@@ -316,9 +316,28 @@ local function CreateMapMarker(key)
         -- newly assigned symbol after other quest pins have been added/removed.
         ConfigureMarkerTargetAction(self, target)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(FreeText(target.label) or (target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_GIVER")))
+        local labelText = FreeText(target.label)
+        local detailText = FreeText(target.detail)
+        -- Dungeon entrance markers: when the label has no translation of its own,
+        -- build it from the translated dungeon name.
+        if target.markerType == "dungeon" and type(target.label) == "string" and labelText == target.label then
+            local dungeonName = target.label:gsub(" Entrance$", "")
+            if FDJ.DB and not FDJ.DB[dungeonName] and FDJ.DB[dungeonName .. ": Graveyard"] then
+                dungeonName = dungeonName .. ": Graveyard"
+            end
+            local localName = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(dungeonName) or dungeonName
+            if FDJ.DB and FDJ.DB[dungeonName] and localName and localName ~= dungeonName then
+                labelText = localName
+                if detailText == target.detail then
+                    local place = FDJ.LocalizeDungeonField and FDJ.LocalizeDungeonField(dungeonName, "location", nil)
+                    detailText = L("DUNGEON_ENTRANCE")
+                    if type(place) == "string" and place ~= "" then detailText = detailText .. ": " .. place end
+                end
+            end
+        end
+        GameTooltip:SetText(labelText or (target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_GIVER")))
         local fallbackDetail = target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_STARTS_HERE")
-        GameTooltip:AddLine(FreeText(target.detail) or fallbackDetail, 1, 0.82, 0.05)
+        GameTooltip:AddLine(detailText or fallbackDetail, 1, 0.82, 0.05)
         if IsTargetableNPCMarker(target) and self._fdjCanTarget then
             GameTooltip:AddLine(L("MAP_LEFT_TARGET"), 0.35, 1.00, 0.35)
         end

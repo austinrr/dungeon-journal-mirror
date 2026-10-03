@@ -1,4 +1,4 @@
-DungeonJournal 1.4.3
+DungeonJournal 1.4.4
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -10,7 +10,7 @@ The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Commands: /fj and /fdj.
 
-CHANGES IN 1.4.3
+CHANGES IN 1.4.4
 - Includes all five currently recorded City of Dalaran quests.
 - Power Overwhelming: target wording matches Arcanic Enigma; confirmed reward
   choices are Violet Sash or Runebound Gloves, plus 1 gold.
@@ -31,6 +31,29 @@ CHANGES IN 1.4.3
 - Update alert: the addon tells you in chat when a guild or group member runs a
   newer version. Addons cannot check the internet, so this only works once
   another player with the newer version is in your guild, party or raid.
+- Boss portraits for every dungeon now appear immediately on a fresh install
+  instead of showing question marks while they load.
+- Boss names are shown in the client language (German, French, Spanish,
+  Portuguese, Russian, Korean, Simplified and Traditional Chinese).
+- Shadowfang Keep map rebuilt on the four levels the game uses; Springvale,
+  Razorclaw, Odo, Fenrus, Nandos and Arugal moved to their correct rooms.
+- Added the paladin chain The Test of Righteousness (Verigan's Fist) to The
+  Deadmines, Shadowfang Keep and Blackfathom Deeps, with all earlier steps.
+- Scarlet Monastery: Graveyard: Trapper's Leather Helm now listed on both
+  Interrogator Vishas and Fallen Champion.
+- Fixed the quest page jumping back to the top while scrolled down to the
+  rewards.
+- Quest chain steps can list their required and provided items as item buttons;
+  hovering one shows where it comes from (used by The Test of Righteousness).
+- Trash drops: added a list for Ruins of Lordaeron (Death Bindings, Sword of the
+  Fallen, Rotmender's Garb and Sash) and Razorfen Kraul, and filled in missing
+  trash drops for The Deadmines and Scarlet Monastery: Graveyard.
+- Trash drop lists now show rare and better items only.
+- Boss loot now includes the profession recipes and blueprints they can drop.
+- New Loot Filter button on the home page (left of Hide Dungeons): show or hide
+  recipes (hidden by default), show only loot your class can use, or only items
+  with the stats you tick.
+  Its Show button lists every boss, in every dungeon, that drops matching loot.
 
 PREVIOUS CHANGES
 - Excavation: filled missing IDs, corrected quest levels, kill counts, item starts

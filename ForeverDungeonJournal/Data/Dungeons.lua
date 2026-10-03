@@ -336,6 +336,7 @@ FDJ.DB = {
                 loot = {
                     {5243, "Firebelcher", "Ranged, Wand", 3},
                     {6632, "Feyscale Cloak", "Back, Cloth", 3},
+                    {252781, "Pattern: Stormrider's Leather Gloves", "Recipe, Leatherworking", 3},
                 },
                 description = "Rare spawn.",
                 rare = true,
@@ -535,7 +536,7 @@ FDJ.DB = {
                 npcID = 250631,
                 aliases = { "The Abandoned" },
                 loot = {
-                    {271207, "Wispcloth Leggings", "Legs, Cloth", 3},
+                    {271207, "Rotmender's Leggings", "Legs, Cloth", 3},
                     {271208, "Grip of Fear", "Hands, Mail", 3},
                     {271216, "Scepter of the Abandoned", "Main Hand, Mace", 3},
                 },
@@ -556,8 +557,10 @@ FDJ.DB = {
                 aliases = { "Rath'mael", "Rath’mael" },
                 loot = {
                     {271213, "Mirror of Rath'mael", "Off Hand, Shield", 3},
-                    {271214, "Frostbane Treads", "Feet, Cloth", 3},
+                    {271214, "Rotmender's Treads", "Feet, Cloth", 3},
                     {271215, "Coldspire Staff", "Two-Hand, Staff", 3},
+                    {273085, "Blueprint: Fermenter", "Blueprint", 2},
+                    {273103, "Blueprint: Arcane Salvager", "Blueprint", 2},
                 },
             },
             {
@@ -580,6 +583,17 @@ FDJ.DB = {
                 description = "Rare spawn.",
                 rare = true,
                 customIcon = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\LordaeronCaptainPortrait.tga",
+            },
+            {
+                -- Dungeon-specific non-boss drops (Wowhead Forever dropped-by data).
+                name = "Trash Drops",
+                trash = true,
+                loot = {
+                    {286981, "Death Bindings", "Wrist, Mail", 3, "Skeleton / Skeletal Soldier / Skeletal Mage / Fallen Necromancer"},
+                    {286977, "Sword of the Fallen", "Two-Hand, Sword", 3, "Ghoul / Ragged Ghoul / Plague Ghoul"},
+                    {286978, "Rotmender's Garb", "Chest, Cloth", 3, "Flesh Golem"},
+                    {286980, "Rotmender's Sash", "Waist, Cloth", 3, "Shrieking Banshee"},
+                },
             },
         },
     },
@@ -690,11 +704,26 @@ DB["The Deadmines"] = {
         level = 22,
         startItem = {2874, "An Unsent Letter", 1, "Looted from Edwin VanCleef"},
         turnin = "Baros Alexston, City Hall, Cathedral Square, Stormwind",
+    }, {
+        classOnly = "PALADIN",
+        objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
+        rewardSummary = "",
+        id = 1806,
+        note = "Paladin class quest for humans and dwarves. In this dungeon: Whitestone Oak Lumber drops from Goblin Woodcarvers. The other parts are Jordan's Smithing Hammer (Shadowfang Keep), the Kor Gem (Blackfathom Deeps) and Jordan's ore shipment (Loch Modan).",
+        liveXPFallback = 5500,
+        rewardItems = {{6953, "Verigan's Fist", 3}},
+        name = "The Test of Righteousness",
+        faction = "Alliance",
+        pickup = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        level = 22,
+        requires = 20,
+        turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
     }},
     bosses = {{
             name = "Rhahk'Zor",
             aliases = {"Rhahk'Zor"},
-            loot = {{872, "Rockslicer", "Two-Hand, Axe", 3}, {5187, "Rhahk'Zor's Hammer", "Two-Hand, Mace", 3}, {273289, "Ogre Loincloth", "Legs, Cloth", 3}},
+            loot = {{872, "Rockslicer", "Two-Hand, Axe", 3}, {5187, "Rhahk'Zor's Hammer", "Two-Hand, Mace", 3}, {273289, "Ogre Loincloth", "Legs, Cloth", 3}, {251362, "Plans: Protector's Gloves", "Recipe, Blacksmithing", 3}, {251364, "Plans: Crusader's Gloves", "Recipe, Blacksmithing", 3}, {253906, "Pattern: Filigreed Flame Gown", "Recipe, Tailoring", 3}},
             npcID = 644,
         }, {
             name = "Miner Johnson",
@@ -711,17 +740,17 @@ DB["The Deadmines"] = {
         }, {
             name = "Sneed",
             aliases = {"Sneed"},
-            loot = {{5194, "Taskmaster Axe", "Two-Hand, Axe", 3}, {5195, "Gold-flecked Gloves", "Hands, Cloth", 3}, {273293, "Bandsaw Wristbands", "Wrist, Mail", 3}, {273092, "Blueprint: Repair Bot", "Engineering", 2}},
+            loot = {{5194, "Taskmaster Axe", "Two-Hand, Axe", 3}, {5195, "Gold-flecked Gloves", "Hands, Cloth", 3}, {273293, "Bandsaw Wristbands", "Wrist, Mail", 3}, {273092, "Blueprint: Repair Bot", "Engineering", 2}, {251360, "Plans: Veteran's Gloves", "Recipe, Blacksmithing", 3}, {251364, "Plans: Crusader's Gloves", "Recipe, Blacksmithing", 3}, {253902, "Pattern: Filigreed Pristine Gown", "Recipe, Tailoring", 3}},
             npcID = 643,
         }, {
             name = "Gilnid",
             aliases = {"Gilnid"},
-            loot = {{1156, "Lavishly Jeweled Ring", "Finger", 3}, {5199, "Smelting Pants", "Legs, Leather", 3}, {273297, "Goblin Hammer", "Main Hand, Mace", 3}},
+            loot = {{1156, "Lavishly Jeweled Ring", "Finger", 3}, {5199, "Smelting Pants", "Legs, Leather", 3}, {273297, "Goblin Hammer", "Main Hand, Mace", 3}, {252777, "Pattern: Brawler's Leather Gloves", "Recipe, Leatherworking", 3}, {252778, "Pattern: Trapper's Leather Gloves", "Recipe, Leatherworking", 3}, {252780, "Pattern: Totemic Leather Gloves", "Recipe, Leatherworking", 3}, {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3}, {253904, "Pattern: Filigreed Silky Gown", "Recipe, Tailoring", 3}, {253906, "Pattern: Filigreed Flame Gown", "Recipe, Tailoring", 3}, {273086, "Blueprint: Anvil", "Blueprint", 2}},
             npcID = 1763,
         }, {
             name = "Mr. Smite",
             aliases = {"Mr. Smite"},
-            loot = {{7230, "Smite's Mighty Hammer", "Two-Hand, Mace", 3}, {5192, "Thief's Blade", "One-Hand, Sword", 3}, {5196, "Smite's Reaver", "One-Hand, Axe", 3}, {284715, "First Mate Band", "Finger", 3}},
+            loot = {{7230, "Smite's Mighty Hammer", "Two-Hand, Mace", 3}, {5192, "Thief's Blade", "One-Hand, Sword", 3}, {5196, "Smite's Reaver", "One-Hand, Axe", 3}, {284715, "First Mate Band", "Finger", 3}, {251362, "Plans: Protector's Gloves", "Recipe, Blacksmithing", 3}, {252779, "Pattern: Defender's Leather Gloves", "Recipe, Leatherworking", 3}, {252780, "Pattern: Totemic Leather Gloves", "Recipe, Leatherworking", 3}, {252781, "Pattern: Stormrider's Leather Gloves", "Recipe, Leatherworking", 3}, {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3}},
             npcID = 646,
         }, {
             name = "Captain Greenskin",
@@ -731,12 +760,12 @@ DB["The Deadmines"] = {
         }, {
             name = "Edwin VanCleef",
             aliases = {"Edwin VanCleef"},
-            loot = {{5193, "Cape of the Brotherhood", "Back, Cloth", 3}, {5202, "Corsair's Overshirt", "Chest, Cloth", 3}, {10399, "Blackened Defias Armor", "Chest, Leather", 3}, {5191, "Cruel Barb", "One-Hand, Sword", 3}, {2874, "An Unsent Letter", "Quest Item", 1}},
+            loot = {{5193, "Cape of the Brotherhood", "Back, Cloth", 3}, {5202, "Corsair's Overshirt", "Chest, Cloth", 3}, {10399, "Blackened Defias Armor", "Chest, Leather", 3}, {5191, "Cruel Barb", "One-Hand, Sword", 3}, {2874, "An Unsent Letter", "Quest Item", 1}, {252799, "Pattern: Trapper's Leather Hood", "Recipe, Leatherworking", 3}, {252800, "Pattern: Defender's Leather Hood", "Recipe, Leatherworking", 3}, {252801, "Pattern: Totemic Leather Hood", "Recipe, Leatherworking", 3}, {252803, "Pattern: Wisdom's Leather Hood", "Recipe, Leatherworking", 3}, {253938, "Pattern: Filigreed Pristine Leggings", "Recipe, Tailoring", 3}, {253948, "Pattern: Filigreed Shining Leggings", "Recipe, Tailoring", 3}},
             npcID = 639,
         }, {
             name = "Cookie",
             aliases = {"Cookie"},
-            loot = {{5198, "Cookie's Stirring Rod", "Ranged, Wand", 3}, {5197, "Cookie's Tenderizer", "One-Hand, Mace", 3}, {273298, "Lookie's Spyglass", "Trinket", 3}},
+            loot = {{5198, "Cookie's Stirring Rod", "Ranged, Wand", 3}, {5197, "Cookie's Tenderizer", "One-Hand, Mace", 3}, {273298, "Lookie's Spyglass", "Trinket", 3}, {251360, "Plans: Veteran's Gloves", "Recipe, Blacksmithing", 3}, {252778, "Pattern: Trapper's Leather Gloves", "Recipe, Leatherworking", 3}, {252779, "Pattern: Defender's Leather Gloves", "Recipe, Leatherworking", 3}, {253910, "Pattern: Filigreed Pearly Gown", "Recipe, Tailoring", 3}, {253912, "Pattern: Filigreed Shining Gown", "Recipe, Tailoring", 3}, {273102, "Blueprint: Cookie's Feast", "Blueprint", 2}},
             npcID = 645,
         }, {
             -- Only dungeon-specific non-boss drops belong here. Do not add
@@ -747,6 +776,10 @@ DB["The Deadmines"] = {
                 {10402, "Blackened Defias Boots", "Feet, Leather", 3, "Defias Strip Miner"},
                 {10401, "Blackened Defias Gloves", "Hands, Leather", 3, "Defias Overseer / Defias Taskmaster"},
                 {10400, "Blackened Defias Leggings", "Legs, Leather", 3, "Defias Overseer / Defias Taskmaster"},
+                {1951, "Blackwater Cutlass", "One-Hand, Sword", 3, "Defias Pirate / Defias Squallshaper"},
+                {1929, "Silk-threaded Trousers", "Legs, Cloth", 3, "Defias Evoker / Defias Wizard"},
+                {1934, "Stonemason Trousers", "Legs, Leather", 3, "Defias Blackguard"},
+                {1936, "Goblin Screwdriver", "One-Hand, Dagger", 3, "Goblin Engineer"},
             },
         }},
 }
@@ -914,56 +947,71 @@ DB["Blackfathom Deeps"] = {
         level = 27,
         requires = 21,
         turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale",
+    }, {
+        classOnly = "PALADIN",
+        objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
+        rewardSummary = "",
+        id = 1806,
+        note = "Paladin class quest for humans and dwarves. In this dungeon: the Corrupted Kor Gem drops from Blackfathom Sea Witches inside, and from Blackfathom Tide Priestesses and Oracles at the entrance in Ashenvale. Thundris Windweaver in Auberdine purifies it. The other parts are Whitestone Oak Lumber (The Deadmines), Jordan's Smithing Hammer (Shadowfang Keep) and Jordan's ore shipment (Loch Modan).",
+        liveXPFallback = 5500,
+        rewardItems = {{6953, "Verigan's Fist", 3}},
+        name = "The Test of Righteousness",
+        faction = "Alliance",
+        pickup = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        level = 22,
+        requires = 20,
+        turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
     }},
     bosses = {
         {
             name = "Ghamoo-ra",
             npcID = 4887,
             aliases = {"Ghamoo-ra"},
-            loot = {{6907, "Tortoise Armor", "Chest, Mail", 3}, {6908, "Ghamoo-ra's Bind", "Waist, Cloth", 3}, {273839, "Spiked Shell Band", "Finger", 3}},
+            loot = {{6907, "Tortoise Armor", "Chest, Mail", 3}, {6908, "Ghamoo-ra's Bind", "Waist, Cloth", 3}, {273839, "Spiked Shell Band", "Finger", 3}, {251382, "Plans: Protector's Silvered Chain Helm", "Recipe, Blacksmithing", 3}, {252801, "Pattern: Totemic Leather Hood", "Recipe, Leatherworking", 3}, {253940, "Pattern: Filigreed Silky Leggings", "Recipe, Tailoring", 3}, {253942, "Pattern: Filigreed Flame Leggings", "Recipe, Tailoring", 3}},
         },
         {
             name = "Lady Sarevess",
             npcID = 4831,
             aliases = {"Lady Sarevess"},
-            loot = {{888, "Naga Battle Gloves", "Hands, Leather", 3}, {3078, "Naga Heartpiercer", "Ranged, Bow", 2}, {11121, "Darkwater Talwar", "Main Hand, Sword", 2}, {252798, "Pattern: Brawler's Leather Hood", "Leatherworking Recipe", 3}},
+            loot = {{888, "Naga Battle Gloves", "Hands, Leather", 3}, {3078, "Naga Heartpiercer", "Ranged, Bow", 2}, {11121, "Darkwater Talwar", "Main Hand, Sword", 2}, {252798, "Pattern: Brawler's Leather Hood", "Leatherworking Recipe", 3}, {251382, "Plans: Protector's Silvered Chain Helm", "Recipe, Blacksmithing", 3}, {251383, "Plans: Acolyte's Silvered Chain Helm", "Recipe, Blacksmithing", 3}, {253944, "Pattern: Filigreed Shadow Leggings", "Recipe, Tailoring", 3}},
         },
         {
             name = "Gelihast",
             npcID = 6243,
             aliases = {"Gelihast", "Geilhast"},
-            loot = {{6906, "Algae Fists", "Hands, Mail", 3}, {6905, "Reef Axe", "Two-Hand, Axe", 3}, {1470, "Murloc Skin Bag", "Bag", 1}},
+            loot = {{6906, "Algae Fists", "Hands, Mail", 3}, {6905, "Reef Axe", "Two-Hand, Axe", 3}, {1470, "Murloc Skin Bag", "Bag", 1}, {273840, "Cursed Murloc Eye", "Trinket", 3}, {251375, "Plans: Veteran's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {251377, "Plans: Protector's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {252820, "Pattern: Brawler's Leather Legguards", "Recipe, Leatherworking", 3}, {252821, "Pattern: Trapper's Leather Legguards", "Recipe, Leatherworking", 3}, {252825, "Pattern: Wisdom's Leather Leggings", "Recipe, Leatherworking", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253980, "Pattern: Filigreed Flame Circlet", "Recipe, Tailoring", 3}, {273141, "Blueprint: Fishing Rack", "Blueprint", 2}},
         },
         {
             name = "Lorgus Jett",
             npcID = 12902,
             aliases = {"Lorgus Jett"},
-            loot = {{273843, "Fallenroot Longbow", "Ranged, Bow", 3}},
+            loot = {{273843, "Fallenroot Longbow", "Ranged, Bow", 3}, {273841, "Twilight Maul", "Two-Hand, Mace", 3}, {273842, "Treacherous Treads", "Feet, Mail", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}},
         },
         {
             name = "Baron Aquanis",
             npcID = 12876,
             aliases = {"Baron Aquanis"},
-            loot = {{16782, "Strange Water Globe", "Quest Item", 1}},
+            loot = {{16782, "Strange Water Globe", "Quest Item", 1}, {252822, "Pattern: Defender's Leather Kilt", "Recipe, Leatherworking", 3}, {253980, "Pattern: Filigreed Flame Circlet", "Recipe, Tailoring", 3}},
             description = "Optional quest-summoned encounter associated with the Fathom Stone; not part of the current 5-player seven-boss route.",
         },
         {
             name = "Old Serra'kis",
             npcID = 4830,
             aliases = {"Old Serra'kis", "Old Serra’kis"},
-            loot = {{6901, "Glowing Thresher Cape", "Back, Cloth", 3}, {6904, "Bite of Serra'kis", "One-Hand, Dagger", 3}, {6902, "Bands of Serra'kis", "Wrist, Leather", 3}},
+            loot = {{6901, "Glowing Thresher Cape", "Back, Cloth", 3}, {6904, "Bite of Serra'kis", "One-Hand, Dagger", 3}, {6902, "Bands of Serra'kis", "Wrist, Leather", 3}, {251375, "Plans: Veteran's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {252825, "Pattern: Wisdom's Leather Leggings", "Recipe, Leatherworking", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}},
         },
         {
             name = "Twilight Lord Kelris",
             npcID = 4832,
             aliases = {"Twilight Lord Kelris"},
-            loot = {{1155, "Rod of the Sleepwalker", "Two-Hand, Staff", 3}, {6903, "Gaze Dreamer Pants", "Legs, Cloth", 3}, {273846, "Twilight Lord Girdle", "Waist, Mail", 3}},
+            loot = {{1155, "Rod of the Sleepwalker", "Two-Hand, Staff", 3}, {6903, "Gaze Dreamer Pants", "Legs, Cloth", 3}, {273846, "Twilight Lord Girdle", "Waist, Mail", 3}, {252820, "Pattern: Brawler's Leather Legguards", "Recipe, Leatherworking", 3}, {252821, "Pattern: Trapper's Leather Legguards", "Recipe, Leatherworking", 3}, {252822, "Pattern: Defender's Leather Kilt", "Recipe, Leatherworking", 3}, {252823, "Pattern: Totemic Leather Leggings", "Recipe, Leatherworking", 3}, {252825, "Pattern: Wisdom's Leather Leggings", "Recipe, Leatherworking", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}},
         },
         {
             name = "Aku'mai",
             npcID = 4829,
             aliases = {"Aku'mai", "Aku’mai"},
-            loot = {{6911, "Moss Cinch", "Waist, Leather", 3}, {6910, "Leech Pants", "Legs, Cloth", 3}, {6909, "Strike of the Hydra", "Two-Hand, Sword", 3}},
+            loot = {{6911, "Moss Cinch", "Waist, Leather", 3}, {6910, "Leech Pants", "Legs, Cloth", 3}, {6909, "Strike of the Hydra", "Two-Hand, Sword", 3}, {251376, "Plans: Guard's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {251377, "Plans: Protector's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {251378, "Plans: Acolyte's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}, {252821, "Pattern: Trapper's Leather Legguards", "Recipe, Leatherworking", 3}, {252824, "Pattern: Stormrider's Leather Kilt", "Recipe, Leatherworking", 3}, {253980, "Pattern: Filigreed Flame Circlet", "Recipe, Tailoring", 3}, {253984, "Pattern: Filigreed Pearly Circlet", "Recipe, Tailoring", 3}},
         },
         {
             -- Blackfathom Deeps-specific BoE zone drops. Keep this restricted
@@ -1091,6 +1139,8 @@ DB["Ragefire Chasm"] = {
                 {272999, "Barbaric Crossbow", "Ranged, Crossbow", 3},
                 {272996, "Trogg Scepter", "Main Hand, Mace", 3},
                 {272998, "Bone Knuckles", "Main Hand, Fist Weapon", 3},
+                {252781, "Pattern: Stormrider's Leather Gloves", "Recipe, Leatherworking", 3},
+                {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -1101,6 +1151,10 @@ DB["Ragefire Chasm"] = {
                 {14149, "Subterranean Cape", "Back, Cloth", 3},
                 {14148, "Crystalline Cuffs", "Wrist, Cloth", 3},
                 {14145, "Cursed Felblade", "Main Hand, Sword", 3},
+                {251361, "Plans: Guard's Gloves", "Recipe, Blacksmithing", 3},
+                {251362, "Plans: Protector's Gloves", "Recipe, Blacksmithing", 3},
+                {251363, "Plans: Acolyte's Gloves", "Recipe, Blacksmithing", 3},
+                {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -1111,6 +1165,8 @@ DB["Ragefire Chasm"] = {
                 {14150, "Robe of Evocation", "Chest, Cloth", 3},
                 {14147, "Cavedweller Bracers", "Wrist, Mail", 3},
                 {14151, "Chanting Blade", "One-Hand, Dagger", 3},
+                {251360, "Plans: Veteran's Gloves", "Recipe, Blacksmithing", 3},
+                {253906, "Pattern: Filigreed Flame Gown", "Recipe, Tailoring", 3},
             },
         },
         {
@@ -1121,6 +1177,10 @@ DB["Ragefire Chasm"] = {
                 {273003, "Searing Dagger", "Main Hand, Dagger", 3},
                 {273007, "Chasm Walkers", "Feet, Leather", 3},
                 {273005, "Satyrskin Cloak", "Back, Cloth", 3},
+                {252780, "Pattern: Totemic Leather Gloves", "Recipe, Leatherworking", 3},
+                {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3},
+                {253908, "Pattern: Filigreed Shadow Gown", "Recipe, Tailoring", 3},
+                {253910, "Pattern: Filigreed Pearly Gown", "Recipe, Tailoring", 3},
             },
         },
     },
@@ -1190,6 +1250,21 @@ DB["Shadowfang Keep"] = {
         level = 27,
         requires = 18,
         turnin = "Dalar Dawnweaver, The Sepulcher, Silverpine Forest",
+    }, {
+        classOnly = "PALADIN",
+        objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
+        rewardSummary = "",
+        id = 1806,
+        note = "Paladin class quest for humans and dwarves. In this dungeon: Jordan's Smithing Hammer is picked up from the object Jordan's Hammer in the courtyard. The other parts are Whitestone Oak Lumber (The Deadmines), the Kor Gem (Blackfathom Deeps) and Jordan's ore shipment (Loch Modan).",
+        liveXPFallback = 5500,
+        rewardItems = {{6953, "Verigan's Fist", 3}},
+        name = "The Test of Righteousness",
+        faction = "Alliance",
+        pickup = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        level = 22,
+        requires = 20,
+        turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
+        startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
     }},
 
     bosses = {
@@ -1210,6 +1285,26 @@ DB["Shadowfang Keep"] = {
             loot = {
                 {6341, "Eerie Stable Lantern", "Held In Off-hand", 3},
                 {932, "Fel Steed Saddlebags", "Bag", 2},
+                {251341, "Plans: Guard's Chain Shirt", "Recipe, Blacksmithing", 3},
+                {251362, "Plans: Protector's Gloves", "Recipe, Blacksmithing", 3},
+                {251363, "Plans: Acolyte's Gloves", "Recipe, Blacksmithing", 3},
+                {251364, "Plans: Crusader's Gloves", "Recipe, Blacksmithing", 3},
+                {252781, "Pattern: Stormrider's Leather Gloves", "Recipe, Leatherworking", 3},
+                {252782, "Pattern: Wisdom's Leather Gloves", "Recipe, Leatherworking", 3},
+                {253902, "Pattern: Filigreed Pristine Gown", "Recipe, Tailoring", 3},
+                {253904, "Pattern: Filigreed Silky Gown", "Recipe, Tailoring", 3},
+                {253906, "Pattern: Filigreed Flame Gown", "Recipe, Tailoring", 3},
+                {253908, "Pattern: Filigreed Shadow Gown", "Recipe, Tailoring", 3},
+                {253910, "Pattern: Filigreed Pearly Gown", "Recipe, Tailoring", 3},
+                {253912, "Pattern: Filigreed Shining Gown", "Recipe, Tailoring", 3},
+                {251381, "Plans: Guard's Silvered Chain Helm", "Recipe, Blacksmithing", 3},
+                {251382, "Plans: Protector's Silvered Chain Helm", "Recipe, Blacksmithing", 3},
+                {252799, "Pattern: Trapper's Leather Hood", "Recipe, Leatherworking", 3},
+                {252801, "Pattern: Totemic Leather Hood", "Recipe, Leatherworking", 3},
+                {252803, "Pattern: Wisdom's Leather Hood", "Recipe, Leatherworking", 3},
+                {253940, "Pattern: Filigreed Silky Leggings", "Recipe, Tailoring", 3},
+                {253946, "Pattern: Filigreed Pearly Leggings", "Recipe, Tailoring", 3},
+                {253948, "Pattern: Filigreed Shining Leggings", "Recipe, Tailoring", 3},
             },
         },
         {
@@ -1240,6 +1335,7 @@ DB["Shadowfang Keep"] = {
                 {6320, "Commander's Crest", "Off Hand, Shield", 3},
                 {3191, "Arced War Axe", "Two-Hand, Axe", 3},
                 {273643, "Worgenbane Talisman", "Trinket", 3},
+                {6341, "Eerie Stable Lantern", "Held In Off-hand", 3},
             },
         },
         {
@@ -1288,6 +1384,7 @@ DB["Shadowfang Keep"] = {
             loot = {
                 {3748, "Feline Mantle", "Shoulder, Cloth", 3},
                 {6314, "Wolfmaster Cape", "Back, Cloth", 3},
+                {273647, "Worgpelt Leggings", "Legs, Leather", 3},
             },
         },
         {
@@ -1422,6 +1519,9 @@ FDJ.DB["The Stockade"] = {
                 {273805, "Blackrock Harness", "Chest, Leather", 3},
                 {273804, "Executioner Mantle", "Shoulder, Leather", 3},
                 {273806, "Dark Horde Band", "Finger", 3},
+                {251380, "Plans: Veteran's Silvered Chain Helm", "Recipe, Blacksmithing", 3},
+                {251382, "Plans: Protector's Silvered Chain Helm", "Recipe, Blacksmithing", 3},
+                {253942, "Pattern: Filigreed Flame Leggings", "Recipe, Tailoring", 3},
             },
         },
         {
@@ -1432,6 +1532,8 @@ FDJ.DB["The Stockade"] = {
                 {2280, "Kam's Walking Stick", "Two-Hand, Staff", 3},
                 {273807, "Demolition Girdle", "Waist, Leather", 3},
                 {273808, "Bridgebreaker Bindings", "Wrist, Cloth", 3},
+                {251379, "Plans: Crusader's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
+                {252825, "Pattern: Wisdom's Leather Leggings", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -1442,6 +1544,7 @@ FDJ.DB["The Stockade"] = {
                 {273809, "Hamhock's Cleaver", "Main Hand, Axe", 3},
                 {273810, "Ogre Grips", "Hands, Mail", 3},
                 {273811, "Repurposed Rack", "Off Hand, Shield", 3},
+                {251377, "Plans: Protector's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
             },
         },
         {
@@ -1452,6 +1555,10 @@ FDJ.DB["The Stockade"] = {
                 {273817, "Graverobber's Shovel", "Two-Hand, Mace", 3},
                 {273819, "Boneslicer", "Two-Hand, Polearm", 3},
                 {273820, "Nightskulker Ring", "Finger", 3},
+                {251375, "Plans: Veteran's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
+                {251376, "Plans: Guard's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
+                {252820, "Pattern: Brawler's Leather Legguards", "Recipe, Leatherworking", 3},
+                {252821, "Pattern: Trapper's Leather Legguards", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -1463,6 +1570,9 @@ FDJ.DB["The Stockade"] = {
                 {273824, "Defias Jailbreakers", "Hands, Leather", 3},
                 {273825, "Red Wool Cloak", "Back, Cloth", 3},
                 {273829, "Concealed Hand Crossbow", "Ranged, Crossbow", 3},
+                {252824, "Pattern: Stormrider's Leather Kilt", "Recipe, Leatherworking", 3},
+                {253976, "Pattern: Filigreed Pristine Circlet", "Recipe, Tailoring", 3},
+                {253986, "Pattern: Filigreed Shining Circlet", "Recipe, Tailoring", 3},
             },
         },
         {
@@ -1674,6 +1784,7 @@ FDJ.DB["Excavation Site: Wetlands"] = {
             loot = {
                 {273025, "Raptorclaw Greaves", "Feet, Mail", 3},
                 {273027, "Raptor's Gaze", "Held In Off-hand", 3},
+                {273106, "Blueprint: Greenhouse", "Blueprint", 2},
             },
         },
         {
@@ -1686,6 +1797,7 @@ FDJ.DB["Excavation Site: Wetlands"] = {
                 {273029, "Golemsight Long Gun", "Ranged, Gun", 3},
                 {273030, "Ring of Power Regulation", "Finger", 3}, -- ID unverified
                 {270866, "Titan Relic", "Quest Item", 1},
+                {273097, "Blueprint: Rock Garden", "Blueprint", 2},
             },
         },
     },
@@ -2190,6 +2302,7 @@ FDJ.DB["Razorfen Kraul"] = {
             loot = {
                 {6681, "Thornspike", "One-Hand, Dagger", 3},
                 {274158, "Death Prophet Spine", "Two-Hand, Staff", 3},
+                {252820, "Pattern: Brawler's Leather Legguards", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -2210,6 +2323,8 @@ FDJ.DB["Razorfen Kraul"] = {
                 {6687, "Corpsemaker", "Two-Hand, Axe", 3},
                 {6686, "Tusken Helm", "Head, Mail", 3},
                 {274161, "Quillord Mail Leggings", "Legs, Mail", 3},
+                {251379, "Plans: Crusader's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
+                {252821, "Pattern: Trapper's Leather Legguards", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -2220,6 +2335,7 @@ FDJ.DB["Razorfen Kraul"] = {
                 {6691, "Swinetusk Shank", "Main Hand, Dagger", 3},
                 {6690, "Ferine Leggings", "Legs, Leather", 3},
                 {274160, "Quilrager Throwing Axe", "Thrown", 3},
+                {251378, "Plans: Acolyte's Silvered Chain Leggings", "Recipe, Blacksmithing", 3},
             },
         },
         {
@@ -2231,6 +2347,7 @@ FDJ.DB["Razorfen Kraul"] = {
                 {6693, "Agamaggan's Clutch", "Finger", 3},
                 {6694, "Heart of Agamaggan", "Off Hand, Shield", 3},
                 {6692, "Pronged Reaver", "One-Hand, Axe", 3},
+                {273103, "Blueprint: Arcane Salvager", "Blueprint", 2},
             },
         },
         {
@@ -2254,6 +2371,22 @@ FDJ.DB["Razorfen Kraul"] = {
             loot = {
                 {6689, "Wind Spirit Staff", "Two-Hand, Staff", 3},
                 {6688, "Whisperwind Headdress", "Head, Leather", 3},
+            },
+        },
+        {
+            -- Dungeon-specific non-boss drops (Wowhead Forever: every dropper is inside Razorfen Kraul).
+            name = "Trash Drops",
+            trash = true,
+            loot = {
+                {776, "Vendetta", "One-Hand, Dagger", 3},
+                {1727, "Sword of Decay", "Main Hand, Sword", 3},
+                {1975, "Pysan's Old Greatsword", "Two-Hand, Sword", 3},
+                {1976, "Slaghammer", "Two-Hand, Mace", 3},
+                {2549, "Staff of the Shade", "Two-Hand, Staff", 3},
+                {1978, "Wolfclaw Gloves", "Hands, Leather", 3},
+                {2264, "Mantle of Thieves", "Shoulder, Leather", 3},
+                {4438, "Pugilist Bracers", "Wrist, Mail", 3},
+                {2039, "Plains Ring", "Finger", 3},
             },
         },
     },
@@ -2299,7 +2432,7 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
                 {7682, "Torturing Poker", "One-Hand, Dagger", 3},
                 {7683, "Bloody Brass Knuckles", "One-Hand, Fist Weapon", 3},
                 {274290, "Painwalker Buckler", "Off Hand, Shield", 3},
-                {252513, "Trapper's Leather Helm", "Head, Leather", 3},
+                {252513, "Trapper's Leather Helm", "Head, Leather", 3}, -- shared drop: also seen on Fallen Champion
             },
         },
         {
@@ -2324,6 +2457,7 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
                 {7691, "Embalmed Shroud", "Head, Cloth", 3},
                 {7690, "Ebon Vise", "Hands, Leather", 3},
                 {7689, "Morbid Dawn", "Two-Hand, Sword", 3},
+                {252513, "Trapper's Leather Helm", "Head, Leather", 3}, -- shared drop: also seen on Interrogator Vishas
             },
         },
         {
@@ -2347,6 +2481,7 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
                 {7685, "Orb of the Forgotten Seer", "Held In Off-hand", 3},
                 {7684, "Bloodmage Mantle", "Shoulder, Cloth", 3},
                 {274291, "Polished Skullcap", "Head, Mail", 3},
+                {252822, "Pattern: Defender's Leather Kilt", "Recipe, Leatherworking", 3},
             },
         },
         {
@@ -2354,12 +2489,16 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
             name = "Trash Drops",
             trash = true,
             loot = {
-                {10328, "Scarlet Chestpiece", "Chest, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
-                {10329, "Scarlet Belt", "Waist, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
-                {10330, "Scarlet Leggings", "Legs, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
-                {10331, "Scarlet Gauntlets", "Hands, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
-                {10333, "Scarlet Wristguards", "Wrist, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
-                {10332, "Scarlet Boots", "Feet, Mail", 2, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10328, "Scarlet Chestpiece", "Chest, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10329, "Scarlet Belt", "Waist, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10330, "Scarlet Leggings", "Legs, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10331, "Scarlet Gauntlets", "Hands, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10333, "Scarlet Wristguards", "Wrist, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {10332, "Scarlet Boots", "Feet, Mail", 3, "Scarlet Monastery trash (Chain of the Scarlet Crusade)"},
+                {5819, "Sunblaze Coif", "Head, Mail", 3, "Scarlet Monastery trash (very rare)"},
+                {7730, "Cobalt Crusher", "Two-Hand, Mace", 3, "Scarlet Monastery trash (very rare)"},
+                {7761, "Steelclaw Reaver", "Main Hand, Axe", 3, "Scarlet Monastery trash (very rare)"},
+                {7787, "Resplendent Guardian", "Off Hand, Shield", 3, "Scarlet Monastery trash (very rare)"},
             },
         },
     },

@@ -1213,3 +1213,322 @@ for lang, strings in pairs(EXC2) do
         if target.places[key] == nil then target.places[key] = value end
     end
 end
+
+-- Item source lines shown at the bottom of item tooltips (quest start items,
+-- required and provided items). Whole-string translations.
+local ITEM_SOURCES = {}
+ITEM_SOURCES.deDE = {
+    ["Dropped by: Dark Iron Agents"] = "Fallen gelassen von: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Fallen gelassen von: Dark Iron Spies in Dun Morogh",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Fallen gelassen von: Goblin Woodcarver, Die Todesminen",
+    ["Dropped by: Mutanus the Devourer"] = "Fallen gelassen von: Mutanus der Verschlinger",
+    ["Dropped by: Relic Guardian"] = "Fallen gelassen von: Relic Guardian",
+    ["Dropped by: The Baron"] = "Fallen gelassen von: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Fallen gelassen von: Untoten in den Ruinen von Lordaeron",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Wird von Blackfathom Tide Priestess in den Eingangstunneln zu den Tiefschwarzen Grotten fallen gelassen.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Wird von Charlga Klingenflanke im Kral der Klingenhauer fallen gelassen",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "In einer Pitted Iron Chest unter Wasser im Teich von Ask'ar, in der nördlichen Nische direkt hinter Ghamoo-ras Schildkrötenraum.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Auf dem Friedhof in den Ruinen von Lordaeron zu finden",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Zu finden in: Jordan's Hammer, Hof von Burg Schattenfang",
+    ["From Matrix Punchograph 3005-A"] = "Aus Matrixlochkartograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Aus Matrixlochkartograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Aus Matrixlochkartograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Aus Matrixlochkartograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Wird von Jordan Stilwell bei Annahme der Quest übergeben",
+    ["Looted from Edwin VanCleef"] = "Erbeutet von Edwin van Cleef",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Zufälliger Drop von Gegnern außerhalb der Instanz Gnomeregan",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "Gemeldeter zufälliger Fundort in den Ruinen von Lordaeron; Türme, Nebenräume und den Bereich von Bjork prüfen",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Belohnung der Quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Belohnung der Quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Dunkelküste. Den verlangten Corrupted Kor Gem lassen Blackfathom Tide Priestesses und Oracles am Eingang der Tiefschwarzen Grotten sowie Blackfathom Sea Witches im Inneren fallen.",
+}
+ITEM_SOURCES.frFR = {
+    ["Dropped by: Dark Iron Agents"] = "Butin de : Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Butin de : Dark Iron Spies à Dun Morogh",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Butin de : Goblin Woodcarver, Les Mortemines",
+    ["Dropped by: Mutanus the Devourer"] = "Butin de : Mutanus le Dévoreur",
+    ["Dropped by: Relic Guardian"] = "Butin de : Relic Guardian",
+    ["Dropped by: The Baron"] = "Butin de : The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Butin de : ennemis morts-vivants dans les Ruines de Lordaeron",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Butin de Blackfathom Tide Priestess dans les tunnels d'entrée menant aux Profondeurs de Brassenoire.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Butin de Charlga Trancheflanc à Kraal de Tranchebauge",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "Dans un Pitted Iron Chest sous l'eau dans le bassin d'Ask'ar, dans l'alcôve nord juste après la salle de la tortue Ghamoo-ra.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Se trouve dans le cimetière des Ruines de Lordaeron",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Se trouve dans : Jordan's Hammer, cour du Donjon d'Ombrecroc",
+    ["From Matrix Punchograph 3005-A"] = "Obtenu du Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Obtenu du Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Obtenu du Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Obtenu du Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Remis par Jordan Stilwell à l'acceptation de la quête",
+    ["Looted from Edwin VanCleef"] = "Ramassé sur Edwin VanCleef",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Butin aléatoire des monstres à l'extérieur de l'instance de Gnomeregan",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "Apparition aléatoire signalée dans les Ruines de Lordaeron ; vérifiez les tours, les salles latérales et la zone de Bjork",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Récompense de la quête Bailor's Ore Shipment : Bailor Stonehand, Thelsamar, Loch Modan",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Récompense de la quête Seeking the Kor Gem : Thundris Windweaver, Auberdine, Sombrivage. La Corrupted Kor Gem demandée tombe sur les Blackfathom Tide Priestesses et Oracles à l'entrée des Profondeurs de Brassenoire et sur les Blackfathom Sea Witches à l'intérieur.",
+}
+ITEM_SOURCES.esES = {
+    ["Dropped by: Dark Iron Agents"] = "Lo suelta: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Lo suelta: Dark Iron Spies en Dun Morogh",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Las Minas de la Muerte",
+    ["Dropped by: Mutanus the Devourer"] = "Lo suelta: Mutanus el Devorador",
+    ["Dropped by: Relic Guardian"] = "Lo suelta: Relic Guardian",
+    ["Dropped by: The Baron"] = "Lo suelta: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Lo sueltan: enemigos no-muertos dentro de las Ruinas de Lordaeron",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Lo suelta Blackfathom Tide Priestess en los túneles de entrada a las Cavernas de Brazanegra.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Lo suelta Charlga Filonavaja en Horado Rajacieno",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "En un Pitted Iron Chest bajo el agua en el estanque de Ask'ar, en el hueco norte justo después de la sala de la tortuga Ghamoo-ra.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Se encuentra en el cementerio dentro de las Ruinas de Lordaeron",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Se encuentra en: Jordan's Hammer, patio del Castillo de Colmillo Oscuro",
+    ["From Matrix Punchograph 3005-A"] = "Del Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Del Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Del Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Del Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Te lo da Jordan Stilwell al aceptar la misión",
+    ["Looted from Edwin VanCleef"] = "Se despoja de Edwin VanCleef",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Botín aleatorio de enemigos fuera de la estancia de Gnomeregan",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "Aparición aleatoria notificada dentro de las Ruinas de Lordaeron; revisa torres, salas laterales y la zona de Bjork",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Recompensa de la misión Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa de la misión Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Oscura. La Corrupted Kor Gem que pide la sueltan las Blackfathom Tide Priestesses y Oracles en la entrada de las Cavernas de Brazanegra y las Blackfathom Sea Witches en el interior.",
+}
+ITEM_SOURCES.itIT = {
+    ["Dropped by: Dark Iron Agents"] = "Bottino di: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Bottino di: Dark Iron Spies a Dun Morogh",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Bottino di: Goblin Woodcarver, Miniere della Morte",
+    ["Dropped by: Mutanus the Devourer"] = "Bottino di: Mutanus the Devourer",
+    ["Dropped by: Relic Guardian"] = "Bottino di: Relic Guardian",
+    ["Dropped by: The Baron"] = "Bottino di: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Bottino di: nemici non morti nelle Rovine di Lordaeron",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Bottino di Blackfathom Tide Priestess nei tunnel d'ingresso verso gli Abissi di Fondocupo.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Bottino di Charlga Razorflank a Razorfen Kraul",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "In un Pitted Iron Chest sott'acqua nella Pozza di Ask'ar, nella nicchia nord subito dopo la sala della tartaruga Ghamoo-ra.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Si trova nel cimitero dentro le Rovine di Lordaeron",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Si trova in: Jordan's Hammer, cortile della Fortezza di Zannascura",
+    ["From Matrix Punchograph 3005-A"] = "Dal Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Dal Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Dal Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Dal Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Consegnato da Jordan Stilwell quando accetti la missione",
+    ["Looted from Edwin VanCleef"] = "Saccheggiato da Edwin VanCleef",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Bottino casuale dei nemici fuori dall'istanza di Gnomeregan",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "Comparsa casuale segnalata nelle Rovine di Lordaeron; controlla torri, stanze laterali e la zona di Bjork",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Ricompensa della missione Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Ricompensa della missione Seeking the Kor Gem: Thundris Windweaver, Auberdine, Rivafosca. La Corrupted Kor Gem richiesta è bottino di Blackfathom Tide Priestess e Oracle all'ingresso degli Abissi di Fondocupo e di Blackfathom Sea Witch all'interno.",
+}
+ITEM_SOURCES.ptBR = {
+    ["Dropped by: Dark Iron Agents"] = "Saqueado de: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Saqueado de: Dark Iron Spies em Dun Morogh",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Saqueado de: Goblin Woodcarver, Minas Mortas",
+    ["Dropped by: Mutanus the Devourer"] = "Saqueado de: Mutanus, o Devorador",
+    ["Dropped by: Relic Guardian"] = "Saqueado de: Relic Guardian",
+    ["Dropped by: The Baron"] = "Saqueado de: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Saqueado de: inimigos mortos-vivos nas Ruínas de Lordaeron",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Saqueado de Blackfathom Tide Priestess nos túneis de entrada das Profundezas Negras.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Saqueado de Charlga Flanco-navalha no Urzal dos Tuscos",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "Em um Pitted Iron Chest debaixo d'água na Poça de Ask'ar, no nicho norte logo após a sala da tartaruga Ghamoo-ra.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Encontrado no cemitério dentro das Ruínas de Lordaeron",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Encontrado em: Jordan's Hammer, pátio da Bastilha da Presa Negra",
+    ["From Matrix Punchograph 3005-A"] = "Do Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Do Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Do Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Do Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Entregue por Jordan Stilwell ao aceitar a missão",
+    ["Looted from Edwin VanCleef"] = "Saqueado de Edwin VanCleef",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Saque aleatório de inimigos fora da instância de Gnomeregan",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "Surgimento aleatório relatado nas Ruínas de Lordaeron; verifique torres, salas laterais e a área de Bjork",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Recompensa da missão Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa da missão Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Negra. A Corrupted Kor Gem pedida cai de Blackfathom Tide Priestesses e Oracles na entrada das Profundezas Negras e de Blackfathom Sea Witches lá dentro.",
+}
+ITEM_SOURCES.ruRU = {
+    ["Dropped by: Dark Iron Agents"] = "Добывается с: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Добывается с: Dark Iron Spies в Дун Мороге",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Добывается с: Goblin Woodcarver, Мертвые копи",
+    ["Dropped by: Mutanus the Devourer"] = "Добывается с: Мутанус Пожиратель",
+    ["Dropped by: Relic Guardian"] = "Добывается с: Relic Guardian",
+    ["Dropped by: The Baron"] = "Добывается с: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "Добывается с: нежити в Руинах Лордерона",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "Добывается с Blackfathom Tide Priestess в туннелях у входа в Непроглядную Пучину.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "Добывается с Чарлги Остробок в Лабиринтах Иглошкурых",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "В Pitted Iron Chest под водой в бассейне Аск'ара, в северной нише сразу за залом черепахи Гхаму-ра.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "Находится на кладбище в Руинах Лордерона",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "Находится в: Jordan's Hammer, двор крепости Темного Клыка",
+    ["From Matrix Punchograph 3005-A"] = "Из Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "Из Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "Из Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "Из Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "Выдается Jordan Stilwell при принятии задания",
+    ["Looted from Edwin VanCleef"] = "Добывается с Эдвина ван Клифа",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "Случайная добыча с существ снаружи подземелья Гномреган",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "По сообщениям, появляется в случайном месте в Руинах Лордерона; проверьте башни, боковые комнаты и зону Бьорка",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "Награда за задание Bailor's Ore Shipment: Bailor Stonehand, Телсамар, Лок Модан",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Награда за задание Seeking the Kor Gem: Thundris Windweaver, Аубердин, Темные берега. Нужный Corrupted Kor Gem падает с Blackfathom Tide Priestess и Oracle у входа в Непроглядную Пучину и с Blackfathom Sea Witch внутри.",
+}
+ITEM_SOURCES.koKR = {
+    ["Dropped by: Dark Iron Agents"] = "드롭: Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "드롭: 던 모로의 Dark Iron Spies",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "드롭: Goblin Woodcarver, 죽음의 폐광",
+    ["Dropped by: Mutanus the Devourer"] = "드롭: 걸신들린 무타누스",
+    ["Dropped by: Relic Guardian"] = "드롭: Relic Guardian",
+    ["Dropped by: The Baron"] = "드롭: The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "드롭: 로데론의 폐허 안의 언데드",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "검은심연 나락으로 이어지는 입구 통로의 Blackfathom Tide Priestess가 드롭합니다.",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "가시덩굴 우리의 서슬깃 차를가가 드롭",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "아스카르의 웅덩이 물속, 가무라의 거북이 방 바로 뒤 북쪽 구석의 Pitted Iron Chest에서 획득.",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "로데론의 폐허 안 묘지에서 발견",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "발견 위치: Jordan's Hammer, 그림자송곳니 성채 안뜰",
+    ["From Matrix Punchograph 3005-A"] = "Matrix Punchograph 3005-A에서 획득",
+    ["From Matrix Punchograph 3005-B"] = "Matrix Punchograph 3005-B에서 획득",
+    ["From Matrix Punchograph 3005-C"] = "Matrix Punchograph 3005-C에서 획득",
+    ["From Matrix Punchograph 3005-D"] = "Matrix Punchograph 3005-D에서 획득",
+    ["Given by Jordan Stilwell when you accept the quest"] = "퀘스트를 수락하면 Jordan Stilwell이 줍니다",
+    ["Looted from Edwin VanCleef"] = "에드윈 밴클리프에게서 획득",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "놈리건 인스턴스 밖의 몬스터에게서 무작위 드롭",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "로데론의 폐허 안에서 무작위로 나타난다고 보고됨; 탑, 옆방, 비요크 구역을 확인하세요",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "퀘스트 Bailor's Ore Shipment 보상: Bailor Stonehand, 텔사마, 모단 호수",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "퀘스트 Seeking the Kor Gem 보상: Thundris Windweaver, 아우버다인, 어둠의 해안. 필요한 Corrupted Kor Gem은 검은심연 나락 입구의 Blackfathom Tide Priestess와 Oracle, 내부의 Blackfathom Sea Witch가 드롭합니다.",
+}
+ITEM_SOURCES.zhCN = {
+    ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫罗的Dark Iron Spies",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡矿井",
+    ["Dropped by: Mutanus the Devourer"] = "掉落自：吞噬者穆坦努斯",
+    ["Dropped by: Relic Guardian"] = "掉落自：Relic Guardian",
+    ["Dropped by: The Baron"] = "掉落自：The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "掉落自：洛丹伦废墟内的亡灵敌人",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "由通往黑暗深渊的入口通道中的Blackfathom Tide Priestess掉落。",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "由剃刀沼泽的卡尔加·刺肋掉落",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "在阿斯卡之池水下的Pitted Iron Chest中，位于加摩拉乌龟房间后面的北侧凹室。",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "位于洛丹伦废墟内的墓地",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "位于：Jordan's Hammer，影牙城堡庭院",
+    ["From Matrix Punchograph 3005-A"] = "来自Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "来自Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "来自Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "来自Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "接受任务时由Jordan Stilwell给予",
+    ["Looted from Edwin VanCleef"] = "从艾德温·范克里夫身上拾取",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "诺莫瑞根副本外的怪物随机掉落",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "据报告在洛丹伦废墟内随机刷新；请检查塔楼、侧室和比约克区域",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "任务Bailor's Ore Shipment的奖励：Bailor Stonehand，塞尔萨玛，洛克莫丹",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任务Seeking the Kor Gem的奖励：Thundris Windweaver，奥伯丁，黑海岸。所需的Corrupted Kor Gem由黑暗深渊入口处的Blackfathom Tide Priestess和Oracle以及副本内的Blackfathom Sea Witch掉落。",
+}
+ITEM_SOURCES.zhTW = {
+    ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
+    ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫洛的Dark Iron Spies",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡礦坑",
+    ["Dropped by: Mutanus the Devourer"] = "掉落自：吞噬者穆坦努斯",
+    ["Dropped by: Relic Guardian"] = "掉落自：Relic Guardian",
+    ["Dropped by: The Baron"] = "掉落自：The Baron",
+    ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "掉落自：羅德隆廢墟內的不死敵人",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "由通往黑暗深淵的入口通道中的Blackfathom Tide Priestess掉落。",
+    ["Drops from Charlga Razorflank in Razorfen Kraul"] = "由剃刀沼澤的卡爾加·刺肋掉落",
+    ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "在阿斯卡之池水下的Pitted Iron Chest中，位於加摩拉烏龜房間後面的北側凹室。",
+    ["Found in the graveyard inside Ruins of Lordaeron"] = "位於羅德隆廢墟內的墓地",
+    ["Found in: Jordan's Hammer, Shadowfang Keep courtyard"] = "位於：Jordan's Hammer，影牙城堡庭院",
+    ["From Matrix Punchograph 3005-A"] = "來自Matrix Punchograph 3005-A",
+    ["From Matrix Punchograph 3005-B"] = "來自Matrix Punchograph 3005-B",
+    ["From Matrix Punchograph 3005-C"] = "來自Matrix Punchograph 3005-C",
+    ["From Matrix Punchograph 3005-D"] = "來自Matrix Punchograph 3005-D",
+    ["Given by Jordan Stilwell when you accept the quest"] = "接受任務時由Jordan Stilwell給予",
+    ["Looted from Edwin VanCleef"] = "從艾德溫·范克里夫身上拾取",
+    ["Random drop from mobs outside the Gnomeregan instance"] = "諾姆瑞根副本外的怪物隨機掉落",
+    ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "據回報在羅德隆廢墟內隨機出現；請檢查塔樓、側室和比約克區域",
+    ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "任務Bailor's Ore Shipment的獎勵：Bailor Stonehand，塞爾薩瑪，洛克莫丹",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任務Seeking the Kor Gem的獎勵：Thundris Windweaver，奧伯丁，黑海岸。所需的Corrupted Kor Gem由黑暗深淵入口處的Blackfathom Tide Priestess和Oracle以及副本內的Blackfathom Sea Witch掉落。",
+}
+for lang, strings in pairs(ITEM_SOURCES) do
+    local target = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = target
+    target.places = target.places or {}
+    for key, value in pairs(strings) do target.places[key] = value end
+end
+
+-- The Test of Righteousness chain: official quest names, objectives and NPC
+-- names from the Wowhead Forever tooltips (Italian has no official text).
+local PALADIN = {}
+PALADIN.koKR = { quests = {
+    [1651] = { name = "용맹의 고서", objective = "데피아즈단의 공격으로부터 대프니 스틸웰을 보호하십시오. 둘 중 하나라도 죽으면 실패하게 됩니다. 성공한 후에 대프니 스틸웰과 다시 대화해야 합니다." },
+    [1652] = { name = "용맹의 고서", objective = "스톰윈드에 있는 두소리안 랄과 대화하십시오." },
+    [1653] = { name = "정의의 시험", objective = "아이언포지에 있는 조던 스틸웰과 대화해야 합니다." },
+    [1654] = { name = "정의의 시험", objective = "조던의 쪽지를 참고해 흰돌참나무 재목, 조던의 제련된 광석 상자, 조던의 대장장이 망치, 그리고 코르석을 찾아 아이언포지에 있는 조던 스틸웰에게 가져가야 합니다." },
+    [1806] = { name = "정의의 시험", objective = "조던 스틸웰이 무기를 다 만들 때까지 기다려야 합니다." },
+}, places = {
+    ["Jordan Stilwell"] = "조던 스틸웰",
+    ["Daphne Stilwell"] = "대프니 스틸웰",
+    ["Duthorian Rall"] = "두소리안 랄",
+} }
+PALADIN.frFR = { quests = {
+    [1651] = { name = "Le Tome de la bravoure", objective = "Défendez Daphne Stilwell contre les attaques des Défias. Aucun de vous deux ne doit mourir, si vous voulez réussir la quête. Quand vous aurez réussi, reparlez à Daphne Stilwell." },
+    [1652] = { name = "Le Tome de la bravoure", objective = "Parler à Duthorian Rall à Stormwind." },
+    [1653] = { name = "Le test de droiture", objective = "Parler à Jordan Stilwell à Ironforge" },
+    [1654] = { name = "Le test de droiture", objective = "Utiliser les Notes sur les armes de Jordan, trouver du Bois de chêne de blanchepierre, la Cargaison de Minerai raffiné de Bailor, le Marteau de forge de Jordan et une Gemme de Kor, puis revenir voir Jordan Stilwell à Ironforge." },
+    [1806] = { name = "Le test de droiture", objective = "Attendre que Jordan Stilwell finisse de forger votre arme." },
+}, places = {
+} }
+PALADIN.deDE = { quests = {
+    [1651] = { name = "Der Foliant der Ehre", objective = "Verteidigt Daphne Stilwell vor dem Angriff der Defias. Keiner Eurer Geister darf aus seinen irdischen Fesseln befreit werden, wenn Ihr erfolgreich sein wollt. Sprecht erneut mit Daphne Stilwell, wenn Ihr erfolgreich wart." },
+    [1652] = { name = "Der Foliant der Ehre", objective = "Sprecht mit Duthorian Rall in Stormwind." },
+    [1653] = { name = "Die Prüfung der Rechtschaffenheit", objective = "Sprecht mit Jordan Stilwell in Ironforge." },
+    [1654] = { name = "Die Prüfung der Rechtschaffenheit", objective = "Sucht mit Jordans Waffennotizen etwas Weißsteineichenholz, Bailors aufbereitete Erzlieferung, Jordans Schmiedehammer und einen Kor-Edelstein und bringt alles zusammen zu Jordan Stilwell in Ironforge." },
+    [1806] = { name = "Die Prüfung der Rechtschaffenheit", objective = "Wartet, bis Jordan Stilwell eine Waffe für Euch geschmiedet hat." },
+}, places = {
+} }
+PALADIN.zhCN = { quests = {
+    [1651] = { name = "勇气之书", objective = "在迪菲亚兄弟会进攻时保护达芙妮·斯迪威尔的安全。如果你想成功的话，你和达芙妮都不能死在他们的剑下。" },
+    [1652] = { name = "勇气之书", objective = "与暴风城的达索瑞恩·拉尔谈一谈。" },
+    [1653] = { name = "正义试炼", objective = "去和铁炉堡的乔丹·斯迪威尔谈一谈。" },
+    [1654] = { name = "正义试炼", objective = "按照乔丹的武器材料单上的说明去寻找一些白石橡木、精炼矿石、乔丹的铁锤和一块科尔宝石，然后回到铁炉堡去见乔丹·斯迪威尔。" },
+    [1806] = { name = "正义试炼", objective = "等待乔丹·斯迪威尔为你铸造武器。" },
+}, places = {
+    ["Jordan Stilwell"] = "乔丹·斯迪威尔",
+    ["Daphne Stilwell"] = "达芙妮·斯迪威尔",
+    ["Duthorian Rall"] = "达索瑞恩·拉尔",
+} }
+PALADIN.esES = { quests = {
+    [1651] = { name = "Libro del valor", objective = "Defiende a Daphne Fontana del ataque de los Defias. Si quieres tener éxito, vuestros espíritus no pueden salir de sus espirales mortales. Cuando lo hayas conseguido, vuelve a hablar con Daphne Fontana." },
+    [1652] = { name = "Libro del valor", objective = "Habla con Duthorian Rall en Ventormenta." },
+    [1653] = { name = "La prueba de rectitud", objective = "Habla con Jordan Fontana en Forjaz." },
+    [1654] = { name = "La prueba de rectitud", objective = "Consulta la lista y llévale a Jordan Fontana de Forjaz lo siquiente: madera de roble de Piedrablanca, envío de oro refinado de Bailor, el martillo de herrero de Jordan y una gema Kor." },
+    [1806] = { name = "La prueba de rectitud", objective = "Espera mientras Jordan Fontana te forja un arma." },
+}, places = {
+    ["Jordan Stilwell"] = "Jordan Fontana",
+    ["Daphne Stilwell"] = "Daphne Fontana",
+} }
+PALADIN.ruRU = { quests = {
+    [1651] = { name = "Фолиант Отваги", objective = "Защитите Дафну Стилвелл от нападения Братства Справедливости. Проследите, чтобы ни ее, ни ваша душа в случае смерти не покинули свои тела, иначе испытание не будет засчитано. После победы поговорите с Дафной Стилвелл." },
+    [1652] = { name = "Фолиант Отваги", objective = "Поговорите с Даторианом Раллом в Штормграде." },
+    [1653] = { name = "Испытание доблести", objective = "Поговорите с Джорданом Стилвеллом в Стальгорне." },
+    [1654] = { name = "Испытание доблести", objective = "Возьмите список Джордана, добудьте немного древесины белокаменного дуба, партию очищенной руды Бэйлора, кузнечный молот Джордана и самоцвет Кора и отдайте их Джордану Стилвеллу в Стальгорне." },
+    [1806] = { name = "Испытание доблести", objective = "Подождите, пока Джордан Стилвелл не закончит изготовление оружия." },
+}, places = {
+    ["Jordan Stilwell"] = "Джордан Стилвелл",
+    ["Daphne Stilwell"] = "Дафна Стилвелл",
+    ["Duthorian Rall"] = "Даториан Ралл",
+} }
+PALADIN.ptBR = { quests = {
+    [1651] = { name = "Tomo da Bravura", objective = "Proteja Dafne Calmafonte do ataque dos Défias. Para obter êxito, seus espíritos não podem ser despidos do lodo mortal. Quando você conseguir, fale novamente com Dafne Calmafonte." },
+    [1652] = { name = "Tomo da Bravura", objective = "Fale com Benedito Brião em Ventobravo." },
+    [1653] = { name = "A prova da retidão", objective = "Fale com Jardel Calmafonte em Altaforja." },
+    [1654] = { name = "A prova da retidão", objective = "Usando as Anotações do Jardel sobre Armas, encontre Madeira de Carvalho de Pedralva, o Carregamento de Minério Refinado do Bailor, o Martelo de Ferreiro de Jardel e uma Gema Kor. Depois, entregue tudo a Jardel Calmafonte em Altaforja." },
+    [1806] = { name = "A prova da retidão", objective = "Espere que Jardel Calmafonte termine de forjar uma arma para você." },
+}, places = {
+    ["Jordan Stilwell"] = "Jardel Calmafonte",
+    ["Daphne Stilwell"] = "Dafne Calmafonte",
+    ["Duthorian Rall"] = "Benedito Brião",
+} }
+PALADIN.zhTW = { quests = {
+    [1651] = { name = "勇氣之書", objective = "在迪菲亞兄弟會進攻時保護達芙妮·斯迪威爾的安全。如果你想成功的話，你和達芙妮都不能死在他們的劍下。" },
+    [1652] = { name = "勇氣之書", objective = "與暴風城的達索瑞恩·拉爾談話。" },
+    [1653] = { name = "正義試煉", objective = "去和鐵爐堡的喬丹·斯迪威爾談話。" },
+    [1654] = { name = "正義試煉", objective = "按照喬丹的武器材料單上的說明去尋找一些白石橡木、精煉礦石、喬丹的鐵錘和一塊科爾寶石，然後回到鐵爐堡去見喬丹·斯迪威爾。" },
+    [1806] = { name = "正義試煉", objective = "等待喬丹·斯迪威爾為你鑄造武器。" },
+}, places = {
+    ["Jordan Stilwell"] = "喬丹·斯迪威爾",
+    ["Daphne Stilwell"] = "達芙妮·斯迪威爾",
+    ["Duthorian Rall"] = "達索瑞恩·拉爾",
+} }
+for lang, data in pairs(PALADIN) do
+    local target = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = target
+    target.quests = target.quests or {}
+    target.places = target.places or {}
+    for id, entry in pairs(data.quests) do target.quests[id] = entry end
+    for key, value in pairs(data.places) do target.places[key] = value end
+end

@@ -360,3 +360,64 @@ https://www.wowhead.com/forever/npc=1666
 https://www.wowhead.com/forever/npc=1717
 https://www.wowhead.com/forever/npc=1663
 https://foreverchanges.pro/dungeons/the-stockade
+
+2026-10-03 boss portrait display IDs
+The 45 bosses without a bundled CreatureDisplayID showed question marks on a fresh install while the hidden model resolver worked through them one by one.
+Their display IDs were taken from the resolver cache of the Forever beta client (build 70170, saved-variables table displayIDs) and bundled in Data/Bosses.lua.
+The five Stockade boss IDs (517, 825, 3250, 2149, 1621) match the client encounter rows listed on https://foreverdb.net/dungeon/34
+Mana Elemental (City of Dalaran) has no NPC ID yet and is not covered.
+
+2026-10-03 localized boss names
+Official client names for the 86 bosses with NPC IDs, per language, from the Wowhead Forever NPC database (tooltip service, locale-specific).
+Languages: deDE, frFR, esES, ptBR, ruRU, koKR, zhCN, zhTW. Names identical to English or not yet localized are left to fall back to English.
+Italian is not included: Wowhead has no Italian names in its Forever or Classic data.
+
+2026-10-03 Shadowfang Keep map
+The Forever client maps Shadowfang Keep on four levels (The Courtyard, Dining Hall, The Wall Walk, Arugal's Chamber = map tiles 1, 2, 7, 6). The addon previously used six tile sets.
+Boss positions follow https://foreverchanges.pro/dungeons/shadowfang-keep ; Baron Silverlaine, Commander Springvale and the Arugal chamber also match the retail journal pins on the same map art (Wowhead NPCs 3887, 4278, 46964).
+Arugal's Voidwalker and the three ladder positions are estimates.
+
+2026-10-03 The Test of Righteousness (paladin, human / dwarf)
+Chain and quest data from Wowhead Forever: 1649, 1650, 1651, 1652 The Tome of Valor; 1653, 1654, 1806 The Test of Righteousness; 1655 Bailor's Ore Shipment; 1442 Seeking the Kor Gem.
+https://www.wowhead.com/forever/quest=1806/the-test-of-righteousness
+Parts: Whitestone Oak Lumber 6994 (Goblin Woodcarver, The Deadmines); Jordan's Smithing Hammer 6895 (object Jordan's Hammer, Shadowfang Keep); Jordan's Refined Ore Shipment 6993 (reward of 1655); Purified Kor Gem 7083 (reward of 1442; Corrupted Kor Gem 6995 from Blackfathom naga).
+Reward of 1806: Verigan's Fist 6953. XP values are the Wowhead Forever quest figures and only used as offline fallbacks.
+The start of 1649 is not listed on Wowhead and is marked not confirmed.
+A Horde paladin equivalent exists (A Moon-Kissed Blade 95036, Seeking the Kor Gem 95042) and is not added yet.
+
+2026-10-03 Trapper's Leather Helm
+Item 252513 seen dropping from Interrogator Vishas (stream) and Fallen Champion (screenshot), reported by user. Listed on both; the wider drop pool is unknown.
+
+2026-10-03 The Test of Righteousness chain correction
+Chain now ends on 1806 (Verigan's Fist) as on the Wowhead series; the side quests 1655 and 1442 are no longer listed as steps and are described inside step 1654.
+1806 experience set to 5,500 as displayed on Wowhead Forever (the raw quest record says 2,200). Unverified XP fallbacks for the earlier steps were removed; the game supplies those values live.
+
+2026-10-03 The Test of Righteousness chain, second correction
+The chain list now matches the Wowhead series exactly: 1651, 1652 The Tome of Valor; 1653, 1654, 1806 The Test of Righteousness. 1649 and 1650 are a separate two-quest series on Wowhead and were removed.
+The final step 1806 is now a row in the chain and shows Verigan's Fist and 5,500 experience.
+https://www.wowhead.com/forever/quest=1651/the-tome-of-valor
+
+2026-10-03 The Test of Righteousness, step 4 item list
+Quest 1654 now lists its items as item buttons under the objective, as on the Wowhead quest page: Whitestone Oak Lumber 6994, Jordan's Refined Ore Shipment 6993, Jordan's Smithing Hammer 6895, Purified Kor Gem 7083; provided item Jordan's Weapon Notes 6996.
+Tooltip source lines: 6994 Goblin Woodcarver, The Deadmines; 6895 object Jordan's Hammer, Shadowfang Keep; 6993 reward of quest 1655 Bailor's Ore Shipment; 7083 reward of quest 1442 Seeking the Kor Gem (Corrupted Kor Gem 6995 from Blackfathom naga).
+https://www.wowhead.com/forever/quest=1654/the-test-of-righteousness
+
+2026-10-03 Trash drop scout (Wowhead Forever)
+Method: zone pages (NPC list, Drops tab) and each non-boss NPC's drop list; an item counts as dungeon trash when every recorded dropper is inside that dungeon and at least one is not a boss.
+Ruins of Lordaeron (zone 16611): 286981 Death Bindings (Skeleton 8/465, Skeletal Soldier 12/508, Skeletal Mage 2/210, Fallen Necromancer 3/122); 286977 Sword of the Fallen (Ghoul, Ragged Ghoul, Plague Ghoul); 286978 Rotmender's Garb (Flesh Golem); 286980 Rotmender's Sash (Shrieking Banshee). 286979 Rotmender's Gloves has no recorded dropper and is not listed.
+271207 and 271214 are now named Rotmender's Leggings and Rotmender's Treads on Wowhead (Rotmender's Raiment set).
+The Deadmines (1581): 1951, 1929, 1934, 1936, 1930, 1943, 1944, 1945, 1925 with the droppers named in the data.
+Razorfen Kraul (491): 776, 1727, 1975, 1976, 2549, 1978, 2264, 4438, 2039 zone-wide; 3569 Death's Head Priest; 6679 Razorfen Spearhide. 1488 Avenger's Armor no longer exists in Forever.
+Scarlet Monastery (796): 5819, 7730, 7761, 7787 drop from Graveyard trash (Unfettered Spirit, Anguished Dead, Haunting Phantasm, Scarlet Torturer, Scarlet Scryer). 7757 Windweaver Staff has no Graveyard dropper; 2262 Mark of Kern has no item page.
+Nothing new found for Wailing Caverns, Blackfathom Deeps, Ragefire Chasm, Shadowfang Keep, The Stockade, Gnomeregan, Excavation Site. Hall of Thanes and City of Dalaran have no zone or trash data on Wowhead yet.
+Most Classic-dungeon figures are Wowhead counts inherited from Classic; the Ruins of Lordaeron figures are Forever beta data.
+https://www.wowhead.com/forever/item=286981/death-bindings
+
+2026-10-03 Boss recipe drops and trash clean-up
+Recipes (item class 9, Forever item IDs 251341-253986) and blueprints (273085-273141) added to each boss that Wowhead Forever records dropping them. They come from a shared low-rate pool, so a boss can drop recipes not yet listed.
+Pattern: Wisdom's Leather Gloves 252782 on Fel Steed / Shadow Charger confirmed by user screenshot.
+All uncommon (green) items removed from Trash Drops lists at the author's request, including the Scarlet Crusade mail set.
+
+2026-10-03 Loot Filter
+Scarlet Crusade mail set restored to Scarlet Monastery: Graveyard trash drops as rare quality (author: the set is blue in Forever).
+Class usability uses Classic weapon and armor proficiencies (mail and plate from level 40); stat filters read the item tooltip.

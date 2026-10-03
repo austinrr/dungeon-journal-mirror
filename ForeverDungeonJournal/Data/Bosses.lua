@@ -166,4 +166,92 @@ FDJ.STATIC_DISPLAY_IDS = {
     [4274] = 2352,  -- Fenrus the Devourer
     [3927] = 11179, -- Wolf Master Nandos
     [4275] = 2353,  -- Archmage Arugal
+
+    -- Resolved by the Forever client (build 70170) and bundled so these
+    -- portraits render immediately instead of waiting on the model resolver.
+
+    -- Hall of Thanes
+    [261306] = 142826,  -- Faldrim Anvilmar
+    [261311] = 142840,  -- Plunder
+    [261319] = 142837,  -- Durgen Dirgehammer
+
+    -- Ruins of Lordaeron
+    [250660] = 144188,  -- The Baron
+    [250483] = 144189,  -- Witherfang
+    [250631] = 138667,  -- The Abandoned
+    [256097] = 144170,  -- Bjork
+    [250657] = 144175,  -- Rath'mael
+    [256035] = 139455,  -- Viktor the Vile
+
+    -- The Stockade
+    [1696] = 517,       -- Targorr the Dread
+    [1666] = 825,       -- Kam Deepfury
+    [1717] = 3250,      -- Hamhock
+    [1663] = 2149,      -- Dextren Ward
+    [1716] = 1621,      -- Bazil Thredd
+    [1720] = 2142,      -- Bruegal Ironknuckle
+
+    -- Excavation Site: Wetlands
+    [260322] = 144209,  -- Saltspine
+    [260325] = 144210,  -- Shadetooth
+    [260326] = 144224,  -- Relic Guardian
+
+    -- City of Dalaran
+    [247126] = 145787,  -- Atrexis the Grave Knight
+    [245999] = 129891,  -- Arcane Anomaly
+    [246003] = 129894,  -- Fel Ancient
+    [246017] = 129954,  -- Unstable Sentinel
+    [246931] = 130220,  -- Mana Wraith
+    [246008] = 129895,  -- Mana Devourer
+    [247032] = 130235,  -- Lyn the Ignored
+    [246020] = 130061,  -- Shade of the Archmage
+
+    -- Gnomeregan
+    [7361] = 144378,    -- Grubbis
+    [7079] = 5497,      -- Viscous Fallout
+    [6235] = 6915,      -- Electrocutioner 6000
+    [6229] = 6774,      -- Crowd Pummeler 9-60
+    [7800] = 6980,      -- Mekgineer Thermaplugg
+    [6228] = 6669,      -- Dark Iron Ambassador
+
+    -- Razorfen Kraul
+    [6168] = 6110,      -- Roogug
+    [4424] = 6097,      -- Aggem Thorncurse
+    [4428] = 4644,      -- Death Speaker Jargba
+    [4420] = 4652,      -- Overlord Ramtusk
+    [4422] = 2450,      -- Agathelos the Raging
+    [4421] = 4642,      -- Charlga Razorflank
+    [4425] = 4735,      -- Blind Hunter
+    [4842] = 6102,      -- Earthcaller Halmgar
+
+    -- Scarlet Monastery: Graveyard
+    [3983] = 2044,      -- Interrogator Vishas
+    [6490] = 5534,      -- Azshir the Sleepless
+    [6488] = 5230,      -- Fallen Champion
+    [6489] = 5231,      -- Ironspine
+    [4543] = 11396,     -- Bloodmage Thalnos
+}
+
+-- Trash mobs named as the source of a trash drop: name -> creature display ID
+-- (Wowhead Forever NPC pages). Used to draw their portraits on the loot row.
+FDJ.TRASH_MOB_DISPLAY_IDS = {
+    ["Druid of the Fang"] = 4211, -- npc 3840
+    ["Skeleton"] = 9786, -- npc 250618
+    ["Shrieking Banshee"] = 10728, -- npc 250620
+    ["Ragged Ghoul"] = 414, -- npc 250622
+    ["Skeletal Mage"] = 7550, -- npc 250624
+    ["Skeletal Soldier"] = 7848, -- npc 250626
+    ["Ghoul"] = 1065, -- npc 250627
+    ["Plague Ghoul"] = 559, -- npc 250630
+    ["Flesh Golem"] = 1693, -- npc 255109
+    ["Fallen Necromancer"] = 9785, -- npc 255964
+    ["Goblin Engineer"] = 7109, -- npc 622
+    ["Defias Overseer"] = 2316, -- npc 634
+    ["Defias Blackguard"] = 2314, -- npc 636
+    ["Defias Pirate"] = 2347, -- npc 657
+    ["Defias Evoker"] = 2318, -- npc 1729
+    ["Defias Squallshaper"] = 2349, -- npc 1732
+    ["Defias Strip Miner"] = 2438, -- npc 4416
+    ["Defias Taskmaster"] = 2440, -- npc 4417
+    ["Defias Wizard"] = 2447, -- npc 4418
 }
