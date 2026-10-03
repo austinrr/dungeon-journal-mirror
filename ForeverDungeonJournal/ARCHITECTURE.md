@@ -1,4 +1,4 @@
-# Forever Dungeon Journal architecture
+# DungeonJournal architecture
 
 Version 1.3.0 is an internal structural refactor. Player-facing behavior is intentionally unchanged.
 

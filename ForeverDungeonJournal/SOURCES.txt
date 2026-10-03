@@ -296,3 +296,67 @@ Forever item/source cross-checks:
 - Wowhead Forever Ruins of Lordaeron overview (updated 2026-09-26): Alliance route via Stormwind -> Auberdine -> Menethil/Southshore boat, then north past Dalaran and through Lordamere Lake to Tirisfal.
 - Blizzard Forever Found Photos recap: confirms the new Stormwind Harbor <-> Auberdine route and the Menethil / Southshore / Auberdine travel connection.
 - Wowhead Three New Ship Routes Debuting in Forever: confirms the Menethil -> Southshore -> Auberdine stop order.
+
+2026-10-02 quest audit, build 70170
+https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-october-1/2360696/4
+https://wowforevertalents.com/quests/
+https://wowforevertalents.com/dungeons/excavation-site-wetlands/
+https://wowforevertalents.com/dungeons/razorfen-kraul/
+https://wowforevertalents.com/quests/a-green-sample-92456/
+https://wowforevertalents.com/quests/power-overwhelming-92489/
+https://wowforevertalents.com/quests/opportunistic-education-96987/
+https://wowforevertalents.com/quests/source-of-power-96988/
+https://wowforevertalents.com/quests/the-grave-knight-96986/
+The public cache is partial. Missing quests are not evidence of removal. Quest XP in a cache is not a verified server-side turn-in reward. Existing faction restrictions are retained unless independently contradicted.
+https://wowforevertalents.com/dungeons/ragefire-chasm/
+https://wowforevertalents.com/dungeons/the-hall-of-thanes/
+https://wowforevertalents.com/dungeons/ruins-of-lordaeron/
+https://wowforevertalents.com/dungeons/deadmines/
+https://wowforevertalents.com/dungeons/wailing-caverns/
+https://wowforevertalents.com/dungeons/shadowfang-keep/
+https://wowforevertalents.com/dungeons/blackfathom-deeps/
+https://wowforevertalents.com/dungeons/stormwind-stockade/
+https://wowforevertalents.com/dungeons/gnomeregan/
+https://wowforevertalents.com/dungeons/scarlet-monastery/
+
+2026-10-03 screenshot corrections
+Power Overwhelming: Arcanic Enigma slain; High Sorcerer Andromath; rare Violet Sash / Runebound Gloves choice and 1 gold. Accepted at level 25 in report (not evidence of a changed minimum level).
+The Fury Runs Deep: screenshot confirms Magistrate's Pantaloons as third rare choice and 5,750 XP.
+Archmage Arugal: level 24, reported directly by user.
+
+2026-10-03 City of Dalaran Alliance quest-giver map positions
+A Green Sample (92456) and Power Overwhelming (92489) used Classic-era Stormwind coordinates. Forever's Stormwind map (1453) is the larger harbor layout, so the pins landed too far north-west.
+Shylamiir (NPC 5502): Classic 15.2, 49.8 -> Forever 31.4, 62.8 (The Park).
+High Sorcerer Andromath (NPC 5694): Classic 37.6, 81.6 -> Forever 48.8, 87.6 (Wizard's Sanctum, Mage Quarter).
+https://www.wowhead.com/forever/npc=5502/shylamiir
+https://www.wowhead.com/forever/npc=5694/high-sorcerer-andromath
+Cross-check: same Classic -> Forever offset as the already-correct Shoni the Shilent (55.6, 12.6 -> 62.4, 34.2) and Warden Thelwater (41.2, 58.0 -> 51.6, 69.4) entries.
+
+2026-10-03 Elder Knowledge / Earthen Echo NPC and Roogug map position
+Elder Knowledge (95664): Wowhead Forever Quick Facts list End: Bashana Runetotem (NPC 9087). Earthen Echo (98823): Start: Bashana Runetotem.
+Bashana Runetotem: Thunder Bluff, Elder Rise, 70.8, 33.4.
+https://www.wowhead.com/forever/quest=95664/elder-knowledge
+https://www.wowhead.com/forever/quest=98823/earthen-echo
+https://www.wowhead.com/forever/npc=9087/bashana-runetotem
+Roogug (NPC 6168): no Forever/Classic map coordinates are published. Position 64.6, 43.0 is the centre of the Wowhead retail spawn cluster (64.4-66.0, 42.2-46.6) on the same Razorfen Kraul map art; Charlga Razorflank on that data set (21.9, 31.1) matches the existing pin.
+It agrees with the Classic route notes: first left after the entrance, across the large vine, at the back of the small area. Not yet confirmed in the Forever beta.
+https://www.wowhead.com/npc=6168/roogug
+https://www.wowhead.com/classic/npc=6168/roogug
+
+2026-10-03 boss level audit
+All returning-dungeon boss levels compared with Classic Era creature data (Wowhead Classic and Wowhead Forever NPC tooltips, which currently carry the same levels).
+Corrected: Mekgineer Thermaplugg 35 -> 34. Fel Steed / Shadow Charger 20-21 -> 19-21 (Fel Steed 19-20, Shadow Charger 20-21).
+Kept: Archmage Arugal 24 (in-game report by user; Classic data says 26).
+Forever-only bosses (Hall of Thanes, Ruins of Lordaeron, Excavation Site, City of Dalaran): no public source lists boss levels as of build 70170, so these remain unverified.
+https://www.wowhead.com/forever/npc=7800/mekgineer-thermaplugg
+https://www.wowhead.com/forever/npc=3864/fel-steed
+https://www.wowhead.com/forever/npc=3865/shadow-charger
+
+2026-10-03 Stockade loot audit
+Compared with the Wowhead Forever drop tables of each Stockade boss. Added: Demolition Girdle 273807 (Kam Deepfury), Repurposed Rack 273811 (Hamhock), Graverobber's Shovel 273817 and Boneslicer 273819 (Dextren Ward). Kam's Walking Stick 2280 quality corrected to rare.
+Nightskulker Ring 273820 stays on Dextren Ward (Wowhead Forever; confirmed by user). foreverchanges.pro lists it under Targorr.
+The table now has all 21 drops Wowhead Forever lists, so the "Full Items Data TBD" note was removed.
+https://www.wowhead.com/forever/npc=1666
+https://www.wowhead.com/forever/npc=1717
+https://www.wowhead.com/forever/npc=1663
+https://foreverchanges.pro/dungeons/the-stockade

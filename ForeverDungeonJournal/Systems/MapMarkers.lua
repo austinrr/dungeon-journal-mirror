@@ -80,7 +80,7 @@ local function RemoveTarget(target)
     end
     GameTooltip:Hide()
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bForever Dungeon Journal:|r " .. L("MAP_MARKER_REMOVED"))
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKER_REMOVED"))
     end
 end
 
@@ -1157,9 +1157,9 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
     if DEFAULT_CHAT_FRAME then
         local mapText = FreeText(target.label or fallbackText or "recorded location")
         if opened then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bForever Dungeon Journal:|r " .. L("MAP_MARKED", mapText))
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKED", mapText))
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bForever Dungeon Journal:|r " .. L("MAP_OPEN_FAILED"))
+            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_OPEN_FAILED"))
         end
     end
 end

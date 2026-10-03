@@ -147,7 +147,7 @@ FDJ.QUEST_PREREQ_CHAINS = {
 }
 
 FDJ.QUEST_PREREQ_DETAILS = {
-    [95647] = { level = 31, requires = 24, objective = "Find Ardin Grassman in the Excavation Sites. Learn what happened to Ardin Grassman.", pickup = "Caitlin Grassman, Menethil Harbor, Wetlands", turnin = "Ardin Grassman, inside Excavation Site: Wetlands", description = "Required before Heartwoven.", map = { mapID = 1437, x = 0.105, y = 0.575, label = "Caitlin Grassman — Menethil Harbor", detail = "Start Lost in the Thicket Things here" } },
+    [95647] = { level = 31, requires = 24, objective = "Find Ardin Grassman in the Excavation Sites. Learn what happened to Ardin Grassman.", pickup = "Caitlin Grassman, Menethil Harbor, Wetlands", turnin = "Ardin Grassman, inside Excavation Site: Wetlands", description = "Required before Heartwoven.", map = { mapID = 1437, x = 0.119, y = 0.588, label = "Caitlin Grassman — Menethil Harbor", detail = "Start Lost in the Thicket Things here" } },
 
 
     -- Gnomeregan prerequisite steps.

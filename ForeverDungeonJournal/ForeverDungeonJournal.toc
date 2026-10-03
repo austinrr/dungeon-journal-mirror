@@ -1,8 +1,8 @@
 ## Interface: 16001
-## Title: Dungeon Journal
+## Title: DungeonJournal
 ## Notes: Boss, loot and quest journal for WoW Classic dungeons.
 ## Author: Exehn
-## Version: 1.4.2
+## Version: 1.4.3
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## SavedVariables: ForeverDungeonJournalDB
 
@@ -35,7 +35,9 @@ Data\QuestMaps.lua
 Data\QuestChains.lua
 Data\QuestRewards.lua
 Data\QuestShareability.lua
+Data\QuestUpdates.lua
 UI\ThemeData.lua
 UI\ItemComparisonData.lua
 Systems\MapMarkers.lua
+Systems\VersionCheck.lua
 Core\Journal.lua

@@ -19,7 +19,7 @@ FDJ.BOSS_LEVELS = {
         ["Viscous Fallout"] = "30",
         ["Electrocutioner 6000"] = "32",
         ["Crowd Pummeler 9-60"] = "32",
-        ["Mekgineer Thermaplugg"] = "35",
+        ["Mekgineer Thermaplugg"] = "34",
         ["Dark Iron Ambassador"] = "33",
     },
     ["Razorfen Kraul"] = {
@@ -84,7 +84,7 @@ FDJ.BOSS_LEVELS = {
     },
     ["Shadowfang Keep"] = {
         ["Rethilgore"] = "20",
-        ["Fel Steed / Shadow Charger"] = "20-21",
+        ["Fel Steed / Shadow Charger"] = "19-21",
         ["Razorclaw the Butcher"] = "22",
         ["Baron Silverlaine"] = "24",
         ["Commander Springvale"] = "24",
@@ -93,7 +93,7 @@ FDJ.BOSS_LEVELS = {
         ["Arugal's Voidwalker"] = "24-25",
         ["Fenrus the Devourer"] = "25",
         ["Wolf Master Nandos"] = "25",
-        ["Archmage Arugal"] = "26",
+        ["Archmage Arugal"] = "24",
     },
     ["The Stockade"] = {
         ["Targorr the Dread"] = "24",

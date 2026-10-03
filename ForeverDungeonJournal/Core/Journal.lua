@@ -247,6 +247,8 @@ FDJ.DUNGEON_MAPS = {
         floors = { { tiles = "Interface\\WorldMap\\RazorfenKraul\\RazorfenKraul1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s1", x0 = 0.2036, y0 = 0.2874, x1 = 0.2375, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s2", x0 = 0.5589, y0 = 0.2874, x1 = 0.5928, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s3", x0 = 0.8593, y0 = 0.3937, x1 = 0.8932, y1 = 0.4446 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s4", x0 = 0.7914, y0 = 0.4955, x1 = 0.8253, y1 = 0.5464 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s5", x0 = 0.0649, y0 = 0.6602, x1 = 0.0988, y1 = 0.7111 } } } },
         entrance = { floor = 1, x = 0.714, y = 0.840, angle = 180 },
         bosses = {
+            -- Roogug: alcove across the vine, first left after the entrance.
+            { name = "Roogug",                 x = 0.646, y = 0.430 },
             { name = "Aggem Thorncurse",       x = 0.808, y = 0.521 },
             { name = "Death Speaker Jargba",   x = 0.876, y = 0.419 },
             { name = "Overlord Ramtusk",       x = 0.576, y = 0.313 },
@@ -843,44 +845,22 @@ local function RequestQuestRewardData(questID)
     end
 end
 
--- WoW Forever dungeon-quest XP fallbacks, audited 24 September 2026.
--- Server-tuned beta values are used where observed; quests without a confirmed
--- server-side adjustment retain the current beta quest-cache value. The live
--- client reward API still wins unless it only echoes the known static base XP.
--- Static beta quest-cache XP. Some Forever dungeon quests are multiplied server-side
--- at turn-in; if the API only echoes this base value, use the observed tuned fallback.
+-- Current client rewards take precedence over all offline fallbacks.
+-- A zero is authoritative only after successful quest-data loading; otherwise
+-- it can mean that the client has not cached the quest yet.
 local function GetLiveQuestXP(quest)
     if not quest then return nil end
-    -- New Forever quests may have no quest ID yet: use their observed XP.
     if not quest.id then return quest.liveXPFallback end
-
-    -- Rendering only reads data; requests happen when opening/selecting quests.
     if type(GetQuestLogRewardXP) == "function" then
         local ok, xp = pcall(GetQuestLogRewardXP, quest.id)
-        if ok and not IsSecret(xp) and type(xp) == "number" and xp > 0 then
-            local tuned = FOREVER_QUEST_XP_FALLBACK[quest.id] or quest.liveXPFallback
-            local base = FOREVER_QUEST_BASE_XP[quest.id]
-
-            -- Forever currently applies large dungeon-quest XP tuning server-side.
-            -- Some client/API paths expose only the static quest-cache XP. Detect
-            -- that exact base value and substitute the observed server reward.
-            -- Any genuinely different live value still wins, so later retuning,
-            -- level-based reductions, etc. are not masked by this fallback.
-            if tuned and base and tuned ~= base and xp == base then
-                return tuned
-            end
-            return xp
+        if ok and not IsSecret(xp) and type(xp) == "number" then
+            if xp > 0 then return xp end
+            local request = questDataRequests[quest.id]
+            if xp == 0 and request and request.state == "loaded" then return 0 end
         end
     end
-
-    -- Do not briefly show an old/low fallback while the requested quest data
-    -- is still arriving. QUEST_DATA_LOAD_RESULT refreshes this panel as soon
-    -- as the client has the authoritative reward data.
     local request = questDataRequests[quest.id]
-    if request and request.state == "pending" then
-        return nil
-    end
-
+    if request and request.state == "pending" then return nil end
     return FOREVER_QUEST_XP_FALLBACK[quest.id] or quest.liveXPFallback
 end
 
@@ -3143,16 +3123,7 @@ local function GetPrerequisiteRewardItems(questID)
 end
 
 local function GetPrerequisiteRewardXP(questID)
-    local fallback = FOREVER_QUEST_XP_FALLBACK and FOREVER_QUEST_XP_FALLBACK[questID]
-    if type(fallback) == "number" and fallback > 0 then
-        return fallback
-    end
-    if type(GetQuestLogRewardXP) ~= "function" then return nil end
-    local ok, value = pcall(GetQuestLogRewardXP, questID)
-    if ok and not IsSecret(value) and type(value) == "number" and value > 0 then
-        return value
-    end
-    return nil
+    return GetLiveQuestXP({ id = questID })
 end
 
 local function GetPrerequisiteRewardMoney(questID)
@@ -5219,11 +5190,10 @@ RefreshBossList = function()
     UpdateScrollBarVisibility(frame.bossListScroll, contentHeight)
 end
 
--- "Items Data TBD": the Stockade plus every dungeon that has no loot entered
+-- "Items Data TBD": dungeons flagged in the data plus every dungeon that has no loot entered
 -- yet (the new level-30 dungeons). Stored on FDJ to stay under Lua's
 -- 200-locals limit for this file.
 FDJ.ShowsItemsTBD = function(name)
-    if name == "The Stockade" then return true end
     local d = DB[name]
     if not d then return false end
     if d.itemsTBD or d.fullItemsTBD then return true end -- loot only partly known
@@ -5237,7 +5207,7 @@ end
 -- but the table is not complete yet, otherwise "Items Data TBD".
 FDJ.ItemsTBDText = function(name)
     local d = DB[name]
-    if name == "The Stockade" or (d and d.fullItemsTBD) then return "Full Items Data TBD" end
+    if d and d.fullItemsTBD then return "Full Items Data TBD" end
     return "Items Data TBD"
 end
 
@@ -7640,7 +7610,7 @@ local function HideMinimapButton()
         minimapButton:Hide()
     end
 
-    print("|cffd8a83cForever Dungeon Journal|r " .. L("MINIMAP_HIDDEN"))
+    print("|cffd8a83cDungeonJournal|r " .. L("MINIMAP_HIDDEN"))
 end
 
 local function ShowMinimapButton()
@@ -7678,7 +7648,7 @@ local function SetupLibDBIconMinimap()
     if not object then
         object = ldb:NewDataObject("ForeverDungeonJournal", {
             type = "launcher",
-            text = "Forever Dungeon Journal",
+            text = "DungeonJournal",
             icon = "Interface\\Icons\\INV_Misc_Book_09",
             OnClick = function(_, button)
                 if button == "LeftButton" then
@@ -7688,7 +7658,7 @@ local function SetupLibDBIconMinimap()
                 end
             end,
             OnTooltipShow = function(tooltip)
-                tooltip:AddLine("Forever Dungeon Journal", 1, 0.82, 0.25)
+                tooltip:AddLine("DungeonJournal", 1, 0.82, 0.25)
                 tooltip:AddLine(L("MINIMAP_LEFT"), 1, 1, 1)
                 tooltip:AddLine(L("MINIMAP_DRAG"), 0.8, 0.8, 0.8)
                 tooltip:AddLine(L("MINIMAP_RIGHT"), 0.8, 0.8, 0.8)
@@ -7741,7 +7711,7 @@ local function CreateFallbackMinimap()
     minimapButton.db = ForeverDungeonJournalDB.minimap
     minimapButton.dataObject = minimapButton.dataObject or {
         type = "launcher",
-        text = "Forever Dungeon Journal",
+        text = "DungeonJournal",
         icon = "Interface\\Icons\\INV_Misc_Book_09",
     }
 
@@ -7774,7 +7744,7 @@ local function CreateFallbackMinimap()
 
         minimapButton:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-            GameTooltip:AddLine("Forever Dungeon Journal", 1, 0.82, 0.25)
+            GameTooltip:AddLine("DungeonJournal", 1, 0.82, 0.25)
             GameTooltip:AddLine(L("MINIMAP_LEFT"), 1, 1, 1)
             GameTooltip:AddLine(L("MINIMAP_DRAG"), 0.8, 0.8, 0.8)
             GameTooltip:AddLine(L("MINIMAP_RIGHT"), 0.8, 0.8, 0.8)
@@ -7851,8 +7821,8 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         local active = FDJ.GetLanguage and FDJ.GetLanguage() or "enUS"
         local saved = ForeverDungeonJournalDB.language or "auto"
         local display = saved == "auto" and L("LANGUAGE_AUTO", active) or active
-        print("|cffd8a83cForever Dungeon Journal|r " .. L("LANGUAGE_CURRENT", display))
-        print("|cffd8a83cForever Dungeon Journal|r " .. L("LANGUAGE_HELP"))
+        print("|cffd8a83cDungeonJournal|r " .. L("LANGUAGE_CURRENT", display))
+        print("|cffd8a83cDungeonJournal|r " .. L("LANGUAGE_HELP"))
         return
     end
 
@@ -7873,7 +7843,7 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
             ApplyLocaleFontTree(frame)
         end
         local display = saved == "auto" and L("LANGUAGE_AUTO", active) or active
-        print("|cffd8a83cForever Dungeon Journal|r " .. L("LANGUAGE_SET", display))
+        print("|cffd8a83cDungeonJournal|r " .. L("LANGUAGE_SET", display))
         return
     end
 
@@ -7888,12 +7858,12 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
             RefreshAll()
         end
 
-        print("|cffd8a83cForever Dungeon Journal|r encounter data refreshed. Boss portraits refreshed from all Encounter Journal tiers. Exact live portraits are cached only by numeric NPC ID; no boss-name learning is used.")
+        print("|cffd8a83cDungeonJournal|r encounter data refreshed. Boss portraits refreshed from all Encounter Journal tiers. Exact live portraits are cached only by numeric NPC ID; no boss-name learning is used.")
         return
     end
 
     if msg == "portraitids" then
-        print("|cffd8a83cForever Dungeon Journal|r resolved boss display IDs:")
+        print("|cffd8a83cDungeonJournal|r resolved boss display IDs:")
 
         for _, dungeonName in ipairs(ORDER) do
             for _, boss in ipairs(DB[dungeonName].bosses) do
@@ -8025,7 +7995,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.4.1"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.4.3"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
