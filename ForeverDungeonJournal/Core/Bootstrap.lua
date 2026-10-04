@@ -35,7 +35,7 @@ BINDING_NAME_FOREVERDUNGEONJOURNAL_TOGGLE = bindingNames[bindingLocale] or "Open
 -- version installed; pressing OK stores a flag in SavedVariables so it never
 -- appears again. Bump NOTICE_ID to show a new message in a later update.
 -- ============================================================
-local NOTICE_ID = "lv30-data-v1"
+local NOTICE_ID = "resize-v1"
 
 local function ShowUpdateNotice(force)
     local db = ForeverDungeonJournalDB
@@ -88,7 +88,7 @@ local function ShowUpdateNotice(force)
     body:SetJustifyH("CENTER")
     body:SetJustifyV("TOP")
     if body.SetWordWrap then body:SetWordWrap(true) end
-    body:SetText(L("NOTICE_LV30_DATA"))
+    body:SetText(L("NOTICE_RESIZE"))
 
     local ok = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     ok:SetSize(110, 24)
@@ -99,9 +99,8 @@ local function ShowUpdateNotice(force)
         f:Hide()
     end)
 
-    -- Grow the box if a translation needs more lines.
-    local needed = 64 + (body:GetStringHeight() or 40) + 60
-    if needed > f:GetHeight() then f:SetHeight(needed) end
+    -- Fit the box to the text so the button sits right under it.
+    f:SetHeight(64 + (body:GetStringHeight() or 30) + 14 + 24 + 20)
 
     if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN then
         pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPEN)

@@ -1,4 +1,4 @@
-DungeonJournal 1.4.4
+DungeonJournal 1.5.0
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,31 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Commands: /fj and /fdj.
+
+CHANGES IN 1.5.0
+- New dungeon: Scarlet Monastery: Library (bosses, loot, quests, map).
+- Dungeon map on the M key: inside a journal dungeon the big map shows the
+  dungeon map with boss pins; a button switches back to the world map.
+  /fj worldmap turns this off.
+- The window can be resized by dragging its bottom-right corner (right-click
+  the corner to reset).
+- Report button next to the language box, with the Discord link.
+- Quests can be shift-clicked into chat.
+- Scarlet Monastery: Graveyard: more quests; Library: Final Passage with the
+  full Test of Lore chain and its rewards.
+- An Unholy Alliance now shows its final quest and rewards.
+- Blackfathom Villainy lists both Horde starting points.
+- Loot Filter: results can show recipe drops only; option renamed to
+  "Show recipes/patterns drops".
+- The journal reopens on the map if it was closed on the map, and changing
+  language keeps the current page, quest faction and map floor.
+- Language box: arrows replaced by a single drop-down arrow.
+- Map fixes: world-map dungeon entrance positions; boss pins in Ruins of
+  Lordaeron and Wailing Caverns; Arcanist Doan added to the Library map.
+- Wailing Caverns map shows its original title and markings again.
+- New card art for both Scarlet Monastery wings.
+- Right-clicking the minimap button asks before hiding it.
+- New Scarlet Monastery quests are translated in all languages.
 
 CHANGES IN 1.4.4
 - Includes all five currently recorded City of Dalaran quests.
@@ -49,6 +74,7 @@ CHANGES IN 1.4.4
   Fallen, Rotmender's Garb and Sash) and Razorfen Kraul, and filled in missing
   trash drops for The Deadmines and Scarlet Monastery: Graveyard.
 - Trash drop lists now show rare and better items only.
+- New dungeon: Scarlet Monastery: Library (Houndmaster Loksey, Arcanist Doan), with its quests.
 - Boss loot now includes the profession recipes and blueprints they can drop.
 - New Loot Filter button on the home page (left of Hide Dungeons): show or hide
   recipes (hidden by default), show only loot your class can use, or only items

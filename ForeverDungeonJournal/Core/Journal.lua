@@ -190,11 +190,11 @@ FDJ.DUNGEON_MAPS = {
         -- Rath'mael on the purple rune in the south-west.
         bosses = {
             { name = "Witherfang",        x = 0.668, y = 0.360 },
-            { name = "The Baron",         x = 0.640, y = 0.555 },
+            { name = "The Baron",         x = 0.615, y = 0.650 }, -- from the author's minimap screenshot (King's Alley, curved road)
             { name = "Viktor the Vile",   x = 0.600, y = 0.730 },
-            { name = "The Abandoned",     x = 0.520, y = 0.600 },
-            { name = "Bjork",             x = 0.345, y = 0.560 },
-            { name = "Rath'mael",         x = 0.395, y = 0.665 },
+            { name = "The Abandoned",     x = 0.395, y = 0.665 },
+            { name = "Bjork",             x = 0.345, y = 0.220 },
+            { name = "Rath'mael",         x = 0.520, y = 0.600 },
             { name = "Lordaeron Captain", x = 0.500, y = 0.300 },
         },
     },
@@ -256,6 +256,14 @@ FDJ.DUNGEON_MAPS = {
             { name = "Agathelos the Raging",  x = 0.082, y = 0.686 },
         },
     },
+    -- Loksey from Wowhead (zone 796 floor 2). Arcanist Doan has no published coordinates yet.
+    ["Scarlet Monastery: Library"] = {
+        floors = { { tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery2_" } },
+        bosses = {
+            { name = "Houndmaster Loksey", x = 0.302, y = 0.846 },
+            { name = "Arcanist Doan",      x = 0.835, y = 0.740 },
+        },
+    },
     ["Scarlet Monastery: Graveyard"] = {
         floors = { { tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s1", x0 = 0.2285, y0 = 0.5404, x1 = 0.2625, y1 = 0.5913 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s2", x0 = 0.7066, y0 = 0.5749, x1 = 0.7405, y1 = 0.6257 } } } },
         entrance = { floor = 1, x = 0.841, y = 0.831, angle = 180 },
@@ -308,7 +316,7 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Wailing Caverns"] = {
-        floors = { { tiles = "Interface\\WorldMap\\WailingCaverns\\WailingCaverns1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s1", x0 = 0.3244, y0 = 0.0898, x1 = 0.3583, y1 = 0.1407 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s2", x0 = 0.1756, y0 = 0.3862, x1 = 0.2096, y1 = 0.4371 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s3", x0 = 0.2924, y0 = 0.4102, x1 = 0.3263, y1 = 0.4611 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s4", x0 = 0.3713, y0 = 0.3308, x1 = 0.4052, y1 = 0.3817 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s5", x0 = 0.1267, y0 = 0.5434, x1 = 0.1607, y1 = 0.5943 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s6", x0 = 0.5180, y0 = 0.4401, x1 = 0.5519, y1 = 0.4910 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s7", x0 = 0.6008, y0 = 0.5105, x1 = 0.6347, y1 = 0.5614 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s8", x0 = 0.5878, y0 = 0.7156, x1 = 0.6218, y1 = 0.7665 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_1", x0 = 0.4291, y0 = 0.0195, x1 = 0.9940, y1 = 0.1647 } } } },
+        floors = { { tiles = "Interface\\WorldMap\\WailingCaverns\\WailingCaverns1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s2", x0 = 0.1786, y0 = 0.3783, x1 = 0.1998, y1 = 0.4186 } } } }, -- hides one printed skull west of Lady Anacondra
         entrance = { floor = 1, x = 0.465, y = 0.590, angle = 200 },
         -- Route: Anacondra on the west side of the first big chamber, drop
         -- into the ravine west to Cobrahn, back through the river (Kresh),
@@ -319,11 +327,11 @@ FDJ.DUNGEON_MAPS = {
             { name = "Lady Anacondra",        x = 0.310, y = 0.430 },
             { name = "Kresh",                 x = 0.385, y = 0.350 },
             { name = "Lord Cobrahn",          x = 0.155, y = 0.570 },
-            { name = "Lord Pythas",           x = 0.545, y = 0.460 },
-            { name = "Skum",                  x = 0.615, y = 0.530 },
+            { name = "Lord Pythas",           x = 0.621, y = 0.536 },
+            { name = "Skum",                  x = 0.622, y = 0.734 },
             { name = "Deviate Faerie Dragon", x = 0.580, y = 0.600 },
             { name = "Lord Serpentis",        x = 0.600, y = 0.660 },
-            { name = "Verdan the Everliving", x = 0.615, y = 0.745 },
+            { name = "Verdan the Everliving", x = 0.545, y = 0.460 },
             { name = "Mutanus the Devourer",  x = 0.345, y = 0.130 },
         },
     },
@@ -766,6 +774,9 @@ local function NormalizeDungeonName(name)
     if n:find("scarlet monastery", 1, true) and n:find("graveyard", 1, true) then
         return "Scarlet Monastery: Graveyard"
     end
+    if n:find("scarlet monastery", 1, true) and n:find("library", 1, true) then
+        return "Scarlet Monastery: Library"
+    end
 end
 
 local function CurrentDungeon()
@@ -794,9 +805,15 @@ local function CurrentDungeon()
     then
         return "Scarlet Monastery: Graveyard"
     end
+    if type(instanceName) == "string" and instanceName:lower():find("scarlet monastery", 1, true)
+        and type(subZone) == "string" and subZone:lower():find("library", 1, true)
+    then
+        return "Scarlet Monastery: Library"
+    end
 
     return NormalizeDungeonName(subZone)
 end
+FDJ.CurrentDungeon = CurrentDungeon
 
 local function QuestMatchesFaction(quest, faction)
     if not quest then return false end
@@ -1286,6 +1303,8 @@ local ShowRouteGuide
 
 local function ApplySelectedLanguage(code)
     local wasRouteOpen = frame and frame.routePanel and frame.routePanel:IsShown()
+    local wasMapOpen = frame and frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown()
+    local mapFloor = frame and frame.dungeonMapFloor
     if FDJ.SetLanguage then FDJ.SetLanguage(code) end
     UpdateLanguageControl()
     if ApplyLocalization then ApplyLocalization() end
@@ -1296,9 +1315,19 @@ local function ApplySelectedLanguage(code)
         if frame.currentView == "home" then
             RefreshHomeDungeonCards()
         else
-            RefreshAll()
+            FDJ.keepQuestState = true
+            local okRefresh, refreshError = pcall(RefreshAll)
+            FDJ.keepQuestState = nil
+            if not okRefresh then error(refreshError, 0) end
             if wasRouteOpen and ShowRouteGuide then
                 ShowRouteGuide()
+            end
+            -- Stay on the map (and the same floor) when it was open.
+            if wasMapOpen and not wasRouteOpen and ShowDungeonMap and FDJ.DUNGEON_MAPS[selectedDungeon] then
+                ShowDungeonMap()
+                if mapFloor and FDJ.RenderCustomDungeonMap then
+                    FDJ.RenderCustomDungeonMap(FDJ.DUNGEON_MAPS[selectedDungeon], mapFloor)
+                end
             end
         end
         ApplyLocaleFontTree(frame)
@@ -2562,6 +2591,8 @@ local function MakeQuestButton(parent)
     button.chainRows = {}
 
     button:SetScript("OnClick", function(self)
+        -- Shift-click with a chat box open links the quest instead of selecting it.
+        if FDJ.TryLinkQuest and FDJ.TryLinkQuest(self.questID, self.fdjQuestName, self.fdjQuestLevel) then return end
         SelectQuest(self.questIndex)
     end)
 
@@ -2872,6 +2903,8 @@ RefreshQuestList = function()
             local rowHeight = baseRowHeight
 
             button.questID = quest.id
+            button.fdjQuestName = quest.name
+            button.fdjQuestLevel = quest.level
             local rawChain = GetQuestPrereqChain(quest)
             local chain = rawChain
 
@@ -2930,6 +2963,10 @@ RefreshQuestList = function()
 
                         row:SetScript("OnClick", function(self)
                             if not self.step then return end
+                            do
+                                local d = self.step.id and QUEST_PREREQ_DETAILS[self.step.id]
+                                if FDJ.TryLinkQuest and FDJ.TryLinkQuest(self.step.id, self.step.name, d and d.level) then return end
+                            end
                             selectedPrereqStep = self.step
                             selectedPrereqParentQuestName = self.parentQuestName
                             selectedPrereqParentQuestID = self.parentQuestID
@@ -3230,6 +3267,31 @@ end
 -- Item rows on a chain-step page: the items the step asks for and the item the
 -- quest giver hands over. Each row is a normal item button, so hovering shows the
 -- item tooltip followed by where the item comes from.
+-- Shift-click quest linking. Returns true when something was put in the chat box.
+FDJ.TryLinkQuest = function(questID, name, level)
+    if not questID or not IsModifiedClick or not IsModifiedClick("CHATLINK") then return false end
+    if not ChatEdit_InsertLink then return false end
+    if type(ChatEdit_GetActiveWindow) == "function" and not ChatEdit_GetActiveWindow() then return false end
+    local title = name
+    if C_QuestLog and type(C_QuestLog.GetQuestInfo) == "function" then
+        local ok, live = pcall(C_QuestLog.GetQuestInfo, questID)
+        if ok and type(live) == "string" and live ~= "" then title = live end
+    end
+    title = title or ("Quest " .. tostring(questID))
+    local link
+    if type(GetQuestLink) == "function" then
+        local ok, live = pcall(GetQuestLink, questID)
+        if ok and type(live) == "string" and live ~= "" then link = live end
+    end
+    if not link then
+        local questLevel = tonumber(level) or -1
+        link = "|cffffff00|Hquest:" .. tostring(questID) .. ":" .. tostring(questLevel) .. "|h[" .. title .. "]|h|r"
+    end
+    if ChatEdit_InsertLink(link) then return true end
+    -- The client refused the hyperlink: fall back to plain text.
+    return ChatEdit_InsertLink("[" .. title .. "]") and true or false
+end
+
 FDJ.QuestTurnedIn = function(questID)
     if not questID then return false end
     if C_QuestLog and type(C_QuestLog.IsQuestFlaggedCompleted) == "function" then
@@ -3251,6 +3313,7 @@ FDJ.HideStepItemButtons = function()
     end
     if frame.questProvidedItemHeader then frame.questProvidedItemHeader:Hide() end
     if frame.questChainNotice then frame.questChainNotice:Hide() end
+    if frame.questWarningText then frame.questWarningText:Hide() end
 end
 
 FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
@@ -3352,6 +3415,16 @@ local function RefreshPrerequisiteQuestDetail(step)
     if frame.selectedQuestClass then frame.selectedQuestClass:Hide() end
     if frame.selectedQuestClassIcon then frame.selectedQuestClassIcon:Hide() end
     if frame.selectedQuestMetaClassIcon then frame.selectedQuestMetaClassIcon:Hide() end
+    -- Chain step pages: the step arrows sit top right, so the tick goes
+    -- directly after the title text instead.
+    frame.selectedQuestComplete:ClearAllPoints()
+    do
+        local title = frame.selectedQuestName
+        local textWidth = title:GetStringWidth() or 0
+        local boxWidth = title:GetWidth() or 0
+        if boxWidth > 0 and textWidth > boxWidth then textWidth = boxWidth end
+        frame.selectedQuestComplete:SetPoint("LEFT", title, "LEFT", textWidth + 6, 0)
+    end
     frame.selectedQuestComplete:SetShown(complete)
     UpdatePrerequisiteNavButtons()
 
@@ -3787,6 +3860,23 @@ RefreshQuestDetail = function()
         header:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -y)
         header:Show()
         return y + math.max(14, header:GetStringHeight() or 14) + 3
+    end
+
+    -- Optional red disclaimer shown first, right under the title area.
+    if quest.warning and quest.warning ~= "" then
+        if not frame.questWarningText then
+            frame.questWarningText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            frame.questWarningText:SetJustifyH("LEFT")
+        end
+        frame.questWarningText:ClearAllPoints()
+        frame.questWarningText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+        frame.questWarningText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
+        frame.questWarningText:SetText(FreeText(quest.warning))
+        frame.questWarningText:SetTextColor(0.62, 0.10, 0.05)
+        frame.questWarningText:Show()
+        cursorY = cursorY + (frame.questWarningText:GetStringHeight() or 28) + 10
+    elseif frame.questWarningText then
+        frame.questWarningText:Hide()
     end
 
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
@@ -4884,7 +4974,10 @@ SetMode = function(mode)
 
     -- Every time the quest tab is opened, start on the player's own faction.
     -- The faction buttons can still be used manually afterwards.
-    if mode == "quests" and UnitFactionGroup then
+    if mode == "quests" and FDJ.keepQuestState then
+        -- Language change: keep the faction, quest and chain step being viewed.
+        BuildVisibleQuestIndexes()
+    elseif mode == "quests" and UnitFactionGroup then
         local playerFaction = UnitFactionGroup("player")
         if playerFaction == "Horde" then
             selectedQuestFaction = "Horde"
@@ -5790,6 +5883,14 @@ RefreshAll = function()
 end
 
 FDJ.GetSelectedDungeon = function() return selectedDungeon, selectedBoss end
+-- Used by the world-map overlay: point the map renderer at a dungeon without
+-- touching the journal window.
+FDJ.SetMapDungeon = function(name) if DB[name] then selectedDungeon = name end end
+FDJ.ReopenDungeonMap = function(dungeonName)
+    if dungeonName == selectedDungeon and FDJ.DUNGEON_MAPS[dungeonName] then
+        pcall(ShowDungeonMap)
+    end
+end
 
 SelectBoss = function(index)
     local dungeon = DB[selectedDungeon]
@@ -6455,29 +6556,23 @@ local function CreateMainFrame()
 
     local languageSelector = CreateFrame("Button", nil, frame, "BackdropTemplate")
     frame.languageSelectorButton = languageSelector
-    languageSelector:SetSize(96, 24)
-    languageSelector:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -75, -15)
+    languageSelector:SetSize(110, 24)
+    languageSelector:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -49, -15)
     SetBackdrop(languageSelector, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 12, 4)
     languageSelector:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
     languageSelector:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
     languageSelector:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
 
-    local leftArrow = CreateFrame("Button", nil, frame)
-    frame.languageLeftButton = leftArrow
-    leftArrow:SetSize(22, 22)
-    leftArrow:SetPoint("RIGHT", languageSelector, "LEFT", -4, 0)
-    StyleLanguageArrowButton(leftArrow, "LEFT")
-
-    local rightArrow = CreateFrame("Button", nil, frame)
-    frame.languageRightButton = rightArrow
-    rightArrow:SetSize(22, 22)
-    rightArrow:SetPoint("LEFT", languageSelector, "RIGHT", 4, 0)
-    StyleLanguageArrowButton(rightArrow, "RIGHT")
+    -- Small down arrow: shows the box opens a list of languages.
+    local languageCaret = languageSelector:CreateTexture(nil, "OVERLAY")
+    languageCaret:SetTexture("Interface\\Buttons\\Arrow-Down-Up")
+    languageCaret:SetSize(12, 12)
+    languageCaret:SetPoint("RIGHT", languageSelector, "RIGHT", -7, -3)
 
     local languageSelectorText = languageSelector:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     frame.languageSelectorText = languageSelectorText
     languageSelectorText:SetPoint("LEFT", 8, 0)
-    languageSelectorText:SetPoint("RIGHT", -8, 0)
+    languageSelectorText:SetPoint("RIGHT", -20, 0)
     languageSelectorText:SetJustifyH("CENTER")
     languageSelectorText:SetTextColor(1.00, 0.82, 0.27)
 
@@ -6515,22 +6610,6 @@ local function CreateMainFrame()
         languageMenu:SetShown(not languageMenu:IsShown())
     end
 
-    local function CycleLanguage(delta)
-        PlayJournalOptionSound()
-        local active = FDJ.GetLanguage and FDJ.GetLanguage() or "enUS"
-        local index = GetLanguageIndex(active)
-        index = index + delta
-        if index < 1 then
-            index = #LANGUAGE_CHOICES
-        elseif index > #LANGUAGE_CHOICES then
-            index = 1
-        end
-        languageMenu:Hide()
-        ApplySelectedLanguage(LANGUAGE_CHOICES[index].code)
-    end
-
-    leftArrow:SetScript("OnClick", function() CycleLanguage(-1) end)
-    rightArrow:SetScript("OnClick", function() CycleLanguage(1) end)
     languageSelector:SetScript("OnClick", ToggleLanguageMenu)
     UpdateLanguageControl()
 
@@ -6637,6 +6716,7 @@ local function CreateMainFrame()
         if selectedDungeon and DB[selectedDungeon] and frame.lootContent then pcall(RefreshLoot) end
     end
     if FDJ.CreateLootFilterButton then FDJ.CreateLootFilterButton(frame, home, hideDungeonsButton) end
+    if FDJ.CreateBugReportButton then FDJ.CreateBugReportButton(frame, frame, frame.languageSelectorButton) end
 
     local homeEmptyText = home:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
     frame.homeEmptyText = homeEmptyText
@@ -7756,10 +7836,18 @@ local function CreateMainFrame()
         else
             ShowHomePage()
         end
+        -- Reopen on the map if that is where this dungeon was left.
+        if FDJ.mapOpenForDungeon and frame.currentView == "dungeon" and FDJ.ReopenDungeonMap then
+            FDJ.ReopenDungeonMap(FDJ.mapOpenForDungeon)
+        end
     end)
     frame:SetScript("OnHide", function()
         if frame and frame.currentView then
             sessionLastView = frame.currentView
+        end
+        FDJ.mapOpenForDungeon = nil
+        if frame.currentView == "dungeon" and frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown() and FDJ.GetSelectedDungeon then
+            FDJ.mapOpenForDungeon = (FDJ.GetSelectedDungeon())
         end
         homeEditMode = false
         if frame.hideDungeonsButton then
@@ -7834,6 +7922,25 @@ local function HideMinimapButton()
     print("|cffd8a83cDungeonJournal|r " .. L("MINIMAP_HIDDEN"))
 end
 
+-- Right-clicking the minimap button asks first: many players hid it by accident.
+FDJ.ConfirmHideMinimapButton = function()
+    if not StaticPopupDialogs or not StaticPopup_Show then
+        HideMinimapButton()
+        return
+    end
+    StaticPopupDialogs["FOREVERDUNGEONJOURNAL_HIDE_MINIMAP"] = {
+        text = L("MINIMAP_HIDE_CONFIRM"),
+        button1 = YES or "Yes",
+        button2 = NO or "No",
+        OnAccept = function() HideMinimapButton() end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+    StaticPopup_Show("FOREVERDUNGEONJOURNAL_HIDE_MINIMAP")
+end
+
 local function ShowMinimapButton()
     ForeverDungeonJournalDB.minimapHidden = false
     ForeverDungeonJournalDB.minimap = ForeverDungeonJournalDB.minimap or {}
@@ -7875,7 +7982,7 @@ local function SetupLibDBIconMinimap()
                 if button == "LeftButton" then
                     ToggleJournal()
                 elseif button == "RightButton" then
-                    HideMinimapButton()
+                    FDJ.ConfirmHideMinimapButton()
                 end
             end,
             OnTooltipShow = function(tooltip)
@@ -7959,7 +8066,7 @@ local function CreateFallbackMinimap()
             if button == "LeftButton" then
                 ToggleJournal()
             elseif button == "RightButton" then
-                HideMinimapButton()
+                FDJ.ConfirmHideMinimapButton()
             end
         end)
 
@@ -8049,22 +8156,23 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
 
     local langArg = msg:match("^lang%s+(%S+)$") or msg:match("^language%s+(%S+)$")
     if langArg then
+        ApplySelectedLanguage(langArg)
         local active, saved = FDJ.SetLanguage(langArg)
-        if ApplyLocalization then ApplyLocalization() end
-        if frame then
-            local wasRouteOpen = frame.routePanel and frame.routePanel:IsShown()
-            if frame.currentView == "home" then
-                RefreshHomeDungeonCards()
-            else
-                RefreshAll()
-                if wasRouteOpen and ShowRouteGuide then
-                    ShowRouteGuide()
-                end
-            end
-            ApplyLocaleFontTree(frame)
-        end
         local display = saved == "auto" and L("LANGUAGE_AUTO", active) or active
         print("|cffd8a83cDungeonJournal|r " .. L("LANGUAGE_SET", display))
+        return
+    end
+
+    if msg == "worldmap" then
+        local on = FDJ.ToggleWorldMapOverlay and FDJ.ToggleWorldMapOverlay()
+        print("|cffd8a83cDungeonJournal|r " .. L("WM_DUNGEON_MAP") .. " (M): " .. (on and "ON" or "OFF"))
+        return
+    end
+
+    if msg:match("^scale") then
+        local value = tonumber(msg:match("^scale%s+([%d%.]+)"))
+        local scale = FDJ.SetJournalScale and FDJ.SetJournalScale(value or 1)
+        print("|cffd8a83cDungeonJournal|r scale: " .. tostring(scale))
         return
     end
 
@@ -8216,7 +8324,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.4.4"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.5.0"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

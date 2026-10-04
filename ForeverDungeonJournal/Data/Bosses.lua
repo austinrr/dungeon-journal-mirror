@@ -39,6 +39,10 @@ FDJ.BOSS_LEVELS = {
         ["Ironspine"] = "33",
         ["Bloodmage Thalnos"] = "34",
     },
+    ["Scarlet Monastery: Library"] = {
+        ["Houndmaster Loksey"] = "34",
+        ["Arcanist Doan"] = "37",
+    },
     ["Hall of Thanes"] = {
         ["Faldrim Anvilmar"] = "16",
         ["Magmatus"] = "16",
@@ -230,6 +234,10 @@ FDJ.STATIC_DISPLAY_IDS = {
     [6488] = 5230,      -- Fallen Champion
     [6489] = 5231,      -- Ironspine
     [4543] = 11396,     -- Bloodmage Thalnos
+
+    -- Scarlet Monastery: Library
+    [3974] = 2040,      -- Houndmaster Loksey
+    [6487] = 5266,      -- Arcanist Doan
 }
 
 -- Trash mobs named as the source of a trash drop: name -> creature display ID

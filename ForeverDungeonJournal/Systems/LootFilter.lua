@@ -775,11 +775,21 @@ end
 
 local function BuildPage()
     local bosses, itemCount = {}, 0
+    local db = Settings()
+    local recipesOnly = db.enabled and db.recipes and not db.classOnly and not db.minLevel and not AnyStatWanted(db)
     FDJ.lootFilterStrict = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
         for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
             local shown = FDJ.FilterBossLoot(boss).loot or {}
+            if recipesOnly then
+                -- Only "Show recipe drops" is ticked: list the recipes alone.
+                local recipes = {}
+                for _, item in ipairs(shown) do
+                    if IsRecipe(item) then recipes[#recipes + 1] = item end
+                end
+                shown = recipes
+            end
             if #shown > 0 then
                 bosses[#bosses + 1] = setmetatable({ loot = shown, fdjDungeon = dungeonName }, { __index = boss })
                 itemCount = itemCount + #shown

@@ -1532,3 +1532,318 @@ for lang, data in pairs(PALADIN) do
     for id, entry in pairs(data.quests) do target.quests[id] = entry end
     for key, value in pairs(data.places) do target.places[key] = value end
 end
+
+-- An Unholy Alliance: the final step (6521) is the journal entry; it shares
+-- its name with part 1 (6522).
+local UNHOLY = {
+    deDE = { "Bringt Botschafter Malcins Kopf zu Varimathras in Unterstadt.", "Dies wird in den HÜGELN DER KLINGENHAUER abgeschlossen. Während der Beta füge ich diesen Dungeon nicht hinzu; die Quest steht hier, weil die Reihe in diesem Dungeon beginnt." },
+    frFR = { "Apportez la tête de l'ambassadeur Malcin à Varimathras à Fossoyeuse.", "Cette quête se termine dans les SOUILLES DE TRANCHEBAUGE. Pendant la bêta je n'ajouterai pas ce donjon ; elle est ici car la suite commence dans ce donjon." },
+    esES = { "Lleva la cabeza del embajador Malcin a Varimathras en Entrañas.", "Esto se completa en ZAHÚRDA RAJACIENO. Durante la beta no añadiré esa mazmorra; está aquí porque la cadena empieza en esta mazmorra." },
+    itIT = { "Porta la testa dell'ambasciatore Malcin a Varimathras a Sepulcra.", "Si completa a RAZORFEN DOWNS. Durante la beta non aggiungerò quella spedizione; è qui perché la catena inizia in questa spedizione." },
+    ptBR = { "Leve a cabeça do Embaixador Malcin a Varimathras em Cidade Baixa.", "Isto é concluído em URZAL DOS MORTOS. Durante o beta não vou adicionar essa masmorra; está aqui porque a cadeia começa nesta masmorra." },
+    ruRU = { "Принесите голову посла Малкина Вариматасу в Подгород.", "Задание завершается в КУРГАНАХ ИГЛОШКУРЫХ. Во время беты я не буду добавлять это подземелье; оно здесь, потому что цепочка начинается в этом подземелье." },
+    koKR = { "사절 말킨의 머리를 언더시티의 바리마트라스에게 가져가세요.", "이 퀘스트는 가시덩굴 구릉에서 완료됩니다. 베타 기간에는 해당 던전을 추가하지 않으며, 연계 퀘스트가 이 던전에서 시작되기 때문에 여기에 있습니다." },
+    zhCN = { "把大使玛尔金的头颅交给幽暗城的瓦里玛萨斯。", "此任务在剃刀高地完成。测试期间我不会添加该地下城；任务链从本地下城开始，所以列在这里。" },
+    zhTW = { "把大使瑪爾金的頭顱交給幽暗城的瓦里瑪薩斯。", "此任務在剃刀高地完成。測試期間我不會加入該地城；任務鏈從本地城開始，所以列在這裡。" },
+}
+for lang, data in pairs(UNHOLY) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        local part1 = content.quests[6522]
+        content.quests[6521] = { name = part1 and part1.name, objective = data[1] }
+        content.places["This is completed in RAZORFEN DOWNS, during the beta I won't add that dungeon, it's here as the chain starts in this dungeon"] = data[2]
+    end
+end
+
+-- Scarlet Monastery: Library: name per language; location reused from the Graveyard.
+local LIBRARY_NAMES = {
+    deDE = "Scharlachrotes Kloster: Bibliothek",
+    frFR = "Monastère écarlate : Bibliothèque",
+    esES = "Monasterio Escarlata: Biblioteca",
+    itIT = "Monastero Scarlatto: Biblioteca",
+    ptBR = "Monastério Escarlate: Biblioteca",
+    ruRU = "Монастырь Алого ордена: Библиотека",
+    koKR = "붉은십자군 수도원: 도서관",
+    zhCN = "血色修道院：图书馆",
+    zhTW = "血色修道院：圖書館",
+}
+for lang, name in pairs(LIBRARY_NAMES) do
+    local content = FDJ.ContentLocales[lang]
+    if content and content.dungeons then
+        local gy = content.dungeons["Scarlet Monastery: Graveyard"]
+        content.dungeons["Scarlet Monastery: Library"] = { name = name, location = gy and gy.location }
+    end
+end
+
+-- Scarlet Monastery (Graveyard additions + Library): quest names, objectives
+-- and NPC names are the official texts from the Wowhead Forever tooltips.
+-- Italian, "Past Due" (new in Forever, no official text yet) and the journal's
+-- own notes are translated by hand.
+local SM = {}
+SM.deDE = {
+  q = {
+    [1049] = { "Kompendium der Gefallenen", "Holt das 'Kompendium der Gefallenen' aus dem Kloster in Tirisfal und bringt es zu Sage Truthseeker in Thunder Bluff." },
+    [1050] = { "Mythologie der Titanen", "Holt die 'Mythologie der Titanen' aus dem Kloster und bringt die der Bibliothekarin Mae Paledust in Ironforge." },
+    [1149] = { "Test des Glaubens", "Wenn Ihr festen Glaubens seid, dann springt von den Planken über Tausend Nadeln." },
+    [1150] = { "Test der Belastbarkeit", "Bringt Grenkas Klaue zu Dorn Plainstalker in Tausend Nadeln." },
+    [1151] = { "Test der Kraft", "Bringt Fragmente von Rok'Alim zu Dorn Plainstalker in Tausend Nadeln." },
+    [1152] = { "Test der Lehre", "Sucht Braug Dimspirit in der Nähe des Eingangs zum Steinkrallenpfad im Steinkrallengebirge." },
+    [1154] = { "Test der Lehre", "Sucht das 'Vermächtnis der Aspekte' und bringt es zu Braug Dimspirit in der Nähe des Eingangs zum Steinkrallenpfad im Steinkrallengebirge zurück." },
+    [1159] = { "Test der Lehre", "Sucht Parqual Fintallas in Undercity." },
+    [1160] = { "Test der Lehre", "Sucht Die Anfänge der Bedrohung durch die Untoten und bringt es zu Parqual Fintallas in Undercity." },
+    [6627] = { "Test der Lehre", "Beantwortet Braug Dimspirits Frage richtig und sprecht dann erneut mit ihm. Er wird immer noch im Steinkrallengebirge sein, wenn Ihr bereit seid." },
+    [96800] = { "Überfällig", "Holt das Buch 'Die verlorene Magie der Runenmeister' aus dem Scharlachroten Kloster." },
+  },
+  npc = { "Arkanist Doan", "Hundemeister Loksey", "Bibliothekarin Mae Paledust", "Sage Truthseeker", "Parqual Fintallas", "Dorn Plainstalker", "Braug Dimspirit", "Apothekermeister Faranell", "Vorrel Sengutz", "Monika Sengutz" },
+  zone = { "Tausend Nadeln", "Steinkrallengebirge", "Steinkrallenpfad", "Apothekarium" },
+  t = { "%s in %s", "Nahe dem Eingang zum Steinkrallenpfad", "Starte %s hier", "Voraussetzung für %s.", "Neu in Forever. Das Buch befindet sich bei Arkanist Doan.", "Nur Orcs, Tauren und Trolle; Untote können diese Quest nicht annehmen.",
+    "Trash im Scharlachroten Kloster (Set des Scharlachroten Kreuzzugs)", "Trash im Scharlachroten Kloster (sehr selten)", "Endboss, in der Gruft der Ehre.", "Endboss, im Athenaeum. Doans Geldkassette hinter ihm enthält den Scharlachroten Schlüssel.",
+    "In der Kammer der Buße. Lässt Vorrels Ehering für %s fallen.", "Im Kreuzgang des Jägers.", "Seltener Gegner.", "Trash-Beute",
+    "Der Bibliotheksflügel des Scharlachroten Klosters mit den Zwingern des Hundemeisters und dem Athenaeum von Arkanist Doan." },
+}
+SM.frFR = {
+  q = {
+    [1049] = { "Compendium des Déchus", "Trouver le « Compendium des Déchus » au Monastère dans les Clairières de Tirisfal et retourner voir le Sage Truthseeker à Thunder Bluff." },
+    [1050] = { "Mythologie des Titans", "Reprendre « la Mythologie des Titans » au Monastère et le rapporter au Bibliothécaire Mae Paledust à Ironforge." },
+    [1149] = { "L'épreuve de la Foi", "Si vous avez la Foi, sautez des planches qui dominent les Mille pointes." },
+    [1150] = { "L’épreuve de l’Endurance", "Apporter la Griffe de Grenka au traqueur des plaines Dorn, aux Mille pointes." },
+    [1151] = { "L'épreuve de la Force", "Apporter des Fragments de Rok'Alim au traqueur des plaines Dorn dans les Mille pointes." },
+    [1152] = { "L'épreuve de la Connaissance", "Trouver Braug Dimspirit près de l’entrée de la Perce des Serres dans les Serres-Rocheuses." },
+    [1154] = { "L'épreuve de la Connaissance", "Trouver l’Héritage des Aspects et l’apporter à Braug Dimspirit, à côté de l’entrée de la Perce des Serres, dans les Serres-Rocheuses." },
+    [1159] = { "L'épreuve de la Connaissance", "Trouver Parqual Fintallas à Undercity." },
+    [1160] = { "L'épreuve de la Connaissance", "Trouver « Les commencements de la menace des morts-vivants » et le rapporter à Parqual Fintallas à Undercity." },
+    [6627] = { "L'épreuve de la Connaissance", "Réussir à répondre à la question de Braug Dimspirit, puis lui reparler. Il se trouve dans les Serres-Rocheuses." },
+    [96800] = { "Retard de prêt", "Récupérer le livre « La magie perdue des maîtres des runes » au Monastère écarlate." },
+  },
+  npc = { "Arcaniste Doan", "Maître-chien Loksey", "Bibliothécaire Mae Paledust", "Sage Truthseeker", "Parqual Fintallas", "Traqueur des plaines Dorn", "Braug Dimspirit", "Maître apothicaire Faranell", "Vorrel Sengutz", "Monika Sengutz" },
+  zone = { "Mille pointes", "Serres-Rocheuses", "Perce des Serres", "Apothicarium" },
+  t = { "%s aux %s", "Près de l'entrée de la Perce des Serres", "Commencez %s ici", "Requis avant %s.", "Nouveau dans Forever. Le livre est détenu par l'Arcaniste Doan.", "Orcs, Taurens et Trolls uniquement ; les Morts-vivants ne peuvent pas prendre cette quête.",
+    "Trash du Monastère écarlate (ensemble de la Croisade écarlate)", "Trash du Monastère écarlate (très rare)", "Boss final, dans la Tombe de l'Honneur.", "Boss final, dans l'Athenaeum. Le coffre de Doan derrière lui contient la Clé écarlate.",
+    "Dans la Chambre de l'Expiation. Donne l'alliance de Vorrel pour %s.", "Dans le Cloître du Veneur.", "Apparition rare.", "Butin des trashs",
+    "L'aile de la bibliothèque du Monastère écarlate, avec les chenils du Maître-chien et l'athenaeum de l'Arcaniste Doan." },
+}
+SM.esES = {
+  q = {
+    [1049] = { "El Compendio de los Caídos", "Recupera el Compendio de los Caídos del Monasterio que se encuentra en los Claros de Tirisfal y regresa ante Sabio Buscaverdad, que está en Cima del Trueno." },
+    [1050] = { "Mitología de los Titanes", "Coge Mitología de los Titanes en el monasterio y llévaselo a la bibliotecaria Mae Palipolvo a Forjaz." },
+    [1149] = { "Prueba de fe", "Si tienes fe, salta desde las tablas que dominan Las Mil Agujas." },
+    [1150] = { "Prueba de resistencia", "Llévale la garra de Grenka a Dorn Acechaprados, que está en Las Mil Agujas." },
+    [1151] = { "Prueba de fuerza", "Llévale fragmentos de Rok'Alim a Dorn Acechaprados, que está en Las Mil Agujas." },
+    [1152] = { "Prueba de conocimiento", "Encuentra a Braug Espiritoscuro cerca de la entrada de El Paso del Espolón en Sierra Espolón." },
+    [1154] = { "Prueba de conocimiento", "Encuentra el Legado de los Aspectos y devuélveselo a Braug Espiritoscuro que se encuentra cerca de la entrada de El Paso del Espolón en Sierra Espolón." },
+    [1159] = { "Prueba de conocimiento", "Encuentra a Parqual Fintallas en Entrañas." },
+    [1160] = { "Prueba de conocimiento", "Encuentra la Guía básica para no-muertos y devuélvesela a Parqual Fintallas, que está en Entrañas." },
+    [6627] = { "Prueba de conocimiento", "Responde la pregunta de Braug Espiritoscuro con acierto y después habla con él de nuevo. Se quedará en Sierra Espolón hasta que estés preparado." },
+    [96800] = { "Fuera de plazo", "Recupera el libro La magia perdida de los maestros de runas del Monasterio Escarlata." },
+  },
+  npc = { "Arcanista Doan", "Domador de jaurías Loksey", "Bibliotecaria Mae Palipolvo", "Sabio Buscaverdad", "Parqual Fintallas", "Dorn Acechallanos", "Braug Espiritoscuro", "Maestro boticario Faranell", "Vorrel Sengutz", "Monika Sengutz" },
+  zone = { "Las Mil Agujas", "Sierra Espolón", "El Paso del Espolón", "Apothecarium" },
+  t = { "%s en %s", "Cerca de la entrada de El Paso del Espolón", "Empieza %s aquí", "Necesaria antes de %s.", "Nueva en Forever. El libro lo tiene el Arcanista Doan.", "Solo orcos, tauren y trols; los no-muertos no pueden aceptar esta misión.",
+    "Enemigos menores del Monasterio Escarlata (conjunto de la Cruzada Escarlata)", "Enemigos menores del Monasterio Escarlata (muy raro)", "Jefe final, en la Tumba del Honor.", "Jefe final, en el Athenaeum. La caja fuerte de Doan, detrás de él, contiene la Llave Escarlata.",
+    "En la Cámara de Expiación. Suelta la alianza de Vorrel para %s.", "En el Claustro del Cazador.", "Aparición rara.", "Botín de enemigos menores",
+    "El ala de la biblioteca del Monasterio Escarlata, con las perreras del Domador de jaurías y el athenaeum del Arcanista Doan." },
+}
+SM.itIT = {
+  q = {
+    [1049] = { "Compendio dei Caduti", "Recupera il Compendio dei Caduti dal Monastero nelle Radure di Tirisfal e torna dal Saggio Truthseeker a Thunder Bluff." },
+    [1050] = { "Mitologia dei Titani", "Recupera Mitologia dei Titani dal Monastero e portalo alla Bibliotecaria Mae Paledust a Ironforge." },
+    [1149] = { "Prova di Fede", "Se hai fede, salta dalle assi che sovrastano le Mille Guglie." },
+    [1150] = { "Prova di Resistenza", "Porta l'Artiglio di Grenka a Dorn Plainstalker nelle Mille Guglie." },
+    [1151] = { "Prova di Forza", "Porta i Frammenti di Rok'Alim a Dorn Plainstalker nelle Mille Guglie." },
+    [1152] = { "Prova di Conoscenza", "Trova Braug Dimspirit vicino all'ingresso del Passo Talondeep sulle Montagne Stonetalon." },
+    [1154] = { "Prova di Conoscenza", "Trova l'Eredità degli Aspetti e riportala a Braug Dimspirit vicino all'ingresso del Passo Talondeep sulle Montagne Stonetalon." },
+    [1159] = { "Prova di Conoscenza", "Trova Parqual Fintallas a Undercity." },
+    [1160] = { "Prova di Conoscenza", "Trova Le origini della minaccia dei non morti e riportalo a Parqual Fintallas a Undercity." },
+    [6627] = { "Prova di Conoscenza", "Rispondi correttamente alla domanda di Braug Dimspirit e poi parlagli di nuovo." },
+    [96800] = { "Prestito scaduto", "Recupera il libro La magia perduta dei Maestri delle Rune dal Monastero Scarlatto." },
+  },
+  npc = { "Arcanista Doan", "Mastro Segugiaio Loksey", "Bibliotecaria Mae Paledust", "Saggio Truthseeker", "Parqual Fintallas", "Dorn Plainstalker", "Braug Dimspirit", "Mastro Speziale Faranell", "Vorrel Sengutz", "Monika Sengutz" },
+  zone = { "Mille Guglie", "Montagne Stonetalon", "Passo Talondeep", "Apothecarium" },
+  t = { "%s nelle %s", "Vicino all'ingresso del Passo Talondeep", "Inizia %s qui", "Necessaria prima di %s.", "Nuova in Forever. Il libro è in possesso dell'Arcanista Doan.", "Solo Orchi, Tauren e Troll; i Non Morti non possono accettare questa missione.",
+    "Nemici minori del Monastero Scarlatto (set della Crociata Scarlatta)", "Nemici minori del Monastero Scarlatto (molto raro)", "Boss finale, nella Tomba dell'Onore.", "Boss finale, nell'Athenaeum. Il forziere di Doan dietro di lui contiene la Chiave Scarlatta.",
+    "Nella Camera dell'Espiazione. Lascia la fede nuziale di Vorrel per %s.", "Nel Chiostro del Cacciatore.", "Comparsa rara.", "Bottino dei nemici minori",
+    "L'ala della biblioteca del Monastero Scarlatto, con i canili del Mastro Segugiaio e l'athenaeum dell'Arcanista Doan." },
+}
+SM.ptBR = {
+  q = {
+    [1049] = { "O Compêndio dos Caídos", "Recupere o Compêndio dos Caídos no Monastério nas Clareiras de Tirisfal e volte a falar com o Sábio Devoto da Verdade no Penhasco do Trovão." },
+    [1050] = { "Mitologia dos Titãs", "Recupere o livro Mitologia dos Titãs no Monastério e leve-o para a Bibliotecária Maé Palidopó em Altaforja." },
+    [1149] = { "Teste da Fé", "Se tiver fé, pule lá de cima das tábuas, no topo de Mil Agulhas." },
+    [1150] = { "Teste de resistência", "Leve a Garra da Grenka para Dorn Espreitaprados em Mil Agulhas." },
+    [1151] = { "Teste de força", "Leve os Fragmentos de Rok'Alim para Dorn Espreitaprados em Mil Agulhas." },
+    [1152] = { "Teste de saber", "Encontre Braug Espírito Turvo perto da entrada do Túnel Garracava, na Cordilheira das Torres de Pedra." },
+    [1154] = { "Teste de saber", "Encontre o Legado dos Aspectos e leve-o para Braug Espírito Turvo perto da entrada do Túnel Garracava, na Cordilheira das Torres de Pedra." },
+    [1159] = { "Teste de saber", "Encontre Pasqual Fintallas na Cidade Baixa." },
+    [1160] = { "Teste de saber", "Encontre o Início da Ameaça dos Mortos-vivos e leve para Pasqual Fintallas na Cidade Baixa." },
+    [6627] = { "Teste de saber", "Responda à pergunta de Braug Espírito Turvo corretamente, depois fale com ele novamente. Ele estará na Cordilheira das Torres de Pedra." },
+    [96800] = { "Prazo vencido", "Recupere o livro A Magia Perdida dos Mestres das Runas no Monastério Escarlate." },
+  },
+  npc = { "Arcanista Doan", "Mestre de Matilha Lobato", "Bibliotecária Maé Palidopó", "Sábio Devoto da Verdade", "Pasqual Fintallas", "Dorn Espreitaprados", "Braug Espírito Turvo", "Mestre-boticário Faranello", "Vorrel Sentripaz", "Monika Sentripaz" },
+  zone = { "Mil Agulhas", "Cordilheira das Torres de Pedra", "Túnel Garracava", "Boticarium" },
+  t = { "%s em %s", "Perto da entrada do Túnel Garracava", "Comece %s aqui", "Necessária antes de %s.", "Nova no Forever. O livro está com o Arcanista Doan.", "Somente Orcs, Taurens e Trolls; Mortos-vivos não podem aceitar esta missão.",
+    "Inimigos comuns do Monastério Escarlate (conjunto da Cruzada Escarlate)", "Inimigos comuns do Monastério Escarlate (muito raro)", "Chefe final, na Tumba da Honra.", "Chefe final, no Athenaeum. O cofre de Doan atrás dele contém a Chave Escarlate.",
+    "Na Câmara da Expiação. Dropa a aliança de Vorrel para %s.", "No Claustro do Caçador.", "Aparição rara.", "Saque de inimigos comuns",
+    "A ala da biblioteca do Monastério Escarlate, com os canis do Mestre de Matilha e o athenaeum do Arcanista Doan." },
+}
+SM.ruRU = {
+  q = {
+    [1049] = { "\"Компендиум павших\"", "Добудьте \"Компендиум павших\" из монастыря в Тирисфальских лесах и возвращайтесь к Ведуну Искателю Истины в Громовой Утес." },
+    [1050] = { "\"Мифология Титанов\"", "Добудьте \"Мифологию Титанов\" из монастыря и принесите ее библиотекарю Мае Белокожке в Стальгорн." },
+    [1149] = { "Испытание веры", "Если ваша вера сильна, прыгните с досок над Тысячью Игл." },
+    [1150] = { "Испытание выносливости", "Принесите коготь Гренки Дорну Вольному Ловчему в Тысячу Игл." },
+    [1151] = { "Испытание силы", "Принесите фрагменты Рок'Алима Дорну Вольному Ловчему в Тысячу Игл." },
+    [1152] = { "Испытание знаний", "Найдите Брауга Тусклый Дух возле входа в Туннель Когтя в Когтистых горах." },
+    [1154] = { "Испытание знаний", "Найдите книгу \"Наследие Аспектов\" и вернитесь к Браугу Тусклому Духу ко входу в Туннель Когтя." },
+    [1159] = { "Испытание знаний", "Найдите Парквела Финталласа в Подгороде." },
+    [1160] = { "Испытание знаний", "Найдите книгу \"Истоки угрозы нежити\" и отнесите ее Парквелу Финталласу в Подгород." },
+    [6627] = { "Испытание знаний", "Дайте верный ответ на вопрос Брауга Тусклого Духа и поговорите с ним еще раз. Брауга можно в любое время найти в Когтистых горах." },
+    [96800] = { "Просроченная книга", "Добудьте книгу \"Утраченная магия мастеров рун\" из монастыря Алого ордена." },
+  },
+  npc = { "Чародей Доан", "Псарь Локси", "Библиотекарь Мая Белокожка", "Ведун Искатель Истины", "Парквел Финталлас", "Дорн Вольный Ловчий", "Брауг Тусклый Дух", "Мастер аптекарь Фаранелл", "Воррел Сенгутц", "Моника Сенгутц" },
+  zone = { "Тысяча Игл", "Когтистые горы", "Туннель Когтя", "Район Фармацевтов" },
+  t = { "%s — %s", "Возле входа в Туннель Когтя", "Начните %s здесь", "Требуется перед заданием %s.", "Новое в Forever. Книга находится у Чародея Доана.", "Только орки, таурены и тролли; нежить не может взять это задание.",
+    "Обычные противники монастыря Алого ордена (комплект Алого ордена)", "Обычные противники монастыря Алого ордена (очень редко)", "Последний босс, в Гробнице Чести.", "Последний босс, в Читальне. В сейфе Доана позади него лежит Алый ключ.",
+    "В Зале Искупления. С него падает обручальное кольцо Воррела для задания %s.", "В Обители Охотника.", "Редкий противник.", "Добыча с обычных противников",
+    "Библиотечное крыло монастыря Алого ордена: псарни Псаря и читальня Чародея Доана." },
+}
+SM.koKR = {
+  q = {
+    [1049] = { "타락의 개요", "티리스팔 숲의 붉은십자군 수도원에서 타락의 개요를 찾아 썬더 블러프에 있는 현자 트루스시커에게 가져가야 합니다." },
+    [1050] = { "티탄 신화", "수도원에서 티탄 신화라는 책을 찾아 아이언포지에 있는 사서 메이 페일더스트에게 가져가야 합니다." },
+    [1149] = { "믿음의 시험", "믿음이 있다면 버섯구름 봉우리가 내려다보이는 높은 곳에서 판자 아래로 뛰어내리십시오." },
+    [1150] = { "인내의 시험", "버섯구름 봉우리에 있는 도른 플레인스토커에게 그렌카의 발톱을 가져가야 합니다." },
+    [1151] = { "용기의 시험", "버섯구름 봉우리에 있는 도른 플레인스토커에게 로크알림의 파편을 가져가야 합니다." },
+    [1152] = { "지혜의 시험", "돌발톱 산맥에 있는 돌발톱 토굴길 입구 근처에서 브라우그 딤스피릿을 찾아야 합니다." },
+    [1154] = { "지혜의 시험", "고대의 유산을 찾아 돌발톱 산맥에 있는 돌발톱 토굴길 입구 근처에서 브라우그 딤스피릿에게 가져가야 합니다." },
+    [1159] = { "지혜의 시험", "언더시티에서 파쿠알 핀탈라스를 찾아야 합니다." },
+    [1160] = { "지혜의 시험", "언데드 위협의 기원을 찾아 언더시티에 있는 파쿠알 핀탈라스에게 가져가야 합니다." },
+    [6627] = { "지혜의 시험", "브라우그 딤스피릿의 질문에 대한 정답을 맞춘 다음 그에게 다시 말을 걸어야 합니다. 준비가 될 때까지 브라우그 딤스피릿은 돌발톱 산맥에 있을 것입니다." },
+    [96800] = { "연체된 책", "붉은십자군 수도원에서 룬마스터의 잃어버린 마법이라는 책을 되찾아야 합니다." },
+  },
+  npc = { "신비술사 도안", "사냥개조련사 록시", "사서 메이 페일더스트", "현자 트루스시커", "파쿠알 핀탈라스", "도른 플레인스토커", "브라우그 딤스피릿", "수석 연금술사 파라넬", "보렐 센구츠", "모니카 센구츠" },
+  zone = { "버섯구름 봉우리", "돌발톱 산맥", "돌발톱 토굴길", "연금술 실험실" },
+  t = { "%2$s의 %1$s", "돌발톱 토굴길 입구 근처", "여기서 %s 시작", "%s 전에 필요합니다.", "Forever에서 새로 추가됨. 책은 신비술사 도안이 가지고 있습니다.", "오크, 타우렌, 트롤 전용. 언데드는 이 퀘스트를 받을 수 없습니다.",
+    "붉은십자군 수도원 일반 몬스터 (붉은십자군 세트)", "붉은십자군 수도원 일반 몬스터 (매우 희귀)", "최종 우두머리, 명예의 무덤.", "최종 우두머리, 도서관 안쪽. 뒤에 있는 도안의 금고에 붉은십자군 열쇠가 들어 있습니다.",
+    "속죄의 방. %s에 필요한 보렐의 결혼 반지를 드롭합니다.", "사냥꾼의 회랑.", "희귀 출현.", "일반 몬스터 전리품",
+    "붉은십자군 수도원의 도서관 구역. 사냥개조련사의 사육장과 신비술사 도안의 서고가 있습니다." },
+}
+SM.zhCN = {
+  q = {
+    [1049] = { "堕落者纲要", "从血色修道院里找到《堕落者纲要》，把它交给雷霆崖的圣者图希克。" },
+    [1050] = { "泰坦神话", "从修道院拿回《泰坦神话》，把它交给铁炉堡的图书馆员麦伊·苍尘。" },
+    [1149] = { "信仰的试炼", "如果你有坚定的信仰，就从那个可以俯瞰千针石林的木板跳下去。" },
+    [1150] = { "耐力的试炼", "把格林卡的爪子交给千针石林的多恩·平原行者。" },
+    [1151] = { "力量的试炼", "把罗卡里姆的碎片交给千针石林的多恩·平原行者。" },
+    [1152] = { "知识试炼", "找到连接石爪山和灰谷的石爪小径里的布劳格·幽魂。" },
+    [1154] = { "知识试炼", "找到《巨龙的遗产》，把它还给位于灰谷和石爪山之间的石爪小径里的布劳格·幽魂。" },
+    [1159] = { "知识试炼", "找到幽暗城的帕科瓦·芬塔拉斯。" },
+    [1160] = { "知识试炼", "找到《亡灵的起源》，把它交给幽暗城的帕科瓦·芬塔拉斯。" },
+    [6627] = { "知识试炼", "成功回答布劳格·幽魂的问题，然后和他再次对话。他会一直在石爪山等你回答问题。" },
+    [96800] = { "逾期未还", "从血色修道院取回《符文大师失落的魔法》一书。" },
+  },
+  npc = { "奥法师杜安", "驯犬者洛克希", "图书馆员麦伊·苍尘", "圣者图希克", "帕科瓦·芬塔拉斯", "多恩·平原行者", "布劳格·幽魂", "大药剂师法拉尼尔", "沃瑞尔·森加斯", "莫尼卡·森加斯" },
+  zone = { "千针石林", "石爪山脉", "石爪小径", "炼金房" },
+  t = { "%2$s的%1$s", "石爪小径入口附近", "在这里开始%s", "%s的前置任务。", "Forever 新增。这本书在奥法师杜安手里。", "仅限兽人、牛头人和巨魔；亡灵无法接取此任务。",
+    "血色修道院小怪（血色十字军套装）", "血色修道院小怪（非常稀有）", "最终首领，位于荣耀之墓。", "最终首领，位于图书馆深处。他身后的杜安的保险箱里有血色十字军钥匙。",
+    "位于忏悔室。掉落%s所需的沃瑞尔的结婚戒指。", "位于猎手回廊。", "稀有刷新。", "小怪掉落",
+    "血色修道院的图书馆区域，有驯犬者的犬舍和奥法师杜安的藏书室。" },
+}
+SM.zhTW = {
+  q = {
+    [1049] = { "墮落者綱要", "從血色修道院裡找到《墮落者綱要》，把它交給雷霆崖的聖者圖希克。" },
+    [1050] = { "泰坦神話", "從修道院拿回《泰坦神話》，把它交給鐵爐堡的圖書館員麥伊·蒼塵。" },
+    [1149] = { "信仰的試煉", "如果你有堅定的信仰，就從那個可以俯瞰千針石林的木板跳下去。" },
+    [1150] = { "耐力的試煉", "把格林卡的爪子交給千針石林的多恩·平原行者。" },
+    [1151] = { "力量的試煉", "把羅卡里姆的碎片交給千針石林的多恩·平原行者。" },
+    [1152] = { "知識試煉", "找到連接石爪山和梣谷的石爪小徑裡的布勞格·幽魂。" },
+    [1154] = { "知識試煉", "找到《巨龍的遺產》，把它還給位於梣谷和石爪山之間的石爪小徑裡的布勞格·幽魂。" },
+    [1159] = { "知識試煉", "找到幽暗城的帕科瓦·芬塔拉斯。" },
+    [1160] = { "知識試煉", "找到《亡靈的起源》，把它交給幽暗城的帕科瓦·芬塔拉斯。" },
+    [6627] = { "知識試煉", "成功回答布勞格·幽魂的問題，然後和他再次對話。他會一直在石爪山等你回答問題。" },
+    [96800] = { "逾期未還", "從血色修道院取回《符文大師失落的魔法》一書。" },
+  },
+  npc = { "奧法師杜安", "馴犬者洛克希", "圖書館員麥伊·蒼塵", "聖者圖希克", "帕科瓦·芬塔拉斯", "多恩·平原行者", "布勞格·幽魂", "大藥劑師法拉尼爾", "沃瑞爾·森加斯", "莫妮卡·森加斯" },
+  zone = { "千針石林", "石爪山脈", "石爪小徑", "鍊金房" },
+  t = { "%2$s的%1$s", "石爪小徑入口附近", "在這裡開始%s", "%s的前置任務。", "Forever 新增。這本書在奧法師杜安手上。", "僅限獸人、牛頭人和食人妖；不死族無法接取此任務。",
+    "血色修道院小怪（血色十字軍套裝）", "血色修道院小怪（非常稀有）", "最終首領，位於榮耀之墓。", "最終首領，位於圖書館深處。他身後的杜安的保險箱裡有血色十字軍鑰匙。",
+    "位於懺悔室。掉落%s所需的沃瑞爾的結婚戒指。", "位於獵手迴廊。", "稀有重生。", "小怪掉落",
+    "血色修道院的圖書館區域，有馴犬者的犬舍和奧法師杜安的藏書室。" },
+}
+
+local SM_NPCS = { "Arcanist Doan", "Houndmaster Loksey", "Librarian Mae Paledust", "Sage Truthseeker", "Parqual Fintallas", "Dorn Plainstalker", "Braug Dimspirit", "Master Apothecary Faranell", "Vorrel Sengutz", "Monika Sengutz" }
+local SM_ZONES = { "Thousand Needles", "Stonetalon Mountains", "Talondeep Path", "Apothecarium" }
+for lang, data in pairs(SM) do
+    local content = FDJ.ContentLocales[lang] or {}
+    FDJ.ContentLocales[lang] = content
+    content.quests = content.quests or {}
+    content.places = content.places or {}
+    content.bosses = content.bosses or {}
+    content.dungeons = content.dungeons or {}
+    local places = content.places
+    local function put(key, value) if places[key] == nil then places[key] = value end end
+    for id, entry in pairs(data.q) do
+        if content.quests[id] == nil then content.quests[id] = { name = entry[1], objective = entry[2] } end
+    end
+    for i, english in ipairs(SM_NPCS) do put(english, data.npc[i]) end
+    for i, english in ipairs(SM_ZONES) do put(english, data.zone[i]) end
+    if content.bosses["Arcanist Doan"] == nil then content.bosses["Arcanist Doan"] = data.npc[1] end
+    if content.bosses["Houndmaster Loksey"] == nil then content.bosses["Houndmaster Loksey"] = data.npc[2] end
+    if content.bosses["Trash Drops"] == nil then content.bosses["Trash Drops"] = data.t[14] end
+
+    local function QuestName(id, english)
+        local q = content.quests[id]
+        return (q and q.name) or english
+    end
+    local t = data.t
+    -- Lua 5.1 has no positional format arguments, so swap them by hand.
+    local where = t[1]
+    if where:find("%1$s", 1, true) then
+        where = where:gsub("%%1%$s", (data.npc[6]:gsub("%%", "%%%%"))):gsub("%%2%$s", (data.zone[1]:gsub("%%", "%%%%")))
+    else
+        where = string.format(where, data.npc[6], data.zone[1])
+    end
+    put("Dorn Plainstalker in Thousand Needles", where)
+    put("Near the entrance to Talondeep Path", t[2])
+    put("Start Going, Going, Guano! here", string.format(t[3], QuestName(1109, "Going, Going, Guano!")))
+    put("Required before Hearts of Zeal.", string.format(t[4], QuestName(1113, "Hearts of Zeal")))
+    put("New in Forever. The book is held by Arcanist Doan.", t[5])
+    put("Orc, Tauren and Troll only; Undead cannot take this quest.", t[6])
+    put("Scarlet Monastery trash (Chain of the Scarlet Crusade)", t[7])
+    put("Scarlet Monastery trash (very rare)", t[8])
+    put("Final boss, in Honor's Tomb.", t[9])
+    put("Final boss, in the Athenaeum. Doan's Strongbox behind him holds The Scarlet Key.", t[10])
+    put("In the Chamber of Atonement. Drops Vorrel's Wedding Ring for Vorrel's Revenge.", string.format(t[11], QuestName(1051, "Vorrel's Revenge")))
+    put("In the Huntsman's Cloister.", t[12])
+    put("Rare spawn.", t[13])
+    local library = content.dungeons["Scarlet Monastery: Library"]
+    if library and not library.description then library.description = t[15] end
+end
+
+-- Final Passage (1394): the Test of Lore chain ends here; official texts from
+-- the Wowhead Forever tooltips (Italian and the journal notes by hand).
+local FINAL_PASSAGE = {
+    deDE = { "Letzte Überfahrt", "Sprecht mit Dorn Plainstalker in Tausend Nadeln.", "Beantwortet Parqual Fintallas' Frage richtig und sprecht dann erneut mit ihm. Er wird immer noch in Undercity sein, wenn Ihr bereit seid.", "Dies ist eine lange Questreihe mit einem Schritt in der Bibliothek", "Das Buch befindet sich im Scharlachroten Kloster: Bibliothek.", "Parqual Fintallas in Undercity" },
+    frFR = { "Le dernier voyage", "Parler au traqueur des plaines Dorn aux Mille pointes.", "Réussir à répondre à la question de Parqual Fintallas, puis lui reparler. Il se trouve à Undercity.", "C'est une longue suite de quêtes dont une étape se déroule dans la Bibliothèque", "Le livre se trouve dans le Monastère écarlate : Bibliothèque.", "Parqual Fintallas à Undercity" },
+    esES = { "La recta final", "Habla con Dorn Acechaprados en Las Mil Agujas.", "Responde la pregunta de Parqual Fintallas con acierto y después habla con él de nuevo. Se quedará en Entrañas hasta que estés preparado.", "Es una cadena larga que tiene un paso en la Biblioteca", "El libro está en el Monasterio Escarlata: Biblioteca.", "Parqual Fintallas en Entrañas" },
+    itIT = { "Passaggio finale", "Parla con Dorn Plainstalker nelle Mille Guglie.", "Rispondi correttamente alla domanda di Parqual Fintallas e poi parlagli di nuovo.", "È una lunga catena che ha un passaggio nella Biblioteca", "Il libro si trova nel Monastero Scarlatto: Biblioteca.", "Parqual Fintallas a Undercity" },
+    ptBR = { "Passagem final", "Fale com Dorn Espreitaprados em Mil Agulhas.", "Responda à pergunta de Pasqual Fintallas corretamente, depois fale com ele novamente. Ele estará na Cidade Baixa.", "Esta é uma cadeia longa que tem uma etapa na Biblioteca", "O livro está no Monastério Escarlate: Biblioteca.", "Pasqual Fintallas na Cidade Baixa" },
+    ruRU = { "Финальное испытание", "Поговорите с Дорном Вольным Ловчим в Тысяче Игл.", "Дайте верный ответ на вопрос Парквела Финталласа и поговорите с ним еще раз. Парквелла можно в любое время найти в Подгороде.", "Это длинная цепочка, один из этапов которой проходит в Библиотеке", "Книга находится в монастыре Алого ордена: Библиотека.", "Парквел Финталлас в Подгороде" },
+    koKR = { "최후의 시험", "버섯구름 봉우리에 있는 도른 플레인스토커와 대화하십시오.", "파쿠알 핀탈라스의 질문에 대한 정답을 맞춘 다음 그에게 다시 말을 걸어야 합니다. 준비가 될 때까지 파쿠알 핀탈라스는 언더시티에 있을 것입니다.", "도서관에서 진행하는 단계가 있는 긴 연계 퀘스트입니다", "책은 붉은십자군 수도원: 도서관 안에 있습니다.", "언더시티의 파쿠알 핀탈라스" },
+    zhCN = { "通过试炼", "和千针石林的多恩·平原行者谈一谈。", "成功回答帕科瓦·芬塔拉斯的问题，然后再次和他对话。他会一直在幽暗城等你回答问题。", "这是一条很长的任务链，其中一步在图书馆内完成", "这本书在血色修道院：图书馆内。", "幽暗城的帕科瓦·芬塔拉斯" },
+    zhTW = { "最後的旅程", "和千針石林的多恩·平原行者談話。", "成功回答帕科瓦·芬塔拉斯的問題，然後再次和他對話。他會一直在幽暗城等你回答問題。", "這是一條很長的任務鏈，其中一步在圖書館內完成", "這本書在血色修道院：圖書館內。", "幽暗城的帕科瓦·芬塔拉斯" },
+}
+for lang, t in pairs(FINAL_PASSAGE) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        content.quests[1394] = { name = t[1], objective = t[2] }
+        local lore = content.quests[1160]
+        content.quests[6628] = { name = lore and lore.name, objective = t[3] }
+        content.places["This is a long chain that has a step in the Library"] = t[4]
+        content.places["The book is inside Scarlet Monastery: Library."] = t[5]
+        content.places["Parqual Fintallas in Undercity"] = t[6]
+    end
+end

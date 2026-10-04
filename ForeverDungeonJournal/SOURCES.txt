@@ -421,3 +421,17 @@ All uncommon (green) items removed from Trash Drops lists at the author's reques
 2026-10-03 Loot Filter
 Scarlet Crusade mail set restored to Scarlet Monastery: Graveyard trash drops as rare quality (author: the set is blue in Forever).
 Class usability uses Classic weapon and armor proficiencies (mail and plate from level 40); stat filters read the item tooltip.
+
+2026-10-04 Blackfathom Villainy (Horde, 6561)
+Pickup changed from Argent Guard Thaelrid (Classic) to Bashana Runetotem, Elder Rise, Thunder Bluff, on a CurseForge player report (romantic_hugle41). Wowhead Forever still shows the Classic start, so this rests on the player report only. Map position reused from Elder Knowledge.
+Later the same day: an older Wowhead comment says the quest has two starts (Thunder Bluff, or the corpse inside Blackfathom Deeps), so the pickup line now lists both; Show on Map points at Thunder Bluff.
+
+2026-10-04 An Unholy Alliance final step (6521)
+Wowhead Forever: choice of 17039 Skullbreaker, 17042 Nail Spitter, 17043 Zealot's Robe, 270054 Cultist's Chestguard; 20 silver; 3,500 XP. Turn in to Varimathras, Undercity.
+https://www.wowhead.com/forever/quest=6521/an-unholy-alliance
+
+2026-10-04 Scarlet Monastery quests available at level 30 or below (Wowhead Forever zone 796)
+Added 1050 Mythology of the Titans, 96800 Past Due (giver not listed), 1049 Compendium of the Fallen, 1160 Test of Lore with its earlier chain steps (names only). All are Library quests by Classic knowledge; listed under the Graveyard page at the author's request. 1048 and 1053 need level 33/34 and are left out.
+
+2026-10-04 Scarlet Monastery: Library
+Bosses, levels (Loksey 34, Doan 37), display IDs and loot from Wowhead Forever NPC pages 3974 and 6487; The Scarlet Key from Doan's Strongbox (object 103821). Level range 33-41 from foreverchanges.pro. Trash: zone blues and Scarlet Boots recorded on Library mobs. Wowhead has no map coordinates for either boss, so the map has no pins. The Library quests moved here from the Graveyard page.
