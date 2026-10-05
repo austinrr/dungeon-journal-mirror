@@ -1847,3 +1847,220 @@ for lang, t in pairs(FINAL_PASSAGE) do
         content.places["Parqual Fintallas in Undercity"] = t[6]
     end
 end
+
+-- Quest-chain/local warning translations added in 1.5.0.
+-- These are needed when the journal language is forced independently of the WoW client locale.
+local QUEST_CHAIN_150 = {
+    deDE = {
+        [95663] = { name = "Gerüchte über den Drachenmalclan", objective = "Reist ins Sumpfland und trefft den Todespirscher-Agenten in den Hügeln oberhalb des Drachenmal-Lagers.", pickup = "Zaruk, Hammerfall, Arathihochland", turnin = "Todespirscher-Agent, Hügel oberhalb des Drachenmal-Lagers, Sumpfland", description = "Erforderlich vor Das Maul öffnen." },
+        [2947] = { name = "Die Rückkehr des Rings", objective = "Bringt den glänzenden Goldring zu Talvash del Kissel in Eisenschmiede.", pickup = "Der Glitzermatic 5200, in Gnomeregan", turnin = "Talvash del Kissel, Mystikerviertel, Eisenschmiede", description = "Allianz-Schritt, erforderlich vor Gnomenverbesserung." },
+        [2948] = { name = "Gnomenverbesserung", objective = "Bringt Talvash del Kissel in Eisenschmiede den glänzenden Goldring, einen Silberbarren, einen Moosachat und 30 Silbermünzen." },
+        [2949] = { name = "Die Rückkehr des Rings", objective = "Bringt den glänzenden Goldring zu Nogg in Orgrimmar.", pickup = "Der Glitzermatic 5200, in Gnomeregan", turnin = "Nogg, Tal der Ehre, Orgrimmar", description = "Horde-Schritt, erforderlich vor Noggs Ringreparatur." },
+        [2950] = { name = "Noggs Ringreparatur", objective = "Bringt Nogg in Orgrimmar den glänzenden Goldring, einen Silberbarren, einen Moosachat und 30 Silbermünzen." },
+        warning = "Untote können diese Quest nicht annehmen",
+        mapStart = "Dragonmaw Rumors hier beginnen",
+    },
+    frFR = {
+        [95663] = { name = "Rumeurs des Gueules-de-dragon", objective = "Rendez-vous dans les Paluns et rencontrez l'agent des nécrotraqueurs dans les collines au-dessus du camp Gueule-de-dragon.", pickup = "Zaruk, Trépas-d'Orgrim, Hautes-terres d'Arathi", turnin = "Agent des nécrotraqueurs, collines au-dessus du camp Gueule-de-dragon, Les Paluns", description = "Requis avant Ouvrir la Gueule." },
+        [2947] = { name = "Le retour de l'anneau", objective = "Apportez l'anneau d'or brillant à Talvash del Kissel à Forgefer.", pickup = "Le Brille-o-Matic 5200, dans Gnomeregan", turnin = "Talvash del Kissel, Garde mystique, Forgefer", description = "Étape Alliance requise avant Amélioration gnome." },
+        [2948] = { name = "Amélioration gnome", objective = "Apportez l'anneau d'or brillant, une barre d'argent, une agate mousse et 30 pièces d'argent à Talvash del Kissel à Forgefer." },
+        [2949] = { name = "Le retour de l'anneau", objective = "Apportez l'anneau d'or brillant à Nogg à Orgrimmar.", pickup = "Le Brille-o-Matic 5200, dans Gnomeregan", turnin = "Nogg, Vallée de l'Honneur, Orgrimmar", description = "Étape Horde requise avant La bague de Nogg." },
+        [2950] = { name = "La bague de Nogg", objective = "Apportez l'anneau d'or brillant, une barre d'argent, une agate mousse et 30 pièces d'argent à Nogg à Orgrimmar." },
+        warning = "Les morts-vivants ne peuvent pas accepter cette quête",
+        mapStart = "Commencer Dragonmaw Rumors ici",
+    },
+    esES = {
+        [95663] = { name = "Rumores Faucedraco", objective = "Viaja a Los Humedales y reúnete con el agente Mortacechador en las colinas sobre el campamento Faucedraco.", pickup = "Zaruk, Sentencia, Tierras Altas de Arathi", turnin = "Agente Mortacechador, colinas sobre el campamento Faucedraco, Los Humedales", description = "Necesaria antes de Abrir las Fauces." },
+        [2947] = { name = "El regreso del anillo", objective = "Lleva el anillo de oro brillante a Talvash del Kissel en Forjaz.", pickup = "El Destellamatic 5200, dentro de Gnomeregan", turnin = "Talvash del Kissel, La Sala Mística, Forjaz", description = "Paso de la Alianza necesario antes de Mejora gnómica." },
+        [2948] = { name = "Mejora gnómica", objective = "Lleva el anillo de oro brillante, una barra de plata, un ágata musgosa y 30 monedas de plata a Talvash del Kissel en Forjaz." },
+        [2949] = { name = "El regreso del anillo", objective = "Lleva el anillo de oro brillante a Nogg en Orgrimmar.", pickup = "El Destellamatic 5200, dentro de Gnomeregan", turnin = "Nogg, Valle del Honor, Orgrimmar", description = "Paso de la Horda necesario antes de Rehacer el anillo de Nogg." },
+        [2950] = { name = "Rehacer el anillo de Nogg", objective = "Lleva el anillo de oro brillante, una barra de plata, un ágata musgosa y 30 monedas de plata a Nogg en Orgrimmar." },
+        warning = "Los no-muertos no pueden aceptar esta misión",
+        mapStart = "Empieza Dragonmaw Rumors aquí",
+    },
+    itIT = {
+        [95663] = { name = "Voci sui Fauci di Drago", objective = "Raggiungi le Paludi Grigie e incontra l'Agente degli Inseguitori Oscuri sulle colline sopra l'accampamento dei Fauci di Drago.", pickup = "Zaruk, Hammerfall, Altopiani d'Arathi", turnin = "Agente degli Inseguitori Oscuri, colline sopra l'accampamento dei Fauci di Drago, Paludi Grigie", description = "Richiesta prima di Aprire le Fauci." },
+        [2947] = { name = "Il ritorno dell'anello", objective = "Porta l'Anello d'Oro Brillante a Talvash del Kissel a Forgiardente.", pickup = "Lo Sparklematic 5200, dentro Gnomeregan", turnin = "Talvash del Kissel, Distretto Mistico, Forgiardente", description = "Passaggio dell'Alleanza richiesto prima di Miglioramento gnomesco." },
+        [2948] = { name = "Miglioramento gnomesco", objective = "Porta l'Anello d'Oro Brillante, una Lingotto d'Argento, un'Agata Muschiata e 30 monete d'argento a Talvash del Kissel a Forgiardente." },
+        [2949] = { name = "Il ritorno dell'anello", objective = "Porta l'Anello d'Oro Brillante a Nogg a Orgrimmar.", pickup = "Lo Sparklematic 5200, dentro Gnomeregan", turnin = "Nogg, Valle dell'Onore, Orgrimmar", description = "Passaggio dell'Orda richiesto prima di Rifare l'anello di Nogg." },
+        [2950] = { name = "Rifare l'anello di Nogg", objective = "Porta l'Anello d'Oro Brillante, una Lingotto d'Argento, un'Agata Muschiata e 30 monete d'argento a Nogg a Orgrimmar." },
+        warning = "I Non Morti non possono accettare questa missione",
+        mapStart = "Inizia Dragonmaw Rumors qui",
+    },
+    ptBR = {
+        [95663] = { name = "Rumores dos Presas do Dragão", objective = "Viaje até os Pantanais e encontre o Agente dos Sicários da Morte nas colinas acima do acampamento Presa do Dragão.", pickup = "Zaruk, Ruína do Martelo, Terras Altas de Arathi", turnin = "Agente dos Sicários da Morte, colinas acima do acampamento Presa do Dragão, Pantanais", description = "Necessária antes de Abrir as Fauces." },
+        [2947] = { name = "O retorno do anel", objective = "Leve o Anel de Ouro Brilhante até Talvash del Kissel em Altaforja.", pickup = "O Brastematic 5200, dentro de Gnomeregan", turnin = "Talvash del Kissel, Distrito Místico, Altaforja", description = "Etapa da Aliança necessária antes de Aprimoramento gnômico." },
+        [2948] = { name = "Aprimoramento gnômico", objective = "Leve o Anel de Ouro Brilhante, uma Barra de Prata, uma Ágata Musgosa e 30 moedas de prata até Talvash del Kissel em Altaforja." },
+        [2949] = { name = "O retorno do anel", objective = "Leve o Anel de Ouro Brilhante até Nogg em Orgrimmar.", pickup = "O Brastematic 5200, dentro de Gnomeregan", turnin = "Nogg, Vale da Honra, Orgrimmar", description = "Etapa da Horda necessária antes de Refazer o anel de Nogg." },
+        [2950] = { name = "Refazer o anel de Nogg", objective = "Leve o Anel de Ouro Brilhante, uma Barra de Prata, uma Ágata Musgosa e 30 moedas de prata até Nogg em Orgrimmar." },
+        warning = "Mortos-vivos não podem aceitar esta missão",
+        mapStart = "Comece Dragonmaw Rumors aqui",
+    },
+    ruRU = {
+        [95663] = { name = "Слухи о клане Драконьей Пасти", objective = "Отправляйтесь в Болотину и встретьтесь с агентом Стражей Смерти на холмах над лагерем Драконьей Пасти.", pickup = "Зарук, Павший Молот, Нагорье Арати", turnin = "Агент Стражей Смерти, холмы над лагерем Драконьей Пасти, Болотина", description = "Требуется перед заданием «Раскрыть Пасть»." },
+        [2947] = { name = "Возвращение кольца", objective = "Отнесите сверкающее золотое кольцо Талвашу дель Кисселю в Стальгорн.", pickup = "Искристый очиститель 5200, в Гномрегане", turnin = "Талваш дель Киссель, Палаты Магии, Стальгорн", description = "Шаг Альянса, необходимый перед заданием «Улучшение гномов»." },
+        [2948] = { name = "Улучшение гномов", objective = "Принесите Талвашу дель Кисселю в Стальгорн сверкающее золотое кольцо, серебряный слиток, моховой агат и 30 серебряных монет." },
+        [2949] = { name = "Возвращение кольца", objective = "Отнесите сверкающее золотое кольцо Ноггу в Оргриммар.", pickup = "Искристый очиститель 5200, в Гномрегане", turnin = "Ногг, Аллея Чести, Оргриммар", description = "Шаг Орды, необходимый перед заданием «Новое кольцо Ногга»." },
+        [2950] = { name = "Новое кольцо Ногга", objective = "Принесите Ноггу в Оргриммар сверкающее золотое кольцо, серебряный слиток, моховой агат и 30 серебряных монет." },
+        warning = "Нежить не может взять это задание",
+        mapStart = "Начать Dragonmaw Rumors здесь",
+    },
+    koKR = {
+        [95663] = { name = "용아귀 소문", objective = "저습지로 가서 용아귀 야영지 위쪽 언덕에 있는 죽음의 추적자 요원을 만나십시오.", pickup = "자루크, 해머폴, 아라시 고원", turnin = "죽음의 추적자 요원, 용아귀 야영지 위쪽 언덕, 저습지", description = "아가리 열기 전에 필요한 퀘스트입니다." },
+        [2947] = { name = "반지의 귀환", objective = "빛나는 금반지를 아이언포지의 탈바쉬 델 키젤에게 가져가십시오.", pickup = "반짝이는 5200, 놈리건 내부", turnin = "탈바쉬 델 키젤, 신비의 전당, 아이언포지", description = "놈 개선 전에 필요한 얼라이언스 단계입니다." },
+        [2948] = { name = "놈 개선", objective = "빛나는 금반지, 은괴, 이끼 마노, 은화 30개를 아이언포지의 탈바쉬 델 키젤에게 가져가십시오." },
+        [2949] = { name = "반지의 귀환", objective = "빛나는 금반지를 오그리마의 노그에게 가져가십시오.", pickup = "반짝이는 5200, 놈리건 내부", turnin = "노그, 명예의 골짜기, 오그리마", description = "노그의 반지 다시 만들기 전에 필요한 호드 단계입니다." },
+        [2950] = { name = "노그의 반지 다시 만들기", objective = "빛나는 금반지, 은괴, 이끼 마노, 은화 30개를 오그리마의 노그에게 가져가십시오." },
+        warning = "언데드는 이 퀘스트를 받을 수 없습니다",
+        mapStart = "여기서 Dragonmaw Rumors 시작",
+    },
+    zhCN = {
+        [95663] = { name = "龙喉传闻", objective = "前往湿地，在龙喉营地上方的山丘与亡灵哨兵探员会面。", pickup = "扎鲁克，落锤镇，阿拉希高地", turnin = "亡灵哨兵探员，龙喉营地上方的山丘，湿地", description = "完成此任务后才能接取“打开巨口”。" },
+        [2947] = { name = "戒指归来", objective = "把闪亮的金戒指带给铁炉堡的塔瓦斯德·基瑟尔。", pickup = "超级清洁器5200型，诺莫瑞根内", turnin = "塔瓦斯德·基瑟尔，秘法区，铁炉堡", description = "联盟步骤，完成后才能接取“侏儒的改进”。" },
+        [2948] = { name = "侏儒的改进", objective = "把闪亮的金戒指、一块银锭、一颗绿玛瑙和30枚银币带给铁炉堡的塔瓦斯德·基瑟尔。" },
+        [2949] = { name = "戒指归来", objective = "把闪亮的金戒指带给奥格瑞玛的诺格。", pickup = "超级清洁器5200型，诺莫瑞根内", turnin = "诺格，荣誉谷，奥格瑞玛", description = "部落步骤，完成后才能接取“诺格的戒指重制”。" },
+        [2950] = { name = "诺格的戒指重制", objective = "把闪亮的金戒指、一块银锭、一颗绿玛瑙和30枚银币带给奥格瑞玛的诺格。" },
+        warning = "亡灵无法接取此任务",
+        mapStart = "在这里开始 Dragonmaw Rumors",
+    },
+    zhTW = {
+        [95663] = { name = "龍喉傳聞", objective = "前往濕地，在龍喉營地上方的山丘與亡靈哨兵探員會面。", pickup = "札魯克，落錘鎮，阿拉希高地", turnin = "亡靈哨兵探員，龍喉營地上方的山丘，濕地", description = "完成此任務後才能接取「開啟巨口」。" },
+        [2947] = { name = "戒指歸來", objective = "把閃亮的金戒指帶給鐵爐堡的塔瓦斯德·基瑟爾。", pickup = "超級清潔器5200型，諾姆瑞根內", turnin = "塔瓦斯德·基瑟爾，秘法區，鐵爐堡", description = "聯盟步驟，完成後才能接取「地精改良」。" },
+        [2948] = { name = "地精改良", objective = "把閃亮的金戒指、一塊銀錠、一顆綠瑪瑙和30枚銀幣帶給鐵爐堡的塔瓦斯德·基瑟爾。" },
+        [2949] = { name = "戒指歸來", objective = "把閃亮的金戒指帶給奧格瑪的諾格。", pickup = "超級清潔器5200型，諾姆瑞根內", turnin = "諾格，榮譽谷，奧格瑪", description = "部落步驟，完成後才能接取「諾格的戒指重製」。" },
+        [2950] = { name = "諾格的戒指重製", objective = "把閃亮的金戒指、一塊銀錠、一顆綠瑪瑙和30枚銀幣帶給奧格瑪的諾格。" },
+        warning = "不死族無法接取此任務",
+        mapStart = "在這裡開始 Dragonmaw Rumors",
+    },
+}
+
+for lang, data in pairs(QUEST_CHAIN_150) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        for id, entry in pairs(data) do
+            if type(id) == "number" then
+                local target = content.quests[id] or {}
+                content.quests[id] = target
+                for field, value in pairs(entry) do target[field] = value end
+            end
+        end
+        content.places["Undead cannot take this quest"] = data.warning
+        content.places["Start Dragonmaw Rumors here"] = data.mapStart
+    end
+end
+
+
+-- Horrors in the Highland prerequisite chain localization (1.5.0).
+local HIGHLAND_CHAIN_150 = {
+    deDE = {
+        [463] = { name = "Der grüne Wächter", objective = "Findet Rethiel den Grünen Wächter im Sumpfland.", pickup = "Erster Maat Fitzsimmons, Hafen von Menethil, Sumpfland", turnin = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", description = "Erster erforderlicher Schritt vor Schrecken im Hochland." },
+        [276] = { name = "Stampfende Pfoten", objective = "Tötet 15 Mooshide-Gnolle und 10 Mooshide-Mischlinge und kehrt dann zu Rethiel dem Grünen Wächter zurück.", pickup = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", turnin = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", description = "Zweiter erforderlicher Schritt vor Schrecken im Hochland." },
+        [277] = { name = "Feuertabu", objective = "Bringt Rethiel dem Grünen Wächter 9 grobe Feuersteine.", pickup = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", turnin = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", description = "Dritter erforderlicher Schritt vor Schrecken im Hochland." },
+        [275] = { name = "Blasen im Land", objective = "Tötet 12 Sumpfkriecher und kehrt dann zu Rethiel dem Grünen Wächter zurück.", pickup = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", turnin = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", description = "Letzter erforderlicher Schritt vor Schrecken im Hochland." },
+        map = { "Hier beginnt Der grüne Wächter", "Hier mit Stampfende Pfoten fortfahren", "Hier mit Feuertabu fortfahren", "Hier mit Blasen im Land fortfahren" },
+    },
+    frFR = {
+        [463] = { name = "Le Gardien vert", objective = "Trouvez Rethiel le Gardien vert dans les Paluns.", pickup = "Second Fitzsimmons, Port de Menethil, Les Paluns", turnin = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", description = "Première étape requise avant Horreurs des hautes terres." },
+        [276] = { name = "Pattes écrasantes", objective = "Tuez 15 gnolls Mosshide et 10 bâtards Mosshide, puis retournez voir Rethiel le Gardien vert.", pickup = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", turnin = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", description = "Deuxième étape requise avant Horreurs des hautes terres." },
+        [277] = { name = "Tabou du feu", objective = "Apportez 9 silex grossiers à Rethiel le Gardien vert.", pickup = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", turnin = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", description = "Troisième étape requise avant Horreurs des hautes terres." },
+        [275] = { name = "Des pustules sur la terre", objective = "Tuez 12 rampants des marais, puis retournez voir Rethiel le Gardien vert.", pickup = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", turnin = "Rethiel le Gardien vert, La Ceinture verte, Les Paluns", description = "Dernière étape requise avant Horreurs des hautes terres." },
+        map = { "Commencer Le Gardien vert ici", "Continuer avec Pattes écrasantes ici", "Continuer avec Tabou du feu ici", "Continuer avec Des pustules sur la terre ici" },
+    },
+    esES = {
+        [463] = { name = "El Guardaverde", objective = "Encuentra a Rethiel el Guardaverde en Los Humedales.", pickup = "Primer oficial Fitzsimmons, Puerto de Menethil, Los Humedales", turnin = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", description = "Primer paso necesario antes de Horrores de las Tierras Altas." },
+        [276] = { name = "Patas pisoteadoras", objective = "Mata a 15 gnolls Pellejomusgo y 10 mestizos Pellejomusgo y vuelve con Rethiel el Guardaverde.", pickup = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", turnin = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", description = "Segundo paso necesario antes de Horrores de las Tierras Altas." },
+        [277] = { name = "Tabú del fuego", objective = "Lleva 9 pedernales rudimentarios a Rethiel el Guardaverde.", pickup = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", turnin = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", description = "Tercer paso necesario antes de Horrores de las Tierras Altas." },
+        [275] = { name = "Ampollas en la tierra", objective = "Mata a 12 reptadores del pantano y vuelve con Rethiel el Guardaverde.", pickup = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", turnin = "Rethiel el Guardaverde, El Cinturón Verde, Los Humedales", description = "Último paso necesario antes de Horrores de las Tierras Altas." },
+        map = { "Empieza El Guardaverde aquí", "Continúa con Patas pisoteadoras aquí", "Continúa con Tabú del fuego aquí", "Continúa con Ampollas en la tierra aquí" },
+    },
+    itIT = {
+        [463] = { name = "Il Guardiano Verde", objective = "Trova Rethiel il Guardiano Verde nelle Paludi Grigie.", pickup = "Primo Ufficiale Fitzsimmons, Porto di Menethil, Paludi Grigie", turnin = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", description = "Primo passaggio richiesto prima di Orrori degli Altipiani." },
+        [276] = { name = "Zampe calpestanti", objective = "Uccidi 15 Gnoll Muschiopelle e 10 Meticci Muschiopelle, poi torna da Rethiel il Guardiano Verde.", pickup = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", turnin = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", description = "Secondo passaggio richiesto prima di Orrori degli Altipiani." },
+        [277] = { name = "Tabù del fuoco", objective = "Porta 9 selci grezze a Rethiel il Guardiano Verde.", pickup = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", turnin = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", description = "Terzo passaggio richiesto prima di Orrori degli Altipiani." },
+        [275] = { name = "Piaghe sulla terra", objective = "Uccidi 12 Striscianti della Palude, poi torna da Rethiel il Guardiano Verde.", pickup = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", turnin = "Rethiel il Guardiano Verde, Cintura Verde, Paludi Grigie", description = "Ultimo passaggio richiesto prima di Orrori degli Altipiani." },
+        map = { "Inizia Il Guardiano Verde qui", "Continua con Zampe calpestanti qui", "Continua con Tabù del fuoco qui", "Continua con Piaghe sulla terra qui" },
+    },
+    ptBR = {
+        [463] = { name = "O Guardião Verde", objective = "Encontre Rethiel, o Guardião Verde, nos Pantanais.", pickup = "Imediato Fitzsimmons, Porto de Menethil, Pantanais", turnin = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", description = "Primeira etapa necessária antes de Horrores das Terras Altas." },
+        [276] = { name = "Patas pisoteantes", objective = "Mate 15 gnolls Couro de Musgo e 10 vira-latas Couro de Musgo e volte a Rethiel, o Guardião Verde.", pickup = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", turnin = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", description = "Segunda etapa necessária antes de Horrores das Terras Altas." },
+        [277] = { name = "Tabu do fogo", objective = "Leve 9 pederneiras brutas a Rethiel, o Guardião Verde.", pickup = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", turnin = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", description = "Terceira etapa necessária antes de Horrores das Terras Altas." },
+        [275] = { name = "Bolhas na terra", objective = "Mate 12 rastejantes do pântano e volte a Rethiel, o Guardião Verde.", pickup = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", turnin = "Rethiel, o Guardião Verde, Cinturão Verde, Pantanais", description = "Etapa final necessária antes de Horrores das Terras Altas." },
+        map = { "Comece O Guardião Verde aqui", "Continue com Patas pisoteantes aqui", "Continue com Tabu do fogo aqui", "Continue com Bolhas na terra aqui" },
+    },
+    ruRU = {
+        [463] = { name = "Страж Природы", objective = "Найдите Ретиля Стража Природы в Болотине.", pickup = "Первый помощник Фитцсиммонс, гавань Менетилов, Болотина", turnin = "Ретиль Страж Природы, Зеленый Пояс, Болотина", description = "Первый обязательный этап перед заданием «Ужасы нагорья»." },
+        [276] = { name = "Топотунья", objective = "Убейте 15 гноллов Мохошкуров и 10 дворняг Мохошкуров, затем вернитесь к Ретилю Стражу Природы.", pickup = "Ретиль Страж Природы, Зеленый Пояс, Болотина", turnin = "Ретиль Страж Природы, Зеленый Пояс, Болотина", description = "Второй обязательный этап перед заданием «Ужасы нагорья»." },
+        [277] = { name = "Табу огня", objective = "Принесите Ретилю Стражу Природы 9 грубых кремней.", pickup = "Ретиль Страж Природы, Зеленый Пояс, Болотина", turnin = "Ретиль Страж Природы, Зеленый Пояс, Болотина", description = "Третий обязательный этап перед заданием «Ужасы нагорья»." },
+        [275] = { name = "Нарывы на земле", objective = "Убейте 12 болотных ползунов, затем вернитесь к Ретилю Стражу Природы.", pickup = "Ретиль Страж Природы, Зеленый Пояс, Болотина", turnin = "Ретиль Страж Природы, Зеленый Пояс, Болотина", description = "Последний обязательный этап перед заданием «Ужасы нагорья»." },
+        map = { "Начать «Страж Природы» здесь", "Продолжить «Топотунья» здесь", "Продолжить «Табу огня» здесь", "Продолжить «Нарывы на земле» здесь" },
+    },
+    koKR = {
+        [463] = { name = "녹색감시자", objective = "저습지에서 녹색감시자 레시엘을 찾으십시오.", pickup = "일등항해사 피츠시몬스, 메네실 항구, 저습지", turnin = "녹색감시자 레시엘, 녹색 지대, 저습지", description = "고지대의 공포 전에 필요한 첫 번째 단계입니다." },
+        [276] = { name = "짓밟는 발", objective = "이끼가죽 놀 15마리와 이끼가죽 싸움꾼 10마리를 처치한 뒤 녹색감시자 레시엘에게 돌아가십시오.", pickup = "녹색감시자 레시엘, 녹색 지대, 저습지", turnin = "녹색감시자 레시엘, 녹색 지대, 저습지", description = "고지대의 공포 전에 필요한 두 번째 단계입니다." },
+        [277] = { name = "불의 금기", objective = "녹색감시자 레시엘에게 조잡한 부싯돌 9개를 가져가십시오.", pickup = "녹색감시자 레시엘, 녹색 지대, 저습지", turnin = "녹색감시자 레시엘, 녹색 지대, 저습지", description = "고지대의 공포 전에 필요한 세 번째 단계입니다." },
+        [275] = { name = "대지의 물집", objective = "늪지대 덩굴손 12마리를 처치한 뒤 녹색감시자 레시엘에게 돌아가십시오.", pickup = "녹색감시자 레시엘, 녹색 지대, 저습지", turnin = "녹색감시자 레시엘, 녹색 지대, 저습지", description = "고지대의 공포 전에 필요한 마지막 단계입니다." },
+        map = { "여기서 녹색감시자 시작", "여기서 짓밟는 발 계속", "여기서 불의 금기 계속", "여기서 대지의 물집 계속" },
+    },
+    zhCN = {
+        [463] = { name = "绿色守卫者", objective = "在湿地找到绿色守卫者雷希耶尔。", pickup = "大副菲兹莫斯，米奈希尔港，湿地", turnin = "绿色守卫者雷希耶尔，绿色地带，湿地", description = "“高地惊魂”之前的第一个必需步骤。" },
+        [276] = { name = "践踏之爪", objective = "消灭15个藓皮豺狼人和10个藓皮混血者，然后返回绿色守卫者雷希耶尔处。", pickup = "绿色守卫者雷希耶尔，绿色地带，湿地", turnin = "绿色守卫者雷希耶尔，绿色地带，湿地", description = "“高地惊魂”之前的第二个必需步骤。" },
+        [277] = { name = "火焰禁忌", objective = "给绿色守卫者雷希耶尔带去9块粗糙燧石。", pickup = "绿色守卫者雷希耶尔，绿色地带，湿地", turnin = "绿色守卫者雷希耶尔，绿色地带，湿地", description = "“高地惊魂”之前的第三个必需步骤。" },
+        [275] = { name = "大地上的脓疱", objective = "消灭12只沼泽爬行者，然后返回绿色守卫者雷希耶尔处。", pickup = "绿色守卫者雷希耶尔，绿色地带，湿地", turnin = "绿色守卫者雷希耶尔，绿色地带，湿地", description = "“高地惊魂”之前的最后一个必需步骤。" },
+        map = { "在这里开始绿色守卫者", "在这里继续践踏之爪", "在这里继续火焰禁忌", "在这里继续大地上的脓疱" },
+    },
+    zhTW = {
+        [463] = { name = "綠色守衛者", objective = "在濕地找到綠色守衛者雷希耶爾。", pickup = "大副菲茲莫斯，米奈希爾港，濕地", turnin = "綠色守衛者雷希耶爾，綠色地帶，濕地", description = "「高地驚魂」之前的第一個必要步驟。" },
+        [276] = { name = "踐踏之爪", objective = "消滅15個苔蘚皮豺狼人和10個苔蘚皮混血者，然後返回綠色守衛者雷希耶爾處。", pickup = "綠色守衛者雷希耶爾，綠色地帶，濕地", turnin = "綠色守衛者雷希耶爾，綠色地帶，濕地", description = "「高地驚魂」之前的第二個必要步驟。" },
+        [277] = { name = "火焰禁忌", objective = "給綠色守衛者雷希耶爾帶去9塊粗糙燧石。", pickup = "綠色守衛者雷希耶爾，綠色地帶，濕地", turnin = "綠色守衛者雷希耶爾，綠色地帶，濕地", description = "「高地驚魂」之前的第三個必要步驟。" },
+        [275] = { name = "大地上的膿疱", objective = "消滅12隻沼澤爬行者，然後返回綠色守衛者雷希耶爾處。", pickup = "綠色守衛者雷希耶爾，綠色地帶，濕地", turnin = "綠色守衛者雷希耶爾，綠色地帶，濕地", description = "「高地驚魂」之前的最後一個必要步驟。" },
+        map = { "在這裡開始綠色守衛者", "在這裡繼續踐踏之爪", "在這裡繼續火焰禁忌", "在這裡繼續大地上的膿疱" },
+    },
+}
+
+for lang, data in pairs(HIGHLAND_CHAIN_150) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        for _, id in ipairs({463, 276, 277, 275}) do
+            local target = content.quests[id] or {}
+            content.quests[id] = target
+            for field, value in pairs(data[id]) do target[field] = value end
+        end
+        content.places["Start The Greenwarden here"] = data.map[1]
+        content.places["Continue with Tramping Paws here"] = data.map[2]
+        content.places["Continue with Fire Taboo here"] = data.map[3]
+        content.places["Continue with Blisters on The Land here"] = data.map[4]
+    end
+end
+
+-- Highland Hides prerequisite added for 1.5.0: Young Crocolisk Skins.
+local HIGHLAND_HIDES_PREREQ_150 = {
+    deDE = { name = "Junge Krokiliskenhäute", objective = "Besorgt 4 Häute junger Krokilisken für James Halloran im Hafen von Menethil.", pickup = "James Halloran, Hafen von Menethil, Sumpfland", turnin = "James Halloran, Hafen von Menethil, Sumpfland", description = "Erforderlich vor Hochlandhäute. Daily Delivery ist in Forever nicht erforderlich.", map = "Hier beginnt Junge Krokiliskenhäute" },
+    frFR = { name = "Peaux de jeunes crocilisques", objective = "Obtenez 4 peaux de jeunes crocilisques pour James Halloran au port de Menethil.", pickup = "James Halloran, port de Menethil, Les Paluns", turnin = "James Halloran, port de Menethil, Les Paluns", description = "Requis avant Peaux des hautes terres. Daily Delivery n'est pas requis dans Forever.", map = "Commencer Peaux de jeunes crocilisques ici" },
+    esES = { name = "Pieles de crocolisco joven", objective = "Consigue 4 pieles de crocolisco joven para James Halloran en el Puerto de Menethil.", pickup = "James Halloran, Puerto de Menethil, Los Humedales", turnin = "James Halloran, Puerto de Menethil, Los Humedales", description = "Necesaria antes de Pieles de las Tierras Altas. Daily Delivery no es necesaria en Forever.", map = "Empieza Pieles de crocolisco joven aquí" },
+    itIT = { name = "Pelli di giovane crocolisco", objective = "Ottieni 4 Pelli di giovane crocolisco per James Halloran a Porto di Menethil.", pickup = "James Halloran, Porto di Menethil, Paludi Grigie", turnin = "James Halloran, Porto di Menethil, Paludi Grigie", description = "Richiesta prima di Pelli degli Altipiani. Daily Delivery non è richiesta in Forever.", map = "Inizia Pelli di giovane crocolisco qui" },
+    ptBR = { name = "Peles de crocolisco jovem", objective = "Obtenha 4 Peles de Crocolisco Jovem para James Halloran no Porto de Menethil.", pickup = "James Halloran, Porto de Menethil, Pantanais", turnin = "James Halloran, Porto de Menethil, Pantanais", description = "Necessária antes de Couros das Terras Altas. Daily Delivery não é necessária em Forever.", map = "Comece Peles de crocolisco jovem aqui" },
+    ruRU = { name = "Шкуры молодых кроколисков", objective = "Добудьте 4 шкуры молодых кроколисков для Джеймса Халлорана в гавани Менетилов.", pickup = "Джеймс Халлоран, гавань Менетилов, Болотина", turnin = "Джеймс Халлоран, гавань Менетилов, Болотина", description = "Требуется перед заданием «Шкуры нагорья». Daily Delivery в Forever не требуется.", map = "Начать «Шкуры молодых кроколисков» здесь" },
+    koKR = { name = "새끼 악어 가죽", objective = "메네실 항구의 제임스 할로란에게 새끼 악어 가죽 4개를 가져가십시오.", pickup = "제임스 할로란, 메네실 항구, 저습지", turnin = "제임스 할로란, 메네실 항구, 저습지", description = "고지대 가죽 전에 필요합니다. Forever에서는 Daily Delivery가 필요하지 않습니다.", map = "여기서 새끼 악어 가죽 시작" },
+    zhCN = { name = "幼年鳄鱼的皮", objective = "为米奈希尔港的詹姆斯·哈洛兰取得4张幼年鳄鱼的皮。", pickup = "詹姆斯·哈洛兰，米奈希尔港，湿地", turnin = "詹姆斯·哈洛兰，米奈希尔港，湿地", description = "“高地兽皮”的前置任务。Forever中不需要完成Daily Delivery。", map = "在这里开始幼年鳄鱼的皮" },
+    zhTW = { name = "幼年鱷魚的皮", objective = "為米奈希爾港的詹姆斯·哈洛蘭取得4張幼年鱷魚的皮。", pickup = "詹姆斯·哈洛蘭，米奈希爾港，濕地", turnin = "詹姆斯·哈洛蘭，米奈希爾港，濕地", description = "「高地獸皮」的前置任務。Forever中不需要完成Daily Delivery。", map = "在這裡開始幼年鱷魚的皮" },
+}
+
+for lang, data in pairs(HIGHLAND_HIDES_PREREQ_150) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        local target = content.quests[484] or {}
+        content.quests[484] = target
+        target.name = data.name
+        target.objective = data.objective
+        target.pickup = data.pickup
+        target.turnin = data.turnin
+        target.description = data.description
+        content.places["Start Young Crocolisk Skins here"] = data.map
+    end
+end

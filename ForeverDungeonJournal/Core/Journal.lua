@@ -327,26 +327,24 @@ FDJ.DUNGEON_MAPS = {
             { name = "Lady Anacondra",        x = 0.310, y = 0.430 },
             { name = "Kresh",                 x = 0.385, y = 0.350 },
             { name = "Lord Cobrahn",          x = 0.155, y = 0.570 },
-            { name = "Lord Pythas",           x = 0.621, y = 0.536 },
+            { name = "Lord Pythas",           x = 0.600, y = 0.617 },
             { name = "Skum",                  x = 0.622, y = 0.734 },
             { name = "Deviate Faerie Dragon", x = 0.580, y = 0.600 },
-            { name = "Lord Serpentis",        x = 0.600, y = 0.660 },
+            { name = "Lord Serpentis",        x = 0.615, y = 0.535 },
             { name = "Verdan the Everliving", x = 0.545, y = 0.460 },
             { name = "Mutanus the Devourer",  x = 0.345, y = 0.130 },
         },
     },
     ["Shadowfang Keep"] = {
-        -- The Forever client maps this dungeon on four levels: The Courtyard,
-        -- Dining Hall, The Wall Walk and Arugal's Chamber (map tiles 1, 2, 7, 6).
+        -- Three levels are shown: The Courtyard, The Wall Walk and Arugal's Chamber
+        -- (map tiles 1, 7, 6). The Dining Hall page was removed at the author's request.
         -- Ladder positions are approximate.
         transitions = {
-            { floor = 1, to = 2, x = 0.375, y = 0.285, dir = "up" }, -- ramp from the courtyard to the kitchen door
-            { floor = 2, to = 3, x = 0.600, y = 0.110, dir = "up" }, -- out onto the battlements
-            { floor = 3, to = 4, x = 0.515, y = 0.915, dir = "up" }, -- from the terrace into the tower
+            { floor = 1, to = 2, x = 0.145, y = 0.864, dir = "up" }, -- stairs behind Baron Silverlaine, up to the wall walk
+            { floor = 2, to = 3, x = 0.515, y = 0.915, dir = "up" }, -- from the terrace into the tower
         },
         floors = {
             { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s1", x0 = 0.2525, y0 = 0.5554, x1 = 0.2864, y1 = 0.6063 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s2", x0 = 0.6497, y0 = 0.6961, x1 = 0.6836, y1 = 0.7470 } } },
-            { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep2_s1", x0 = 0.2884, y0 = 0.7425, x1 = 0.3224, y1 = 0.7934 } } },
             { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep7_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep7_s1", x0 = 0.5659, y0 = 0.8024, x1 = 0.5998, y1 = 0.8533 } } },
             { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep6_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s1", x0 = 0.6677, y0 = 0.3084, x1 = 0.7016, y1 = 0.3593 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s2", x0 = 0.5289, y0 = 0.6018, x1 = 0.5629, y1 = 0.6527 } } },
         },
@@ -356,15 +354,14 @@ FDJ.DUNGEON_MAPS = {
         bosses = {
             { name = "Rethilgore",                 floor = 1, x = 0.670, y = 0.715 },
             { name = "Fel Steed / Shadow Charger", floor = 1, x = 0.345, y = 0.635 },
-            { name = "Commander Springvale",       floor = 1, x = 0.270, y = 0.581 },
-            { name = "Razorclaw the Butcher",      floor = 2, x = 0.480, y = 0.290 },
-            { name = "Baron Silverlaine",          floor = 2, x = 0.305, y = 0.768 },
-            { name = "Deathsworn Captain",         floor = 3, x = 0.630, y = 0.525 },
-            { name = "Odo the Blindwatcher",       floor = 3, x = 0.583, y = 0.828 },
-            { name = "Fenrus the Devourer",        floor = 4, x = 0.546, y = 0.627 },
-            { name = "Arugal's Voidwalker",        floor = 4, x = 0.492, y = 0.710 },
-            { name = "Wolf Master Nandos",         floor = 4, x = 0.590, y = 0.533 },
-            { name = "Archmage Arugal",            floor = 4, x = 0.685, y = 0.334 },
+            { name = "Razorclaw the Butcher",      floor = 1, x = 0.327, y = 0.447 },
+            { name = "Baron Silverlaine",          floor = 1, x = 0.162, y = 0.807 },
+            { name = "Deathsworn Captain",         floor = 2, x = 0.630, y = 0.525 },
+            { name = "Odo the Blindwatcher",       floor = 2, x = 0.583, y = 0.828 },
+            { name = "Fenrus the Devourer",        floor = 3, x = 0.546, y = 0.627 },
+            { name = "Arugal's Voidwalker",        floor = 3, x = 0.492, y = 0.710 },
+            { name = "Wolf Master Nandos",         floor = 3, x = 0.590, y = 0.533 },
+            { name = "Archmage Arugal",            floor = 3, x = 0.685, y = 0.334 },
         },
     },
     ["The Stockade"] = {
@@ -582,6 +579,39 @@ FDJ.StartsInsideDungeon = function(pickupText)
     return text:find("inside ", 1, true) ~= nil
 end
 
+-- Quest list rows: a small dungeon icon after "Available from Level X" for
+-- quests that are picked up inside the dungeon (same icon as the quest page).
+FDJ.SetRowDungeonIcon = function(button, show, offsetX)
+    local icon = button.dungeonStartIcon
+    if not show then
+        if icon then icon:Hide() end
+        return
+    end
+    if not icon then
+        icon = CreateFrame("Frame", nil, button)
+        button.dungeonStartIcon = icon
+        icon:SetSize(26, 26)
+        icon:SetFrameLevel(button:GetFrameLevel() + 6)
+        icon:EnableMouse(true)
+        icon.tex = icon:CreateTexture(nil, "OVERLAY")
+        icon.tex:SetAllPoints()
+        local ok = icon.tex.SetAtlas and pcall(icon.tex.SetAtlas, icon.tex, "Dungeon", false)
+        if not ok then
+            icon.tex:SetTexture("Interface\\Icons\\INV_Misc_Rune_01")
+            icon.tex:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        end
+        icon:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L("IN_DUNGEON"))
+            GameTooltip:Show()
+        end)
+        icon:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
+    icon:ClearAllPoints()
+    icon:SetPoint("LEFT", button.meta, "LEFT", offsetX, 0)
+    icon:Show()
+end
+
 FDJ.PositionInDungeonIcon = function()
     if not frame or not frame.questStartDungeonIcon or not frame.questStartsHeader then return end
     frame.questStartDungeonIcon:ClearAllPoints()
@@ -779,6 +809,14 @@ local function NormalizeDungeonName(name)
     end
 end
 
+FDJ.INSTANCE_ID_TO_DUNGEON = {
+    [389] = "Ragefire Chasm", [36] = "The Deadmines", [43] = "Wailing Caverns", [33] = "Shadowfang Keep",
+    [34] = "The Stockade", [48] = "Blackfathom Deeps", [90] = "Gnomeregan", [47] = "Razorfen Kraul",
+    [189] = "Scarlet Monastery", [2999] = "Ruins of Lordaeron", [2959] = "City of Dalaran",
+    [2998] = "Excavation Site: Wetlands", [3065] = "Hall of Thanes",
+}
+FDJ.SCARLET_WING_MAPS = { [302] = "Scarlet Monastery: Graveyard", [303] = "Scarlet Monastery: Library" }
+
 local function CurrentDungeon()
     -- Only auto-select a dungeon while the player is actually inside an
     -- instance. This prevents similarly named outdoor zones from hijacking the
@@ -788,9 +826,37 @@ local function CurrentDungeon()
         if not inInstance then return nil end
     end
 
+    -- Language-independent detection first: the numeric instance ID is the same
+    -- on every client, so non-English clients are recognised too.
+    if GetInstanceInfo then
+        local instanceID = select(8, GetInstanceInfo())
+        local byID = FDJ.INSTANCE_ID_TO_DUNGEON[tonumber(instanceID) or -1]
+        if byID == "Scarlet Monastery" then
+            -- The wings share one instance; the map shown for the player tells them apart.
+            local wing
+            if C_Map and C_Map.GetBestMapForUnit then
+                local ok, uiMap = pcall(C_Map.GetBestMapForUnit, "player")
+                wing = ok and FDJ.SCARLET_WING_MAPS[uiMap or -1] or nil
+            end
+            if wing then return wing end
+        elseif byID and DB[byID] then
+            return byID
+        end
+    end
+
     local instanceName = GetInstanceInfo and GetInstanceInfo()
     local n = NormalizeDungeonName(instanceName)
     if n then return n end
+    -- Localised instance name: compare with the journal's own translations.
+    if type(instanceName) == "string" and instanceName ~= "" then
+        local wanted = instanceName:lower()
+        for _, content in pairs(FDJ.ContentLocales or {}) do
+            for internal, entry in pairs(content.dungeons or {}) do
+                if DB[internal] and type(entry.name) == "string" and entry.name:lower() == wanted then return internal end
+            end
+        end
+    end
+
 
     local zone = GetRealZoneText and GetRealZoneText()
     n = NormalizeDungeonName(zone)
@@ -1848,34 +1914,17 @@ end
 local function PositionPrimaryItemTooltip(owner)
     if not itemTooltip or not owner then return end
 
-    local screenRight = (UIParent and UIParent.GetRight and UIParent:GetRight()) or GetScreenWidth()
-    local screenTop = (UIParent and UIParent.GetTop and UIParent:GetTop()) or GetScreenHeight()
-    local width = itemTooltip:GetWidth() or 220
-    local height = itemTooltip:GetHeight() or 1
-    local left = owner:GetLeft() or 0
-    local right = owner:GetRight() or left
-    local ownerTop = owner:GetTop() or 500
-    local ownerBottom = owner:GetBottom() or ownerTop
-
-    -- AtlasLoot-style placement: float the tooltip over the journal rather
-    -- than kicking it out to the far-right edge of the screen. Center it over
-    -- the hovered item row and put it immediately above the row when possible.
-    local ownerCenter = (left + right) * 0.5
-    local x = ownerCenter - (width * 0.5)
-    x = math.max(12, math.min(x, screenRight - width - 12))
-
-    local top = ownerTop + 8 + height
-    if top > screenTop - 12 then
-        -- If there is not enough room above, drop it directly below the row.
-        top = ownerBottom - 8
+    -- Anchor directly to the hovered row. The journal can be scaled independently
+    -- from UIParent, so converting owner coordinates into UIParent coordinates
+    -- can push the tooltip far away from the item. A relative anchor lets WoW
+    -- handle the effective-scale conversion and keeps the tooltip immediately
+    -- above the row without covering its text.
+    if itemTooltip.SetClampedToScreen then
+        itemTooltip:SetClampedToScreen(true)
     end
-    top = ClampTooltipTop(top, height)
-
-    -- IMPORTANT: do not call SetOwner here. SetOwner clears/rebuilds a
-    -- GameTooltip on this client, which was the v1.0.2 regression that left
-    -- a blank rectangle after SetHyperlink had already populated the tooltip.
     itemTooltip:ClearAllPoints()
-    itemTooltip:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, top)
+    local anchor = owner.icon or owner
+    itemTooltip:SetPoint("BOTTOMLEFT", anchor, "TOPRIGHT", 4, 4)
 end
 
 local function GetItemEquipLocation(itemID)
@@ -1937,40 +1986,22 @@ local function PositionTooltipGroup(owner, comparisons)
 
     comparisons = comparisons or {}
     local gap = 6
-    local totalWidth = itemTooltip:GetWidth() or 220
-    local maxHeight = itemTooltip:GetHeight() or 1
 
-    for _, tooltip in ipairs(comparisons) do
-        totalWidth = totalWidth + gap + (tooltip:GetWidth() or 220)
-        maxHeight = math.max(maxHeight, tooltip:GetHeight() or 1)
+    -- Keep the hovered item tooltip locked directly above its row. Comparison
+    -- tooltips extend to the right of it, preserving the same local anchor and
+    -- avoiding UIParent/journal scale mismatches.
+    if itemTooltip.SetClampedToScreen then
+        itemTooltip:SetClampedToScreen(true)
     end
-
-    local screenRight = (UIParent and UIParent.GetRight and UIParent:GetRight()) or GetScreenWidth()
-    local screenTop = (UIParent and UIParent.GetTop and UIParent:GetTop()) or GetScreenHeight()
-    local left = owner:GetLeft() or 0
-    local right = owner:GetRight() or left
-    local ownerTop = owner:GetTop() or 500
-    local ownerBottom = owner:GetBottom() or ownerTop
-
-    -- Keep the whole comparison cluster over/around the journal, like
-    -- AtlasLoot. The hovered item remains the first (left-most) tooltip, with
-    -- equipped comparisons continuing to its right. Center the complete group
-    -- over the hovered row instead of starting it at the row's right edge.
-    local ownerCenter = (left + right) * 0.5
-    local x = ownerCenter - (totalWidth * 0.5)
-    x = math.max(12, math.min(x, screenRight - totalWidth - 12))
-
-    local top = ownerTop + 8 + maxHeight
-    if top > screenTop - 12 then
-        top = ownerBottom - 8
-    end
-    top = ClampTooltipTop(top, maxHeight)
-
     itemTooltip:ClearAllPoints()
-    itemTooltip:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x, top)
+    local anchor = owner.icon or owner
+    itemTooltip:SetPoint("BOTTOMLEFT", anchor, "TOPRIGHT", 4, 4)
 
     local previous = itemTooltip
     for _, tooltip in ipairs(comparisons) do
+        if tooltip.SetClampedToScreen then
+            tooltip:SetClampedToScreen(true)
+        end
         tooltip:ClearAllPoints()
         tooltip:SetPoint("TOPLEFT", previous, "TOPRIGHT", gap, 0)
         previous = tooltip
@@ -2919,6 +2950,12 @@ RefreshQuestList = function()
                 local metaWidth = button.meta:GetStringWidth() or 0
                 button.chainToggle:SetPoint("LEFT", button.meta, "LEFT", metaWidth + 6, 0)
             end
+            -- startsInDungeon = true on a quest forces the icon even when the
+            -- quest has a chain (its chain starts inside the dungeon); the icon
+            -- then sits to the right of the chain control.
+            local rowIconOffset = (button.meta:GetStringWidth() or 0) + 6
+            if chain and button.chainToggle then rowIconOffset = rowIconOffset + (button.chainToggle:GetWidth() or 20) + 4 end
+            FDJ.SetRowDungeonIcon(button, quest.startsInDungeon or ((not chain) and FDJ.StartsInsideDungeon(quest.pickup)), rowIconOffset)
 
             if chain and chainExpanded and button.chainPanel then
                 local lineHeight = 18
@@ -3415,16 +3452,6 @@ local function RefreshPrerequisiteQuestDetail(step)
     if frame.selectedQuestClass then frame.selectedQuestClass:Hide() end
     if frame.selectedQuestClassIcon then frame.selectedQuestClassIcon:Hide() end
     if frame.selectedQuestMetaClassIcon then frame.selectedQuestMetaClassIcon:Hide() end
-    -- Chain step pages: the step arrows sit top right, so the tick goes
-    -- directly after the title text instead.
-    frame.selectedQuestComplete:ClearAllPoints()
-    do
-        local title = frame.selectedQuestName
-        local textWidth = title:GetStringWidth() or 0
-        local boxWidth = title:GetWidth() or 0
-        if boxWidth > 0 and textWidth > boxWidth then textWidth = boxWidth end
-        frame.selectedQuestComplete:SetPoint("LEFT", title, "LEFT", textWidth + 6, 0)
-    end
     frame.selectedQuestComplete:SetShown(complete)
     UpdatePrerequisiteNavButtons()
 
@@ -3446,6 +3473,53 @@ local function RefreshPrerequisiteQuestDetail(step)
     frame.selectedQuestName:ClearAllPoints()
     frame.selectedQuestName:SetPoint("TOPLEFT", frame.questTextInset, "TOPLEFT", 16, -15)
     frame.selectedQuestName:SetPoint("RIGHT", frame.questTextInset, "RIGHT", -prereqShareInset, 0)
+    -- Placed here, after the title got its final width (the Share button narrows it).
+    -- Chain step pages: the step arrows sit top right, so the tick goes
+    -- directly after the title text instead.
+    frame.selectedQuestComplete:ClearAllPoints()
+    do
+        local title = frame.selectedQuestName
+        if not frame.fdjTitleMeasure then
+            frame.fdjTitleMeasure = frame:CreateFontString(nil, "BACKGROUND")
+            frame.fdjTitleMeasure:Hide()
+        end
+        do
+            local fontFile, fontSize, fontFlags = title:GetFont()
+            if fontFile then frame.fdjTitleMeasure:SetFont(fontFile, fontSize, fontFlags) end
+            frame.fdjTitleMeasure:SetText(title:GetText() or "")
+        end
+        local textWidth = frame.fdjTitleMeasure:GetStringWidth() or 0
+        local boxWidth = title:GetWidth() or 0
+        if boxWidth > 0 and textWidth > boxWidth then
+            -- The title wraps: put the tick after the end of its LAST line, so it
+            -- never sits under the Share button. The wrap is re-created word by
+            -- word with a hidden measuring string in the same font.
+            if not frame.fdjTitleMeasure then
+                frame.fdjTitleMeasure = frame:CreateFontString(nil, "BACKGROUND")
+                frame.fdjTitleMeasure:Hide()
+            end
+            local measure = frame.fdjTitleMeasure
+            local fontFile, fontSize, fontFlags = title:GetFont()
+            if fontFile then measure:SetFont(fontFile, fontSize, fontFlags) end
+            local line, lastWidth = "", 0
+            for word in tostring(title:GetText() or ""):gmatch("%S+") do
+                local try = (line == "") and word or (line .. " " .. word)
+                measure:SetText(try)
+                local w = measure:GetStringWidth() or 0
+                if line ~= "" and w > boxWidth then
+                    line = word
+                    measure:SetText(word)
+                    lastWidth = measure:GetStringWidth() or 0
+                else
+                    line, lastWidth = try, w
+                end
+            end
+            if lastWidth > boxWidth - 22 then lastWidth = boxWidth - 22 end
+            frame.selectedQuestComplete:SetPoint("BOTTOMLEFT", title, "BOTTOMLEFT", lastWidth + 6, -2)
+        else
+            frame.selectedQuestComplete:SetPoint("LEFT", title, "LEFT", textWidth + 6, 0)
+        end
+    end
 
     local detailWidth = math.max(260, (frame.questDetailScroll:GetWidth() or 350) - 4)
     frame.questDetailContent:SetWidth(detailWidth)
@@ -3577,6 +3651,7 @@ local function RefreshPrerequisiteQuestDetail(step)
             frame.questMapButton:ClearAllPoints()
             frame.questMapButton.quest = nil
             frame.questMapButton.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(details.map)) or details.map
+            frame.questMapButton.fdjQuestTitle = QuestField(questID, "name", step.name)
             if FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction then
                 FDJ.MapMarkers.ConfigureTargetAndMarkAction(frame.questMapButton, frame.questMapButton.prereqLocation, true)
             end
@@ -3916,11 +3991,34 @@ RefreshQuestDetail = function()
     frame.questStartsText:ClearAllPoints()
     frame.questStartItemButton:ClearAllPoints()
 
-    if quest.startItem then
+    if quest.startObject and not quest.startItem then
+        -- Quest started by a world object (not an item): same button as a
+        -- quest-start item, with a plain tooltip saying where the object is.
+        -- startObject = {name, icon texture, where to find it}
+        local obj = quest.startObject
+        frame.questStartsText:SetText("")
+        frame.questStartsText:Hide()
+        frame.questStartItemButton.item = nil
+        frame.questStartItemButton.fdjSourceText = nil
+        frame.questStartItemButton.fdjObject = { FreeText(obj[1]), FreeText(obj[3]) }
+        frame.questStartItemButton.icon:SetTexture(obj[2] or "Interface\\Icons\\INV_Misc_QuestionMark")
+        frame.questStartItemButton.name:SetText(FreeText(obj[1]))
+        frame.questStartItemButton.name:SetTextColor(1.00, 1.00, 1.00)
+        frame.questStartItemButton:SetBackdropColor(unpack(theme.lootRow))
+        frame.questStartItemButton:SetBackdropBorderColor(unpack(theme.border))
+        frame.questStartItemButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+        frame.questStartItemButton:Show()
+        if frame.questStartDungeonIcon then
+            frame.questStartDungeonIcon:Hide()
+            if FDJ.StartsInsideDungeon(quest.pickup) and not QUEST_PREREQ_CHAINS[quest.id] then FDJ.PositionInDungeonIcon() end
+        end
+        cursorY = cursorY + 44
+    elseif quest.startItem then
         frame.questStartsText:SetText("")
         frame.questStartsText:Hide()
 
         local startItem = quest.startItem
+        frame.questStartItemButton.fdjObject = nil
         frame.questStartItemButton.item = startItem
         frame.questStartItemButton.fdjSourceText = FreeText(startItem[4])
         frame.questStartItemButton.icon:SetTexture(ItemIcon(startItem[1]))
@@ -3944,7 +4042,7 @@ RefreshQuestDetail = function()
         frame.questStartsText:Show()
         if frame.questStartDungeonIcon then
             frame.questStartDungeonIcon:Hide()
-            if FDJ.StartsInsideDungeon(pickupText) then
+            if quest.startsInDungeon or (FDJ.StartsInsideDungeon(pickupText) and not QUEST_PREREQ_CHAINS[quest.id]) then
                 FDJ.PositionInDungeonIcon()
             end
         end
@@ -3996,7 +4094,7 @@ RefreshQuestDetail = function()
             end
         end
     end
-    if pendingStep then
+    if hasChain then
         if not frame.questChainNotice then
             frame.questChainNotice = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             frame.questChainNotice:SetJustifyH("LEFT")
@@ -4007,13 +4105,14 @@ RefreshQuestDetail = function()
         -- Only name a step once the chain is under way: an earlier step is
         -- turned in, or the open step is in the quest log.
         local noticeText = L("CHAIN_REQUIRED")
-        if pendingIndex > 1 or IsQuestInLog(pendingStep.id) then
+        if pendingStep and (pendingIndex > 1 or IsQuestInLog(pendingStep.id)) then
             noticeText = noticeText .. " " .. L("CHAIN_STEP", pendingIndex, chainLength)
         end
         frame.questChainNotice:SetText(noticeText)
         frame.questChainNotice:SetTextColor(0.62, 0.10, 0.05)
         frame.questChainNotice:Show()
         cursorY = cursorY + (frame.questChainNotice:GetStringHeight() or 14) + 8
+        if not pendingStep then frame.questMapButton.fdjLabelKey = nil end
     else
         frame.questMapButton.fdjLabelKey = nil
         if frame.questChainNotice then frame.questChainNotice:Hide() end
@@ -4023,6 +4122,7 @@ RefreshQuestDetail = function()
 
     local showMap = loc and not quest.startItem
     if FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction then
+        frame.questMapButton.fdjQuestTitle = QuestField(quest.id, "name", quest.name)
         FDJ.MapMarkers.ConfigureTargetAndMarkAction(frame.questMapButton, showMap and loc or nil, true)
     end
     if pendingStep and frame.questChainButton then
@@ -7351,10 +7451,20 @@ local function CreateMainFrame()
     frame.questStartItemButton.name:SetPoint("RIGHT", -6, 0)
     frame.questStartItemButton.name:SetJustifyH("LEFT")
     frame.questStartItemButton:SetScript("OnEnter", function(self)
-        if self.item then ShowItemTooltip(self) end
+        if self.item then
+            ShowItemTooltip(self)
+        elseif self.fdjObject then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(self.fdjObject[1], 1, 1, 1)
+            if self.fdjObject[2] and self.fdjObject[2] ~= "" then
+                GameTooltip:AddLine(self.fdjObject[2], 1.00, 0.82, 0.00, true)
+            end
+            GameTooltip:Show()
+        end
     end)
     frame.questStartItemButton:SetScript("OnLeave", function(self)
         self.fdjComparing = nil
+        if not self.item and GameTooltip:IsOwned(self) then GameTooltip:Hide() end
         if itemTooltip then itemTooltip:Hide() end
         HideComparisonTooltips()
     end)
@@ -7467,6 +7577,7 @@ local function CreateMainFrame()
         local loc = self.prereqLocation or (self.quest and QUEST_START_MAPS[self.quest.id])
         -- Targeting and raid marking, when the quest giver is nearby, are handled
         -- by the secure hardware-click macro configured for this button.
+        FDJ.pendingMarkerQuestTitle = self.fdjQuestTitle
         if self.prereqLocation then
             ShowRecordedLocationOnMap(self.prereqLocation, self.prereqLocation.label)
         else
@@ -8324,7 +8435,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.5.0"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.5.1"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

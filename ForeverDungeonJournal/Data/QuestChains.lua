@@ -94,6 +94,18 @@ FDJ.QUEST_PREREQ_CHAINS = {
 
 
 
+    -- Gnomeregan ring chain. The faction-specific upgrade quest is the
+    -- journal entry; Grime-Encrusted Ring and Return of the Ring are the
+    -- required steps that unlock it.
+    [2948] = {
+        { id = 2945, name = "Grime-Encrusted Ring" },
+        { id = 2947, name = "Return of the Ring" },
+    },
+    [2950] = {
+        { id = 2945, name = "Grime-Encrusted Ring" },
+        { id = 2949, name = "Return of the Ring" },
+    },
+
     -- Gnomeregan. Optional breadcrumb quests are intentionally excluded.
     -- Tinkmaster Overspark -> Save Techbot's Brain!, The Day After -> Gnogaine,
     -- and Castpipe's Task -> Data Rescue are storyline/breadcrumb links, not
@@ -139,6 +151,29 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 6564, name = "Allegiance to the Old Gods" },
     },
 
+    -- Excavation Site: Wetlands (Alliance): Horrors in the Highland only
+    -- becomes available after completing Rethiel the Greenwarden's full
+    -- Wetlands chain, beginning with First Mate Fitzsimmons in Menethil Harbor.
+    [95646] = {
+        { id = 463, name = "The Greenwarden" },
+        { id = 276, name = "Tramping Paws" },
+        { id = 277, name = "Fire Taboo" },
+        { id = 275, name = "Blisters on The Land" },
+    },
+
+    -- Excavation Site: Wetlands (Alliance): Highland Hides requires
+    -- Young Crocolisk Skins. Daily Delivery is only a breadcrumb in Forever
+    -- and is not required for Highland Hides.
+    [98815] = {
+        { id = 484, name = "Young Crocolisk Skins" },
+    },
+
+    -- Excavation Site: Wetlands (Horde): Dragonmaw Rumors is the
+    -- required lead-in to Open the Maw.
+    [95682] = {
+        { id = 95663, name = "Dragonmaw Rumors" },
+    },
+
     -- Excavation Site: Wetlands (Alliance): Heartwoven follows
     -- Lost in the Thicket Things.
     [95809] = {
@@ -147,8 +182,78 @@ FDJ.QUEST_PREREQ_CHAINS = {
 }
 
 FDJ.QUEST_PREREQ_DETAILS = {
+    [463] = {
+        level = 21, requires = 20,
+        objective = "Find Rethiel the Greenwarden in the Wetlands.",
+        pickup = "First Mate Fitzsimmons, Menethil Harbor, Wetlands",
+        turnin = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        description = "First required step before Horrors in the Highland.",
+        map = { mapID = 1437, x = 0.108, y = 0.596, label = "First Mate Fitzsimmons — Menethil Harbor", detail = "Start The Greenwarden here" },
+    },
+    [276] = {
+        level = 21, requires = 20,
+        objective = "Kill 15 Mosshide Gnolls and 10 Mosshide Mongrels, then return to Rethiel the Greenwarden.",
+        pickup = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        turnin = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        description = "Second required step before Horrors in the Highland.",
+        map = { mapID = 1437, x = 0.562, y = 0.406, label = "Rethiel the Greenwarden — Wetlands", detail = "Continue with Tramping Paws here" },
+    },
+    [277] = {
+        level = 23, requires = 20,
+        objective = "Bring Rethiel the Greenwarden 9 Crude Flints.",
+        pickup = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        turnin = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        description = "Third required step before Horrors in the Highland.",
+        map = { mapID = 1437, x = 0.562, y = 0.406, label = "Rethiel the Greenwarden — Wetlands", detail = "Continue with Fire Taboo here" },
+    },
+    [275] = {
+        level = 26, requires = 20,
+        objective = "Kill 12 Fen Creepers, then return to Rethiel the Greenwarden.",
+        pickup = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        turnin = "Rethiel the Greenwarden, The Green Belt, Wetlands",
+        description = "Final required step before Horrors in the Highland.",
+        map = { mapID = 1437, x = 0.562, y = 0.406, label = "Rethiel the Greenwarden — Wetlands", detail = "Continue with Blisters on The Land here" },
+    },
+
+    [484] = {
+        level = 22,
+        requires = 18,
+        objective = "Obtain 4 Young Crocolisk Skins for James Halloran in Menethil Harbor.",
+        pickup = "James Halloran, Menethil Harbor, Wetlands",
+        turnin = "James Halloran, Menethil Harbor, Wetlands",
+        description = "Required before Highland Hides. Daily Delivery is not required in Forever.",
+        map = { mapID = 1437, x = 0.080, y = 0.550, label = "James Halloran — Menethil Harbor", detail = "Start Young Crocolisk Skins here" },
+    },
+
+    [95663] = { level = 31, requires = 24, objective = "Travel to the Wetlands and meet the Deathstalker Agent in the hills above the Dragonmaw camp.", pickup = "Zaruk, Hammerfall, Arathi Highlands", turnin = "Deathstalker Agent, hills above the Dragonmaw camp, Wetlands", description = "Required before Open the Maw.", map = { mapID = 1417, x = 0.740, y = 0.360, label = "Zaruk — Hammerfall", detail = "Start Dragonmaw Rumors here" } },
     [95647] = { level = 31, requires = 24, objective = "Find Ardin Grassman in the Excavation Sites. Learn what happened to Ardin Grassman.", pickup = "Caitlin Grassman, Menethil Harbor, Wetlands", turnin = "Ardin Grassman, inside Excavation Site: Wetlands", description = "Required before Heartwoven.", map = { mapID = 1437, x = 0.119, y = 0.588, label = "Caitlin Grassman — Menethil Harbor", detail = "Start Lost in the Thicket Things here" } },
 
+
+    -- Gnomeregan ring-chain prerequisite steps.
+    [2945] = {
+        level = 34,
+        requires = 28,
+        objective = "Find a way to remove the grime from the Grime-Encrusted Ring by using the Sparklematic 5200.",
+        pickup = "Grime-Encrusted Ring, dropped by Dark Iron dwarves in Gnomeregan",
+        turnin = "The Sparklematic 5200, inside Gnomeregan",
+        startItem = {9326, "Grime-Encrusted Ring", 1, "Dropped by Dark Iron dwarves in Gnomeregan"},
+    },
+    [2947] = {
+        level = 34,
+        requires = 28,
+        objective = "Take the Brilliant Gold Ring to Talvash del Kissel in Ironforge.",
+        pickup = "The Sparklematic 5200, inside Gnomeregan",
+        turnin = "Talvash del Kissel, Mystic Ward, Ironforge",
+        description = "Alliance step required before Gnome Improvement.",
+    },
+    [2949] = {
+        level = 34,
+        requires = 28,
+        objective = "Take the Brilliant Gold Ring to Nogg in Orgrimmar.",
+        pickup = "The Sparklematic 5200, inside Gnomeregan",
+        turnin = "Nogg, Valley of Honor, Orgrimmar",
+        description = "Horde step required before Nogg's Ring Redo.",
+    },
 
     -- Gnomeregan prerequisite steps.
     [2926] = { level = 27, requires = 20, objective = "Use the Empty Leaden Collection Phial on a living Irradiated Invader or Irradiated Pillager, then return the full phial to Ozzie Togglevolt.", pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh", turnin = "Ozzie Togglevolt, Kharanos, Dun Morogh", description = "Required before The Only Cure is More Green Glow.", map = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", detail = "Start Gnogaine here" } },

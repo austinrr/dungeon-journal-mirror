@@ -1,4 +1,4 @@
-DungeonJournal 1.5.0
+DungeonJournal 1.5.1
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,13 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Commands: /fj and /fdj.
+
+CHANGES IN 1.5.1
+- Show on Map: the quest marker pulse is smoother and no longer blinks when it restarts.
+- The Treaty of Understanding: the Stone Tablet that starts the quest is shown as a
+  button; hover it to see where it is.
+- Gnomeregan: Nogg's Ring Redo and Gnome Improvement show the In Dungeon icon.
+- Gnomeregan: removed a redundant note from the Grime-Encrusted Ring step.
 
 CHANGES IN 1.5.0
 - New dungeon: Scarlet Monastery: Library (bosses, loot, quests, map).

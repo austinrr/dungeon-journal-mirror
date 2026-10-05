@@ -2,6 +2,9 @@ local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
 FDJ.QUEST_START_MAPS = {
+    -- Excavation Site: Wetlands prerequisite quest giver.
+    [95663] = { mapID = 1417, x = 0.740, y = 0.360, label = "Zaruk — Hammerfall", targetName = "Zaruk", detail = "Start Dragonmaw Rumors here" },
+
     -- Ruins of Lordaeron quest givers / entrance.
     [92401] = { mapID = 1421, x = 0.4450, y = 0.4300, label = "Tabitha Heartweaver — The Sepulcher" },
     [92421] = { mapID = 1458, x = 0.5790, y = 0.8950, label = "Morbin Lightbane — Royal Quarter" },
@@ -64,6 +67,8 @@ FDJ.QUEST_START_MAPS = {
     [2929] = { mapID = 1455, x = 0.680, y = 0.490, label = "High Tinker Mekkatorque — Tinker Town, Ironforge", targetName = "High Tinker Mekkatorque" },
     [2843] = { mapID = 1434, x = 0.280, y = 0.770, label = "Scooty — Booty Bay", targetName = "Scooty" },
     [2841] = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", targetName = "Nogg" },
+    [2948] = { mapID = 1455, x = 0.357, y = 0.040, label = "Talvash del Kissel — Mystic Ward, Ironforge", targetName = "Talvash del Kissel" },
+    [2950] = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", targetName = "Nogg" },
 
     -- Razorfen Kraul quest givers.
     [1221] = { mapID = 1413, x = 0.620, y = 0.370, label = "Mebok Mizzyrix — Ratchet", targetName = "Mebok Mizzyrix" },

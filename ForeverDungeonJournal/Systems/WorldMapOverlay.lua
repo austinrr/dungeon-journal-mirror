@@ -77,6 +77,21 @@ local function Attach(dungeonName)
     panel:SetFrameLevel(backdrop:GetFrameLevel() + 1)
     panel:Show()
 
+    -- Right-click anywhere on the dungeon map: switch to the world map (as
+    -- Blizzard's map does to zoom out). Hooked once; only acts while attached.
+    if not FDJ.worldMapRightClickHooked then
+        FDJ.worldMapRightClickHooked = true
+        local function OnRightClick(_, button)
+            if button ~= "RightButton" or not attached then return end
+            wantWorld = true
+            if not pcall(FDJ.RefreshWorldMapOverlay) then pcall(Detach) end
+        end
+        for _, target in ipairs({ backdrop, panel, journal.dungeonMapCanvas, journal.dungeonMapArtHolder }) do
+            if target and target.HookScript then
+                pcall(target.HookScript, target, "OnMouseUp", OnRightClick)
+            end
+        end
+    end
     if FDJ.SetupDungeonMapZoom then FDJ.SetupDungeonMapZoom() end
     if FDJ.ResetDungeonMapView then FDJ.ResetDungeonMapView() end
     FDJ.RenderCustomDungeonMap(mapData, mapData.entrance and mapData.entrance.floor or 1)

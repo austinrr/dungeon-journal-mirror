@@ -91,6 +91,13 @@ FDJ.QUEST_SHAREABILITY_AUDIT = {
     [5726] = true,    -- Hidden Enemies, step 1
     [5727] = false,   -- Hidden Enemies, step 2
 
+    -- Gnomeregan ring chain
+    [2945] = false,  -- Grime-Encrusted Ring
+    [2947] = false,  -- Return of the Ring (Alliance)
+    [2948] = false,  -- Gnome Improvement
+    [2949] = false,  -- Return of the Ring (Horde)
+    [2950] = false,  -- Nogg's Ring Redo
+
     -- Shadowfang Keep
     [1098] = true,    -- Deathstalkers in Shadowfang
     [1740] = true,    -- The Orb of Soran'ruk

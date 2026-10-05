@@ -89,6 +89,13 @@ for _, content in pairs(FDJ.ContentLocales or {}) do
 end
 
 -- Test of Lore (Horde): earlier steps, all require level 25 (Wowhead Forever series).
+-- Ragefire Chasm: Returning the Lost Satchel is the journal entry; Searching for
+-- the Lost Satchel is its earlier step.
+FDJ.QUEST_PREREQ_CHAINS[5724] = {
+    { id = 5722, name = "Searching for the Lost Satchel" },
+}
+FDJ.QUEST_PREREQ_DETAILS[5722] = { level = 16, requires = 9, objective = "Find Maur Grimtotem's corpse inside Ragefire Chasm and search it for anything of interest.", pickup = "Rahauro, Elder Rise, Thunder Bluff", turnin = "Maur Grimtotem's corpse inside Ragefire Chasm. From the first major three-way junction, take the right-hand tunnel, follow it uphill toward the dead end, then enter the small side room on the left. Interact with Maur's corpse there.", map = { mapID = 1456, x = 0.7040, y = 0.3220, label = "Rahauro" } }
+FDJ.FOREVER_QUEST_XP_FALLBACK[5722] = 880
 FDJ.QUEST_PREREQ_CHAINS[1394] = {
     { id = 1149, name = "Test of Faith" },
     { id = 1150, name = "Test of Endurance" },

@@ -237,11 +237,49 @@ local function CreateMapMarker(key)
     marker:EnableMouse(true)
     marker._fdjKey = key
 
+    -- Dark disc behind the X so it reads on pale parts of the map.
+    marker.backing = marker:CreateTexture(nil, "BACKGROUND", nil, -2)
+    marker.backing:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+    marker.backing:SetVertexColor(0, 0, 0, 0.62)
+    marker.backing:SetSize(32, 32)
+    marker.backing:SetPoint("CENTER")
+
+    -- Soft ring that ripples outwards, so the pin catches the eye.
+    marker.pulse = marker:CreateTexture(nil, "BACKGROUND", nil, -3)
+    marker.pulse:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+    marker.pulse:SetVertexColor(1.00, 0.30, 0.10, 0.55)
+    marker.pulse:SetBlendMode("ADD")
+    marker.pulse:SetSize(32, 32)
+    marker.pulse:SetPoint("CENTER")
+    -- The ring rests invisible; each ripple fades in, expands and fades out,
+    -- then pauses. Nothing snaps back into view when the loop restarts.
+    marker.pulse:SetAlpha(0)
+    pcall(function()
+        local group = marker.pulse:CreateAnimationGroup()
+        group:SetLooping("REPEAT")
+        local grow = group:CreateAnimation("Scale")
+        grow:SetDuration(1.8)
+        if grow.SetScaleFrom then grow:SetScaleFrom(0.9, 0.9); grow:SetScaleTo(2.0, 2.0) else grow:SetScale(2.0, 2.0) end
+        grow:SetOrigin("CENTER", 0, 0)
+        grow:SetEndDelay(0.7)
+        local fadeIn = group:CreateAnimation("Alpha")
+        fadeIn:SetDuration(0.45)
+        fadeIn:SetFromAlpha(0)
+        fadeIn:SetToAlpha(0.55)
+        local fadeOut = group:CreateAnimation("Alpha")
+        fadeOut:SetStartDelay(0.45)
+        fadeOut:SetDuration(1.35)
+        fadeOut:SetFromAlpha(0.55)
+        fadeOut:SetToAlpha(0)
+        fadeOut:SetEndDelay(0.7)
+        marker.pulseAnim = group
+    end)
+
     marker.glow = marker:CreateFontString(nil, "BACKGROUND", "GameFontNormalLarge")
     marker.glow:SetPoint("CENTER", marker, "CENTER", 0, 0)
     marker.glow:SetText("X")
     marker.glow:SetTextColor(1.00, 0.82, 0.20, 0.32)
-    marker.glow:SetScale(1.35)
+    marker.glow:SetScale(1.80)
 
     marker.outline = {}
     local offsets = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} }
@@ -250,13 +288,15 @@ local function CreateMapMarker(key)
         shadow:SetPoint("CENTER", marker, "CENTER", offsets[i][1], offsets[i][2])
         shadow:SetText("X")
         shadow:SetTextColor(0, 0, 0, 1)
+        shadow:SetScale(1.35)
         marker.outline[i] = shadow
     end
 
     marker.x = marker:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     marker.x:SetPoint("CENTER", marker, "CENTER", 0, 0)
     marker.x:SetText("X")
-    marker.x:SetTextColor(1, 1, 1, 1)
+    marker.x:SetTextColor(1.00, 0.88, 0.10, 1)
+    marker.x:SetScale(1.35)
 
     marker.dungeonIcon = marker:CreateTexture(nil, "OVERLAY")
     marker.dungeonIcon:SetPoint("CENTER")
@@ -335,6 +375,13 @@ local function CreateMapMarker(key)
                 end
             end
         end
+        -- Quest pins read "NPC — Quest title" instead of "NPC — place".
+        if target.markerType ~= "dungeon" and type(target.questTitle) == "string" and target.questTitle ~= "" and type(labelText) == "string" then
+            local dash = " \226\128\148 "
+            local cut = labelText:find(dash, 1, true)
+            local npc = cut and labelText:sub(1, cut - 1) or labelText
+            labelText = npc .. dash .. target.questTitle
+        end
         GameTooltip:SetText(labelText or (target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_GIVER")))
         local fallbackDetail = target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_STARTS_HERE")
         GameTooltip:AddLine(detailText or fallbackDetail, 1, 0.82, 0.05)
@@ -396,6 +443,14 @@ local function PositionMarker(marker, target, parent)
     marker.glow:SetShown(not isDungeon)
     marker.x:SetShown(not isDungeon)
     for _, shadow in ipairs(marker.outline) do shadow:SetShown(not isDungeon) end
+    if marker.backing then marker.backing:SetShown(not isDungeon) end
+    if marker.pulse then
+        marker.pulse:SetShown(not isDungeon)
+        if marker.pulseAnim then
+            if isDungeon then marker.pulseAnim:Stop() elseif not marker.pulseAnim:IsPlaying() then marker.pulseAnim:Play() end
+        end
+    end
+
     marker:Show()
 end
 
@@ -1142,6 +1197,9 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
     local target = {}
     for k, v in pairs(loc) do target[k] = v end
     target._fdjKey = key
+    -- The journal names the quest this pin was opened for; the tooltip shows it.
+    target.questTitle = FDJ.pendingMarkerQuestTitle
+    FDJ.pendingMarkerQuestTitle = nil
     local existing = mapTargets[key]
     if existing and existing.raidMarkIndex then
         target.raidMarkIndex = existing.raidMarkIndex
