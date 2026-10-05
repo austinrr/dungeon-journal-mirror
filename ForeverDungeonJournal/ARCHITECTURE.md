@@ -27,4 +27,4 @@ Localization is intentionally not included in this refactor.
 
 
 ## Localization
-Static interface strings live in `Localization/Localization.lua`. The initial languages are English and German. Runtime test commands: `/fj lang de`, `/fj lang en`, `/fj lang auto`. Quest/dungeon source data is intentionally not translated yet.
+Static interface strings live in `Localization/Localization.lua`. The initial languages are English and German. Runtime test commands: `/dj lang de`, `/dj lang en`, `/dj lang auto`. Quest/dungeon source data is intentionally not translated yet.

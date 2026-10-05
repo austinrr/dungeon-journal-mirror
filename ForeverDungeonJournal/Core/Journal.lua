@@ -103,6 +103,7 @@ end
 local selectedDungeon = ForeverDungeonJournalDB.lastDungeon or ORDER[1]
 local selectedBoss = ForeverDungeonJournalDB.lastBoss or 1
 local selectedQuest = ForeverDungeonJournalDB.lastQuest or 1
+local allowHiddenQuestSelection = false
 local selectedMode = ForeverDungeonJournalDB.lastMode or "bosses"
 local selectedQuestFaction = ForeverDungeonJournalDB.questFaction or "Alliance"
 local selectedPrereqStep = nil
@@ -222,10 +223,10 @@ FDJ.DUNGEON_MAPS = {
         -- Cataclysm-era client art; its skulls are patched out and our own
         -- portraits mark the Classic/Forever boss rooms instead.
         floors = {
-            { tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan1_s1", x0 = 0.7595, y0 = 0.6452, x1 = 0.7934, y1 = 0.6961 } } },
-            { tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan2_s1", x0 = 0.7435, y0 = 0.4431, x1 = 0.7774, y1 = 0.4940 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan2_s2", x0 = 0.2275, y0 = 0.6587, x1 = 0.2615, y1 = 0.7096 } } },
-            { tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan3_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan3_s1", x0 = 0.4172, y0 = 0.8578, x1 = 0.4511, y1 = 0.9087 } } },
-            { tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan4_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan4_s1", x0 = 0.2984, y0 = 0.2740, x1 = 0.3323, y1 = 0.3249 } } },
+            { uiMapID = 226, tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan1_s1", x0 = 0.7595, y0 = 0.6452, x1 = 0.7934, y1 = 0.6961 } } },
+            { uiMapID = 227, tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan2_s1", x0 = 0.7435, y0 = 0.4431, x1 = 0.7774, y1 = 0.4940 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan2_s2", x0 = 0.2275, y0 = 0.6587, x1 = 0.2615, y1 = 0.7096 } } },
+            { uiMapID = 228, tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan3_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan3_s1", x0 = 0.4172, y0 = 0.8578, x1 = 0.4511, y1 = 0.9087 } } },
+            { uiMapID = 229, tiles = "Interface\\WorldMap\\Gnomeregan\\Gnomeregan4_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Gnomeregan4_s1", x0 = 0.2984, y0 = 0.2740, x1 = 0.3323, y1 = 0.3249 } } },
         },
         entrance = { floor = 1, x = 0.642, y = 0.278, angle = 0 },
         -- Ladders: where each level continues (shared rooms between maps).
@@ -244,7 +245,7 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Razorfen Kraul"] = {
-        floors = { { tiles = "Interface\\WorldMap\\RazorfenKraul\\RazorfenKraul1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s1", x0 = 0.2036, y0 = 0.2874, x1 = 0.2375, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s2", x0 = 0.5589, y0 = 0.2874, x1 = 0.5928, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s3", x0 = 0.8593, y0 = 0.3937, x1 = 0.8932, y1 = 0.4446 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s4", x0 = 0.7914, y0 = 0.4955, x1 = 0.8253, y1 = 0.5464 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s5", x0 = 0.0649, y0 = 0.6602, x1 = 0.0988, y1 = 0.7111 } } } },
+        floors = { { uiMapID = 301, tiles = "Interface\\WorldMap\\RazorfenKraul\\RazorfenKraul1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s1", x0 = 0.2036, y0 = 0.2874, x1 = 0.2375, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s2", x0 = 0.5589, y0 = 0.2874, x1 = 0.5928, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s3", x0 = 0.8593, y0 = 0.3937, x1 = 0.8932, y1 = 0.4446 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s4", x0 = 0.7914, y0 = 0.4955, x1 = 0.8253, y1 = 0.5464 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s5", x0 = 0.0649, y0 = 0.6602, x1 = 0.0988, y1 = 0.7111 } } } },
         entrance = { floor = 1, x = 0.714, y = 0.840, angle = 180 },
         bosses = {
             -- Roogug: alcove across the vine, first left after the entrance.
@@ -258,14 +259,14 @@ FDJ.DUNGEON_MAPS = {
     },
     -- Loksey from Wowhead (zone 796 floor 2). Arcanist Doan has no published coordinates yet.
     ["Scarlet Monastery: Library"] = {
-        floors = { { tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery2_" } },
+        floors = { { uiMapID = 303, tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery2_" } },
         bosses = {
             { name = "Houndmaster Loksey", x = 0.302, y = 0.846 },
             { name = "Arcanist Doan",      x = 0.835, y = 0.740 },
         },
     },
     ["Scarlet Monastery: Graveyard"] = {
-        floors = { { tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s1", x0 = 0.2285, y0 = 0.5404, x1 = 0.2625, y1 = 0.5913 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s2", x0 = 0.7066, y0 = 0.5749, x1 = 0.7405, y1 = 0.6257 } } } },
+        floors = { { uiMapID = 302, tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s1", x0 = 0.2285, y0 = 0.5404, x1 = 0.2625, y1 = 0.5913 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ScarletMonastery1_s2", x0 = 0.7066, y0 = 0.5749, x1 = 0.7405, y1 = 0.6257 } } } },
         entrance = { floor = 1, x = 0.841, y = 0.831, angle = 180 },
         bosses = {
             { name = "Interrogator Vishas", x = 0.724, y = 0.600 },
@@ -284,7 +285,7 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Ragefire Chasm"] = {
-        floors = { { tiles = "Interface\\WorldMap\\Ragefire\\Ragefire1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s1", x0 = 0.5259, y0 = 0.2725, x1 = 0.5599, y1 = 0.3234 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s2", x0 = 0.3752, y0 = 0.5584, x1 = 0.4092, y1 = 0.6093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s3", x0 = 0.6806, y0 = 0.6213, x1 = 0.7146, y1 = 0.6722 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s4", x0 = 0.3253, y0 = 0.7904, x1 = 0.3593, y1 = 0.8413 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_1", x0 = 0.0150, y0 = 0.0120, x1 = 0.5948, y1 = 0.1497 } } } },
+        floors = { { uiMapID = 213, tiles = "Interface\\WorldMap\\Ragefire\\Ragefire1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s1", x0 = 0.5259, y0 = 0.2725, x1 = 0.5599, y1 = 0.3234 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s2", x0 = 0.3752, y0 = 0.5584, x1 = 0.4092, y1 = 0.6093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s3", x0 = 0.6806, y0 = 0.6213, x1 = 0.7146, y1 = 0.6722 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_s4", x0 = 0.3253, y0 = 0.7904, x1 = 0.3593, y1 = 0.8413 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\Ragefire1_1", x0 = 0.0150, y0 = 0.0120, x1 = 0.5948, y1 = 0.1497 } } } },
         entrance = { floor = 1, x = 0.610, y = 0.075, angle = 200 },
         bosses = {
             { name = "Oggleflint",             x = 0.561, y = 0.378 },
@@ -299,8 +300,8 @@ FDJ.DUNGEON_MAPS = {
             { floor = 1, to = 2, x = 0.615, y = 0.610 },
         },
         floors = {
-            { tiles = "Interface\\WorldMap\\TheDeadmines\\TheDeadmines1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_s1", x0 = 0.3313, y0 = 0.5898, x1 = 0.3653, y1 = 0.6407 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_s2", x0 = 0.4721, y0 = 0.8413, x1 = 0.5060, y1 = 0.8922 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_1", x0 = 0.3194, y0 = 0.0150, x1 = 0.6996, y1 = 0.1347 } } },
-            { tiles = "Interface\\WorldMap\\TheDeadmines\\TheDeadmines2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s1", x0 = 0.1088, y0 = 0.7365, x1 = 0.1427, y1 = 0.7874 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s2", x0 = 0.5908, y0 = 0.3428, x1 = 0.6248, y1 = 0.3937 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s3", x0 = 0.5650, y0 = 0.4160, x1 = 0.6110, y1 = 0.4840, alpha = 1.0 } } },
+            { uiMapID = 291, tiles = "Interface\\WorldMap\\TheDeadmines\\TheDeadmines1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_s1", x0 = 0.3313, y0 = 0.5898, x1 = 0.3653, y1 = 0.6407 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_s2", x0 = 0.4721, y0 = 0.8413, x1 = 0.5060, y1 = 0.8922 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines1_1", x0 = 0.3194, y0 = 0.0150, x1 = 0.6996, y1 = 0.1347 } } },
+            { uiMapID = 292, tiles = "Interface\\WorldMap\\TheDeadmines\\TheDeadmines2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s1", x0 = 0.1088, y0 = 0.7365, x1 = 0.1427, y1 = 0.7874 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s2", x0 = 0.5908, y0 = 0.3428, x1 = 0.6248, y1 = 0.3937 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheDeadmines2_s3", x0 = 0.5650, y0 = 0.4160, x1 = 0.6110, y1 = 0.4840, alpha = 1.0 } } },
         },
         entrance = { floor = 1, x = 0.295, y = 0.135, angle = -15 },
         bosses = {
@@ -316,7 +317,7 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Wailing Caverns"] = {
-        floors = { { tiles = "Interface\\WorldMap\\WailingCaverns\\WailingCaverns1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s2", x0 = 0.1786, y0 = 0.3783, x1 = 0.1998, y1 = 0.4186 } } } }, -- hides one printed skull west of Lady Anacondra
+        floors = { { uiMapID = 279, tiles = "Interface\\WorldMap\\WailingCaverns\\WailingCaverns1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\WailingCaverns1_s2", x0 = 0.1786, y0 = 0.3783, x1 = 0.1998, y1 = 0.4186 } } } }, -- hides one printed skull west of Lady Anacondra
         entrance = { floor = 1, x = 0.465, y = 0.590, angle = 200 },
         -- Route: Anacondra on the west side of the first big chamber, drop
         -- into the ravine west to Cobrahn, back through the river (Kresh),
@@ -344,9 +345,9 @@ FDJ.DUNGEON_MAPS = {
             { floor = 2, to = 3, x = 0.515, y = 0.915, dir = "up" }, -- from the terrace into the tower
         },
         floors = {
-            { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s1", x0 = 0.2525, y0 = 0.5554, x1 = 0.2864, y1 = 0.6063 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s2", x0 = 0.6497, y0 = 0.6961, x1 = 0.6836, y1 = 0.7470 } } },
-            { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep7_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep7_s1", x0 = 0.5659, y0 = 0.8024, x1 = 0.5998, y1 = 0.8533 } } },
-            { tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep6_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s1", x0 = 0.6677, y0 = 0.3084, x1 = 0.7016, y1 = 0.3593 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s2", x0 = 0.5289, y0 = 0.6018, x1 = 0.5629, y1 = 0.6527 } } },
+            { uiMapID = 310, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s1", x0 = 0.2525, y0 = 0.5554, x1 = 0.2864, y1 = 0.6063 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s2", x0 = 0.6497, y0 = 0.6961, x1 = 0.6836, y1 = 0.7470 } } },
+            { uiMapID = 316, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep7_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep7_s1", x0 = 0.5659, y0 = 0.8024, x1 = 0.5998, y1 = 0.8533 } } },
+            { uiMapID = 315, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep6_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s1", x0 = 0.6677, y0 = 0.3084, x1 = 0.7016, y1 = 0.3593 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s2", x0 = 0.5289, y0 = 0.6018, x1 = 0.5629, y1 = 0.6527 } } },
         },
         entrance = { floor = 1, x = 0.705, y = 0.605, angle = 0 },
         -- Pins on a printed map marker sit exactly on it; the rest follow the
@@ -365,7 +366,7 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["The Stockade"] = {
-        floors = { { tiles = "Interface\\WorldMap\\TheStockade\\TheStockade1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheStockade1_s1", x0 = 0.7685, y0 = 0.4311, x1 = 0.8024, y1 = 0.4820 } } } },
+        floors = { { uiMapID = 225, tiles = "Interface\\WorldMap\\TheStockade\\TheStockade1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheStockade1_s1", x0 = 0.7685, y0 = 0.4311, x1 = 0.8024, y1 = 0.4820 } } } },
         entrance = { floor = 1, x = 0.500, y = 0.815, angle = 0 },
         bosses = {
             { name = "Targorr the Dread",   x = 0.440, y = 0.445 },
@@ -382,9 +383,9 @@ FDJ.DUNGEON_MAPS = {
             { floor = 2, to = 3, x = 0.470, y = 0.700, labelKey = "MAP_SWIM_LEVEL" },
         },
         floors = {
-            { tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s1", x0 = 0.0818, y0 = 0.3728, x1 = 0.1158, y1 = 0.4237 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s2", x0 = 0.3114, y0 = 0.5793, x1 = 0.3453, y1 = 0.6302 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s3", x0 = 0.5289, y0 = 0.5479, x1 = 0.5629, y1 = 0.5988 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_1", x0 = 0.2146, y0 = 0.0075, x1 = 0.4391, y1 = 0.1093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_2", x0 = 0.4691, y0 = 0.0075, x1 = 0.8044, y1 = 0.1093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_3", x0 = 0.4242, y0 = 0.0075, x1 = 0.4890, y1 = 0.0719 } } },
-            { tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps2_s1", x0 = 0.5090, y0 = 0.7934, x1 = 0.5429, y1 = 0.8443 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps2_s2", x0 = 0.8263, y0 = 0.8398, x1 = 0.8603, y1 = 0.8907 } } },
-            { tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps3_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps3_s1", x0 = 0.5569, y0 = 0.2799, x1 = 0.5908, y1 = 0.3308 } } },
+            { uiMapID = 221, tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s1", x0 = 0.0818, y0 = 0.3728, x1 = 0.1158, y1 = 0.4237 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s2", x0 = 0.3114, y0 = 0.5793, x1 = 0.3453, y1 = 0.6302 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_s3", x0 = 0.5289, y0 = 0.5479, x1 = 0.5629, y1 = 0.5988 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_1", x0 = 0.2146, y0 = 0.0075, x1 = 0.4391, y1 = 0.1093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_2", x0 = 0.4691, y0 = 0.0075, x1 = 0.8044, y1 = 0.1093 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps1_3", x0 = 0.4242, y0 = 0.0075, x1 = 0.4890, y1 = 0.0719 } } },
+            { uiMapID = 222, tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps2_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps2_s1", x0 = 0.5090, y0 = 0.7934, x1 = 0.5429, y1 = 0.8443 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps2_s2", x0 = 0.8263, y0 = 0.8398, x1 = 0.8603, y1 = 0.8907 } } },
+            { uiMapID = 223, tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps3_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps3_s1", x0 = 0.5569, y0 = 0.2799, x1 = 0.5908, y1 = 0.3308 } } },
         },
         entrance = { floor = 1, x = 0.455, y = 0.085, angle = -20 },
         bosses = {
@@ -938,6 +939,18 @@ local function GetLiveQuestXP(quest)
     if type(GetQuestLogRewardXP) == "function" then
         local ok, xp = pcall(GetQuestLogRewardXP, quest.id)
         if ok and not IsSecret(xp) and type(xp) == "number" then
+            -- Forever 1.60.1 currently exposes stale/base quest-log XP for a few
+            -- BFD quests while the server/turn-in frame awards the values below.
+            -- Only replace the exact stale amount; any level-scaled value is left alone.
+            local correctedBFDXP = {
+                [6565] = { stale = 6300, current = 6489 }, -- Allegiance to the Old Gods
+                [6921] = { stale = 6550, current = 6746 }, -- Amongst the Ruins
+                [6922] = { stale = 7250, current = 7468 }, -- Baron Aquanis
+            }
+            local correction = correctedBFDXP[quest.id]
+            if correction and xp == correction.stale then
+                return correction.current
+            end
             if xp > 0 then return xp end
             local request = questDataRequests[quest.id]
             if xp == 0 and request and request.state == "loaded" then return 0 end
@@ -981,6 +994,19 @@ local function ParseQuestRewardExtras(quest)
                     end
                 end
             else
+                -- Reputation rewards are stored as "Faction Name +Amount".
+                -- Translate only the faction name, then preserve the numeric
+                -- reputation amount exactly as authored.
+                local repName, repAmount = token:match("^(.-)%s+([%+%-]%d+)$")
+                if repName and repAmount then
+                    repName = repName:gsub("^%s+", ""):gsub("%s+$", "")
+                    if FDJ.LocalizeReputationName then
+                        repName = FDJ.LocalizeReputationName(repName) or repName
+                    else
+                        repName = FreeText(repName)
+                    end
+                    token = repName .. " " .. repAmount
+                end
                 table.insert(kept, token)
             end
         end
@@ -1704,12 +1730,12 @@ local function SetBossPortrait(texture, dungeonName, boss)
     texture:SetTexture(nil)
     texture:SetTexCoord(0, 1, 0, 1)
 
-    -- Trash Drops always uses the familiar 10-slot Heavy Brown Bag icon.
+    -- Trash Drops uses a custom bag-only icon with no background.
     -- Keep this synthetic row on a simple 2D texture so it never touches the
     -- NPC/model portrait resolver.
     if boss and boss.trash then
-        texture:SetTexture("Interface\\Icons\\INV_Misc_Bag_10")
-        texture:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        texture:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TrashDropsIcon")
+        texture:SetTexCoord(0, 1, 0, 1)
         return true
     end
 
@@ -2204,6 +2230,58 @@ local function UpdateItemComparison(owner)
     end
 end
 
+local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
+    if not tooltip or not text or text == "" or not tooltip.GetName or not tooltip.NumLines then return false end
+    local tipName = tooltip:GetName()
+    if not tipName or tipName == "" then return false end
+
+    local requiredNeedle = tostring(_G.ITEM_MIN_LEVEL or "Requires Level %d")
+    requiredNeedle = requiredNeedle:gsub("%%d", ""):gsub("%%s", "")
+    requiredNeedle = requiredNeedle:gsub("^%s+", ""):gsub("%s+$", "")
+
+    local lineCount = tooltip:NumLines() or 0
+    local requiredIndex
+    for i = 1, lineCount do
+        local left = _G[tipName .. "TextLeft" .. i]
+        local lineText = left and left:GetText()
+        if type(lineText) == "string" and requiredNeedle ~= "" and lineText:find(requiredNeedle, 1, true) then
+            requiredIndex = i
+            break
+        end
+    end
+    if not requiredIndex then return false end
+
+    -- Add one native tooltip row, then shift the existing Required Level line
+    -- and everything below it down by one slot. This preserves the tooltip's
+    -- normal spacing while placing our custom stat exactly above Required Level.
+    tooltip:AddLine(" ")
+    for i = lineCount, requiredIndex, -1 do
+        local srcL = _G[tipName .. "TextLeft" .. i]
+        local srcR = _G[tipName .. "TextRight" .. i]
+        local dstL = _G[tipName .. "TextLeft" .. (i + 1)]
+        local dstR = _G[tipName .. "TextRight" .. (i + 1)]
+        if srcL and dstL then
+            dstL:SetText(srcL:GetText() or "")
+            local cr, cg, cb, ca = srcL:GetTextColor()
+            dstL:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
+        end
+        if srcR and dstR then
+            dstR:SetText(srcR:GetText() or "")
+            local cr, cg, cb, ca = srcR:GetTextColor()
+            dstR:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
+        end
+    end
+
+    local targetL = _G[tipName .. "TextLeft" .. requiredIndex]
+    local targetR = _G[tipName .. "TextRight" .. requiredIndex]
+    if targetL then
+        targetL:SetText(text)
+        targetL:SetTextColor(r or 0.10, g or 1.00, b or 0.10, 1)
+    end
+    if targetR then targetR:SetText("") end
+    return true
+end
+
 local function ShowItemTooltip(row)
     if not row.item then return end
 
@@ -2224,6 +2302,15 @@ local function ShowItemTooltip(row)
     end
     local _, liveLink = ItemInfo(row.item[1])
     itemTooltip:SetHyperlink(liveLink or ("item:" .. row.item[1]))
+    -- Some loot entries need a short Journal-only stat hint that the base item
+    -- hyperlink cannot show. Charged Gear, for example, rolls a random enchant
+    -- when it drops, while the static item ID has no suffix attached to it.
+    if type(row.item[6]) == "string" and row.item[6] ~= "" then
+        local statText = L(row.item[6])
+        if not InsertTooltipLineBeforeRequiredLevel(itemTooltip, statText, 0.10, 1.00, 0.10) then
+            itemTooltip:AddLine(statText, 0.10, 1.00, 0.10, true)
+        end
+    end
     if row.fdjSourceText and row.fdjSourceText ~= "" then
         itemTooltip:AddLine(" ")
         itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
@@ -2886,7 +2973,18 @@ local function BuildVisibleQuestIndexes()
         end
     end
 
+    -- Hidden quests may still be opened deliberately through an in-journal
+    -- quest link (for optional/breadcrumb pages). Keep that page selected
+    -- without adding it back to the normal quest list.
+    if not selectedVisible and allowHiddenQuestSelection then
+        local selected = quests[selectedQuest]
+        if selected and selected.hideFromMainList and QuestMatchesFaction(selected, selectedQuestFaction) then
+            selectedVisible = true
+        end
+    end
+
     if not selectedVisible then
+        allowHiddenQuestSelection = false
         selectedQuest = visibleQuestIndexes[1] or 1
         ForeverDungeonJournalDB.lastQuest = selectedQuest
     end
@@ -3946,7 +4044,24 @@ RefreshQuestDetail = function()
         frame.questWarningText:ClearAllPoints()
         frame.questWarningText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questWarningText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
-        frame.questWarningText:SetText(FreeText(quest.warning))
+
+        -- Quest warnings can have quest-specific localized text (for example
+        -- Baron Aquanis). Prefer the localized quest field first, then fall back
+        -- to generic free-text localization.
+        local warningText = QuestField(quest.id, "warning", quest.warning)
+        -- Rig Wars warning contains quest titles. Build it from the localized
+        -- client/addon quest names so the titles never remain in English on
+        -- non-English clients.
+        if quest.id == 2841 then
+            local template = FreeText("Accept %s before %s. If %s disappears, abandon %s and it will reappear.")
+            local rigWarsTitle = GetLoadedQuestTitle(2841, "Rig Wars")
+            local scootyTitle = GetLoadedQuestTitle(2842, "Chief Engineer Scooty")
+            local ok, formatted = pcall(string.format, template, rigWarsTitle, scootyTitle, rigWarsTitle, scootyTitle)
+            if ok and type(formatted) == "string" and formatted ~= "" then
+                warningText = formatted
+            end
+        end
+        frame.questWarningText:SetText(warningText)
         frame.questWarningText:SetTextColor(0.62, 0.10, 0.05)
         frame.questWarningText:Show()
         cursorY = cursorY + (frame.questWarningText:GetStringHeight() or 28) + 10
@@ -4163,6 +4278,7 @@ RefreshQuestDetail = function()
     frame.questTurninText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     frame.questTurninText:SetText(QuestField(quest.id, "turnin", quest.turnin))
     frame.questTurninText:SetTextColor(0.10, 0.065, 0.025)
+    frame.questTurninText:Show()
     cursorY = cursorY + (frame.questTurninText:GetStringHeight() or 24)
 
     for _, button in ipairs(questNoteRewardButtons) do
@@ -4170,7 +4286,7 @@ RefreshQuestDetail = function()
         button:Hide()
     end
 
-    if (quest.note and quest.note ~= "") or quest.leadsToQuestLink then
+    if (quest.note and quest.note ~= "") or quest.leadsToQuestLink or quest.noteQuestLink then
         cursorY = cursorY + 13
         cursorY = PlaceHeader(frame.questNotesHeader, cursorY)
 
@@ -4186,11 +4302,20 @@ RefreshQuestDetail = function()
             frame.questNotesText:Hide()
         end
 
-        if quest.leadsToQuestLink and frame.questLeadsToButton then
+        local noteLink = quest.noteQuestLink
+        local leadsLink = quest.leadsToQuestLink
+        if (noteLink or leadsLink) and frame.questLeadsToButton then
             if quest.note and quest.note ~= "" then cursorY = cursorY + 7 end
+            local link = noteLink or leadsLink
             frame.questLeadsToButton:ClearAllPoints()
-            frame.questLeadsToButton.questID = quest.leadsToQuestLink.id
-            frame.questLeadsToButton:SetText(L("LEADS_TO", QuestField(quest.leadsToQuestLink.id, "name", quest.leadsToQuestLink.name or L("NEXT_QUEST"))))
+            frame.questLeadsToButton.questID = link.id
+            if noteLink then
+                -- Optional/breadcrumb quest links in Notes show the localized
+                -- quest title itself instead of implying a required chain.
+                frame.questLeadsToButton:SetText(GetLoadedQuestTitle(link.id, link.name or L("QUEST")))
+            else
+                frame.questLeadsToButton:SetText(L("LEADS_TO", QuestField(link.id, "name", link.name or L("NEXT_QUEST"))))
+            end
             frame.questLeadsToButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
             frame.questLeadsToButton:Show()
             cursorY = cursorY + 31
@@ -4843,17 +4968,49 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         t:SetTexCoord(0, floorData.texRight or 1, 0, floorData.texBottom or 1)
         t:Show()
     else
-        -- 4x3 client tiles; 1002x668 of the 1024x768 grid is the visible map.
-        local scale = artW / 1002
-        for i = 1, 12 do
-            local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
-            local t = Tile(i)
-            t:SetSize(256 * scale, 256 * scale)
-            t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * 256 * scale, -row * 256 * scale)
-            t:SetTexture(floorData.tiles .. i)
-            t:SetTexCoord(0, 1, 0, 1)
-            t:SetDrawLayer("ARTWORK", 0)
-            t:Show()
+        -- Prefer C_Map's numeric FileDataIDs when a UIMapID is supplied.
+        -- FileDataIDs are locale-independent, unlike some legacy Interface\WorldMap
+        -- texture aliases which are missing on certain localized Forever clients.
+        local apiTextures, apiLayer
+        if floorData.uiMapID and C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayerTextures then
+            local okLayers, layers = pcall(C_Map.GetMapArtLayers, floorData.uiMapID)
+            if okLayers and type(layers) == "table" and layers[1] then
+                apiLayer = layers[1]
+                local okTextures, textures = pcall(C_Map.GetMapArtLayerTextures, floorData.uiMapID, 1)
+                if okTextures and type(textures) == "table" and #textures > 0 then apiTextures = textures end
+            end
+        end
+
+        if apiTextures and apiLayer then
+            local layerW = tonumber(apiLayer.layerWidth) or 1002
+            local layerH = tonumber(apiLayer.layerHeight) or 668
+            local tileW = tonumber(apiLayer.tileWidth) or 256
+            local tileH = tonumber(apiLayer.tileHeight) or 256
+            local cols = math.max(1, math.ceil(layerW / tileW))
+            local scaleX, scaleY = artW / layerW, artH / layerH
+            for i = 1, #apiTextures do
+                local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
+                local t = Tile(i)
+                t:SetSize(tileW * scaleX, tileH * scaleY)
+                t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * tileW * scaleX, -row * tileH * scaleY)
+                t:SetTexture(apiTextures[i])
+                t:SetTexCoord(0, 1, 0, 1)
+                t:SetDrawLayer("ARTWORK", 0)
+                t:Show()
+            end
+        else
+            -- Legacy fallback for clients where the map-art API is unavailable.
+            local scale = artW / 1002
+            for i = 1, 12 do
+                local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
+                local t = Tile(i)
+                t:SetSize(256 * scale, 256 * scale)
+                t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * 256 * scale, -row * 256 * scale)
+                t:SetTexture(floorData.tiles .. i)
+                t:SetTexCoord(0, 1, 0, 1)
+                t:SetDrawLayer("ARTWORK", 0)
+                t:Show()
+            end
         end
         -- Parchment patches that cover the map's printed title banner.
         for p, patch in ipairs(floorData.patches or {}) do
@@ -5118,10 +5275,11 @@ SetMode = function(mode)
     end
 end
 
-SelectQuest = function(index)
+SelectQuest = function(index, allowHidden)
     local quests = DB[selectedDungeon].quests or {}
     if not quests[index] then return end
 
+    allowHiddenQuestSelection = allowHidden == true
     selectedPrereqStep = nil
     selectedPrereqParentQuestName = nil
     selectedPrereqParentQuestID = nil
@@ -5138,7 +5296,7 @@ SelectQuestByID = function(questID)
     local quests = DB[selectedDungeon].quests or {}
     for index, quest in ipairs(quests) do
         if quest.id == questID then
-            SelectQuest(index)
+            SelectQuest(index, quest.hideFromMainList == true)
             return
         end
     end
@@ -8052,7 +8210,7 @@ FDJ.ConfirmHideMinimapButton = function()
     StaticPopup_Show("FOREVERDUNGEONJOURNAL_HIDE_MINIMAP")
 end
 
-local function ShowMinimapButton()
+function FDJ.ShowMinimapButton()
     ForeverDungeonJournalDB.minimapHidden = false
     ForeverDungeonJournalDB.minimap = ForeverDungeonJournalDB.minimap or {}
     ForeverDungeonJournalDB.minimap.hide = false
@@ -8066,7 +8224,7 @@ local function ShowMinimapButton()
     end
 end
 
-local function SetupLibDBIconMinimap()
+function FDJ.SetupLibDBIconMinimap()
     if not _G.LibStub then return false end
 
     local ldb = _G.LibStub("LibDataBroker-1.1", true)
@@ -8131,7 +8289,7 @@ local function SetupLibDBIconMinimap()
     return true
 end
 
-local function CreateFallbackMinimap()
+function FDJ.CreateFallbackMinimap()
     FDJ._minimapUsingLibDBIcon = false
 
     minimapButton = _G["LibDBIcon10_ForeverDungeonJournal"]
@@ -8226,26 +8384,26 @@ local function CreateFallbackMinimap()
     end
 end
 
-local function CreateMinimap()
+function FDJ.CreateMinimap()
     -- Prefer the real shared LibDataBroker/LibDBIcon libraries when another
     -- enabled addon (including Leatrix Plus) provides them. This makes FDJ a
     -- genuinely registered LibDBIcon launcher instead of only imitating the
     -- frame name, which is required by collectors that use the library registry.
-    if SetupLibDBIconMinimap() then
+    if FDJ.SetupLibDBIconMinimap() then
         return
     end
 
     -- Keep a standalone fallback so FDJ still has a minimap button when no
     -- broker/icon library exists in the user's addon set.
-    CreateFallbackMinimap()
+    FDJ.CreateFallbackMinimap()
 end
 
 -- ============================================================
 -- COMMANDS / EVENTS
 -- ============================================================
 
-SLASH_FOREVERDUNGEONJOURNAL1 = "/fj"
-SLASH_FOREVERDUNGEONJOURNAL2 = "/fdj"
+SLASH_FOREVERDUNGEONJOURNAL1 = "/dj"
+SLASH_FOREVERDUNGEONJOURNAL2 = nil
 
 SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
     msg = strtrim(msg or ""):lower()
@@ -8288,7 +8446,7 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
     end
 
     if msg == "minimap" then
-        ShowMinimapButton()
+        FDJ.ShowMinimapButton()
         return
     end
 
@@ -8423,7 +8581,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         ScanEncounterJournal()
         CreateItemTooltip()
         CreateMainFrame()
-        CreateMinimap()
+        FDJ.CreateMinimap()
 
         -- Boss portraits use journal data or numeric NPC-ID display resolution; no live unit-string parsing.
 
@@ -8435,7 +8593,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.5.1"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.5.2"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

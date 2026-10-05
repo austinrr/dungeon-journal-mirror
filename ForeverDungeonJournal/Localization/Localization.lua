@@ -6,10 +6,11 @@ FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.Locales = FDJ.Locales or {}
 
 FDJ.Locales.enUS = {
+    RANDOM_ENCHANT = "+Random Enchant",
     ALSO_RECEIVE = "You will also receive:",
     MAP_JUMP_LEVEL = "Jump down to Level %d",
     NOTICE_LV30_DATA = "New loot and quests for dungeons up to lv 30 are still being discovered. I will update as new data comes out. gl hf",
-    NOTICE_RESIZE = "You can now resize the window by dragging the bottom right corner.",
+    NOTICE_RESIZE = "Commands changed from |cffff3030/fj|r to |cff33ff33/dj|r.",
     MAP_SWIM_LEVEL = "Swim underwater for level %d",
     MAP_ENTRANCE = "Entrance",
     MAP_FLOOR = "Level %d",
@@ -75,7 +76,7 @@ FDJ.Locales.enUS = {
     BUG_REPORT_TEXT = "Found some wrong information or new discoveries that should be added? Please report it on the Discord, Screenshot required.",
     WM_WORLD_MAP = "World Map",
     WM_DUNGEON_MAP = "Dungeon Map",
-    MINIMAP_HIDE_CONFIRM = "Hide the Dungeon Journal minimap button?\n\nYou can bring it back by typing /fj minimap.",
+    MINIMAP_HIDE_CONFIRM = "Hide the Dungeon Journal minimap button?\n\nYou can bring it back by typing /dj minimap.",
     LF_SHOW_RECIPES = "Show recipes/patterns drops",
     RESIZE_TIP_TITLE = "Resize",
     RESIZE_TIP = "Drag to resize the window. Right-click to reset.",
@@ -119,14 +120,14 @@ FDJ.Locales.enUS = {
     QUEST_COMPLETED = "This earlier quest has been completed.",
     QUEST_NOT_CACHED = "Quest text is not currently cached by the client.",
     CLASS_ONLY = "%s ONLY",
-    MINIMAP_HIDDEN = "minimap button hidden. Use /fj minimap.",
+    MINIMAP_HIDDEN = "minimap button hidden. Use /dj minimap.",
     MINIMAP_LEFT = "Left-click: Open / close",
     MINIMAP_DRAG = "Drag: Move",
     MINIMAP_RIGHT = "Right-click: Hide",
     LANGUAGE_CURRENT = "Language: %s",
     LANGUAGE_SET = "Language set to %s.",
     LANGUAGE_AUTO = "Auto (%s)",
-    LANGUAGE_HELP = "Language test: /fj lang de, fr, es, ru, it, pt, ko, zh, zhtw, en, /fj lang auto",
+    LANGUAGE_HELP = "Language test: /dj lang de, fr, es, ru, it, pt, ko, zh, zhtw, en, /dj lang auto",
     UPDATE_AVAILABLE = "Version %s is available (you have %s). Update on CurseForge.",
     PREVIOUS_QUEST = "Previous quest",
     NEXT_QUEST = "Next quest",
@@ -141,10 +142,11 @@ FDJ.Locales.enUS = {
 }
 
 FDJ.Locales.deDE = {
+    RANDOM_ENCHANT = "+Zufällige Verzauberung",
     ALSO_RECEIVE = "Ihr bekommt außerdem:",
     MAP_JUMP_LEVEL = "Auf Ebene %d hinunterspringen",
     NOTICE_LV30_DATA = "Neue Beute und Quests für Dungeons bis Stufe 30 werden noch entdeckt. Ich aktualisiere, sobald neue Daten erscheinen. gl hf",
-    NOTICE_RESIZE = "Du kannst das Fenster jetzt vergrößern oder verkleinern, indem du die untere rechte Ecke ziehst.",
+    NOTICE_RESIZE = "Die Befehle wurden von |cffff3030/fj|r zu |cff33ff33/dj|r geändert.",
     MAP_SWIM_LEVEL = "Unter Wasser tauchen für Ebene %d",
     MAP_ENTRANCE = "Eingang",
     MAP_FLOOR = "Ebene %d",
@@ -207,7 +209,7 @@ FDJ.Locales.deDE = {
     BUG_REPORT_TEXT = "Falsche Informationen gefunden oder neue Entdeckungen, die hinzugefügt werden sollten? Bitte melde es auf Discord, Screenshot erforderlich.",
     WM_WORLD_MAP = "Weltkarte",
     WM_DUNGEON_MAP = "Dungeonkarte",
-    MINIMAP_HIDE_CONFIRM = "Minimap-Schaltfläche des Dungeon-Journals ausblenden?\n\nMit /fj minimap wird sie wieder angezeigt.",
+    MINIMAP_HIDE_CONFIRM = "Minimap-Schaltfläche des Dungeon-Journals ausblenden?\n\nMit /dj minimap wird sie wieder angezeigt.",
     LF_SHOW_RECIPES = "Rezept-/Muster-Drops anzeigen",
     RESIZE_TIP_TITLE = "Größe ändern",
     RESIZE_TIP = "Ziehen, um die Fenstergröße zu ändern. Rechtsklick zum Zurücksetzen.",
@@ -251,14 +253,14 @@ FDJ.Locales.deDE = {
     QUEST_COMPLETED = "Diese frühere Quest wurde abgeschlossen.",
     QUEST_NOT_CACHED = "Der Questtext ist derzeit nicht im Client-Cache.",
     CLASS_ONLY = "NUR %s",
-    MINIMAP_HIDDEN = "Minimap-Schaltfläche ausgeblendet. Mit /fj minimap wieder anzeigen.",
+    MINIMAP_HIDDEN = "Minimap-Schaltfläche ausgeblendet. Mit /dj minimap wieder anzeigen.",
     MINIMAP_LEFT = "Linksklick: Öffnen / schließen",
     MINIMAP_DRAG = "Ziehen: Verschieben",
     MINIMAP_RIGHT = "Rechtsklick: Ausblenden",
     LANGUAGE_CURRENT = "Sprache: %s",
     LANGUAGE_SET = "Sprache auf %s gesetzt.",
     LANGUAGE_AUTO = "Automatisch (%s)",
-    LANGUAGE_HELP = "Sprachtest: /fj lang de, fr, es, ru, it, pt, en oder auto",
+    LANGUAGE_HELP = "Sprachtest: /dj lang de, fr, es, ru, it, pt, en oder auto",
     UPDATE_AVAILABLE = "Version %s ist verfügbar (du hast %s). Aktualisiere über CurseForge.",
     PREVIOUS_QUEST = "Vorherige Quest",
     NEXT_QUEST = "Nächste Quest",
@@ -337,7 +339,7 @@ function FDJ.GetClientLanguage()
 end
 
 -- Client-provided quest/item strings are already localized, but only to the
--- actual WoW client language. When /fj lang forces a different language for
+-- actual WoW client language. When /dj lang forces a different language for
 -- testing, use our content table instead of mixing English client text into it.
 function FDJ.CanUseClientLocalizedText()
     return FDJ.GetLanguage() == FDJ.GetClientLanguage()
@@ -409,6 +411,140 @@ function FDJ.LocalizeFreeText(value)
     local t, changed = TranslateCommaList(value)
     if changed then return t end
     return value
+end
+
+
+-- Reputation reward names need their own localization pass because reward
+-- summaries store them together with the amount (for example
+-- "Ironforge +100").  Localize the faction name before rebuilding that token
+-- instead of requiring a translation entry for every possible amount.
+local REPUTATION_NAMES = {
+    deDE = {
+        ["Gadgetzan"] = "Gadgetzan",
+        ["Gnomeregan Exiles"] = "Gnomeregangnome",
+        ["Argent Dawn"] = "Argentumdämmerung",
+        ["Darnassus"] = "Darnassus",
+        ["Darkspear Trolls"] = "Dunkelspeertrolle",
+        ["Earthen Ring"] = "Der Irdene Ring",
+        ["Orgrimmar"] = "Orgrimmar",
+        ["Stormwind"] = "Sturmwind",
+        ["Ironforge"] = "Eisenschmiede",
+        ["Thunder Bluff"] = "Donnerfels",
+        ["Undercity"] = "Unterstadt",
+    },
+    frFR = {
+        ["Gadgetzan"] = "Gadgetzan",
+        ["Gnomeregan Exiles"] = "Exilés de Gnomeregan",
+        ["Argent Dawn"] = "Aube d'argent",
+        ["Darnassus"] = "Darnassus",
+        ["Darkspear Trolls"] = "Trolls Sombrelance",
+        ["Earthen Ring"] = "Cercle terrestre",
+        ["Orgrimmar"] = "Orgrimmar",
+        ["Stormwind"] = "Hurlevent",
+        ["Ironforge"] = "Forgefer",
+        ["Thunder Bluff"] = "Pitons-du-Tonnerre",
+        ["Undercity"] = "Fossoyeuse",
+    },
+    esES = {
+        ["Gadgetzan"] = "Gadgetzan",
+        ["Gnomeregan Exiles"] = "Exiliados de Gnomeregan",
+        ["Argent Dawn"] = "Alba Argenta",
+        ["Darnassus"] = "Darnassus",
+        ["Darkspear Trolls"] = "Trols Lanza Negra",
+        ["Earthen Ring"] = "Anillo de la Tierra",
+        ["Orgrimmar"] = "Orgrimmar",
+        ["Stormwind"] = "Ventormenta",
+        ["Ironforge"] = "Forjaz",
+        ["Thunder Bluff"] = "Cima del Trueno",
+        ["Undercity"] = "Entrañas",
+    },
+    itIT = {
+        ["Gadgetzan"] = "Gadgetzan",
+        ["Gnomeregan Exiles"] = "Esuli di Gnomeregan",
+        ["Argent Dawn"] = "Alba d'Argento",
+        ["Darnassus"] = "Darnassus",
+        ["Darkspear Trolls"] = "Troll Lanciascura",
+        ["Earthen Ring"] = "Circolo della Terra",
+        ["Orgrimmar"] = "Orgrimmar",
+        ["Stormwind"] = "Roccavento",
+        ["Ironforge"] = "Forgiardente",
+        ["Thunder Bluff"] = "Picco del Tuono",
+        ["Undercity"] = "Sepulcra",
+    },
+    ptBR = {
+        ["Gadgetzan"] = "Geringontzan",
+        ["Gnomeregan Exiles"] = "Exilados de Gnomeregan",
+        ["Argent Dawn"] = "Aurora Argêntea",
+        ["Darnassus"] = "Darnassus",
+        ["Darkspear Trolls"] = "Trolls Lançanegra",
+        ["Earthen Ring"] = "Harmonia Telúrica",
+        ["Orgrimmar"] = "Orgrimmar",
+        ["Stormwind"] = "Ventobravo",
+        ["Ironforge"] = "Altaforja",
+        ["Thunder Bluff"] = "Penhasco do Trovão",
+        ["Undercity"] = "Cidade Baixa",
+    },
+    ruRU = {
+        ["Gadgetzan"] = "Прибамбасск",
+        ["Gnomeregan Exiles"] = "Изгнанники Гномрегана",
+        ["Argent Dawn"] = "Серебряный Рассвет",
+        ["Darnassus"] = "Дарнас",
+        ["Darkspear Trolls"] = "Тролли Черного Копья",
+        ["Earthen Ring"] = "Служители Земли",
+        ["Orgrimmar"] = "Оргриммар",
+        ["Stormwind"] = "Штормград",
+        ["Ironforge"] = "Стальгорн",
+        ["Thunder Bluff"] = "Громовой Утёс",
+        ["Undercity"] = "Подгород",
+    },
+    koKR = {
+        ["Gadgetzan"] = "가젯잔",
+        ["Gnomeregan Exiles"] = "놈리건 추방자",
+        ["Argent Dawn"] = "은빛 여명회",
+        ["Darnassus"] = "다르나서스",
+        ["Darkspear Trolls"] = "검은창 트롤",
+        ["Earthen Ring"] = "대지 고리회",
+        ["Orgrimmar"] = "오그리마",
+        ["Stormwind"] = "스톰윈드",
+        ["Ironforge"] = "아이언포지",
+        ["Thunder Bluff"] = "썬더 블러프",
+        ["Undercity"] = "언더시티",
+    },
+    zhCN = {
+        ["Gadgetzan"] = "加基森",
+        ["Gnomeregan Exiles"] = "诺莫瑞根流亡者",
+        ["Argent Dawn"] = "银色黎明",
+        ["Darnassus"] = "达纳苏斯",
+        ["Darkspear Trolls"] = "暗矛巨魔",
+        ["Earthen Ring"] = "大地之环",
+        ["Orgrimmar"] = "奥格瑞玛",
+        ["Stormwind"] = "暴风城",
+        ["Ironforge"] = "铁炉堡",
+        ["Thunder Bluff"] = "雷霆崖",
+        ["Undercity"] = "幽暗城",
+    },
+    zhTW = {
+        ["Gadgetzan"] = "加基森",
+        ["Gnomeregan Exiles"] = "諾姆瑞根流亡者",
+        ["Argent Dawn"] = "銀色黎明",
+        ["Darnassus"] = "達納蘇斯",
+        ["Darkspear Trolls"] = "暗矛食人妖",
+        ["Earthen Ring"] = "大地之環",
+        ["Orgrimmar"] = "奧格瑪",
+        ["Stormwind"] = "暴風城",
+        ["Ironforge"] = "鐵爐堡",
+        ["Thunder Bluff"] = "雷霆崖",
+        ["Undercity"] = "幽暗城",
+    },
+}
+
+function FDJ.LocalizeReputationName(name)
+    if type(name) ~= "string" or name == "" then return name end
+    local names = REPUTATION_NAMES[FDJ.GetLanguage()]
+    if names and names[name] then return names[name] end
+    -- Keep this fallback so any future reputation name already present in the
+    -- general content tables still localizes without another code change.
+    return FDJ.LocalizeFreeText(name)
 end
 
 function FDJ.LocalizeDungeonName(internalName)

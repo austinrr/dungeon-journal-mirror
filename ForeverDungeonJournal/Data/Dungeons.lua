@@ -706,6 +706,7 @@ DB["The Deadmines"] = {
         startItem = {2874, "An Unsent Letter", 1, "Looted from Edwin VanCleef"},
         turnin = "Baros Alexston, City Hall, Cathedral Square, Stormwind",
     }, {
+    }, {
         classOnly = "PALADIN",
         objective = "Wait for Jordan Stilwell to finish forging a weapon for you.",
         rewardSummary = "",
@@ -786,7 +787,7 @@ DB["The Deadmines"] = {
 }
 
 DB["Blackfathom Deeps"] = {
-    level = "22+",
+    level = "24-32",
     location = "Zoram Strand, Ashenvale",
     description = "A flooded night elf ruin on the Zoram Strand, occupied by naga, murlocs and Twilight's Hammer cultists serving Aku'mai.",
     icon = "Interface\\Icons\\INV_Misc_MonsterClaw_04",
@@ -881,6 +882,7 @@ DB["Blackfathom Deeps"] = {
         liveXPFallback = 1300,
     }, {
         note = "Introductory step leading to The Essence of Aku'Mai.",
+        warning = "OPTIONAL, not required",
         objective = "Speak to Je'neu Sancrea in Ashenvale.",
         rewardSummary = "Darkspear Trolls +25  •  Earthen Ring +100",
         id = 6562,
@@ -888,13 +890,15 @@ DB["Blackfathom Deeps"] = {
         rewardItems = {
         },
         name = "Trouble in the Deeps",
+        hideFromMainList = true,
         faction = "Horde",
         pickup = "Tsunaman, Stonetalon Mountains",
         level = 22,
         requires = 17,
         turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale",
     }, {
-        note = "Trouble in the Deeps leads here, but it is optional.",
+        note = "Optional introductory quest:",
+        noteQuestLink = { id = 6562, name = "Trouble in the Deeps" },
         objective = "Collect 20 Sapphires of Aku'Mai in Blackfathom Deeps.",
         rewardSummary = "14s  •  Darkspear Trolls +100  •  Earthen Ring +150",
         id = 6563,
@@ -912,7 +916,7 @@ DB["Blackfathom Deeps"] = {
         objective = "Defeat Lorgus Jett in Blackfathom Deeps.",
         rewardSummary = "40s  •  Darkspear Trolls +150  •  Earthen Ring +150",
         id = 6565,
-        liveXPFallback = 2650,
+        liveXPFallback = 6489,
         rewardChoice = true,
         rewardItems = {{17694, "Band of the Fist", 3}, {17695, "Chestnut Mantle", 3}},
         name = "Allegiance to the Old Gods",
@@ -937,15 +941,31 @@ DB["Blackfathom Deeps"] = {
     }, {
         note = "The Fathom Stone is also associated with the optional Baron Aquanis encounter.",
         objective = "Recover the Fathom Core from the Fathom Stone in Blackfathom Deeps.",
-        rewardSummary = "45s",
+        rewardSummary = "45s  •  Darkspear Trolls +150  •  Earthen Ring +150",
         id = 6921,
-        liveXPFallback = 2750,
+        liveXPFallback = 6746,
         rewardItems = {
         },
         name = "Amongst the Ruins",
         faction = "Horde",
         pickup = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale (12, 34)",
         level = 27,
+        requires = 21,
+        turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale",
+    }, {
+        warning = "Baron Aquanis spawns by looting the Fathom Core from the 'Amongst the Ruins' quest.",
+        objective = "Bring the Strange Water Globe to Je'neu Sancrea at Zoram'gar Outpost, Ashenvale.",
+        rewardSummary = "Darkspear Trolls +150",
+        id = 6922,
+        liveXPFallback = 7468,
+        rewardChoice = true,
+        rewardItems = {{16886, "Outlaw Sabre", 3}, {16887, "Witch's Finger", 3}, {270043, "Dreamer's Chestguard", 3}},
+        name = "Baron Aquanis",
+        faction = "Horde",
+        pickup = "Strange Water Globe, dropped by Baron Aquanis inside Blackfathom Deeps",
+        startsInDungeon = true,
+        startItem = {16782, "Strange Water Globe", 1, "Drops from Baron Aquanis inside Blackfathom Deeps."},
+        level = 30,
         requires = 21,
         turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale",
     }, {
@@ -988,13 +1008,6 @@ DB["Blackfathom Deeps"] = {
             npcID = 12902,
             aliases = {"Lorgus Jett"},
             loot = {{273843, "Fallenroot Longbow", "Ranged, Bow", 3}, {273841, "Twilight Maul", "Two-Hand, Mace", 3}, {273842, "Treacherous Treads", "Feet, Mail", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}},
-        },
-        {
-            name = "Baron Aquanis",
-            npcID = 12876,
-            aliases = {"Baron Aquanis"},
-            loot = {{16782, "Strange Water Globe", "Quest Item", 1}, {252822, "Pattern: Defender's Leather Kilt", "Recipe, Leatherworking", 3}, {253980, "Pattern: Filigreed Flame Circlet", "Recipe, Tailoring", 3}},
-            description = "Optional quest-summoned encounter associated with the Fathom Stone; not part of the current 5-player seven-boss route.",
         },
         {
             name = "Old Serra'kis",
@@ -1315,6 +1328,7 @@ DB["Shadowfang Keep"] = {
                 {6320, "Commander's Crest", "Off Hand, Shield", 3},
                 {3191, "Arced War Axe", "Two-Hand, Axe", 3},
                 {273643, "Worgenbane Talisman", "Trinket", 3},
+                {273105, "Blueprint: Toxin Study", "Blueprint", 2},
                 {6341, "Eerie Stable Lantern", "Held In Off-hand", 3},
             },
         },
@@ -1935,7 +1949,6 @@ FDJ.DB["City of Dalaran"] = {
 }
 
 FDJ.DB["Gnomeregan"] = {
-    fullItemsTBD = true, -- shows "Full Items Data TBD"
     level = "29-38",
     location = "Dun Morogh",
     description = "The irradiated underground city of the gnomes, overrun by troggs and Mekgineer Thermaplugg's forces.",
@@ -2041,6 +2054,7 @@ FDJ.DB["Gnomeregan"] = {
         rewardChoice = true,
         rewardItems = {{9623, "Civinad Robes", 2}, {9624, "Triprunner Dungarees", 2}, {9625, "Dual Reinforced Leggings", 2}},
         name = "Rig Wars",
+        warning = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear.",
         faction = "Horde",
         pickup = "Nogg, Orgrimmar",
         level = 35,
@@ -2107,6 +2121,7 @@ FDJ.DB["Gnomeregan"] = {
             loot = {
                 {9445, "Grubbis Paws", "Hands, Mail", 3},
                 {274043, "Irradiated Shield", "Off Hand, Shield", 3},
+                {274042, "Skullduggery Belt", "Waist, Leather", 3},
             },
         },
         {
@@ -2150,7 +2165,7 @@ FDJ.DB["Gnomeregan"] = {
             loot = {
                 {9458, "Thermaplugg's Central Core", "Off Hand, Shield", 3},
                 {9459, "Thermaplugg's Left Arm", "Two-Hand, Axe", 3},
-                {9461, "Charged Gear", "Finger", 3},
+                {9461, "Charged Gear", "Finger", 3, "", "RANDOM_ENCHANT"},
                 {9492, "Electromagnetic Gigaflux Reactivator", "Head, Cloth", 3},
             },
         },
@@ -2300,6 +2315,7 @@ FDJ.DB["Razorfen Kraul"] = {
             loot = {
                 {6681, "Thornspike", "One-Hand, Dagger", 3},
                 {274158, "Death Prophet Spine", "Two-Hand, Staff", 3},
+                {274159, "Thorncursed Grips", "Hands, Leather", 3},
                 {252820, "Pattern: Brawler's Leather Legguards", "Recipe, Leatherworking", 3},
             },
         },

@@ -1,4 +1,4 @@
-DungeonJournal 1.5.1
+DungeonJournal 1.5.2
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -8,9 +8,9 @@ It replaces the previous version in the same folder.
 SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
-Commands: /fj and /fdj.
+Command: /dj.
 
-CHANGES IN 1.5.1
+CHANGES IN 1.5.2
 - Show on Map: the quest marker pulse is smoother and no longer blinks when it restarts.
 - The Treaty of Understanding: the Stone Tablet that starts the quest is shown as a
   button; hover it to see where it is.
@@ -21,7 +21,7 @@ CHANGES IN 1.5.0
 - New dungeon: Scarlet Monastery: Library (bosses, loot, quests, map).
 - Dungeon map on the M key: inside a journal dungeon the big map shows the
   dungeon map with boss pins; a button switches back to the world map.
-  /fj worldmap turns this off.
+  /dj worldmap turns this off.
 - The window can be resized by dragging its bottom-right corner (right-click
   the corner to reset).
 - Report button next to the language box, with the Discord link.

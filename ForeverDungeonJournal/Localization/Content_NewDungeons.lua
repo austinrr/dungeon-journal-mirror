@@ -2064,3 +2064,164 @@ for lang, data in pairs(HIGHLAND_HIDES_PREREQ_150) do
         content.places["Start Young Crocolisk Skins here"] = data.map
     end
 end
+
+
+-- Rig Wars pickup-order warning (1.5.2).
+local RIG_WARS_WARNING_EN = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear."
+local RIG_WARS_WARNING_TEMPLATE_EN = "Accept %s before %s. If %s disappears, abandon %s and it will reappear."
+local RIG_WARS_WARNING_TEMPLATES_151 = {
+    deDE = "Nimm %s vor %s an. Falls %s verschwindet, brich %s ab; dann erscheint die Quest wieder.",
+    frFR = "Acceptez %s avant %s. Si %s disparaît, abandonnez %s et la quête réapparaîtra.",
+    esES = "Acepta %s antes de %s. Si %s desaparece, abandona %s y la misión volverá a aparecer.",
+    itIT = "Accetta %s prima di %s. Se %s scompare, abbandona %s e la missione ricomparirà.",
+    ptBR = "Aceite %s antes de %s. Se %s desaparecer, abandone %s e a missão reaparecerá.",
+    ruRU = "Сначала возьмите %s, затем %s. Если %s исчезнет, отмените %s — задание появится снова.",
+    koKR = "%s 퀘스트를 %s보다 먼저 받으세요. %s 퀘스트가 사라지면 %s 퀘스트를 포기하면 다시 나타납니다.",
+    zhCN = "先接取%s，再接%s。如果%s消失，放弃%s后该任务会重新出现。",
+    zhTW = "先接取%s，再接%s。如果%s消失，放棄%s後該任務會重新出現。",
+}
+local RIG_WARS_WARNING_151 = {
+    deDE = "Nimm Rig Wars vor Chief Engineer Scooty an. Falls Rig Wars verschwindet, brich Chief Engineer Scooty ab; dann erscheint Rig Wars wieder.",
+    frFR = "Acceptez Rig Wars avant Chief Engineer Scooty. Si Rig Wars disparaît, abandonnez Chief Engineer Scooty et Rig Wars réapparaîtra.",
+    esES = "Acepta Rig Wars antes de Chief Engineer Scooty. Si Rig Wars desaparece, abandona Chief Engineer Scooty y Rig Wars volverá a aparecer.",
+    itIT = "Accetta Rig Wars prima di Chief Engineer Scooty. Se Rig Wars scompare, abbandona Chief Engineer Scooty e Rig Wars ricomparirà.",
+    ptBR = "Aceite Rig Wars antes de Chief Engineer Scooty. Se Rig Wars desaparecer, abandone Chief Engineer Scooty e Rig Wars reaparecerá.",
+    ruRU = "Сначала возьмите Rig Wars, затем Chief Engineer Scooty. Если Rig Wars исчезнет, отмените Chief Engineer Scooty — Rig Wars появится снова.",
+    koKR = "Chief Engineer Scooty보다 먼저 Rig Wars를 받으세요. Rig Wars가 사라지면 Chief Engineer Scooty를 포기하면 Rig Wars가 다시 나타납니다.",
+    zhCN = "先接取 Rig Wars，再接 Chief Engineer Scooty。如果 Rig Wars 消失，放弃 Chief Engineer Scooty 后，Rig Wars 会重新出现。",
+    zhTW = "先接取 Rig Wars，再接 Chief Engineer Scooty。如果 Rig Wars 消失，放棄 Chief Engineer Scooty 後，Rig Wars 會重新出現。",
+}
+for lang, translated in pairs(RIG_WARS_WARNING_151) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.places = content.places or {}
+        content.places[RIG_WARS_WARNING_EN] = translated
+        local template = RIG_WARS_WARNING_TEMPLATES_151[lang]
+        if template then
+            content.places[RIG_WARS_WARNING_TEMPLATE_EN] = template
+        end
+    end
+end
+
+
+-- Blackfathom Deeps: Baron Aquanis (6922), added in 1.5.2.
+-- This is an item-start quest inside BFD, not a formal quest-chain entry.
+local BARON_AQUANIS_6922 = {
+    deDE = {
+        name = "Baron Aquanis",
+        objective = "Bringt die seltsame Wasserkugel zu Je'neu Sancrea im Zoram'gar-Außenposten im Eschental.",
+        warning = "Baron Aquanis erscheint, wenn ihr den Tiefenkern aus der Quest 'Inmitten der Ruinen' plündert.",
+        pickup = "Seltsame Wasserkugel, Beute von Baron Aquanis in der Tiefschwarzen Grotte",
+        turnin = "Je'neu Sancrea, Zoram'gar-Außenposten, Eschental",
+        source = "Beute von Baron Aquanis in der Tiefschwarzen Grotte.",
+    },
+    frFR = {
+        name = "Baron Aquanis",
+        objective = "Apportez le Globe d'eau étrange à Je'neu Sancrea à l'avant-poste de Zoram'gar, en Orneval.",
+        warning = "Le Baron Aquanis apparaît lorsque vous récupérez le Noyau des profondeurs pour la quête 'Parmi les ruines'.",
+        pickup = "Globe d'eau étrange, obtenu sur le Baron Aquanis dans les Profondeurs de Brassenoire",
+        turnin = "Je'neu Sancrea, avant-poste de Zoram'gar, Orneval",
+        source = "Obtenu sur le Baron Aquanis dans les Profondeurs de Brassenoire.",
+    },
+    esES = {
+        name = "Barón Aquanis",
+        objective = "Lleva el Globo de agua extraño a Je'neu Sancrea en el Puesto de Zoram'gar, Vallefresno.",
+        warning = "El Barón Aquanis aparece al saquear el Núcleo de las profundidades de la misión 'Entre las ruinas'.",
+        pickup = "Globo de agua extraño, botín del Barón Aquanis dentro de Cavernas de Brazanegra",
+        turnin = "Je'neu Sancrea, Puesto de Zoram'gar, Vallefresno",
+        source = "Botín del Barón Aquanis dentro de Cavernas de Brazanegra.",
+    },
+    itIT = {
+        name = "Barone Aquanis",
+        objective = "Porta il Globo d'Acqua Strano a Je'neu Sancrea all'Avamposto di Zoram'gar, Valtetra.",
+        warning = "Il Barone Aquanis compare quando raccogli il Nucleo degli Abissi per la missione 'Tra le Rovine'.",
+        pickup = "Globo d'Acqua Strano, bottino del Barone Aquanis nelle Profondità di Fondocupo",
+        turnin = "Je'neu Sancrea, Avamposto di Zoram'gar, Valtetra",
+        source = "Bottino del Barone Aquanis nelle Profondità di Fondocupo.",
+    },
+    ptBR = {
+        name = "Barão Aquanis",
+        objective = "Leve o Globo de Água Estranho a Je'neu Sancrea no Posto Avançado de Zoram'gar, Vale Gris.",
+        warning = "O Barão Aquanis aparece ao saquear o Núcleo das Profundezas da missão 'Entre as Ruínas'.",
+        pickup = "Globo de Água Estranho, saque do Barão Aquanis dentro de Profundezas Negras",
+        turnin = "Je'neu Sancrea, Posto Avançado de Zoram'gar, Vale Gris",
+        source = "Saque do Barão Aquanis dentro de Profundezas Negras.",
+    },
+    ruRU = {
+        name = "Барон Акванис",
+        objective = "Отнесите странную водяную сферу Джен'ю Санкри в заставу Зорам'гар, Ясеневый лес.",
+        warning = "Барон Акванис появляется, когда вы забираете Ядро глубин для задания 'Среди руин'.",
+        pickup = "Странная водяная сфера, добывается с барона Акваниса в Непроглядной Пучине",
+        turnin = "Джен'ю Санкри, застава Зорам'гар, Ясеневый лес",
+        source = "Добывается с барона Акваниса в Непроглядной Пучине.",
+    },
+    koKR = {
+        name = "군주 아쿠아니스",
+        objective = "잿빛 골짜기 조람가르 전초기지의 제뉴 산크리에게 이상한 물구슬을 가져가십시오.",
+        warning = "군주 아쿠아니스는 '폐허 사이로' 퀘스트의 심연의 핵을 획득하면 생성됩니다.",
+        pickup = "이상한 물구슬, 검은심연 나락의 군주 아쿠아니스에게서 획득",
+        turnin = "제뉴 산크리, 조람가르 전초기지, 잿빛 골짜기",
+        source = "검은심연 나락의 군주 아쿠아니스에게서 획득합니다.",
+    },
+    zhCN = {
+        name = "阿奎尼斯男爵",
+        objective = "把奇怪的水球交给灰谷佐拉姆加前哨站的耶努萨克雷。",
+        warning = "拾取'废墟之间'任务的深渊之核后，阿奎尼斯男爵会出现。",
+        pickup = "奇怪的水球，由黑暗深渊中的阿奎尼斯男爵掉落",
+        turnin = "耶努萨克雷，佐拉姆加前哨站，灰谷",
+        source = "由黑暗深渊中的阿奎尼斯男爵掉落。",
+    },
+    zhTW = {
+        name = "阿奎尼斯男爵",
+        objective = "把奇怪的水球交給梣谷佐拉姆加前哨站的耶努薩克雷。",
+        warning = "拾取'廢墟之間'任務的深淵之核後，阿奎尼斯男爵會出現。",
+        pickup = "奇怪的水球，由黑暗深淵中的阿奎尼斯男爵掉落",
+        turnin = "耶努薩克雷，佐拉姆加前哨站，梣谷",
+        source = "由黑暗深淵中的阿奎尼斯男爵掉落。",
+    },
+}
+
+for lang, data in pairs(BARON_AQUANIS_6922) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        local q = content.quests[6922] or {}
+        content.quests[6922] = q
+        q.name = data.name
+        q.objective = data.objective
+        q.warning = data.warning
+        q.pickup = data.pickup
+        q.turnin = data.turnin
+        content.places["Drops from Baron Aquanis inside Blackfathom Deeps."] = data.source
+    end
+end
+
+
+-- Blackfathom Deeps optional breadcrumb presentation (1.5.2).
+-- Trouble in the Deeps stays available as a hidden detail page, opened from
+-- The Essence of Aku'Mai Notes, but is not presented as a required chain step.
+local BFD_TROUBLE_OPTIONAL_151 = {
+    deDE = { warning = "OPTIONAL, nicht erforderlich", essenceNote = "Optionale Einführungsquest:" },
+    frFR = { warning = "FACULTATIF, non requis", essenceNote = "Quête d’introduction facultative :" },
+    esES = { warning = "OPCIONAL, no es necesaria", essenceNote = "Misión introductoria opcional:" },
+    itIT = { warning = "OPZIONALE, non richiesta", essenceNote = "Missione introduttiva opzionale:" },
+    ptBR = { warning = "OPCIONAL, não é obrigatória", essenceNote = "Missão introdutória opcional:" },
+    ruRU = { warning = "НЕОБЯЗАТЕЛЬНО, не требуется", essenceNote = "Необязательное вводное задание:" },
+    koKR = { warning = "선택 사항, 필요하지 않음", essenceNote = "선택형 선행 안내 퀘스트:" },
+    zhCN = { warning = "可选，并非必需", essenceNote = "可选的引导任务：" },
+    zhTW = { warning = "可選，並非必需", essenceNote = "可選的引導任務：" },
+}
+for lang, data in pairs(BFD_TROUBLE_OPTIONAL_151) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        local trouble = content.quests[6562] or {}
+        content.quests[6562] = trouble
+        trouble.warning = data.warning
+
+        local essence = content.quests[6563] or {}
+        content.quests[6563] = essence
+        essence.note = data.essenceNote
+    end
+end

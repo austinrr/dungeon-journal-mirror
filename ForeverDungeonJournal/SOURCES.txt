@@ -435,3 +435,5 @@ Added 1050 Mythology of the Titans, 96800 Past Due (giver not listed), 1049 Comp
 
 2026-10-04 Scarlet Monastery: Library
 Bosses, levels (Loksey 34, Doan 37), display IDs and loot from Wowhead Forever NPC pages 3974 and 6487; The Scarlet Key from Doan's Strongbox (object 103821). Level range 33-41 from foreverchanges.pro. Trash: zone blues and Scarlet Boots recorded on Library mobs. Wowhead has no map coordinates for either boss, so the map has no pins. The Library quests moved here from the Graveyard page.
+
+Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practical Amongst the Ruins prerequisite: https://www.wowhead.com/forever/quest=6922/baron-aquanis ; https://www.wowhead.com/forever/guide/blackfathom-deeps-dungeon-overview-location-rewards

@@ -35,7 +35,7 @@ BINDING_NAME_FOREVERDUNGEONJOURNAL_TOGGLE = bindingNames[bindingLocale] or "Open
 -- version installed; pressing OK stores a flag in SavedVariables so it never
 -- appears again. Bump NOTICE_ID to show a new message in a later update.
 -- ============================================================
-local NOTICE_ID = "resize-v1"
+local NOTICE_ID = "dj-command-v1"
 
 local function ShowUpdateNotice(force)
     local db = ForeverDungeonJournalDB

@@ -74,6 +74,7 @@ FDJ.QUEST_SHAREABILITY_AUDIT = {
     [1200] = true,    -- Blackfathom Villainy (Alliance)
     [1199] = true,    -- Twilight Falls
     [6564] = false,   -- Allegiance to the Old Gods (item-start step)
+    [6922] = false,   -- Baron Aquanis (item-start quest from Strange Water Globe)
     [6562] = true,    -- Trouble in the Deeps
     [6563] = true,    -- Essence of Aku'Mai
     [6565] = true,    -- Allegiance to the Old Gods (final)

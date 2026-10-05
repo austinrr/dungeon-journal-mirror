@@ -30,9 +30,30 @@ FDJ.LootFilterSettings = Settings
 
 -- ---------------------------------------------------------------- recipes
 local function IsRecipe(item)
-    local slot = item and item[3]
-    if type(slot) ~= "string" then return false end
-    return slot:find("^Recipe") ~= nil or slot:find("^Blueprint") ~= nil
+    if type(item) ~= "table" then return false end
+
+    -- Most profession drops use slot strings such as "Recipe, Leatherworking",
+    -- but some Forever entries use variants like "Leatherworking Recipe".
+    -- Detect both the stored slot text and the item-name prefix so patterns,
+    -- plans, recipes and blueprints always obey the recipe visibility toggle.
+    local slot = item[3]
+    if type(slot) == "string" then
+        local lowerSlot = slot:lower()
+        if lowerSlot:find("recipe", 1, true) or lowerSlot:find("blueprint", 1, true) then
+            return true
+        end
+    end
+
+    local name = item[2]
+    if type(name) == "string" then
+        local lowerName = name:lower()
+        if lowerName:find("^pattern:") or lowerName:find("^plans:")
+            or lowerName:find("^recipe:") or lowerName:find("^blueprint:") then
+            return true
+        end
+    end
+
+    return false
 end
 
 -- ---------------------------------------------------------- class usability
@@ -569,6 +590,55 @@ local function ItemIconTexture(itemID)
     return "Interface\\Icons\\INV_Misc_QuestionMark"
 end
 
+local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
+    if not tooltip or not text or text == "" or not tooltip.GetName or not tooltip.NumLines then return false end
+    local tipName = tooltip:GetName()
+    if not tipName or tipName == "" then return false end
+
+    local requiredNeedle = tostring(_G.ITEM_MIN_LEVEL or "Requires Level %d")
+    requiredNeedle = requiredNeedle:gsub("%%d", ""):gsub("%%s", "")
+    requiredNeedle = requiredNeedle:gsub("^%s+", ""):gsub("%s+$", "")
+
+    local lineCount = tooltip:NumLines() or 0
+    local requiredIndex
+    for i = 1, lineCount do
+        local left = _G[tipName .. "TextLeft" .. i]
+        local lineText = left and left:GetText()
+        if type(lineText) == "string" and requiredNeedle ~= "" and lineText:find(requiredNeedle, 1, true) then
+            requiredIndex = i
+            break
+        end
+    end
+    if not requiredIndex then return false end
+
+    tooltip:AddLine(" ")
+    for i = lineCount, requiredIndex, -1 do
+        local srcL = _G[tipName .. "TextLeft" .. i]
+        local srcR = _G[tipName .. "TextRight" .. i]
+        local dstL = _G[tipName .. "TextLeft" .. (i + 1)]
+        local dstR = _G[tipName .. "TextRight" .. (i + 1)]
+        if srcL and dstL then
+            dstL:SetText(srcL:GetText() or "")
+            local cr, cg, cb, ca = srcL:GetTextColor()
+            dstL:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
+        end
+        if srcR and dstR then
+            dstR:SetText(srcR:GetText() or "")
+            local cr, cg, cb, ca = srcR:GetTextColor()
+            dstR:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
+        end
+    end
+
+    local targetL = _G[tipName .. "TextLeft" .. requiredIndex]
+    local targetR = _G[tipName .. "TextRight" .. requiredIndex]
+    if targetL then
+        targetL:SetText(text)
+        targetL:SetTextColor(r or 0.10, g or 1.00, b or 0.10, 1)
+    end
+    if targetR then targetR:SetText("") end
+    return true
+end
+
 local function MakeResultRow(parent)
     local row = CreateFrame("Button", nil, parent)
     row.bg = row:CreateTexture(nil, "BACKGROUND")
@@ -590,6 +660,12 @@ local function MakeResultRow(parent)
             GameTooltip:SetHyperlink("item:" .. self.item[1])
         else
             GameTooltip:SetText(self.item[2] or "")
+        end
+        if type(self.item[6]) == "string" and self.item[6] ~= "" then
+            local statText = L(self.item[6])
+            if not InsertTooltipLineBeforeRequiredLevel(GameTooltip, statText, 0.10, 1.00, 0.10) then
+                GameTooltip:AddLine(statText, 0.10, 1.00, 0.10, true)
+            end
         end
         if type(self.item[5]) == "string" and self.item[5] ~= "" then
             GameTooltip:AddLine(" ")

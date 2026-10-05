@@ -169,7 +169,7 @@ watcher:SetScript("OnEvent", function(_, event)
     end
 end)
 
--- /fj worldmap toggles the feature.
+-- /dj worldmap toggles the feature.
 function FDJ.ToggleWorldMapOverlay()
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
     ForeverDungeonJournalDB.worldMapOverlay = not Enabled()
