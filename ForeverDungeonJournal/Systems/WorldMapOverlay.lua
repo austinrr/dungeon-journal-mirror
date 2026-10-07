@@ -98,6 +98,45 @@ local function Attach(dungeonName)
     return true
 end
 
+-- Scarlet Monastery: buttons to say which wing this is. Shown whenever the
+-- player is inside, so a wrong guess can always be corrected with one click.
+local wingButtons = {}
+local function UpdateWingButtons(dungeonName, anchor)
+    local inScarlet = false
+    if FDJ.InScarletMonastery then
+        local ok, value = pcall(FDJ.InScarletMonastery)
+        inScarlet = ok and value or false
+    end
+    local show = inScarlet and dungeonName and Enabled() and not wantWorld and anchor
+    for i, wing in ipairs(FDJ.SCARLET_WINGS or {}) do
+        local button = wingButtons[i]
+        if show and not button then
+            button = CreateFrame("Button", nil, WorldMapFrame, "UIPanelButtonTemplate")
+            button:SetSize(130, 22)
+            button:SetFrameStrata("HIGH")
+            button:SetScript("OnClick", function(self)
+                if FDJ.SetScarletWing then FDJ.SetScarletWing(self.fdjWing) end
+            end)
+            wingButtons[i] = button
+        end
+        if button then
+            if show then
+                local label = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(wing) or wing
+                label = type(label) == "string" and (label:match("[:：]%s*(.+)$") or label) or wing
+                button.fdjWing = wing
+                button:SetText(label)
+                button:ClearAllPoints()
+                button:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -4 - (i - 1) * 24)
+                button:SetFrameLevel(anchor:GetFrameLevel())
+                if button.SetEnabled then button:SetEnabled(wing ~= dungeonName) end
+                button:Show()
+            else
+                button:Hide()
+            end
+        end
+    end
+end
+
 local function UpdateToggle(dungeonName)
     if not WorldMapFrame then return end
     if not toggle then
@@ -118,6 +157,7 @@ local function UpdateToggle(dungeonName)
     else
         toggle:Hide()
     end
+    pcall(UpdateWingButtons, dungeonName, toggle)
 end
 
 function FDJ.RefreshWorldMapOverlay()
@@ -136,9 +176,17 @@ function FDJ.RefreshWorldMapOverlay()
     UpdateToggle(dungeonName)
 end
 
+local reportedError = false
 local function Safe()
-    local ok = pcall(FDJ.RefreshWorldMapOverlay)
-    if not ok then pcall(Detach) end
+    local ok, err = pcall(FDJ.RefreshWorldMapOverlay)
+    if not ok then
+        pcall(Detach)
+        -- Say so once instead of silently leaving the world map up.
+        if not reportedError then
+            reportedError = true
+            print("|cffffd100Dungeon Journal|r map error: " .. tostring(err))
+        end
+    end
 end
 
 local watcher = CreateFrame("Frame")

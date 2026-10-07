@@ -46,6 +46,7 @@ FDJ.Locales.enUS = {
     REWARDS = "Rewards",
     CHOOSE_ONE_REWARD = "Choose one reward",
     SHOW_ON_MAP = "Show on Map",
+    SHOW_TURN_IN = "Show Turn In",
     ROUTE_FP_TARREN_MILL_TEXT = "The route detours here so you can pick up the flight path. Afterwards, head back down the road and continue east toward Arathi.",
     ROUTE_FP_TARREN_MILL = "Tarren Mill Flight Path",
     ROUTE_REMOVE_HINT = "Right click to remove route",
@@ -77,7 +78,7 @@ FDJ.Locales.enUS = {
     WM_WORLD_MAP = "World Map",
     WM_DUNGEON_MAP = "Dungeon Map",
     MINIMAP_HIDE_CONFIRM = "Hide the Dungeon Journal minimap button?\n\nYou can bring it back by typing /dj minimap.",
-    LF_SHOW_RECIPES = "Show recipes/patterns drops",
+    LF_SHOW_RECIPES = "Always show pattern/recipe drops",
     RESIZE_TIP_TITLE = "Resize",
     RESIZE_TIP = "Drag to resize the window. Right-click to reset.",
     LF_ENABLE = "Enable",
@@ -98,6 +99,7 @@ FDJ.Locales.enUS = {
     LF_CLEAR = "Clear",
     LF_OK = "Ok",
     LF_HIDDEN_NOTE = "%d hidden by Loot Filter",
+    RECIPES_SECTION = "Recipes & Patterns (%d)",
     LF_STAT_HEAL = "Healing",
     LF_STAT_SPELL = "Spell Damage",
     LF_STAT_AP = "Attack Power",
@@ -182,6 +184,7 @@ FDJ.Locales.deDE = {
     REWARDS = "Belohnungen",
     CHOOSE_ONE_REWARD = "Wähle eine Belohnung",
     SHOW_ON_MAP = "Auf Karte zeigen",
+    SHOW_TURN_IN = "Abgabe anzeigen",
     SHOW_LOCATION = "Ort anzeigen",
     DUNGEON_ENTRANCE = "Dungeoneingang",
     HOW_TO_GET_THERE = "Anreise",
@@ -210,7 +213,7 @@ FDJ.Locales.deDE = {
     WM_WORLD_MAP = "Weltkarte",
     WM_DUNGEON_MAP = "Dungeonkarte",
     MINIMAP_HIDE_CONFIRM = "Minimap-Schaltfläche des Dungeon-Journals ausblenden?\n\nMit /dj minimap wird sie wieder angezeigt.",
-    LF_SHOW_RECIPES = "Rezept-/Muster-Drops anzeigen",
+    LF_SHOW_RECIPES = "Muster-/Rezept-Drops immer anzeigen",
     RESIZE_TIP_TITLE = "Größe ändern",
     RESIZE_TIP = "Ziehen, um die Fenstergröße zu ändern. Rechtsklick zum Zurücksetzen.",
     LF_ENABLE = "Aktivieren",
@@ -236,6 +239,7 @@ FDJ.Locales.deDE = {
     LF_CLEAR = "Leeren",
     LF_OK = "Ok",
     LF_HIDDEN_NOTE = "%d vom Beutefilter ausgeblendet",
+    RECIPES_SECTION = "Rezepte & Muster (%d)",
     LF_STAT_HEAL = "Heilung",
     LF_STAT_SPELL = "Zauberschaden",
     LF_STAT_AP = "Angriffskraft",
@@ -421,6 +425,7 @@ end
 local REPUTATION_NAMES = {
     deDE = {
         ["Gadgetzan"] = "Gadgetzan",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Gnomeregangnome",
         ["Argent Dawn"] = "Argentumdämmerung",
         ["Darnassus"] = "Darnassus",
@@ -434,6 +439,7 @@ local REPUTATION_NAMES = {
     },
     frFR = {
         ["Gadgetzan"] = "Gadgetzan",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilés de Gnomeregan",
         ["Argent Dawn"] = "Aube d'argent",
         ["Darnassus"] = "Darnassus",
@@ -447,6 +453,7 @@ local REPUTATION_NAMES = {
     },
     esES = {
         ["Gadgetzan"] = "Gadgetzan",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exiliados de Gnomeregan",
         ["Argent Dawn"] = "Alba Argenta",
         ["Darnassus"] = "Darnassus",
@@ -460,6 +467,7 @@ local REPUTATION_NAMES = {
     },
     itIT = {
         ["Gadgetzan"] = "Gadgetzan",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Esuli di Gnomeregan",
         ["Argent Dawn"] = "Alba d'Argento",
         ["Darnassus"] = "Darnassus",
@@ -473,6 +481,7 @@ local REPUTATION_NAMES = {
     },
     ptBR = {
         ["Gadgetzan"] = "Geringontzan",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilados de Gnomeregan",
         ["Argent Dawn"] = "Aurora Argêntea",
         ["Darnassus"] = "Darnassus",
@@ -486,6 +495,7 @@ local REPUTATION_NAMES = {
     },
     ruRU = {
         ["Gadgetzan"] = "Прибамбасск",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Изгнанники Гномрегана",
         ["Argent Dawn"] = "Серебряный Рассвет",
         ["Darnassus"] = "Дарнас",
@@ -499,6 +509,7 @@ local REPUTATION_NAMES = {
     },
     koKR = {
         ["Gadgetzan"] = "가젯잔",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "놈리건 추방자",
         ["Argent Dawn"] = "은빛 여명회",
         ["Darnassus"] = "다르나서스",
@@ -512,6 +523,7 @@ local REPUTATION_NAMES = {
     },
     zhCN = {
         ["Gadgetzan"] = "加基森",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "诺莫瑞根流亡者",
         ["Argent Dawn"] = "银色黎明",
         ["Darnassus"] = "达纳苏斯",
@@ -525,6 +537,7 @@ local REPUTATION_NAMES = {
     },
     zhTW = {
         ["Gadgetzan"] = "加基森",
+        ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "諾姆瑞根流亡者",
         ["Argent Dawn"] = "銀色黎明",
         ["Darnassus"] = "達納蘇斯",
@@ -570,6 +583,11 @@ function FDJ.LocalizeQuestField(questID, field, fallback)
 end
 
 function FDJ.LocalizeBossName(name)
+    if name == "Recipes & Patterns" then
+        -- Reuse the translated divider text ("Recipes & Patterns (%d)") without its count.
+        local text = FDJ.L("RECIPES_SECTION", 0):gsub("%s*%(0%)%s*", "")
+        return text
+    end
     local content = ContentTable()
     local value = content and content.bosses and content.bosses[name]
     return value or FDJ.LocalizeFreeText(name)

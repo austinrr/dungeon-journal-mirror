@@ -1,4 +1,4 @@
-DungeonJournal 1.5.2
+DungeonJournal 1.6.0
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,24 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.0
+- Favourites: right-click any boss loot or quest item to add it to Favourites;
+  the Favourites button on the home page opens the list, grouped by dungeon.
+  Left-click a favourite to jump to its boss or quest, right-click to remove it.
+- Favourites: quest items show the quest icon and the quest they come from.
+- Favourites: an item you own (bags, bank or equipped) gets the green
+  "completed" frame and tick.
+- Favourites: item types follow the journal language; the window can be closed
+  with its X in combat and stays above the journal.
+- Scarlet Monastery: the dungeon map on the M key now opens in both wings. The
+  wing is recognised from the entrance you walked through, and two buttons on
+  the map (Graveyard / Library) switch it by hand. /dj wing graveyard or
+  /dj wing library does the same.
+- Boss portraits no longer flash black, or show through other windows, while
+  they load.
+- City of Dalaran: Heart of Disruption and An Alarming Request are available
+  from level 30; An Alarming Request has a start location and Show on Map.
 
 CHANGES IN 1.5.2
 - Show on Map: the quest marker pulse is smoother and no longer blinks when it restarts.
@@ -43,7 +61,7 @@ CHANGES IN 1.5.0
 - New Scarlet Monastery quests are translated in all languages.
 
 CHANGES IN 1.4.4
-- Includes all five currently recorded City of Dalaran quests.
+- Includes eight currently recorded City of Dalaran quests, including the Horde attunement prerequisite chain.
 - Power Overwhelming: target wording matches Arcanic Enigma; confirmed reward
   choices are Violet Sash or Runebound Gloves, plus 1 gold.
 - The Fury Runs Deep: three reward choices, with rare Magistrate's Pantaloons;
@@ -92,7 +110,7 @@ PREVIOUS CHANGES
 - Excavation: filled missing IDs, corrected quest levels, kill counts, item starts
   and turn-ins; added Lost in the Thicket Things, Fallen in the Fen,
   Prehistoric Prism and Earthen Echo with rewards and supported chain links.
-- Added five recorded City of Dalaran quests. This does not assert dungeon access.
+- Added eight recorded City of Dalaran quests, including Horde attunement prerequisites. This does not assert dungeon access.
 - Razorfen Kraul: added Sentinel's Boots, resolved Boar Signet's item ID,
   and added the guaranteed Quilboar Blaster reward for A Vengeful Fate.
 - Stockade: filled Town Clerk's Mittens and Magistrate's Pantaloons rewards.

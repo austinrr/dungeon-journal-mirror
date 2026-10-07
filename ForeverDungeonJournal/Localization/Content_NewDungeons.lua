@@ -1536,15 +1536,15 @@ end
 -- An Unholy Alliance: the final step (6521) is the journal entry; it shares
 -- its name with part 1 (6522).
 local UNHOLY = {
-    deDE = { "Bringt Botschafter Malcins Kopf zu Varimathras in Unterstadt.", "Dies wird in den HÜGELN DER KLINGENHAUER abgeschlossen. Während der Beta füge ich diesen Dungeon nicht hinzu; die Quest steht hier, weil die Reihe in diesem Dungeon beginnt." },
-    frFR = { "Apportez la tête de l'ambassadeur Malcin à Varimathras à Fossoyeuse.", "Cette quête se termine dans les SOUILLES DE TRANCHEBAUGE. Pendant la bêta je n'ajouterai pas ce donjon ; elle est ici car la suite commence dans ce donjon." },
-    esES = { "Lleva la cabeza del embajador Malcin a Varimathras en Entrañas.", "Esto se completa en ZAHÚRDA RAJACIENO. Durante la beta no añadiré esa mazmorra; está aquí porque la cadena empieza en esta mazmorra." },
-    itIT = { "Porta la testa dell'ambasciatore Malcin a Varimathras a Sepulcra.", "Si completa a RAZORFEN DOWNS. Durante la beta non aggiungerò quella spedizione; è qui perché la catena inizia in questa spedizione." },
-    ptBR = { "Leve a cabeça do Embaixador Malcin a Varimathras em Cidade Baixa.", "Isto é concluído em URZAL DOS MORTOS. Durante o beta não vou adicionar essa masmorra; está aqui porque a cadeia começa nesta masmorra." },
-    ruRU = { "Принесите голову посла Малкина Вариматасу в Подгород.", "Задание завершается в КУРГАНАХ ИГЛОШКУРЫХ. Во время беты я не буду добавлять это подземелье; оно здесь, потому что цепочка начинается в этом подземелье." },
-    koKR = { "사절 말킨의 머리를 언더시티의 바리마트라스에게 가져가세요.", "이 퀘스트는 가시덩굴 구릉에서 완료됩니다. 베타 기간에는 해당 던전을 추가하지 않으며, 연계 퀘스트가 이 던전에서 시작되기 때문에 여기에 있습니다." },
-    zhCN = { "把大使玛尔金的头颅交给幽暗城的瓦里玛萨斯。", "此任务在剃刀高地完成。测试期间我不会添加该地下城；任务链从本地下城开始，所以列在这里。" },
-    zhTW = { "把大使瑪爾金的頭顱交給幽暗城的瓦里瑪薩斯。", "此任務在剃刀高地完成。測試期間我不會加入該地城；任務鏈從本地城開始，所以列在這裡。" },
+    deDE = { "Bringt Botschafter Malcins Kopf zu Varimathras in Unterstadt.", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
+    frFR = { "Apportez la tête de l'ambassadeur Malcin à Varimathras à Fossoyeuse.", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
+    esES = { "Lleva la cabeza del embajador Malcin a Varimathras en Entrañas.", "Esta misión se completa en la zona FUERA de Zahúrda Rajacieno." },
+    itIT = { "Porta la testa dell'ambasciatore Malcin a Varimathras a Sepulcra.", "Questa missione si completa nell'area FUORI da Razorfen Downs." },
+    ptBR = { "Leve a cabeça do Embaixador Malcin a Varimathras em Cidade Baixa.", "Esta missão é concluída na área FORA de Urzal dos Mortos." },
+    ruRU = { "Принесите голову посла Малкина Вариматасу в Подгород.", "Это задание выполняется в области СНАРУЖИ Курганов Иглошкурых." },
+    koKR = { "사절 말킨의 머리를 언더시티의 바리마트라스에게 가져가세요.", "이 퀘스트는 가시덩굴 구릉 바깥 지역에서 완료됩니다." },
+    zhCN = { "把大使玛尔金的头颅交给幽暗城的瓦里玛萨斯。", "此任务在剃刀高地外部区域完成。" },
+    zhTW = { "把大使瑪爾金的頭顱交給幽暗城的瓦里瑪薩斯。", "此任務在剃刀高地外部區域完成。" },
 }
 for lang, data in pairs(UNHOLY) do
     local content = FDJ.ContentLocales[lang]
@@ -1553,7 +1553,7 @@ for lang, data in pairs(UNHOLY) do
         content.places = content.places or {}
         local part1 = content.quests[6522]
         content.quests[6521] = { name = part1 and part1.name, objective = data[1] }
-        content.places["This is completed in RAZORFEN DOWNS, during the beta I won't add that dungeon, it's here as the chain starts in this dungeon"] = data[2]
+        content.places["This quest is completed in the area OUTSIDE Razorfen Downs."] = data[2]
     end
 end
 
@@ -1821,18 +1821,37 @@ for lang, data in pairs(SM) do
     if library and not library.description then library.description = t[15] end
 end
 
+-- Test of Lore answer hint used only on step 6 (quest 6627).
+local TEST_OF_LORE_ANSWER = {
+    deDE = "ANTWORT: Neltharion",
+    frFR = "RÉPONSE : Neltharion",
+    esES = "RESPUESTA: Neltharion",
+    itIT = "RISPOSTA: Neltharion",
+    ptBR = "RESPOSTA: Neltharion",
+    ruRU = "ОТВЕТ: Нелтарион",
+    koKR = "정답: 넬타리온",
+    zhCN = "答案：奈萨里奥",
+    zhTW = "答案：奈薩里奧",
+}
+for lang, warning in pairs(TEST_OF_LORE_ANSWER) do
+    local content = FDJ.ContentLocales[lang]
+    if content and content.quests then
+        if content.quests[6627] then content.quests[6627].warning = warning end
+    end
+end
+
 -- Final Passage (1394): the Test of Lore chain ends here; official texts from
 -- the Wowhead Forever tooltips (Italian and the journal notes by hand).
 local FINAL_PASSAGE = {
-    deDE = { "Letzte Überfahrt", "Sprecht mit Dorn Plainstalker in Tausend Nadeln.", "Beantwortet Parqual Fintallas' Frage richtig und sprecht dann erneut mit ihm. Er wird immer noch in Undercity sein, wenn Ihr bereit seid.", "Dies ist eine lange Questreihe mit einem Schritt in der Bibliothek", "Das Buch befindet sich im Scharlachroten Kloster: Bibliothek.", "Parqual Fintallas in Undercity" },
-    frFR = { "Le dernier voyage", "Parler au traqueur des plaines Dorn aux Mille pointes.", "Réussir à répondre à la question de Parqual Fintallas, puis lui reparler. Il se trouve à Undercity.", "C'est une longue suite de quêtes dont une étape se déroule dans la Bibliothèque", "Le livre se trouve dans le Monastère écarlate : Bibliothèque.", "Parqual Fintallas à Undercity" },
-    esES = { "La recta final", "Habla con Dorn Acechaprados en Las Mil Agujas.", "Responde la pregunta de Parqual Fintallas con acierto y después habla con él de nuevo. Se quedará en Entrañas hasta que estés preparado.", "Es una cadena larga que tiene un paso en la Biblioteca", "El libro está en el Monasterio Escarlata: Biblioteca.", "Parqual Fintallas en Entrañas" },
-    itIT = { "Passaggio finale", "Parla con Dorn Plainstalker nelle Mille Guglie.", "Rispondi correttamente alla domanda di Parqual Fintallas e poi parlagli di nuovo.", "È una lunga catena che ha un passaggio nella Biblioteca", "Il libro si trova nel Monastero Scarlatto: Biblioteca.", "Parqual Fintallas a Undercity" },
-    ptBR = { "Passagem final", "Fale com Dorn Espreitaprados em Mil Agulhas.", "Responda à pergunta de Pasqual Fintallas corretamente, depois fale com ele novamente. Ele estará na Cidade Baixa.", "Esta é uma cadeia longa que tem uma etapa na Biblioteca", "O livro está no Monastério Escarlate: Biblioteca.", "Pasqual Fintallas na Cidade Baixa" },
-    ruRU = { "Финальное испытание", "Поговорите с Дорном Вольным Ловчим в Тысяче Игл.", "Дайте верный ответ на вопрос Парквела Финталласа и поговорите с ним еще раз. Парквелла можно в любое время найти в Подгороде.", "Это длинная цепочка, один из этапов которой проходит в Библиотеке", "Книга находится в монастыре Алого ордена: Библиотека.", "Парквел Финталлас в Подгороде" },
-    koKR = { "최후의 시험", "버섯구름 봉우리에 있는 도른 플레인스토커와 대화하십시오.", "파쿠알 핀탈라스의 질문에 대한 정답을 맞춘 다음 그에게 다시 말을 걸어야 합니다. 준비가 될 때까지 파쿠알 핀탈라스는 언더시티에 있을 것입니다.", "도서관에서 진행하는 단계가 있는 긴 연계 퀘스트입니다", "책은 붉은십자군 수도원: 도서관 안에 있습니다.", "언더시티의 파쿠알 핀탈라스" },
-    zhCN = { "通过试炼", "和千针石林的多恩·平原行者谈一谈。", "成功回答帕科瓦·芬塔拉斯的问题，然后再次和他对话。他会一直在幽暗城等你回答问题。", "这是一条很长的任务链，其中一步在图书馆内完成", "这本书在血色修道院：图书馆内。", "幽暗城的帕科瓦·芬塔拉斯" },
-    zhTW = { "最後的旅程", "和千針石林的多恩·平原行者談話。", "成功回答帕科瓦·芬塔拉斯的問題，然後再次和他對話。他會一直在幽暗城等你回答問題。", "這是一條很長的任務鏈，其中一步在圖書館內完成", "這本書在血色修道院：圖書館內。", "幽暗城的帕科瓦·芬塔拉斯" },
+    deDE = { "Letzte Überfahrt", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
+    frFR = { "Le dernier voyage", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
+    esES = { "La recta final", "Esta misión se completa en la zona FUERA de Zahúrda Rajacieno." },
+    itIT = { "Passaggio finale", "Questa missione si completa nell'area FUORI da Razorfen Downs." },
+    ptBR = { "Passagem final", "Esta missão é concluída na área FORA de Urzal dos Mortos." },
+    ruRU = { "Финальное испытание", "Это задание выполняется в области СНАРУЖИ Курганов Иглошкурых." },
+    koKR = { "최후의 시험", "이 퀘스트는 가시덩굴 구릉 바깥 지역에서 완료됩니다." },
+    zhCN = { "通过试炼", "此任务在剃刀高地外部区域完成。" },
+    zhTW = { "最後的旅程", "此任務在剃刀高地外部區域完成。" },
 }
 for lang, t in pairs(FINAL_PASSAGE) do
     local content = FDJ.ContentLocales[lang]
@@ -2038,15 +2057,15 @@ end
 
 -- Highland Hides prerequisite added for 1.5.0: Young Crocolisk Skins.
 local HIGHLAND_HIDES_PREREQ_150 = {
-    deDE = { name = "Junge Krokiliskenhäute", objective = "Besorgt 4 Häute junger Krokilisken für James Halloran im Hafen von Menethil.", pickup = "James Halloran, Hafen von Menethil, Sumpfland", turnin = "James Halloran, Hafen von Menethil, Sumpfland", description = "Erforderlich vor Hochlandhäute. Daily Delivery ist in Forever nicht erforderlich.", map = "Hier beginnt Junge Krokiliskenhäute" },
-    frFR = { name = "Peaux de jeunes crocilisques", objective = "Obtenez 4 peaux de jeunes crocilisques pour James Halloran au port de Menethil.", pickup = "James Halloran, port de Menethil, Les Paluns", turnin = "James Halloran, port de Menethil, Les Paluns", description = "Requis avant Peaux des hautes terres. Daily Delivery n'est pas requis dans Forever.", map = "Commencer Peaux de jeunes crocilisques ici" },
-    esES = { name = "Pieles de crocolisco joven", objective = "Consigue 4 pieles de crocolisco joven para James Halloran en el Puerto de Menethil.", pickup = "James Halloran, Puerto de Menethil, Los Humedales", turnin = "James Halloran, Puerto de Menethil, Los Humedales", description = "Necesaria antes de Pieles de las Tierras Altas. Daily Delivery no es necesaria en Forever.", map = "Empieza Pieles de crocolisco joven aquí" },
-    itIT = { name = "Pelli di giovane crocolisco", objective = "Ottieni 4 Pelli di giovane crocolisco per James Halloran a Porto di Menethil.", pickup = "James Halloran, Porto di Menethil, Paludi Grigie", turnin = "James Halloran, Porto di Menethil, Paludi Grigie", description = "Richiesta prima di Pelli degli Altipiani. Daily Delivery non è richiesta in Forever.", map = "Inizia Pelli di giovane crocolisco qui" },
-    ptBR = { name = "Peles de crocolisco jovem", objective = "Obtenha 4 Peles de Crocolisco Jovem para James Halloran no Porto de Menethil.", pickup = "James Halloran, Porto de Menethil, Pantanais", turnin = "James Halloran, Porto de Menethil, Pantanais", description = "Necessária antes de Couros das Terras Altas. Daily Delivery não é necessária em Forever.", map = "Comece Peles de crocolisco jovem aqui" },
-    ruRU = { name = "Шкуры молодых кроколисков", objective = "Добудьте 4 шкуры молодых кроколисков для Джеймса Халлорана в гавани Менетилов.", pickup = "Джеймс Халлоран, гавань Менетилов, Болотина", turnin = "Джеймс Халлоран, гавань Менетилов, Болотина", description = "Требуется перед заданием «Шкуры нагорья». Daily Delivery в Forever не требуется.", map = "Начать «Шкуры молодых кроколисков» здесь" },
-    koKR = { name = "새끼 악어 가죽", objective = "메네실 항구의 제임스 할로란에게 새끼 악어 가죽 4개를 가져가십시오.", pickup = "제임스 할로란, 메네실 항구, 저습지", turnin = "제임스 할로란, 메네실 항구, 저습지", description = "고지대 가죽 전에 필요합니다. Forever에서는 Daily Delivery가 필요하지 않습니다.", map = "여기서 새끼 악어 가죽 시작" },
-    zhCN = { name = "幼年鳄鱼的皮", objective = "为米奈希尔港的詹姆斯·哈洛兰取得4张幼年鳄鱼的皮。", pickup = "詹姆斯·哈洛兰，米奈希尔港，湿地", turnin = "詹姆斯·哈洛兰，米奈希尔港，湿地", description = "“高地兽皮”的前置任务。Forever中不需要完成Daily Delivery。", map = "在这里开始幼年鳄鱼的皮" },
-    zhTW = { name = "幼年鱷魚的皮", objective = "為米奈希爾港的詹姆斯·哈洛蘭取得4張幼年鱷魚的皮。", pickup = "詹姆斯·哈洛蘭，米奈希爾港，濕地", turnin = "詹姆斯·哈洛蘭，米奈希爾港，濕地", description = "「高地獸皮」的前置任務。Forever中不需要完成Daily Delivery。", map = "在這裡開始幼年鱷魚的皮" },
+    deDE = { "Junge Krokiliskenhäute", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
+    frFR = { "Peaux de jeunes crocilisques", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
+    esES = { "Pieles de crocolisco joven", "Esta misión se completa en la zona FUERA de Zahúrda Rajacieno." },
+    itIT = { "Pelli di giovane crocolisco", "Questa missione si completa nell'area FUORI da Razorfen Downs." },
+    ptBR = { "Peles de crocolisco jovem", "Esta missão é concluída na área FORA de Urzal dos Mortos." },
+    ruRU = { "Шкуры молодых кроколисков", "Это задание выполняется в области СНАРУЖИ Курганов Иглошкурых." },
+    koKR = { "새끼 악어 가죽", "이 퀘스트는 가시덩굴 구릉 바깥 지역에서 완료됩니다." },
+    zhCN = { "幼年鳄鱼的皮", "此任务在剃刀高地外部区域完成。" },
+    zhTW = { "幼年鱷魚的皮", "此任務在剃刀高地外部區域完成。" },
 }
 
 for lang, data in pairs(HIGHLAND_HIDES_PREREQ_150) do
@@ -2202,15 +2221,15 @@ end
 -- Trouble in the Deeps stays available as a hidden detail page, opened from
 -- The Essence of Aku'Mai Notes, but is not presented as a required chain step.
 local BFD_TROUBLE_OPTIONAL_151 = {
-    deDE = { warning = "OPTIONAL, nicht erforderlich", essenceNote = "Optionale Einführungsquest:" },
-    frFR = { warning = "FACULTATIF, non requis", essenceNote = "Quête d’introduction facultative :" },
-    esES = { warning = "OPCIONAL, no es necesaria", essenceNote = "Misión introductoria opcional:" },
-    itIT = { warning = "OPZIONALE, non richiesta", essenceNote = "Missione introduttiva opzionale:" },
-    ptBR = { warning = "OPCIONAL, não é obrigatória", essenceNote = "Missão introdutória opcional:" },
-    ruRU = { warning = "НЕОБЯЗАТЕЛЬНО, не требуется", essenceNote = "Необязательное вводное задание:" },
-    koKR = { warning = "선택 사항, 필요하지 않음", essenceNote = "선택형 선행 안내 퀘스트:" },
-    zhCN = { warning = "可选，并非必需", essenceNote = "可选的引导任务：" },
-    zhTW = { warning = "可選，並非必需", essenceNote = "可選的引導任務：" },
+    deDE = { "OPTIONAL, nicht erforderlich", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
+    frFR = { "FACULTATIF, non requis", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
+    esES = { "OPCIONAL, no es necesaria", "Esta misión se completa en la zona FUERA de Zahúrda Rajacieno." },
+    itIT = { "OPZIONALE, non richiesta", "Questa missione si completa nell'area FUORI da Razorfen Downs." },
+    ptBR = { "OPCIONAL, não é obrigatória", "Esta missão é concluída na área FORA de Urzal dos Mortos." },
+    ruRU = { "НЕОБЯЗАТЕЛЬНО, не требуется", "Это задание выполняется в области СНАРУЖИ Курганов Иглошкурых." },
+    koKR = { "선택 사항, 필요하지 않음", "이 퀘스트는 가시덩굴 구릉 바깥 지역에서 완료됩니다." },
+    zhCN = { "可选，并非必需", "此任务在剃刀高地外部区域完成。" },
+    zhTW = { "可選，並非必需", "此任務在剃刀高地外部區域完成。" },
 }
 for lang, data in pairs(BFD_TROUBLE_OPTIONAL_151) do
     local content = FDJ.ContentLocales[lang]
@@ -2225,3 +2244,125 @@ for lang, data in pairs(BFD_TROUBLE_OPTIONAL_151) do
         essence.note = data.essenceNote
     end
 end
+
+
+-- City of Dalaran quest additions (1.5.2): Alliance Heart of Disruption chain
+-- and the both-factions Starving Arcane quest.
+local DALARAN_QUESTS_92432_92457_92458 = {
+    deDE = {
+        [92432] = { name = "Eine alarmierende Bitte", objective = "Meldet Euch beim Abbild von Erzmagierin Modera in der Nähe von Dalaran.", turnin = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran", description = "Einführungsquest, die zu 'Das Herz der Störung' führt." },
+        [92457] = { name = "Verhungernder Arkaner", objective = "Besiegt 8 suchende Fragmente, 8 gesättigte Fragmente und 8 Manaechos in Dalaran für Erzmagierin Modera vor Dalaran.", pickup = "Erzmagierin Modera, vor Dalaran am Lordameresee", turnin = "Erzmagierin Modera, vor Dalaran am Lordameresee" },
+        [92458] = { name = "Das Herz der Störung", objective = "Holt den Arkanpartikel für das Abbild von Erzmagierin Modera in der Nähe von Dalaran.", pickup = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran", turnin = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran" },
+    },
+    frFR = {
+        [92432] = { name = "Une requête alarmante", objective = "Faites votre rapport à l'image de l'archimage Modera près de Dalaran.", turnin = "Image de l'archimage Modera, lac Lordamere près de Dalaran", description = "Quête d'introduction menant à Cœur de la perturbation." },
+        [92457] = { name = "Arcane affamé", objective = "Vainquez 8 Vestiges chercheurs, 8 Vestiges saturés et 8 Échos de mana dans Dalaran pour l'archimage Modera, à l'extérieur de la ville.", pickup = "Archimage Modera, à l'extérieur de Dalaran près du lac Lordamere", turnin = "Archimage Modera, à l'extérieur de Dalaran près du lac Lordamere" },
+        [92458] = { name = "Cœur de la perturbation", objective = "Récupérez la granule arcanique pour l'image de l'archimage Modera près de Dalaran.", pickup = "Image de l'archimage Modera, lac Lordamere près de Dalaran", turnin = "Image de l'archimage Modera, lac Lordamere près de Dalaran" },
+    },
+    esES = {
+        [92432] = { name = "Una petición alarmante", objective = "Preséntate ante la imagen de la archimaga Modera cerca de Dalaran.", turnin = "Imagen de la archimaga Modera, lago Lordamere cerca de Dalaran", description = "Misión introductoria que conduce a Corazón de la disrupción." },
+        [92457] = { name = "Arcano hambriento", objective = "Derrota a 8 Remanentes buscadores, 8 Remanentes saturados y 8 Ecos de maná dentro de Dalaran para la archimaga Modera, fuera de la ciudad.", pickup = "Archimaga Modera, fuera de Dalaran junto al lago Lordamere", turnin = "Archimaga Modera, fuera de Dalaran junto al lago Lordamere" },
+        [92458] = { name = "Corazón de la disrupción", objective = "Consigue la Mota arcana para la imagen de la archimaga Modera cerca de Dalaran.", pickup = "Imagen de la archimaga Modera, lago Lordamere cerca de Dalaran", turnin = "Imagen de la archimaga Modera, lago Lordamere cerca de Dalaran" },
+    },
+    itIT = {
+        [92432] = { name = "Una richiesta allarmante", objective = "Fai rapporto all'immagine dell'Arcimaga Modera vicino a Dalaran.", turnin = "Immagine dell'Arcimaga Modera, Lago Lordamere vicino a Dalaran", description = "Missione introduttiva che porta a Cuore della perturbazione." },
+        [92457] = { name = "Arcano affamato", objective = "Sconfiggi 8 Resti Cercatori, 8 Resti Saturi e 8 Echi di Mana dentro Dalaran per l'Arcimaga Modera fuori dalla città.", pickup = "Arcimaga Modera, fuori Dalaran presso il Lago Lordamere", turnin = "Arcimaga Modera, fuori Dalaran presso il Lago Lordamere" },
+        [92458] = { name = "Cuore della perturbazione", objective = "Recupera la Particella Arcana per l'immagine dell'Arcimaga Modera vicino a Dalaran.", pickup = "Immagine dell'Arcimaga Modera, Lago Lordamere vicino a Dalaran", turnin = "Immagine dell'Arcimaga Modera, Lago Lordamere vicino a Dalaran" },
+    },
+    ptBR = {
+        [92432] = { name = "Um pedido alarmante", objective = "Apresente-se à imagem da Arquimaga Modera perto de Dalaran.", turnin = "Imagem da Arquimaga Modera, Lago Lordamere perto de Dalaran", description = "Missão introdutória que leva a Coração da Perturbação." },
+        [92457] = { name = "Arcano faminto", objective = "Derrote 8 Remanescentes Buscadores, 8 Remanescentes Saturados e 8 Ecos de Mana dentro de Dalaran para a Arquimaga Modera, fora da cidade.", pickup = "Arquimaga Modera, fora de Dalaran junto ao Lago Lordamere", turnin = "Arquimaga Modera, fora de Dalaran junto ao Lago Lordamere" },
+        [92458] = { name = "Coração da Perturbação", objective = "Obtenha a Partícula Arcana para a imagem da Arquimaga Modera perto de Dalaran.", pickup = "Imagem da Arquimaga Modera, Lago Lordamere perto de Dalaran", turnin = "Imagem da Arquimaga Modera, Lago Lordamere perto de Dalaran" },
+    },
+    ruRU = {
+        [92432] = { name = "Тревожная просьба", objective = "Доложите образу верховного мага Модеры возле Даларана.", turnin = "Образ верховного мага Модеры, озеро Лордамер возле Даларана", description = "Вводное задание, ведущее к заданию «Сердце нарушения»." },
+        [92457] = { name = "Голодная тайная магия", objective = "Победите 8 ищущих остатков, 8 насыщенных остатков и 8 отголосков маны в Даларане для верховного мага Модеры за пределами города.", pickup = "Верховный маг Модера, возле Даларана у озера Лордамер", turnin = "Верховный маг Модера, возле Даларана у озера Лордамер" },
+        [92458] = { name = "Сердце нарушения", objective = "Добудьте частицу тайной магии для образа верховного мага Модеры возле Даларана.", pickup = "Образ верховного мага Модеры, озеро Лордамер возле Даларана", turnin = "Образ верховного мага Модеры, озеро Лордамер возле Даларана" },
+    },
+    koKR = {
+        [92432] = { name = "긴급한 요청", objective = "달라란 근처의 대마법사 모데라의 환영에게 보고하십시오.", turnin = "대마법사 모데라의 환영, 달라란 근처 로다미어 호수", description = "혼란의 심장으로 이어지는 도입 퀘스트입니다." },
+        [92457] = { name = "굶주린 비전 마력", objective = "달라란 내부에서 탐색하는 잔재 8마리, 포화된 잔재 8마리, 마나의 메아리 8마리를 처치하고 달라란 밖의 대마법사 모데라에게 돌아가십시오.", pickup = "대마법사 모데라, 달라란 밖 로다미어 호수 근처", turnin = "대마법사 모데라, 달라란 밖 로다미어 호수 근처" },
+        [92458] = { name = "혼란의 심장", objective = "달라란 근처의 대마법사 모데라의 환영을 위해 비전 티끌을 가져오십시오.", pickup = "대마법사 모데라의 환영, 달라란 근처 로다미어 호수", turnin = "대마법사 모데라의 환영, 달라란 근처 로다미어 호수" },
+    },
+    zhCN = {
+        [92432] = { name = "紧急请求", objective = "向达拉然附近的大法师茉德拉的影像报告。", turnin = "大法师茉德拉的影像，达拉然附近的洛丹米尔湖", description = "通往“扰乱之心”的引导任务。" },
+        [92457] = { name = "饥饿的奥术", objective = "在达拉然城内击败8个搜寻残片、8个饱和残片和8个法力回响，然后向城外的大法师茉德拉复命。", pickup = "大法师茉德拉，达拉然城外洛丹米尔湖附近", turnin = "大法师茉德拉，达拉然城外洛丹米尔湖附近" },
+        [92458] = { name = "扰乱之心", objective = "为达拉然附近的大法师茉德拉的影像取得奥术微粒。", pickup = "大法师茉德拉的影像，达拉然附近的洛丹米尔湖", turnin = "大法师茉德拉的影像，达拉然附近的洛丹米尔湖" },
+    },
+    zhTW = {
+        [92432] = { name = "緊急請求", objective = "向達拉然附近的大法師莫德拉的影像報告。", turnin = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", description = "通往「擾亂之心」的引導任務。" },
+        [92457] = { name = "飢餓的秘法", objective = "在達拉然城內擊敗8個搜尋殘片、8個飽和殘片和8個法力迴響，然後向城外的大法師莫德拉覆命。", pickup = "大法師莫德拉，達拉然城外羅德米爾湖附近", turnin = "大法師莫德拉，達拉然城外羅德米爾湖附近" },
+        [92458] = { name = "擾亂之心", objective = "為達拉然附近的大法師莫德拉的影像取得秘法微粒。", pickup = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", turnin = "大法師莫德拉的影像，達拉然附近的羅德米爾湖" },
+    },
+}
+
+for lang, quests in pairs(DALARAN_QUESTS_92432_92457_92458) do
+    local content = FDJ.ContentLocales[lang]
+    if content then
+        content.quests = content.quests or {}
+        for questID, data in pairs(quests) do
+            local q = content.quests[questID] or {}
+            content.quests[questID] = q
+            for field, value in pairs(data) do q[field] = value end
+        end
+    end
+end
+
+
+-- City of Dalaran Horde attunement chain (1.5.2).
+-- The Forever beta does not currently expose localized text for every new
+-- attunement quest through Wowhead, so these addon-language strings keep the
+-- Journal consistent when its language selector differs from the game client.
+FDJ.ContentLocales.deDE.quests[544] = { name = "Einbruch ins Gefängnis", objective = "Findet die vier abtrünnigen Verlassenen im Internierungslager von Lordamere, holt ihre Blutsteinartefakte zurück und kehrt zu Magus Wordeen Voidglare zurück.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", note = "Nehmt gleichzeitig 'Schlüssel zur Stadt' bei Magus Wordeen Voidglare an." }
+FDJ.ContentLocales.deDE.quests[93680] = { name = "Schlüssel zur Stadt", objective = "Beschafft den schmutzigen Schlüssel für Magus Wordeen Voidglare in Tarrens Mühle.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", note = "Diese Quest kann gleichzeitig mit 'Einbruch ins Gefängnis' angenommen werden." }
+FDJ.ContentLocales.deDE.quests[545] = { name = "Patrouillen von Dalaran", objective = "Tötet 6 Beschwörer von Dalaran und 12 Elementarsklaven und kehrt zu Magus Wordeen Voidglare in Tarrens Mühle zurück.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", description = "Verfügbar nach Abschluss von 'Einbruch ins Gefängnis'." }
+FDJ.ContentLocales.deDE.quests[92434] = { name = "Blut auf den Straßen", objective = "Findet am Lordameresee einen Weg nach Dalaran hinein.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran", note = "Benötigt die Dalaran-Quests von Magus Wordeen Voidglare. 'Steinmarken' und 'Armschienen der Bindung' von Keeper Bel'varil sind optional und für die Einstimmung nicht erforderlich." }
+FDJ.ContentLocales.deDE.quests[96984] = { name = "Das Herz der Störung", objective = "Sammelt den Arkanpartikel in Dalaran für Magus Wordeen Voidglare in Tarrens Mühle.", pickup = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", note = "Horde-Einstimmung für Dalaran. 'Steinmarken' und 'Armschienen der Bindung' können nebenbei erledigt werden, sind aber nicht erforderlich." }
+
+FDJ.ContentLocales.frFR.quests[544] = { name = "Évasion de prison", objective = "Trouvez les quatre traîtres Réprouvés au camp d'internement de Lordamere, récupérez leurs artefacts de pierre de sang et retournez voir Magus Wordeen Voidglare.", pickup = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", turnin = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", note = "Prenez aussi 'Clé de la ville' auprès de Magus Wordeen Voidglare." }
+FDJ.ContentLocales.frFR.quests[93680] = { name = "Clé de la ville", objective = "Obtenez la clé crasseuse pour Magus Wordeen Voidglare au Moulin-de-Tarren.", pickup = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", turnin = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", note = "Cette quête peut être acceptée en même temps qu'Évasion de prison." }
+FDJ.ContentLocales.frFR.quests[545] = { name = "Patrouilles de Dalaran", objective = "Tuez 6 invocateurs de Dalaran et 12 esclaves élémentaires, puis retournez voir Magus Wordeen Voidglare au Moulin-de-Tarren.", pickup = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", turnin = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", description = "Disponible après Évasion de prison." }
+FDJ.ContentLocales.frFR.quests[92434] = { name = "Du sang dans les rues", objective = "Trouvez un moyen d'entrer dans Dalaran le long du lac Lordamere.", pickup = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", turnin = "Image de l'archimage Modera, lac Lordamere près de Dalaran", note = "Nécessite les quêtes de Dalaran de Magus Wordeen Voidglare. Jetons de pierre et Bracelets de lien de Keeper Bel'varil sont facultatifs et ne sont pas requis pour l'accès." }
+FDJ.ContentLocales.frFR.quests[96984] = { name = "Cœur de la perturbation", objective = "Récupérez la granule arcanique dans Dalaran pour Magus Wordeen Voidglare au Moulin-de-Tarren.", pickup = "Image de l'archimage Modera, lac Lordamere près de Dalaran", turnin = "Magus Wordeen Voidglare, Moulin-de-Tarren, Contreforts de Hautebrande", note = "Accès Horde à Dalaran. Jetons de pierre et Bracelets de lien peuvent être faits en parallèle mais ne sont pas requis." }
+
+FDJ.ContentLocales.esES.quests[544] = { name = "Fuga de la prisión", objective = "Encuentra a los cuatro traidores Renegados en el Campo de Internamiento de Lordamere, recupera sus artefactos de piedra de sangre y vuelve con Magus Wordeen Voidglare.", pickup = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", turnin = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", note = "Acepta también 'Llave de la ciudad' de Magus Wordeen Voidglare." }
+FDJ.ContentLocales.esES.quests[93680] = { name = "Llave de la ciudad", objective = "Consigue la Llave mugrienta para Magus Wordeen Voidglare en Molino Tarren.", pickup = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", turnin = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", note = "Esta misión puede aceptarse al mismo tiempo que Fuga de la prisión." }
+FDJ.ContentLocales.esES.quests[545] = { name = "Patrullas de Dalaran", objective = "Mata a 6 Invocadores de Dalaran y 12 Esclavos elementales y vuelve con Magus Wordeen Voidglare en Molino Tarren.", pickup = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", turnin = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", description = "Disponible después de completar Fuga de la prisión." }
+FDJ.ContentLocales.esES.quests[92434] = { name = "Sangre en las calles", objective = "Encuentra una forma de entrar en Dalaran por el lago Lordamere.", pickup = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", turnin = "Imagen de la archimaga Modera, lago Lordamere cerca de Dalaran", note = "Requiere las misiones de Dalaran de Magus Wordeen Voidglare. Fichas de piedra y Brazales de vinculación de Keeper Bel'varil son opcionales y no son necesarios para la armonización." }
+FDJ.ContentLocales.esES.quests[96984] = { name = "Corazón de la perturbación", objective = "Recoge la Mota arcana en Dalaran para Magus Wordeen Voidglare en Molino Tarren.", pickup = "Imagen de la archimaga Modera, lago Lordamere cerca de Dalaran", turnin = "Magus Wordeen Voidglare, Molino Tarren, Laderas de Trabalomas", note = "Armonización de la Horda para Dalaran. Fichas de piedra y Brazales de vinculación pueden hacerse en paralelo, pero no son necesarios." }
+
+FDJ.ContentLocales.itIT.quests[544] = { name = "Evasione dalla prigione", objective = "Trova i quattro traditori Reietti al Campo d'Internamento di Lordamere, recupera i loro artefatti di Pietrasangue e torna da Magus Wordeen Voidglare.", pickup = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", turnin = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", note = "Prendi anche 'Chiave della città' da Magus Wordeen Voidglare." }
+FDJ.ContentLocales.itIT.quests[93680] = { name = "Chiave della città", objective = "Recupera la Chiave sudicia per Magus Wordeen Voidglare a Mulino di Tarren.", pickup = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", turnin = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", note = "Questa missione può essere accettata insieme a Evasione dalla prigione." }
+FDJ.ContentLocales.itIT.quests[545] = { name = "Pattuglie di Dalaran", objective = "Uccidi 6 Evocatori di Dalaran e 12 Schiavi Elementali, poi torna da Magus Wordeen Voidglare a Mulino di Tarren.", pickup = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", turnin = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", description = "Disponibile dopo aver completato Evasione dalla prigione." }
+FDJ.ContentLocales.itIT.quests[92434] = { name = "Sangue nelle strade", objective = "Trova un modo per entrare a Dalaran lungo il Lago Lordamere.", pickup = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", turnin = "Immagine dell'Arcimaga Modera, Lago Lordamere vicino a Dalaran", note = "Richiede le missioni di Dalaran di Magus Wordeen Voidglare. Gettoni di Pietra e Bracciali del Vincolo di Keeper Bel'varil sono opzionali e non richiesti per l'accesso." }
+FDJ.ContentLocales.itIT.quests[96984] = { name = "Cuore della perturbazione", objective = "Raccogli la Particella Arcana a Dalaran per Magus Wordeen Voidglare a Mulino di Tarren.", pickup = "Immagine dell'Arcimaga Modera, Lago Lordamere vicino a Dalaran", turnin = "Magus Wordeen Voidglare, Mulino di Tarren, Alture di Colletorto", note = "Accesso dell'Orda a Dalaran. Gettoni di Pietra e Bracciali del Vincolo possono essere fatti in parallelo, ma non sono richiesti." }
+
+FDJ.ContentLocales.ptBR.quests[544] = { name = "Invasão da prisão", objective = "Encontre os quatro traidores Renegados no Campo de Internamento de Lordamere, recupere os artefatos de Pedra de Sangue e volte a Magus Wordeen Voidglare.", pickup = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", turnin = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", note = "Pegue também 'Chave da cidade' com Magus Wordeen Voidglare." }
+FDJ.ContentLocales.ptBR.quests[93680] = { name = "Chave da cidade", objective = "Consiga a Chave Suja para Magus Wordeen Voidglare no Moinho Tarren.", pickup = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", turnin = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", note = "Esta missão pode ser aceita junto com Invasão da prisão." }
+FDJ.ContentLocales.ptBR.quests[545] = { name = "Patrulhas de Dalaran", objective = "Mate 6 Invocadores de Dalaran e 12 Escravos Elementais e volte a Magus Wordeen Voidglare no Moinho Tarren.", pickup = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", turnin = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", description = "Disponível após concluir Invasão da prisão." }
+FDJ.ContentLocales.ptBR.quests[92434] = { name = "Sangue nas ruas", objective = "Encontre uma forma de entrar em Dalaran pelo Lago Lordamere.", pickup = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", turnin = "Imagem da Arquimaga Modera, Lago Lordamere perto de Dalaran", note = "Requer as missões de Dalaran de Magus Wordeen Voidglare. Fichas de Pedra e Braçadeiras de Vinculação de Keeper Bel'varil são opcionais e não são necessárias para a harmonização." }
+FDJ.ContentLocales.ptBR.quests[96984] = { name = "Coração da Perturbação", objective = "Colete a Partícula Arcana em Dalaran para Magus Wordeen Voidglare no Moinho Tarren.", pickup = "Imagem da Arquimaga Modera, Lago Lordamere perto de Dalaran", turnin = "Magus Wordeen Voidglare, Moinho Tarren, Contraforte de Eira dos Montes", note = "Harmonização da Horda para Dalaran. Fichas de Pedra e Braçadeiras de Vinculação podem ser feitas em paralelo, mas não são necessárias." }
+
+FDJ.ContentLocales.ruRU.quests[544] = { name = "Побег из тюрьмы", objective = "Найдите четырех предателей Отрекшихся в лагере для интернированных Лордамер, заберите их артефакты Кровавого камня и вернитесь к магу Вордину Пустогляду.", pickup = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", turnin = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", note = "Одновременно возьмите у мага Вордина Пустогляда задание «Ключ от города»." }
+FDJ.ContentLocales.ruRU.quests[93680] = { name = "Ключ от города", objective = "Добудьте грязный ключ для мага Вордина Пустогляда на Мельнице Таррен.", pickup = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", turnin = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", note = "Это задание можно взять одновременно с «Побегом из тюрьмы»." }
+FDJ.ContentLocales.ruRU.quests[545] = { name = "Патрули Даларана", objective = "Убейте 6 призывателей Даларана и 12 порабощенных элементалей, затем вернитесь к магу Вордину Пустогляду на Мельницу Таррен.", pickup = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", turnin = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", description = "Доступно после выполнения «Побега из тюрьмы»." }
+FDJ.ContentLocales.ruRU.quests[92434] = { name = "Кровь на улицах", objective = "Найдите путь в Даларан со стороны озера Лордамер.", pickup = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", turnin = "Образ верховного мага Модеры, озеро Лордамер возле Даларана", note = "Требует задания Даларана от мага Вордина Пустогляда. «Каменные жетоны» и «Наручи подчинения» от Keeper Bel'varil необязательны и не нужны для доступа." }
+FDJ.ContentLocales.ruRU.quests[96984] = { name = "Сердце нарушения", objective = "Добудьте частицу тайной магии в Даларане для мага Вордина Пустогляда на Мельнице Таррен.", pickup = "Образ верховного мага Модеры, озеро Лордамер возле Даларана", turnin = "Маг Вордин Пустогляд, Мельница Таррен, Предгорья Хилсбрада", note = "Ордынская цепочка доступа в Даларан. Каменные жетоны и Наручи подчинения можно выполнить параллельно, но они не обязательны." }
+
+FDJ.ContentLocales.koKR.quests[544] = { name = "감옥 침입", objective = "로다미어 수용소에서 포세이큰 배신자 네 명을 찾아 혈석 유물을 되찾고 타렌 밀의 마구스 워딘 보이드글레어에게 돌아가세요.", pickup = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", turnin = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", note = "마구스 워딘 보이드글레어에게서 '도시의 열쇠'도 함께 받으세요." }
+FDJ.ContentLocales.koKR.quests[93680] = { name = "도시의 열쇠", objective = "타렌 밀의 마구스 워딘 보이드글레어를 위해 때 묻은 열쇠를 구하세요.", pickup = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", turnin = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", note = "감옥 침입과 동시에 받을 수 있습니다." }
+FDJ.ContentLocales.koKR.quests[545] = { name = "달라란 순찰대", objective = "달라란 소환사 6명과 정령 노예 12마리를 처치하고 타렌 밀의 마구스 워딘 보이드글레어에게 돌아가세요.", pickup = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", turnin = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", description = "감옥 침입 완료 후 이용할 수 있습니다." }
+FDJ.ContentLocales.koKR.quests[92434] = { name = "거리의 피", objective = "로다미어 호수를 따라 달라란으로 들어갈 방법을 찾으세요.", pickup = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", turnin = "대마법사 모데라의 환영, 달라란 근처 로다미어 호수", note = "마구스 워딘 보이드글레어의 달라란 퀘스트가 필요합니다. Keeper Bel'varil의 돌 토큰과 속박의 팔보호구는 선택 사항이며 입장에 필요하지 않습니다." }
+FDJ.ContentLocales.koKR.quests[96984] = { name = "혼란의 심장", objective = "타렌 밀의 마구스 워딘 보이드글레어를 위해 달라란에서 비전 티끌을 수집하세요.", pickup = "대마법사 모데라의 환영, 달라란 근처 로다미어 호수", turnin = "마구스 워딘 보이드글레어, 타렌 밀, 힐스브래드 구릉지", note = "호드 달라란 입장 연계입니다. 돌 토큰과 속박의 팔보호구는 함께 진행할 수 있지만 필수는 아닙니다." }
+
+FDJ.ContentLocales.zhCN.quests[544] = { name = "越狱行动", objective = "在洛丹米尔收容所找到四名被遗忘者叛徒，夺回他们的血石神器，然后返回塔伦米尔的法师沃迪恩·虚空之眼处。", pickup = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", turnin = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", note = "同时从法师沃迪恩·虚空之眼处接取“城市钥匙”。" }
+FDJ.ContentLocales.zhCN.quests[93680] = { name = "城市钥匙", objective = "为塔伦米尔的法师沃迪恩·虚空之眼取得肮脏的钥匙。", pickup = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", turnin = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", note = "此任务可与“越狱行动”同时接取。" }
+FDJ.ContentLocales.zhCN.quests[545] = { name = "达拉然巡逻队", objective = "击杀6名达拉然召唤师和12个元素奴仆，然后返回塔伦米尔的法师沃迪恩·虚空之眼处。", pickup = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", turnin = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", description = "完成“越狱行动”后可接取。" }
+FDJ.ContentLocales.zhCN.quests[92434] = { name = "街头之血", objective = "沿洛丹米尔湖寻找进入达拉然的方法。", pickup = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", turnin = "大法师茉德拉的影像，达拉然附近的洛丹米尔湖", note = "需要完成法师沃迪恩·虚空之眼的达拉然任务。Keeper Bel'varil的石质徽记和束缚护腕为可选任务，不是入场前置。" }
+FDJ.ContentLocales.zhCN.quests[96984] = { name = "扰乱之心", objective = "在达拉然收集奥术微粒并交给塔伦米尔的法师沃迪恩·虚空之眼。", pickup = "大法师茉德拉的影像，达拉然附近的洛丹米尔湖", turnin = "法师沃迪恩·虚空之眼，塔伦米尔，希尔斯布莱德丘陵", note = "部落达拉然入场任务链。石质徽记和束缚护腕可以顺路完成，但并非必需。" }
+
+FDJ.ContentLocales.zhTW.quests[544] = { name = "越獄行動", objective = "在羅德米爾收容所找到四名被遺忘者叛徒，奪回他們的血石神器，然後返回塔倫米爾的法師沃迪恩·虛空之眼處。", pickup = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", turnin = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", note = "同時從法師沃迪恩·虛空之眼處接取「城市鑰匙」。" }
+FDJ.ContentLocales.zhTW.quests[93680] = { name = "城市鑰匙", objective = "為塔倫米爾的法師沃迪恩·虛空之眼取得骯髒的鑰匙。", pickup = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", turnin = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", note = "此任務可與「越獄行動」同時接取。" }
+FDJ.ContentLocales.zhTW.quests[545] = { name = "達拉然巡邏隊", objective = "擊殺6名達拉然召喚師和12個元素奴僕，然後返回塔倫米爾的法師沃迪恩·虛空之眼處。", pickup = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", turnin = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", description = "完成「越獄行動」後可接取。" }
+FDJ.ContentLocales.zhTW.quests[92434] = { name = "街頭之血", objective = "沿羅德米爾湖尋找進入達拉然的方法。", pickup = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", turnin = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", note = "需要完成法師沃迪恩·虛空之眼的達拉然任務。Keeper Bel'varil的石質徽記和束縛護腕為可選任務，不是入場前置。" }
+FDJ.ContentLocales.zhTW.quests[96984] = { name = "擾亂之心", objective = "在達拉然收集秘法微粒並交給塔倫米爾的法師沃迪恩·虛空之眼。", pickup = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", turnin = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", note = "部落達拉然入場任務鏈。石質徽記和束縛護腕可以順路完成，但並非必需。" }

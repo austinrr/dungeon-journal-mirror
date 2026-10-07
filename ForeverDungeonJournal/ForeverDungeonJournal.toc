@@ -2,9 +2,10 @@
 ## Title: DungeonJournal
 ## Notes: Boss, loot and quest journal for WoW Classic dungeons.
 ## Author: Exehn
-## Version: 1.5.2
+## Version: 1.6.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## SavedVariables: ForeverDungeonJournalDB
+## SavedVariablesPerCharacter: ForeverDungeonJournalCharacterDB
 
 
 Core\Bootstrap.lua
@@ -41,8 +42,11 @@ UI\ItemComparisonData.lua
 Systems\MapMarkers.lua
 Systems\VersionCheck.lua
 Systems\LootFilter.lua
+Systems\Favourites.lua
 Systems\BugReport.lua
+Systems\PortraitPool.lua
 Core\Journal.lua
+Systems\ScarletWing.lua
 Systems\WorldMapOverlay.lua
 Systems\Resize.lua
 Systems\OptionsPanel.lua

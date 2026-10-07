@@ -64,7 +64,7 @@ FDJ.PREREQ_REWARD_ITEMS_FALLBACK[1806] = { items = { {6953, "Verigan's Fist", 3}
 FDJ.FOREVER_QUEST_XP_FALLBACK[1806] = 5500
 
 -- An Unholy Alliance (Horde): the journal entry is the final step (6521); part 1 starts from the Small Scroll in Razorfen
--- Kraul; the final step is in Razorfen Downs and gives the item reward.
+-- Kraul; the final step is completed in the area outside Razorfen Downs and gives the item reward.
 FDJ.QUEST_PREREQ_CHAINS[6521] = {
     { id = 6522, name = "An Unholy Alliance" },
 }
@@ -113,11 +113,11 @@ FDJ.QUEST_PREREQ_DETAILS[1150] = { level = 30, requires = 25, objective = "Bring
 FDJ.FOREVER_QUEST_XP_FALLBACK[1150] = 2450
 FDJ.QUEST_PREREQ_DETAILS[1151] = { level = 30, requires = 25, objective = "Bring Fragments of Rok'Alim to Dorn Plainstalker in Thousand Needles.", pickup = "Dorn Plainstalker, Thousand Needles", turnin = "Dorn Plainstalker, Thousand Needles", map = { mapID = 1441, x = 0.538, y = 0.414, label = "Dorn Plainstalker — Thousand Needles", detail = "Dorn Plainstalker in Thousand Needles" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1151] = 3050
-FDJ.QUEST_PREREQ_DETAILS[1152] = { level = 30, requires = 25, objective = "Find Braug Dimspirit near the entrance to Talondeep Path in Stonetalon Mountains.", pickup = "Dorn Plainstalker, Thousand Needles", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", map = { mapID = 1441, x = 0.538, y = 0.414, label = "Dorn Plainstalker — Thousand Needles", detail = "Dorn Plainstalker in Thousand Needles" } }
+FDJ.QUEST_PREREQ_DETAILS[1152] = { level = 30, requires = 25, objective = "Find Braug Dimspirit near the entrance to Talondeep Path in Stonetalon Mountains.", pickup = "Dorn Plainstalker, Thousand Needles", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", suppressDescription = true, map = { mapID = 1441, x = 0.538, y = 0.414, label = "Dorn Plainstalker — Thousand Needles", detail = "Dorn Plainstalker in Thousand Needles" }, turninMap = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1152] = 1200
 FDJ.QUEST_PREREQ_DETAILS[1154] = { level = 30, requires = 25, objective = "Find the Legacy of the Aspects and return it to Braug Dimspirit near the entrance to Talondeep Path in Stonetalon Mountains.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1154] = 1850
-FDJ.QUEST_PREREQ_DETAILS[6627] = { level = 30, requires = 25, objective = "Answer Braug Dimspirit's question successfully and then speak to him again.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
+FDJ.QUEST_PREREQ_DETAILS[6627] = { level = 30, requires = 25, objective = "Answer Braug Dimspirit's question successfully and then speak to him again.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", warning = "ANSWER: Neltharion", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[6627] = 245
 FDJ.QUEST_PREREQ_DETAILS[1159] = { level = 30, requires = 25, objective = "Find Parqual Fintallas in Undercity.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Parqual Fintallas, Undercity", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1159] = 1200
@@ -126,3 +126,95 @@ FDJ.QUEST_PREREQ_DETAILS[1160] = { level = 36, requires = 25, objective = "Find 
 FDJ.FOREVER_QUEST_XP_FALLBACK[1160] = 2100
 FDJ.QUEST_PREREQ_DETAILS[6628] = { level = 30, requires = 25, objective = "Answer Parqual Fintallas' question successfully and then speak to him again.", pickup = "Parqual Fintallas, Undercity", turnin = "Parqual Fintallas, Undercity", map = { mapID = 1458, x = 0.576, y = 0.652, label = "Parqual Fintallas — Undercity", detail = "Parqual Fintallas in Undercity" } }
 
+
+
+-- City of Dalaran (Alliance): Heart of Disruption follows the introductory
+-- An Alarming Request breadcrumb. Starving Arcane is a standalone quest for
+-- both factions.
+FDJ.QUEST_PREREQ_CHAINS[92458] = {
+    { id = 92432, name = "An Alarming Request" },
+}
+FDJ.QUEST_PREREQ_DETAILS[92432] = {
+    level = 33,
+    requires = 30,
+    objective = "Report to the Image of Archmage Modera near the City of Dalaran.",
+    pickup = "Emissary Jacques, Southshore, Hillsbrad Foothills",
+    turnin = "Image of Archmage Modera, Lordamere Lake near Dalaran",
+    -- Start pin read off Wowhead's Hillsbrad Foothills map (approximate).
+    map = { mapID = 1424, x = 0.484, y = 0.602, label = "Emissary Jacques — Southshore", detail = "Emissary Jacques in Southshore, Hillsbrad Foothills" },
+    description = "Introductory quest leading to Heart of Disruption.",
+}
+FDJ.FOREVER_QUEST_XP_FALLBACK[92457] = 9400
+FDJ.FOREVER_QUEST_XP_FALLBACK[92458] = 9400
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92432] = true
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92457] = true
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92458] = false
+
+
+-- City of Dalaran (Horde): required attunement chain.
+-- Prison Break In and Key to the City can both be picked up from Magus Wordeen
+-- Voidglare in Tarren Mill. Dalaran Patrols follows Prison Break In. Once the
+-- Magus quests are complete, Blood in the Streets leads to Heart of Disruption.
+-- Keeper Bel'varil's Stone Tokens -> Bracers of Binding branch is useful to do
+-- in the same area but is NOT required for the Dalaran attunement.
+FDJ.QUEST_PREREQ_CHAINS[96984] = {
+    { id = 544, name = "Prison Break In" },
+    { id = 93680, name = "Key to the City", shareNormally = true },
+    { id = 545, name = "Dalaran Patrols" },
+    { id = 92434, name = "Blood in the Streets" },
+}
+
+FDJ.QUEST_PREREQ_DETAILS[544] = {
+    level = 34,
+    requires = 30,
+    objective = "Find the four Forsaken traitors at the Lordamere Internment Camp, recover their Bloodstone artifacts, and return to Magus Wordeen Voidglare.",
+    pickup = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    note = "Pick up Key to the City from Magus Wordeen Voidglare at the same time.",
+    map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
+}
+FDJ.FOREVER_QUEST_XP_FALLBACK[544] = 3350
+
+FDJ.QUEST_PREREQ_DETAILS[93680] = {
+    level = 33,
+    requires = 30,
+    objective = "Acquire the Grimy Key for Magus Wordeen Voidglare in Tarren Mill.",
+    requiredItems = {
+        {279469, "Grimy Key", 1, "Found while investigating the Dalaran forces around the Lordamere Internment Camp"},
+    },
+    pickup = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    note = "This quest can be accepted alongside Prison Break In.",
+    map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
+}
+
+FDJ.QUEST_PREREQ_DETAILS[545] = {
+    level = 35,
+    requires = 30,
+    objective = "Kill 6 Dalaran Summoners and 12 Elemental Slaves, then return to Magus Wordeen Voidglare in Tarren Mill.",
+    pickup = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    description = "Available after completing Prison Break In.",
+    map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
+}
+FDJ.FOREVER_QUEST_XP_FALLBACK[545] = 2050
+
+FDJ.QUEST_PREREQ_DETAILS[92434] = {
+    level = 34,
+    requires = 30,
+    objective = "Find a way into Dalaran along Lordamere Lake.",
+    pickup = "Magus Wordeen Voidglare, Tarren Mill, Hillsbrad Foothills",
+    turnin = "Image of Archmage Modera, Lordamere Lake near Dalaran",
+    providedItem = {279469, "Grimy Key", 1, "Provided for Blood in the Streets"},
+    note = "Requires Magus Wordeen Voidglare's Dalaran quests. Stone Tokens and Bracers of Binding from Keeper Bel'varil are optional and are not required for attunement.",
+    map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
+    turninMap = { mapID = 1416, x = 0.197, y = 0.754, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", detail = "Outside Dalaran near Lordamere Lake" },
+}
+FDJ.FOREVER_QUEST_XP_FALLBACK[92434] = 270
+FDJ.FOREVER_QUEST_XP_FALLBACK[96984] = 9400
+
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[544] = true
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[93680] = true
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[545] = true
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92434] = false
+ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[96984] = false

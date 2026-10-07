@@ -18,7 +18,9 @@ local function Settings()
         db = {}
         ForeverDungeonJournalDB.lootFilter = db
     end
-    if db.recipes == nil then db.recipes = false end
+    -- The "show recipes" option was removed: recipes live on the recipe tab
+    -- (or under the boss-page divider), never inline in the loot list.
+    db.recipes = false
     if db.classOnly == nil then db.classOnly = false end
     if type(db.stats) ~= "table" then db.stats = {} end
     if db.matchAll == nil then db.matchAll = true end
@@ -29,6 +31,31 @@ end
 FDJ.LootFilterSettings = Settings
 
 -- ---------------------------------------------------------------- recipes
+-- Blueprints are few and distinctive: on boss pages they stay in the main
+-- loot list instead of going under the "Recipes & Patterns" divider.
+local function IsBlueprint(item)
+    if type(item) ~= "table" then return false end
+    local slot, name = item[3], item[2]
+    return (type(slot) == "string" and slot:lower():find("blueprint", 1, true) ~= nil)
+        or (type(name) == "string" and name:lower():find("^blueprint:") ~= nil)
+end
+
+FDJ.IsBlueprint = IsBlueprint
+
+-- Loot offered by the search bar: whatever the Loot Filter keeps, plus every
+-- blueprint (blueprints are always listed on boss pages, so always findable).
+function FDJ.SearchableBossLoot(boss)
+    if type(boss) ~= "table" or type(boss.loot) ~= "table" then return {} end
+    if boss.recipeTab then return boss.loot end -- recipes are found on their tab
+    local kept = FDJ.FilterBossLoot(boss).loot or {}
+    local seen, out = {}, {}
+    for _, item in ipairs(kept) do seen[item] = true; out[#out + 1] = item end
+    for _, item in ipairs(boss.loot) do
+        if IsBlueprint(item) and not seen[item] then out[#out + 1] = item end
+    end
+    return out
+end
+
 local function IsRecipe(item)
     if type(item) ~= "table" then return false end
 
@@ -226,9 +253,53 @@ end
 -- ----------------------------------------------------------------- filter
 -- Returns the boss itself when nothing is hidden, otherwise a stand-in whose
 -- loot list holds only the visible items (every other field reads through).
+-- ------------------------------------------------------------ recipe tab
+-- Instead of repeating the same recipes on every boss, each dungeon whose
+-- bosses drop recipes gets one extra entry at the end of its boss list that
+-- holds each recipe once, with the portraits of the bosses that drop it.
+FDJ.RECIPE_TAB_NAME = "Recipes & Patterns"
+do
+    for dungeonName, dungeon in pairs(FDJ.DB or {}) do
+        if type(dungeon) == "table" and type(dungeon.bosses) == "table" and not dungeon.fdjRecipeTabBuilt then
+            dungeon.fdjRecipeTabBuilt = true
+            local order, byID = {}, {}
+            for _, boss in ipairs(dungeon.bosses) do
+                if not boss.trash and type(boss.loot) == "table" then
+                    -- Let the row portraits (shared with Trash Drops) draw this boss.
+                    -- " / " separates sources on a row, so a boss whose own name
+                    -- contains it ("Fel Steed / Shadow Charger") is listed with "&".
+                    local sourceName = boss.name:gsub(" / ", " & ")
+                    local displayID = boss.npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[boss.npcID]
+                    if displayID and FDJ.TRASH_MOB_DISPLAY_IDS and not FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] then
+                        FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] = displayID
+                    end
+                    for _, item in ipairs(boss.loot) do
+                        if IsRecipe(item) and not IsBlueprint(item) then
+                            boss.fdjHasRecipeTab = true
+                            local entry = byID[item[1]]
+                            if entry then
+                                entry[5] = entry[5] .. " / " .. sourceName
+                            else
+                                entry = { item[1], item[2], item[3], item[4], sourceName }
+                                byID[item[1]] = entry
+                                order[#order + 1] = entry
+                            end
+                        end
+                    end
+                end
+            end
+            if #order > 0 then
+                dungeon.bosses[#dungeon.bosses + 1] = { name = FDJ.RECIPE_TAB_NAME, trash = true, recipeTab = true, loot = order }
+            end
+        end
+    end
+end
+
 function FDJ.FilterBossLoot(boss)
     FDJ.lootFilterHidden = 0
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
+    -- The recipe tab is a view of other bosses' drops: never list it twice.
+    if boss.recipeTab then return setmetatable({ loot = {} }, { __index = boss }) end
     local db = Settings()
     -- Switched off: default view (recipe drops hidden, nothing else filtered).
     local on = db.enabled
@@ -270,23 +341,43 @@ end
 function FDJ.FilterBossLootForPage(boss)
     FDJ.lootFilterDimmed = {}
     FDJ.lootFilterHidden = 0
+    -- Recipe section on boss pages: recipe drops are never silently hidden.
+    -- They sit under a "Recipes & Patterns (N)" divider at the end of the
+    -- list, folded by default; lootRecipeSplit is the number of rows above it.
+    FDJ.lootRecipeCount = 0
+    FDJ.lootRecipeSplit = nil
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
     if boss.fdjDungeon then return boss end -- the Show page already holds matches only
+    if boss.recipeTab then return boss end  -- the recipe tab always lists everything
     local db = Settings()
     local showRecipes = db.enabled and db.recipes
     local keep = {}
     for _, item in ipairs(FDJ.FilterBossLoot(boss).loot) do keep[item] = true end
-    local shown = {}
+    local shown, recipes = {}, {}
     for _, item in ipairs(boss.loot) do
-        if IsRecipe(item) then
-            if showRecipes then shown[#shown + 1] = item end
+        if IsBlueprint(item) then
+            shown[#shown + 1] = item
+        elseif IsRecipe(item) then
+            if showRecipes then
+                shown[#shown + 1] = item
+            elseif not boss.fdjHasRecipeTab then
+                -- (with a recipe tab in the dungeon, recipes live there instead)
+                recipes[#recipes + 1] = item
+            end
         else
             shown[#shown + 1] = item
             if not keep[item] then FDJ.lootFilterDimmed[item] = true end
         end
     end
     FDJ.lootFilterHidden = 0
-    if #shown == #boss.loot then return boss end
+    if #recipes > 0 then
+        FDJ.lootRecipeCount = #recipes
+        FDJ.lootRecipeSplit = #shown
+        if FDJ.lootRecipesExpanded then
+            for _, item in ipairs(recipes) do shown[#shown + 1] = item end
+        end
+    end
+    if #shown == #boss.loot and not FDJ.lootRecipeSplit then return boss end
     return setmetatable({ loot = shown }, { __index = boss })
 end
 
@@ -352,8 +443,20 @@ local function RefreshWindow(frame)
     win.title:SetText(L("LOOT_FILTER"))
     win.statsHeader:SetText(L("LF_STATS_HEADER"))
     win.statsHint:SetText(L("LF_STATS_HINT"))
-    win.recipes.fdjLabel:SetText(L("LF_SHOW_RECIPES"))
-    win.classOnly.fdjLabel:SetText(L("LF_CLASS_ONLY"))
+    -- Small inline icons in front of the two option labels: a recipe scroll,
+    -- and the icon of the class this character is playing.
+    local recipeIcon = "|TInterface\\Icons\\INV_Scroll_03:16:16:0:0:64:64:5:59:5:59|t "
+    local classIcon = ""
+    do
+        local _, classFile = UnitClass("player")
+        local c = classFile and CLASS_ICON_TCOORDS and CLASS_ICON_TCOORDS[classFile]
+        if c then
+            classIcon = string.format(
+                "|TInterface\\GLUES\\CHARACTERCREATE\\UI-CharacterCreate-Classes:16:16:0:0:256:256:%d:%d:%d:%d|t ",
+                c[1] * 256 + 4, c[2] * 256 - 4, c[3] * 256 + 4, c[4] * 256 - 4)
+        end
+    end
+    win.classOnly.fdjLabel:SetText(classIcon .. L("LF_CLASS_ONLY"))
     win.clear:SetText(L("LF_CLEAR"))
     win.ok:SetText(L("LF_OK"))
     win.show:SetText(L("LF_SHOW"))
@@ -391,7 +494,7 @@ end
 local function CreateWindow(frame)
     local win = CreateFrame("Frame", "ForeverDungeonJournalLootFilter", frame, "BackdropTemplate")
     frame.lootFilterWindow = win
-    win:SetSize(390, 440)
+    win:SetSize(390, 406)
     win:SetPoint("CENTER", frame, "CENTER", 0, 0)
     win:SetFrameStrata("TOOLTIP")
     win:SetFrameLevel(200)
@@ -418,12 +521,9 @@ local function CreateWindow(frame)
     win.checks = {}
     win.statChecks = {}
 
-    win.recipes = MakeCheck(win, frame, function() return Settings().recipes end, function(v) Settings().recipes = v end)
-    win.recipes:SetPoint("TOPLEFT", 14, -44)
-    win.checks[#win.checks + 1] = win.recipes
 
     win.classOnly = MakeCheck(win, frame, function() return Settings().classOnly end, function(v) Settings().classOnly = v end)
-    win.classOnly:SetPoint("TOPLEFT", win.recipes, "BOTTOMLEFT", 0, -4)
+    win.classOnly:SetPoint("TOPLEFT", 14, -44)
     win.checks[#win.checks + 1] = win.classOnly
 
     win.statsHeader = win:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -438,7 +538,7 @@ local function CreateWindow(frame)
 
     -- Minimum required level: empty shows everything.
     win.minLabel = win:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    win.minLabel:SetPoint("TOPLEFT", win, "TOPLEFT", 20, -158)
+    win.minLabel:SetPoint("TOPLEFT", win.statsHint, "BOTTOMLEFT", 0, -10)
     win.minBox = CreateFrame("EditBox", "ForeverDungeonJournalLootFilterMinLevel", win, "InputBoxTemplate")
     win.minBox:SetSize(44, 20)
     win.minBox:SetPoint("LEFT", win.minLabel, "RIGHT", 12, 0)
@@ -471,13 +571,13 @@ local function CreateWindow(frame)
         check.fdjStat = stat
         local column = (i - 1) % 2
         local row = math.floor((i - 1) / 2)
-        check:SetPoint("TOPLEFT", win, "TOPLEFT", 14 + column * 182, -184 - row * 28)
+        check:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6 + column * 182, -16 - row * 28)
         win.checks[#win.checks + 1] = check
         win.statChecks[#win.statChecks + 1] = check
     end
 
     win.matchAll = MakeCheck(win, frame, function() return Settings().matchAll end, function(v) Settings().matchAll = v end)
-    win.matchAll:SetPoint("TOPLEFT", win, "TOPLEFT", 14, -184 - math.ceil(#STATS / 2) * 28 - 6)
+    win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - math.ceil(#STATS / 2) * 28 - 6)
     win.checks[#win.checks + 1] = win.matchAll
 
     win.clear = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
@@ -1028,7 +1128,7 @@ function FDJ.SetRowMobs(row, sourceText)
             button:SetScript("OnEnter", function(self)
                 if not GameTooltip or not self.fdjMobName then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(self.fdjMobName) or self.fdjMobName, 1, 0.82, 0.27)
+                GameTooltip:SetText((FDJ.LocalizeBossName and FDJ.LocalizeBossName(self.fdjMobName)) or self.fdjMobName, 1, 0.82, 0.27)
                 GameTooltip:Show()
             end)
             button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
