@@ -1268,7 +1268,7 @@ ITEM_SOURCES.frFR = {
 ITEM_SOURCES.esES = {
     ["Dropped by: Dark Iron Agents"] = "Lo suelta: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Lo suelta: Dark Iron Spies en Dun Morogh",
-    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Las Minas de la Muerte",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Minas de la Muerte",
     ["Dropped by: Mutanus the Devourer"] = "Lo suelta: Mutanus el Devorador",
     ["Dropped by: Relic Guardian"] = "Lo suelta: Relic Guardian",
     ["Dropped by: The Baron"] = "Lo suelta: The Baron",
@@ -1837,6 +1837,24 @@ for lang, warning in pairs(TEST_OF_LORE_ANSWER) do
     local content = FDJ.ContentLocales[lang]
     if content and content.quests then
         if content.quests[6627] then content.quests[6627].warning = warning end
+    end
+end
+
+-- Test of Lore answer hint for the Undercity step (quest 6628).
+for lang, warning in pairs({
+    deDE = "ANTWORT: Ner'zhul",
+    frFR = "RÉPONSE : Ner'zhul",
+    esES = "RESPUESTA: Ner'zhul",
+    itIT = "RISPOSTA: Ner'zhul",
+    ptBR = "RESPOSTA: Ner'zhul",
+    ruRU = "ОТВЕТ: Нер'зул",
+    koKR = "정답: 넬쥴",
+    zhCN = "答案：耐奥祖",
+    zhTW = "答案：耐奧祖",
+}) do
+    local content = FDJ.ContentLocales[lang]
+    if content and content.quests and content.quests[6628] then
+        content.quests[6628].warning = warning
     end
 end
 

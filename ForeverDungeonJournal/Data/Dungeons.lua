@@ -593,6 +593,7 @@ FDJ.DB = {
                     {286981, "Death Bindings", "Wrist, Mail", 3, "Skeleton / Skeletal Soldier / Skeletal Mage / Fallen Necromancer"},
                     {286977, "Sword of the Fallen", "Two-Hand, Sword", 3, "Ghoul / Ragged Ghoul / Plague Ghoul"},
                     {286978, "Rotmender's Garb", "Chest, Cloth", 3, "Flesh Golem"},
+                    {286979, "Rotmender's Gloves", "Hands, Cloth", 3, "Stone Watcher"},
                     {286980, "Rotmender's Sash", "Waist, Cloth", 3, "Shrieking Banshee"},
                 },
             },

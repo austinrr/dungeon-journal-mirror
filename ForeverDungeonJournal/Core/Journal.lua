@@ -233,8 +233,9 @@ FDJ.DUNGEON_MAPS = {
         transitions = {
             { floor = 1, to = 2, x = 0.545, y = 0.409, labelKey = "MAP_JUMP_LEVEL" }, -- Hall of Gears: jump down
             { floor = 1, to = 2, x = 0.487, y = 0.877 }, -- The Dormitory
-            { floor = 2, to = 3, x = 0.245, y = 0.500 }, -- Launch Bay
+            { floor = 2, to = 3, x = 0.435, y = 0.813 }, -- end of the corridor below the Launch Bay
             { floor = 3, to = 4, x = 0.370, y = 0.720 }, -- Engineering Labs
+            { floor = 4, to = 3, x = 0.440, y = 0.726 }, -- corridor bend between Tinkers' Court and the Engineering Labs
         },
         bosses = {
             { name = "Grubbis",               floor = 1, x = 0.776, y = 0.671 },
@@ -984,8 +985,28 @@ local function ParseQuestRewardExtras(quest)
     local money = 0
     local kept = {}
 
+    -- Items already shown as reward buttons must not be repeated as text
+    -- underneath (e.g. "Nogg's Gold Ring" under the Nogg's Gold Ring button).
+    local shownItems = {}
+    if type(quest) == "table" then
+        for _, list in ipairs({ quest.rewardItems, quest.additionalRewardItems, quest.noteRewardItems }) do
+            for _, item in ipairs(type(list) == "table" and list or {}) do
+                if type(item[2]) == "string" then shownItems[item[2]:lower()] = true end
+                if type(item[1]) == "number" and item[1] > 0 and GetItemInfo then
+                    local ok, liveName = pcall(GetItemInfo, item[1])
+                    if ok and type(liveName) == "string" and not IsSecret(liveName) then
+                        shownItems[liveName:lower()] = true
+                    end
+                end
+            end
+        end
+    end
+
     for token in raw:gmatch("[^•|]+") do
         token = token:gsub("^%s+", ""):gsub("%s+$", "")
+        -- "Nogg's Gold Ring" or "Nogg's Gold Ring x2": already a button.
+        local bare = token:gsub("%s*[xX]%s*%d+$", ""):lower()
+        if shownItems[bare] then token = "" end
         if token ~= "" then
             local remainder = token:gsub("%d+%s*[gsc]", ""):gsub("%s+", "")
             if remainder == "" and token:find("%d+%s*[gsc]") then
@@ -2449,12 +2470,25 @@ local function MakeLootRow(parent)
     row.name:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 10, -4)
     row.name:SetPoint("RIGHT", -10, 0)
     row.name:SetJustifyH("LEFT")
+    -- One line only: names too long for the row end in "..." (matters most
+    -- in the two-column layout).
+    row.name:SetWordWrap(false)
 
     row.slot = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     row.slot:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -5)
     row.slot:SetPoint("RIGHT", -10, 0)
     row.slot:SetJustifyH("LEFT")
+    row.slot:SetWordWrap(false)
     row.slot:SetTextColor(0.27, 0.18, 0.08)
+
+    -- Small right-hand label for shared boss loot, styled like the RARE tag
+    -- on rare bosses. Sits left of the favourite star.
+    row.sharedText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    row.sharedText:SetPoint("RIGHT", row, "RIGHT", -28, 0)
+    row.sharedText:SetJustifyH("RIGHT")
+    row.sharedText:SetText("Shared Loot, low %")
+    row.sharedText:SetTextColor(1.00, 0.82, 0.00)
+    row.sharedText:Hide()
 
     row:SetScript("OnEnter", function(self)
         HideSearchItemHighlight(self)
@@ -5140,6 +5174,14 @@ FDJ.SetupDungeonMapZoom = function()
     end)
 end
 
+-- Floor to open a dungeon's map on: the one last looked at, else the entrance floor.
+FDJ.SavedMapFloor = function(dungeonName, data)
+    local floors = data and data.floors or {}
+    local saved = ForeverDungeonJournalDB.mapFloors and ForeverDungeonJournalDB.mapFloors[dungeonName]
+    if type(saved) == "number" and saved >= 1 and saved <= #floors then return saved end
+    return data and data.entrance and data.entrance.floor or 1
+end
+
 FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     if not frame or not frame.dungeonMapArtHolder or not data then return end
     ClearDungeonMapArt()
@@ -5148,6 +5190,11 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     local floors = data.floors or {}
     floorIndex = math.max(1, math.min(#floors, floorIndex or (data.entrance and data.entrance.floor) or 1))
     frame.dungeonMapFloor = floorIndex
+    -- Remember the floor per dungeon so the map reopens where it was left.
+    if selectedDungeon and DB[selectedDungeon] then
+        ForeverDungeonJournalDB.mapFloors = ForeverDungeonJournalDB.mapFloors or {}
+        ForeverDungeonJournalDB.mapFloors[selectedDungeon] = floorIndex
+    end
     local floorData = floors[floorIndex]
     if not floorData then return end
 
@@ -5432,7 +5479,7 @@ ShowDungeonMap = function()
     local mapData = FDJ.DUNGEON_MAPS[selectedDungeon]
     FDJ.SetupDungeonMapZoom()
     FDJ.ResetDungeonMapView()
-    FDJ.RenderCustomDungeonMap(mapData, mapData.entrance and mapData.entrance.floor or 1)
+    FDJ.RenderCustomDungeonMap(mapData, FDJ.SavedMapFloor(selectedDungeon, mapData))
     UpdateModeTabs()
 end
 
@@ -5732,13 +5779,20 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     return button
 end
 
+-- Used by Systems/SettingsPanel.lua.
+FDJ.IsQuestFinished = IsQuestFinished
+FDJ.RefreshHomeCards = function()
+    if RefreshHomeDungeonCards then RefreshHomeDungeonCards() end
+end
+
 RefreshHomeDungeonCards = function()
     if not frame or not frame.homeCardsContent or not frame.homeScroll then return end
 
     ForeverDungeonJournalDB.hiddenDungeons = ForeverDungeonJournalDB.hiddenDungeons or {}
     local shownDungeons = {}
     for _, dungeonName in ipairs(ORDER) do
-        if homeEditMode or not ForeverDungeonJournalDB.hiddenDungeons[dungeonName] then
+        if homeEditMode or not (ForeverDungeonJournalDB.hiddenDungeons[dungeonName]
+            or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName))) then
             shownDungeons[#shownDungeons + 1] = dungeonName
         end
     end
@@ -5819,6 +5873,7 @@ RefreshHomeDungeonCards = function()
         end
 
         local isHidden = ForeverDungeonJournalDB.hiddenDungeons[dungeonName] == true
+            or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName)) or false
         if card.editOverlay then card.editOverlay:SetShown(homeEditMode) end
         if card.editBorder then card.editBorder:SetShown(homeEditMode) end
         if card.hiddenShade then card.hiddenShade:SetShown(homeEditMode and isHidden) end
@@ -6024,10 +6079,79 @@ RefreshLoot = function()
     frame.lootScroll:SetPoint("TOPLEFT", 12, isStockade and -124 or -102)
     frame.lootScroll:SetPoint("BOTTOMRIGHT", -29, 11)
 
-    for i = 1, math.max(#lootRows, #boss.loot) do
+    -- The rows shown: the boss's (filtered) loot, then - when this boss has
+    -- shared loot and the "Show Shared Loot" divider is open - those items.
+    local loot = {}
+    for _, item in ipairs(boss.loot) do loot[#loot + 1] = item end
+    local ownCount = #loot
+    local sharedList = FDJ.GetBossSharedLoot and FDJ.GetBossSharedLoot(selectedDungeon, boss) or nil
+    local sharedCount = sharedList and #sharedList or 0
+    if sharedCount > 0 and FDJ.lootSharedExpanded then
+        for _, item in ipairs(sharedList) do loot[#loot + 1] = item end
+    end
+
+    -- Sections, top to bottom: gear, "Recipes & Patterns" (when split off),
+    -- "Shared Loot" (when the boss has any). Each divider line sits between.
+    local ROW_STEP, LINE_STEP, COL_GAP, SINGLE_WIDTH = 59, 31, 8, 388
+    local recipeSplit = FDJ.lootRecipeSplit
+    local sections = {}
+    sections[#sections + 1] = { first = 1, last = recipeSplit or ownCount }
+    if recipeSplit then sections[#sections + 1] = { line = "recipe", first = recipeSplit + 1, last = ownCount } end
+    if sharedCount > 0 then sections[#sections + 1] = { line = "shared", first = ownCount + 1, last = #loot } end
+
+    -- One column normally. When the list would need scrolling, use two
+    -- columns (items read left, right, next line) so far less scrolling is
+    -- needed. Pages whose rows carry trash-mob portraits stay one column,
+    -- because the portraits need the full row width.
+    local function HasMobPortraits()
+        if not boss.trash or not FDJ.TRASH_MOB_DISPLAY_IDS then return false end
+        for _, item in ipairs(loot) do
+            local source = item[5]
+            if type(source) == "string" and source ~= "" then
+                local all, any = true, false
+                for name in (source .. " / "):gmatch("(.-) / ") do
+                    name = name:gsub("^%s+", ""):gsub("%s+$", "")
+                    if name ~= "" then
+                        any = true
+                        if not FDJ.TRASH_MOB_DISPLAY_IDS[name] then all = false end
+                    end
+                end
+                if any and all then return true end
+            end
+        end
+        return false
+    end
+    local singleHeight = #loot * ROW_STEP + (#sections - 1) * LINE_STEP
+    local viewport = frame.lootScroll:GetHeight() or 0
+    local twoColumns = viewport > 0 and singleHeight > viewport + 4 and #loot > 1 and not HasMobPortraits()
+    local availableWidth = math.max(SINGLE_WIDTH, math.floor(frame.lootScroll:GetWidth() or SINGLE_WIDTH))
+    local rowWidth = twoColumns and math.floor((availableWidth - COL_GAP) / 2) or SINGLE_WIDTH
+    frame.lootContent:SetWidth(twoColumns and availableWidth or SINGLE_WIDTH)
+    FDJ.lootTwoColumns = twoColumns
+
+    local rowPos, lineY = {}, {}
+    local cursorY = 0
+    for _, section in ipairs(sections) do
+        if section.line then
+            lineY[section.line] = cursorY
+            cursorY = cursorY + LINE_STEP
+        end
+        local count = math.max(0, section.last - section.first + 1)
+        for k = 0, count - 1 do
+            if twoColumns then
+                rowPos[section.first + k] = { (k % 2) * (rowWidth + COL_GAP), cursorY + math.floor(k / 2) * ROW_STEP }
+            else
+                rowPos[section.first + k] = { 0, cursorY + k * ROW_STEP }
+            end
+        end
+        cursorY = cursorY + (twoColumns and math.ceil(count / 2) or count) * ROW_STEP
+    end
+    local layoutHeight = cursorY
+
+    for i = 1, math.max(#lootRows, #loot) do
         local row = lootRows[i]
 
-        if i <= #boss.loot then
+        if i <= #loot then
             if not row then
                 row = MakeLootRow(frame.lootContent)
                 lootRows[i] = row
@@ -6036,16 +6160,19 @@ RefreshLoot = function()
             -- Rows are placed by offset so the recipe divider can sit between
             -- the gear rows and the recipe rows.
             row:ClearAllPoints()
-            local rowY = (i - 1) * 59
-            if FDJ.lootRecipeSplit and i > FDJ.lootRecipeSplit then rowY = rowY + 31 end
-            row:SetPoint("TOPLEFT", frame.lootContent, "TOPLEFT", 0, -rowY)
+            local rowX, rowY = rowPos[i][1], rowPos[i][2]
+            row:SetWidth(rowWidth)
+            row:SetPoint("TOPLEFT", frame.lootContent, "TOPLEFT", rowX, -rowY)
 
-            local item = boss.loot[i]
+            local item = loot[i]
             row.item = item
             row.fdjDungeonName = selectedDungeon
             row.fdjBossName = boss.name
             row.icon:SetTexture(ItemIcon(item[1]))
             if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(row, item[1]) end
+            -- Shared loot is marked on the item-type line (see below), so the
+            -- old right-hand label is no longer used.
+            if row.sharedText then row.sharedText:Hide() end
             if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
                 pcall(C_Item.RequestLoadItemDataByID, item[1])
             end
@@ -6089,6 +6216,18 @@ RefreshLoot = function()
             -- Named trash mobs are shown as hoverable portraits instead of text.
             if FDJ.SetRowMobs and FDJ.SetRowMobs(row, showTrashSource and trashSource or nil) then
                 row.slot:SetText(ItemSlot(item[3]))
+            end
+
+            -- Keep the name and type clear of the trash mob portraits.
+            do
+                local inset = -10
+                local mobs = 0
+                for _, button in ipairs(row.fdjMobButtons or {}) do
+                    if button:IsShown() then mobs = mobs + 1 end
+                end
+                if mobs > 0 then inset = math.min(inset, -(14 + mobs * 38)) end
+                row.name:SetPoint("RIGHT", inset, 0)
+                row.slot:SetPoint("RIGHT", inset, 0)
             end
 
             local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
@@ -6143,7 +6282,7 @@ RefreshLoot = function()
                 line.text:SetText(L("RECIPES_SECTION", FDJ.lootRecipeCount or 0))
                 line.icon:SetTexture(FDJ.lootRecipesExpanded and "Interface\\Buttons\\UI-MinusButton-Up" or "Interface\\Buttons\\UI-PlusButton-Up")
                 line:ClearAllPoints()
-                line:SetPoint("TOPLEFT", frame.lootContent, "TOPLEFT", 0, -(split * 59))
+                line:SetPoint("TOPLEFT", frame.lootContent, "TOPLEFT", 0, -(lineY.recipe or 0))
                 line:SetPoint("RIGHT", frame.lootContent, "RIGHT", 0, 0)
                 line:Show()
                 recipeLineHeight = 31
@@ -6153,7 +6292,51 @@ RefreshLoot = function()
         end
     end
 
-    local contentHeight = math.max(1, #boss.loot * 59 + recipeLineHeight)
+    -- "Show Shared Loot (N)" divider: only for bosses with shared loot.
+    -- Folded by default; clicking it shows / hides those items below.
+    do
+        local line = frame.lootSharedLine
+        if sharedCount > 0 and not line then
+            line = CreateFrame("Button", nil, frame.lootContent)
+            frame.lootSharedLine = line
+            line:SetHeight(24)
+            line.rule = line:CreateTexture(nil, "BACKGROUND")
+            line.rule:SetHeight(1)
+            line.rule:SetPoint("BOTTOMLEFT", 0, 0)
+            line.rule:SetPoint("BOTTOMRIGHT", 0, 0)
+            line.rule:SetColorTexture(0.48, 0.40, 0.27, 0.6)
+            line.icon = line:CreateTexture(nil, "ARTWORK")
+            line.icon:SetSize(16, 16)
+            line.icon:SetPoint("LEFT", 4, 0)
+            line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            line.text:SetPoint("LEFT", line.icon, "RIGHT", 6, 0)
+            line.text:SetJustifyH("LEFT")
+            line.note = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            line.note:SetPoint("LEFT", line.text, "RIGHT", 8, 0)
+            line.note:SetTextColor(0.68, 0.62, 0.52)
+            line:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+            line:SetScript("OnClick", function()
+                FDJ.lootSharedExpanded = not FDJ.lootSharedExpanded
+                RefreshLoot()
+            end)
+        end
+        if line then
+            if sharedCount > 0 then
+                local open = FDJ.lootSharedExpanded and true or false
+                line.text:SetText(L(open and "SHARED_HIDE" or "SHARED_SHOW", sharedCount))
+                line.note:SetText(L("SHARED_NOTE"))
+                line.icon:SetTexture(open and "Interface\\Buttons\\UI-MinusButton-Up" or "Interface\\Buttons\\UI-PlusButton-Up")
+                line:ClearAllPoints()
+                line:SetPoint("TOPLEFT", frame.lootContent, "TOPLEFT", 0, -(lineY.shared or 0))
+                line:SetPoint("RIGHT", frame.lootContent, "RIGHT", 0, 0)
+                line:Show()
+            else
+                line:Hide()
+            end
+        end
+    end
+
+    local contentHeight = math.max(1, layoutHeight)
     frame.lootContent:SetHeight(contentHeight)
     local viewportHeight = frame.lootScroll:GetHeight() or 0
     local needsScroll = viewportHeight > 0 and contentHeight > viewportHeight + 4
@@ -6977,6 +7160,9 @@ local function CreateGlobalSearchUI()
         end
     end
 
+    -- Used by Systems/ItemSource.lua to jump to an item from a tooltip.
+    FDJ.OpenSearchResult = OpenSearchResult
+
     local function EnsureSearchRow(index)
         local row = searchRows[index]
         if row then return row end
@@ -7774,6 +7960,14 @@ local function CreateMainFrame()
     frame.lootContent = CreateFrame("Frame", nil, lootScroll)
     frame.lootContent:SetSize(388, 1)
     lootScroll:SetScrollChild(frame.lootContent)
+    -- Resizing the window can change how many loot columns fit. React to
+    -- width changes only (the item-count title changes the height).
+    lootScroll:HookScript("OnSizeChanged", function(self, width)
+        width = math.floor(width or 0)
+        if width == self.fdjLastWidth then return end
+        self.fdjLastWidth = width
+        if frame:IsShown() and FDJ.RefreshLootNow then FDJ.RefreshLootNow() end
+    end)
 
     -- QUEST MODE: mirrors the fast boss workflow. All quests remain visible on
     -- the left; clicking one updates the details on the right with no extra page.
@@ -8476,6 +8670,7 @@ local function CreateMainFrame()
     frame.dungeonMapArtHolder:SetPoint("CENTER")
     frame.dungeonMapArtTiles = {}
     frame.dungeonMapBossMarkers = {}
+
     frame.dungeonMapPanel:Hide()
 
     -- Full-width travel guide page for faction-specific approaches.
@@ -8696,6 +8891,7 @@ local function HideMinimapButton()
 end
 
 -- Right-clicking the minimap button asks first: many players hid it by accident.
+FDJ.HideMinimapButton = HideMinimapButton
 FDJ.ConfirmHideMinimapButton = function()
     if not StaticPopupDialogs or not StaticPopup_Show then
         HideMinimapButton()
@@ -8755,14 +8951,14 @@ function FDJ.SetupLibDBIconMinimap()
                 if button == "LeftButton" then
                     ToggleJournal()
                 elseif button == "RightButton" then
-                    FDJ.ConfirmHideMinimapButton()
+                    if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() else FDJ.ConfirmHideMinimapButton() end
                 end
             end,
             OnTooltipShow = function(tooltip)
                 tooltip:AddLine("DungeonJournal", 1, 0.82, 0.25)
                 tooltip:AddLine(L("MINIMAP_LEFT"), 1, 1, 1)
                 tooltip:AddLine(L("MINIMAP_DRAG"), 0.8, 0.8, 0.8)
-                tooltip:AddLine(L("MINIMAP_RIGHT"), 0.8, 0.8, 0.8)
+                tooltip:AddLine(L("MINIMAP_OPTIONS"), 0.8, 0.8, 0.8)
             end,
         })
     end
@@ -8839,7 +9035,7 @@ function FDJ.CreateFallbackMinimap()
             if button == "LeftButton" then
                 ToggleJournal()
             elseif button == "RightButton" then
-                FDJ.ConfirmHideMinimapButton()
+                if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() else FDJ.ConfirmHideMinimapButton() end
             end
         end)
 
@@ -8848,7 +9044,7 @@ function FDJ.CreateFallbackMinimap()
             GameTooltip:AddLine("DungeonJournal", 1, 0.82, 0.25)
             GameTooltip:AddLine(L("MINIMAP_LEFT"), 1, 1, 1)
             GameTooltip:AddLine(L("MINIMAP_DRAG"), 0.8, 0.8, 0.8)
-            GameTooltip:AddLine(L("MINIMAP_RIGHT"), 0.8, 0.8, 0.8)
+            GameTooltip:AddLine(L("MINIMAP_OPTIONS"), 0.8, 0.8, 0.8)
             GameTooltip:Show()
         end)
 
@@ -8943,6 +9139,15 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         else
             print("|cffffd100Dungeon Journal|r /dj wing graveyard  |  /dj wing library")
         end
+        return
+    end
+    if msg == "options" or msg == "settings" or msg == "config" then
+        if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
+        return
+    end
+    if msg == "itemtip" then
+        local on = FDJ.ToggleItemSourceStrip and FDJ.ToggleItemSourceStrip()
+        print("|cffffd100Dungeon Journal|r item source on tooltips: " .. (on and "ON" or "OFF"))
         return
     end
     if msg == "where" then
@@ -9111,7 +9316,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.0"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.1"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

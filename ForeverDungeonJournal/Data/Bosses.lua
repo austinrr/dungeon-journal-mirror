@@ -252,6 +252,7 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Ghoul"] = 1065, -- npc 250627
     ["Plague Ghoul"] = 559, -- npc 250630
     ["Flesh Golem"] = 1693, -- npc 255109
+    ["Stone Watcher"] = 7534, -- npc 250629
     ["Fallen Necromancer"] = 9785, -- npc 255964
     ["Goblin Engineer"] = 7109, -- npc 622
     ["Defias Overseer"] = 2316, -- npc 634

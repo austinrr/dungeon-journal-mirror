@@ -1,4 +1,4 @@
-DungeonJournal 1.6.0
+DungeonJournal 1.6.1
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,42 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.1
+- Item source on tooltips: an item that is in the journal gets one extra line
+  at the bottom of its tooltip with the boss (or quest) and dungeon it comes
+  from. This works when hovering gear while inspecting, in bags and on loot
+  rolls, and on the window that opens when an item link in chat is clicked.
+- Click that line on a chat-link window to open the journal on the boss or
+  quest. For hover tooltips, bind "Open hovered item in Dungeon Journal" in the
+  key bindings. /dj itemtip turns the line off.
+- Options panel: right-click the minimap button (or type /dj options).
+  UI: hide the journal line on item tooltips, hide the minimap button, and
+  set a key to open the journal. Dungeon list: auto-hide dungeons you have
+  outleveled, and dungeons whose quests you have all completed.
+- Shared boss loot: the six shared leather helms (Brawler's, Trapper's,
+  Defender's, Totemic, Stormrider's, Wisdom's) can drop from many bosses in
+  Blackfathom Deeps, The Stockade, Razorfen Kraul and Scarlet Monastery:
+  Graveyard. Those bosses get a folded "Show Shared Loot (N)" line below their
+  loot; click it to see the helms.
+- Boss loot lists too long to fit are shown in two columns, so far less scrolling
+  is needed. Names too long for a column end in "...".
+- Loot Filter: new Armor Filter button next to the minimum level. Tick one or
+  more armor types (Cloth, Leather, Mail, Plate) to see only those; "All"
+  clears the ticks. Weapons, shields, jewellery and cloaks always stay.
+- Dungeon map: reopens on the floor you last looked at in each dungeon.
+- Ruins of Lordaeron: Rotmender's Gloves added to Trash Drops (Stone Watcher).
+- Test of Lore (Parqual Fintallas, Undercity) shows the answer: Ner'zhul.
+- Smaller download: the two City of Dalaran maps were reduced in resolution,
+  roughly halving the size of the addon.
+- Gnomeregan map: level 2 ladder moved to the corridor below the Launch Bay;
+  new level 3 ladder on the level 4 map.
+- World map: the Dungeon Map / World Map button moves aside instead of sitting
+  on top of other addons' map buttons (such as Questie's).
+- Quest rewards: an item shown as a reward button is no longer repeated as
+  text underneath it.
+- Spanish: dungeon names now match the game (Salón de los Feudales, Minas de
+  la Muerte, Mazmorras de Ventormenta).
 
 CHANGES IN 1.6.0
 - Favourites: right-click any boss loot or quest item to add it to Favourites;
