@@ -1,4 +1,4 @@
-DungeonJournal 1.6.1
+DungeonJournal 1.6.2
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,43 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.2
+- City of Dalaran:
+  - Boss "Mana Elemental" renamed to Arcanic Enigma, with its portrait.
+  - Mana Wraith removed from the boss list.
+  - Boss levels added: Mana Devourer 31, Arcanic Enigma 30.
+  - Lyn the Ignored's page shows "Summoned by: Tome of Dalaran"; hover it to
+    see how to get the tome.
+  - New loot:
+    - Atrexis the Grave Knight: Graveweave Bindings, Gravespike Repeater
+      (moved from Trash Drops; that page is gone).
+    - Arcane Anomaly: Mana-Warped Chain Shirt.
+    - Unstable Sentinel: Unstable Crystalline Shoulderpads, Refractory
+      Scaleguards, Blueprint: Spinning Wheel.
+    - Fel Ancient: Blightleaf Rope, Garb of Fallen Felbark.
+    - Mana Devourer: Manascale Treads.
+    - Arcanic Enigma: Violet Sorcerer's Robes, Wand of Mana Concentration.
+    - Lyn the Ignored: Bonepile Gaze, Cartilage Shapers, Tendonscraper Dagger.
+  - Map: level 1 is now the Underbelly (where you enter), level 2 the city.
+    New boss pins (Lyn, Mana Devourer, Fel Ancient, Unstable Sentinel,
+    Arcanic Enigma) and moved pins (Arcane Anomaly on Krasus' Landing). The
+    Underbelly ladder is at the end of the east pipe.
+  - Quests:
+    - Starving Arcane is shown for the Alliance.
+    - Opportunistic Education starts inside the dungeon, near the sewer
+      entrance.
+    - The Image of Archmage Modera is shown next to the dungeon entrance on
+      the map.
+  - The red "Full Items Data TBD" note stays under the dungeon title only.
+- The Stockade:
+  - What Comes Around...: Guard Berton is pinned at Redridge 21.2, 46.6.
+  - Bazil Thredd: Baros Alexston is pinned at Stormwind 57.7, 47.9.
+- Dungeon map on the world map (M): zoom with the mouse wheel, then hold
+  left-click to drag the map around.
+- Items whose ID was not known yet now find it by themselves: the addon asks
+  the server about the IDs near the dungeon's known items and also checks your
+  bags and gear. /dj newids lists what was found and what is still missing.
 
 CHANGES IN 1.6.1
 - Item source on tooltips: an item that is in the journal gets one extra line
@@ -34,6 +71,13 @@ CHANGES IN 1.6.1
   clears the ticks. Weapons, shields, jewellery and cloaks always stay.
 - Dungeon map: reopens on the floor you last looked at in each dungeon.
 - Ruins of Lordaeron: Rotmender's Gloves added to Trash Drops (Stone Watcher).
+- City of Dalaran loot: Bonebinder's Signet (Atrexis the Grave Knight), Ephemeral
+  Grips and Runemender's Seal (Arcane Anomaly), Drape of Shifting Energy (Arcanic Enigma),
+  Slitherwrap Girdle and Spine of the Devourer (Mana Devourer),
+  Felbough Arm (Fel Ancient),
+  Archmagister's Faceted Pendant and Violet Sorcerer's Mantle (Shade of the
+  Archmage), and a new Trash Drops
+  page with the Gravespike Repeater.
 - Test of Lore (Parqual Fintallas, Undercity) shows the answer: Ner'zhul.
 - Smaller download: the two City of Dalaran maps were reduced in resolution,
   roughly halving the size of the addon.
@@ -43,6 +87,12 @@ CHANGES IN 1.6.1
   on top of other addons' map buttons (such as Questie's).
 - Quest rewards: an item shown as a reward button is no longer repeated as
   text underneath it.
+- AddOn drawer: Dungeon Journal is listed in the addon list button by the
+  minimap (like Leatrix), so the minimap button can be hidden safely.
+  Left-click opens the journal, right-click opens the options.
+- New items whose ID was not known yet fill in their icon and tooltip by
+  themselves once you see the item in game (tooltip, loot, roll or chat link).
+- The pop-up about the /dj command no longer appears at login.
 - Spanish: dungeon names now match the game (Salón de los Feudales, Minas de
   la Muerte, Mazmorras de Ventormenta).
 

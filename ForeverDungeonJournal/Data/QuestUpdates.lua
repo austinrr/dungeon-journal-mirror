@@ -129,8 +129,8 @@ FDJ.QUEST_PREREQ_DETAILS[6628] = { level = 30, requires = 25, objective = "Answe
 
 
 -- City of Dalaran (Alliance): Heart of Disruption follows the introductory
--- An Alarming Request breadcrumb. Starving Arcane is a standalone quest for
--- both factions.
+-- An Alarming Request breadcrumb. Starving Arcane is a standalone Alliance
+-- quest from the same Image of Archmage Modera.
 FDJ.QUEST_PREREQ_CHAINS[92458] = {
     { id = 92432, name = "An Alarming Request" },
 }
@@ -208,7 +208,7 @@ FDJ.QUEST_PREREQ_DETAILS[92434] = {
     providedItem = {279469, "Grimy Key", 1, "Provided for Blood in the Streets"},
     note = "Requires Magus Wordeen Voidglare's Dalaran quests. Stone Tokens and Bracers of Binding from Keeper Bel'varil are optional and are not required for attunement.",
     map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
-    turninMap = { mapID = 1416, x = 0.197, y = 0.754, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", detail = "Outside Dalaran near Lordamere Lake" },
+    turninMap = { mapID = 1416, x = 0.092, y = 0.600, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", detail = "Outside Dalaran near Lordamere Lake" },
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[92434] = 270
 FDJ.FOREVER_QUEST_XP_FALLBACK[96984] = 9400

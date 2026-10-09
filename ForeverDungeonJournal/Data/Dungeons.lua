@@ -1800,7 +1800,7 @@ FDJ.DB["Excavation Site: Wetlands"] = {
 }
 
 FDJ.DB["City of Dalaran"] = {
-    itemsTBD = true, -- only two drops known so far (BlizzCon demo)
+    fullItemsTBD = true, -- some loot known, table not complete yet
     level = "28-33",
     location = "Alterac Mountains",
     description = "The restored mage city of Dalaran has become a new five-player dungeon in WoW Forever. Enter through the sewers and the Underbelly, then fight through the streets to the Violet Citadel.",
@@ -1840,14 +1840,16 @@ FDJ.DB["City of Dalaran"] = {
         name = "Starving Arcane",
         level = 33,
         requires = 24,
-        pickup = "Archmage Modera, outside Dalaran near Lordamere Lake",
+        faction = "Alliance",
+        pickup = "Image of Archmage Modera, Lordamere Lake near Dalaran",
         objective = "Defeat 8 Seeking Remnants, 8 Saturated Remnants, and 8 Mana Echoes inside the City of Dalaran for Archmage Modera outside of Dalaran.",
-        turnin = "Archmage Modera, outside Dalaran near Lordamere Lake",
+        turnin = "Image of Archmage Modera, Lordamere Lake near Dalaran",
         liveXPFallback = 9400,
         rewardSummary = "Kirin Tor +100",
+        note = "There may not be enough of these mobs inside to finish it in one run.",
         rewardChoice = true,
         rewardItems = {{279837, "Fallen Guard's Pendant", 3}, {279838, "Arcane Infused Rod", 3}},
-        startMap = { mapID = 1416, x = 0.197, y = 0.754, label = "Archmage Modera — outside Dalaran", targetName = "Archmage Modera" },
+        startMap = { mapID = 1416, x = 0.092, y = 0.600, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", targetName = "Image of Archmage Modera" },
     }, {
         id = 92458,
         name = "Heart of Disruption",
@@ -1863,7 +1865,7 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "Kirin Tor +100",
         rewardChoice = true,
         rewardItems = {{279839, "Spellguard Pauldrons", 3}, {279840, "Renewing Footpads", 3}, {279841, "Defender of Dalaran", 3}},
-        startMap = { mapID = 1416, x = 0.197, y = 0.754, label = "Image of Archmage Modera — Lordamere Lake", targetName = "Image of Archmage Modera" },
+        startMap = { mapID = 1416, x = 0.092, y = 0.600, label = "Image of Archmage Modera — Lordamere Lake", targetName = "Image of Archmage Modera" },
     }, {
         id = 96984,
         name = "Heart of Disruption",
@@ -1880,22 +1882,22 @@ FDJ.DB["City of Dalaran"] = {
         rewardChoice = true,
         rewardItems = {{279842, "Battle Spaulders", 3}, {279843, "Enchanted Sandals", 3}, {279844, "Striking Staff", 3}},
         note = "Horde Dalaran attunement. Stone Tokens and Bracers of Binding can be done alongside the chain, but they are optional and are not required for attunement.",
-        startMap = { mapID = 1416, x = 0.197, y = 0.754, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", targetName = "Image of Archmage Modera" },
+        startMap = { mapID = 1416, x = 0.092, y = 0.600, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", targetName = "Image of Archmage Modera" },
     }, {
         id = 96987,
         name = "Opportunistic Education",
         level = 33,
         requires = 24,
         faction = "Horde",
-        pickup = "Rexxie Copperclutch, near the Dalaran sewer entrance",
+        startsInDungeon = true,
+        pickup = "Rexxie Copperclutch, inside the dungeon, near the sewer entrance",
         objective = "Recover The Founding of Dalaran and deliver it to Rexxie Copperclutch.",
-        turnin = "Rexxie Copperclutch, near the Dalaran sewer entrance",
+        turnin = "Rexxie Copperclutch, inside the dungeon, near the sewer entrance",
         liveXPFallback = 3950,
         rewardSummary = "",
         rewardChoice = true,
         rewardItems = {{279845, "Item 279845", 3}, {279846, "Item 279846", 3}},
         note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
-        startMap = { mapID = 1416, x = 0.150, y = 0.660, label = "Rexxie Copperclutch — Dalaran sewer entrance", targetName = "Rexxie Copperclutch" },
     }, {
         id = 96988,
         name = "Source of Power",
@@ -1933,21 +1935,35 @@ FDJ.DB["City of Dalaran"] = {
             npcID = 247126,
             aliases = {"Atrexis the Grave Knight"},
             description = "At the ritual circle in the Underbelly, surrounded by Kirin Tor Necromancers and rising skeletons. Disarms.",
-            loot = {},
+            loot = {
+                {273032, "Bonebinder's Signet", "Finger", 3},
+                {0, "Graveweave Bindings", "Wrist, Cloth", 3},
+                {0, "Gravespike Repeater", "Ranged, Crossbow", 3},
+            },
         },
         {
             name = "Arcane Anomaly",
             npcID = 245999,
             aliases = {"Arcane Anomaly"},
             description = "On a round terrace in the streets after leaving the sewers. Casts Arcane Bolt and Focal Blast.",
-            loot = {},
+            loot = {
+                -- Seen in-game (Oct 2026); item ID not known yet (0).
+                {0, "Ephemeral Grips", "Hands, Cloth", 3},
+                {273031, "Runemender's Seal", "Finger", 3},
+                {0, "Mana-Warped Chain Shirt", "Chest, Mail", 3},
+            },
         },
         {
             name = "Fel Ancient",
             npcID = 246003,
             aliases = {"Fel Ancient"},
             description = "A fel-touched treant in the streets, among Suffused Treants.",
-            loot = {},
+            loot = {
+                -- Seen in-game (Oct 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Felbough Arm", "Two-Hand, Polearm", 3},
+                {0, "Blightleaf Rope", "Waist, Cloth", 3},
+                {0, "Garb of Fallen Felbark", "Chest, Leather", 3},
+            },
         },
         {
             name = "Unstable Sentinel",
@@ -1956,24 +1972,31 @@ FDJ.DB["City of Dalaran"] = {
             description = "An arcane golem by the Magus Commerce Exchange, with Angry Tomes. Malfunction hits everyone within 25 yards.",
             loot = {
                 {273046, "Guardian's Dualblade", "Weapon", 3},
+                {0, "Unstable Crystalline Shoulderpads", "Shoulder", 3},
+                {0, "Refractory Scaleguards", "Legs, Mail", 3},
+                {273099, "Blueprint: Spinning Wheel", "Blueprint", 2},
             },
-        },
-        {
-            name = "Mana Wraith",
-            npcID = 246931,
-            aliases = {"Mana Wraith"},
-            loot = {},
         },
         {
             name = "Mana Devourer",
             npcID = 246008,
             aliases = {"Mana Devourer"},
-            loot = {},
+            loot = {
+                {273041, "Slitherwrap Girdle", "Waist, Leather", 3},
+                -- Seen in-game (Oct 2026); item ID not known yet (0).
+                {0, "Spine of the Devourer", "Two-Hand, Staff", 3},
+                {0, "Manascale Treads", "Feet, Mail", 3},
+            },
         },
         {
-            name = "Mana Elemental",
-            aliases = {"Mana Elemental"},
-            loot = {},
+            name = "Arcanic Enigma",
+            npcID = 246016,
+            aliases = {"Arcanic Enigma", "Mana Elemental"},
+            loot = {
+                {273045, "Drape of Shifting Energy", "Back", 3},
+                {0, "Violet Sorcerer's Robes", "Chest, Cloth", 3},
+                {0, "Wand of Mana Concentration", "Ranged, Wand", 3},
+            },
         },
         {
             name = "Lyn the Ignored",
@@ -1981,7 +2004,13 @@ FDJ.DB["City of Dalaran"] = {
             aliases = {"Lyn the Ignored"},
             description = "Rare elite.",
             rare = true,
-            loot = {},
+            -- Shown under the boss name ("Summoned by: Tome of Dalaran").
+            summonItem = 275989,
+            loot = {
+                {0, "Bonepile Gaze", "Off Hand, Shield", 3},
+                {0, "Cartilage Shapers", "Hands, Leather", 3},
+                {0, "Tendonscraper Dagger", "Main Hand, Dagger", 3},
+            },
         },
         {
             name = "Shade of the Archmage",
@@ -1990,6 +2019,10 @@ FDJ.DB["City of Dalaran"] = {
             description = "Final boss, in the Purple Parlor of the Violet Citadel. Don't stand in line with the Bounding Mana target; he polymorphs the group and resets if someone leaves the room.",
             loot = {
                 {273052, "Ponderous Orb", "Held In Off-hand", 3},
+                -- Seen dropping on stream (Oct 2026); not on Wowhead yet, so the
+                -- item ID is unknown (0). Replace 0 with the real ID once known.
+                {0, "Archmagister's Faceted Pendant", "Neck", 3},
+                {0, "Violet Sorcerer's Mantle", "Shoulder, Cloth", 3}, -- Violet Sorcerer's Vestments set piece; ID not known yet
             },
         },
     },

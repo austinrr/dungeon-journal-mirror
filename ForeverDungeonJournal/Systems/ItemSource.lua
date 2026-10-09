@@ -106,6 +106,8 @@ local function BuildIndex()
     end
 end
 
+function FDJ.ResetItemSourceIndex() index = nil end
+
 function FDJ.GetItemSource(itemID)
     itemID = tonumber(itemID)
     if not itemID then return nil end

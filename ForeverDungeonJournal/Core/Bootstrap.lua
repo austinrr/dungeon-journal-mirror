@@ -110,6 +110,10 @@ end
 
 FDJ.ShowUpdateNotice = ShowUpdateNotice
 
+-- No notice is shown at login right now (the /dj command notice was retired
+-- in 1.6.1). To announce something in a later update: write the new text,
+-- bump NOTICE_ID, and re-enable this block.
+--[[
 local noticeEvents = CreateFrame("Frame")
 noticeEvents:RegisterEvent("PLAYER_ENTERING_WORLD")
 noticeEvents:SetScript("OnEvent", function(self)
@@ -121,3 +125,4 @@ noticeEvents:SetScript("OnEvent", function(self)
         ShowUpdateNotice()
     end
 end)
+--]]

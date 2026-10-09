@@ -12,6 +12,8 @@ FDJ.BOSS_LEVELS = {
         ["Arcane Anomaly"] = "30",
         ["Unstable Sentinel"] = "31",
         ["Fel Ancient"] = "32",
+        ["Mana Devourer"] = "31",
+        ["Arcanic Enigma"] = "30",
         ["Shade of the Archmage"] = "33",
     },
     ["Gnomeregan"] = {
@@ -207,6 +209,7 @@ FDJ.STATIC_DISPLAY_IDS = {
     [246017] = 129954,  -- Unstable Sentinel
     [246931] = 130220,  -- Mana Wraith
     [246008] = 129895,  -- Mana Devourer
+    [246016] = 129900,  -- Arcanic Enigma (Mana Elemental)
     [247032] = 130235,  -- Lyn the Ignored
     [246020] = 130061,  -- Shade of the Archmage
 

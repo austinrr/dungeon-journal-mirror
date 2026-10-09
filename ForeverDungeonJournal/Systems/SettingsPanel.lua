@@ -405,3 +405,30 @@ function FDJ.ToggleSettingsPanel()
     if not panel then CreatePanel() end
     if panel:IsShown() then panel:Hide() else panel:Show() end
 end
+
+-- ---------------------------------------------------------------------------
+-- AddOn drawer (the addon list button next to the minimap on newer clients,
+-- where Leatrix and others appear). Wired up in the .toc; clients without the
+-- drawer simply ignore those lines.
+--   left-click: open / close the journal     right-click: options
+-- ---------------------------------------------------------------------------
+function ForeverDungeonJournal_OnAddonCompartmentClick(_, mouseButton)
+    if mouseButton == "RightButton" then
+        if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
+    elseif FDJ.ToggleJournal then
+        FDJ.ToggleJournal()
+    end
+end
+
+function ForeverDungeonJournal_OnAddonCompartmentEnter(_, owner)
+    if not GameTooltip then return end
+    GameTooltip:SetOwner(owner or UIParent, "ANCHOR_LEFT")
+    GameTooltip:AddLine("Dungeon Journal", 1, 0.82, 0.25)
+    GameTooltip:AddLine(L("MINIMAP_LEFT"), 1, 1, 1)
+    GameTooltip:AddLine(L("MINIMAP_OPTIONS"), 0.8, 0.8, 0.8)
+    GameTooltip:Show()
+end
+
+function ForeverDungeonJournal_OnAddonCompartmentLeave()
+    if GameTooltip then GameTooltip:Hide() end
+end

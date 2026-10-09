@@ -69,7 +69,21 @@ local function Attach(dungeonName)
     backdrop:ClearAllPoints()
     backdrop:SetAllPoints(host)
     backdrop:SetFrameStrata(WorldMapFrame:GetFrameStrata())
-    backdrop:SetFrameLevel((host.GetFrameLevel and host:GetFrameLevel() or 1) + 20)
+    -- Sit above every world map pin and the player-position layer (they take
+    -- mouse clicks and would otherwise swallow the drag on the dungeon map).
+    local top = host.GetFrameLevel and host:GetFrameLevel() or 1
+    local function Scan(f, depth)
+        if not f or depth > 4 or not f.GetChildren then return end
+        for _, child in ipairs({ f:GetChildren() }) do
+            if child ~= backdrop and child.GetFrameLevel then
+                local ok, lvl = pcall(child.GetFrameLevel, child)
+                if ok and type(lvl) == "number" and lvl > top then top = lvl end
+                Scan(child, depth + 1)
+            end
+        end
+    end
+    pcall(Scan, host, 1)
+    backdrop:SetFrameLevel(math.min(top + 20, 8000))
     backdrop:Show()
 
     panel:SetParent(backdrop)

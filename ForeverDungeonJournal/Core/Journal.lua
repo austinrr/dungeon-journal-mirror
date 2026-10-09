@@ -201,21 +201,26 @@ FDJ.DUNGEON_MAPS = {
     },
 
     ["City of Dalaran"] = {
+        -- Level 1 is the Underbelly (where the dungeon starts), Level 2 the city.
         floors = {
-            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DalaranCityMap", texBottom = 1365 / 2048 },
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DalaranUnderbellyMap", texBottom = 1365 / 2048 },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DalaranCityMap", texBottom = 1365 / 2048 },
         },
         -- The dungeon starts at the portal at the end of the Underbelly pipe.
-        entrance = { floor = 2, x = 0.190, y = 0.838, angle = 0 },
+        entrance = { floor = 1, x = 0.190, y = 0.838, angle = 0 },
         transitions = {
-            { floor = 1, to = 2, x = 0.610, y = 0.560 },
-            { floor = 2, to = 1, x = 0.642, y = 0.593 },
+            { floor = 1, to = 2, x = 0.778, y = 0.564 },
         },
-        -- Only bosses whose spot is known (BlizzCon demo) are placed.
+        -- Only bosses whose spot is known are placed.
         bosses = {
-            { name = "Atrexis the Grave Knight", floor = 2, x = 0.535, y = 0.505 },
-            { name = "Arcane Anomaly",           floor = 1, x = 0.545, y = 0.705 },
-            { name = "Shade of the Archmage",    floor = 1, x = 0.520, y = 0.240 },
+            { name = "Atrexis the Grave Knight", floor = 1, x = 0.535, y = 0.505 },
+            { name = "Lyn the Ignored",          floor = 1, x = 0.680, y = 0.177 },
+            { name = "Mana Devourer",            floor = 2, x = 0.416, y = 0.730 },
+            { name = "Fel Ancient",              floor = 2, x = 0.513, y = 0.549 },
+            { name = "Unstable Sentinel",        floor = 2, x = 0.614, y = 0.413 },
+            { name = "Arcanic Enigma",           floor = 2, x = 0.669, y = 0.503 },
+            { name = "Arcane Anomaly",           floor = 2, x = 0.527, y = 0.843 },
+            { name = "Shade of the Archmage",    floor = 2, x = 0.520, y = 0.240 },
         },
     },
 
@@ -3900,7 +3905,7 @@ local function RefreshPrerequisiteQuestDetail(step)
             frame.questStartsText:Show()
             if frame.questStartDungeonIcon then
                 frame.questStartDungeonIcon:Hide()
-                if FDJ.StartsInsideDungeon(pickupText) then
+                if details.startsInDungeon or FDJ.StartsInsideDungeon(details.pickup) or FDJ.StartsInsideDungeon(pickupText) then
                     FDJ.PositionInDungeonIcon()
                 end
             end
@@ -5121,8 +5126,12 @@ FDJ.PositionDungeonMapHolder = function()
     if not holder or not panel then return end
     local pw, ph = panel:GetWidth() or 0, panel:GetHeight() or 0
     local hw, hh = holder:GetWidth() or 0, holder:GetHeight() or 0
-    -- Keep the map covering the page once it is bigger than it.
-    local maxX, maxY = math.max(0, (hw - pw) / 2 + 8), math.max(0, (hh - ph) / 2 + 8)
+    -- Zoomed in: the map can be dragged until its edge reaches the middle of
+    -- the page, so every corner can be brought into view. Not zoomed: centred.
+    local maxX, maxY = 0, 0
+    if (frame.dungeonMapZoom or 1) > 1.001 then
+        maxX, maxY = hw / 2, hh / 2
+    end
     frame.dungeonMapPanX = math.max(-maxX, math.min(maxX, frame.dungeonMapPanX or 0))
     frame.dungeonMapPanY = math.max(-maxY, math.min(maxY, frame.dungeonMapPanY or 0))
     holder:ClearAllPoints()
@@ -5154,18 +5163,31 @@ FDJ.SetupDungeonMapZoom = function()
         frame.dungeonMapZoom = new
         FDJ.RenderCustomDungeonMap(data, frame.dungeonMapFloor)
     end)
+    -- Left-click and hold to drag the zoomed map around. The drag ends on
+    -- mouse up (also when released outside the map) or when the map hides.
+    local function StopDrag(self)
+        if not self.fdjDrag then return end
+        self.fdjDrag = nil
+        if ResetCursor then pcall(ResetCursor) end
+    end
     panel:SetScript("OnMouseDown", function(self, button)
-        if button ~= "LeftButton" or (frame.dungeonMapZoom or 1) <= 1 then return end
+        if button ~= "LeftButton" or (frame.dungeonMapZoom or 1) <= 1.001 then return end
         local scale = self:GetEffectiveScale()
         local cx, cy = GetCursorPosition()
         self.fdjDrag = { x = cx / scale, y = cy / scale, px = frame.dungeonMapPanX or 0, py = frame.dungeonMapPanY or 0 }
+        if SetCursor then pcall(SetCursor, "Interface\\CURSOR\\UI-Cursor-Move") end
     end)
-    panel:SetScript("OnMouseUp", function(self) self.fdjDrag = nil end)
-    panel:SetScript("OnHide", function(self) self.fdjDrag = nil end)
+    panel:HookScript("OnMouseUp", function(self, button)
+        if button == "LeftButton" then StopDrag(self) end
+    end)
+    panel:HookScript("OnHide", StopDrag)
+    if panel.RegisterEvent then pcall(panel.RegisterEvent, panel, "GLOBAL_MOUSE_UP") end
+    panel:SetScript("OnEvent", function(self, event, button)
+        if event == "GLOBAL_MOUSE_UP" and (button == nil or button == "LeftButton") then StopDrag(self) end
+    end)
     panel:SetScript("OnUpdate", function(self)
         local d = self.fdjDrag
         if not d then return end
-        if not IsMouseButtonDown("LeftButton") then self.fdjDrag = nil return end
         local scale = self:GetEffectiveScale()
         local cx, cy = GetCursorPosition()
         frame.dungeonMapPanX = d.px + (cx / scale - d.x)
@@ -6022,13 +6044,16 @@ RefreshLoot = function()
     end
 
     local isStockade = FDJ.ShowsItemsTBD(selectedDungeon)
+    -- "Full Items Data TBD" stays under the dungeon title only; the boss
+    -- loot page shows its own copy only for dungeons with no loot data yet.
+    local lootTBD = isStockade and not (dungeon and dungeon.fullItemsTBD)
     if frame.stockadeItemsTBD then
         frame.stockadeItemsTBD:SetText(FDJ.ItemsTBDText(selectedDungeon))
         frame.stockadeItemsTBD:SetShown(isStockade)
     end
     if frame.stockadeLootTBD then
         frame.stockadeLootTBD:SetText(FDJ.ItemsTBDText(selectedDungeon))
-        frame.stockadeLootTBD:SetShown(isStockade)
+        frame.stockadeLootTBD:SetShown(lootTBD)
     end
 
     frame.selectedBossName:SetText(BossName(boss.name))
@@ -6050,6 +6075,8 @@ RefreshLoot = function()
             frame.selectedBossType:Hide()
         end
     end
+
+    if FDJ.UpdateBossSummon then pcall(FDJ.UpdateBossSummon, frame, boss) end
 
     local hasPortrait = SetBossPortrait(
         frame.selectedBossPortrait,
@@ -6076,7 +6103,7 @@ RefreshLoot = function()
     frame.lootTitle:SetText("")
     frame.lootTitle:Hide()
     frame.lootScroll:ClearAllPoints()
-    frame.lootScroll:SetPoint("TOPLEFT", 12, isStockade and -124 or -102)
+    frame.lootScroll:SetPoint("TOPLEFT", 12, lootTBD and -124 or -102)
     frame.lootScroll:SetPoint("BOTTOMRIGHT", -29, 11)
 
     -- The rows shown: the boss's (filtered) loot, then - when this boss has
@@ -6343,10 +6370,10 @@ RefreshLoot = function()
     if needsScroll then
         frame.lootTitle:SetText(tostring(#boss.loot) .. " " .. L("ITEMS"))
         frame.lootTitle:ClearAllPoints()
-        frame.lootTitle:SetPoint("TOPLEFT", 14, isStockade and -124 or -102)
+        frame.lootTitle:SetPoint("TOPLEFT", 14, lootTBD and -124 or -102)
         frame.lootTitle:Show()
         frame.lootScroll:ClearAllPoints()
-        frame.lootScroll:SetPoint("TOPLEFT", 12, isStockade and -146 or -124)
+        frame.lootScroll:SetPoint("TOPLEFT", 12, lootTBD and -146 or -124)
         frame.lootScroll:SetPoint("BOTTOMRIGHT", -29, 11)
     else
         frame.lootTitle:SetText("")
@@ -9145,6 +9172,10 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
         return
     end
+    if msg == "newids" then
+        if FDJ.PrintLearnedItemIDs then FDJ.PrintLearnedItemIDs() end
+        return
+    end
     if msg == "itemtip" then
         local on = FDJ.ToggleItemSourceStrip and FDJ.ToggleItemSourceStrip()
         print("|cffffd100Dungeon Journal|r item source on tooltips: " .. (on and "ON" or "OFF"))
@@ -9316,7 +9347,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.1"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.2"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
