@@ -560,6 +560,8 @@ local function CreateWindow(frame)
     end)
 
     win:HookScript("OnShow", function()
+        -- Same size as the journal (it can be resized with its corner grip).
+        if FDJ.SyncPopupScale then pcall(FDJ.SyncPopupScale) end
         close:EnableMouse(true)
         close:SetAlpha(1)
         close:Show()

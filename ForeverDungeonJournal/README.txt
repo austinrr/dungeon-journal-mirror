@@ -1,4 +1,4 @@
-DungeonJournal 1.6.2
+DungeonJournal 1.6.3
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,36 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.3
+- Class quests (Warlock, Paladin, ...) only show for that class. "Show All
+  Class Quests" in the options panel lists them for every class.
+- Home page: a green tick in a small circle, with a soft glow, before the
+  quest count of a dungeon whose quests you have all completed. It can be
+  turned off in the options panel.
+- Item tooltips in the journal (loot, quest rewards, search results) now use
+  the game's normal tooltip, so tooltip addons such as Pawn show their scores
+  and upgrade percentages there too. The tooltip keeps a solid background,
+  and the item comparison only appears while Shift is held.
+- Fixed: some items were shown with red names. That colour came from the
+  "Retrieving item information" placeholder while an item was still loading.
+- Fixed: the Favourites window now follows the journal's size when the
+  journal is resized.
+- Older dungeon maps on game clients that do not have their artwork (for
+  example the Russian client) show a plain parchment with all boss pins and a
+  short note instead of a black or green map.
+- Look: new Map button icon with a thin black frame; the Horde crest on the
+  Route button has a thin outline; class labels ("WARLOCK ONLY") have a light
+  black edge and the class icon is centred under them.
+- City of Dalaran:
+  - Shade of the Archmage: Blueprint: Arcane Salvager.
+  - Starving Arcane needs An Alarming Request first (Show Quest Chain).
+- Blackfathom Deeps: The Orb of Soran'ruk (Warlock) added to the quests;
+  Plans: Protector's Silvered Chain Leggings also drop from Lorgus Jett.
+- Shadowfang Keep: Plans: Veteran's Silvered Chain Helm also drop from Fenrus
+  the Devourer.
+- Shared loot: Totemic Leather Helm can also drop from Azshir the Sleepless
+  (Scarlet Monastery: Graveyard).
 
 CHANGES IN 1.6.2
 - City of Dalaran:

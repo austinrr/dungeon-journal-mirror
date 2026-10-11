@@ -129,9 +129,12 @@ FDJ.QUEST_PREREQ_DETAILS[6628] = { level = 30, requires = 25, objective = "Answe
 
 
 -- City of Dalaran (Alliance): Heart of Disruption follows the introductory
--- An Alarming Request breadcrumb. Starving Arcane is a standalone Alliance
--- quest from the same Image of Archmage Modera.
+-- An Alarming Request breadcrumb. Starving Arcane (same Image of Archmage
+-- Modera) also needs An Alarming Request first.
 FDJ.QUEST_PREREQ_CHAINS[92458] = {
+    { id = 92432, name = "An Alarming Request" },
+}
+FDJ.QUEST_PREREQ_CHAINS[92457] = {
     { id = 92432, name = "An Alarming Request" },
 }
 FDJ.QUEST_PREREQ_DETAILS[92432] = {
@@ -142,7 +145,7 @@ FDJ.QUEST_PREREQ_DETAILS[92432] = {
     turnin = "Image of Archmage Modera, Lordamere Lake near Dalaran",
     -- Start pin read off Wowhead's Hillsbrad Foothills map (approximate).
     map = { mapID = 1424, x = 0.484, y = 0.602, label = "Emissary Jacques — Southshore", detail = "Emissary Jacques in Southshore, Hillsbrad Foothills" },
-    description = "Introductory quest leading to Heart of Disruption.",
+    description = "Introductory quest leading to Heart of Disruption and Starving Arcane.",
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[92457] = 9400
 FDJ.FOREVER_QUEST_XP_FALLBACK[92458] = 9400

@@ -984,6 +984,22 @@ DB["Blackfathom Deeps"] = {
         requires = 20,
         turnin = "Jordan Stilwell, Gates of Ironforge, Dun Morogh",
         startMap = { mapID = 1426, x = 0.526, y = 0.368, label = "Jordan Stilwell — Gates of Ironforge", targetName = "Jordan Stilwell" },
+    }, {
+        classOnly = "WARLOCK",
+        objective = "Find 3 Soran'ruk Fragments and 1 Large Soran'ruk Fragment and return them to Doan Karhan.",
+        rewardSummary = "",
+        id = 1740,
+        rewards = "Choose: Orb of Soran'ruk or Staff of Soran'ruk\n2,550 XP",
+        note = "Warlock class quest. The fragments come from Shadowfang Keep and Blackfathom Deeps.",
+        liveXPFallback = 2550,
+        rewardItems = {{6898, "Orb of Soran'ruk", 3}, {15109, "Staff of Soran'ruk", 3}},
+        rewardChoice = true,
+        name = "The Orb of Soran'ruk",
+        faction = "Both",
+        pickup = "Doan Karhan, The Barrens",
+        level = 25,
+        requires = 20,
+        turnin = "Doan Karhan, The Barrens",
     }},
     bosses = {
         {
@@ -1008,7 +1024,7 @@ DB["Blackfathom Deeps"] = {
             name = "Lorgus Jett",
             npcID = 12902,
             aliases = {"Lorgus Jett"},
-            loot = {{273843, "Fallenroot Longbow", "Ranged, Bow", 3}, {273841, "Twilight Maul", "Two-Hand, Mace", 3}, {273842, "Treacherous Treads", "Feet, Mail", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}},
+            loot = {{273843, "Fallenroot Longbow", "Ranged, Bow", 3}, {273841, "Twilight Maul", "Two-Hand, Mace", 3}, {273842, "Treacherous Treads", "Feet, Mail", 3}, {253978, "Pattern: Filigreed Silky Circlet", "Recipe, Tailoring", 3}, {253982, "Pattern: Filigreed Shadow Circlet", "Recipe, Tailoring", 3}, {251377, "Plans: Protector's Silvered Chain Leggings", "Recipe, Blacksmithing", 3}},
         },
         {
             name = "Old Serra'kis",
@@ -1370,6 +1386,7 @@ DB["Shadowfang Keep"] = {
                 {6340, "Fenrus' Hide", "Back, Cloth", 3},
                 {3230, "Black Wolf Bracers", "Wrist, Leather", 3},
                 {273646, "Half-Eaten Boots", "Feet, Mail", 3},
+                {251380, "Plans: Veteran's Silvered Chain Helm", "Recipe, Blacksmithing", 3},
             },
         },
         {
@@ -2023,6 +2040,7 @@ FDJ.DB["City of Dalaran"] = {
                 -- item ID is unknown (0). Replace 0 with the real ID once known.
                 {0, "Archmagister's Faceted Pendant", "Neck", 3},
                 {0, "Violet Sorcerer's Mantle", "Shoulder, Cloth", 3}, -- Violet Sorcerer's Vestments set piece; ID not known yet
+                {273103, "Blueprint: Arcane Salvager", "Blueprint", 2},
             },
         },
     },

@@ -61,7 +61,8 @@ local function AllQuestsDone(dungeon)
     for _, quest in ipairs(dungeon.quests or {}) do
         local forFaction = quest.faction == nil or quest.faction == "Both"
             or quest.faction == "Neutral" or quest.faction == faction
-        local forClass = not quest.classOnly or (class and tostring(quest.classOnly):upper() == class)
+        local forClass = not quest.classOnly or Store().showAllClassQuests
+            or (class and tostring(quest.classOnly):upper() == class)
         if forFaction and forClass and not quest.hideFromMainList and quest.id then
             count = count + 1
             if not FDJ.IsQuestFinished(quest.id) then return false end
@@ -132,6 +133,23 @@ local OPTIONS = {
         tip = "OPT_HIDE_QUESTS_DONE_TIP",
         get = function() return Store().autoHideQuestsDone == true end,
         set = function(on) Store().autoHideQuestsDone = on or nil end,
+        refreshHome = true,
+    },
+    {
+        label = "OPT_HIDE_DONE_TICK",
+        tip = "OPT_HIDE_DONE_TICK_TIP",
+        get = function() return Store().hideDoneTick == true end,
+        set = function(on) Store().hideDoneTick = on or nil end,
+        refreshHome = true,
+    },
+    {
+        label = "OPT_SHOW_ALL_CLASS",
+        tip = "OPT_SHOW_ALL_CLASS_TIP",
+        get = function() return Store().showAllClassQuests == true end,
+        set = function(on)
+            Store().showAllClassQuests = on or nil
+            if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+        end,
         refreshHome = true,
     },
 }

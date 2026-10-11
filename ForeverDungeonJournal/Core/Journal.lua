@@ -669,6 +669,10 @@ local function GetTooltipRenderedItemColor(itemID)
         if ok and type(data) == "table" and type(data.lines) == "table" and data.lines[1] then
             local line = data.lines[1]
             local r, g, b = ExtractRGB(line.leftColor or line.color)
+            -- Not loaded yet: the title is the red "Retrieving item
+            -- information" placeholder. Never cache that colour.
+            local text = line.leftText or line.text
+            if RETRIEVING_ITEM_INFO and text == RETRIEVING_ITEM_INFO then r = nil end
             if r then
                 itemTooltipQualityCache[itemID] = {r, g, b}
                 return r, g, b
@@ -695,7 +699,8 @@ local function GetTooltipRenderedItemColor(itemID)
         local ok = pcall(qualityScanTooltip.SetHyperlink, qualityScanTooltip, "item:" .. tostring(itemID))
         if ok then
             local line = _G["ForeverDungeonJournalQualityScanTooltipTextLeft1"]
-            if line and line.GetTextColor and line.GetText and line:GetText() and line:GetText() ~= "" then
+            if line and line.GetTextColor and line.GetText and line:GetText() and line:GetText() ~= ""
+                and not (RETRIEVING_ITEM_INFO and line:GetText() == RETRIEVING_ITEM_INFO) then
                 local r, g, b = line:GetTextColor()
                 qualityScanTooltip:Hide()
                 if type(r) == "number" and type(g) == "number" and type(b) == "number" then
@@ -717,8 +722,16 @@ local function GetAuthoritativeItemQuality(itemID, link, apiQuality, fallbackQua
     -- The journal should match the color the actual in-game tooltip renders.
     -- This is authoritative for ALL loot/reward items, including Forever
     -- quality changes that differ from Classic-era databases or item links.
+    -- The tooltip color is authoritative (Forever's own shades of green etc.
+    -- differ from the stock quality colors), except RED: no item quality is
+    -- red, so a red title means something else tinted it (another addon, or a
+    -- weapon the character cannot use). Then fall back to the item's quality.
     local tr, tg, tb = GetTooltipRenderedItemColor(itemID)
-    if tr then return tr, tg, tb end
+    if tr then
+        local isRed = tr > 0.8 and tg < 0.45 and tb < 0.45
+        if not isRed then return tr, tg, tb end
+        itemTooltipQualityCache[itemID] = nil
+    end
 
     -- Deviate Hide Pack (918) is Common/white. The Forever tooltip is the
     -- authority above; this is only a safe fallback while item data loads.
@@ -896,9 +909,25 @@ FDJ.CurrentDungeon = CurrentDungeon
 
 local function QuestMatchesFaction(quest, faction)
     if not quest then return false end
-    return quest.faction == "Both"
+    local forFaction = quest.faction == "Both"
         or quest.faction == "Neutral"
         or quest.faction == faction
+    if not forFaction then return false end
+    -- Class quests only show for that class, unless the player turned on
+    -- "Show All Class Quests" in the options.
+    if quest.classOnly and not ForeverDungeonJournalDB.showAllClassQuests then
+        local playerClass
+        if UnitClass then
+            local ok, _, token = pcall(UnitClass, "player")
+            if ok then playerClass = token end
+        end
+        if type(issecretvalue) == "function" and issecretvalue(playerClass) then playerClass = nil end
+        if type(playerClass) == "string" and playerClass ~= ""
+            and tostring(quest.classOnly):upper() ~= playerClass then
+            return false
+        end
+    end
+    return true
 end
 
 local function IsSecret(v)
@@ -1977,7 +2006,11 @@ end
 -- ============================================================
 
 local function CreateItemTooltip()
-    itemTooltip = CreateFrame(
+    -- Item hovers use the game's own GameTooltip, so other tooltip addons
+    -- (Pawn upgrade scores, vendor prices, bag counts, ...) add their lines
+    -- exactly as on any other item tooltip. A private tooltip frame is not
+    -- hooked by them.
+    itemTooltip = GameTooltip or CreateFrame(
         "GameTooltip",
         "ForeverDungeonJournalItemTooltip",
         UIParent,
@@ -1999,7 +2032,7 @@ local function CreateItemTooltip()
     )
     -- Solid backing so journal text underneath does not show through.
     for _, tip in ipairs({ itemTooltip, compareTooltip1, compareTooltip2 }) do
-        if tip and tip.CreateTexture and not tip.fdjSolidBackground then
+        if tip and tip ~= GameTooltip and tip.CreateTexture and not tip.fdjSolidBackground then
             local bg = tip:CreateTexture(nil, "BACKGROUND", nil, -8)
             bg:SetPoint("TOPLEFT", 3, -3)
             bg:SetPoint("BOTTOMRIGHT", -3, 3)
@@ -2390,6 +2423,7 @@ local function ShowItemTooltip(row)
         local r, g, b = QualityColor(row.item[3] or 1)
         itemTooltip:AddLine(row.item[2] or L("ITEM"), r, g, b)
         itemTooltip:Show()
+        if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
         PositionPrimaryItemTooltip(row)
         return
     end
@@ -2409,6 +2443,7 @@ local function ShowItemTooltip(row)
         itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
     end
     itemTooltip:Show()
+    if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
     PositionPrimaryItemTooltip(row)
 
     -- Handles Shift already being held when the mouse enters the item.
@@ -3059,11 +3094,21 @@ local function UpdateDungeonHeaderTabs()
         if not frame.mapTab.fdjIcon then
             frame.mapTab.fdjIcon = frame.mapTab:CreateTexture(nil, "OVERLAY")
         end
-        frame.mapTab.fdjIcon:SetSize(30, 30)
+        -- Same icon as the Bloody Map item (Ability_Spy), edges trimmed.
+        frame.mapTab.fdjIcon:SetSize(24, 24)
         frame.mapTab.fdjIcon:ClearAllPoints()
-        frame.mapTab.fdjIcon:SetPoint("LEFT", 3, 0)
-        frame.mapTab.fdjIcon:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapTabIcon")
-        frame.mapTab.fdjIcon:SetTexCoord(0, 1, 0, 1)
+        frame.mapTab.fdjIcon:SetPoint("LEFT", 5, 0)
+        frame.mapTab.fdjIcon:SetTexture("Interface\\Icons\\Ability_Spy")
+        frame.mapTab.fdjIcon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        -- Thin black frame around the icon.
+        if not frame.mapTab.fdjIconBorder then
+            frame.mapTab.fdjIconBorder = frame.mapTab:CreateTexture(nil, "ARTWORK", nil, 7)
+            frame.mapTab.fdjIconBorder:SetColorTexture(0, 0, 0, 1)
+        end
+        frame.mapTab.fdjIconBorder:ClearAllPoints()
+        frame.mapTab.fdjIconBorder:SetPoint("TOPLEFT", frame.mapTab.fdjIcon, "TOPLEFT", -1.5, 1.5)
+        frame.mapTab.fdjIconBorder:SetPoint("BOTTOMRIGHT", frame.mapTab.fdjIcon, "BOTTOMRIGHT", 1.5, -1.5)
+        frame.mapTab.fdjIconBorder:Show()
         frame.mapTab.fdjIcon:Show()
         if frame.mapTab.text then
             frame.mapTab.text:ClearAllPoints()
@@ -4177,6 +4222,12 @@ RefreshQuestDetail = function()
     if classLabel and frame.selectedQuestClass then
         frame.selectedQuestClass:SetText(classLabel)
         frame.selectedQuestClass:SetTextColor(classR, classG, classB)
+        -- Light black edge so the class colour reads on the parchment: a
+        -- solid one-pixel shadow (a full font outline looked too heavy).
+        local font, size = frame.selectedQuestClass:GetFont()
+        if font and size then frame.selectedQuestClass:SetFont(font, size, "") end
+        frame.selectedQuestClass:SetShadowColor(0, 0, 0, 1)
+        frame.selectedQuestClass:SetShadowOffset(1, -1)
         frame.selectedQuestClass:Show()
 
         if frame.selectedQuestClassIcon then
@@ -4187,6 +4238,12 @@ RefreshQuestDetail = function()
             else
                 frame.selectedQuestClassIcon:SetTexCoord(0, 1, 0, 1)
             end
+            -- Centre the icon under the words themselves, not under the
+            -- (wider, right-aligned) text box.
+            local textWidth = math.min(frame.selectedQuestClass:GetStringWidth() or 0,
+                frame.selectedQuestClass:GetWidth() or 118)
+            frame.selectedQuestClassIcon:ClearAllPoints()
+            frame.selectedQuestClassIcon:SetPoint("TOP", frame.selectedQuestClass, "BOTTOMRIGHT", -textWidth / 2, -3)
             frame.selectedQuestClassIcon:Show()
         end
 
@@ -5250,6 +5307,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         return t
     end
     if floorData.texture then
+        if FDJ.CheckMapTiles then pcall(FDJ.CheckMapTiles, panel, nil) end
         local t = Tile(1)
         t:SetAllPoints(holder)
         t:SetTexture(floorData.texture)
@@ -5260,6 +5318,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         -- FileDataIDs are locale-independent, unlike some legacy Interface\WorldMap
         -- texture aliases which are missing on certain localized Forever clients.
         local apiTextures, apiLayer
+        frame.dungeonMapArtMissing = false
         if floorData.uiMapID and C_Map and C_Map.GetMapArtLayers and C_Map.GetMapArtLayerTextures then
             local okLayers, layers = pcall(C_Map.GetMapArtLayers, floorData.uiMapID)
             if okLayers and type(layers) == "table" and layers[1] then
@@ -5281,27 +5340,52 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 local t = Tile(i)
                 t:SetSize(tileW * scaleX, tileH * scaleY)
                 t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * tileW * scaleX, -row * tileH * scaleY)
-                t:SetTexture(apiTextures[i])
+                -- If a file ID does not load on this client, try the tile's path.
+                local loaded = t:SetTexture(apiTextures[i])
+                if loaded == false and floorData.tiles then t:SetTexture(floorData.tiles .. i) end
                 t:SetTexCoord(0, 1, 0, 1)
                 t:SetDrawLayer("ARTWORK", 0)
                 t:Show()
             end
         else
             -- Legacy fallback for clients where the map-art API is unavailable.
+            -- Some localized clients (ruRU) do not have these map files at all:
+            -- the file name then has no file ID. Show a plain parchment instead
+            -- of black/green tiles, so the boss pins stay readable.
             local scale = artW / 1002
+            local first = Tile(1)
+            first:SetTexture(floorData.tiles .. 1)
+            frame.dungeonMapArtMissing = FDJ.forceMissingMapArt
+                or (first.GetTextureFileID and not first:GetTextureFileID()) or false
             for i = 1, 12 do
                 local col, row = (i - 1) % 4, math.floor((i - 1) / 4)
                 local t = Tile(i)
-                t:SetSize(256 * scale, 256 * scale)
-                t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * 256 * scale, -row * 256 * scale)
-                t:SetTexture(floorData.tiles .. i)
-                t:SetTexCoord(0, 1, 0, 1)
-                t:SetDrawLayer("ARTWORK", 0)
-                t:Show()
+                t:ClearAllPoints()
+                if frame.dungeonMapArtMissing then
+                    if i == 1 then
+                        t:SetAllPoints(holder)
+                        t:SetColorTexture(0.42, 0.33, 0.20, 1)
+                        t:SetDrawLayer("ARTWORK", 0)
+                        t:Show()
+                    else
+                        t:Hide()
+                    end
+                else
+                    t:SetSize(256 * scale, 256 * scale)
+                    t:SetPoint("TOPLEFT", holder, "TOPLEFT", col * 256 * scale, -row * 256 * scale)
+                    t:SetTexture(floorData.tiles .. i)
+                    t:SetTexCoord(0, 1, 0, 1)
+                    t:SetDrawLayer("ARTWORK", 0)
+                    t:Show()
+                end
             end
         end
+        if FDJ.CheckMapTiles then
+            pcall(FDJ.CheckMapTiles, panel, tiles, apiTextures and #apiTextures or 12, floorData, apiTextures, apiLayer,
+                frame.dungeonMapArtMissing and not apiTextures)
+        end
         -- Parchment patches that cover the map's printed title banner.
-        for p, patch in ipairs(floorData.patches or {}) do
+        for p, patch in ipairs((not (frame.dungeonMapArtMissing and not apiTextures)) and floorData.patches or {}) do
             local t = Tile(12 + p)
             t:SetDrawLayer("ARTWORK", 1)
             t:SetPoint("TOPLEFT", holder, "TOPLEFT", patch.x0 * artW, -patch.y0 * artH)
@@ -5762,10 +5846,14 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button:SetScript("OnEnter", function(self)
         self:SetBackdropBorderColor(1.00, 0.76, 0.22, 1)
         self.fullShade:SetColorTexture(1, 0.82, 0.18, 0.08)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP")
         local activeDungeonName = self.dungeonName
-        GameTooltip:SetText(DungeonName(activeDungeonName))
         local dungeon = DB[activeDungeonName]
+        -- Normal cards need no tooltip (the card already shows the name and
+        -- clicking it is obvious); only Hide Dungeons mode and preview-only
+        -- dungeons still explain themselves.
+        if not homeEditMode and not (dungeon and dungeon.previewOnly) then return end
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        GameTooltip:SetText(DungeonName(activeDungeonName))
         if homeEditMode then
             if ForeverDungeonJournalDB.hiddenDungeons[activeDungeonName] then
                 GameTooltip:AddLine(L("CLICK_RESTORE_DUNGEON"), 1, 1, 1)
@@ -5862,13 +5950,39 @@ RefreshHomeDungeonCards = function()
             if detectedFaction == "Horde" then playerFaction = "Horde" end
         end
 
-        local factionQuestCount = 0
+        local factionQuestCount, finishedCount = 0, 0
         for _, quest in ipairs(dungeon.quests or {}) do
             if QuestMatchesFaction(quest, playerFaction) and not quest.hideFromMainList then
                 factionQuestCount = factionQuestCount + 1
+                if quest.id and IsQuestFinished(quest.id) then finishedCount = finishedCount + 1 end
             end
         end
 
+        -- Green tick in front when every quest of this dungeon is done.
+        local allDone = factionQuestCount > 0 and finishedCount == factionQuestCount
+            and not ForeverDungeonJournalDB.hideDoneTick
+        if not card.doneTick then
+            card.doneGlow = card:CreateTexture(nil, "OVERLAY", nil, 5)
+            card.doneGlow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
+            card.doneGlow:SetBlendMode("ADD")
+            card.doneGlow:SetAlpha(0.55)
+            card.doneGlow:SetSize(34, 34)
+            -- Open ring around the tick; its long stroke leaves through the gap.
+            card.doneRing = card:CreateTexture(nil, "OVERLAY", nil, 6)
+            card.doneRing:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickRing")
+            card.doneRing:SetSize(22, 22)
+            card.doneRing:SetPoint("RIGHT", card.counts, "LEFT", -3, 0)
+
+            card.doneTick = card:CreateTexture(nil, "OVERLAY", nil, 7)
+            card.doneTick:SetTexture("Interface\\RaidFrame\\ReadyCheck-Ready")
+            card.doneTick:SetSize(17, 17)
+            card.doneTick:SetPoint("CENTER", card.doneRing, "CENTER", 2, 2)
+            card.doneGlow:SetPoint("CENTER", card.doneRing, "CENTER", 0, 0)
+            if FDJ.AttachDoneTickTooltip then FDJ.AttachDoneTickTooltip(card) end
+        end
+        card.doneRing:SetShown(allDone)
+        card.doneTick:SetShown(allDone)
+        card.doneGlow:SetShown(allDone)
         local factionIcon = playerFaction == "Horde" and HORDE_ICON or ALLIANCE_ICON
         card.counts:SetText(
             "|T" .. factionIcon .. ":22:22:0:0|t "
@@ -6605,7 +6719,10 @@ RefreshAll = function()
         local allowed = route and (not route.faction or route.faction == playerFaction)
         frame.dungeonRouteButton:SetShown(allowed and true or false)
         if frame.dungeonRouteButton.icon then
-            local routeIcon = (route and route.faction == "Horde") and HORDE_ICON or ALLIANCE_ICON
+            -- The Horde crest gets a thin black outline here so it stands out
+            -- on the red button.
+            local routeIcon = (route and route.faction == "Horde")
+                and "Interface\\AddOns\\ForeverDungeonJournal\\Media\\HordeOutlined.tga" or ALLIANCE_ICON
             frame.dungeonRouteButton.icon:SetTexture(routeIcon)
         end
         if allowed then frame.dungeonRouteButton:SetText(L("ROUTE")) end
@@ -7238,6 +7355,7 @@ local function CreateGlobalSearchUI()
             local _, liveLink = ItemInfo(result.itemID)
             itemTooltip:SetHyperlink(liveLink or ("item:" .. result.itemID))
             itemTooltip:Show()
+            if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
             itemTooltip:ClearAllPoints()
             itemTooltip:SetPoint("TOPLEFT", searchResults, "TOPRIGHT", 4, 0)
         end)
@@ -9172,6 +9290,17 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
         return
     end
+    -- /dj nomapart: preview the parchment map shown on clients without map art.
+    if msg == "nomapart" then
+        FDJ.forceMissingMapArt = not FDJ.forceMissingMapArt
+        print("|cffffd100Dungeon Journal|r parchment map preview (no map art): " .. (FDJ.forceMissingMapArt and "ON" or "OFF"))
+        local dungeon = FDJ.GetSelectedDungeon and FDJ.GetSelectedDungeon()
+        local data = dungeon and FDJ.DUNGEON_MAPS and FDJ.DUNGEON_MAPS[dungeon]
+        if data and frame and frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown() then
+            FDJ.RenderCustomDungeonMap(data, frame.dungeonMapFloor)
+        end
+        return
+    end
     if msg == "newids" then
         if FDJ.PrintLearnedItemIDs then FDJ.PrintLearnedItemIDs() end
         return
@@ -9347,7 +9476,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.2"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.3"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
