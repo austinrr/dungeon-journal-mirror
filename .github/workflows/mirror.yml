@@ -1,0 +1,20 @@
+name: Mirror from CurseForge
+
+on:
+  schedule:
+    - cron: "17 */2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency: mirror
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: austinrr/wow-addon-mirror-action@v1
+        with:
+          project-id: 1707971
