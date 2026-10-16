@@ -1,4 +1,4 @@
-DungeonJournal 1.6.3
+DungeonJournal 1.6.4
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,31 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.4
+- Looking For Group button: an eye next to Show Location on every dungeon
+  page. Click it to open the game's Looking For Group window and search for
+  that dungeon. If the window opens on another page, a note points to the
+  Group Browser tab. Clicking it again while the window is open just searches
+  again. Right-click > Disable, or "Hide LFG Panel" in the options, hides it.
+- Quests show the game's own objective text and, while the quest is in your
+  log, your live progress (for example 5/7 Deviate Dreadfang slain). The
+  journal learns this text from your quest log and quest givers.
+- Dungeon maps: a "Boss icons" size control at the bottom left (100% down to
+  0%, which hides them; 90% by default). Your size is remembered.
+- New option "Hide Dungeon Map inside the dungeon": when ticked, pressing M
+  inside a dungeon shows the game's normal map.
+- Loot Filter: new Spell Hit stat.
+- /dj shortcuts for the newer dungeons: /dj stocks, gnomer, rfk, dala, exca,
+  smgy, smlib (they work in the search bar too).
+- Fixed: City of Dalaran loot showed a "?" icon and the English name on
+  non-English game clients. All Dalaran items now have their item IDs.
+- Home page: hovering the green tick says "All quests completed"; the hover
+  tooltip on dungeon covers was removed; the City of Dalaran cover no longer
+  shows a black strip at the bottom.
+- Wailing Caverns: Lord Pythas moved to his correct spot on the map.
+- French: "Une requête apeurée" quest name and objective corrected.
+- Options: "Show all class quests" label matches the other options.
 
 CHANGES IN 1.6.3
 - Class quests (Warlock, Paladin, ...) only show for that class. "Show All

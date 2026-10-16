@@ -34,7 +34,21 @@ local function Settings()
     for key in pairs(db.armorTypes) do
         if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate" then db.armorTypes[key] = nil end
     end
+    -- Resistances ticked in the Resistance Filter (none ticked = no filter).
+    if type(db.resists) ~= "table" then db.resists = {} end
+    for key in pairs(db.resists) do
+        if key ~= "FIRE" and key ~= "FROST" and key ~= "NATURE" and key ~= "SHADOW" and key ~= "ARCANE" then db.resists[key] = nil end
+    end
     return db
+end
+
+-- The resistance filter is switched off for now (set to true to bring back
+-- the drop-down next to Defense).
+local RESIST_FILTER = false
+
+local function AnyResistTicked(db)
+    if not RESIST_FILTER then return false end
+    return next(db.resists or {}) ~= nil
 end
 
 local function AnyArmorTicked(db)
@@ -195,7 +209,8 @@ local STATS = {
     { key = "AP", test = function(l) return Has(l, "attack power") end },
     { key = "CRIT", test = function(l) return Has(l, "critical strike") and not Has(l, "spell") end },
     { key = "SPELLCRIT", test = function(l) return Has(l, "critical strike") and Has(l, "spell") end },
-    { key = "HIT", test = function(l) return Has(l, "chance to hit") end },
+    { key = "HIT", test = function(l) return Has(l, "chance to hit") and not Has(l, "spell") end },
+    { key = "SPELLHIT", test = function(l) return Has(l, "chance to hit") and Has(l, "spell") end },
     { key = "DEF", test = function(l) return Has(l, "defense") end },
 }
 FDJ.LOOT_FILTER_STATS = STATS
@@ -279,6 +294,36 @@ local function AnyStatWanted(db)
     return false
 end
 
+-- ------------------------------------------------------------ resistances
+-- Matched on the tooltip with the client's own resistance names (so every
+-- client language works) plus the English wording. "+X All Resistances"
+-- counts for every school.
+local RESISTS = {
+    { key = "FIRE",   global = "RESISTANCE2_NAME", label = "fire resistance" },
+    { key = "NATURE", global = "RESISTANCE3_NAME", label = "nature resistance" },
+    { key = "FROST",  global = "RESISTANCE4_NAME", label = "frost resistance" },
+    { key = "SHADOW", global = "RESISTANCE5_NAME", label = "shadow resistance" },
+    { key = "ARCANE", global = "RESISTANCE6_NAME", label = "arcane resistance" },
+}
+local RESIST_ORDER = { "FIRE", "FROST", "NATURE", "SHADOW", "ARCANE" }
+
+local function HasResist(item, wanted)
+    local id = item and item[1]
+    if not id or id <= 0 then return false end
+    local text = TooltipText(id, FDJ.lootFilterStrict)
+    if not text then return not FDJ.lootFilterStrict end
+    for _, line in ipairs(text) do
+        if line:find("all resistances", 1, true) then return true end
+        for _, res in ipairs(RESISTS) do
+            if wanted[res.key] then
+                local name = type(_G[res.global]) == "string" and string.lower(_G[res.global]) or nil
+                if (name and line:find(name, 1, true)) or line:find(res.label, 1, true) then return true end
+            end
+        end
+    end
+    return false
+end
+
 -- ----------------------------------------------------------------- filter
 -- Returns the boss itself when nothing is hidden, otherwise a stand-in whose
 -- loot list holds only the visible items (every other field reads through).
@@ -337,7 +382,8 @@ function FDJ.FilterBossLoot(boss)
     local wantStats = on and AnyStatWanted(db)
     local minLevel = on and db.minLevel or nil
     local armor = on and AnyArmorTicked(db) and db.armorTypes or nil
-    if showRecipes and not classOnly and not wantStats and not minLevel and not armor then return boss end
+    local resists = on and AnyResistTicked(db) and db.resists or nil
+    if showRecipes and not classOnly and not wantStats and not minLevel and not armor and not resists then return boss end
     local shown = {}
     for _, item in ipairs(boss.loot) do
         local keep = true
@@ -362,6 +408,7 @@ function FDJ.FilterBossLoot(boss)
                 end
             end
             if keep and wantStats and not HasAnyStat(item, db.stats, db.matchAll) then keep = false end
+            if keep and resists and not HasResist(item, resists) then keep = false end
         end
         if keep then shown[#shown + 1] = item end
     end
@@ -437,7 +484,7 @@ end
 -- --------------------------------------------------------------------- UI
 local function IsActive()
     local db = Settings()
-    return db.enabled and (db.recipes or db.classOnly or db.minLevel ~= nil or AnyArmorTicked(db) or AnyStatWanted(db))
+    return db.enabled and (db.recipes or db.classOnly or db.minLevel ~= nil or AnyArmorTicked(db) or AnyResistTicked(db) or AnyStatWanted(db))
 end
 
 local function UpdateButton(frame)
@@ -532,7 +579,23 @@ local function RefreshWindow(frame)
         end
         if not on and win.armor.menu then win.armor.menu:Hide() end
     end
-    for _, control in ipairs({ win.minBox, win.show, win.clear, win.armor }) do
+    if win.resist then
+        local ticked = Settings().resists or {}
+        local names = {}
+        for _, key in ipairs(RESIST_ORDER) do
+            if ticked[key] then names[#names + 1] = L("LF_RES_" .. key) end
+        end
+        win.resist.text:SetText(#names > 0 and table.concat(names, ", ") or L("LF_ARMOR_ALL"))
+        for _, option in ipairs(win.resist.options or {}) do
+            local value = option.fdjResist
+            option.text:SetText(value and L("LF_RES_" .. value) or L("LF_ARMOR_ALL"))
+            local checked
+            if value then checked = ticked[value] and true or false else checked = #names == 0 end
+            option.check:SetShown(checked)
+        end
+        if not on and win.resist.menu then win.resist.menu:Hide() end
+    end
+    for _, control in ipairs({ win.minBox, win.show, win.clear, win.armor, win.resist }) do
         if control.SetEnabled then control:SetEnabled(on) end
         control:SetAlpha(on and 1 or 0.45)
     end
@@ -546,7 +609,7 @@ end
 local function CreateWindow(frame)
     local win = CreateFrame("Frame", "ForeverDungeonJournalLootFilter", frame, "BackdropTemplate")
     frame.lootFilterWindow = win
-    win:SetSize(390, 406)
+    win:SetSize(390, 434)
     win:SetPoint("CENTER", frame, "CENTER", 0, 0)
     win:SetFrameStrata("TOOLTIP")
     win:SetFrameLevel(200)
@@ -676,7 +739,10 @@ local function CreateWindow(frame)
         end)
         win.armor.options[#win.armor.options + 1] = option
     end
-    win.armor:SetScript("OnClick", function() menu:SetShown(not menu:IsShown()) end)
+    win.armor:SetScript("OnClick", function()
+        if win.resist and win.resist.menu then win.resist.menu:Hide() end
+        menu:SetShown(not menu:IsShown())
+    end)
     win.armor:SetScript("OnHide", function() menu:Hide() end)
     win.armor:SetScript("OnEnter", function(self)
         if not GameTooltip then return end
@@ -712,6 +778,91 @@ local function CreateWindow(frame)
     win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - math.ceil(#STATS / 2) * 28 - 6)
     win.checks[#win.checks + 1] = win.matchAll
 
+    -- Resistance drop-down, built like the armor one, in the free spot next
+    -- to the last stat. Ticked schools: the item needs at least one of them.
+    if RESIST_FILTER then
+        local lastRow = math.floor((#STATS - 1) / 2)
+        local b = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
+        win.resist = b
+        b:SetSize(150, 22)
+        b:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6 + 182 + 2, -16 - lastRow * 28 - 1)
+        b:SetText("")
+        b.icon = b:CreateTexture(nil, "OVERLAY")
+        b.icon:SetSize(16, 16)
+        b.icon:SetPoint("LEFT", b, "LEFT", 7, 0)
+        b.icon:SetTexture("Interface\\Icons\\Spell_Fire_FireArmor")
+        b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        local arrow = b:CreateTexture(nil, "OVERLAY")
+        arrow:SetTexture("Interface\\Buttons\\Arrow-Down-Up")
+        arrow:SetSize(12, 12)
+        arrow:SetPoint("RIGHT", b, "RIGHT", -7, -3)
+        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        b.text:SetPoint("LEFT", b.icon, "RIGHT", 4, 0)
+        b.text:SetPoint("RIGHT", arrow, "LEFT", -2, 3)
+        b.text:SetJustifyH("CENTER")
+        b.text:SetWordWrap(false)
+
+        local rmenu = CreateFrame("Frame", nil, b, "BackdropTemplate")
+        b.menu = rmenu
+        local rchoices = { false, "FIRE", "FROST", "NATURE", "SHADOW", "ARCANE" }
+        rmenu:SetSize(150, #rchoices * 22 + 10)
+        rmenu:SetPoint("TOPLEFT", b, "BOTTOMLEFT", -4, -4)
+        rmenu:SetFrameStrata("TOOLTIP")
+        rmenu:SetFrameLevel(win:GetFrameLevel() + 30)
+        rmenu:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 12,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        rmenu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
+        rmenu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
+        rmenu:Hide()
+        b.options = {}
+        for i, value in ipairs(rchoices) do
+            local option = CreateFrame("Button", nil, rmenu)
+            option:SetPoint("TOPLEFT", 6, -5 - (i - 1) * 22)
+            option:SetPoint("TOPRIGHT", -6, -5 - (i - 1) * 22)
+            option:SetHeight(21)
+            option:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+            option.fdjResist = value or nil
+            option.box = option:CreateTexture(nil, "ARTWORK")
+            option.box:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
+            option.box:SetSize(18, 18)
+            option.box:SetPoint("LEFT", 4, 0)
+            option.check = option:CreateTexture(nil, "OVERLAY")
+            option.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+            option.check:SetAllPoints(option.box)
+            option.check:Hide()
+            option.text = option:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            option.text:SetPoint("LEFT", option.box, "RIGHT", 4, 0)
+            option.text:SetTextColor(0.95, 0.83, 0.53)
+            option:SetScript("OnClick", function(self)
+                local s = Settings()
+                if self.fdjResist then
+                    s.resists[self.fdjResist] = not s.resists[self.fdjResist] or nil
+                else
+                    s.resists = {}
+                end
+                RefreshWindow(frame)
+                Changed(frame)
+            end)
+            b.options[#b.options + 1] = option
+        end
+        b:SetScript("OnClick", function()
+            if win.armor and win.armor.menu then win.armor.menu:Hide() end
+            rmenu:SetShown(not rmenu:IsShown())
+        end)
+        b:SetScript("OnHide", function() rmenu:Hide() end)
+        b:SetScript("OnEnter", function(self)
+            if not GameTooltip then return end
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(L("LF_RESIST"), 1, 0.82, 0.27)
+            GameTooltip:Show()
+        end)
+        b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+    end
+
     win.clear = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
     win.clear:SetSize(110, 22)
     win.clear:SetPoint("BOTTOMRIGHT", -16, 14)
@@ -746,6 +897,7 @@ local function CreateWindow(frame)
         s.stats = {}
         s.minLevel = nil
         s.armorTypes = {}
+        s.resists = {}
         if frame.lootFilterWindow and frame.lootFilterWindow.minBox then frame.lootFilterWindow.minBox:SetText("") end
         RefreshWindow(frame)
         Changed(frame)
@@ -1085,7 +1237,7 @@ end
 local function BuildPage()
     local bosses, itemCount = {}, 0
     local db = Settings()
-    local recipesOnly = db.enabled and db.recipes and not db.classOnly and not db.minLevel and not AnyArmorTicked(db) and not AnyStatWanted(db)
+    local recipesOnly = db.enabled and db.recipes and not db.classOnly and not db.minLevel and not AnyArmorTicked(db) and not AnyResistTicked(db) and not AnyStatWanted(db)
     FDJ.lootFilterStrict = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
@@ -1159,7 +1311,7 @@ end
 
 local OpenLootFilterPage
 function FDJ.ShowLootFilterResults(frame, keepBoss)
-    if Settings().enabled and AnyStatWanted(Settings()) then
+    if Settings().enabled and (AnyStatWanted(Settings()) or AnyResistTicked(Settings())) then
         WarmTooltips(function() OpenLootFilterPage(frame, keepBoss) end)
     else
         OpenLootFilterPage(frame, keepBoss)
@@ -1223,7 +1375,7 @@ if pageWatcher then
         self.pending = true
         local function check()
             self.pending = nil
-            if not PageIsOpen(frame) or not AnyStatWanted(Settings()) then return end
+            if not PageIsOpen(frame) or not (AnyStatWanted(Settings()) or AnyResistTicked(Settings())) then return end
             WarmTooltips(function()
                 if not PageIsOpen(frame) then return end
                 local _, count = BuildPage()

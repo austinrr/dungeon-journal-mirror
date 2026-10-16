@@ -115,8 +115,8 @@ FDJ.ContentLocales.frFR.quests = {
         ["note"] = "Le choix d’objet est accordé lors de la quête suivante « Tourment sans fin » à Fossoyeuse.",
     },
     [92401] = {
-        ["name"] = "Une requête terrifiée",
-        ["objective"] = "Enquêtez sur la disparition d’Edward Heartweaver dans les Ruines de Lordaeron.",
+        ["name"] = "Une requête apeurée",
+        ["objective"] = "Enquêtez sur la disparition d’Edward Tissecœur dans les ruines de Lordaeron.",
     },
     [95195] = {
         ["name"] = "Insigne ensanglanté",

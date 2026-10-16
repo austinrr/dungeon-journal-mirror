@@ -1954,8 +1954,8 @@ FDJ.DB["City of Dalaran"] = {
             description = "At the ritual circle in the Underbelly, surrounded by Kirin Tor Necromancers and rising skeletons. Disarms.",
             loot = {
                 {273032, "Bonebinder's Signet", "Finger", 3},
-                {0, "Graveweave Bindings", "Wrist, Cloth", 3},
-                {0, "Gravespike Repeater", "Ranged, Crossbow", 3},
+                {273036, "Graveweave Bindings", "Wrist, Cloth", 3},
+                {273033, "Gravespike Repeater", "Ranged, Crossbow", 3},
             },
         },
         {
@@ -1965,9 +1965,9 @@ FDJ.DB["City of Dalaran"] = {
             description = "On a round terrace in the streets after leaving the sewers. Casts Arcane Bolt and Focal Blast.",
             loot = {
                 -- Seen in-game (Oct 2026); item ID not known yet (0).
-                {0, "Ephemeral Grips", "Hands, Cloth", 3},
+                {273034, "Ephemeral Grips", "Hands, Cloth", 3},
                 {273031, "Runemender's Seal", "Finger", 3},
-                {0, "Mana-Warped Chain Shirt", "Chest, Mail", 3},
+                {273035, "Mana-Warped Chain Shirt", "Chest, Mail", 3},
             },
         },
         {
@@ -1977,9 +1977,9 @@ FDJ.DB["City of Dalaran"] = {
             description = "A fel-touched treant in the streets, among Suffused Treants.",
             loot = {
                 -- Seen in-game (Oct 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Felbough Arm", "Two-Hand, Polearm", 3},
-                {0, "Blightleaf Rope", "Waist, Cloth", 3},
-                {0, "Garb of Fallen Felbark", "Chest, Leather", 3},
+                {273037, "Felbough Arm", "Two-Hand, Polearm", 3},
+                {273039, "Blightleaf Rope", "Waist, Cloth", 3},
+                {273038, "Garb of Fallen Felbark", "Chest, Leather", 3},
             },
         },
         {
@@ -1989,8 +1989,8 @@ FDJ.DB["City of Dalaran"] = {
             description = "An arcane golem by the Magus Commerce Exchange, with Angry Tomes. Malfunction hits everyone within 25 yards.",
             loot = {
                 {273046, "Guardian's Dualblade", "Weapon", 3},
-                {0, "Unstable Crystalline Shoulderpads", "Shoulder", 3},
-                {0, "Refractory Scaleguards", "Legs, Mail", 3},
+                {273047, "Unstable Crystalline Shoulderpads", "Shoulder", 3},
+                {273048, "Refractory Scaleguards", "Legs, Mail", 3},
                 {273099, "Blueprint: Spinning Wheel", "Blueprint", 2},
             },
         },
@@ -2001,8 +2001,8 @@ FDJ.DB["City of Dalaran"] = {
             loot = {
                 {273041, "Slitherwrap Girdle", "Waist, Leather", 3},
                 -- Seen in-game (Oct 2026); item ID not known yet (0).
-                {0, "Spine of the Devourer", "Two-Hand, Staff", 3},
-                {0, "Manascale Treads", "Feet, Mail", 3},
+                {273040, "Spine of the Devourer", "Two-Hand, Staff", 3},
+                {273042, "Manascale Treads", "Feet, Mail", 3},
             },
         },
         {
@@ -2011,8 +2011,8 @@ FDJ.DB["City of Dalaran"] = {
             aliases = {"Arcanic Enigma", "Mana Elemental"},
             loot = {
                 {273045, "Drape of Shifting Energy", "Back", 3},
-                {0, "Violet Sorcerer's Robes", "Chest, Cloth", 3},
-                {0, "Wand of Mana Concentration", "Ranged, Wand", 3},
+                {273044, "Violet Sorcerer's Robes", "Chest, Cloth", 3},
+                {273043, "Wand of Mana Concentration", "Ranged, Wand", 3},
             },
         },
         {
@@ -2024,9 +2024,9 @@ FDJ.DB["City of Dalaran"] = {
             -- Shown under the boss name ("Summoned by: Tome of Dalaran").
             summonItem = 275989,
             loot = {
-                {0, "Bonepile Gaze", "Off Hand, Shield", 3},
-                {0, "Cartilage Shapers", "Hands, Leather", 3},
-                {0, "Tendonscraper Dagger", "Main Hand, Dagger", 3},
+                {273055, "Bonepile Gaze", "Off Hand, Shield", 3},
+                {273054, "Cartilage Shapers", "Hands, Leather", 3},
+                {273053, "Tendonscraper Dagger", "Main Hand, Dagger", 3},
             },
         },
         {
@@ -2038,8 +2038,8 @@ FDJ.DB["City of Dalaran"] = {
                 {273052, "Ponderous Orb", "Held In Off-hand", 3},
                 -- Seen dropping on stream (Oct 2026); not on Wowhead yet, so the
                 -- item ID is unknown (0). Replace 0 with the real ID once known.
-                {0, "Archmagister's Faceted Pendant", "Neck", 3},
-                {0, "Violet Sorcerer's Mantle", "Shoulder, Cloth", 3}, -- Violet Sorcerer's Vestments set piece; ID not known yet
+                {273049, "Archmagister's Faceted Pendant", "Neck", 3},
+                {273051, "Violet Sorcerer's Mantle", "Shoulder, Cloth", 3}, -- Violet Sorcerer's Vestments set piece
                 {273103, "Blueprint: Arcane Salvager", "Blueprint", 2},
             },
         },

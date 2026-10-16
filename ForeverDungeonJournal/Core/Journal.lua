@@ -333,7 +333,7 @@ FDJ.DUNGEON_MAPS = {
             { name = "Lady Anacondra",        x = 0.310, y = 0.430 },
             { name = "Kresh",                 x = 0.385, y = 0.350 },
             { name = "Lord Cobrahn",          x = 0.155, y = 0.570 },
-            { name = "Lord Pythas",           x = 0.600, y = 0.617 },
+            { name = "Lord Pythas",           x = 0.620, y = 0.657 },
             { name = "Skum",                  x = 0.622, y = 0.734 },
             { name = "Deviate Faerie Dragon", x = 0.580, y = 0.600 },
             { name = "Lord Serpentis",        x = 0.615, y = 0.535 },
@@ -3014,7 +3014,7 @@ local function UpdateDungeonHeaderTabs()
     if frame.dungeonRouteButton and frame.dungeonRouteButton:IsShown() then
         frame.dungeonRouteButton:ClearAllPoints()
         frame.dungeonRouteButton:SetSize(96, 30)
-        frame.dungeonRouteButton:SetPoint("LEFT", frame.dungeonLocationButton, "RIGHT", 3, 0)
+        frame.dungeonRouteButton:SetPoint("LEFT", (frame.lfgButton and frame.lfgButton:IsShown()) and frame.lfgButton or frame.dungeonLocationButton, "RIGHT", 3, 0)
     end
 
     if frame.dungeonMapPanel then frame.dungeonMapPanel:Hide() end
@@ -3819,6 +3819,7 @@ local function RefreshPrerequisiteQuestDetail(step)
     frame.questDetailContent:SetWidth(detailWidth)
     frame.questDetailText:SetWidth(detailWidth)
     frame.questNotesText:SetWidth(detailWidth)
+    if FDJ.HideQuestDescription then FDJ.HideQuestDescription(frame) end
 
     if frame.questStartsHeader then frame.questStartsHeader:Hide() end
     if frame.questTurninHeader then frame.questTurninHeader:Hide() end
@@ -4334,9 +4335,16 @@ RefreshQuestDetail = function()
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
     frame.questDetailText:ClearAllPoints()
     frame.questDetailText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
-    frame.questDetailText:SetText(QuestField(quest.id, "objective", quest.objective))
+    -- Real quest text from the game when known (see Systems/QuestText.lua).
+    if FDJ.QuestPageText then
+        frame.fdjObjText, frame.fdjDescText = FDJ.QuestPageText(quest.id, QuestField(quest.id, "objective", quest.objective))
+    else
+        frame.fdjObjText, frame.fdjDescText = QuestField(quest.id, "objective", quest.objective), nil
+    end
+    frame.questDetailText:SetText(frame.fdjObjText)
     frame.questDetailText:SetTextColor(0.10, 0.065, 0.025)
     cursorY = cursorY + (frame.questDetailText:GetStringHeight() or 30) + 13
+    if FDJ.PlaceQuestDescription then cursorY = FDJ.PlaceQuestDescription(frame, frame.fdjDescText, cursorY, PlaceHeader) end
 
     -- Normal dungeon-quest required items use field 5 for Journal-only source
     -- information (field 4 is the stack count). Only render the large item card
@@ -5424,8 +5432,9 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         end
     end
 
+    if FDJ.UpdateMapBossSizer then pcall(FDJ.UpdateMapBossSizer, panel, holder, frame.dungeonMapFloorButtons) end
     local dungeon = DB[selectedDungeon]
-    local size = math.max(26, math.floor(baseH * 0.095))
+    local size = math.floor(math.max(26, math.floor(baseH * 0.095)) * (FDJ.MapBossScale and FDJ.MapBossScale() or 1))
     local shown = 0
     for _, mapBoss in ipairs(data.bosses or {}) do
         if (mapBoss.floor or 1) == floorIndex then
@@ -5470,7 +5479,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             end)
             marker:ClearAllPoints()
             marker:SetPoint("CENTER", holder, "TOPLEFT", mapBoss.x * artW, -(mapBoss.y * artH))
-            marker:Show()
+            marker:SetShown(size > 0) -- boss icon size 0% hides them
         end
     end
     for i = shown + 1, #frame.dungeonMapBossMarkers do
@@ -5999,6 +6008,7 @@ RefreshHomeDungeonCards = function()
         end
         local crop = DUNGEON_HOME_TEXCOORD[dungeonName] or { 0.03, 0.97, 0.05, 0.95 }
         card.art:SetTexCoord(crop[1], crop[2], crop[3], crop[4])
+        if FDJ.ApplyHomeBottomBand then pcall(FDJ.ApplyHomeBottomBand, card, dungeonName) end
         if card.previewIcon then
             if dungeon.previewUseIconOnly and dungeon.icon then
                 card.previewIcon:SetTexture(dungeon.icon)
@@ -6651,6 +6661,7 @@ ApplyLocalization = function()
     if frame.bossListTitle then frame.bossListTitle:SetText(L("BOSSES")) end
     if frame.questListTitle then frame.questListTitle:SetText(L("QUESTS")) end
     if frame.questObjectiveHeader then frame.questObjectiveHeader:SetText(L("OBJECTIVE")) end
+    if frame.questDescHeader then frame.questDescHeader:SetText(L("DESCRIPTION")) end
     if frame.questRequiredItemsHeader then frame.questRequiredItemsHeader:SetText(L("REQUIRED_ITEMS")) end
     if frame.questProvidedItemHeader then frame.questProvidedItemHeader:SetText(L("PROVIDED_ITEM")) end
     if frame.questStartsHeader then frame.questStartsHeader:SetText(L("STARTS_AT")) end
@@ -6713,6 +6724,7 @@ RefreshAll = function()
     if frame.dungeonLocationButton then
         frame.dungeonLocationButton:SetShown(dungeon.entrance ~= nil)
     end
+    if FDJ.UpdateLFGButton then FDJ.UpdateLFGButton(frame, selectedDungeon, dungeon) end
     if frame.dungeonRouteButton then
         local route = dungeon.routeGuide
         local playerFaction = UnitFactionGroup and UnitFactionGroup("player") or nil
@@ -6870,6 +6882,12 @@ local function CreateGlobalSearchUI()
         ["Shadowfang Keep"] = { "sfk" },
         ["The Stockade"] = { "stocks", "stockades", "stockade", "sw stocks" },
         ["Blackfathom Deeps"] = { "bfd" },
+        ["Gnomeregan"] = { "gnomer", "gnomergan" },
+        ["Razorfen Kraul"] = { "rfk", "kraul" },
+        ["City of Dalaran"] = { "dala", "dal", "dalaran" },
+        ["Excavation Site: Wetlands"] = { "excavation", "exca", "wetlands" },
+        ["Scarlet Monastery: Graveyard"] = { "smgy", "gy", "sm gy", "sm graveyard" },
+        ["Scarlet Monastery: Library"] = { "smlib", "lib", "sm lib", "sm library" },
     }
 
     local function SearchText(value)
@@ -7560,6 +7578,7 @@ local function CreateMainFrame()
     top:SetPoint("TOPLEFT", 12, -10)
     top:SetPoint("TOPRIGHT", -12, -10)
     top:SetHeight(34)
+    frame.topStrip = top
 
     local topLine = frame:CreateTexture(nil, "ARTWORK")
     topLine:SetTexture("Interface\\Buttons\\WHITE8X8")
@@ -7567,6 +7586,7 @@ local function CreateMainFrame()
     topLine:SetPoint("TOPRIGHT", top, "TOPRIGHT", 0, 0)
     topLine:SetHeight(1)
     topLine:SetColorTexture(0.68, 0.52, 0.20, 0.65)
+    frame.topStripLine = topLine
 
     local bottomLine = frame:CreateTexture(nil, "ARTWORK")
     bottomLine:SetTexture("Interface\\Buttons\\WHITE8X8")
@@ -7574,6 +7594,7 @@ local function CreateMainFrame()
     bottomLine:SetPoint("BOTTOMRIGHT", top, "BOTTOMRIGHT", 0, 0)
     bottomLine:SetHeight(1)
     bottomLine:SetColorTexture(0.68, 0.52, 0.20, 0.45)
+    frame.topStripBottomLine = bottomLine
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     frame.mainTitle = title
@@ -7607,6 +7628,7 @@ local function CreateMainFrame()
     end
 
     local languageSelector = CreateFrame("Button", nil, frame, "BackdropTemplate")
+    frame.languageSelectorButton = languageSelector
     frame.languageSelectorButton = languageSelector
     languageSelector:SetSize(110, 24)
     languageSelector:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -49, -15)
@@ -7671,6 +7693,7 @@ local function CreateMainFrame()
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -3, -3)
+    frame.closeButton = close
 
     frame.backButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     frame.backButton:SetSize(120, 24)
@@ -7893,10 +7916,11 @@ local function CreateMainFrame()
             FDJ.MapMarkers.ShowRecordedLocationOnMap(entrance, DungeonName(selectedDungeon))
         end
     end)
+    if FDJ.CreateLFGButton then FDJ.CreateLFGButton(frame, header, frame.dungeonLocationButton) end
 
     frame.dungeonRouteButton = CreateFrame("Button", nil, header, "UIPanelButtonTemplate")
     frame.dungeonRouteButton:SetSize(96, 30)
-    frame.dungeonRouteButton:SetPoint("LEFT", frame.dungeonLocationButton, "RIGHT", 3, 0)
+    frame.dungeonRouteButton:SetPoint("LEFT", frame.lfgButton or frame.dungeonLocationButton, "RIGHT", 3, 0)
     frame.dungeonRouteButton:SetText(L("ROUTE"))
     frame.dungeonRouteButton.text = frame.dungeonRouteButton:GetFontString()
     if frame.dungeonRouteButton.text then
@@ -8417,6 +8441,15 @@ local function CreateMainFrame()
     frame.questStartsHeader = MakeQuestSectionHeader(L("STARTS_AT"))
     frame.questTurninHeader = MakeQuestSectionHeader(L("TURN_IN"))
     frame.questNotesHeader = MakeQuestSectionHeader(L("NOTES"))
+    frame.questDescHeader = MakeQuestSectionHeader(L("DESCRIPTION"))
+    frame.questDescHeader:Hide()
+    frame.questDescText = frame.questDetailContent:CreateFontString(nil, "OVERLAY")
+    frame.questDescText:SetWidth(365)
+    frame.questDescText:SetJustifyH("LEFT")
+    frame.questDescText:SetJustifyV("TOP")
+    frame.questDescText:SetWordWrap(true)
+    ApplyQuestFont(frame.questDescText, "QuestFont", "GameFontHighlight")
+    frame.questDescText:Hide()
 
     frame.questStartsText = frame.questDetailContent:CreateFontString(nil, "OVERLAY")
     frame.questStartsText:SetWidth(365)
@@ -9291,6 +9324,10 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         return
     end
     -- /dj nomapart: preview the parchment map shown on clients without map art.
+    if msg == "lfgdebug" then
+        if FDJ.LFGDebug then FDJ.LFGDebug() end
+        return
+    end
     if msg == "nomapart" then
         FDJ.forceMissingMapArt = not FDJ.forceMissingMapArt
         print("|cffffd100Dungeon Journal|r parchment map preview (no map art): " .. (FDJ.forceMissingMapArt and "ON" or "OFF"))
@@ -9409,6 +9446,26 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         return
     end
 
+    -- Shortcuts for the dungeons added later (/dj smlib, /dj gnomer, ...).
+    do
+        local shortcuts = {
+            stocks = "The Stockade", stockade = "The Stockade", stockades = "The Stockade",
+            gnomer = "Gnomeregan", gnomeregan = "Gnomeregan",
+            rfk = "Razorfen Kraul", kraul = "Razorfen Kraul", razorfenkraul = "Razorfen Kraul",
+            dala = "City of Dalaran", dal = "City of Dalaran", dalaran = "City of Dalaran", cityofdalaran = "City of Dalaran",
+            exca = "Excavation Site: Wetlands", excavation = "Excavation Site: Wetlands", wetlands = "Excavation Site: Wetlands",
+            smgy = "Scarlet Monastery: Graveyard", gy = "Scarlet Monastery: Graveyard", graveyard = "Scarlet Monastery: Graveyard",
+            smlib = "Scarlet Monastery: Library", lib = "Scarlet Monastery: Library", library = "Scarlet Monastery: Library",
+        }
+        local key = msg:gsub("[%s:%-']", "")
+        local target = shortcuts[key]
+        if target and DB[target] then
+            frame:Show()
+            SelectDungeon(target)
+            return
+        end
+    end
+
     ToggleJournal()
 end
 
@@ -9476,7 +9533,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.3"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.4"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

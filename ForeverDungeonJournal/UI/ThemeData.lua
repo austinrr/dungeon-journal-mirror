@@ -209,3 +209,9 @@ for _, tableName in ipairs({ "THEMES", "DUNGEON_HOME_ART", "DUNGEON_HOME_TEXCOOR
         t["Scarlet Monastery: Library"] = t["Scarlet Monastery: Graveyard"]
     end
 end
+
+-- Cards whose art ends in a dark strip get a coloured band over the bottom
+-- edge, tinted to match the art: { r, g, b, height }.
+FDJ.DUNGEON_HOME_BOTTOM_BAND = {
+    ["City of Dalaran"] = { 0.36, 0.26, 0.42, 4 },
+}

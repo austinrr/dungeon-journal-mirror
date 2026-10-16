@@ -119,6 +119,21 @@ local OPTIONS = {
             end
         end,
     },
+    {
+        label = "OPT_HIDE_LFG",
+        tip = "OPT_HIDE_LFG_TIP",
+        get = function() return FDJ.IsLFGButtonHidden and FDJ.IsLFGButtonHidden() or false end,
+        set = function(on) if FDJ.SetLFGButtonHidden then FDJ.SetLFGButtonHidden(on) end end,
+    },
+    {
+        label = "OPT_HIDE_DUNGEON_MAP",
+        tip = "OPT_HIDE_DUNGEON_MAP_TIP",
+        get = function() return Store().worldMapOverlay == false end,
+        set = function(on)
+            Store().worldMapOverlay = (not on) and nil or false
+            if FDJ.RefreshWorldMapOverlay and WorldMapFrame and WorldMapFrame:IsShown() then pcall(FDJ.RefreshWorldMapOverlay) end
+        end,
+    },
     { keybind = true, label = "OPT_BIND" },
     { header = "OPT_DUNGEON_LIST" },
     {
@@ -365,7 +380,27 @@ local function CreatePanel()
     panel.texts = {} -- { fontString, key } re-translated on every show
     local y = -66
     for _, option in ipairs(OPTIONS) do
-        if option.keybind then
+        if option.action then
+            local button = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+            button:SetSize(200, 24)
+            button:SetPoint("TOPLEFT", 24, y - 2)
+            button.option = option
+            button.Refresh = function() button:SetText(option.text()) end
+            button:SetScript("OnClick", function(self)
+                pcall(self.option.run)
+                self.Refresh()
+            end)
+            button:SetScript("OnEnter", function(self)
+                if not GameTooltip then return end
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:AddLine(self.option.text(), 1, 0.82, 0.27)
+                GameTooltip:AddLine(self.option.tipText(), 1, 1, 1, true)
+                GameTooltip:Show()
+            end)
+            button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+            panel.keybinds[#panel.keybinds + 1] = button -- refreshed on show like the bind button
+            y = y - 32
+        elseif option.keybind then
             panel.keybinds[#panel.keybinds + 1] = CreateKeybindRow(panel, option, y - 4)
             y = y - 52
         elseif option.header then
