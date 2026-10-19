@@ -64,6 +64,7 @@ FDJ.ContentLocales.ptBR.quests = {
     [96394] = {
         ["name"] = "Os mortos inquietos",
         ["objective"] = "Mate 15 aparições enfurecidas e 10 almas atormentadas e, depois, dê descanso ao espírito de Anvilmar.",
+        ["pickup"] = "Afadra Dunwall, no alto da Velha Altaforja, fora da masmorra",
     },
     [96393] = {
         ["name"] = "Incursão na antiga Altaforja",
@@ -416,7 +417,7 @@ FDJ.ContentLocales.ptBR.quests = {
     [3765] = {
         ["name"] = "A Corrupção Distante",
         ["objective"] = "Vá até Gershala Sussurrante da Noite em Auberdine, Costa Negra.",
-        ["description"] = "Missão introdutória da Aliança que deve ser concluída antes de “Pesquisando a corrupção”.",
+        ["note"] = "Etapa introdutória que leva a “Pesquisando a corrupção”.",
     },
 }
 

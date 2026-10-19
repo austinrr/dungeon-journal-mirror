@@ -192,7 +192,7 @@ FDJ.DUNGEON_MAPS = {
         bosses = {
             { name = "Witherfang",        x = 0.668, y = 0.360 },
             { name = "The Baron",         x = 0.615, y = 0.650 }, -- from the author's minimap screenshot (King's Alley, curved road)
-            { name = "Viktor the Vile",   x = 0.600, y = 0.730 },
+            { name = "Viktor the Vile",   x = 0.530, y = 0.825 }, -- south, below the curved road (author's marked screenshot)
             { name = "The Abandoned",     x = 0.395, y = 0.665 },
             { name = "Bjork",             x = 0.345, y = 0.220 },
             { name = "Rath'mael",         x = 0.520, y = 0.600 },
@@ -253,11 +253,17 @@ FDJ.DUNGEON_MAPS = {
     ["Razorfen Kraul"] = {
         floors = { { uiMapID = 301, tiles = "Interface\\WorldMap\\RazorfenKraul\\RazorfenKraul1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s1", x0 = 0.2036, y0 = 0.2874, x1 = 0.2375, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s2", x0 = 0.5589, y0 = 0.2874, x1 = 0.5928, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s3", x0 = 0.8593, y0 = 0.3937, x1 = 0.8932, y1 = 0.4446 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s4", x0 = 0.7914, y0 = 0.4955, x1 = 0.8253, y1 = 0.5464 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s5", x0 = 0.0649, y0 = 0.6602, x1 = 0.0988, y1 = 0.7111 } } } },
         entrance = { floor = 1, x = 0.714, y = 0.840, angle = 180 },
+        -- Ladder notes (no level change): how to get across to Roogug.
+        transitions = {
+            { floor = 1, x = 0.606, y = 0.725, note = true, labelKey = "MAP_RFK_WALLJUMP" },
+            { floor = 1, x = 0.626, y = 0.562, note = true, labelKey = "MAP_RFK_VINE" },
+        },
         bosses = {
             -- Roogug: alcove across the vine, first left after the entrance.
             { name = "Roogug",                 x = 0.646, y = 0.430 },
             { name = "Aggem Thorncurse",       x = 0.808, y = 0.521 },
             { name = "Death Speaker Jargba",   x = 0.876, y = 0.419 },
+            { name = "Earthcaller Halmgar",    x = 0.498, y = 0.473 }, -- author's green mark
             { name = "Overlord Ramtusk",       x = 0.576, y = 0.313 },
             { name = "Charlga Razorflank",     x = 0.221, y = 0.313 },
             { name = "Agathelos the Raging",  x = 0.082, y = 0.686 },
@@ -393,12 +399,19 @@ FDJ.DUNGEON_MAPS = {
             { uiMapID = 223, tiles = "Interface\\WorldMap\\BlackFathomDeeps\\BlackFathomDeeps3_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\BlackFathomDeeps3_s1", x0 = 0.5569, y0 = 0.2799, x1 = 0.5908, y1 = 0.3308 } } },
         },
         entrance = { floor = 1, x = 0.455, y = 0.085, angle = -20 },
+        -- Quest objectives you click or loot on the spot (not kills / drops).
+        -- Positions from Wowhead's spawn data for the same map.
+        -- Switched off for now (shown later):
+        -- objectives = {
+        --     { floor = 1, x = 0.330, y = 0.413, questID = 971, quest = "Knowledge in the Deeps", textKey = "MAP_OBJ_BFD_CHEST" },
+        --     { floor = 2, x = 0.414, y = 0.754, questID = 6921, quest = "Amongst the Ruins", textKey = "MAP_OBJ_BFD_FATHOM" },
+        -- },
         bosses = {
             { name = "Ghamoo-ra",            floor = 1, x = 0.325, y = 0.605 },
             { name = "Lady Sarevess",        floor = 1, x = 0.110, y = 0.385 },
             { name = "Gelihast",             floor = 1, x = 0.540, y = 0.575 },
             { name = "Lorgus Jett",          floor = 2, x = 0.325, y = 0.700 },
-            { name = "Baron Aquanis",        floor = 2, x = 0.420, y = 0.720 },
+            { name = "Baron Aquanis",        floor = 2, x = 0.420, y = 0.720, npcID = 12876 }, -- not a journal boss: portrait from its NPC ID
             { name = "Twilight Lord Kelris", floor = 2, x = 0.525, y = 0.810 },
             { name = "Aku'mai",              floor = 2, x = 0.855, y = 0.860 },
             { name = "Old Serra'kis",        floor = 3, x = 0.585, y = 0.290 },
@@ -2986,7 +2999,7 @@ local function UpdateDungeonHeaderTabs()
     if not frame or not frame.bossesTab or not frame.questsTab then return end
 
     local currentDungeon = DB[selectedDungeon]
-    if currentDungeon and currentDungeon.recipeSearch then
+    if currentDungeon and (currentDungeon.recipeSearch or currentDungeon.lootFilterPage) then
         frame.questsTab:Hide()
         frame.bossesTab:Show()
         frame.bossesTab:ClearAllPoints()
@@ -4532,33 +4545,23 @@ RefreshQuestDetail = function()
         frame.questMapButton.fdjQuestTitle = QuestField(quest.id, "name", quest.name)
         FDJ.MapMarkers.ConfigureTargetAndMarkAction(frame.questMapButton, showMap and loc or nil, true)
     end
-    if pendingStep and frame.questChainButton then
-        -- Chain button first, then the normal Show on Map.
+    -- Show Quest Chain always comes first, then Show on Map.
+    local chainShown = (pendingStep or hasChain) and frame.questChainButton
+    if chainShown then
         frame.questChainButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questChainButton:Show()
-        if showMap then
+    elseif frame.questChainButton then
+        frame.questChainButton:Hide()
+    end
+    if showMap then
+        if chainShown then
             frame.questMapButton:SetPoint("LEFT", frame.questChainButton, "RIGHT", 8, 0)
-            frame.questMapButton:Show()
         else
-            frame.questMapButton:Hide()
-        end
-    else
-        if showMap then
             frame.questMapButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
-            frame.questMapButton:Show()
-        else
-            frame.questMapButton:Hide()
         end
-        if hasChain and frame.questChainButton then
-            if showMap then
-                frame.questChainButton:SetPoint("LEFT", frame.questMapButton, "RIGHT", 8, 0)
-            else
-                frame.questChainButton:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
-            end
-            frame.questChainButton:Show()
-        elseif frame.questChainButton then
-            frame.questChainButton:Hide()
-        end
+        frame.questMapButton:Show()
+    else
+        frame.questMapButton:Hide()
     end
 
     if showMap or hasChain then
@@ -5466,7 +5469,8 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 if candidate.name == mapBoss.name then bossRecord, bossIndex = candidate, idx break end
             end
             marker.portrait:SetTexCoord(0, 1, 0, 1)
-            if not (bossRecord and SetBossPortrait(marker.portrait, selectedDungeon, bossRecord)) then
+            local portraitRecord = bossRecord or (mapBoss.npcID and { name = mapBoss.name, npcID = mapBoss.npcID })
+            if not (portraitRecord and SetBossPortrait(marker.portrait, selectedDungeon, portraitRecord)) then
                 marker.portrait:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
                 marker.portrait:SetTexCoord(0.08, 0.92, 0.08, 0.92)
             end
@@ -5535,7 +5539,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     frame.dungeonMapTransitions = frame.dungeonMapTransitions or {}
     local used = 0
     for _, tr in ipairs(data.transitions or {}) do
-        if tr.floor == floorIndex and floors[tr.to] then
+        if tr.floor == floorIndex and (floors[tr.to] or tr.note) then
             used = used + 1
             local t = frame.dungeonMapTransitions[used]
             if not t then
@@ -5551,12 +5555,13 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 t.label:SetTextColor(0.35, 1.00, 0.35)
                 t.label:SetPoint("BOTTOM", t, "TOP", 0, 1)
                 t:SetScript("OnClick", function(self)
+                    if not self.toFloor then return end
                     FDJ.ResetDungeonMapView()
                     FDJ.RenderCustomDungeonMap(FDJ.DUNGEON_MAPS[selectedDungeon], self.toFloor)
                 end)
                 t:SetScript("OnEnter", function(self)
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(L("MAP_FLOOR", self.toFloor), 0.35, 1, 0.35)
+                    GameTooltip:SetText(self.toFloor and L("MAP_FLOOR", self.toFloor) or self.noteText or "", 0.35, 1, 0.35)
                     GameTooltip:Show()
                 end)
                 t:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -5569,12 +5574,51 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             t:SetFrameLevel(holder:GetFrameLevel() + 14)
             t:ClearAllPoints()
             t:SetPoint("CENTER", holder, "TOPLEFT", tr.x * artW, -(tr.y * artH))
-            t.label:SetText(L(tr.labelKey or "MAP_FLOOR", tr.to))
+            -- Notes (no level change) only show their text on hover.
+            t.noteText = tr.note and L(tr.labelKey) or nil
+            t.label:SetText(tr.note and "" or L(tr.labelKey or "MAP_FLOOR", tr.to))
             t:Show()
         end
     end
     for i = used + 1, #frame.dungeonMapTransitions do
         frame.dungeonMapTransitions[i]:Hide()
+    end
+
+    -- Yellow "?" where a quest objective is picked up or clicked on the spot.
+    frame.dungeonMapObjectives = frame.dungeonMapObjectives or {}
+    local nObj = 0
+    for _, ob in ipairs(data.objectives or {}) do
+        if (ob.floor or 1) == floorIndex then
+            nObj = nObj + 1
+            local q = frame.dungeonMapObjectives[nObj]
+            if not q then
+                q = CreateFrame("Frame", nil, holder)
+                q:EnableMouse(true)
+                q.icon = q:CreateTexture(nil, "OVERLAY")
+                q.icon:SetAllPoints()
+                q.icon:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
+                q:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.title or "", 1, 0.82, 0)
+                    if self.body then GameTooltip:AddLine(self.body, 1, 1, 1, true) end
+                    GameTooltip:Show()
+                end)
+                q:SetScript("OnLeave", function() GameTooltip:Hide() end)
+                frame.dungeonMapObjectives[nObj] = q
+            end
+            if q:GetParent() ~= holder then q:SetParent(holder) end
+            q.title = QuestField(ob.questID, "name", ob.quest)
+            q.body = ob.textKey and L(ob.textKey) or nil
+            local size = math.max(22, math.floor(baseH * 0.07))
+            q:SetSize(size, size)
+            q:SetFrameLevel(holder:GetFrameLevel() + 15)
+            q:ClearAllPoints()
+            q:SetPoint("CENTER", holder, "TOPLEFT", ob.x * artW, -(ob.y * artH))
+            q:Show()
+        end
+    end
+    for i = nObj + 1, #frame.dungeonMapObjectives do
+        frame.dungeonMapObjectives[i]:Hide()
     end
 end
 
@@ -5732,7 +5776,22 @@ end
 
 local homeDungeonCards = {}
 local homeEditMode = false
-ForeverDungeonJournalDB.hiddenDungeons = ForeverDungeonJournalDB.hiddenDungeons or {}
+-- Dungeons hidden by hand are stored per character (ForeverDungeonJournalCharacterDB).
+-- Older versions kept one account-wide list; the first character to log in
+-- after the update takes it over and the account-wide copy is removed.
+FDJ.HiddenDungeons = function()
+    ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
+    local char = ForeverDungeonJournalCharacterDB
+    if not char.hiddenDungeons then
+        local old = ForeverDungeonJournalDB and ForeverDungeonJournalDB.hiddenDungeons
+        char.hiddenDungeons = {}
+        if type(old) == "table" then
+            for k, v in pairs(old) do char.hiddenDungeons[k] = v end
+            ForeverDungeonJournalDB.hiddenDungeons = nil
+        end
+    end
+    return char.hiddenDungeons
+end
 
 
 local function MakeHomeDungeonCard(parent, dungeonName)
@@ -5864,7 +5923,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText(DungeonName(activeDungeonName))
         if homeEditMode then
-            if ForeverDungeonJournalDB.hiddenDungeons[activeDungeonName] then
+            if FDJ.HiddenDungeons()[activeDungeonName] then
                 GameTooltip:AddLine(L("CLICK_RESTORE_DUNGEON"), 1, 1, 1)
             else
                 GameTooltip:AddLine(L("CLICK_HIDE_DUNGEON"), 1, 1, 1)
@@ -5887,7 +5946,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
         local activeDungeonName = self.dungeonName
         if not activeDungeonName then return end
         if homeEditMode then
-            ForeverDungeonJournalDB.hiddenDungeons[activeDungeonName] = not ForeverDungeonJournalDB.hiddenDungeons[activeDungeonName] or nil
+            FDJ.HiddenDungeons()[activeDungeonName] = not FDJ.HiddenDungeons()[activeDungeonName] or nil
             PlayJournalOptionSound()
             RefreshHomeDungeonCards()
             return
@@ -5907,10 +5966,9 @@ end
 RefreshHomeDungeonCards = function()
     if not frame or not frame.homeCardsContent or not frame.homeScroll then return end
 
-    ForeverDungeonJournalDB.hiddenDungeons = ForeverDungeonJournalDB.hiddenDungeons or {}
     local shownDungeons = {}
     for _, dungeonName in ipairs(ORDER) do
-        if homeEditMode or not (ForeverDungeonJournalDB.hiddenDungeons[dungeonName]
+        if homeEditMode or not (FDJ.HiddenDungeons()[dungeonName]
             or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName))) then
             shownDungeons[#shownDungeons + 1] = dungeonName
         end
@@ -5995,7 +6053,8 @@ RefreshHomeDungeonCards = function()
         local factionIcon = playerFaction == "Horde" and HORDE_ICON or ALLIANCE_ICON
         card.counts:SetText(
             "|T" .. factionIcon .. ":22:22:0:0|t "
-            .. tostring(factionQuestCount)
+            -- "2/6 quests" once at least one is done; just "6 quests" before that.
+            .. ((finishedCount > 0) and (finishedCount .. "/" .. factionQuestCount) or tostring(factionQuestCount))
             .. " " .. (factionQuestCount == 1 and L("QUEST") or L("QUESTS_LOWER"))
         )
         local art = DUNGEON_HOME_ART[dungeonName]
@@ -6018,7 +6077,7 @@ RefreshHomeDungeonCards = function()
             end
         end
 
-        local isHidden = ForeverDungeonJournalDB.hiddenDungeons[dungeonName] == true
+        local isHidden = FDJ.HiddenDungeons()[dungeonName] == true
             or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName)) or false
         if card.editOverlay then card.editOverlay:SetShown(homeEditMode) end
         if card.editBorder then card.editBorder:SetShown(homeEditMode) end
@@ -6716,7 +6775,21 @@ RefreshAll = function()
     ApplyTheme()
 
     frame.dungeonTitle:SetText(dungeon.recipeSearchTitle or DungeonName(selectedDungeon))
-    if dungeon.recipeSearch then
+    -- "Matching loot" has no level line: larger title, centred in the header box.
+    do
+        local t = frame.dungeonTitle
+        if not t.fdjFont then t.fdjFont = { t:GetFont() } end
+        local font, size, flags = t.fdjFont[1], t.fdjFont[2], t.fdjFont[3]
+        t:ClearAllPoints()
+        if dungeon.lootFilterPage and font then
+            t:SetFont(font, (size or 20) + 6, flags)
+            t:SetPoint("LEFT", t:GetParent(), "LEFT", 18, 0)
+        else
+            if font then t:SetFont(font, size, flags) end
+            t:SetPoint("TOPLEFT", 15, -10)
+        end
+    end
+    if dungeon.recipeSearch or not dungeon.level or dungeon.level == "" then
         frame.dungeonMeta:SetText("")
     else
         frame.dungeonMeta:SetText(FDJ.HomeLevelText(dungeon.level))
@@ -9533,7 +9606,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.4"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.6.5"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

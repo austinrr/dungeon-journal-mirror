@@ -47,7 +47,7 @@ FDJ.DB = {
         rewardChoice = true,
         name = "The Restless Dead",
         faction = "Alliance",
-        pickup = "Afadra Dunwall, Ironforge",
+        pickup = "Afadra Dunwall, top of Old Ironforge, outside the dungeon",
         level = 15,
         requires = 10,
         turnin = "Afadra Dunwall, Ironforge",
@@ -807,7 +807,24 @@ DB["Blackfathom Deeps"] = {
         requires = 10,
         turnin = "Gerrig Bonegrip, Forlorn Cavern, Ironforge",
     }, {
-        note = "Follows The Corruption Abroad.",
+        note = "Introductory step leading to Researching the Corruption.",
+        warning = "OPTIONAL, not required",
+        objective = "Travel to Gershala Nightwhisper in Auberdine, Darkshore.",
+        rewardSummary = "13s  •  Darnassus +75",
+        id = 3765,
+        liveXPFallback = 1450,
+        rewardItems = {
+        },
+        name = "The Corruption Abroad",
+        hideFromMainList = true,
+        faction = "Alliance",
+        pickup = "Argos Nightwhisper, The Park, Stormwind",
+        level = 24,
+        requires = 18,
+        turnin = "Gershala Nightwhisper, Auberdine, Darkshore",
+    }, {
+        note = "Optional introductory quest:",
+        noteQuestLink = { id = 3765, name = "The Corruption Abroad" },
         objective = "Collect 8 Corrupted Brain Stems from creatures in Blackfathom Deeps.",
         rewardSummary = "35s  •  Darnassus +150",
         id = 1275,
@@ -1817,7 +1834,6 @@ FDJ.DB["Excavation Site: Wetlands"] = {
 }
 
 FDJ.DB["City of Dalaran"] = {
-    fullItemsTBD = true, -- some loot known, table not complete yet
     level = "28-33",
     location = "Alterac Mountains",
     description = "The restored mage city of Dalaran has become a new five-player dungeon in WoW Forever. Enter through the sewers and the Underbelly, then fight through the streets to the Violet Citadel.",
@@ -2041,6 +2057,15 @@ FDJ.DB["City of Dalaran"] = {
                 {273049, "Archmagister's Faceted Pendant", "Neck", 3},
                 {273051, "Violet Sorcerer's Mantle", "Shoulder, Cloth", 3}, -- Violet Sorcerer's Vestments set piece
                 {273103, "Blueprint: Arcane Salvager", "Blueprint", 2},
+            },
+        },
+        {
+            name = "Trash Drops",
+            trash = true,
+            loot = {
+                {286987, "Violet Sorcerer's Sandals", "Feet, Cloth", 3, "Dark Caster / Kirin Tor Necromancer"},
+                {286989, "Violet Sorcerer's Wraps", "Hands, Cloth", 3, "Kirin Tor Necromancer / Fallen Mage"},
+                {286988, "Violet Sorcerer's Leggings", "Legs, Cloth", 3, "Fallen Mage / Dark Caster"},
             },
         },
     },

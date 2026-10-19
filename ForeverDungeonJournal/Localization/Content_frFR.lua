@@ -64,6 +64,7 @@ FDJ.ContentLocales.frFR.quests = {
     [96394] = {
         ["name"] = "Les morts sans repos",
         ["objective"] = "Tuez 15 apparitions enragées et 10 âmes tourmentées, puis apaisez l’esprit d’Anvilmar.",
+        ["pickup"] = "Afadra Dunwall, en haut de la Vieille Forgefer, à l’extérieur du donjon",
     },
     [96393] = {
         ["name"] = "Incursion dans l’ancienne Forgefer",
@@ -416,7 +417,7 @@ FDJ.ContentLocales.frFR.quests = {
     [3765] = {
         ["name"] = "La corruption au loin",
         ["objective"] = "Rendez-vous auprès de Gershala Murmenuit à Auberdine, sur Sombrivage.",
-        ["description"] = "Quête d’introduction de l’Alliance à terminer avant « Recherches sur la corruption ».",
+        ["note"] = "Étape d’introduction menant à « Recherches sur la corruption ».",
     },
 }
 

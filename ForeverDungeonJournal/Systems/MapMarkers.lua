@@ -1233,6 +1233,13 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
 
     if DEFAULT_CHAT_FRAME then
         local mapText = FreeText(target.label or fallbackText or "recorded location")
+        -- Short dash in chat ("Alba Fairmoon - Sentinel Hill inn"), like the game's own lines.
+        mapText = tostring(mapText):gsub("%s*\226\128\148%s*", " - "):gsub("%s*\226\128\147%s*", " - ")
+        -- Labels without a place ("Thrall") get the zone name: "Thrall - Orgrimmar".
+        if not mapText:find(" - ", 1, true) and target.mapID and C_Map and C_Map.GetMapInfo then
+            local ok, info = pcall(C_Map.GetMapInfo, target.mapID)
+            if ok and info and info.name and info.name ~= "" then mapText = mapText .. " - " .. info.name end
+        end
         if opened then
             DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKED", mapText))
         else

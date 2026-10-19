@@ -1,4 +1,4 @@
-DungeonJournal 1.6.4
+DungeonJournal 1.6.5
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,35 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.6.5
+- New options panel in the style of the game's own Options window: Options
+  and Discord tabs, General / Dungeon list pages, row highlights, and dragging the
+  bottom-right corner scales the whole panel bigger or smaller. The Discord
+  tab has the invite link (click it, then Ctrl+C).
+- Options > AddOns > Dungeon Journal shows a page with an "Open Options"
+  button.
+- Home page: dungeon covers show your progress (for example 2/6 quests) once
+  at least one quest there is done.
+- Hiding dungeons is now per character instead of account-wide.
+- Loot Filter: new MP5 stat (hover it for "Mana per 5 seconds"), a
+  Resistances drop-down (only items with every ticked school), and a spell
+  school drop-down next to Spell Damage (Fire, Frost, Nature, Shadow, Arcane,
+  Holy). New icon on Show results.
+- Matching loot page: no Quests tab and no "LV" line.
+- City of Dalaran: three Violet Sorcerer's trash drops with the mobs that
+  drop them; "Full Items Data TBD" removed.
+- Quest pages: Show Quest Chain always comes before Show on Map. Researching
+  the Corruption treats The Corruption Abroad as an optional breadcrumb.
+- Show on Map added for more quest givers (Thom Filch, Afadra Dunwall,
+  Earthseer Farsen, Varimathras for RFK); chat messages name the zone, e.g.
+  "Thrall - Orgrimmar". The Corruption Abroad shows its reward.
+- Maps: Viktor the Vile and Earthcaller Halmgar placed, Baron Aquanis has a
+  portrait, and Razorfen Kraul shows how to reach Roogug (hover the ladders).
+- Report button glows on hover.
+- Fixed: the "Hide Dungeon Map" tick could not be unticked and hid the map
+  for good; opening the options panel the first time after a reload blocked
+  movement keys.
 
 CHANGES IN 1.6.4
 - Looking For Group button: an eye next to Show Location on every dungeon

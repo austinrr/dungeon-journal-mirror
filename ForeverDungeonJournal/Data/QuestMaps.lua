@@ -5,6 +5,11 @@ FDJ.QUEST_START_MAPS = {
     -- Excavation Site: Wetlands prerequisite quest giver.
     [95663] = { mapID = 1417, x = 0.740, y = 0.360, label = "Zaruk — Hammerfall", targetName = "Zaruk", detail = "Start Dragonmaw Rumors here" },
 
+    -- Hall of Thanes quest givers.
+    [96394] = { mapID = 1455, x = 0.333, y = 0.481, label = "Afadra Dunwall — top of Old Ironforge", targetName = "Afadra Dunwall", detail = "Top of Old Ironforge, outside the dungeon" },
+    [96393] = { mapID = 1426, x = 0.647, y = 0.584, label = "Earthseer Farsen — Gol'Bolar Quarry, Dun Morogh", targetName = "Earthseer Farsen" },
+    [96403] = { mapID = 1455, x = 0.435, y = 0.520, label = "Thom Filch — Hall of Thanes portal, Ironforge", targetName = "Thom Filch" },
+
     -- Ruins of Lordaeron quest givers / entrance.
     [92401] = { mapID = 1421, x = 0.4450, y = 0.4300, label = "Tabitha Heartweaver — The Sepulcher" },
     [92421] = { mapID = 1458, x = 0.5790, y = 0.8950, label = "Morbin Lightbane — Royal Quarter" },
@@ -23,6 +28,7 @@ FDJ.QUEST_START_MAPS = {
     [5728] = { mapID = 1454, x = 0.3200, y = 0.3780, label = "Thrall" },
     [5761] = { mapID = 1454, x = 0.4960, y = 0.5060, label = "Neeru Fireblade" },
     [5725] = { mapID = 1458, x = 0.5620, y = 0.9260, label = "Varimathras" },
+    [6521] = { mapID = 1458, x = 0.5620, y = 0.9260, label = "Varimathras — Royal Quarter, Undercity" },
 
     -- The Stockade quest givers.
     [386] = { mapID = 1433, x = 0.212, y = 0.466, label = "Guard Berton — Lakeshire" },
@@ -35,6 +41,7 @@ FDJ.QUEST_START_MAPS = {
     -- Blackfathom Deeps quest givers (Classic map positions used by Forever).
     [971]  = { mapID = 1455, x = 0.5083, y = 0.0561, label = "Gerrig Bonegrip" },
     [1275] = { mapID = 1439, x = 0.3830, y = 0.4310, label = "Gershala Nightwhisper" },
+    [3765] = { mapID = 1453, x = 0.363, y = 0.674, label = "Argos Nightwhisper — The Park", targetName = "Argos Nightwhisper" },
     [1198] = { mapID = 1457, x = 0.5500, y = 0.2400, label = "Dawnwatcher Shaedlass" },
     [1199] = { mapID = 1457, x = 0.5500, y = 0.2400, label = "Argent Guard Manados" },
     [6563] = { mapID = 1440, x = 0.1200, y = 0.3400, label = "Je'neu Sancrea" },

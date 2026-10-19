@@ -266,4 +266,8 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Defias Strip Miner"] = 2438, -- npc 4416
     ["Defias Taskmaster"] = 2440, -- npc 4417
     ["Defias Wizard"] = 2447, -- npc 4418
+    -- City of Dalaran
+    ["Dark Caster"] = 7555, -- npc 255072
+    ["Fallen Mage"] = 9783, -- npc 255066
+    ["Kirin Tor Necromancer"] = 145809, -- npc 269134
 }
