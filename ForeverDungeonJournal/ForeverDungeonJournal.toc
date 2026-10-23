@@ -1,8 +1,8 @@
-## Interface: 16001
-## Title: DungeonJournal
-## Notes: Boss, loot and quest journal for WoW Classic dungeons.
+## Interface: 20506
+## Title: Dungeon Journal - TBC Anniversary
+## Notes: Dungeon boss, loot, quest and map journal for Burning Crusade Anniversary (Vanilla dungeons, TBC dungeons, all 9 Burning Crusade raids, and all 7 original Vanilla raids).
 ## Author: Exehn
-## Version: 1.6.5
+## Version: 1.6.14.53
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## AddonCompartmentFunc: ForeverDungeonJournal_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ForeverDungeonJournal_OnAddonCompartmentEnter
@@ -31,8 +31,8 @@ Localization\Content_koKR.lua
 Localization\Content_zhCN.lua
 Localization\Content_zhTW.lua
 Localization\Content_NewDungeons.lua
+Localization\Content_OfficialNames.lua
 Data\Dungeons.lua
-Data\SharedLoot.lua
 Data\DungeonEntrances.lua
 Data\DungeonRoutes.lua
 Data\Bosses.lua
@@ -41,15 +41,44 @@ Data\QuestChains.lua
 Data\QuestRewards.lua
 Data\QuestShareability.lua
 Data\QuestUpdates.lua
+Data\TBCAnniversary.lua
+Data\ClassicEraQuestShareability.lua
+Data\TBCVanillaDungeons.lua
+Data\TBCAnniversaryPolish.lua
+Data\TBCCompendiumQuests.lua
+Data\TBCQuestPolish.lua
 UI\ThemeData.lua
+Data\TBCOutlandDungeons.lua
+Data\TBCBossLevels.lua
+Data\TBCOutlandQuestCorrections.lua
+Data\TBCHeroic.lua
+Data\TBCJewelcrafting.lua
+Data\TBCGemFinder.lua
+Data\TBCLootAudit.lua
+Data\TBCRaids.lua
+Data\TBCRaidLoot.lua
+Data\TBCRaidPolish.lua
+Data\TBCRaidQuests.lua
+Data\VanillaRaids.lua
+Data\VanillaRaidLoot.lua
+Data\TBCQuestClassification.lua
+Data\TBCQuestListConsolidation.lua
+Data\TBCDungeonQuestMaps.lua
 UI\ItemComparisonData.lua
 Systems\MapMarkers.lua
-Systems\VersionCheck.lua
 Systems\LootFilter.lua
 Systems\Favourites.lua
+Systems\GemFinder.lua
 Systems\BugReport.lua
 Systems\PortraitPool.lua
+Systems\SeasonalQuests.lua
+Systems\QuestProfessions.lua
 Core\Journal.lua
+Systems\TBCDungeonMaps.lua
+Systems\TBCRaidMaps.lua
+Systems\VanillaRaidMaps.lua
+Systems\ClassicDungeonMaps.lua
+Systems\ForeverBetaSharedArt.lua
 Systems\ScarletWing.lua
 Systems\ItemSource.lua
 Systems\SettingsPanel.lua
@@ -59,7 +88,7 @@ Systems\MapNote.lua
 Systems\TooltipBacking.lua
 Systems\DoneTickTooltip.lua
 Systems\HomeBottomBand.lua
-Systems\LFGButton.lua
+Systems\TBCAnniversaryLFG.lua
 Systems\QuestText.lua
 Systems\MapBossSize.lua
 Systems\WorldMapOverlay.lua

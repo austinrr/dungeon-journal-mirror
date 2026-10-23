@@ -380,9 +380,9 @@ FDJ.ContentLocales.ptBR.quests = {
     },
     [92749] = {
         ["name"] = "Um plano com dinamite",
-        ["objective"] = "Obtenha 10 Dinamites Brutas e volte para Sprite Jumpsprocket em Ventobravo.",
-        ["description"] = "A Dinamite Bruta pode ser fabricada, negociada ou comprada na Casa de Leilões.",
-        ["note"] = "A Dinamite Bruta pode ser fabricada, negociada ou comprada na Casa de Leilões.",
+        ["objective"] = "Obtenha 10 Dinamites Grosseiras e volte para Sprite Jumpsprocket em Ventobravo.",
+        ["description"] = "A Dinamite Grosseira pode ser fabricada, negociada ou comprada na Casa de Leilões.",
+        ["note"] = "A Dinamite Grosseira pode ser fabricada, negociada ou comprada na Casa de Leilões.",
     },
     [92750] = {
         ["name"] = "Detonação à distância",

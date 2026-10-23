@@ -380,9 +380,9 @@ FDJ.ContentLocales.frFR.quests = {
     },
     [92749] = {
         ["name"] = "Un plan à la dynamite",
-        ["objective"] = "Récupérez 10 dynamites grossières puis retournez voir Sprite Jumpsprocket à Hurlevent.",
-        ["description"] = "La dynamite grossière peut être fabriquée, échangée ou achetée à l’hôtel des ventes.",
-        ["note"] = "La dynamite grossière peut être fabriquée, échangée ou achetée à l’hôtel des ventes.",
+        ["objective"] = "Récupérez 10 dynamites basiques puis retournez voir Sprite Jumpsprocket à Hurlevent.",
+        ["description"] = "La dynamite basique peut être fabriquée, échangée ou achetée à l’hôtel des ventes.",
+        ["note"] = "La dynamite basique peut être fabriquée, échangée ou achetée à l’hôtel des ventes.",
     },
     [92750] = {
         ["name"] = "Détonation à distance",

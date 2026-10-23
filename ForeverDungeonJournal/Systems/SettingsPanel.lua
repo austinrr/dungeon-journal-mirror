@@ -63,7 +63,8 @@ local function AllQuestsDone(dungeon)
             or quest.faction == "Neutral" or quest.faction == faction
         local forClass = not quest.classOnly or Store().showAllClassQuests
             or (class and tostring(quest.classOnly):upper() == class)
-        if forFaction and forClass and not quest.hideFromMainList and quest.id then
+        local forProfession = not FDJ.IsQuestProfessionVisible or FDJ.IsQuestProfessionVisible(quest)
+        if forFaction and forClass and forProfession and not quest.hideFromMainList and quest.id then
             count = count + 1
             if not FDJ.IsQuestFinished(quest.id) then return false end
         end
@@ -164,6 +165,16 @@ local OPTIONS = {
         set = function(on)
             Store().showAllClassQuests = on or nil
             if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+        end,
+        refreshHome = true,
+    },
+    {
+        label = "OPT_SHOW_ALL_PROFESSION",
+        tip = "OPT_SHOW_ALL_PROFESSION_TIP",
+        get = function() return Store().showAllProfessionQuests == true end,
+        set = function(on)
+            Store().showAllProfessionQuests = on or nil
+            if FDJ.ScheduleQuestRefresh then FDJ.ScheduleQuestRefresh() end
         end,
         refreshHome = true,
     },

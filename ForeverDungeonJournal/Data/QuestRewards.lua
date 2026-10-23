@@ -28,7 +28,7 @@ FDJ.FOREVER_QUEST_XP_FALLBACK = {
     [92745] = 490,  -- The State of the Mines
     [92747] = 580,  -- Moonbrook Espionage
     -- 92748 has no XP reward in the current Forever data.
-    [92749] = 580,  -- A Dynamite Plan
+    [92749] = 575,  -- A Dynamite Plan
     -- 92750 and 92751 have no XP reward in the current Forever data.
     [92752] = 580,  -- Explosive Consultation (return to Alba)
     [92753] = 1350, -- Destruction in Deadmines (dungeon step)
@@ -190,6 +190,6 @@ FDJ.PREREQ_REWARD_MONEY_FALLBACK = {
     [92744] = 250,
     [92745] = 300,
     [92747] = 400,
-    [92749] = 400,
+    [92749] = 200,
     [92752] = 400,
 }

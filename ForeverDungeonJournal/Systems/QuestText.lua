@@ -54,15 +54,28 @@ end
 
 -- ------------------------------------------------------------- learning
 local function ScanLog()
-    if not (C_QuestLog and C_QuestLog.GetNumQuestLogEntries and C_QuestLog.GetInfo) then return end
     if type(GetQuestLogQuestText) ~= "function" then return end
-    local okN, n = pcall(C_QuestLog.GetNumQuestLogEntries)
-    if not okN or type(n) ~= "number" then return end
-    for i = 1, n do
-        local ok, info = pcall(C_QuestLog.GetInfo, i)
-        if ok and type(info) == "table" and not info.isHeader and type(info.questID) == "number" and info.questID > 0 then
-            local ok2, desc, obj = pcall(GetQuestLogQuestText, i)
-            if ok2 then Save(info.questID, obj, desc) end
+    -- Forever uses C_QuestLog; TBC Anniversary uses the traditional quest log
+    -- globals, with questID as the eighth return from GetQuestLogTitle.
+    if C_QuestLog and C_QuestLog.GetNumQuestLogEntries and C_QuestLog.GetInfo then
+        local okN, n = pcall(C_QuestLog.GetNumQuestLogEntries)
+        if not okN or type(n) ~= "number" then return end
+        for i = 1, n do
+            local ok, info = pcall(C_QuestLog.GetInfo, i)
+            if ok and type(info) == "table" and not info.isHeader and type(info.questID) == "number" and info.questID > 0 then
+                local ok2, desc, obj = pcall(GetQuestLogQuestText, i)
+                if ok2 then Save(info.questID, obj, desc) end
+            end
+        end
+    elseif type(GetNumQuestLogEntries) == "function" and type(GetQuestLogTitle) == "function" then
+        local okN, n = pcall(GetNumQuestLogEntries)
+        if not okN or type(n) ~= "number" then return end
+        for i = 1, n do
+            local ok, _, _, _, isHeader, _, _, _, questID = pcall(GetQuestLogTitle, i)
+            if ok and not isHeader and type(questID) == "number" and questID > 0 then
+                local okText, desc, obj = pcall(GetQuestLogQuestText, i)
+                if okText then Save(questID, obj, desc) end
+            end
         end
     end
 end
@@ -104,17 +117,31 @@ end
 FDJ.LearnedQuestText = Learned
 
 local function ProgressLines(questID)
-    if not (questID and C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetQuestObjectives) then return nil end
-    local okI, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
-    if not okI or type(index) ~= "number" or index <= 0 then return nil end
-    local ok, objectives = pcall(C_QuestLog.GetQuestObjectives, questID)
-    if not ok or type(objectives) ~= "table" or #objectives == 0 then return nil end
+    if not questID then return nil end
     local lines = {}
-    for _, o in ipairs(objectives) do
-        local text = type(o) == "table" and Str(o.text)
-        if text then
-            -- Finished objectives are muted, like the game's quest log.
-            lines[#lines + 1] = o.finished and ("|cff6e5c40" .. text .. "|r") or text
+    if C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetQuestObjectives then
+        local okI, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
+        if not okI or type(index) ~= "number" or index <= 0 then return nil end
+        local ok, objectives = pcall(C_QuestLog.GetQuestObjectives, questID)
+        if not ok or type(objectives) ~= "table" then return nil end
+        for _, o in ipairs(objectives) do
+            local text = type(o) == "table" and Str(o.text)
+            if text then
+                lines[#lines + 1] = o.finished and ("|cff6e5c40" .. text .. "|r") or text
+            end
+        end
+    elseif type(GetQuestLogIndexByID) == "function" and type(GetNumQuestLeaderBoards) == "function"
+        and type(GetQuestLogLeaderBoard) == "function" then
+        local okI, index = pcall(GetQuestLogIndexByID, questID)
+        if not okI or type(index) ~= "number" or index <= 0 then return nil end
+        local okN, n = pcall(GetNumQuestLeaderBoards, index)
+        if not okN or type(n) ~= "number" then return nil end
+        for i = 1, n do
+            local ok, text, _, finished = pcall(GetQuestLogLeaderBoard, i, index)
+            text = ok and Str(text) or nil
+            if text then
+                lines[#lines + 1] = finished and ("|cff6e5c40" .. text .. "|r") or text
+            end
         end
     end
     return #lines > 0 and table.concat(lines, "\n") or nil

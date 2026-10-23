@@ -77,6 +77,20 @@ local function BuildIndex()
                 end
             end
 
+            -- Trash-mob Jewelcrafting designs have their real source in the
+            -- recipe tab; no fictitious boss is added to the encounter list.
+            for _, recipeSource in ipairs(dungeon.fdjRecipeSources or {}) do
+                local item = recipeSource.item
+                if item then
+                    offer(item[1], {
+                        mode = "recipe",
+                        dungeonName = dungeonName,
+                        bossName = recipeSource.source,
+                        displayName = item[2],
+                    }, 2)
+                end
+            end
+
             for questIndex, quest in ipairs(dungeon.quests or {}) do
                 local items = {}
                 local function add(item)

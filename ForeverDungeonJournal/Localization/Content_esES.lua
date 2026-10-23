@@ -380,9 +380,9 @@ FDJ.ContentLocales.esES.quests = {
     },
     [92749] = {
         ["name"] = "Un plan con dinamita",
-        ["objective"] = "Consigue 10 dinamitas burdas y vuelve con Sprite Jumpsprocket en Ventormenta.",
-        ["description"] = "La dinamita burda puede fabricarse, comerciarse o comprarse en la casa de subastas.",
-        ["note"] = "La dinamita burda puede fabricarse, comerciarse o comprarse en la casa de subastas.",
+        ["objective"] = "Consigue 10 dinamitas bastas y vuelve con Sprite Jumpsprocket en Ventormenta.",
+        ["description"] = "La dinamita basta puede fabricarse, comerciarse o comprarse en la casa de subastas.",
+        ["note"] = "La dinamita basta puede fabricarse, comerciarse o comprarse en la casa de subastas.",
     },
     [92750] = {
         ["name"] = "Detonación a distancia",

@@ -94,7 +94,7 @@ FDJ.IsBlueprint = IsBlueprint
 -- blueprint (blueprints are always listed on boss pages, so always findable).
 function FDJ.SearchableBossLoot(boss)
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return {} end
-    if boss.recipeTab then return boss.loot end -- recipes are found on their tab
+    if boss.recipeTab or boss.raidSupplement then return boss.loot end -- all shared source records are searchable
     local kept = FDJ.FilterBossLoot(boss).loot or {}
     local seen, out = {}, {}
     for _, item in ipairs(kept) do seen[item] = true; out[#out + 1] = item end
@@ -114,7 +114,8 @@ local function IsRecipe(item)
     local slot = item[3]
     if type(slot) == "string" then
         local lowerSlot = slot:lower()
-        if lowerSlot:find("recipe", 1, true) or lowerSlot:find("blueprint", 1, true) then
+        if lowerSlot:find("recipe", 1, true) or lowerSlot:find("blueprint", 1, true)
+            or lowerSlot:find("design", 1, true) then
             return true
         end
     end
@@ -123,7 +124,8 @@ local function IsRecipe(item)
     if type(name) == "string" then
         local lowerName = name:lower()
         if lowerName:find("^pattern:") or lowerName:find("^plans:")
-            or lowerName:find("^recipe:") or lowerName:find("^blueprint:") then
+            or lowerName:find("^recipe:") or lowerName:find("^blueprint:")
+            or lowerName:find("^design:") then
             return true
         end
     end
@@ -368,16 +370,45 @@ end
 -- bosses drop recipes gets one extra entry at the end of its boss list that
 -- holds each recipe once, with the portraits of the bosses that drop it.
 FDJ.RECIPE_TAB_NAME = "Recipes & Patterns"
-do
-    for dungeonName, dungeon in pairs(FDJ.DB or {}) do
-        if type(dungeon) == "table" and type(dungeon.bosses) == "table" and not dungeon.fdjRecipeTabBuilt then
-            dungeon.fdjRecipeTabBuilt = true
-            local order, byID = {}, {}
+-- Rebuild when Normal/Heroic is switched: the two loot tables can differ.
+-- This also includes dungeon-specific designs dropped by non-boss enemies.
+function FDJ.RebuildRecipeTabs()
+    for _, dungeon in pairs(FDJ.DB or {}) do
+        if type(dungeon) == "table" and type(dungeon.bosses) == "table"
+            and not dungeon.recipeSearch and not dungeon.lootFilterPage then
+            local bosses = {}
             for _, boss in ipairs(dungeon.bosses) do
+                if not boss.recipeTab then
+                    boss.fdjHasRecipeTab = nil
+                    bosses[#bosses + 1] = boss
+                end
+            end
+            dungeon.bosses = bosses
+
+            local order, byID = {}, {}
+            local function AddRecipe(item, sourceName)
+                if not IsRecipe(item) or IsBlueprint(item) then return end
+                local id = tonumber(item[1])
+                if not id then return end
+                local entry = byID[id]
+                if entry then
+                    -- Each recipe appears once, even if several NPCs drop it.
+                    if not entry.fdjSourceNames[sourceName] then
+                        entry.fdjSourceNames[sourceName] = true
+                        entry[5] = entry[5] .. " / " .. sourceName
+                    end
+                else
+                    entry = { item[1], item[2], item[3], item[4], sourceName }
+                    entry.fdjSourceNames = { [sourceName] = true }
+                    byID[id] = entry
+                    order[#order + 1] = entry
+                end
+            end
+
+            for _, boss in ipairs(bosses) do
                 if not boss.trash and type(boss.loot) == "table" then
-                    -- Let the row portraits (shared with Trash Drops) draw this boss.
-                    -- " / " separates sources on a row, so a boss whose own name
-                    -- contains it ("Fel Steed / Shadow Charger") is listed with "&".
+                    -- Treat a boss's " / " as part of its name, not as two
+                    -- different NPCs for the recipe source portraits.
                     local sourceName = boss.name:gsub(" / ", " & ")
                     local displayID = boss.npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[boss.npcID]
                     if displayID and FDJ.TRASH_MOB_DISPLAY_IDS and not FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] then
@@ -386,24 +417,26 @@ do
                     for _, item in ipairs(boss.loot) do
                         if IsRecipe(item) and not IsBlueprint(item) then
                             boss.fdjHasRecipeTab = true
-                            local entry = byID[item[1]]
-                            if entry then
-                                entry[5] = entry[5] .. " / " .. sourceName
-                            else
-                                entry = { item[1], item[2], item[3], item[4], sourceName }
-                                byID[item[1]] = entry
-                                order[#order + 1] = entry
-                            end
+                            AddRecipe(item, sourceName)
                         end
                     end
                 end
             end
+            for _, source in ipairs(dungeon.fdjRecipeSources or {}) do
+                if type(source.item) == "table" and type(source.source) == "string" then
+                    AddRecipe(source.item, source.source)
+                end
+            end
             if #order > 0 then
-                dungeon.bosses[#dungeon.bosses + 1] = { name = FDJ.RECIPE_TAB_NAME, trash = true, recipeTab = true, loot = order }
+                bosses[#bosses + 1] = {
+                    name = FDJ.RECIPE_TAB_NAME, trash = true, recipeTab = true,
+                    loot = order,
+                }
             end
         end
     end
 end
+FDJ.RebuildRecipeTabs()
 
 function FDJ.FilterBossLoot(boss)
     FDJ.lootFilterHidden = 0
@@ -464,6 +497,7 @@ function FDJ.FilterBossLootForPage(boss)
     FDJ.lootRecipeCount = 0
     FDJ.lootRecipeSplit = nil
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
+    if boss.raidSupplement then return boss end -- grouped raid source tables must remain complete
     if boss.fdjDungeon then return boss end -- the Show page already holds matches only
     if boss.recipeTab then return boss end  -- the recipe tab always lists everything
     local db = Settings()
@@ -1217,6 +1251,7 @@ local function CollectResults()
     FDJ.lootFilterStrict = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
+        if FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName) then dungeon = nil end
         local dungeonAdded = false
         for bossIndex, boss in ipairs((dungeon and dungeon.bosses) or {}) do
             local shown = FDJ.FilterBossLoot(boss).loot or {}
@@ -1385,6 +1420,7 @@ local function BuildPage()
     FDJ.lootFilterStrict = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
+        if FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName) then dungeon = nil end
         for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
             local shown = FDJ.FilterBossLoot(boss).loot or {}
             if recipesOnly then
@@ -1548,11 +1584,14 @@ function FDJ.SetRowMobs(row, sourceText)
             end
         end
     end
+    local compactSourceIcons = row.GetHeight and row:GetHeight() < 34
+    local iconSize = compactSourceIcons and 22 or 34
+    local iconStep = iconSize + 4
     for i, name in ipairs(names) do
         local button = row.fdjMobButtons[i]
         if not button then
             button = CreateFrame("Button", nil, row)
-            button:SetSize(34, 34)
+            button:SetSize(iconSize, iconSize)
             button.portrait = button:CreateTexture(nil, "ARTWORK")
             button.portrait:SetAllPoints()
             button:SetScript("OnEnter", function(self)
@@ -1565,15 +1604,16 @@ function FDJ.SetRowMobs(row, sourceText)
             row.fdjMobButtons[i] = button
         end
         button.fdjMobName = name
+        button:SetSize(iconSize, iconSize)
         button:ClearAllPoints()
-        button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * 38, 0)
+        button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * iconStep, 0)
         pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, FDJ.TRASH_MOB_DISPLAY_IDS[name])
         button:Show()
     end
     for i = #names + 1, #row.fdjMobButtons do row.fdjMobButtons[i]:Hide() end
     -- Keep the item name clear of the portraits.
     if row.name and row.name.SetPoint then
-        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - #names * 38, 0)
+        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - #names * iconStep, 0)
     end
     return #names > 0
 end

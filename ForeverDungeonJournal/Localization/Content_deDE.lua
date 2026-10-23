@@ -383,9 +383,9 @@ FDJ.ContentLocales.deDE.quests = {
     },
     [92749] = {
         ["name"] = "Ein Dynamitplan",
-        ["objective"] = "Beschafft 10 grobes Dynamit und kehrt anschließend zu Sprite Jumpsprocket in Sturmwind zurück.",
-        ["description"] = "Grobes Dynamit kann hergestellt, gehandelt oder im Auktionshaus gekauft werden.",
-        ["note"] = "Grobes Dynamit kann hergestellt, gehandelt oder im Auktionshaus gekauft werden.",
+        ["objective"] = "Beschafft 10 raues Dynamit und kehrt anschließend zu Sprite Jumpsprocket in Sturmwind zurück.",
+        ["description"] = "Raues Dynamit kann hergestellt, gehandelt oder im Auktionshaus gekauft werden.",
+        ["note"] = "Raues Dynamit kann hergestellt, gehandelt oder im Auktionshaus gekauft werden.",
     },
     [92750] = {
         ["name"] = "Fernzündung",
