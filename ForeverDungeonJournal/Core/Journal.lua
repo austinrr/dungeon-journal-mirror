@@ -14,8 +14,42 @@ local function DungeonField(name, field, fallback)
     return FDJ.LocalizeDungeonField and FDJ.LocalizeDungeonField(name, field, fallback) or fallback
 end
 
+-- IDs belong to lookup data and hyperlinks, not the player's quest prose.
+function FDJ.CleanQuestDisplayText(text)
+    if type(text) ~= "string" then return text end
+    text = text:gsub("%s*%(%s*#%d+%s*%)", "")
+    text = text:gsub("%s*#%d+", "")
+    return text
+end
+
+function FDJ.GetQuestPrerequisiteSteps(questID)
+    local raw = FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[questID]
+    if type(raw) ~= "table" then return nil end
+    local steps = {}
+    for _, step in ipairs(raw) do
+        if step.itemStep or step.id ~= questID then
+            steps[#steps + 1] = step
+        end
+    end
+    return #steps > 0 and steps or nil
+end
+
+-- Required materials use the same real item buttons as quest rewards, with
+-- quantity overlays. The starter's own card already shows that item once.
+function FDJ.GetQuestRequiredItems(quest)
+    local items = {}
+    for _, item in ipairs(quest.requiredItems or {}) do
+        if type(item) == "table" and type(item[1]) == "number" and item[1] > 0
+            and not (quest.startItem and quest.startItem[1] == item[1]) then
+            items[#items + 1] = item
+        end
+    end
+    return items
+end
+
 local function QuestField(questID, field, fallback)
-    return FDJ.LocalizeQuestField and FDJ.LocalizeQuestField(questID, field, fallback) or fallback
+    local text = FDJ.LocalizeQuestField and FDJ.LocalizeQuestField(questID, field, fallback) or fallback
+    return FDJ.CleanQuestDisplayText(text)
 end
 
 local function BossName(name)
@@ -27,7 +61,8 @@ local function ItemSlot(text)
 end
 
 local function FreeText(text)
-    return FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(text) or text
+    local localized = FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(text) or text
+    return FDJ.CleanQuestDisplayText(localized)
 end
 
 -- Loot rows whose type is only "Item" (raid / heroic tables): ask the game what
@@ -664,7 +699,7 @@ end
 
 -- Quest list rows: a small dungeon icon after "Available from Level X" for
 -- quests that are picked up inside the dungeon (same icon as the quest page).
-FDJ.SetRowDungeonIcon = function(button, show, offsetX, onNameLine)
+FDJ.SetRowDungeonIcon = function(button, show, offsetX, onNameLine, titleRightInset)
     local icon = button.dungeonStartIcon
     if not show then
         if icon then icon:Hide() end
@@ -693,12 +728,29 @@ FDJ.SetRowDungeonIcon = function(button, show, offsetX, onNameLine)
     end
     icon:ClearAllPoints()
     if onNameLine and button.chainToggle then
-        -- Stacked directly ABOVE the chain icon (same column, title line),
-        -- exactly like the Forever journal.
-        local _, nameSize = button.name:GetFont()
-        local _, metaSize = button.meta:GetFont()
-        local lift = ((nameSize or 12) + (metaSize or 10)) / 2 + 5
-        icon:SetPoint("CENTER", button.chainToggle, "CENTER", 0, lift)
+        local titleWidth = math.min(button.name:GetStringWidth() or 0, button.name:GetWidth() or 182)
+        local stackedLeft = offsetX + (button.chainToggle:GetWidth() or 16) / 2 - 13
+        local rightLimit = (button:GetWidth() or 296) - 42 - (titleRightInset or 55)
+        local stackedTitleWidth = stackedLeft - 4
+        -- Prefer a shared portal/chain column. Wrap the title to the LEFT of
+        -- that column before deciding whether the portal needs to move.
+        local canStack = stackedTitleWidth >= 84 and stackedLeft + 26 <= rightLimit
+        if canStack then
+            if titleWidth + 4 > stackedLeft then
+                button.name:SetWidth(math.min(182, stackedTitleWidth))
+            end
+            local _, nameSize = button.name:GetFont()
+            local _, metaSize = button.meta:GetFont()
+            local lift = ((nameSize or 12) + (metaSize or 10)) / 2 + 5
+            icon:SetPoint("CENTER", button.chainToggle, "CENTER", 0, lift)
+        else
+            -- Very narrow columns or extra status/class badges can prevent
+            -- stacking. Only then use the space directly after the title.
+            local available = math.max(50, rightLimit - 6 - 26)
+            button.name:SetWidth(math.min(182, available))
+            titleWidth = math.min(button.name:GetStringWidth() or 0, button.name:GetWidth())
+            icon:SetPoint("LEFT", button.name, "LEFT", titleWidth + 6, 0)
+        end
     else
         icon:SetPoint("LEFT", button.meta, "LEFT", offsetX, 0)
     end
@@ -1478,7 +1530,7 @@ local function QuestNeedsSameStepShareNote(questID)
     if type(questID) ~= "number" then return false end
 
     -- The dungeon/final quest itself is a gated chain step.
-    if QUEST_PREREQ_CHAINS[questID] ~= nil then
+    if FDJ.GetQuestPrerequisiteSteps(questID) ~= nil then
         return true
     end
 
@@ -1548,12 +1600,7 @@ end
 local expandedQuestChains = {}
 
 local function GetQuestPrereqChain(quest)
-    if not quest or not quest.id then return nil end
-    local chain = QUEST_PREREQ_CHAINS[quest.id]
-    if chain and #chain > 0 then
-        return chain
-    end
-    return nil
+    return quest and FDJ.GetQuestPrerequisiteSteps(quest.id) or nil
 end
 
 local function GetQuestClassRestriction(quest)
@@ -1862,7 +1909,9 @@ local function StartNextPortraitResolve()
     if not model then
         model = CreateFrame("PlayerModel", nil, UIParent)
         model:SetSize(1, 1)
-        model:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        -- Keep even the fallback model outside the viewport: some clients
+        -- briefly paint model surfaces despite an alpha of zero.
+        model:SetPoint("TOPLEFT", UIParent, "TOPRIGHT", 400, 0)
         model:SetAlpha(0)
         portraitModels[npcID] = model
     end
@@ -2117,7 +2166,8 @@ end
 -- queued once, resolved one by one and saved, then visible panels refresh.
 local prewarmTexture
 FDJ.PrewarmBossPortraits = function()
-    if not frame then return end
+    -- Anniversary portraits load only for the page the player is viewing.
+    if not frame or FDJ.IS_TBC_ANNIVERSARY then return end
     if not prewarmTexture then
         prewarmTexture = frame:CreateTexture(nil, "BACKGROUND")
         prewarmTexture:SetSize(1, 1)
@@ -2633,6 +2683,9 @@ local function ShowItemTooltip(row)
         itemTooltip:AddLine(" ")
         itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
     end
+    if FDJ.IsTierToken and FDJ.IsTierToken(row.item[1]) then
+        itemTooltip:AddLine("Left-click: Choose class / spec rewards", 0.3, 1, 0.3, true)
+    end
     itemTooltip:Show()
     if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
     PositionPrimaryItemTooltip(row)
@@ -2678,6 +2731,15 @@ local function ShowItemTooltip(row)
 
     -- Handles Shift already being held when the mouse enters the item.
     UpdateItemComparison(row)
+end
+
+-- Share the journal's tooltip/comparison behavior with token reward buttons.
+FDJ.ShowJournalItemTooltip = ShowItemTooltip
+FDJ.UpdateJournalItemComparison = UpdateItemComparison
+FDJ.HideJournalItemTooltip = function()
+    if itemTooltip then itemTooltip:Hide() end
+    FDJ.RestoreJournalTooltipScale()
+    HideComparisonTooltips()
 end
 
 -- ============================================================
@@ -2809,6 +2871,12 @@ local function MakeLootRow(parent)
             and DressUpItemLink
         then
             DressUpItemLink(link)
+            return
+        end
+        if button == "LeftButton" and FDJ.ShowTierTokenChooser then
+            if FDJ.ShowTierTokenChooser(self, self.item) then
+                FDJ.HideJournalItemTooltip()
+            end
         end
     end)
 
@@ -3174,6 +3242,12 @@ local function MakeQuestRewardButton(parent)
         end
         if link and IsModifiedClick and IsModifiedClick("DRESSUP") and DressUpItemLink then
             DressUpItemLink(link)
+            return
+        end
+        if mouseButton == "LeftButton" and FDJ.ShowTierTokenChooser then
+            if FDJ.ShowTierTokenChooser(self, self.item) then
+                FDJ.HideJournalItemTooltip()
+            end
         end
     end)
 
@@ -3469,6 +3543,8 @@ FDJ.AnchorQuestRow = function(button, displayIndex, indent)
     end
     button.fdjIndent = indent
     button:SetWidth(296 - indent)
+    -- Quest rows are recycled; undo a previous title's reserved portal space.
+    if button.name then button.name:SetWidth(182) end
 end
 
 -- Collapsible header for a quest group (Karazhan's four Violet Eye rings).
@@ -3565,10 +3641,6 @@ RefreshQuestList = function()
             button.questIndex = questIndex
             button.name:SetText(QuestField(quest.id, "name", quest.name))
             button.meta:SetText(quest.requires and L("AVAILABLE_FROM_LEVEL", quest.requires) or (quest.requiredSkill or "Quest requirements vary"))
-            local titleHeight = math.max(14, button.name:GetStringHeight() or 14)
-            local metaHeight = math.max(12, button.meta:GetStringHeight() or 12)
-            local baseRowHeight = math.max(48, 9 + titleHeight + 5 + metaHeight + 10)
-            local rowHeight = baseRowHeight
 
             button.questID = quest.id
             button.fdjQuestName = quest.name
@@ -3578,17 +3650,27 @@ RefreshQuestList = function()
 
             local chainExpanded = chain and expandedQuestChains[quest.id] == true
 
-            -- Chain control after "Available from Level X". The in-dungeon portal
-            -- sits there too, or - when the quest also has a chain - right after
-            -- the quest title (Forever layout).
+            -- Prefer the portal above the chain; wrap the title beside that
+            -- shared column before falling back to a title-side portal.
             local beginsInside = FDJ.QuestBeginsInDungeon(quest)
             local metaWidth = button.meta:GetStringWidth() or 0
-            FDJ.SetRowDungeonIcon(button, beginsInside, metaWidth + 6, chain ~= nil)
             if button.chainToggle then
                 button.chainToggle:SetShown(chain ~= nil)
                 button.chainToggle:ClearAllPoints()
                 button.chainToggle:SetPoint("LEFT", button.meta, "LEFT", metaWidth + 6, 0)
             end
+            local both = quest.faction == "Both" or quest.faction == "Neutral"
+            local _, _, _, _, questClassToken = GetQuestClassRestriction(quest)
+            local professionIcon = FDJ.QuestProfessionIcon and FDJ.QuestProfessionIcon(quest)
+            local titleRightInset = both and ((questClassToken or professionIcon) and 96 or 74)
+                or ((questClassToken or professionIcon) and 74 or 55)
+            if inLog and not complete then titleRightInset = math.max(titleRightInset, 103) end
+            FDJ.SetRowDungeonIcon(button, beginsInside, metaWidth + 6, chain ~= nil, titleRightInset)
+            -- Measure after reserving icon space: long titles may now wrap.
+            local titleHeight = math.max(14, button.name:GetStringHeight() or 14)
+            local metaHeight = math.max(12, button.meta:GetStringHeight() or 12)
+            local baseRowHeight = math.max(48, 9 + titleHeight + 5 + metaHeight + 10)
+            local rowHeight = baseRowHeight
 
             if chain and chainExpanded and button.chainPanel then
                 local lineHeight = 18
@@ -3668,7 +3750,7 @@ RefreshQuestList = function()
                     end
 
                     local prefix = tostring(step.num or chainIndex) .. ". "
-                    if step.id and (IsQuestFinished(step.id) or (step.alt and IsQuestFinished(step.alt))) then
+                    if FDJ.IsQuestChainStepComplete(step, IsQuestFinished) then
                         if row.statusIcon then
                             row.statusIcon:SetTexture("Interface\\RaidFrame\\ReadyCheck-Ready")
                             row.statusIcon:SetTexCoord(0, 1, 0, 1)
@@ -3680,7 +3762,7 @@ RefreshQuestList = function()
                     else
                         row.text:SetTextColor(0.78, 0.74, 0.66)
                     end
-                    row.text:SetText(prefix .. QuestField(step.id, "name", step.name))
+                    row.text:SetText(tostring(chainIndex) .. ". " .. QuestField(step.id, "name", step.name))
 
                     -- Put the prerequisite tick literally beside its title.
                     -- Example: "1. Underground Map  ✓"
@@ -3709,10 +3791,7 @@ RefreshQuestList = function()
             button:SetHeight(rowHeight)
             contentHeight = contentHeight + rowHeight + 3
 
-            local both = quest.faction == "Both" or quest.faction == "Neutral"
             local iconTopY = (inLog and not complete) and -27 or -8
-            local _, _, _, _, questClassToken = GetQuestClassRestriction(quest)
-            local professionIcon = FDJ.QuestProfessionIcon and FDJ.QuestProfessionIcon(quest)
             button.allianceIcon:SetShown(both or quest.faction == "Alliance")
             button.hordeIcon:SetShown(both or quest.faction == "Horde")
 
@@ -3883,7 +3962,7 @@ local function GetPrerequisiteRewardMoney(questID)
 end
 
 local function SelectPrerequisiteStepByOffset(offset)
-    local chain = selectedPrereqParentQuestID and QUEST_PREREQ_CHAINS[selectedPrereqParentQuestID]
+    local chain = selectedPrereqParentQuestID and FDJ.GetQuestPrerequisiteSteps(selectedPrereqParentQuestID)
     if not chain or not selectedPrereqStep then return end
     local currentIndex
     for i, chainStep in ipairs(chain) do
@@ -3903,7 +3982,7 @@ end
 
 local function UpdatePrerequisiteNavButtons()
     if not frame or not frame.questPrevStepButton or not frame.questNextStepButton then return end
-    local chain = selectedPrereqParentQuestID and QUEST_PREREQ_CHAINS[selectedPrereqParentQuestID]
+    local chain = selectedPrereqParentQuestID and FDJ.GetQuestPrerequisiteSteps(selectedPrereqParentQuestID)
     if not chain or not selectedPrereqStep then
         frame.questPrevStepButton:Hide()
         frame.questNextStepButton:Hide()
@@ -3998,9 +4077,11 @@ FDJ.HideStepItemButtons = function()
     if frame.questWarningText then frame.questWarningText:Hide() end
 end
 
-FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
+FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width, columns)
     frame.questStepItemButtons = frame.questStepItemButtons or {}
     local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
+    columns = columns == 2 and 2 or 1
+    local cellWidth = math.floor((width - (columns - 1) * 8) / columns)
     for i, item in ipairs(items) do
         local index = startIndex + i
         local button = frame.questStepItemButtons[index]
@@ -4010,9 +4091,11 @@ FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
         end
         button.item = item
         if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(button, item[1]) end
-        button.fdjSourceText = item[4] and FreeText(item[4]) or nil
-        button:SetSize(width, 42)
+        button.fdjSourceText = type(item[4]) == "string" and FreeText(item[4]) or nil
+        button:SetSize(cellWidth, 42)
         button.icon:SetTexture(ItemIcon(item[1]))
+        local count = item.count or (type(item[4]) == "number" and item[4]) or 1
+        if button.count then button.count:SetText(count > 1 and tostring(count) or "") end
         if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
             pcall(C_Item.RequestLoadItemDataByID, item[1])
         end
@@ -4023,11 +4106,11 @@ FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
         button:SetBackdropColor(unpack(theme.lootRow))
         button:SetBackdropBorderColor(unpack(theme.border))
         button:ClearAllPoints()
-        button:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+        local col, row = (i - 1) % columns, math.floor((i - 1) / columns)
+        button:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", col * (cellWidth + 8), -(cursorY + row * 46))
         button:Show()
-        cursorY = cursorY + 46
     end
-    return cursorY
+    return cursorY + math.ceil(#items / columns) * 46
 end
 
 local function RefreshPrerequisiteQuestDetail(step)
@@ -4242,33 +4325,22 @@ local function RefreshPrerequisiteQuestDetail(step)
     frame.questDetailText:Show()
     cursorY = cursorY + (frame.questDetailText:GetStringHeight() or 40) + 14
 
-    local stepRequired = details.requiredItems
-    -- Required-item cards are only useful when we can tell the player where the
-    -- item comes from. Bare item icons duplicate the quest objective and waste
-    -- a large amount of vertical space.
-    if stepRequired and #stepRequired > 0 and frame.questRequiredItemsHeader then
-        local usefulRequired = {}
-        for _, requiredItem in ipairs(stepRequired) do
-            if type(requiredItem[4]) == "string" and requiredItem[4] ~= "" then
-                usefulRequired[#usefulRequired + 1] = requiredItem
-            end
-        end
-        if #usefulRequired > 0 then
-            frame.questRequiredItemsHeader:ClearAllPoints()
-            frame.questRequiredItemsHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
-            frame.questRequiredItemsHeader:Show()
-            cursorY = cursorY + (frame.questRequiredItemsHeader:GetStringHeight() or 18) + 4
-            cursorY = FDJ.PlaceStepItemButtons(usefulRequired, 0, cursorY, math.min(300, detailWidth)) + 8
-        else
-            frame.questRequiredItemsHeader:Hide()
-        end
+    local stepRequired = FDJ.GetQuestRequiredItems(details)
+    if #stepRequired > 0 and frame.questRequiredItemsHeader then
+        frame.questRequiredItemsHeader:ClearAllPoints()
+        frame.questRequiredItemsHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+        frame.questRequiredItemsHeader:Show()
+        cursorY = cursorY + (frame.questRequiredItemsHeader:GetStringHeight() or 18) + 4
+        cursorY = FDJ.PlaceStepItemButtons(stepRequired, 0, cursorY, detailWidth, 2) + 8
+    elseif frame.questRequiredItemsHeader then
+        frame.questRequiredItemsHeader:Hide()
     end
     if details.providedItem and frame.questProvidedItemHeader then
         frame.questProvidedItemHeader:ClearAllPoints()
         frame.questProvidedItemHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questProvidedItemHeader:Show()
         cursorY = cursorY + (frame.questProvidedItemHeader:GetStringHeight() or 18) + 4
-        cursorY = FDJ.PlaceStepItemButtons({ details.providedItem }, stepRequired and #stepRequired or 0, cursorY, math.min(300, detailWidth)) + 8
+        cursorY = FDJ.PlaceStepItemButtons({ details.providedItem }, #stepRequired, cursorY, math.min(300, detailWidth)) + 8
     end
 
 
@@ -4278,8 +4350,8 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questStartsHeader:Show()
         cursorY = cursorY + (frame.questStartsHeader:GetStringHeight() or 18) + 3
 
-        if details.startItem and frame.questStartItemButton then
-            local startItem = details.startItem
+        if (details.startItem or details.startRequirementItem) and frame.questStartItemButton then
+            local startItem = details.startItem or details.startRequirementItem
             frame.questStartsText:SetText("")
             frame.questStartsText:Hide()
 
@@ -4300,6 +4372,14 @@ local function RefreshPrerequisiteQuestDetail(step)
                 FDJ.PositionInDungeonIcon()
             end
             cursorY = cursorY + 48
+            if details.startRequirementItem and not details.startItem then
+                frame.questStartsText:ClearAllPoints()
+                frame.questStartsText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+                frame.questStartsText:SetText(QuestField(questID, "pickup", details.pickup))
+                frame.questStartsText:SetTextColor(0.10, 0.065, 0.025)
+                frame.questStartsText:Show()
+                cursorY = cursorY + (frame.questStartsText:GetStringHeight() or 24) + 7
+            end
         else
             frame.questStartsText:ClearAllPoints()
             frame.questStartsText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
@@ -4506,6 +4586,9 @@ RefreshQuestDetail = function()
     if frame and frame.questNoteItemButton then HideSearchItemHighlight(frame.questNoteItemButton) end
     if not frame or not frame.questDetailText then return end
 
+    if selectedPrereqStep and selectedPrereqStep.id == selectedPrereqParentQuestID and not selectedPrereqStep.itemStep then
+        selectedPrereqStep = nil
+    end
     if selectedPrereqStep then
         if RefreshPrerequisiteQuestDetail(selectedPrereqStep) then return end
     end
@@ -4721,6 +4804,16 @@ RefreshQuestDetail = function()
     cursorY = cursorY + (frame.questDetailText:GetStringHeight() or 30) + 13
     if FDJ.PlaceQuestDescription then cursorY = FDJ.PlaceQuestDescription(frame, frame.fdjDescText, cursorY, PlaceHeader) end
 
+    if quest.requiredItems then
+        if frame.questRequiredItemButton then frame.questRequiredItemButton.item = nil; frame.questRequiredItemButton:Hide() end
+        local required = FDJ.GetQuestRequiredItems(quest)
+        if #required > 0 then
+            cursorY = PlaceHeader(frame.questRequiredItemsHeader, cursorY)
+            cursorY = FDJ.PlaceStepItemButtons(required, 0, cursorY, detailWidth, 2) + 8
+        elseif frame.questRequiredItemsHeader then
+            frame.questRequiredItemsHeader:Hide()
+        end
+    else
     -- Normal dungeon-quest required items use field 5 for Journal-only source
     -- information (field 4 is the stack count). Only render the large item card
     -- when that source information is actually useful to the player.
@@ -4755,6 +4848,8 @@ RefreshQuestDetail = function()
         end
     end
 
+    end
+
     -- Some Forever quests provide an item when accepted (for example the
     -- Dalaran Sewer Key for Heart of Disruption). Render it just like a
     -- prerequisite-step provided item so the journal mirrors Blizzard's log.
@@ -4763,7 +4858,7 @@ RefreshQuestDetail = function()
         frame.questProvidedItemHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questProvidedItemHeader:Show()
         cursorY = cursorY + (frame.questProvidedItemHeader:GetStringHeight() or 18) + 4
-        cursorY = FDJ.PlaceStepItemButtons({ quest.providedItem }, 0, cursorY, math.min(300, detailWidth)) + 8
+        cursorY = FDJ.PlaceStepItemButtons({ quest.providedItem }, #FDJ.GetQuestRequiredItems(quest), cursorY, math.min(300, detailWidth)) + 8
     elseif frame.questProvidedItemHeader then
         frame.questProvidedItemHeader:Hide()
     end
@@ -4794,11 +4889,11 @@ RefreshQuestDetail = function()
             if FDJ.QuestBeginsInDungeon(quest) then FDJ.PositionInDungeonIcon() end
         end
         cursorY = cursorY + 44
-    elseif quest.startItem then
+    elseif quest.startItem or quest.startRequirementItem then
         frame.questStartsText:SetText("")
         frame.questStartsText:Hide()
 
-        local startItem = quest.startItem
+        local startItem = quest.startItem or quest.startRequirementItem
         frame.questStartItemButton.fdjObject = nil
         frame.questStartItemButton.item = startItem
         frame.questStartItemButton.fdjSourceText = FreeText(startItem[4])
@@ -4816,6 +4911,14 @@ RefreshQuestDetail = function()
             if FDJ.QuestBeginsInDungeon(quest) then FDJ.PositionInDungeonIcon() end
         end
         cursorY = cursorY + 44
+        if quest.startRequirementItem and not quest.startItem then
+            frame.questStartsText:ClearAllPoints()
+            frame.questStartsText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+            frame.questStartsText:SetText(QuestField(quest.id, "pickup", quest.pickup))
+            frame.questStartsText:SetTextColor(0.10, 0.065, 0.025)
+            frame.questStartsText:Show()
+            cursorY = cursorY + (frame.questStartsText:GetStringHeight() or 24) + 8
+        end
     else
         frame.questStartItemButton.item = nil
         frame.questStartItemButton.fdjSourceText = nil
@@ -4835,7 +4938,7 @@ RefreshQuestDetail = function()
     end
 
     local loc = quest.startMap or QUEST_START_MAPS[quest.id]
-    local hasChain = QUEST_PREREQ_CHAINS[quest.id] ~= nil
+    local hasChain = GetQuestPrereqChain(quest) ~= nil
 
     frame.questMapButton:ClearAllPoints()
     frame.questMapButton.prereqLocation = quest.startMap
@@ -4871,10 +4974,10 @@ RefreshQuestDetail = function()
     -- and lead with the chain button. Show on Map still points at this quest.
     local pendingStep, pendingIndex, chainLength
     if hasChain and not IsQuestInLog(quest.id) and not FDJ.QuestTurnedIn(quest.id) then
-        local chain = QUEST_PREREQ_CHAINS[quest.id]
+        local chain = GetQuestPrereqChain(quest)
         chainLength = #chain
         for i, step in ipairs(chain) do
-            if step.id and not FDJ.QuestTurnedIn(step.id) then
+            if step.id and not FDJ.IsQuestChainStepComplete(step, FDJ.QuestTurnedIn, true) then
                 if step.id ~= quest.id then pendingStep, pendingIndex = step, i end
                 break
             end
@@ -6195,6 +6298,8 @@ local homeEditMode = false
 ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
 FDJ.homeExpansion = (ForeverDungeonJournalCharacterDB.homeExpansion == "tbc" or ForeverDungeonJournalCharacterDB.homeExpansion == "raids")
     and ForeverDungeonJournalCharacterDB.homeExpansion or "vanilla"
+-- Classic Era: a "tbc" gallery saved by another edition falls back to Vanilla.
+if FDJ.IS_CLASSIC_ERA and FDJ.homeExpansion == "tbc" then FDJ.homeExpansion = "vanilla" end
 
 FDJ.TBC_DUNGEON_NAMES = {
     ["Hellfire Ramparts"] = true, ["The Blood Furnace"] = true,
@@ -6239,7 +6344,9 @@ function FDJ.PlaceExpansionEmblem(f)
     local home = f and f.homePanel
     local list = f and f.homeExpansionEmblems
     if not home or not list then return end
+    -- Classic Era has no TBC medallion: the Raids medallion follows Vanilla directly.
     local first, second, third = list.vanilla, list.tbc, list.raids
+    if not first or not third then return end
     first:ClearAllPoints()
     local rpg = FDJ.IsRPGMode and FDJ.IsRPGMode()
     local size
@@ -6258,20 +6365,27 @@ function FDJ.PlaceExpansionEmblem(f)
     for _, btn in ipairs({ first, second, third }) do
         if btn.halo then btn.halo:SetSize(size * 1.9, size * 1.9) end
     end
-    first:SetSize(size, size); second:SetSize(size, size); third:SetSize(size + labelWidth + 6, size)
+    first:SetSize(size, size); third:SetSize(size + labelWidth + 6, size)
+    if second then second:SetSize(size, size) end
     third.icon:ClearAllPoints()
     third.icon:SetSize(size, size)
     third.icon:SetPoint("LEFT", third, "LEFT")
-    second:ClearAllPoints()
-    second:SetPoint("LEFT", first, "RIGHT", size >= 40 and 12 or 8, 0)
+    local previous = first
+    if second then
+        second:ClearAllPoints()
+        second:SetPoint("LEFT", first, "RIGHT", size >= 40 and 12 or 8, 0)
+        previous = second
+    end
     third:ClearAllPoints()
-    third:SetPoint("LEFT", second, "RIGHT", size >= 40 and 12 or 8, 0)
-    first:Show(); second:Show(); third:Show()
+    third:SetPoint("LEFT", previous, "RIGHT", size >= 40 and 12 or 8, 0)
+    first:Show(); third:Show()
+    if second then second:Show() end
 end
 
 FDJ.GetHomeExpansion = function() return FDJ.homeExpansion end
 FDJ.SetHomeExpansion = function(expansion)
     if expansion ~= "vanilla" and expansion ~= "tbc" and expansion ~= "raids" then return end
+    if FDJ.IS_CLASSIC_ERA and expansion == "tbc" then return end
     FDJ.homeExpansion = expansion
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     ForeverDungeonJournalCharacterDB.homeExpansion = expansion
@@ -6496,6 +6610,9 @@ RefreshHomeDungeonCards = function()
     local shownDungeons = {}
     local vanillaRaidDungeons = {}
     local raidGallery = FDJ.homeExpansion == "raids"
+    -- On Classic Era the seven original raids ARE the raid gallery: no TBC
+    -- raids above them and no "Vanilla raids" accordion underneath.
+    local vanillaRaidsAsSection = raidGallery and not FDJ.IS_CLASSIC_ERA
     for _, dungeonName in ipairs(ORDER) do
         if DB[dungeonName] and FDJ.DungeonExpansion(dungeonName) == FDJ.homeExpansion then
             local rpgLocked = not DB[dungeonName].isRaid and FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName)
@@ -6507,7 +6624,7 @@ RefreshHomeDungeonCards = function()
                     or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName)))
             end
             if visible then
-                if raidGallery and DB[dungeonName].raidEra == "vanilla" then
+                if vanillaRaidsAsSection and DB[dungeonName].raidEra == "vanilla" then
                     vanillaRaidDungeons[#vanillaRaidDungeons + 1] = dungeonName
                 else
                     shownDungeons[#shownDungeons + 1] = dungeonName
@@ -6517,7 +6634,7 @@ RefreshHomeDungeonCards = function()
     end
 
     local tbcRaidCount = #shownDungeons
-    local expanded = raidGallery and FDJ.VanillaRaidsExpanded()
+    local expanded = vanillaRaidsAsSection and FDJ.VanillaRaidsExpanded()
     if expanded then
         for _, dungeonName in ipairs(vanillaRaidDungeons) do
             shownDungeons[#shownDungeons + 1] = dungeonName
@@ -6528,7 +6645,7 @@ RefreshHomeDungeonCards = function()
     local classicHeaderY = math.ceil(tbcRaidCount / 2) * rowStep + 4
     local classicCardY = classicHeaderY + 55
     local contentHeight
-    if raidGallery then
+    if vanillaRaidsAsSection then
         -- Reserve the click-to-expand header even when the section is closed.
         contentHeight = classicCardY + (expanded
             and (math.ceil(#vanillaRaidDungeons / 2) * rowStep - 12) or 0)
@@ -6549,7 +6666,7 @@ RefreshHomeDungeonCards = function()
     frame.homeCardsContent:SetWidth(contentWidth)
 
     -- Keep Vanilla raids visually underneath the existing nine TBC raid cards.
-    if raidGallery and not frame.vanillaRaidsHeader then
+    if vanillaRaidsAsSection and not frame.vanillaRaidsHeader then
         local header = CreateFrame("Button", nil, frame.homeCardsContent, "BackdropTemplate")
         header:SetHeight(45)
         header:SetBackdrop({
@@ -6588,8 +6705,8 @@ RefreshHomeDungeonCards = function()
     end
     if frame.vanillaRaidsHeader then
         local header = frame.vanillaRaidsHeader
-        header:SetShown(raidGallery)
-        if raidGallery then
+        header:SetShown(vanillaRaidsAsSection)
+        if vanillaRaidsAsSection then
             header:SetWidth(contentWidth)
             header:ClearAllPoints()
             header:SetPoint("TOPLEFT", frame.homeCardsContent, "TOPLEFT", 0, -classicHeaderY)
@@ -6609,7 +6726,7 @@ RefreshHomeDungeonCards = function()
         end
 
         local col, topY
-        if raidGallery and i > tbcRaidCount then
+        if vanillaRaidsAsSection and i > tbcRaidCount then
             local classicIndex = i - tbcRaidCount - 1
             col = classicIndex % 2
             topY = classicCardY + math.floor(classicIndex / 2) * rowStep
@@ -6758,7 +6875,8 @@ RefreshHomeDungeonCards = function()
             end
         end
         frame.homeEmptyText:SetText(anyInExpansion and L("ALL_DUNGEONS_HIDDEN")
-            or (FDJ.homeExpansion == "raids" and "No TBC raids available." or "Burning Crusade dungeons have not been added yet."))
+            or (FDJ.homeExpansion == "raids" and (FDJ.IS_CLASSIC_ERA and "No raids available." or "No TBC raids available.")
+                or "Burning Crusade dungeons have not been added yet."))
         frame.homeEmptyText:SetShown(#shownDungeons == 0 and not homeEditMode)
     end
 
@@ -8172,6 +8290,8 @@ local function CreateGlobalSearchUI()
                     for _, item in ipairs(quest.noteRewardItems or {}) do AddQuestSearchItem(item) end
                     AddQuestSearchItem(quest.requiredItem)
                     AddQuestSearchItem(quest.startItem)
+                    AddQuestSearchItem(quest.startRequirementItem)
+                    for _, item in ipairs(quest.requiredItems or {}) do AddQuestSearchItem(item) end
                     AddQuestSearchItem(quest.noteItem)
 
                     for _, item in ipairs(questItems) do
@@ -8902,8 +9022,13 @@ local function CreateMainFrame()
         return btn
     end
     local vanillaEmblem = CreateExpansionEmblem("vanilla", "Vanilla Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\VanillaExpansionIcon")
-    local tbcEmblem = CreateExpansionEmblem("tbc", "TBC Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TBCExpansionIcon")
-    local raidEmblem = CreateExpansionEmblem("raids", "TBC Raids (10 / 25 players)", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\RaidExpansionIcon")
+    -- Classic Era has no Burning Crusade content: two medallions, Dungeons and Raids.
+    local tbcEmblem = not FDJ.IS_CLASSIC_ERA
+        and CreateExpansionEmblem("tbc", "TBC Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TBCExpansionIcon")
+        or nil
+    local raidEmblem = CreateExpansionEmblem("raids",
+        FDJ.IS_CLASSIC_ERA and "Raids (20 / 40 players)" or "TBC Raids (10 / 25 players)",
+        "Interface\\AddOns\\ForeverDungeonJournal\\Media\\RaidExpansionIcon")
     local raidLabel = raidEmblem:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     raidLabel:SetText("RAIDS")
     raidLabel:SetTextColor(1, 0.82, 0.32)
@@ -8915,8 +9040,12 @@ local function CreateMainFrame()
     raidEmblem.ring:SetSize(48, 48)
     raidEmblem.ring:SetPoint("CENTER", raidEmblem.icon, "CENTER")
     vanillaEmblem:SetPoint("LEFT", homeTitle, "RIGHT", 10, 0)
-    tbcEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
-    raidEmblem:SetPoint("LEFT", tbcEmblem, "RIGHT", 8, 0)
+    if tbcEmblem then
+        tbcEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
+        raidEmblem:SetPoint("LEFT", tbcEmblem, "RIGHT", 8, 0)
+    else
+        raidEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
+    end
     FDJ.RefreshExpansionButtons()
 
     local hideDungeonsButton = CreateFrame("Button", nil, home, "BackdropTemplate")
@@ -9877,7 +10006,7 @@ local function CreateMainFrame()
     end
     frame.questChainButton:SetScript("OnClick", function(self)
         local questID = self.questID
-        local chain = questID and QUEST_PREREQ_CHAINS[questID]
+        local chain = questID and FDJ.GetQuestPrerequisiteSteps(questID)
         if not chain then return end
 
         -- The detail-panel "Show Quest Chain" button is OPEN/NAVIGATE only.
@@ -9897,7 +10026,7 @@ local function CreateMainFrame()
         end
         if not target then
             for _, step in ipairs(chain) do
-                if not (step.id and (IsQuestFinished(step.id) or (step.alt and IsQuestFinished(step.alt)))) then
+                if not FDJ.IsQuestChainStepComplete(step, IsQuestFinished, true) then
                     target = step
                     break
                 end
@@ -10178,10 +10307,10 @@ local function CreateMainFrame()
     frame:SetScript("OnShow", function()
         if FDJ.InstallRightClickBack then FDJ.InstallRightClickBack() end
         PlayJournalPaperSound()
-        -- Warm the portraits once per session, on a later frame and never in
-        -- combat: doing all of it inside OnShow can exceed the client's script
-        -- time limit when the journal is opened mid-fight.
-        if FDJ.PrewarmBossPortraits and not FDJ.portraitsPrewarmed then
+        -- The Anniversary edition loads visible portraits on demand. A timer
+        -- alone does not prevent a whole-database preload from freezing a frame.
+        if not FDJ.IS_TBC_ANNIVERSARY
+            and FDJ.PrewarmBossPortraits and not FDJ.portraitsPrewarmed then
             local function prewarm()
                 if FDJ.portraitsPrewarmed then return end
                 if type(InCombatLockdown) == "function" and InCombatLockdown() then return end
@@ -10527,7 +10656,7 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
 
     if msg == "client" or msg == "version" then
         local _, build, _, interface = GetBuildInfo()
-        print("|cffd8a83cDungeon Journal|r TBC Anniversary port 1.6.5.2; interface "
+        print("|cffd8a83cDungeon Journal|r " .. (FDJ.IS_CLASSIC_ERA and "Classic Era edition" or "TBC Anniversary port 1.6.5.2") .. "; interface "
             .. tostring(interface) .. "; build " .. tostring(build)
             .. "; " .. tostring(#ORDER) .. " Classic dungeons loaded.")
         return
@@ -10836,11 +10965,15 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
             local function DoRefresh()
                 FDJ.itemInfoRefreshPending = nil
                 if not (frame and frame:IsShown()) then return end
-                if selectedMode == "bosses" then
-                    RefreshLoot()
-                elseif selectedMode == "quests" then
-                    RefreshQuestDetail()
-                    ApplyLocaleFontTree(frame)
+                -- Item events from other addons must not rebuild a hidden
+                -- loot/quest page while the player is browsing the home gallery.
+                if frame.currentView == "dungeon" then
+                    if selectedMode == "bosses" then
+                        RefreshLoot()
+                    elseif selectedMode == "quests" then
+                        RefreshQuestDetail()
+                        ApplyLocaleFontTree(frame)
+                    end
                 end
                 -- Update names/icons in an open search dropdown without
                 -- making the player retype the query.

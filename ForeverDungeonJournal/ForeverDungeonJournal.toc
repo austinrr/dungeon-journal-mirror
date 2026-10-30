@@ -1,8 +1,8 @@
-## Interface: 20506
-## Title: Dungeon Journal - TBC Anniversary
-## Notes: Dungeon boss, loot, quest and map journal for Burning Crusade Anniversary (Vanilla dungeons, TBC dungeons, all 9 Burning Crusade raids, and all 7 original Vanilla raids).
+## Interface: 11509
+## Title: Dungeon Journal - Classic Era
+## Notes: Dungeon boss, loot, quest and map journal for Classic Era and Hardcore (all 26 Vanilla dungeon wings and all 7 original raids).
 ## Author: Exehn
-## Version: 1.6.14.53
+## Version: 1.0.0
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## AddonCompartmentFunc: ForeverDungeonJournal_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ForeverDungeonJournal_OnAddonCompartmentEnter
@@ -41,41 +41,33 @@ Data\QuestChains.lua
 Data\QuestRewards.lua
 Data\QuestShareability.lua
 Data\QuestUpdates.lua
-Data\TBCAnniversary.lua
+Data\ClassicEra.lua
 Data\ClassicEraQuestShareability.lua
 Data\TBCVanillaDungeons.lua
 Data\TBCAnniversaryPolish.lua
 Data\TBCCompendiumQuests.lua
 Data\TBCQuestPolish.lua
 UI\ThemeData.lua
-Data\TBCOutlandDungeons.lua
 Data\TBCBossLevels.lua
-Data\TBCOutlandQuestCorrections.lua
-Data\TBCHeroic.lua
-Data\TBCJewelcrafting.lua
-Data\TBCGemFinder.lua
+Data\ClassicEraBossLevels.lua
 Data\TBCLootAudit.lua
-Data\TBCRaids.lua
-Data\TBCRaidLoot.lua
-Data\TBCRaidPolish.lua
-Data\TBCRaidQuests.lua
 Data\VanillaRaids.lua
 Data\VanillaRaidLoot.lua
+Data\VanillaRaidQuests.lua
 Data\TBCQuestClassification.lua
 Data\TBCQuestListConsolidation.lua
-Data\TBCDungeonQuestMaps.lua
+Data\ClassicEraQuestFixes.lua
 UI\ItemComparisonData.lua
 Systems\MapMarkers.lua
 Systems\LootFilter.lua
 Systems\Favourites.lua
-Systems\GemFinder.lua
 Systems\BugReport.lua
+Data\TierTokenRewards.lua
 Systems\PortraitPool.lua
 Systems\SeasonalQuests.lua
 Systems\QuestProfessions.lua
 Core\Journal.lua
-Systems\TBCDungeonMaps.lua
-Systems\TBCRaidMaps.lua
+Systems\TierTokenChooser.lua
 Systems\VanillaRaidMaps.lua
 Systems\ClassicDungeonMaps.lua
 Systems\ForeverBetaSharedArt.lua
@@ -88,7 +80,7 @@ Systems\MapNote.lua
 Systems\TooltipBacking.lua
 Systems\DoneTickTooltip.lua
 Systems\HomeBottomBand.lua
-Systems\TBCAnniversaryLFG.lua
+Systems\ClassicEraLFG.lua
 Systems\QuestText.lua
 Systems\MapBossSize.lua
 Systems\WorldMapOverlay.lua

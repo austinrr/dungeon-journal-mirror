@@ -1,9 +1,35 @@
--- TBC Anniversary (2.5.6) dataset/compatibility isolation.
+-- Classic Era (1.15.x) dataset/compatibility isolation.
 -- Keep the original ForeverDungeonJournal folder for its bundled texture paths.
+--
+-- This build is derived from the TBC Anniversary edition. IS_TBC_ANNIVERSARY
+-- stays TRUE on purpose: every file that checks it means "a client with the
+-- real Classic database, as opposed to the Forever realm" (quest-log APIs,
+-- on-demand portraits, no Forever XP tables, TBCVanillaDungeons.lua and the
+-- Vanilla raid files all gate on it). IS_CLASSIC_ERA is the flag for the few
+-- places where Era differs from TBC Anniversary: no Outland content, no
+-- heroic mode, only the Vanilla + Raids galleries, Era boss levels and quest
+-- levels (Data/ClassicEraBossLevels.lua, Data/ClassicEraQuestFixes.lua).
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.IS_TBC_ANNIVERSARY = true
-FDJ.CLIENT_FLAVOR = "TBC Anniversary"
+FDJ.IS_CLASSIC_ERA = true
+FDJ.CLIENT_FLAVOR = "Classic Era"
+
+-- Season of Discovery runs on the same client but with its own levels, loot
+-- and runes. The journal still opens there; the data is Classic Era's.
+do
+    local seasonID
+    if type(C_Seasons) == "table" and type(C_Seasons.GetActiveSeason) == "function" then
+        local ok, id = pcall(C_Seasons.GetActiveSeason)
+        if ok and type(id) == "number" then seasonID = id end
+    end
+    local sod = 2 -- Enum.SeasonID.SeasonOfDiscovery
+    if type(Enum) == "table" and type(Enum.SeasonID) == "table"
+        and type(Enum.SeasonID.SeasonOfDiscovery) == "number" then
+        sod = Enum.SeasonID.SeasonOfDiscovery
+    end
+    FDJ.IS_SEASON_OF_DISCOVERY = (seasonID ~= nil and seasonID == sod)
+end
 
 -- Only dungeons that actually exist in this client are shown. The remaining
 -- original 1.6.5 data contains Forever-only raids, item IDs and quests.
