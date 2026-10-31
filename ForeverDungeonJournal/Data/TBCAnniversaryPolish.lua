@@ -71,41 +71,61 @@ if type(_G.ForeverDungeonJournalDB) == "table" then
 end
 
 -- Real gameobject (Gordok Tribute, object ID 179564), not an NPC.
--- After King Gordok, Mizzle the Crafty creates this loot chest. A successful
--- full tribute run leaves the guards and Cho'Rush alive for best rewards.
+-- After King Gordok dies, Mizzle the Crafty places this chest. Its contents
+-- depend on the Tribute Run: ONE item from the tribute pool for each of the
+-- five bosses still alive (Guard Mol'dar, Guard Fengus, Guard Slip'kik,
+-- Captain Kromcrush, Cho'Rush the Observer), so a clean run yields five
+-- items and every kill removes one. Stomper Kreeg does not count. The four
+-- consumables are always inside; with all five bosses dead they are all the
+-- chest holds. The items are not tied to particular survivors.
 local north = db["Dire Maul: North"]
 if north then
+    local TRIBUTE_POOL = {
+        {18538, "Treant's Bane", "Item", 4},
+        {18499, "Barrier Shield", "Item", 3},
+        {18537, "Counterattack Lodestone", "Item", 3},
+        {18528, "Cyclone Spaulders", "Item", 3},
+        {18529, "Elemental Plate Girdle", "Item", 3},
+        {18533, "Gordok Bracers of Power", "Item", 3},
+        {18532, "Mindsurge Robe", "Item", 3},
+        {18530, "Ogre Forged Hauberk", "Item", 3},
+        {18495, "Redoubt Cloak", "Item", 3},
+        {18534, "Rod of the Ogre Magi", "Item", 3},
+        {18500, "Tarnished Elven Ring", "Item", 3},
+        {18531, "Unyielding Maul", "Item", 3},
+        {18479, "Carrion Scorpid Helm", "Item", 3},
+        {18478, "Hyena Hide Jerkin", "Item", 3},
+        {18476, "Mud Stained Boots", "Item", 3},
+        {18475, "Oddly Magical Belt", "Item", 3},
+        {18482, "Ogre Toothpick Shooter", "Item", 3},
+        {18480, "Scarab Plate Helm", "Item", 3},
+        {18655, "Schematic: Major Recombobulator", "Item", 3},
+        {18477, "Shaggy Leggings", "Item", 3},
+        {18481, "Skullcracking Mace", "Item", 3},
+    }
+    local ALWAYS = {
+        {13446, "Major Healing Potion", "Item", 1},
+        {13444, "Major Mana Potion", "Item", 1},
+        {8766, "Morning Glory Dew", "Item", 1},
+        {8952, "Roasted Quail", "Item", 1},
+    }
+    local poolIDs, alwaysIDs, loot = {}, {}, {}
+    for _, item in ipairs(TRIBUTE_POOL) do loot[#loot + 1] = item; poolIDs[#poolIDs + 1] = item[1] end
+    for _, item in ipairs(ALWAYS) do loot[#loot + 1] = item; alwaysIDs[#alwaysIDs + 1] = item[1] end
     local chest = {
         name = "Gordok Tribute Chest",
         treasureChest = true,
+        chestLabel = "Treasure Chest | 1 item per boss left alive (up to 5)",
         customIcon = "Interface\\Icons\\INV_Box_01",
-        loot = {
-            {18538, "Treant's Bane", "Item", 4},
-            {18499, "Barrier Shield", "Item", 3},
-            {18537, "Counterattack Lodestone", "Item", 3},
-            {18528, "Cyclone Spaulders", "Item", 3},
-            {18529, "Elemental Plate Girdle", "Item", 3},
-            {18533, "Gordok Bracers of Power", "Item", 3},
-            {18532, "Mindsurge Robe", "Item", 3},
-            {18530, "Ogre Forged Hauberk", "Item", 3},
-            {18495, "Redoubt Cloak", "Item", 3},
-            {18534, "Rod of the Ogre Magi", "Item", 3},
-            {18500, "Tarnished Elven Ring", "Item", 3},
-            {18531, "Unyielding Maul", "Item", 3},
-            {18479, "Carrion Scorpid Helm", "Item", 3},
-            {18478, "Hyena Hide Jerkin", "Item", 3},
-            {18476, "Mud Stained Boots", "Item", 3},
-            {18475, "Oddly Magical Belt", "Item", 3},
-            {18482, "Ogre Toothpick Shooter", "Item", 3},
-            {18480, "Scarab Plate Helm", "Item", 3},
-            {18655, "Schematic: Major Recombobulator", "Item", 3},
-            {18477, "Shaggy Leggings", "Item", 3},
-            {18481, "Skullcracking Mace", "Item", 3},
+        loot = loot,
+        lootSections = {
+            { title = "One per guard left alive", ids = poolIDs },
+            { title = "Always inside (all you get if every boss is dead)", ids = alwaysIDs },
         },
     }
-    local existing = false
-    for _, boss in ipairs(north.bosses or {}) do
-        if boss.name == chest.name then existing = true; break end
+    local replaced = false
+    for i, boss in ipairs(north.bosses or {}) do
+        if boss.name == chest.name then north.bosses[i] = chest; replaced = true; break end
     end
-    if not existing then table.insert(north.bosses, chest) end
+    if not replaced then table.insert(north.bosses, chest) end
 end

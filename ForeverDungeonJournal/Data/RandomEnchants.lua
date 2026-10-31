@@ -1,8 +1,8 @@
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Boss drops that roll a random "of the ..." enchant. Source: Burning Crusade
--- item_template (RandomProperty / RandomSuffix), checked against every loot
+-- Boss drops that roll a random "of the ..." enchant. Source: item_template
+-- (RandomProperty / RandomSuffix), checked against every loot
 -- table in the journal (31 Oct 2026). The tooltip shows the translated
 -- "+Random Enchant" line (RANDOM_ENCHANT) above "Requires Level".
 FDJ.RANDOM_ENCHANT_ITEMS = FDJ.RANDOM_ENCHANT_ITEMS or {}
@@ -40,18 +40,6 @@ for _, id in ipairs({
     18529, -- Elemental Plate Girdle (Gordok Tribute Chest, Dire Maul: North)
     19921, -- Zulian Hacker (Raid Trash, Zul'Gurub)
     22225, -- Dragonskin Cowl (Gyth, Upper Blackrock Spire)
-    30675, -- Lurker's Cord (Hyakiss the Lurker, Karazhan)
-    30676, -- Lurker's Grasp (Hyakiss the Lurker, Karazhan)
-    30677, -- Lurker's Belt (Hyakiss the Lurker, Karazhan)
-    30678, -- Lurker's Girdle (Hyakiss the Lurker, Karazhan)
-    30680, -- Glider's Foot-Wraps (Shadikith the Glider, Karazhan)
-    30681, -- Glider's Boots (Shadikith the Glider, Karazhan)
-    30682, -- Glider's Sabatons (Shadikith the Glider, Karazhan)
-    30683, -- Glider's Greaves (Shadikith the Glider, Karazhan)
-    30684, -- Ravager's Cuffs (Rokad the Ravager, Karazhan)
-    30685, -- Ravager's Wrist-Wraps (Rokad the Ravager, Karazhan)
-    30686, -- Ravager's Bands (Rokad the Ravager, Karazhan)
-    30687, -- Ravager's Bracers (Rokad the Ravager, Karazhan)
 }) do FDJ.RANDOM_ENCHANT_ITEMS[id] = true end
 
 local function MarkLoot(list)
