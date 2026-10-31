@@ -538,14 +538,15 @@ local function PlainText(pattern)
 end
 local function FreeTextMap(content, lang)
     local cached = plainMapCache[lang]
-    if cached and cached.source == content then return cached.map end
+    local version = FDJ.ContentTextVersion or 0
+    if cached and cached.source == content and cached.version == version then return cached.map end
     local map = {}
     for key, value in pairs(content.places or {}) do map[key] = value end
     for _, pair in ipairs(content.replacements or {}) do
         local key = PlainText(pair[1])
         if map[key] == nil then map[key] = (pair[2]:gsub("%%%%", "%%")) end
     end
-    plainMapCache[lang] = { source = content, map = map }
+    plainMapCache[lang] = { source = content, map = map, version = version }
     return map
 end
 

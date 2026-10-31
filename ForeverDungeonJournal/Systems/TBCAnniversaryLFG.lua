@@ -1,28 +1,13 @@
--- Classic Era "Looking For Group" eye on dungeon pages.
--- Same code as the TBC Anniversary edition: it drives the client's own Group
--- Finder (Blizzard_GroupFinder_VanillaStyle) - open the window on the Group
--- Browser tab, set the category, tick this dungeon in the Activity drop-down
--- and run the browser's own search. Not every Classic Era realm type has the
--- Group Finder enabled, so the eye only appears once the client reports at
--- least one LFG activity; on realms without the tool it stays hidden.
--- The Forever client has a different window (Systems/LFGButton.lua).
+-- TBC Anniversary "Looking For Group" eye on dungeon pages.
+-- Built for TBC Anniversary's own Group Finder (Blizzard_GroupFinder_VanillaStyle):
+-- the click opens the window on the Group Browser tab, sets the category,
+-- ticks this dungeon in the Activity drop-down and runs the browser's own
+-- search, so the list shows only groups for this dungeon. In Heroic mode the
+-- dungeon's heroic listing is used. This file is TBC-only; the Forever client
+-- has a different window and restrictions (Systems/LFGButton.lua).
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 local function DB() return ForeverDungeonJournalDB end
-
--- Is the Group Finder usable on this realm? Checked lazily (the activity list
--- is empty until the client has logged in) and re-checked while it says no.
-local lfgAvailable = nil
-function FDJ.LFGToolAvailable()
-    if lfgAvailable then return true end
-    if not (C_LFGList and type(C_LFGList.GetAvailableActivities) == "function") then return false end
-    local ok, ids = pcall(C_LFGList.GetAvailableActivities)
-    if ok and type(ids) == "table" and #ids > 0 then
-        lfgAvailable = true
-        return true
-    end
-    return false
-end
 
 -- Activity IDs on the TBC Anniversary client (recorded from /dj lfgdebug).
 local NORMAL = {
@@ -153,6 +138,7 @@ function FDJ.SetLFGButtonHidden(hidden)
                 hidden and frame.dungeonLocationButton or frame.lfgButton, "RIGHT", 3, 0)
         end
     end
+    if FDJ.FitDungeonTitle then FDJ.FitDungeonTitle() end
     local settings = _G.ForeverDungeonJournalSettings
     if settings and settings:IsShown() then
         local onShow = settings:GetScript("OnShow")
@@ -275,7 +261,6 @@ function FDJ.UpdateLFGButton(frame, name, dungeon)
     button.fdjDungeon = dungeon and not dungeon.lootFilterPage and not dungeon.recipeSearch
         and not dungeon.previewOnly and name or nil
     button.fdjHeroic = button.fdjDungeon and WantHeroic(name) or nil
-    if button.fdjDungeon and not FDJ.LFGToolAvailable() then button.fdjDungeon = nil end
     button:SetShown(not FDJ.IsLFGButtonHidden() and button.fdjDungeon ~= nil)
     if frame.dungeonRouteButton then
         frame.dungeonRouteButton:ClearAllPoints()

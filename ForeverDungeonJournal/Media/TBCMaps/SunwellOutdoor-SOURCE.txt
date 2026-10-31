@@ -1,0 +1,5 @@
+Original Blizzard Sunwell outdoor parchment map, retrieved from Wowhead map CDN.
+https://wow.zamimg.com/images/wow/maps/enus/original/4075.jpg
+Converted to uncompressed power-of-two TGA; displayed crop 1002 x 668.
+Native client WorldMap tiles are preferred; this image is a fallback.
+Map artwork copyright Blizzard Entertainment.

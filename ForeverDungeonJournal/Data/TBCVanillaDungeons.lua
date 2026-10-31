@@ -1468,7 +1468,7 @@ FDJ.DB["Upper Blackrock Spire"] = {
                 {12963, "Blademaster Leggings", "Item", 3},
                 {12964, "Tristam Legguards", "Item", 3},
                 {22311, "Ironweave Boots", "Item", 3},
-                {12709, "Finkle's Skinner", "Item", 3},
+                {12709, "Pip's Skinner", "Item", 3},
                 {12969, "Seeping Willow", "Item", 3},
             },
             displayID = 10193,

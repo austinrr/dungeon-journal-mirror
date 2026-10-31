@@ -3300,6 +3300,77 @@ local function UpdateModeTabs()
     end
 end
 
+-- Long wing names (e.g. German "Das Scharlachrote Kloster: Kathedrale") push the
+-- portal / LFG / route buttons into the header tabs. When the title row does not
+-- fit to the left of the first tab, break the name at the wing separator onto two
+-- lines in a slightly smaller font so the level line still fits the header.
+local function FitDungeonTitle()
+    local t = frame and frame.dungeonTitle
+    if not t then return end
+    local header = t:GetParent()
+    local dungeon = DB[selectedDungeon]
+    if not header or not dungeon or dungeon.lootFilterPage then return end
+    if not t.fdjFont then t.fdjFont = { t:GetFont() } end
+    local font, size, flags = t.fdjFont[1], t.fdjFont[2], t.fdjFont[3]
+    if not font then return end
+    local full = (t.fdjFullText and t.fdjFullText ~= "") and t.fdjFullText or (t:GetText() or "")
+    full = full:gsub("\n", " ")
+    t.fdjFullText = full
+
+    -- single-line layout first
+    t:SetFont(font, size, flags)
+    t:SetText(full)
+    t:ClearAllPoints()
+    t:SetPoint("TOPLEFT", 15, -10)
+    if frame.dungeonMeta then
+        frame.dungeonMeta:ClearAllPoints()
+        frame.dungeonMeta:SetPoint("TOPLEFT", t, "BOTTOMLEFT", 0, -4)
+    end
+
+    local headerLeft = header:GetLeft()
+    if not headerLeft then return end
+    local limit
+    for _, tab in ipairs({ frame.mapTab, frame.bossesTab, frame.questsTab }) do
+        if tab and tab:IsShown() and tab:GetLeft() then
+            local x = tab:GetLeft() - headerLeft
+            if not limit or x < limit then limit = x end
+        end
+    end
+    if not limit then return end
+    local icons = 0
+    local loc = frame.dungeonLocationButton
+    if loc and loc:IsShown() then icons = icons + 5 + loc:GetWidth() end
+    if frame.lfgButton and frame.lfgButton:IsShown() then icons = icons + 3 + frame.lfgButton:GetWidth() end
+    if frame.dungeonRouteButton and frame.dungeonRouteButton:IsShown() then icons = icons + 3 + frame.dungeonRouteButton:GetWidth() end
+    local function Fits() return 15 + t:GetStringWidth() + icons + 10 <= limit end
+    if Fits() then return end
+
+    -- "Prefix: Wing" / "Prefix : Wing" / "Prefix：Wing" / "Prefix - Wing"
+    local first, second = full:match("^(.-%s*：)%s*(.+)$")
+    if not first then first, second = full:match("^(.-%s?:)%s*(.+)$") end
+    if not first then first, second = full:match("^(.-)%s+%-%s+(.+)$") end
+    if not first or not second then return end
+
+    local twoLineSize = math.max(12, math.floor((size or 20) - 5))
+    t:SetFont(font, twoLineSize, flags)
+    t:SetJustifyH("LEFT")
+    t:SetText(first .. "\n" .. second)
+    -- still too wide (very long single part): shrink a little more
+    while not Fits() and twoLineSize > 11 do
+        twoLineSize = twoLineSize - 1
+        t:SetFont(font, twoLineSize, flags)
+    end
+    t:ClearAllPoints()
+    t:SetPoint("TOPLEFT", 15, -5)
+    if frame.dungeonMeta then
+        frame.dungeonMeta:ClearAllPoints()
+        frame.dungeonMeta:SetPoint("TOPLEFT", t, "BOTTOMLEFT", 0, -2)
+    end
+end
+FDJ.FitDungeonTitle = function()
+    pcall(FitDungeonTitle)
+end
+
 local function UpdateDungeonHeaderTabs()
     if not frame or not frame.bossesTab or not frame.questsTab then return end
 
@@ -6298,8 +6369,6 @@ local homeEditMode = false
 ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
 FDJ.homeExpansion = (ForeverDungeonJournalCharacterDB.homeExpansion == "tbc" or ForeverDungeonJournalCharacterDB.homeExpansion == "raids")
     and ForeverDungeonJournalCharacterDB.homeExpansion or "vanilla"
--- Classic Era: a "tbc" gallery saved by another edition falls back to Vanilla.
-if FDJ.IS_CLASSIC_ERA and FDJ.homeExpansion == "tbc" then FDJ.homeExpansion = "vanilla" end
 
 FDJ.TBC_DUNGEON_NAMES = {
     ["Hellfire Ramparts"] = true, ["The Blood Furnace"] = true,
@@ -6344,9 +6413,7 @@ function FDJ.PlaceExpansionEmblem(f)
     local home = f and f.homePanel
     local list = f and f.homeExpansionEmblems
     if not home or not list then return end
-    -- Classic Era has no TBC medallion: the Raids medallion follows Vanilla directly.
     local first, second, third = list.vanilla, list.tbc, list.raids
-    if not first or not third then return end
     first:ClearAllPoints()
     local rpg = FDJ.IsRPGMode and FDJ.IsRPGMode()
     local size
@@ -6365,27 +6432,20 @@ function FDJ.PlaceExpansionEmblem(f)
     for _, btn in ipairs({ first, second, third }) do
         if btn.halo then btn.halo:SetSize(size * 1.9, size * 1.9) end
     end
-    first:SetSize(size, size); third:SetSize(size + labelWidth + 6, size)
-    if second then second:SetSize(size, size) end
+    first:SetSize(size, size); second:SetSize(size, size); third:SetSize(size + labelWidth + 6, size)
     third.icon:ClearAllPoints()
     third.icon:SetSize(size, size)
     third.icon:SetPoint("LEFT", third, "LEFT")
-    local previous = first
-    if second then
-        second:ClearAllPoints()
-        second:SetPoint("LEFT", first, "RIGHT", size >= 40 and 12 or 8, 0)
-        previous = second
-    end
+    second:ClearAllPoints()
+    second:SetPoint("LEFT", first, "RIGHT", size >= 40 and 12 or 8, 0)
     third:ClearAllPoints()
-    third:SetPoint("LEFT", previous, "RIGHT", size >= 40 and 12 or 8, 0)
-    first:Show(); third:Show()
-    if second then second:Show() end
+    third:SetPoint("LEFT", second, "RIGHT", size >= 40 and 12 or 8, 0)
+    first:Show(); second:Show(); third:Show()
 end
 
 FDJ.GetHomeExpansion = function() return FDJ.homeExpansion end
 FDJ.SetHomeExpansion = function(expansion)
     if expansion ~= "vanilla" and expansion ~= "tbc" and expansion ~= "raids" then return end
-    if FDJ.IS_CLASSIC_ERA and expansion == "tbc" then return end
     FDJ.homeExpansion = expansion
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     ForeverDungeonJournalCharacterDB.homeExpansion = expansion
@@ -6610,9 +6670,6 @@ RefreshHomeDungeonCards = function()
     local shownDungeons = {}
     local vanillaRaidDungeons = {}
     local raidGallery = FDJ.homeExpansion == "raids"
-    -- On Classic Era the seven original raids ARE the raid gallery: no TBC
-    -- raids above them and no "Vanilla raids" accordion underneath.
-    local vanillaRaidsAsSection = raidGallery and not FDJ.IS_CLASSIC_ERA
     for _, dungeonName in ipairs(ORDER) do
         if DB[dungeonName] and FDJ.DungeonExpansion(dungeonName) == FDJ.homeExpansion then
             local rpgLocked = not DB[dungeonName].isRaid and FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName)
@@ -6624,7 +6681,7 @@ RefreshHomeDungeonCards = function()
                     or (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName)))
             end
             if visible then
-                if vanillaRaidsAsSection and DB[dungeonName].raidEra == "vanilla" then
+                if raidGallery and DB[dungeonName].raidEra == "vanilla" then
                     vanillaRaidDungeons[#vanillaRaidDungeons + 1] = dungeonName
                 else
                     shownDungeons[#shownDungeons + 1] = dungeonName
@@ -6634,7 +6691,7 @@ RefreshHomeDungeonCards = function()
     end
 
     local tbcRaidCount = #shownDungeons
-    local expanded = vanillaRaidsAsSection and FDJ.VanillaRaidsExpanded()
+    local expanded = raidGallery and FDJ.VanillaRaidsExpanded()
     if expanded then
         for _, dungeonName in ipairs(vanillaRaidDungeons) do
             shownDungeons[#shownDungeons + 1] = dungeonName
@@ -6645,7 +6702,7 @@ RefreshHomeDungeonCards = function()
     local classicHeaderY = math.ceil(tbcRaidCount / 2) * rowStep + 4
     local classicCardY = classicHeaderY + 55
     local contentHeight
-    if vanillaRaidsAsSection then
+    if raidGallery then
         -- Reserve the click-to-expand header even when the section is closed.
         contentHeight = classicCardY + (expanded
             and (math.ceil(#vanillaRaidDungeons / 2) * rowStep - 12) or 0)
@@ -6666,7 +6723,7 @@ RefreshHomeDungeonCards = function()
     frame.homeCardsContent:SetWidth(contentWidth)
 
     -- Keep Vanilla raids visually underneath the existing nine TBC raid cards.
-    if vanillaRaidsAsSection and not frame.vanillaRaidsHeader then
+    if raidGallery and not frame.vanillaRaidsHeader then
         local header = CreateFrame("Button", nil, frame.homeCardsContent, "BackdropTemplate")
         header:SetHeight(45)
         header:SetBackdrop({
@@ -6705,8 +6762,8 @@ RefreshHomeDungeonCards = function()
     end
     if frame.vanillaRaidsHeader then
         local header = frame.vanillaRaidsHeader
-        header:SetShown(vanillaRaidsAsSection)
-        if vanillaRaidsAsSection then
+        header:SetShown(raidGallery)
+        if raidGallery then
             header:SetWidth(contentWidth)
             header:ClearAllPoints()
             header:SetPoint("TOPLEFT", frame.homeCardsContent, "TOPLEFT", 0, -classicHeaderY)
@@ -6726,7 +6783,7 @@ RefreshHomeDungeonCards = function()
         end
 
         local col, topY
-        if vanillaRaidsAsSection and i > tbcRaidCount then
+        if raidGallery and i > tbcRaidCount then
             local classicIndex = i - tbcRaidCount - 1
             col = classicIndex % 2
             topY = classicCardY + math.floor(classicIndex / 2) * rowStep
@@ -6875,8 +6932,7 @@ RefreshHomeDungeonCards = function()
             end
         end
         frame.homeEmptyText:SetText(anyInExpansion and L("ALL_DUNGEONS_HIDDEN")
-            or (FDJ.homeExpansion == "raids" and (FDJ.IS_CLASSIC_ERA and "No raids available." or "No TBC raids available.")
-                or "Burning Crusade dungeons have not been added yet."))
+            or (FDJ.homeExpansion == "raids" and "No TBC raids available." or "Burning Crusade dungeons have not been added yet."))
         frame.homeEmptyText:SetShown(#shownDungeons == 0 and not homeEditMode)
     end
 
@@ -7720,6 +7776,7 @@ RefreshAll = function()
         frame.backButton:SetText(dungeon.isRaid and "Raids" or L("DUNGEONS"))
     end
     frame.dungeonTitle:SetText(dungeon.recipeSearchTitle or DungeonName(selectedDungeon))
+    frame.dungeonTitle.fdjFullText = frame.dungeonTitle:GetText()
     -- "Matching loot" has no level line: larger title, centred in the header box.
     do
         local t = frame.dungeonTitle
@@ -7744,6 +7801,8 @@ RefreshAll = function()
         frame.dungeonLocationButton:SetShown(dungeon.entrance ~= nil)
     end
     if FDJ.UpdateLFGButton then FDJ.UpdateLFGButton(frame, selectedDungeon, dungeon) end
+    FDJ.FitDungeonTitle()
+    if C_Timer and C_Timer.After then C_Timer.After(0, FDJ.FitDungeonTitle) end
     if frame.dungeonRouteButton then
         local route = dungeon.routeGuide
         local playerFaction = UnitFactionGroup and UnitFactionGroup("player") or nil
@@ -9022,13 +9081,8 @@ local function CreateMainFrame()
         return btn
     end
     local vanillaEmblem = CreateExpansionEmblem("vanilla", "Vanilla Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\VanillaExpansionIcon")
-    -- Classic Era has no Burning Crusade content: two medallions, Dungeons and Raids.
-    local tbcEmblem = not FDJ.IS_CLASSIC_ERA
-        and CreateExpansionEmblem("tbc", "TBC Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TBCExpansionIcon")
-        or nil
-    local raidEmblem = CreateExpansionEmblem("raids",
-        FDJ.IS_CLASSIC_ERA and "Raids (20 / 40 players)" or "TBC Raids (10 / 25 players)",
-        "Interface\\AddOns\\ForeverDungeonJournal\\Media\\RaidExpansionIcon")
+    local tbcEmblem = CreateExpansionEmblem("tbc", "TBC Dungeons", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TBCExpansionIcon")
+    local raidEmblem = CreateExpansionEmblem("raids", "TBC Raids (10 / 25 players)", "Interface\\AddOns\\ForeverDungeonJournal\\Media\\RaidExpansionIcon")
     local raidLabel = raidEmblem:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     raidLabel:SetText("RAIDS")
     raidLabel:SetTextColor(1, 0.82, 0.32)
@@ -9040,12 +9094,8 @@ local function CreateMainFrame()
     raidEmblem.ring:SetSize(48, 48)
     raidEmblem.ring:SetPoint("CENTER", raidEmblem.icon, "CENTER")
     vanillaEmblem:SetPoint("LEFT", homeTitle, "RIGHT", 10, 0)
-    if tbcEmblem then
-        tbcEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
-        raidEmblem:SetPoint("LEFT", tbcEmblem, "RIGHT", 8, 0)
-    else
-        raidEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
-    end
+    tbcEmblem:SetPoint("LEFT", vanillaEmblem, "RIGHT", 8, 0)
+    raidEmblem:SetPoint("LEFT", tbcEmblem, "RIGHT", 8, 0)
     FDJ.RefreshExpansionButtons()
 
     local hideDungeonsButton = CreateFrame("Button", nil, home, "BackdropTemplate")
@@ -9179,6 +9229,7 @@ local function CreateMainFrame()
     -- Header
     local header = CreateFrame("Frame", nil, content, "BackdropTemplate")
     frame.headerPanel = header
+    header:HookScript("OnSizeChanged", function() if FDJ.FitDungeonTitle then FDJ.FitDungeonTitle() end end)
     header:SetPoint("TOPLEFT", 14, -12)
     header:SetPoint("TOPRIGHT", -14, -12)
     header:SetHeight(62)
@@ -10656,7 +10707,7 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
 
     if msg == "client" or msg == "version" then
         local _, build, _, interface = GetBuildInfo()
-        print("|cffd8a83cDungeon Journal|r " .. (FDJ.IS_CLASSIC_ERA and "Classic Era edition" or "TBC Anniversary port 1.6.5.2") .. "; interface "
+        print("|cffd8a83cDungeon Journal|r TBC Anniversary port 1.6.5.2; interface "
             .. tostring(interface) .. "; build " .. tostring(build)
             .. "; " .. tostring(#ORDER) .. " Classic dungeons loaded.")
         return
