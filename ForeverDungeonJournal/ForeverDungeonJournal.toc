@@ -1,8 +1,8 @@
-## Interface: 11509
-## Title: Dungeon Journal
-## Notes: Dungeon boss, loot, quest and map journal for Classic Era and Hardcore (all 26 Vanilla dungeon wings and all 7 original raids).
+## Interface: 16001
+## Title: DungeonJournal
+## Notes: Boss, loot and quest journal for WoW Classic dungeons.
 ## Author: Exehn
-## Version: 1.0.3
+## Version: 1.6.6
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## AddonCompartmentFunc: ForeverDungeonJournal_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ForeverDungeonJournal_OnAddonCompartmentEnter
@@ -31,10 +31,8 @@ Localization\Content_koKR.lua
 Localization\Content_zhCN.lua
 Localization\Content_zhTW.lua
 Localization\Content_NewDungeons.lua
-Localization\Content_OfficialNames.lua
-Localization\Content_OfficialQuests.lua
-Localization\Content_QuestText.lua
 Data\Dungeons.lua
+Data\SharedLoot.lua
 Data\DungeonEntrances.lua
 Data\DungeonRoutes.lua
 Data\Bosses.lua
@@ -43,47 +41,30 @@ Data\QuestChains.lua
 Data\QuestRewards.lua
 Data\QuestShareability.lua
 Data\QuestUpdates.lua
-Data\ClassicEra.lua
-Data\ClassicEraQuestShareability.lua
-Data\TBCVanillaDungeons.lua
-Data\TBCAnniversaryPolish.lua
-Data\TBCCompendiumQuests.lua
-Data\TBCQuestPolish.lua
 UI\ThemeData.lua
-Data\TBCBossLevels.lua
-Data\ClassicEraBossLevels.lua
-Data\TBCLootAudit.lua
-Data\VanillaRaids.lua
-Data\VanillaRaidLoot.lua
-Data\VanillaRaidQuests.lua
-Data\TBCQuestClassification.lua
-Data\TBCQuestListConsolidation.lua
-Data\ClassicEraQuestFixes.lua
-Data\RandomEnchants.lua
 UI\ItemComparisonData.lua
 Systems\MapMarkers.lua
+Systems\VersionCheck.lua
 Systems\LootFilter.lua
 Systems\Favourites.lua
 Systems\BugReport.lua
-Data\TierTokenRewards.lua
 Systems\PortraitPool.lua
-Systems\SeasonalQuests.lua
-Systems\QuestProfessions.lua
 Core\Journal.lua
-Systems\TierTokenChooser.lua
-Systems\VanillaRaidMaps.lua
-Systems\ClassicDungeonMaps.lua
-Systems\ForeverBetaSharedArt.lua
 Systems\ScarletWing.lua
 Systems\ItemSource.lua
 Systems\SettingsPanel.lua
+Systems\RPGMode.lua
+Systems\ForeverFilter.lua
+Systems\BossFactionTag.lua
+Systems\MapArtFinder.lua
+Systems\WingFromText.lua
 Systems\ItemIdLearner.lua
 Systems\BossSummon.lua
 Systems\MapNote.lua
 Systems\TooltipBacking.lua
 Systems\DoneTickTooltip.lua
 Systems\HomeBottomBand.lua
-Systems\ClassicEraLFG.lua
+Systems\LFGButton.lua
 Systems\QuestText.lua
 Systems\MapBossSize.lua
 Systems\WorldMapOverlay.lua

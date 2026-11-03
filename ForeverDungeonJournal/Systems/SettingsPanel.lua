@@ -63,8 +63,9 @@ local function AllQuestsDone(dungeon)
             or quest.faction == "Neutral" or quest.faction == faction
         local forClass = not quest.classOnly or Store().showAllClassQuests
             or (class and tostring(quest.classOnly):upper() == class)
-        local forProfession = not FDJ.IsQuestProfessionVisible or FDJ.IsQuestProfessionVisible(quest)
-        if forFaction and forClass and forProfession and not quest.hideFromMainList and quest.id then
+        local forProfession = not quest.profession or Store().showAllProfessionQuests
+            or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(quest.profession)
+        if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id then
             count = count + 1
             if not FDJ.IsQuestFinished(quest.id) then return false end
         end
@@ -138,6 +139,13 @@ local OPTIONS = {
     { keybind = true, label = "OPT_BIND" },
     { header = "OPT_DUNGEON_LIST" },
     {
+        label = "OPT_RPG_MODE",
+        tip = "OPT_RPG_MODE_TIP",
+        get = function() return FDJ.IsRPGMode and FDJ.IsRPGMode() or false end,
+        set = function(on) if FDJ.SetJournalMode then FDJ.SetJournalMode(on and "rpg" or "gamer") end end,
+        refreshHome = true,
+    },
+    {
         label = "OPT_HIDE_OUTLEVELED",
         tip = "OPT_HIDE_OUTLEVELED_TIP",
         get = function() return Store().autoHideOutleveled == true end,
@@ -169,12 +177,12 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        label = "OPT_SHOW_ALL_PROFESSION",
-        tip = "OPT_SHOW_ALL_PROFESSION_TIP",
+        label = "OPT_SHOW_ALL_PROF",
+        tip = "OPT_SHOW_ALL_PROF_TIP",
         get = function() return Store().showAllProfessionQuests == true end,
         set = function(on)
             Store().showAllProfessionQuests = on or nil
-            if FDJ.ScheduleQuestRefresh then FDJ.ScheduleQuestRefresh() end
+            if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
         end,
         refreshHome = true,
     },

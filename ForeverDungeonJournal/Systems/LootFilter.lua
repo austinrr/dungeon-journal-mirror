@@ -23,6 +23,10 @@ local function Settings()
     db.recipes = false
     if db.classOnly == nil then db.classOnly = false end
     if type(db.stats) ~= "table" then db.stats = {} end
+    -- Spell Crit / Spell Hit were folded into Critical Strike / Hit.
+    if db.stats.SPELLCRIT then db.stats.CRIT = true end
+    if db.stats.SPELLHIT then db.stats.HIT = true end
+    db.stats.SPELLCRIT, db.stats.SPELLHIT, db.stats.BLOCK = nil, nil, nil
     if db.matchAll == nil then db.matchAll = true end
     if db.enabled == nil then db.enabled = false end
     if type(db.minLevel) ~= "number" or db.minLevel <= 0 then db.minLevel = nil end
@@ -33,6 +37,16 @@ local function Settings()
     db.armor = nil
     for key in pairs(db.armorTypes) do
         if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate" then db.armorTypes[key] = nil end
+    end
+    -- Weapon types ticked in the Weapon Filter (none ticked = no filter).
+    if type(db.weaponTypes) ~= "table" then db.weaponTypes = {} end
+    for _, kind in ipairs({ "Sword", "Axe", "Mace" }) do
+        if db.weaponTypes[kind] then
+            db.weaponTypes["1H " .. kind], db.weaponTypes["2H " .. kind] = true, true
+        end
+    end
+    for key in pairs(db.weaponTypes) do
+        if FDJ.LOOT_FILTER_WEAPON_SET and not FDJ.LOOT_FILTER_WEAPON_SET[key] then db.weaponTypes[key] = nil end
     end
     -- Spell schools ticked under Spell Damage (none ticked = any spell damage).
     if type(db.schools) ~= "table" then db.schools = {} end
@@ -78,6 +92,42 @@ local function ArmorType(item)
 end
 FDJ.LootFilterSettings = Settings
 
+-- ------------------------------------------------------------ weapon type
+-- Weapon filter: ticked weapon types (shields included). While any is ticked,
+-- weapons of other types are hidden, and so is everything that is not a
+-- weapon unless the Armor filter is also set and the item is armor of a
+-- ticked type (e.g. Leather + Dagger for a rogue).
+-- Swords, axes and maces come one- and two-handed; the other types only one way.
+local WEAPON_TYPES = { "1H Sword", "2H Sword", "1H Axe", "2H Axe", "1H Mace", "2H Mace", "Dagger", "Fist Weapon", "Polearm", "Staff", "Bow", "Gun", "Crossbow", "Wand", "Thrown", "Shield" }
+local HANDED = { Sword = true, Axe = true, Mace = true }
+local WEAPON_SET = {}
+for _, w in ipairs(WEAPON_TYPES) do WEAPON_SET[w] = true end
+FDJ.LOOT_FILTER_WEAPON_SET = WEAPON_SET
+local function WeaponType(item)
+    local slot = type(item) == "table" and item[3]
+    if type(slot) ~= "string" then return nil end
+    local first, kind = slot:match("^([^,]+),%s*(.+)$")
+    if not first then first = slot end
+    first = first:gsub("%s+$", "")
+    if first == "Thrown" then return "Thrown" end
+    if kind and first ~= "Projectile" then
+        kind = kind:gsub("%s+$", "")
+        if HANDED[kind] then return (first == "Two-Hand" and "2H " or "1H ") .. kind end
+        if WEAPON_SET[kind] then return kind end
+    end
+    return nil
+end
+-- Menu label: "One-Hand Sword", "Dagger"... in the journal language.
+local function WeaponLabel(key)
+    local loc = FDJ.LocalizeItemSlot or function(t) return t end
+    local hand, kind = key:match("^(%d)H (.+)$")
+    if hand then return loc(hand == "2" and "Two-Hand" or "One-Hand") .. " " .. loc(kind) end
+    return loc(key)
+end
+local function AnyWeaponTicked(db)
+    return next(db.weaponTypes or {}) ~= nil
+end
+
 -- ---------------------------------------------------------------- recipes
 -- Blueprints are few and distinctive: on boss pages they stay in the main
 -- loot list instead of going under the "Recipes & Patterns" divider.
@@ -94,7 +144,7 @@ FDJ.IsBlueprint = IsBlueprint
 -- blueprint (blueprints are always listed on boss pages, so always findable).
 function FDJ.SearchableBossLoot(boss)
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return {} end
-    if boss.recipeTab or boss.raidSupplement then return boss.loot end -- all shared source records are searchable
+    if boss.recipeTab then return boss.loot end -- recipes are found on their tab
     local kept = FDJ.FilterBossLoot(boss).loot or {}
     local seen, out = {}, {}
     for _, item in ipairs(kept) do seen[item] = true; out[#out + 1] = item end
@@ -114,8 +164,7 @@ local function IsRecipe(item)
     local slot = item[3]
     if type(slot) == "string" then
         local lowerSlot = slot:lower()
-        if lowerSlot:find("recipe", 1, true) or lowerSlot:find("blueprint", 1, true)
-            or lowerSlot:find("design", 1, true) then
+        if lowerSlot:find("recipe", 1, true) or lowerSlot:find("blueprint", 1, true) then
             return true
         end
     end
@@ -124,8 +173,7 @@ local function IsRecipe(item)
     if type(name) == "string" then
         local lowerName = name:lower()
         if lowerName:find("^pattern:") or lowerName:find("^plans:")
-            or lowerName:find("^recipe:") or lowerName:find("^blueprint:")
-            or lowerName:find("^design:") then
+            or lowerName:find("^recipe:") or lowerName:find("^blueprint:") then
             return true
         end
     end
@@ -228,13 +276,14 @@ local STATS = {
     { key = "HEAL", test = function(l) return Has(l, "increases healing done") end },
     { key = "SPELL", test = SpellDamageLine },
     { key = "AP", test = function(l) return Has(l, "attack power") end },
-    { key = "CRIT", test = function(l) return Has(l, "critical strike") and not Has(l, "spell") end },
-    { key = "SPELLCRIT", test = function(l) return Has(l, "critical strike") and Has(l, "spell") end },
-    { key = "HIT", test = function(l) return Has(l, "chance to hit") and not Has(l, "spell") end },
-    { key = "SPELLHIT", test = function(l) return Has(l, "chance to hit") and Has(l, "spell") end },
+    -- WoW Forever merged spell and melee hit/crit into one stat each.
+    { key = "CRIT", test = function(l) return Has(l, "critical strike") end },
+    { key = "HIT", test = function(l) return Has(l, "chance to hit") or Has(l, "hit rating") end },
     { key = "DEF", test = function(l) return Has(l, "defense") end },
     -- "Restores 5 mana per 5 sec." (some items say "every 5 sec").
     { key = "MP5", tip = "LF_STAT_MP5_TIP", test = function(l) return Has(l, "mana per 5") or Has(l, "mana every 5") end },
+    -- "Restores 6 health per 5 sec." / "health every 5 sec."
+    { key = "HP5", tip = "LF_STAT_HP5_TIP", test = function(l) return Has(l, "health per 5") or Has(l, "health every 5") end },
 }
 FDJ.LOOT_FILTER_STATS = STATS
 
@@ -370,45 +419,16 @@ end
 -- bosses drop recipes gets one extra entry at the end of its boss list that
 -- holds each recipe once, with the portraits of the bosses that drop it.
 FDJ.RECIPE_TAB_NAME = "Recipes & Patterns"
--- Rebuild when Normal/Heroic is switched: the two loot tables can differ.
--- This also includes dungeon-specific designs dropped by non-boss enemies.
-function FDJ.RebuildRecipeTabs()
-    for _, dungeon in pairs(FDJ.DB or {}) do
-        if type(dungeon) == "table" and type(dungeon.bosses) == "table"
-            and not dungeon.recipeSearch and not dungeon.lootFilterPage then
-            local bosses = {}
-            for _, boss in ipairs(dungeon.bosses) do
-                if not boss.recipeTab then
-                    boss.fdjHasRecipeTab = nil
-                    bosses[#bosses + 1] = boss
-                end
-            end
-            dungeon.bosses = bosses
-
+do
+    for dungeonName, dungeon in pairs(FDJ.DB or {}) do
+        if type(dungeon) == "table" and type(dungeon.bosses) == "table" and not dungeon.fdjRecipeTabBuilt then
+            dungeon.fdjRecipeTabBuilt = true
             local order, byID = {}, {}
-            local function AddRecipe(item, sourceName)
-                if not IsRecipe(item) or IsBlueprint(item) then return end
-                local id = tonumber(item[1])
-                if not id then return end
-                local entry = byID[id]
-                if entry then
-                    -- Each recipe appears once, even if several NPCs drop it.
-                    if not entry.fdjSourceNames[sourceName] then
-                        entry.fdjSourceNames[sourceName] = true
-                        entry[5] = entry[5] .. " / " .. sourceName
-                    end
-                else
-                    entry = { item[1], item[2], item[3], item[4], sourceName }
-                    entry.fdjSourceNames = { [sourceName] = true }
-                    byID[id] = entry
-                    order[#order + 1] = entry
-                end
-            end
-
-            for _, boss in ipairs(bosses) do
+            for _, boss in ipairs(dungeon.bosses) do
                 if not boss.trash and type(boss.loot) == "table" then
-                    -- Treat a boss's " / " as part of its name, not as two
-                    -- different NPCs for the recipe source portraits.
+                    -- Let the row portraits (shared with Trash Drops) draw this boss.
+                    -- " / " separates sources on a row, so a boss whose own name
+                    -- contains it ("Fel Steed / Shadow Charger") is listed with "&".
                     local sourceName = boss.name:gsub(" / ", " & ")
                     local displayID = boss.npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[boss.npcID]
                     if displayID and FDJ.TRASH_MOB_DISPLAY_IDS and not FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] then
@@ -417,26 +437,24 @@ function FDJ.RebuildRecipeTabs()
                     for _, item in ipairs(boss.loot) do
                         if IsRecipe(item) and not IsBlueprint(item) then
                             boss.fdjHasRecipeTab = true
-                            AddRecipe(item, sourceName)
+                            local entry = byID[item[1]]
+                            if entry then
+                                entry[5] = entry[5] .. " / " .. sourceName
+                            else
+                                entry = { item[1], item[2], item[3], item[4], sourceName }
+                                byID[item[1]] = entry
+                                order[#order + 1] = entry
+                            end
                         end
                     end
                 end
             end
-            for _, source in ipairs(dungeon.fdjRecipeSources or {}) do
-                if type(source.item) == "table" and type(source.source) == "string" then
-                    AddRecipe(source.item, source.source)
-                end
-            end
             if #order > 0 then
-                bosses[#bosses + 1] = {
-                    name = FDJ.RECIPE_TAB_NAME, trash = true, recipeTab = true,
-                    loot = order,
-                }
+                dungeon.bosses[#dungeon.bosses + 1] = { name = FDJ.RECIPE_TAB_NAME, trash = true, recipeTab = true, loot = order }
             end
         end
     end
 end
-FDJ.RebuildRecipeTabs()
 
 function FDJ.FilterBossLoot(boss)
     FDJ.lootFilterHidden = 0
@@ -452,7 +470,8 @@ function FDJ.FilterBossLoot(boss)
     local minLevel = on and db.minLevel or nil
     local armor = on and AnyArmorTicked(db) and db.armorTypes or nil
     local resists = on and AnyResistTicked(db) and db.resists or nil
-    if showRecipes and not classOnly and not wantStats and not minLevel and not armor and not resists then return boss end
+    local weapons = on and AnyWeaponTicked(db) and db.weaponTypes or nil
+    if showRecipes and not classOnly and not wantStats and not minLevel and not armor and not resists and not weapons then return boss end
     local shown = {}
     for _, item in ipairs(boss.loot) do
         local keep = true
@@ -463,6 +482,14 @@ function FDJ.FilterBossLoot(boss)
             if keep and armor then
                 local itemArmor = ArmorType(item)
                 if itemArmor and not armor[itemArmor] then keep = false end
+            end
+            if keep and weapons then
+                local itemWeapon = WeaponType(item)
+                if itemWeapon then
+                    if not weapons[itemWeapon] then keep = false end
+                elseif not (armor and ArmorType(item)) then
+                    keep = false
+                end
             end
             if keep and minLevel then
                 local required
@@ -497,7 +524,6 @@ function FDJ.FilterBossLootForPage(boss)
     FDJ.lootRecipeCount = 0
     FDJ.lootRecipeSplit = nil
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
-    if boss.raidSupplement then return boss end -- grouped raid source tables must remain complete
     if boss.fdjDungeon then return boss end -- the Show page already holds matches only
     if boss.recipeTab then return boss end  -- the recipe tab always lists everything
     local db = Settings()
@@ -554,7 +580,7 @@ end
 -- --------------------------------------------------------------------- UI
 local function IsActive()
     local db = Settings()
-    return db.enabled and (db.recipes or db.classOnly or db.minLevel ~= nil or AnyArmorTicked(db) or AnyResistTicked(db) or AnyStatWanted(db))
+    return db.enabled and (db.recipes or db.classOnly or db.minLevel ~= nil or AnyArmorTicked(db) or AnyWeaponTicked(db) or AnyResistTicked(db) or AnyStatWanted(db))
 end
 
 local function UpdateButton(frame)
@@ -568,7 +594,7 @@ end
 
 local function Changed(frame)
     UpdateButton(frame)
-    if frame and frame.lootFilterResults and frame.lootFilterResults:IsShown() then FDJ.RefreshLootFilterResults(frame) end
+    if frame and frame.lootFilterResults and frame.lootFilterResults:IsShown() then FDJ.ShowLootFilterResults(frame) end
     if FDJ.RebuildLootFilterPage then FDJ.RebuildLootFilterPage(frame) end
     if FDJ.RefreshLootNow then FDJ.RefreshLootNow() end
 end
@@ -639,7 +665,8 @@ local function RefreshWindow(frame)
                 names[#names + 1] = (FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(armor)) or armor
             end
         end
-        win.armor.text:SetText(#names > 0 and table.concat(names, ", ") or L("LF_ARMOR_ALL"))
+        -- Like Resistances: "Armor", or "Armor (2)" with ticks (nothing ticked = all).
+        win.armor.text:SetText(#names > 0 and (L("LF_ARMOR_BTN") .. " (" .. #names .. ")") or L("LF_ARMOR_BTN"))
         for _, option in ipairs(win.armor.options or {}) do
             local value = option.fdjArmor
             option.text:SetText(value and ((FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(value)) or value) or L("LF_ARMOR_ALL"))
@@ -648,6 +675,22 @@ local function RefreshWindow(frame)
             option.check:SetShown(checked)
         end
         if not on and win.armor.menu then win.armor.menu:Hide() end
+    end
+    if win.weapon then
+        local ticked = Settings().weaponTypes or {}
+        local names = {}
+        for _, w in ipairs(WEAPON_TYPES) do
+            if ticked[w] then names[#names + 1] = w end
+        end
+        win.weapon.text:SetText(#names > 0 and (L("LF_WEAPON_BTN") .. " (" .. #names .. ")") or L("LF_WEAPON_BTN"))
+        for _, option in ipairs(win.weapon.options or {}) do
+            local value = option.fdjWeapon
+            option.text:SetText(value and WeaponLabel(value) or L("LF_WEAPON_ALL"))
+            local checked
+            if value then checked = ticked[value] and true or false else checked = #names == 0 end
+            option.check:SetShown(checked)
+        end
+        if not on and win.weapon.menu then win.weapon.menu:Hide() end
     end
     if win.schoolArrow then
         local ticked = Settings().schools or {}
@@ -673,7 +716,7 @@ local function RefreshWindow(frame)
         end
         if not on and win.resist.menu then win.resist.menu:Hide() end
     end
-    for _, control in ipairs({ win.minBox, win.show, win.clear, win.armor, win.resist }) do
+    for _, control in ipairs({ win.minBox, win.show, win.clear, win.armor, win.weapon, win.resist }) do
         if control.SetEnabled then control:SetEnabled(on) end
         control:SetAlpha(on and 1 or 0.45)
     end
@@ -687,7 +730,7 @@ end
 local function CreateWindow(frame)
     local win = CreateFrame("Frame", "ForeverDungeonJournalLootFilter", frame, "BackdropTemplate")
     frame.lootFilterWindow = win
-    win:SetSize(390, RESIST_FILTER and 462 or 434)
+    win:SetSize(390, RESIST_FILTER and 490 or 462)
     win:SetPoint("CENTER", frame, "CENTER", 0, 0)
     win:SetFrameStrata("TOOLTIP")
     win:SetFrameLevel(200)
@@ -750,8 +793,9 @@ local function CreateWindow(frame)
     -- Armor type drop-down: a red WoW button like the others in this window,
     -- with a mail-armor icon on the left and a down arrow on the right.
     win.armor = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    win.armor:SetSize(118, 22)
-    win.armor:SetPoint("LEFT", win.minBox, "RIGHT", 16, 0)
+    -- Armor / Weapon / Resistance drop-downs side by side under the level box.
+    win.armor:SetSize(116, 22)
+    win.armor:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -2, -10)
     win.armor:SetText("")
     win.armor.icon = win.armor:CreateTexture(nil, "OVERLAY")
     win.armor.icon:SetSize(16, 16)
@@ -770,7 +814,7 @@ local function CreateWindow(frame)
 
     local menu = CreateFrame("Frame", nil, win.armor, "BackdropTemplate")
     win.armor.menu = menu
-    local choices = { false, "Cloth", "Leather", "Mail", "Plate" }
+    local choices = { "Cloth", "Leather", "Mail", "Plate" }
     menu:SetSize(130, #choices * 22 + 10)
     menu:SetPoint("TOPLEFT", win.armor, "BOTTOMLEFT", -4, -4)
     menu:SetFrameStrata("TOOLTIP")
@@ -819,6 +863,7 @@ local function CreateWindow(frame)
     end
     win.armor:SetScript("OnClick", function()
         if win.resist and win.resist.menu then win.resist.menu:Hide() end
+        if win.weapon and win.weapon.menu then win.weapon.menu:Hide() end
         menu:SetShown(not menu:IsShown())
     end)
     win.armor:SetScript("OnHide", function() menu:Hide() end)
@@ -830,6 +875,94 @@ local function CreateWindow(frame)
         GameTooltip:SetFrameLevel(win:GetFrameLevel() + 40)
     end)
     win.armor:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+
+    -- Weapon type drop-down (shields included), under the armor one.
+    do
+        local b = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
+        win.weapon = b
+        b:SetSize(116, 22)
+        b:SetPoint("LEFT", win.armor, "RIGHT", 4, 0)
+        b:SetText("")
+        b.icon = b:CreateTexture(nil, "OVERLAY")
+        b.icon:SetSize(18, 18)
+        b.icon:SetPoint("LEFT", b, "LEFT", 6, 0)
+        b.icon:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\WeaponFilterIcon")
+        local arrow = b:CreateTexture(nil, "OVERLAY")
+        arrow:SetTexture("Interface\\Buttons\\Arrow-Down-Up")
+        arrow:SetSize(12, 12)
+        arrow:SetPoint("RIGHT", b, "RIGHT", -7, -3)
+        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        b.text:SetPoint("LEFT", b.icon, "RIGHT", 3, 0)
+        b.text:SetPoint("RIGHT", arrow, "LEFT", -2, 3)
+        b.text:SetJustifyH("CENTER")
+        b.text:SetWordWrap(false)
+
+        local wmenu = CreateFrame("Frame", nil, b, "BackdropTemplate")
+        b.menu = wmenu
+        local wchoices = {}
+        for _, w in ipairs(WEAPON_TYPES) do wchoices[#wchoices + 1] = w end
+        -- Two columns so the list stays short.
+        local rows = math.ceil(#wchoices / 2)
+        wmenu:SetSize(330, rows * 22 + 10)
+        wmenu:SetPoint("TOPLEFT", b, "BOTTOMLEFT", -4, -4)
+        wmenu:SetFrameStrata("TOOLTIP")
+        wmenu:SetFrameLevel(win:GetFrameLevel() + 30)
+        wmenu:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 12,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        wmenu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
+        wmenu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
+        wmenu:Hide()
+        b.options = {}
+        for i, value in ipairs(wchoices) do
+            local option = CreateFrame("Button", nil, wmenu)
+            local col = (i - 1) % 2
+            local row = math.floor((i - 1) / 2)
+            option:SetPoint("TOPLEFT", 6 + col * 160, -5 - row * 22)
+            option:SetSize(156, 21)
+            option:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+            option.fdjWeapon = value or nil
+            option.box = option:CreateTexture(nil, "ARTWORK")
+            option.box:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
+            option.box:SetSize(18, 18)
+            option.box:SetPoint("LEFT", 4, 0)
+            option.check = option:CreateTexture(nil, "OVERLAY")
+            option.check:SetTexture("Interface\\Buttons\\UI-CheckBox-Check")
+            option.check:SetAllPoints(option.box)
+            option.check:Hide()
+            option.text = option:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            option.text:SetPoint("LEFT", option.box, "RIGHT", 4, 0)
+            option.text:SetTextColor(0.95, 0.83, 0.53)
+            option:SetScript("OnClick", function(self)
+                local s = Settings()
+                if self.fdjWeapon then
+                    s.weaponTypes[self.fdjWeapon] = not s.weaponTypes[self.fdjWeapon] or nil
+                else
+                    s.weaponTypes = {}
+                end
+                RefreshWindow(frame)
+                Changed(frame)
+            end)
+            b.options[#b.options + 1] = option
+        end
+        b:SetScript("OnClick", function()
+            if win.armor and win.armor.menu then win.armor.menu:Hide() end
+            if win.resist and win.resist.menu then win.resist.menu:Hide() end
+            wmenu:SetShown(not wmenu:IsShown())
+        end)
+        b:SetScript("OnHide", function() wmenu:Hide() end)
+        b:SetScript("OnEnter", function(self)
+            if not GameTooltip then return end
+            GameTooltip:SetOwner(self, "ANCHOR_TOP")
+            GameTooltip:SetText(L("LF_WEAPON"), 1, 0.82, 0.27)
+            GameTooltip:Show()
+            GameTooltip:SetFrameLevel(win:GetFrameLevel() + 40)
+        end)
+        b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+    end
 
     -- Master switch: while off, the journal shows its default loot view.
     win.toggle = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
@@ -848,7 +981,7 @@ local function CreateWindow(frame)
         check.fdjStat = stat
         local column = (i - 1) % 2
         local row = math.floor((i - 1) / 2)
-        check:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6 + column * 182, -16 - (RESIST_FILTER and 28 or 0) - row * 28)
+        check:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6 + column * 182, -16 - 34 - row * 28)
         if stat.tip then
             -- The label is outside the 24px box; widen the hover/click area over it.
             check:SetHitRectInsets(0, -130, 0, 0)
@@ -941,6 +1074,7 @@ local function CreateWindow(frame)
         arrow:SetScript("OnClick", function()
             if win.armor and win.armor.menu then win.armor.menu:Hide() end
             if win.resist and win.resist.menu then win.resist.menu:Hide() end
+            if win.weapon and win.weapon.menu then win.weapon.menu:Hide() end
             smenu:SetShown(not smenu:IsShown())
         end)
         arrow:SetScript("OnHide", function() smenu:Hide() end)
@@ -955,7 +1089,7 @@ local function CreateWindow(frame)
     end
 
     win.matchAll = MakeCheck(win, frame, function() return Settings().matchAll end, function(v) Settings().matchAll = v end)
-    win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - (RESIST_FILTER and 28 or 0) - math.ceil(#STATS / 2) * 28 - 6)
+    win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - 34 - math.ceil(#STATS / 2) * 28 - 6)
     win.checks[#win.checks + 1] = win.matchAll
 
     -- Resistance drop-down, built like the armor one, right under it.
@@ -963,8 +1097,8 @@ local function CreateWindow(frame)
     if RESIST_FILTER then
         local b = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
         win.resist = b
-        b:SetSize(118, 22)
-        b:SetPoint("TOPLEFT", win.armor, "BOTTOMLEFT", 0, -6)
+        b:SetSize(116, 22)
+        b:SetPoint("LEFT", win.weapon or win.armor, "RIGHT", 4, 0)
         b:SetText("")
         b.icon = b:CreateTexture(nil, "OVERLAY")
         b.icon:SetSize(16, 16)
@@ -1026,6 +1160,7 @@ local function CreateWindow(frame)
         end
         b:SetScript("OnClick", function()
             if win.armor and win.armor.menu then win.armor.menu:Hide() end
+            if win.weapon and win.weapon.menu then win.weapon.menu:Hide() end
             rmenu:SetShown(not rmenu:IsShown())
         end)
         b:SetScript("OnHide", function() rmenu:Hide() end)
@@ -1038,6 +1173,13 @@ local function CreateWindow(frame)
         end)
         b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     end
+
+    -- Fit the window to its content: the bottom buttons sit a fixed gap
+    -- under "Item must have all ticked stats".
+    win:SetScript("OnShow", function(self)
+        local top, bottom = self:GetTop(), self.matchAll and self.matchAll:GetBottom()
+        if top and bottom then self:SetHeight(math.floor(top - bottom + 0.5) + 70) end
+    end)
 
     win.clear = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
     win.clear:SetSize(110, 22)
@@ -1074,6 +1216,7 @@ local function CreateWindow(frame)
         s.stats = {}
         s.minLevel = nil
         s.armorTypes = {}
+        s.weaponTypes = {}
         s.resists = {}
         s.schools = {}
         if frame.lootFilterWindow and frame.lootFilterWindow.minBox then frame.lootFilterWindow.minBox:SetText("") end
@@ -1221,6 +1364,7 @@ local function MakeResultRow(parent)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if self.item[1] and self.item[1] > 0 then
             GameTooltip:SetHyperlink("item:" .. self.item[1])
+            if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
         else
             GameTooltip:SetText(self.item[2] or "")
         end
@@ -1276,8 +1420,12 @@ end
 function FDJ.RefreshLootFilterResults(frame)
     local panel = frame and frame.lootFilterResults
     if not panel then return end
-    local list, itemCount = CollectResults()
-    panel.title:SetText(L("LF_RESULTS") .. "  |cffb8ab94" .. itemCount .. " " .. L("ITEMS") .. "|r")
+    -- Only used for the empty state now: when items match, the Show page
+    -- (boss list + loot) opens instead of this flat list.
+    local list, itemCount = {}, 0
+    panel.title:SetText(L("LF_RESULTS"))
+    local bar = rawget(panel.scroll, "ScrollBar") or _G["ForeverDungeonJournalLootFilterResultsScrollScrollBar"]
+    if type(bar) == "table" and bar.Hide then bar:Hide() end
     panel.back:SetText(L("LF_BACK"))
     panel.filter:SetText(L("LOOT_FILTER"))
     panel.empty:SetText(L("LF_NO_RESULTS"))
@@ -1391,7 +1539,7 @@ FDJ.ShowLootFilterList = function(frame)
             panel.fdjPending = true
             local function redraw()
                 panel.fdjPending = nil
-                if panel:IsShown() then FDJ.RefreshLootFilterResults(frame) end
+                if panel:IsShown() then FDJ.ShowLootFilterResults(frame) end
             end
             if C_Timer and C_Timer.After then C_Timer.After(0.5, redraw) else redraw() end
         end)
@@ -1416,7 +1564,7 @@ end
 local function BuildPage()
     local bosses, itemCount = {}, 0
     local db = Settings()
-    local recipesOnly = db.enabled and db.recipes and not db.classOnly and not db.minLevel and not AnyArmorTicked(db) and not AnyResistTicked(db) and not AnyStatWanted(db)
+    local recipesOnly = db.enabled and db.recipes and not db.classOnly and not db.minLevel and not AnyArmorTicked(db) and not AnyWeaponTicked(db) and not AnyResistTicked(db) and not AnyStatWanted(db)
     FDJ.lootFilterStrict = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
@@ -1584,14 +1732,11 @@ function FDJ.SetRowMobs(row, sourceText)
             end
         end
     end
-    local compactSourceIcons = row.GetHeight and row:GetHeight() < 34
-    local iconSize = compactSourceIcons and 22 or 34
-    local iconStep = iconSize + 4
     for i, name in ipairs(names) do
         local button = row.fdjMobButtons[i]
         if not button then
             button = CreateFrame("Button", nil, row)
-            button:SetSize(iconSize, iconSize)
+            button:SetSize(34, 34)
             button.portrait = button:CreateTexture(nil, "ARTWORK")
             button.portrait:SetAllPoints()
             button:SetScript("OnEnter", function(self)
@@ -1604,16 +1749,15 @@ function FDJ.SetRowMobs(row, sourceText)
             row.fdjMobButtons[i] = button
         end
         button.fdjMobName = name
-        button:SetSize(iconSize, iconSize)
         button:ClearAllPoints()
-        button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * iconStep, 0)
+        button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * 38, 0)
         pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, FDJ.TRASH_MOB_DISPLAY_IDS[name])
         button:Show()
     end
     for i = #names + 1, #row.fdjMobButtons do row.fdjMobButtons[i]:Hide() end
     -- Keep the item name clear of the portraits.
     if row.name and row.name.SetPoint then
-        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - #names * iconStep, 0)
+        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - #names * 38, 0)
     end
     return #names > 0
 end

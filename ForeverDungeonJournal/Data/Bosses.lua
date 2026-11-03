@@ -45,6 +45,178 @@ FDJ.BOSS_LEVELS = {
         ["Houndmaster Loksey"] = "34",
         ["Arcanist Doan"] = "37",
     },
+    ["Scarlet Monastery: Armory"] = {
+        ["Herod"] = "40",
+    },
+    ["Scarlet Monastery: Cathedral"] = {
+        ["High Inquisitor Fairbanks"] = "40",
+        ["Scarlet Commander Mograine"] = "42",
+        ["High Inquisitor Whitemane"] = "42",
+    },
+    ["Uldaman"] = {
+        ["Revelosh"] = "40",
+        ["The Lost Dwarves"] = "41",
+        ["Ironaya"] = "40",
+        ["Ancient Stone Keeper"] = "44",
+        ["Galgann Firehammer"] = "45",
+        ["Grimlok"] = "45",
+        ["Archaedas"] = "47",
+    },
+    ["Zul'Farrak"] = {
+        ["Antu'sul"] = "48",
+        ["Witch Doctor Zum'rah"] = "46",
+        ["Shadowpriest Sezz'ziz"] = "47",
+        ["Gahz'rilla"] = "46",
+        ["Zerillis"] = "45",
+        ["Sandarr Dunereaver"] = "45",
+        ["Dustwraith"] = "45",
+        ["Ruuzlu"] = "46",
+        ["Chief Ukorz Sandscalp"] = "48",
+    },
+    ["Sunken Temple"] = {
+        ["Atal'alarion"] = "50",
+        ["Dreamscythe"] = "53",
+        ["Weaver"] = "51",
+        ["Avatar of Hakkar"] = "55",
+        ["Jammal'an the Prophet"] = "54",
+        ["Ogom the Wretched"] = "53",
+        ["Morphaz"] = "52",
+        ["Hazzas"] = "53",
+        ["Shade of Eranikus"] = "55",
+    },
+    ["Scholomance"] = {
+        ["Kirtonos the Herald"] = "60",
+        ["Jandice Barov"] = "61",
+        ["Rattlegore"] = "61",
+        ["Marduk Blackpool"] = "58",
+        ["Vectus"] = "60",
+        ["Ras Frostwhisper"] = "62",
+        ["Instructor Malicia"] = "60",
+        ["Doctor Theolen Krastinov"] = "60",
+        ["Lorekeeper Polkelt"] = "60",
+        ["The Ravenian"] = "60",
+        ["Lord Alexei Barov"] = "60",
+        ["Lady Illucia Barov"] = "60",
+        ["Darkmaster Gandling"] = "61",
+    },
+    ["Maraudon"] = {
+        ["Noxxion"] = "48",
+        ["Razorlash"] = "48",
+        ["Lord Vyletongue"] = "47",
+        ["Meshlok the Harvester"] = "48",
+        ["Celebras the Cursed"] = "49",
+        ["Landslide"] = "50",
+        ["Tinkerer Gizlock"] = "50",
+        ["Rotgrip"] = "50",
+        ["Princess Theradras"] = "51",
+    },
+    ["Dire Maul: East"] = {
+        ["Zevrim Thornhoof"] = "57",
+        ["Hydrospawn"] = "57",
+        ["Lethtendris"] = "57",
+        ["Alzzin the Wildshaper"] = "58",
+    },
+    ["Dire Maul: West"] = {
+        ["Tendris Warpwood"] = "60",
+        ["Illyanna Ravenoak"] = "60",
+        ["Tsu'zee"] = "59",
+        ["Magister Kalendris"] = "60",
+        ["Immol'thar"] = "61",
+        ["Lord Hel'nurath"] = "62",
+        ["Prince Tortheldrin"] = "61",
+    },
+    ["Dire Maul: North"] = {
+        ["Guard Mol'dar"] = "59",
+        ["Stomper Kreeg"] = "59",
+        ["Guard Fengus"] = "59",
+        ["Guard Slip'kik"] = "59",
+        ["Captain Kromcrush"] = "61",
+        ["Cho'Rush the Observer"] = "60",
+        ["King Gordok"] = "62",
+    },
+    ["Stratholme: Living"] = {
+        ["Skul"] = "58",
+        ["Hearthsinger Forresten"] = "57",
+        ["The Unforgiven"] = "57",
+        ["Timmy the Cruel"] = "58",
+        ["Postmaster Malown"] = "60",
+        ["Cannon Master Willey"] = "60",
+        ["Archivist Galford"] = "60",
+        ["Balnazzar"] = "62",
+    },
+    ["Stratholme: Undead"] = {
+        ["Stonespine"] = "60",
+        ["Magistrate Barthilas"] = "58",
+        ["Nerub'enkan"] = "60",
+        ["Baroness Anastari"] = "59",
+        ["Maleki the Pallid"] = "61",
+        ["Ramstein the Gorger"] = "61",
+        ["Baron Rivendare"] = "62",
+    },
+    ["Blackrock Depths"] = {
+        ["High Interrogator Gerstahn"] = "52",
+        ["Lord Roccor"] = "51",
+        ["Houndmaster Grebmar"] = "52",
+        ["Gorosh the Dervish"] = "56",
+        ["Grizzle"] = "54",
+        ["Eviscerator"] = "54",
+        ["Ok'thor the Breaker"] = "53",
+        ["Anub'shiah"] = "54",
+        ["Hedrum the Creeper"] = "53",
+        ["Pyromancer Loregrain"] = "52",
+        ["Fineous Darkvire"] = "54",
+        ["Warder Stilgiss"] = "56",
+        ["Lord Incendius"] = "55",
+        ["Bael'Gar"] = "54",
+        ["General Angerforge"] = "57",
+        ["Golem Lord Argelmach"] = "57",
+        ["Hurley Blackbreath"] = "55",
+        ["Phalanx"] = "55",
+        ["Ribbly Screwspigot"] = "53",
+        ["Plugger Spazzring"] = "55",
+        ["Ambassador Flamelash"] = "57",
+        ["Panzor the Invincible"] = "57",
+        ["The Seven"] = "57",
+        ["Magmus"] = "57",
+        ["Princess Moira Bronzebeard"] = "58",
+        ["Emperor Dagran Thaurissan"] = "59",
+    },
+    ["Blackrock Depths"] = {
+        ["Pyroguard Emberseer"] = "60",
+        ["Solakar Flamewreath"] = "60",
+        ["Jed Runewatcher"] = "59",
+        ["Goraluk Anvilcrack"] = "61",
+        ["Gyth"] = "62",
+        ["Warchief Rend Blackhand"] = "62",
+        ["The Beast"] = "62",
+        ["Lord Valthalak"] = "62",
+        ["General Drakkisath"] = "62",
+    },
+    ["Blackrock Depths"] = {
+        ["Spirestone Butcher"] = "59",
+        ["Spirestone Battle Lord"] = "59",
+        ["Spirestone Lord Magus"] = "59",
+        ["Highlord Omokk"] = "62",
+        ["Shadow Hunter Vosh'gajin"] = "60",
+        ["War Master Voone"] = "60",
+        ["Mother Smolderweb"] = "59",
+        ["Crystal Fang"] = "60",
+        ["Urok Doomhowl"] = "60",
+        ["Bannok Grimaxe"] = "59",
+        ["Quartermaster Zigris"] = "59",
+        ["Halycon"] = "59",
+        ["Gizrul the Slavener"] = "60",
+        ["Ghok Bashguud"] = "59",
+        ["Overlord Wyrmthalak"] = "63",
+    },
+    ["Razorfen Downs"] = {
+        ["Tuten'kash"] = "40",
+        ["Mordresh Fire Eye"] = "39",
+        ["Glutton"] = "40",
+        ["Ragglesnout"] = "37",
+        ["Plaguemaw the Rotting"] = "40",
+        ["Amnennar the Coldbringer"] = "41",
+    },
     ["Hall of Thanes"] = {
         ["Faldrim Anvilmar"] = "16",
         ["Magmatus"] = "16",
@@ -241,6 +413,178 @@ FDJ.STATIC_DISPLAY_IDS = {
     -- Scarlet Monastery: Library
     [3974] = 2040,      -- Houndmaster Loksey
     [6487] = 5266,      -- Arcanist Doan
+
+    -- Scarlet Monastery: Armory
+    [3975] = 2041,      -- Herod
+
+    -- Scarlet Monastery: Cathedral
+    [4542] = 2605,      -- High Inquisitor Fairbanks
+    [3976] = 2042,      -- Scarlet Commander Mograine
+    [3977] = 2043,      -- High Inquisitor Whitemane
+
+    -- Razorfen Downs
+    [7355] = 7845,      -- Tuten'kash
+    [7357] = 8055,      -- Mordresh Fire Eye
+    [8567] = 7864,      -- Glutton
+    [7354] = 11382,     -- Ragglesnout
+    [7356] = 6124,      -- Plaguemaw the Rotting
+    [7358] = 7971,      -- Amnennar the Coldbringer
+
+    -- Lower Blackrock Spire
+    [9219] = 11574,  -- Spirestone Butcher
+    [9218] = 11576,  -- Spirestone Battle Lord
+    [9217] = 11578,  -- Spirestone Lord Magus
+    [9196] = 11565,  -- Highlord Omokk
+    [9236] = 9732,  -- Shadow Hunter Vosh'gajin
+    [9237] = 9733,  -- War Master Voone
+    [10596] = 9929,  -- Mother Smolderweb
+    [10376] = 9755,  -- Crystal Fang
+    [10584] = 11583,  -- Urok Doomhowl
+    [9596] = 9668,  -- Bannok Grimaxe
+    [9736] = 9738,  -- Quartermaster Zigris
+    [10220] = 9567,  -- Halycon
+    [10268] = 9564,  -- Gizrul the Slavener
+    [9718] = 11809,  -- Ghok Bashguud
+    [9568] = 8711,  -- Overlord Wyrmthalak
+
+    -- Upper Blackrock Spire
+    [9816] = 2172,  -- Pyroguard Emberseer
+    [10264] = 9581,  -- Solakar Flamewreath
+    [10509] = 9686,  -- Jed Runewatcher
+    [10899] = 10222,  -- Goraluk Anvilcrack
+    [10339] = 9806,  -- Gyth
+    [10429] = 9778,  -- Warchief Rend Blackhand
+    [10430] = 10193,  -- The Beast
+    [16042] = 14308,  -- Lord Valthalak
+    [10363] = 10115,  -- General Drakkisath
+
+    -- Blackrock Depths
+    [9018] = 8761,  -- High Interrogator Gerstahn
+    [9025] = 5781,  -- Lord Roccor
+    [9319] = 9212,  -- Houndmaster Grebmar
+    [9027] = 8760,  -- Gorosh the Dervish
+    [9028] = 7873,  -- Grizzle
+    [9029] = 523,  -- Eviscerator
+    [9030] = 11538,  -- Ok'thor the Breaker
+    [9031] = 3004,  -- Anub'shiah
+    [9032] = 8271,  -- Hedrum the Creeper
+    [9024] = 8762,  -- Pyromancer Loregrain
+    [9056] = 8704,  -- Fineous Darkvire
+    [9041] = 9089,  -- Warder Stilgiss
+    [9017] = 1204,  -- Lord Incendius
+    [9016] = 12162,  -- Bael'Gar
+    [9033] = 8756,  -- General Angerforge
+    [8983] = 8759,  -- Golem Lord Argelmach
+    [9537] = 8658,  -- Hurley Blackbreath
+    [9502] = 8177,  -- Phalanx
+    [9543] = 8667,  -- Ribbly Screwspigot
+    [9499] = 8652,  -- Plugger Spazzring
+    [9156] = 8329,  -- Ambassador Flamelash
+    [8923] = 8270,  -- Panzor the Invincible
+    [9039] = 8687,  -- The Seven
+    [9938] = 12162,  -- Magmus
+    [8929] = 8705,  -- Princess Moira Bronzebeard
+    [9019] = 8807,  -- Emperor Dagran Thaurissan
+
+    -- Dire Maul: East
+    [11490] = 11335,  -- Zevrim Thornhoof
+    [13280] = 5489,   -- Hydrospawn
+    [14327] = 14378,  -- Lethtendris
+    [11492] = 14416,  -- Alzzin the Wildshaper
+
+    -- Dire Maul: West
+    [11489] = 14383,  -- Tendris Warpwood
+    [11488] = 11270,  -- Illyanna Ravenoak
+    [11467] = 11250,  -- Tsu'zee
+    [11487] = 14384,  -- Magister Kalendris
+    [11496] = 14173,  -- Immol'thar
+    [14506] = 14556,  -- Lord Hel'nurath
+    [11486] = 11256,  -- Prince Tortheldrin
+
+    -- Dire Maul: North
+    [14326] = 11561,  -- Guard Mol'dar
+    [14322] = 11545,  -- Stomper Kreeg
+    [14321] = 11561,  -- Guard Fengus
+    [14323] = 11561,  -- Guard Slip'kik
+    [14325] = 11564,  -- Captain Kromcrush
+    [14324] = 11537,  -- Cho'Rush the Observer
+    [11501] = 11583,  -- King Gordok
+
+    -- Stratholme: Living
+    [10393] = 2606,   -- Skul
+    [10558] = 10482,  -- Hearthsinger Forresten
+    [10516] = 10771,  -- The Unforgiven
+    [10808] = 571,    -- Timmy the Cruel
+    [11143] = 10669,  -- Postmaster Malown
+    [10997] = 10674,  -- Cannon Master Willey
+    [10811] = 10544,  -- Archivist Galford
+    [10813] = 10691,  -- Balnazzar
+
+    -- Stratholme: Undead
+    [10809] = 7856,   -- Stonespine
+    [10435] = 10433,  -- Magistrate Barthilas
+    [10437] = 9793,   -- Nerub'enkan
+    [10436] = 10698,  -- Baroness Anastari
+    [10438] = 10546,  -- Maleki the Pallid
+    [10439] = 12818,  -- Ramstein the Gorger
+    [10440] = 10729,  -- Baron Rivendare
+
+    -- Sunken Temple
+    [8580] = 7873,   -- Atal'alarion
+    [5721] = 7553,   -- Dreamscythe
+    [5720] = 6375,   -- Weaver
+    [8443] = 8053,   -- Avatar of Hakkar
+    [5710] = 6708,   -- Jammal'an the Prophet
+    [5711] = 6709,   -- Ogom the Wretched
+    [5719] = 7975,   -- Morphaz
+    [5722] = 9584,   -- Hazzas
+    [5709] = 7806,   -- Shade of Eranikus
+
+    -- Scholomance
+    [10506] = 143673, -- Kirtonos the Herald
+    [10503] = 11073,  -- Jandice Barov
+    [11622] = 12073,  -- Rattlegore
+    [10433] = 10248,  -- Marduk Blackpool
+    [10432] = 2606,   -- Vectus
+    [10508] = 7919,   -- Ras Frostwhisper
+    [10505] = 11069,  -- Instructor Malicia
+    [11261] = 10901,  -- Doctor Theolen Krastinov
+    [10901] = 11492,  -- Lorekeeper Polkelt
+    [10507] = 10433,  -- The Ravenian
+    [10504] = 11072,  -- Lord Alexei Barov
+    [10502] = 11835,  -- Lady Illucia Barov
+    [1853] = 11070,  -- Darkmaster Gandling
+
+    -- Maraudon
+    [13282] = 11172,  -- Noxxion
+    [12258] = 12389,  -- Razorlash
+    [12236] = 12334,  -- Lord Vyletongue
+    [12237] = 9014,   -- Meshlok the Harvester
+    [12225] = 12350,  -- Celebras the Cursed
+    [12203] = 12293,  -- Landslide
+    [13601] = 7125,   -- Tinkerer Gizlock
+    [13596] = 13589,  -- Rotgrip
+    [12201] = 12292,  -- Princess Theradras
+
+    -- Uldaman
+    [6910] = 5945,  -- Revelosh
+    [6906] = 5710,  -- The Lost Dwarves
+    [7228] = 6089,  -- Ironaya
+    [7206] = 10798, -- Ancient Stone Keeper
+    [7291] = 6059,  -- Galgann Firehammer
+    [4854] = 11165, -- Grimlok
+    [2748] = 5988,  -- Archaedas
+
+    -- Zul'Farrak
+    [8127] = 7353,  -- Antu'sul
+    [7271] = 6434,  -- Witch Doctor Zum'rah
+    [7275] = 6441,  -- Shadowpriest Sezz'ziz
+    [7273] = 7271,  -- Gahz'rilla
+    [10082] = 9293,  -- Zerillis
+    [10080] = 9291,  -- Sandarr Dunereaver
+    [10081] = 9292,  -- Dustwraith
+    [7797] = 6687,  -- Ruuzlu
+    [7267] = 6439,  -- Chief Ukorz Sandscalp
 }
 
 -- Trash mobs named as the source of a trash drop: name -> creature display ID
@@ -270,167 +614,9 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Dark Caster"] = 7555, -- npc 255072
     ["Fallen Mage"] = 9783, -- npc 255066
     ["Kirin Tor Necromancer"] = 145809, -- npc 269134
+    -- Scarlet Monastery
+    ["Scarlet Defender"] = 2462, -- npc 4298
+    ["Scarlet Myrmidon"] = 2514, -- npc 4295
+    ["Scarlet Champion"] = 2460, -- npc 4302
+    ["Scarlet Centurion"] = 2499, -- npc 4301
 }
-
--- Source-verified Classic display IDs for the added dungeon bosses.
-FDJ.STATIC_DISPLAY_IDS = FDJ.STATIC_DISPLAY_IDS or {}
--- Scarlet Monastery: Armory
-FDJ.STATIC_DISPLAY_IDS[3975] = 2041 -- authentic Herod model, 3975
--- Scarlet Monastery: Cathedral
--- Razorfen Downs
-FDJ.STATIC_DISPLAY_IDS[7355] = 7845
-FDJ.STATIC_DISPLAY_IDS[7357] = 8055
-FDJ.STATIC_DISPLAY_IDS[8567] = 7864
-FDJ.STATIC_DISPLAY_IDS[7354] = 11382
--- Uldaman
-FDJ.STATIC_DISPLAY_IDS[6907] = 5708
-FDJ.STATIC_DISPLAY_IDS[6906] = 5710
-FDJ.STATIC_DISPLAY_IDS[6908] = 5709
-FDJ.STATIC_DISPLAY_IDS[6910] = 5945
-FDJ.STATIC_DISPLAY_IDS[7228] = 6089
-FDJ.STATIC_DISPLAY_IDS[7023] = 5285
-FDJ.STATIC_DISPLAY_IDS[7206] = 10798
-FDJ.STATIC_DISPLAY_IDS[7291] = 6059
-FDJ.STATIC_DISPLAY_IDS[4854] = 11165
-FDJ.STATIC_DISPLAY_IDS[2748] = 5988
--- Zul'Farrak
-FDJ.STATIC_DISPLAY_IDS[8127] = 7353
-FDJ.STATIC_DISPLAY_IDS[7272] = 6696
-FDJ.STATIC_DISPLAY_IDS[7271] = 6434
-FDJ.STATIC_DISPLAY_IDS[7796] = 6690
-FDJ.STATIC_DISPLAY_IDS[7275] = 6441
-FDJ.STATIC_DISPLAY_IDS[10081] = 9292
-FDJ.STATIC_DISPLAY_IDS[7274] = 6440
-FDJ.STATIC_DISPLAY_IDS[7604] = 6433
-FDJ.STATIC_DISPLAY_IDS[7795] = 6685
-FDJ.STATIC_DISPLAY_IDS[7273] = 7271
-FDJ.STATIC_DISPLAY_IDS[7267] = 6439
-FDJ.STATIC_DISPLAY_IDS[10082] = 9293
--- Maraudon
-FDJ.STATIC_DISPLAY_IDS[13282] = 11172
-FDJ.STATIC_DISPLAY_IDS[12258] = 12389
-FDJ.STATIC_DISPLAY_IDS[12236] = 12334
-FDJ.STATIC_DISPLAY_IDS[12237] = 9014
-FDJ.STATIC_DISPLAY_IDS[12225] = 12350
-FDJ.STATIC_DISPLAY_IDS[12203] = 12293
-FDJ.STATIC_DISPLAY_IDS[13601] = 7125
-FDJ.STATIC_DISPLAY_IDS[13596] = 13589
-FDJ.STATIC_DISPLAY_IDS[12201] = 12292
--- The Temple of Atal'Hakkar
-FDJ.STATIC_DISPLAY_IDS[8580] = 7873
-FDJ.STATIC_DISPLAY_IDS[5708] = 4065
-FDJ.STATIC_DISPLAY_IDS[8443] = 8053
-FDJ.STATIC_DISPLAY_IDS[5710] = 6708
-FDJ.STATIC_DISPLAY_IDS[5711] = 6709
-FDJ.STATIC_DISPLAY_IDS[5721] = 7553
-FDJ.STATIC_DISPLAY_IDS[5720] = 6375
-FDJ.STATIC_DISPLAY_IDS[5722] = 9584
-FDJ.STATIC_DISPLAY_IDS[5719] = 7975
-FDJ.STATIC_DISPLAY_IDS[5709] = 7806
--- Blackrock Depths
-FDJ.STATIC_DISPLAY_IDS[9025] = 5781
-FDJ.STATIC_DISPLAY_IDS[9018] = 8761
-FDJ.STATIC_DISPLAY_IDS[9319] = 9212
-FDJ.STATIC_DISPLAY_IDS[9027] = 8760
-FDJ.STATIC_DISPLAY_IDS[9028] = 7873
-FDJ.STATIC_DISPLAY_IDS[9029] = 523
-FDJ.STATIC_DISPLAY_IDS[9030] = 11538
-FDJ.STATIC_DISPLAY_IDS[9031] = 3004
-FDJ.STATIC_DISPLAY_IDS[9032] = 8271
-FDJ.STATIC_DISPLAY_IDS[9024] = 8762
-FDJ.STATIC_DISPLAY_IDS[9016] = 12162
-FDJ.STATIC_DISPLAY_IDS[9017] = 1204
-FDJ.STATIC_DISPLAY_IDS[9056] = 8704
-FDJ.STATIC_DISPLAY_IDS[9041] = 9089
-FDJ.STATIC_DISPLAY_IDS[9033] = 8756
-FDJ.STATIC_DISPLAY_IDS[8983] = 8759
-FDJ.STATIC_DISPLAY_IDS[9499] = 8652
-FDJ.STATIC_DISPLAY_IDS[9502] = 8177
-FDJ.STATIC_DISPLAY_IDS[9543] = 8667
-FDJ.STATIC_DISPLAY_IDS[9537] = 8658
-FDJ.STATIC_DISPLAY_IDS[9156] = 8329
-FDJ.STATIC_DISPLAY_IDS[8923] = 8270
-FDJ.STATIC_DISPLAY_IDS[9938] = 12162
-FDJ.STATIC_DISPLAY_IDS[8929] = 8705
-FDJ.STATIC_DISPLAY_IDS[9019] = 8807
--- Lower Blackrock Spire
-FDJ.STATIC_DISPLAY_IDS[10263] = 5047
-FDJ.STATIC_DISPLAY_IDS[9219] = 11574
-FDJ.STATIC_DISPLAY_IDS[9196] = 11565
-FDJ.STATIC_DISPLAY_IDS[9236] = 9732
-FDJ.STATIC_DISPLAY_IDS[9237] = 9733
-FDJ.STATIC_DISPLAY_IDS[9596] = 9668
-FDJ.STATIC_DISPLAY_IDS[10596] = 9929
-FDJ.STATIC_DISPLAY_IDS[10584] = 11583
-FDJ.STATIC_DISPLAY_IDS[9736] = 9738
-FDJ.STATIC_DISPLAY_IDS[10220] = 9567
-FDJ.STATIC_DISPLAY_IDS[10268] = 9564
-FDJ.STATIC_DISPLAY_IDS[9568] = 8711
-FDJ.STATIC_DISPLAY_IDS[9218] = 11576
-FDJ.STATIC_DISPLAY_IDS[9217] = 11578
-FDJ.STATIC_DISPLAY_IDS[10376] = 9755
-FDJ.STATIC_DISPLAY_IDS[9718] = 11809
--- Upper Blackrock Spire
-FDJ.STATIC_DISPLAY_IDS[9816] = 2172
-FDJ.STATIC_DISPLAY_IDS[10264] = 9581
-FDJ.STATIC_DISPLAY_IDS[10509] = 9686
-FDJ.STATIC_DISPLAY_IDS[10899] = 10222
-FDJ.STATIC_DISPLAY_IDS[10339] = 9806
-FDJ.STATIC_DISPLAY_IDS[10429] = 9778
-FDJ.STATIC_DISPLAY_IDS[10430] = 10193
-FDJ.STATIC_DISPLAY_IDS[10363] = 10115
--- Dire Maul: East
-FDJ.STATIC_DISPLAY_IDS[14354] = 7552
-FDJ.STATIC_DISPLAY_IDS[11490] = 11335
-FDJ.STATIC_DISPLAY_IDS[13280] = 5489
-FDJ.STATIC_DISPLAY_IDS[14327] = 14378
-FDJ.STATIC_DISPLAY_IDS[11492] = 14416
--- Dire Maul: West
-FDJ.STATIC_DISPLAY_IDS[11489] = 14383
-FDJ.STATIC_DISPLAY_IDS[11488] = 11270
-FDJ.STATIC_DISPLAY_IDS[11487] = 14384
-FDJ.STATIC_DISPLAY_IDS[11467] = 11250
-FDJ.STATIC_DISPLAY_IDS[11496] = 14173
-FDJ.STATIC_DISPLAY_IDS[11486] = 11256
-FDJ.STATIC_DISPLAY_IDS[14506] = 14556
--- Dire Maul: North
-FDJ.STATIC_DISPLAY_IDS[14326] = 11561
-FDJ.STATIC_DISPLAY_IDS[14322] = 11545
-FDJ.STATIC_DISPLAY_IDS[14321] = 11561
-FDJ.STATIC_DISPLAY_IDS[14323] = 11561
-FDJ.STATIC_DISPLAY_IDS[14325] = 11564
-FDJ.STATIC_DISPLAY_IDS[14324] = 11537
-FDJ.STATIC_DISPLAY_IDS[11501] = 11583
--- Scholomance
-FDJ.STATIC_DISPLAY_IDS[10506] = 7534
-FDJ.STATIC_DISPLAY_IDS[10503] = 11073
-FDJ.STATIC_DISPLAY_IDS[11622] = 12073
-FDJ.STATIC_DISPLAY_IDS[10433] = 10248
-FDJ.STATIC_DISPLAY_IDS[10432] = 2606
-FDJ.STATIC_DISPLAY_IDS[10508] = 7919
-FDJ.STATIC_DISPLAY_IDS[10505] = 11069
-FDJ.STATIC_DISPLAY_IDS[11261] = 10901
-FDJ.STATIC_DISPLAY_IDS[10901] = 11492
-FDJ.STATIC_DISPLAY_IDS[10507] = 10433
-FDJ.STATIC_DISPLAY_IDS[10504] = 11072
-FDJ.STATIC_DISPLAY_IDS[10502] = 11835
-FDJ.STATIC_DISPLAY_IDS[1853] = 11070
-FDJ.STATIC_DISPLAY_IDS[14516] = 14591
--- Stratholme: Living
-FDJ.STATIC_DISPLAY_IDS[10393] = 2606
-FDJ.STATIC_DISPLAY_IDS[10516] = 10771
-FDJ.STATIC_DISPLAY_IDS[10558] = 10482
-FDJ.STATIC_DISPLAY_IDS[10808] = 571
-FDJ.STATIC_DISPLAY_IDS[11032] = 10458
-FDJ.STATIC_DISPLAY_IDS[10997] = 10674
-FDJ.STATIC_DISPLAY_IDS[10811] = 10544
-FDJ.STATIC_DISPLAY_IDS[10813] = 10691
-FDJ.STATIC_DISPLAY_IDS[11143] = 10669
--- Stratholme: Undead
-FDJ.STATIC_DISPLAY_IDS[10809] = 7856
-FDJ.STATIC_DISPLAY_IDS[10436] = 10698
-FDJ.STATIC_DISPLAY_IDS[10437] = 9793
-FDJ.STATIC_DISPLAY_IDS[10438] = 10546
-FDJ.STATIC_DISPLAY_IDS[10435] = 10433
-FDJ.STATIC_DISPLAY_IDS[10439] = 12818
-FDJ.STATIC_DISPLAY_IDS[10440] = 10729

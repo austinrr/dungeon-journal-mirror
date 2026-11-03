@@ -75,9 +75,9 @@ FDJ.PREREQ_REWARD_MONEY_FALLBACK[6521] = 2000
 FDJ.FOREVER_QUEST_XP_FALLBACK[6521] = 3500
 
 -- These are item-start quests. Leave other new quests to the live predicate.
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[95809] = false
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[95664] = false
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[95810] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[95809] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[95664] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[95810] = false
 
 -- Drop superseded translations of corrected fields, retaining localized names.
 for _, content in pairs(FDJ.ContentLocales or {}) do
@@ -149,9 +149,9 @@ FDJ.QUEST_PREREQ_DETAILS[92432] = {
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[92457] = 9400
 FDJ.FOREVER_QUEST_XP_FALLBACK[92458] = 9400
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92432] = true
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92457] = true
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92458] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[92432] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[92457] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[92458] = false
 
 
 -- City of Dalaran (Horde): required attunement chain.
@@ -216,8 +216,39 @@ FDJ.QUEST_PREREQ_DETAILS[92434] = {
 FDJ.FOREVER_QUEST_XP_FALLBACK[92434] = 270
 FDJ.FOREVER_QUEST_XP_FALLBACK[96984] = 9400
 
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[544] = true
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[93680] = true
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[545] = true
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[92434] = false
-ForeverDungeonJournal.QUEST_SHAREABILITY_AUDIT[96984] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[544] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[93680] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[545] = true
+FDJ.QUEST_SHAREABILITY_AUDIT[92434] = false
+FDJ.QUEST_SHAREABILITY_AUDIT[96984] = false
+
+-- Starter pins from the starter-location guide for steps defined in this file.
+for _, id in ipairs({ 1652, 1653 }) do
+    local details = FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[id]
+    if details and not details.map and FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[id] then
+        details.map = FDJ.QUEST_START_MAPS[id]
+    end
+end
+
+-- Franclorn disclaimer (Dark Iron Legacy step), per language.
+do
+    local t = {
+        deDE = "Ihr müsst tot sein, um mit ihm zu sprechen. Er befindet sich im Schwarzfels, in einem Raum, an dem Ihr auf dem Weg die Kette hinab nach BRD vorbeikommt.",
+        frFR = "Vous devez être mort pour lui parler. Il se trouve dans le mont Rochenoire, dans une salle que vous longez en descendant la chaîne vers les Profondeurs de Rochenoire.",
+        esES = "Tienes que estar muerto para hablar con él. Está en la Montaña Roca Negra, en una sala junto a la cadena que baja a las Profundidades de Roca Negra.",
+        itIT = "Devi essere morto per parlare con lui. Si trova nella Montagna Rocconera, in una stanza lungo la catena che scende verso le Profondità di Rocconera.",
+        ptBR = "Você precisa estar morto para falar com ele. Ele fica na Montanha Rocha Negra, numa sala ao longo da corrente que desce até as Profundezas Rocha Negra.",
+        ruRU = "Чтобы поговорить с ним, нужно быть мертвым. Он находится в Черной горе, в комнате у цепи, по которой спускаются к Глубинам Черной горы.",
+        koKR = "죽은 상태에서만 대화할 수 있습니다. 검은바위 산에서 검은바위 나락으로 내려가는 사슬 길 옆 방에 있습니다.",
+        zhCN = "你必须处于死亡状态才能与他交谈。他在黑石山中，位于沿锁链走向黑石深渊途中的一个房间里。",
+        zhTW = "你必須處於死亡狀態才能與他交談。他在黑石山中，位於沿鎖鏈走向黑石深淵途中的一個房間裡。",
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for loc, text in pairs(t) do
+        local c = FDJ.ContentLocales[loc] or {}
+        FDJ.ContentLocales[loc] = c
+        c.quests = c.quests or {}
+        c.quests[3801] = c.quests[3801] or {}
+        c.quests[3801].warning = text
+    end
+end

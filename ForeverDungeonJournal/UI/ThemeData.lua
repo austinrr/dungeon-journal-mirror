@@ -210,92 +210,83 @@ for _, tableName in ipairs({ "THEMES", "DUNGEON_HOME_ART", "DUNGEON_HOME_TEXCOOR
     end
 end
 
+-- Armory and Cathedral share the Graveyard look; Razorfen Downs the Kraul one.
+-- Home-card art: the first loading screen this client actually has.
+do
+    local function Pick(candidates)
+        if not GetFileIDFromPath then return nil end
+        for _, path in ipairs(candidates) do
+            local ok, id = pcall(GetFileIDFromPath, path)
+            if ok and id then return path end
+        end
+    end
+    local SM = { "Interface\\Glues\\LoadingScreens\\LoadScreenScarletMonastery", "Interface\\Glues\\LoadingScreens\\LoadScreenMonastery" }
+    local RFD = { "Interface\\Glues\\LoadingScreens\\LoadScreenRazorfenDowns", "Interface\\Glues\\LoadingScreens\\LoadScreenRazorfenDown" }
+    local smArt, rfdArt = Pick(SM), Pick(RFD)
+    for _, wing in ipairs({ "Scarlet Monastery: Armory", "Scarlet Monastery: Cathedral" }) do
+        if smArt then
+            FDJ.DUNGEON_HOME_ART[wing] = smArt
+            FDJ.DUNGEON_HOME_TEXCOORD[wing] = { 0.02, 0.98, 0.24, 0.82 }
+        end
+    end
+    if rfdArt then
+        FDJ.DUNGEON_HOME_ART["Razorfen Downs"] = rfdArt
+        FDJ.DUNGEON_HOME_TEXCOORD["Razorfen Downs"] = { 0.02, 0.98, 0.24, 0.82 }
+    end
+    for _, tableName in ipairs({ "THEMES", "DUNGEON_HOME_ART", "DUNGEON_HOME_TEXCOORD", "DUNGEON_PAGE_ART", "DUNGEON_PAGE_TEXCOORD" }) do
+        local t = FDJ[tableName]
+        if type(t) == "table" then
+            for _, wing in ipairs({ "Scarlet Monastery: Armory", "Scarlet Monastery: Cathedral" }) do
+                if t[wing] == nil then t[wing] = t["Scarlet Monastery: Graveyard"] end
+            end
+            if t["Razorfen Downs"] == nil then t["Razorfen Downs"] = t["Razorfen Kraul"] end
+        end
+    end
+end
+
+-- The Cathedral has its own bundled card art (its loading screen, logo cut off).
+FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Cathedral"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryCathedralHome"
+FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Cathedral"] = { 0, 1, 0.06, 0.94 }
+
+FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Armory"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryArmoryHome"
+FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Armory"] = { 0, 1, 0.06, 0.94 }
+
+-- Uldaman and Zul'Farrak: the client's own loading screens when it has them.
+do
+    local function Has(path)
+        if not GetFileIDFromPath then return false end
+        local ok, id = pcall(GetFileIDFromPath, path)
+        return ok and id ~= nil
+    end
+    for name, paths in pairs({
+        ["Uldaman"] = { "Interface\\Glues\\LoadingScreens\\LoadScreenUldaman" },
+        ["Zul'Farrak"] = { "Interface\\Glues\\LoadingScreens\\LoadScreenZulFarrak", "Interface\\Glues\\LoadingScreens\\LoadScreenZulfarrak" },
+    }) do
+        for _, path in ipairs(paths) do
+            if Has(path) then
+                FDJ.DUNGEON_HOME_ART[name] = path
+                FDJ.DUNGEON_HOME_TEXCOORD[name] = { 0.02, 0.98, 0.24, 0.82 }
+                break
+            end
+        end
+    end
+end
+
+-- Bundled card art (the client may not ship these loading screens yet).
+for name, file in pairs({ ["Uldaman"] = "UldamanHome", ["Zul'Farrak"] = "ZulFarrakHome", ["Razorfen Downs"] = "RazorfenDownsHome",
+    ["Sunken Temple"] = "SunkenTempleHome", ["Scholomance"] = "ScholomanceHome", ["Maraudon"] = "MaraudonHome",
+    ["Blackrock Depths"] = "BlackrockDepthsHome", ["Upper Blackrock Spire"] = "UpperBlackrockSpireHome", ["Lower Blackrock Spire"] = "BlackrockSpireHome",
+    ["Dire Maul: East"] = "DireMaulHome", ["Dire Maul: West"] = "DireMaulWestHome", ["Dire Maul: North"] = "DireMaulNorthHome",
+    ["Stratholme: Living"] = "StratholmeHome", ["Stratholme: Undead"] = "StratholmeUndeadHome",
+    -- WoW Forever dungeons announced but not out yet ("Coming Soon" cards).
+    ["The Drowned City"] = "DrownedCityHome", ["Krol'dok Stronghold"] = "KroldokHome", ["Alcaz Prison"] = "AlcazPrisonHome",
+    ["Blackmaw Hold"] = "BlackmawHoldHome", ["Shaper's Terrace"] = "ShapersTerraceHome" }) do
+    FDJ.DUNGEON_HOME_ART[name] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\" .. file
+    FDJ.DUNGEON_HOME_TEXCOORD[name] = { 0, 1, 0.06, 0.94 }
+end
+
 -- Cards whose art ends in a dark strip get a coloured band over the bottom
 -- edge, tinted to match the art: { r, g, b, height }.
 FDJ.DUNGEON_HOME_BOTTOM_BAND = {
     ["City of Dalaran"] = { 0.36, 0.26, 0.42, 4 },
 }
-
--- Vanilla wings added for TBC Anniversary.
--- Keep this grouped to avoid adding 16 almost-identical theme definitions.
-local stockLoadingScreen = "Interface\\Glues\\LoadingScreens\\"
-FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Armory"] = stockLoadingScreen .. "LoadScreenMonastery"
-FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Armory"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Scarlet Monastery: Armory"] = FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Armory"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Scarlet Monastery: Armory"] = FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Armory"]
-FDJ.THEMES["Scarlet Monastery: Armory"] = FDJ.THEMES["Scarlet Monastery: Graveyard"]
-FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Cathedral"] = stockLoadingScreen .. "LoadScreenMonastery"
-FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Cathedral"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Scarlet Monastery: Cathedral"] = FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Cathedral"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Scarlet Monastery: Cathedral"] = FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Cathedral"]
-FDJ.THEMES["Scarlet Monastery: Cathedral"] = FDJ.THEMES["Scarlet Monastery: Graveyard"]
-FDJ.DUNGEON_HOME_ART["Razorfen Downs"] = stockLoadingScreen .. "LoadScreenRazorfenDowns"
-FDJ.DUNGEON_HOME_TEXCOORD["Razorfen Downs"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Razorfen Downs"] = FDJ.DUNGEON_HOME_ART["Razorfen Downs"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Razorfen Downs"] = FDJ.DUNGEON_HOME_TEXCOORD["Razorfen Downs"]
-FDJ.THEMES["Razorfen Downs"] = FDJ.THEMES["Wailing Caverns"]
-FDJ.DUNGEON_HOME_ART["Uldaman"] = stockLoadingScreen .. "LoadScreenUldaman"
-FDJ.DUNGEON_HOME_TEXCOORD["Uldaman"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Uldaman"] = FDJ.DUNGEON_HOME_ART["Uldaman"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Uldaman"] = FDJ.DUNGEON_HOME_TEXCOORD["Uldaman"]
-FDJ.THEMES["Uldaman"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Zul'Farrak"] = stockLoadingScreen .. "LoadScreenZulFarrak"
-FDJ.DUNGEON_HOME_TEXCOORD["Zul'Farrak"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Zul'Farrak"] = FDJ.DUNGEON_HOME_ART["Zul'Farrak"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Zul'Farrak"] = FDJ.DUNGEON_HOME_TEXCOORD["Zul'Farrak"]
-FDJ.THEMES["Zul'Farrak"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Maraudon"] = stockLoadingScreen .. "LoadScreenMaraudon"
-FDJ.DUNGEON_HOME_TEXCOORD["Maraudon"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Maraudon"] = FDJ.DUNGEON_HOME_ART["Maraudon"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Maraudon"] = FDJ.DUNGEON_HOME_TEXCOORD["Maraudon"]
-FDJ.THEMES["Maraudon"] = FDJ.THEMES["Wailing Caverns"]
-FDJ.DUNGEON_HOME_ART["The Temple of Atal'Hakkar"] = stockLoadingScreen .. "LoadScreenSunkenTemple"
-FDJ.DUNGEON_HOME_TEXCOORD["The Temple of Atal'Hakkar"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["The Temple of Atal'Hakkar"] = FDJ.DUNGEON_HOME_ART["The Temple of Atal'Hakkar"]
-FDJ.DUNGEON_PAGE_TEXCOORD["The Temple of Atal'Hakkar"] = FDJ.DUNGEON_HOME_TEXCOORD["The Temple of Atal'Hakkar"]
-FDJ.THEMES["The Temple of Atal'Hakkar"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Blackrock Depths"] = stockLoadingScreen .. "LoadScreenBlackrockDepths"
-FDJ.DUNGEON_HOME_TEXCOORD["Blackrock Depths"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Blackrock Depths"] = FDJ.DUNGEON_HOME_ART["Blackrock Depths"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Blackrock Depths"] = FDJ.DUNGEON_HOME_TEXCOORD["Blackrock Depths"]
-FDJ.THEMES["Blackrock Depths"] = FDJ.THEMES["Ragefire Chasm"]
-FDJ.DUNGEON_HOME_ART["Lower Blackrock Spire"] = stockLoadingScreen .. "LoadScreenBlackrockSpire"
-FDJ.DUNGEON_HOME_TEXCOORD["Lower Blackrock Spire"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Lower Blackrock Spire"] = FDJ.DUNGEON_HOME_ART["Lower Blackrock Spire"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Lower Blackrock Spire"] = FDJ.DUNGEON_HOME_TEXCOORD["Lower Blackrock Spire"]
-FDJ.THEMES["Lower Blackrock Spire"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Upper Blackrock Spire"] = stockLoadingScreen .. "LoadScreenBlackrockSpire"
-FDJ.DUNGEON_HOME_TEXCOORD["Upper Blackrock Spire"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Upper Blackrock Spire"] = FDJ.DUNGEON_HOME_ART["Upper Blackrock Spire"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Upper Blackrock Spire"] = FDJ.DUNGEON_HOME_TEXCOORD["Upper Blackrock Spire"]
-FDJ.THEMES["Upper Blackrock Spire"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Dire Maul: East"] = stockLoadingScreen .. "LoadScreenDireMaul"
-FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: East"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Dire Maul: East"] = FDJ.DUNGEON_HOME_ART["Dire Maul: East"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Dire Maul: East"] = FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: East"]
-FDJ.THEMES["Dire Maul: East"] = FDJ.THEMES["Wailing Caverns"]
-FDJ.DUNGEON_HOME_ART["Dire Maul: West"] = stockLoadingScreen .. "LoadScreenDireMaul"
-FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: West"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Dire Maul: West"] = FDJ.DUNGEON_HOME_ART["Dire Maul: West"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Dire Maul: West"] = FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: West"]
-FDJ.THEMES["Dire Maul: West"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Dire Maul: North"] = stockLoadingScreen .. "LoadScreenDireMaul"
-FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: North"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Dire Maul: North"] = FDJ.DUNGEON_HOME_ART["Dire Maul: North"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Dire Maul: North"] = FDJ.DUNGEON_HOME_TEXCOORD["Dire Maul: North"]
-FDJ.THEMES["Dire Maul: North"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Scholomance"] = stockLoadingScreen .. "LoadScreenScholomance"
-FDJ.DUNGEON_HOME_TEXCOORD["Scholomance"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Scholomance"] = FDJ.DUNGEON_HOME_ART["Scholomance"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Scholomance"] = FDJ.DUNGEON_HOME_TEXCOORD["Scholomance"]
-FDJ.THEMES["Scholomance"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Stratholme: Living"] = stockLoadingScreen .. "LoadScreenStrathome"
-FDJ.DUNGEON_HOME_TEXCOORD["Stratholme: Living"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Stratholme: Living"] = FDJ.DUNGEON_HOME_ART["Stratholme: Living"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Stratholme: Living"] = FDJ.DUNGEON_HOME_TEXCOORD["Stratholme: Living"]
-FDJ.THEMES["Stratholme: Living"] = FDJ.THEMES["Shadowfang Keep"]
-FDJ.DUNGEON_HOME_ART["Stratholme: Undead"] = stockLoadingScreen .. "LoadScreenStrathome"
-FDJ.DUNGEON_HOME_TEXCOORD["Stratholme: Undead"] = {0.02, 0.98, 0.24, 0.82}
-FDJ.DUNGEON_PAGE_ART["Stratholme: Undead"] = FDJ.DUNGEON_HOME_ART["Stratholme: Undead"]
-FDJ.DUNGEON_PAGE_TEXCOORD["Stratholme: Undead"] = FDJ.DUNGEON_HOME_TEXCOORD["Stratholme: Undead"]
-FDJ.THEMES["Stratholme: Undead"] = FDJ.THEMES["Shadowfang Keep"]

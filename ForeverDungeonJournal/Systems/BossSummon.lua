@@ -126,6 +126,7 @@ local function Create(frame)
         local _, link = ItemData(self.itemID)
         local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, link or ("item:" .. self.itemID))
         if not ok then GameTooltip:AddLine(ItemData(self.itemID), 0, 0.44, 0.87) end
+        if ok and FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
         local steps = Pick(HOWTO[self.itemID])
         if steps then
             GameTooltip:AddLine(" ")

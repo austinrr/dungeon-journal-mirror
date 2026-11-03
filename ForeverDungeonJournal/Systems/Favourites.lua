@@ -237,6 +237,7 @@ local function ShowItemTooltip(owner, itemID, hint)
         local _, link = GetItemInfo(itemID)
         if link then GameTooltip:SetHyperlink(link) end
     end
+    if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
     if hint then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(hint, 0.75, 0.75, 0.75, true)
