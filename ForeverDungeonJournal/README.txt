@@ -1,4 +1,4 @@
-DungeonJournal 1.7.0
+DungeonJournal 1.7.1
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,54 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.7.1
+- Cozy Sleeping Bag (new): the bag's icon on the home page, next to the WoW
+  Forever and Raids icons, opens its whole quest chain at the step you are
+  on: where each step starts and is handed in (on the map, with
+  coordinates), how to reach the spot and its rewards, for your faction.
+  Track puts the chain in the quest tracker. Right-click the icon to hide it
+  (also Options > UI: Hide Sleeping Bag quest); it hides by itself once you
+  have the bag, and unticking the option always brings it back.
+- Waypoint arrow (new, for the Sleeping Bag chain): Show on Map or Show Turn
+  In on a step, or tracking the chain, puts an arrow on the screen with the
+  quest's name and the distance, and it leads you through the chain step by
+  step to the end. It points to the flight master first when flying saves
+  enough of the way (and counts the flight down in the air), to the boat or
+  zeppelin for another continent, and says when the spot is below ground or
+  upstairs. Drag it anywhere, right-click to hide it; hidden in instances.
+- RPG Mode: quests unlock one by one as you pick them up, with a "Dungeon
+  Quest Unlocked" popup (e.g. 2/6). A dungeon's page opens partly with its
+  first quest: bosses stay ??? until you kill them, quests you haven't
+  picked up yet are ??? rows, and the Map, Trash Drops and Recipes &
+  Patterns unlock after about 20% of its trash, with a "Dungeon Map
+  Unlocked" popup. The final boss still unlocks everything. Quests you
+  have already handed in count too: a quest that needed a boss dead (kill
+  him, bring his head, an item only he drops) reveals that boss, and the
+  final boss unlocks the page, even if you did it before turning RPG Mode
+  on. The search shows only what you have unlocked. Bigger icons above the
+  Journey bar.
+- Dungeon maps: quest spots inside the dungeons, a ! where a quest starts
+  and a ? where it is handed in or done (the Lorgalis Manuscript in
+  Blackfathom Deeps, the Book of Ur in Shadowfang Keep, the prisoners in
+  Blackrock Depths and more). Hover: what to do there; click: the quest.
+  Every ! and ? has a thin black edge, easier to see.
+- Quest list: a quest ready to hand in shows a bigger ? with "Turn in". The
+  ? of a quest handed in inside a dungeon opens that dungeon's map.
+- Dungeon cards: a quest counts as done only once it is handed in (also for
+  hiding finished dungeons and RPG Mode's journey points).
+- Quest tracker and quest pages: the objectives are in the journal's
+  language when it differs from the game's.
+- In Dungeon icon: also on quests whose chain starts with an item found in
+  the dungeon (the Titan Relic, the Small Scroll from Charlga Razorflank).
+- The Glowing Shard: the tracker shows Sputtervalve in Ratchet first, then
+  Falla Sagewind above Wailing Caverns, where it is handed in.
+- The Drowned City: boss levels, their drops with the real items, Primeval
+  Elemental's own page, its loading screen, and the rest of its loot in a
+  folded "Not confirmed, but probable drop" section.
+- Dalaran: two Kirin Tor quests from Archmage Lan'dalock (Alliance), The
+  Coldbringer's Eye and The Witch Doctor's Head. The Coldbringer's Eye
+  drops from Amnennar the Coldbringer.
 
 CHANGES IN 1.7.0
 - Quest tracker (new): the Track button on a dungeon's quest list puts its
