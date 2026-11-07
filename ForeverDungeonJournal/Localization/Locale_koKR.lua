@@ -60,6 +60,7 @@ FDJ.Locales.koKR = {
     ["CHOOSE_ONE_REWARD"] = "보상 하나 선택",
     ["SHOW_ON_MAP"] = "지도에 표시",
     ["SHOW_TURN_IN"] = "완료 위치 표시",
+    ["TURN_IN_DUNGEON"] = "완료 장소: 던전",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "비행 경로를 얻기 위해 이곳을 들릅니다. 그 후 길을 따라 다시 내려와 아라시 방향으로 동쪽으로 이동하세요.",
     ["ROUTE_FP_TARREN_MILL"] = "타렌 밀 비행 경로",
     ["ROUTE_REMOVE_HINT"] = "오른쪽 클릭으로 경로 제거",

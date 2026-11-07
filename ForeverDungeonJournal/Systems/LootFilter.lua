@@ -353,14 +353,35 @@ local function StatInText(stat, lines)
     return false
 end
 
+-- kroldok: an item whose ID is not known yet is matched on the stats the
+-- game showed for it (its tip lines in the data).
+local function TipText(item)
+    local tip = type(item) == "table" and item.tip
+    if type(tip) ~= "table" then return nil end
+    local parts = {}
+    for _, line in ipairs(tip) do
+        if type(line) == "table" then line = tostring(line[1] or "") .. " " .. tostring(line[2] or "") end
+        if type(line) == "string" and line ~= "" then
+            line = line:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+            parts[#parts + 1] = string.lower(line)
+        end
+    end
+    return #parts > 0 and parts or nil
+end
+
 -- matchAll: the item must have every ticked stat; otherwise any one is enough.
 local function HasAnyStat(item, wanted, matchAll)
     local id = item and item[1]
-    if not id or id <= 0 then return false end
-    -- The all-dungeon page never scans here: its tooltips are read a few per
-    -- frame beforehand (WarmTooltips), so one click cannot run too long.
-    local text = TooltipText(id, FDJ.lootFilterStrict)
-    if not text then return not FDJ.lootFilterStrict end -- unknown yet: keep on boss pages, wait in the results list
+    local text
+    if not id or id <= 0 then
+        text = TipText(item) -- kroldok
+        if not text then return false end
+    else
+        -- The all-dungeon page never scans here: its tooltips are read a few per
+        -- frame beforehand (WarmTooltips), so one click cannot run too long.
+        text = TooltipText(id, FDJ.lootFilterStrict)
+        if not text then return not FDJ.lootFilterStrict end -- unknown yet: keep on boss pages, wait in the results list
+    end
     local schools = Settings().schools
     schoolsWanted = (schools and next(schools)) and schools or nil
     local found = false
@@ -397,9 +418,14 @@ local RESIST_ORDER = { "FIRE", "FROST", "NATURE", "SHADOW", "ARCANE" }
 
 local function HasResist(item, wanted)
     local id = item and item[1]
-    if not id or id <= 0 then return false end
-    local text = TooltipText(id, FDJ.lootFilterStrict)
-    if not text then return not FDJ.lootFilterStrict end
+    local text
+    if not id or id <= 0 then
+        text = TipText(item) -- kroldok
+        if not text then return false end
+    else
+        text = TooltipText(id, FDJ.lootFilterStrict)
+        if not text then return not FDJ.lootFilterStrict end
+    end
     -- The item must have every ticked school. Only real resistance lines
     -- ("+10 Fire Resistance") count; proc text such as "deals 50 Fire
     -- damage" does not. "+X All Resistances" covers every school.
@@ -504,6 +530,12 @@ function FDJ.FilterBossLoot(boss)
                 if type(GetItemInfo) == "function" and item[1] and item[1] > 0 then
                     local ok, _, _, _, _, itemMinLevel = pcall(GetItemInfo, item[1])
                     if ok and type(itemMinLevel) == "number" then required = itemMinLevel end
+                end
+                if required == nil and not (item[1] and item[1] > 0) then -- kroldok: the level the game showed
+                    for _, line in ipairs(TipText(item) or {}) do
+                        local n = tonumber(line:match("^requires level (%d+)"))
+                        if n then required = n end
+                    end
                 end
                 if required == nil then
                     if FDJ.lootFilterStrict then keep = false end -- not loaded yet
@@ -1374,7 +1406,8 @@ local function MakeResultRow(parent)
             GameTooltip:SetHyperlink("item:" .. self.item[1])
             if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
         else
-            GameTooltip:SetText(self.item[2] or "")
+            GameTooltip:SetText(self.item[2] or "", QualityColor(self.item[4]))
+            if FDJ.AddItemTipLines then FDJ.AddItemTipLines(GameTooltip, self.item) end -- kroldok
         end
         if type(self.item[6]) == "string" and self.item[6] ~= "" then
             local statText = L(self.item[6])

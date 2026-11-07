@@ -57,6 +57,7 @@ FDJ.Locales.ptBR = {
     ["CHOOSE_ONE_REWARD"] = "Escolha uma recompensa",
     ["SHOW_ON_MAP"] = "Ver mapa",
     ["SHOW_TURN_IN"] = "Ver entrega",
+    ["TURN_IN_DUNGEON"] = "Entregar: masmorra",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "A rota faz um desvio aqui para você pegar a rota de voo. Depois, volte pela estrada e siga para o leste, rumo a Arathi.",
     ["ROUTE_FP_TARREN_MILL"] = "Rota de voo de Serraria Tarren",
     ["ROUTE_REMOVE_HINT"] = "Clique com o botão direito para remover a rota",

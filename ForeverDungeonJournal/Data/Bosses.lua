@@ -16,6 +16,13 @@ FDJ.BOSS_LEVELS = {
         ["Arcanic Enigma"] = "30",
         ["Shade of the Archmage"] = "33",
     },
+    ["Krol'dok Stronghold"] = {
+        ["Slavecrusher Grox"] = "42",
+        ["Twilight Commander Zarmok"] = "43",
+        ["Nar'gurk"] = "44",
+        ["Bossman Toof"] = "42",
+        ["Overlord Mugg"] = "45",
+    },
     ["Gnomeregan"] = {
         ["Grubbis"] = "32",
         ["Viscous Fallout"] = "30",

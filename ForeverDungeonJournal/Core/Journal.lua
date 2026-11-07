@@ -235,12 +235,13 @@ FDJ.DUNGEON_MAPS = {
         entrance = { floor = 1, x = 0.846, y = 0.521, angle = 0 }, -- the swirl in Sunken Hollow
         bosses = {},
     },
-    -- Announced dungeons (no boss data yet): the map is their only page.
+    -- No boss positions known yet.
     ["Krol'dok Stronghold"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\KroldokMap", texBottom = 683 / 1024 } },
         entrance = { floor = 1, x = 0.205, y = 0.807, angle = 180 }, -- the swirl where the trail comes in (south-west)
         bosses = {},
     },
+    -- Announced dungeons (no boss data yet): the map is their only page.
     ["Shaper's Terrace"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ShapersTerraceMap", texBottom = 683 / 1024 } },
         bosses = {},
@@ -408,6 +409,14 @@ FDJ.DUNGEON_MAPS = {
     ["Excavation Site: Wetlands"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ExcavationSiteMap", texBottom = 683 / 1024 } },
         entrance = { floor = 1, x = 0.888, y = 0.258, angle = 180, labelPos = "top" }, -- the swirl at the right of the map
+        -- insidequest: quest NPCs inside (Warcraft Tavern's screenshots):
+        -- Ardin Grassman up on the wooden tower by the Relic Guardian (just
+        -- beside its portrait), Daewyn Songblade's body in a tent at the Lost
+        -- Dig Site, by the dig and the bones.
+        turnins = {
+            { npc = "Ardin Grassman", x = 0.262, y = 0.668 },
+            { npc = "Daewyn Songblade", x = 0.074, y = 0.497 },
+        },
         -- Boss spots as marked by Exehn on the map (2026-10-06).
         bosses = {
             { name = "Saltspine",       x = 0.550, y = 0.361 },
@@ -840,6 +849,92 @@ FDJ.StartsInsideDungeon = function(pickupText)
     return text:find("inside ", 1, true) ~= nil
 end
 
+-- insidequest: handed in inside the dungeon: "..., inside Shadowfang Keep",
+-- or the place after the last comma is the dungeon itself ("Baelog,
+-- Uldaman"); never "just outside".
+FDJ.TurnInInsideDungeon = function(turninText, dungeonName)
+    if type(turninText) ~= "string" or turninText == "" then return false end
+    local text = string.lower(turninText)
+    if text:find("outside", 1, true) then return false end
+    if text:find("inside", 1, true) then return true end
+    if type(dungeonName) ~= "string" then return false end
+    local place = text:match(",%s*([^,]-)%s*$")
+    if not place or place == "" then return false end
+    local name = string.lower(dungeonName)
+    return place == name or place == name:match("^(.-):")
+end
+
+-- A chain step done inside the dungeon: handed in there, or its objective
+-- says inside / within this dungeon (The Horn of Xelthos: "inside of
+-- Shadowfang Keep", not on the Scarlet Monastery's pages).
+FDJ.ObjectiveInsideDungeon = function(details, dungeonName)
+    if type(details) ~= "table" then return false end
+    if FDJ.TurnInInsideDungeon(details.turnin, dungeonName) then return true end
+    if type(details.objective) ~= "string" or type(dungeonName) ~= "string" then return false end
+    local text = string.lower(details.objective)
+    if not (text:find("inside", 1, true) or text:find("within", 1, true)) then return false end
+    local name = string.lower(dungeonName)
+    return text:find(name:match("^(.-):") or name, 1, true) ~= nil
+end
+
+-- Quests (and chain steps) handed in inside a dungeon, by quest ID.
+FDJ.HandedInInsideDungeon = function(questID)
+    if not questID then return false end
+    if not FDJ.insideTurnInIDs then
+        local ids = {}
+        for dungeonName, dungeon in pairs(DB) do
+            if type(dungeon) == "table" and type(dungeon.quests) == "table" then
+                for _, quest in ipairs(dungeon.quests) do
+                    if type(quest) == "table" and quest.id then
+                        if FDJ.TurnInInsideDungeon(quest.turnin, dungeonName) then ids[quest.id] = true end
+                        for _, step in ipairs(QUEST_PREREQ_CHAINS[quest.id] or {}) do
+                            local details = type(step) == "table" and step.id and QUEST_PREREQ_DETAILS[step.id]
+                            if type(details) == "table" and FDJ.TurnInInsideDungeon(details.turnin, dungeonName) then
+                                ids[step.id] = true
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        FDJ.insideTurnInIDs = ids
+    end
+    return FDJ.insideTurnInIDs[questID] == true
+end
+
+-- The In Dungeon icon after a quest page's Objective / Turn in header
+-- (key: questObjectiveDungeonIcon / questTurninDungeonIcon), as after
+-- Starts at. show false: hidden.
+FDJ.SetHeaderDungeonIcon = function(key, header, show)
+    local icon = frame and frame[key]
+    if not show or not header or not frame or not frame.questDetailContent then
+        if icon then icon:Hide() end
+        return
+    end
+    if not icon then
+        icon = CreateFrame("Button", nil, frame.questDetailContent)
+        frame[key] = icon
+        icon:SetSize(26, 26)
+        icon.icon = icon:CreateTexture(nil, "ARTWORK")
+        icon.icon:SetAllPoints()
+        local ok = icon.icon.SetAtlas and pcall(icon.icon.SetAtlas, icon.icon, "Dungeon", false)
+        if not ok then
+            icon.icon:SetTexture("Interface\\Icons\\INV_Misc_Rune_01")
+            icon.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+        end
+        icon:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+        icon:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L("IN_DUNGEON"))
+            GameTooltip:Show()
+        end)
+        icon:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
+    icon:ClearAllPoints()
+    icon:SetPoint("LEFT", header, "RIGHT", 6, 0)
+    icon:Show()
+end
+
 -- A quest started by an item that drops in the dungeon (from one of its
 -- bosses or its trash) starts inside too, whatever its text says.
 FDJ.StartItemDropsIn = function(quest, dungeonName)
@@ -903,6 +998,75 @@ FDJ.SetRowDungeonIcon = function(button, show, offsetX)
     icon:ClearAllPoints()
     icon:SetPoint("LEFT", button.meta, "LEFT", offsetX, 0)
     icon:Show()
+end
+
+-- chainturnin: a chain step in the quest log that is handed in inside the
+-- dungeon says so at the top of its page: YOU HAVE IT (gold, a thin black
+-- outline) and a "Turn in: Dungeon" button like Show on Map, with the round
+-- quest ? in it (on the left); a click opens the dungeon map where it is handed in (as
+-- the ? of a quest ready to hand in does). Returns cursorY.
+FDJ.PlaceStepHaveItRow = function(show, questID, details, title, cursorY)
+    local row = frame and frame.questStepHaveIt
+    if not show or not frame or not frame.questDetailContent then
+        if row then row:Hide() end
+        return cursorY
+    end
+    if not row then
+        row = CreateFrame("Frame", nil, frame.questDetailContent)
+        frame.questStepHaveIt = row
+        row:SetHeight(26)
+        row.haveIt = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        row.haveIt:SetPoint("LEFT", row, "LEFT", 0, 0)
+        do
+            local font, size = row.haveIt:GetFont()
+            if font then row.haveIt:SetFont(font, size or 12, "OUTLINE") end
+        end
+        row.haveIt:SetTextColor(1.00, 0.82, 0.10)
+        local button = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+        row.button = button
+        button:SetSize(130, 24)
+        button:SetPoint("LEFT", row.haveIt, "RIGHT", 10, 0)
+        button:RegisterForClicks("LeftButtonUp")
+        row.mark = FDJ.CreateTurnInButton and FDJ.CreateTurnInButton(button, 21)
+        if row.mark then
+            row.mark:SetPoint("LEFT", button, "LEFT", 5, 0)
+            row.mark:SetFrameLevel(button:GetFrameLevel() + 2)
+        end
+        -- The button does what the ? does (the ? itself takes no mouse).
+        local function Forward(script)
+            return function(_, ...)
+                local mark = row.mark
+                local fn = mark and mark:GetScript(script)
+                if fn then fn(mark, ...) end
+            end
+        end
+        button:SetScript("OnClick", Forward("OnClick"))
+        button:SetScript("OnEnter", Forward("OnEnter"))
+        button:SetScript("OnLeave", Forward("OnLeave"))
+        button:HookScript("OnMouseDown", Forward("OnMouseDown"))
+        button:HookScript("OnMouseUp", Forward("OnMouseUp"))
+    end
+    local button = row.button
+    row.haveIt:SetText(L("YOU_HAVE_IT"))
+    button:SetText(L("TURN_IN_DUNGEON"))
+    local fs = button:GetFontString()
+    local textWidth = fs and fs:GetStringWidth() or 0
+    button:SetWidth(math.max(96, math.min(210, math.ceil(textWidth + 24 + 22))))
+    if fs then
+        fs:ClearAllPoints()
+        fs:SetPoint("CENTER", button, "CENTER", row.mark and 10 or 0, 0)
+    end
+    if row.mark and FDJ.SetTurnInButton then
+        FDJ.SetTurnInButton(row.mark, { id = questID, turnin = details.turnin, turninMap = details.turninMap }, title)
+        local clickable = row.mark:IsMouseEnabled()
+        row.mark:EnableMouse(false)
+        button:EnableMouse(clickable)
+    end
+    row:ClearAllPoints()
+    row:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+    row:SetWidth(math.max(120, (row.haveIt:GetStringWidth() or 0) + 10 + button:GetWidth()))
+    row:Show()
+    return cursorY + 26 + 8
 end
 
 FDJ.PositionInDungeonIcon = function()
@@ -1527,8 +1691,12 @@ local function BuildQuestRewardSummary(quest, includeXP)
     return summary
 end
 
+-- devlog: /dj fakelog <questID>: quests shown as if in the quest log.
+FDJ.DEV_FAKE_LOG = FDJ.DEV_FAKE_LOG or {}
+
 local function IsQuestFinished(questID)
     if not questID then return false end
+    if FDJ.DEV_FAKE_LOG[questID] then return false end -- devlog
 
     -- A permanently completed quest is always complete.
     if C_QuestLog and type(C_QuestLog.IsQuestFlaggedCompleted) == "function" then
@@ -1577,6 +1745,13 @@ local function IsQuestFinished(questID)
             if okCount and type(count) == "number" then objectiveCount = count end
         end
     end
+    -- insidequest: nothing to do but go and speak to someone inside a
+    -- dungeon (Songblade Search, Deathstalkers in Shadowfang): the quest log
+    -- calls it complete as soon as it is accepted, but it is not ready before
+    -- that talk. YOU HAVE IT (in the quest log) until it is handed in there.
+    if objectiveCount == 0 and FDJ.HandedInInsideDungeon and FDJ.HandedInInsideDungeon(questID) then
+        return false
+    end
     if C_QuestLog and type(C_QuestLog.IsComplete) == "function" then
         local ok, value = pcall(C_QuestLog.IsComplete, questID)
         if ok then
@@ -1589,6 +1764,7 @@ end
 
 local function IsQuestInLog(questID)
     if not questID then return false end
+    if FDJ.DEV_FAKE_LOG[questID] then return true end -- devlog
 
     if C_QuestLog and type(C_QuestLog.GetLogIndexForQuestID) == "function" then
         local ok, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
@@ -2881,6 +3057,19 @@ function FDJ.AddUnseenItemHint(tooltip)
     tooltip:AddLine(L("ITEM_UNSEEN_TITLE"), 1.00, 0.82, 0.10)
     tooltip:AddLine(L("ITEM_UNSEEN_TIP"), 0.85, 0.85, 0.85, true)
     return true
+end
+
+-- kroldok: the stats the game showed for an item whose ID is not known
+-- yet (item.tip: a line, or { left, right }).
+function FDJ.AddItemTipLines(tooltip, item)
+    local tip = type(item) == "table" and item.tip
+    for _, line in ipairs(type(tip) == "table" and tip or {}) do
+        if type(line) == "table" then
+            tooltip:AddDoubleLine(line[1], line[2], 1, 1, 1, 1, 1, 1)
+        else
+            tooltip:AddLine(line, 1, 1, 1, true)
+        end
+    end
 end
 
 local function ShowItemTooltip(row)
@@ -4330,6 +4519,7 @@ end
 
 FDJ.QuestTurnedIn = function(questID)
     if not questID then return false end
+    if FDJ.DEV_FAKE_LOG[questID] then return false end -- devlog
     if C_QuestLog and type(C_QuestLog.IsQuestFlaggedCompleted) == "function" then
         local ok, value = pcall(C_QuestLog.IsQuestFlaggedCompleted, questID)
         return ok and value == true
@@ -4536,6 +4726,8 @@ local function RefreshPrerequisiteQuestDetail(step)
 
     if frame.questStartsHeader then frame.questStartsHeader:Hide() end
     if frame.questTurninHeader then frame.questTurninHeader:Hide() end
+    FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon") -- insidequest
+    FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon")
     if frame.questMapButton then
         frame.questMapButton.quest = nil
         frame.questMapButton.prereqLocation = nil
@@ -4578,9 +4770,13 @@ local function RefreshPrerequisiteQuestDetail(step)
     if FDJ.LayoutRepPills then FDJ.LayoutRepPills({}, 0, 0) end
 
     local cursorY = 0
+    cursorY = FDJ.PlaceStepHaveItRow(inLog and not FDJ.QuestTurnedIn(questID) -- chainturnin
+        and FDJ.TurnInInsideDungeon(details.turnin, selectedDungeon), questID, details, title, cursorY)
     frame.questObjectiveHeader:ClearAllPoints()
     frame.questObjectiveHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     frame.questObjectiveHeader:Show()
+    FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon", frame.questObjectiveHeader,
+        (not isItemStep) and FDJ.ObjectiveInsideDungeon(details, selectedDungeon)) -- insidequest
     cursorY = cursorY + (frame.questObjectiveHeader:GetStringHeight() or 18) + 4
 
     frame.questDetailText:ClearAllPoints()
@@ -4720,6 +4916,8 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questTurninHeader:ClearAllPoints()
         frame.questTurninHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questTurninHeader:Show()
+        FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon", frame.questTurninHeader,
+            (not isItemStep) and FDJ.TurnInInsideDungeon(details.turnin, selectedDungeon)) -- insidequest
         cursorY = cursorY + (frame.questTurninHeader:GetStringHeight() or 18) + 3
         frame.questTurninText:ClearAllPoints()
         frame.questTurninText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
@@ -4958,6 +5156,9 @@ RefreshQuestDetail = function()
         if frame.questRequiredItemButton then frame.questRequiredItemButton.item = nil; frame.questRequiredItemButton:Hide() end
         if frame.questNoteItemButton then frame.questNoteItemButton.item = nil; frame.questNoteItemButton:Hide() end
         if frame.questStartDungeonIcon then frame.questStartDungeonIcon:Hide() end
+        FDJ.PlaceStepHaveItRow(false) -- chainturnin
+        FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon") -- insidequest
+        FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon")
         if frame.questTurninText then frame.questTurninText:SetText("") end
         frame.questRewardHeader:SetText("")
         if frame.questXPReward then frame.questXPReward:Hide() end
@@ -4976,6 +5177,7 @@ RefreshQuestDetail = function()
     if frame.questDetailScroll then frame.questDetailScroll:Show() end
     if frame.noQuestMessage then frame.noQuestMessage:Hide() end
     if frame.questStartDungeonIcon then frame.questStartDungeonIcon:Hide() end
+    FDJ.PlaceStepHaveItRow(false) -- chainturnin
 
     local detailWidth = math.max(260, (frame.questDetailScroll:GetWidth() or 350) - 4)
     frame.questDetailContent:SetWidth(detailWidth)
@@ -5104,6 +5306,9 @@ RefreshQuestDetail = function()
     end
 
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
+    -- insidequest: done and handed in inside the dungeon.
+    FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon", frame.questObjectiveHeader,
+        FDJ.TurnInInsideDungeon(quest.turnin, selectedDungeon))
     frame.questDetailText:ClearAllPoints()
     frame.questDetailText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     -- Real quest text from the game when known (see Systems/QuestText.lua).
@@ -5343,6 +5548,8 @@ RefreshQuestDetail = function()
     end
 
     cursorY = PlaceHeader(frame.questTurninHeader, cursorY)
+    FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon", frame.questTurninHeader,
+        FDJ.TurnInInsideDungeon(quest.turnin, selectedDungeon)) -- insidequest
     frame.questTurninText:ClearAllPoints()
     frame.questTurninText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     frame.questTurninText:SetText(QuestField(quest.id, "turnin", quest.turnin))
@@ -8318,6 +8525,7 @@ local function CreateGlobalSearchUI()
                                 dungeonName = dungeonName,
                                 bossIndex = bossIndex,
                                 itemID = item[1],
+                                item = item, -- kroldok: no ID yet, its stats on hover
                                 displayName = itemName,
                                 subText = localizedDungeon .. "  -  " .. BossName(boss.name),
                                 -- Boss-loot tuple field 5 is optional source/mob text,
@@ -8594,9 +8802,16 @@ local function CreateGlobalSearchUI()
             itemTooltip:Hide()
             itemTooltip:SetOwner(self, "ANCHOR_NONE")
             if itemTooltip.ClearLines then itemTooltip:ClearLines() end
-            local _, liveLink = ItemInfo(result.itemID)
-            itemTooltip:SetHyperlink(liveLink or ("item:" .. result.itemID))
-            FDJ.AddUnseenItemHint(itemTooltip)
+            if (tonumber(result.itemID) or 0) <= 0 then -- kroldok: item ID not known yet
+                local item = result.item or {}
+                local r, g, b = QualityColor(tonumber(item[4]) or 1)
+                itemTooltip:AddLine(result.displayName or item[2] or "", r, g, b)
+                FDJ.AddItemTipLines(itemTooltip, item)
+            else
+                local _, liveLink = ItemInfo(result.itemID)
+                itemTooltip:SetHyperlink(liveLink or ("item:" .. result.itemID))
+                FDJ.AddUnseenItemHint(itemTooltip)
+            end
             itemTooltip:Show()
             if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
             itemTooltip:ClearAllPoints()
@@ -10707,6 +10922,24 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
         return
     end
+    if msg:match("^fakelog") then -- devlog
+        local id = tonumber(msg:match("^fakelog%s+(%d+)"))
+        if id then
+            FDJ.DEV_FAKE_LOG[id] = not FDJ.DEV_FAKE_LOG[id] or nil
+            print("|cffffd100Dungeon Journal|r fakelog " .. id .. ": " .. (FDJ.DEV_FAKE_LOG[id] and "ON (shown as in your quest log)" or "OFF"))
+            if frame and frame:IsShown() then
+                if RefreshQuestList then RefreshQuestList() end
+                if RefreshQuestDetail then RefreshQuestDetail() end
+            end
+            if FDJ.RefreshQuestTracker then pcall(FDJ.RefreshQuestTracker) end
+        else
+            local ids = {}
+            for k in pairs(FDJ.DEV_FAKE_LOG) do ids[#ids + 1] = tostring(k) end
+            table.sort(ids)
+            print("|cffffd100Dungeon Journal|r /dj fakelog <questID>: show a quest as if in your quest log (again: off). On: " .. (#ids > 0 and table.concat(ids, ", ") or "none"))
+        end
+        return
+    end
     if msg == "newids" then
         if FDJ.PrintLearnedItemIDs then FDJ.PrintLearnedItemIDs() end
         return
@@ -10906,7 +11139,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "1.7.1"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "1.7.2"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

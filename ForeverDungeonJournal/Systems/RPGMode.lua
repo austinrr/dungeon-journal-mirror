@@ -37,6 +37,7 @@ local FINAL = {
 local finalByNpc, finalNames -- npcID -> dungeon, lower-case boss name -> dungeon
 local finalNpcOf = {}         -- dungeon -> the final boss shown on its locked card
 local finalBossOf = {}        -- dungeon -> that boss's (localized) name
+local nameFinal = {}          -- kroldok: dungeon -> its final boss, known by name only
 local function Build()
     if finalByNpc then return end
     finalByNpc, finalNames = {}, {}
@@ -65,6 +66,28 @@ local function Build()
                         finalNames[string.lower(b.name)] = name
                         local loc = FDJ.LocalizeBossName and FDJ.LocalizeBossName(b.name)
                         if type(loc) == "string" then finalNames[string.lower(loc)] = name end
+                        for _, alias in ipairs(b.aliases or {}) do -- kroldok: the game's other name (Overseer Mugg)
+                            if type(alias) == "string" then finalNames[string.lower(alias)] = name end
+                        end
+                    end
+                end
+            end
+            -- kroldok: no boss of the dungeon has an NPC ID yet: its last
+            -- boss counts by name (inside the dungeon only, see CheckDead).
+            if not ids[1] then
+                local last
+                for _, b in ipairs(d.bosses or {}) do
+                    if type(b) == "table" and not b.trash and not b.rare and not b.recipeTab and type(b.name) == "string" then last = b end
+                end
+                if last then
+                    finalNpcOf[name] = false -- a page like any other, sketched as a ?
+                    nameFinal[name] = last
+                    local loc = FDJ.LocalizeBossName and FDJ.LocalizeBossName(last.name)
+                    finalBossOf[name] = type(loc) == "string" and loc or last.name
+                    finalNames[string.lower(last.name)] = name
+                    if type(loc) == "string" then finalNames[string.lower(loc)] = name end
+                    for _, alias in ipairs(last.aliases or {}) do
+                        if type(alias) == "string" then finalNames[string.lower(alias)] = name end
                     end
                 end
             end
@@ -789,6 +812,17 @@ local function NpcFromGUID(guid)
     if kind == "Creature" or kind == "Vehicle" then return tonumber(id) end
 end
 
+-- kroldok: a final boss known by name only counts inside its own dungeon.
+local function NameFinalHere(unit)
+    local okN, who = pcall(UnitName, unit)
+    who = okN and Plain(who) or nil
+    if type(who) ~= "string" or who == "" then return nil end
+    local name = finalNames[string.lower(who)]
+    if not name or not nameFinal[name] then return nil end
+    local okH, here = pcall(function() return FDJ.CurrentDungeon and FDJ.CurrentDungeon() end)
+    if okH and here == name then return name end
+end
+
 -- A final boss lying dead in front of you (targeted, hovered, looted, or
 -- dying as your target/boss frame) unlocks its dungeon.
 local function CheckDead(unit)
@@ -799,6 +833,7 @@ local function CheckDead(unit)
     local okG, guid = pcall(UnitGUID, unit)
     local id = okG and NpcFromGUID(guid)
     local name = id and finalByNpc[id]
+    if not name and id and next(nameFinal) then name = NameFinalHere(unit) end -- kroldok
     if name then Unlock(name) end
 end
 
@@ -1726,6 +1761,7 @@ do
         ["Hall of Thanes"] = 80, -- estimate
         ["Ruins of Lordaeron"] = 120, -- estimate
         ["The Drowned City"] = 120, -- estimate
+        ["Krol'dok Stronghold"] = 120, -- estimate
     }
     local SHARE = 0.20
 
@@ -2029,7 +2065,7 @@ do
                 if b.npcID then seen[b.npcID] = true end
                 if type(b.name) == "string" then seen[b.name:lower()] = true end
                 any = true
-                local final = b.npcID and finalByNpc and finalByNpc[b.npcID] == name
+                local final = (b.npcID and finalByNpc and finalByNpc[b.npcID] == name) or nameFinal[name] == b -- kroldok
                 if FDJ.IsRPGMode() and not final and not CharDB().rpgKills[name] and QuestOpen(name) then
                     print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_BOSS_REVEALED_MSG", BossLabel(b.name)) .. "|r")
                 end
@@ -2219,6 +2255,11 @@ do
         [1102] = { { "Razorfen Kraul", 4421 } },                 -- A Vengeful Fate: Razorflank's Heart
         -- The Drowned City
         [95776] = { { "The Drowned City", 258924 } },            -- The Only Good Brinescale...: Var'Taka
+        [95791] = { { "The Drowned City", 260042 } },            -- The Saltseer Captain: Captain Dreadrise
+        -- Krol'dok Stronghold
+        [94968] = { { "Krol'dok Stronghold", 258968 } },        -- Eye of Mugg (Horde): Overlord Mugg
+        [94982] = { { "Krol'dok Stronghold", 258968 } },        -- Eye of Mugg (Alliance): Overlord Mugg
+        [94984] = { { "Krol'dok Stronghold", 258964 } },        -- Tome of Twilight (Alliance): Nar'gurk
         -- Scarlet Monastery: Whitemane, Mograine, Herod and Loksey
         [1048] = { { "Scarlet Monastery: Cathedral", 3977, 3976 }, { "Scarlet Monastery: Armory", 3975 },
             { "Scarlet Monastery: Library", 3974 } },

@@ -60,6 +60,7 @@ FDJ.Locales.zhCN = {
     ["CHOOSE_ONE_REWARD"] = "选择一项奖励",
     ["SHOW_ON_MAP"] = "在地图上显示",
     ["SHOW_TURN_IN"] = "显示交付地点",
+    ["TURN_IN_DUNGEON"] = "交付：地下城",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "路线在此绕行，以便你获得飞行点。之后沿路返回，继续向东前往阿拉希。",
     ["ROUTE_FP_TARREN_MILL"] = "塔伦米尔飞行点",
     ["ROUTE_REMOVE_HINT"] = "右键点击以移除路线",

@@ -57,6 +57,7 @@ FDJ.Locales.frFR = {
     ["CHOOSE_ONE_REWARD"] = "Choisissez une récompense",
     ["SHOW_ON_MAP"] = "Voir carte",
     ["SHOW_TURN_IN"] = "Voir le rendu",
+    ["TURN_IN_DUNGEON"] = "Rendre : donjon",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "L'itinéraire fait un détour ici pour que vous récupériez le point de vol. Ensuite, redescendez la route et continuez vers l'est en direction d'Arathi.",
     ["ROUTE_FP_TARREN_MILL"] = "Point de vol de Moulin-de-Tarren",
     ["ROUTE_REMOVE_HINT"] = "Clic droit pour retirer l'itinéraire",

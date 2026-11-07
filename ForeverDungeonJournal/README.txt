@@ -1,4 +1,4 @@
-DungeonJournal 1.7.1
+DungeonJournal 1.7.2
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,53 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.7.2
+- Krol'dok Stronghold: a full page now, with its loading screen. Its bosses
+  (Slavecrusher Grox, Twilight Commander Zarmok, War Handler Ashka,
+  Nar'gurk, Bossman Toof, Overlord Mugg) with their pictures, levels and
+  the drops seen so far (among them Resistance Breaker Spaulder,
+  Shadowlight Athame and Big-Belly Belt), and the rest of its known loot
+  (War Handler's Gaze, the Krol'dok Warplate set) in a folded "Not
+  confirmed, but probable drop" section. Its seven quests: Eye of Mugg,
+  Tome of Twilight, A Token of Vengeance, Twilight Mementos and Vengeance
+  of the Highborne, with Tome of Twilight's lead-in A Small Favor for the
+  Alliance. RPG Mode unlocks it when Overlord Mugg dies or Eye of Mugg is
+  handed in; the Alliance Tome of Twilight reveals Nar'gurk.
+- The Drowned City: Gill is a rare and drops Gill's Gills; five more items
+  of the same batch as probable drops. Two more quests, for both factions,
+  from Krazek in Booty Bay: Shady Saltseers and The Saltseer Captain (in
+  RPG Mode, handing it in counts as Captain Dreadrise killed). Zul'Alai,
+  Captain Dreadrise and Gill with their real NPC IDs.
+- Scarlet Monastery: Houndmaster Boomerang (Houndmaster Loksey), Library
+  Walkers (Arcanist Doan), Band of Crimson Light (Herod).
+- Quests done inside a dungeon: the In Dungeon icon now also sits next to
+  Objective and Turn in when that part happens inside (Lost in the Thicket
+  Things, Songblade Search, Deathstalkers in Shadowfang...). A quest where
+  you only have to speak to someone inside the dungeon shows YOU HAVE IT
+  until it is handed in there, not Turn in (also in the quest tracker). A
+  chain step in your quest log that is handed in inside the dungeon says
+  so at the top of its page: YOU HAVE IT and a "Turn in: Dungeon" button
+  that opens the dungeon map where it is handed in.
+- Excavation Site: Wetlands map: Ardin Grassman and Daewyn Songblade.
+- Sleeping Bag arrow:
+  - It only flies from and to flight points your character has found: open
+    the flight map once at any flight master (it remembers per character);
+    until then it walks. The flight it picks follows the zones (from the
+    Field of Giants: Camp Taurajo, not Brackenwall over the mountains).
+  - It knows the way where the straight line does not go. The Pocket
+    Litter camp, worked out on real walking maps of Stonetalon: out of Sun
+    Rock Retreat's east exit, up the road and along the hill path, point by
+    point (also from the Barrens road, and for the Alliance from Stonetalon
+    Peak); the Alliance go round Honor's Stand. At Thoradin's Wall it keeps
+    to the fallen cart until you are actually on it (or up on the rubble
+    behind it), then turns to the Messenger Bag.
+  - In the air it counts the flight down from the length of its real path
+    (the time it really took, after the first time).
+  - A click on the arrow opens the world map on the objective; only the
+    arrow itself can be dragged.
+- /dj fakelog <questID>: shows a quest as if it were in your quest log (to
+  look at its page; again to turn it off).
 
 CHANGES IN 1.7.1
 - Cozy Sleeping Bag (new): the bag's icon on the home page, next to the WoW

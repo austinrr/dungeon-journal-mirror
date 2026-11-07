@@ -57,6 +57,7 @@ FDJ.Locales.itIT = {
     ["CHOOSE_ONE_REWARD"] = "Scegli una ricompensa",
     ["SHOW_ON_MAP"] = "Mostra mappa",
     ["SHOW_TURN_IN"] = "Mostra consegna",
+    ["TURN_IN_DUNGEON"] = "Consegna: spedizione",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "Il percorso fa una deviazione qui per prendere il punto di volo. Poi torna sulla strada e prosegui verso est, in direzione di Arathi.",
     ["ROUTE_FP_TARREN_MILL"] = "Punto di volo di Mulino di Tarren",
     ["ROUTE_REMOVE_HINT"] = "Clic destro per rimuovere il percorso",

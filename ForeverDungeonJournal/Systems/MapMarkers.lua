@@ -1773,11 +1773,13 @@ end
 -- first ("Take the boat to Darkshore"), then on from where it lands. When a
 -- flight point the character has found saves enough of the way, it points to
 -- the flight master first ("Fly to The Sepulcher"), and in the air counts
--- down the flight (as long as it took last time). Near an NPC who stands well
+-- down the flight (as long as it took last time; the first time, from the
+-- length of the flight's path). Near an NPC who stands well
 -- below or above the ground around (a crypt, a tower top), it says so ("Below
 -- ground: find the way down") and does not take standing over them as there.
--- Close to a quest NPC, a click on it targets and marks the NPC. Drag it
--- anywhere; right-click hides it; it goes away on arrival (a chain's spot only
+-- Close to a quest NPC, a click on it targets and marks the NPC; elsewhere a
+-- click shows the spot on the map. Drag it (by the arrow itself) anywhere;
+-- right-click hides it; it goes away on arrival (a chain's spot only
 -- steps aside until the step moves on) and is not shown inside instances.
 do
     local ART = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\WaypointArrow"
@@ -1793,7 +1795,10 @@ do
     local FLY_EXTRA = 100  -- yards' worth of time a flight costs on top (the flight master, landing)
     local FLY_MIN = 500    -- yards: shorter ways are not worth a flight
     local FLY_WORTH = 0.85 -- fly when that takes less than this share of the way there
-    local FLIGHT_YPS = 25  -- a flight's yards a second, as the crow flies (a first guess)
+    local FLIGHT_SPEED = 30  -- yards a second along a flight's path (Classic gryphons and wind riders)
+    local FLIGHT_STOP = 2    -- seconds each hop costs on top (taking off, landing)
+    local FLIGHT_CURVE = 1.4 -- a path not known: this many times the straight line (known paths: half are under 1.38)
+    local FAR_ZONE = 500   -- yards: a flight point in another zone than where one stands (or is going) counts this much farther (zone borders are mostly mountains: Brackenwall is not 750 yards from the Field of Giants)
     local FLOOR_NEAR = 100 -- yards: near enough for "below / above ground" to matter
 
     do
@@ -1820,16 +1825,16 @@ do
                 ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
         }
         local more = {
-            enUS = { ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up" },
-            deDE = { ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben" },
-            frFR = { ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter" },
-            esES = { ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir" },
-            itIT = { ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire" },
-            ptBR = { ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir" },
-            ruRU = { ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём" },
-            koKR = { ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요" },
-            zhCN = { ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去" },
-            zhTW = { ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去" },
+            enUS = { ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map." },
+            deDE = { ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte." },
+            frFR = { ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte." },
+            esES = { ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa." },
+            itIT = { ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa." },
+            ptBR = { ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa." },
+            ruRU = { ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте." },
+            koKR = { ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다." },
+            zhCN = { ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。" },
+            zhTW = { ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。" },
         }
         for locale, entries in pairs(more) do
             for key, value in pairs(entries) do strings[locale][key] = value end
@@ -1884,7 +1889,7 @@ do
         local hit = worldCache[key]
         if hit == nil then
             local wx, wy, continent = World(spot.mapID, tonumber(spot.x) or 0, tonumber(spot.y) or 0)
-            hit = wx and { wx, wy, continent } or false
+            hit = wx and { wx, wy, continent, map = tonumber(spot.mapID) } or false
             worldCache[key] = hit
         end
         return hit or nil
@@ -1998,40 +2003,79 @@ do
         if nodeFaction == 2 then return faction == "Alliance" end
         return true
     end
+    -- The flight points this character has found, by the flight map's names
+    -- (lower case): every name the flight map listed when it was open, kept
+    -- in the character's saved variables. The game's own list of flight
+    -- points says on some clients which are found (isUndiscovered); WoW
+    -- Forever's lists them all alike, so there only the flight map tells.
+    local function FoundFlights()
+        if type(ForeverDungeonJournalCharacterDB) ~= "table" then ForeverDungeonJournalCharacterDB = {} end
+        if type(ForeverDungeonJournalCharacterDB.flightPoints) ~= "table" then ForeverDungeonJournalCharacterDB.flightPoints = {} end
+        return ForeverDungeonJournalCharacterDB.flightPoints
+    end
+    local function RecordFlightMap()
+        if type(NumTaxiNodes) ~= "function" or type(TaxiNodeName) ~= "function" then return end
+        local ok, count = pcall(NumTaxiNodes)
+        local found, any = FoundFlights(), false
+        for i = 1, (ok and Number(count)) or 0 do
+            local okType, kind = true, "REACHABLE"
+            if type(TaxiNodeGetType) == "function" then okType, kind = pcall(TaxiNodeGetType, i) end
+            local okName, name = pcall(TaxiNodeName, i)
+            if type(issecretvalue) == "function" and issecretvalue(name) then name = nil end
+            if okType and kind ~= "NONE" and okName and type(name) == "string" and name ~= "" then
+                if not found[string.lower(name)] then any = true end
+                found[string.lower(name)] = true
+            end
+        end
+        if any then flights = nil end
+    end
+    local function Found(node)
+        if node.isUndiscovered ~= nil then return node.isUndiscovered ~= true end
+        local name = type(node.name) == "string" and string.lower(node.name) or nil
+        return name ~= nil and FoundFlights()[name] == true
+    end
     local function ReadFlights()
         flights = {}
         if not (C_TaxiMap and type(C_TaxiMap.GetTaxiNodesForMap) == "function") then return end
         local faction, seen = Faction(), {}
-        local function Add(mapID)
+        local function Add(mapID, zoned)
             local ok, nodes = pcall(C_TaxiMap.GetTaxiNodesForMap, mapID)
             if not ok or type(nodes) ~= "table" then return 0 end
             local added = 0
             for _, node in ipairs(nodes) do
                 local id = type(node) == "table" and Number(node.nodeID)
-                if id and not seen[id] and node.isUndiscovered ~= true and OurSide(node.faction, faction) and type(node.position) == "table" then
-                    local nx, ny = node.position.x, node.position.y
-                    if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
-                    local wx, wy, c = World(mapID, Number(nx), Number(ny))
-                    if wx and c then
-                        seen[id] = true
-                        flights[c] = flights[c] or {}
-                        table.insert(flights[c], { wx, wy, name = PlaceName(node.name), c = c })
-                        added = added + 1
+                if id and Found(node) and OurSide(node.faction, faction) and type(node.position) == "table" then
+                    if seen[id] then
+                        if seen[id].maps then seen[id].maps[mapID] = true end -- the same flight point on another map (a city's and its zone's)
+                    else
+                        local nx, ny = node.position.x, node.position.y
+                        if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
+                        local wx, wy, c = World(mapID, Number(nx), Number(ny))
+                        if wx and c then
+                            local entry = { wx, wy, name = PlaceName(node.name), c = c, maps = zoned and { [mapID] = true } or nil }
+                            seen[id] = entry
+                            flights[c] = flights[c] or {}
+                            table.insert(flights[c], entry)
+                            added = added + 1
+                        end
                     end
                 end
             end
             return added
         end
+        -- Zone by zone (cities too), so each flight point knows the maps it
+        -- is on; the continent's own list only when a game has no zone lists.
         for _, mapID in ipairs(CONTINENT_MAPS) do
-            if Add(mapID) == 0 and C_Map and type(C_Map.GetMapChildrenInfo) == "function" then
-                -- this game lists them by zone only
-                local ok, zones = pcall(C_Map.GetMapChildrenInfo, mapID, 3, false)
+            local added = 0
+            if C_Map and type(C_Map.GetMapChildrenInfo) == "function" then
+                local ok, zones = pcall(C_Map.GetMapChildrenInfo, mapID, 3, true)
                 if ok and type(zones) == "table" then
                     for _, zone in ipairs(zones) do
-                        if type(zone) == "table" and zone.mapID then Add(zone.mapID) end
+                        if type(zone) == "table" and zone.mapID then added = added + Add(zone.mapID, true) end
                     end
                 end
             end
+            if added == 0 then Add(mapID) end
         end
     end
     local function FlightPoints(continent)
@@ -2048,7 +2092,10 @@ do
         for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "TAXIMAP_OPENED", "TAXIMAP_CLOSED", "TAXI_NODE_STATUS_CHANGED", "UI_INFO_MESSAGE" }) do
             pcall(watch.RegisterEvent, watch, event)
         end
-        watch:SetScript("OnEvent", function() flights = nil end)
+        watch:SetScript("OnEvent", function(_, event)
+            if event == "TAXIMAP_OPENED" or event == "TAXI_NODE_STATUS_CHANGED" then pcall(RecordFlightMap) end
+            flights = nil
+        end)
     end
 
     -- The flight under way: from / to (the flight map's names), at (when
@@ -2072,13 +2119,14 @@ do
         return nil
     end
     -- The flight map's names of where the player is and of the picked slot.
+    local function TaxiName(i)
+        if type(TaxiNodeName) ~= "function" or i == nil then return nil end
+        local ok, name = pcall(TaxiNodeName, i)
+        if not ok or (type(issecretvalue) == "function" and issecretvalue(name)) then return nil end
+        return type(name) == "string" and name ~= "" and name or nil
+    end
     local function TaxiNames(slot)
-        local function Name(i)
-            if type(TaxiNodeName) ~= "function" then return nil end
-            local ok, name = pcall(TaxiNodeName, i)
-            if not ok or (type(issecretvalue) == "function" and issecretvalue(name)) then return nil end
-            return type(name) == "string" and name ~= "" and name or nil
-        end
+        local Name = TaxiName
         local from
         if type(NumTaxiNodes) == "function" and type(TaxiNodeGetType) == "function" then
             local ok, count = pcall(NumTaxiNodes)
@@ -2091,6 +2139,143 @@ do
             end
         end
         return from, Name(slot)
+    end
+    -- How long a flight takes the first time (1.8.5): the yards it flies
+    -- along its path, from Blizzard's TaxiPath tables of Classic Era (by way
+    -- of Polestar's travel data, GPL-3.0-or-later): the flight masters
+    -- { continent, wx, wy } by node id, and the one-way flights from, to,
+    -- yards. A flight that changes gryphons on the way flies each hop.
+    local TAXI_NODES = {
+        [2] = { 0, -8840.6, 489.7 }, [4] = { 0, -10628.9, 1036.7 }, [5] = { 0, -9429.1, -2231.4 }, [6] = { 0, -4821.8, -1155.4 },
+        [7] = { 0, -3792.3, -783.3 }, [8] = { 0, -5421.9, -2930 }, [10] = { 0, 478.9, 1536.6 }, [11] = { 0, 1568.6, 268 },
+        [12] = { 0, -10515.5, -1261.7 }, [13] = { 0, -0.1, -859.9 }, [14] = { 0, -711.5, -515.5 }, [16] = { 0, -1240.5, -2515.1 },
+        [17] = { 0, -916.3, -3496.9 }, [18] = { 0, -14444.3, 509.6 }, [19] = { 0, -14473, 464.1 }, [20] = { 0, -12414.2, 146.3 },
+        [21] = { 0, -6634, -2180.1 }, [22] = { 1, -1197.2, 29.7 }, [23] = { 1, 1677.6, -4315.7 }, [25] = { 1, -441.8, -2596.1 },
+        [26] = { 1, 6341.4, 557.7 }, [27] = { 1, 8643.6, 841 }, [28] = { 1, 2827.3, -289.2 }, [29] = { 1, 966.6, 1040.3 },
+        [30] = { 1, -5407.7, -2414.3 }, [31] = { 1, -4491.9, -775.9 }, [32] = { 1, -3825.4, -4516.6 }, [33] = { 1, 2681.1, 1461.7 },
+        [37] = { 1, 139.2, 1325.8 }, [38] = { 1, -1767.6, 3263.9 }, [39] = { 1, -7224, -3734.6 }, [40] = { 1, -7048.9, -3780.4 },
+        [41] = { 1, -4373.8, 3338.6 }, [42] = { 1, -4419.9, 199.3 }, [43] = { 0, 283.7, -2002.8 }, [44] = { 1, 3661.5, -4390.4 },
+        [45] = { 0, -11112.2, -3435.7 }, [48] = { 1, 5068.4, -337.2 }, [49] = { 1, 7458.5, -2487.2 }, [52] = { 1, 6799.2, -4742.4 },
+        [53] = { 1, 6813.1, -4611.1 }, [55] = { 1, -3147.4, -2842.2 }, [56] = { 0, -10457, -3279.2 }, [58] = { 1, 3374.7, 997 },
+        [61] = { 1, 2302.4, -2524.6 }, [62] = { 1, 7793.6, -2403.5 }, [63] = { 1, 7787.7, -2404.1 }, [64] = { 1, 2722, -3880.6 },
+        [65] = { 1, 6205.9, -1949.6 }, [66] = { 0, 931.3, -1430.1 }, [67] = { 0, 2271.1, -5340.8 }, [68] = { 0, 2327.4, -5286.9 },
+        [69] = { 1, 7470.4, -2123.4 }, [70] = { 0, -7504, -2187.5 }, [71] = { 0, -8364.6, -2738.4 }, [72] = { 1, -6811.4, 836.7 },
+        [73] = { 1, -6761.8, 772 }, [74] = { 0, -6552.6, -1168.3 }, [75] = { 0, -6554.9, -1100.1 }, [76] = { 0, -635.3, -4720.5 },
+        [77] = { 1, -2380.7, -1882.7 }, [79] = { 1, -6113.8, -1142.7 }, [80] = { 1, -894.6, -3773 },
+    }
+    local TAXI_FLOWN = {
+        2, 4, 2319, 2, 5, 3368, 2, 6, 7748, 2, 12, 3469, 2, 19, 7317, 2, 45, 5268, 2, 71, 4700, 4, 2, 2565,
+        4, 5, 3890, 4, 12, 2897, 4, 19, 5561, 5, 2, 3374, 5, 4, 4003, 5, 12, 1812, 5, 71, 1825, 6, 2, 6307,
+        6, 7, 3861, 6, 8, 3037, 6, 14, 7938, 6, 16, 7585, 6, 43, 8941, 6, 66, 8816, 6, 67, 10440, 6, 74, 2594,
+        7, 6, 2658, 7, 8, 4877, 7, 14, 3215, 7, 16, 3388, 8, 6, 3266, 8, 7, 4564, 8, 16, 4902, 10, 11, 3345,
+        10, 13, 2847, 11, 10, 3180, 11, 13, 4224, 11, 17, 9014, 11, 21, 14630, 11, 68, 7849, 11, 76, 8530, 12, 2, 2629,
+        12, 4, 2794, 12, 5, 1787, 12, 19, 5135, 12, 45, 2903, 13, 10, 2969, 13, 11, 4172, 13, 17, 3532, 13, 76, 5840,
+        14, 6, 6174, 14, 7, 3301, 14, 16, 2214, 14, 43, 2139, 14, 66, 2418, 16, 6, 8109, 16, 7, 3776, 16, 8, 5113,
+        16, 14, 2596, 16, 43, 2152, 17, 11, 7763, 17, 13, 3493, 17, 21, 7760, 17, 76, 2705, 18, 20, 3047, 18, 21, 12190,
+        18, 56, 7986, 19, 2, 6585, 19, 4, 5439, 19, 12, 5242, 20, 18, 2422, 20, 21, 9802, 20, 56, 6151, 21, 11, 14918,
+        21, 17, 7881, 21, 18, 12493, 21, 20, 9376, 21, 56, 8424, 21, 70, 2593, 21, 75, 1682, 22, 23, 6213, 22, 25, 4752,
+        22, 29, 5439, 22, 30, 6113, 22, 38, 4772, 22, 40, 8693, 22, 42, 7563, 22, 44, 8070, 22, 55, 7149, 22, 77, 2599,
+        23, 22, 6745, 23, 25, 3304, 23, 40, 12500, 23, 44, 2965, 23, 48, 7558, 23, 53, 9582, 23, 55, 6853, 23, 61, 2680,
+        25, 22, 5461, 25, 23, 4252, 25, 29, 4495, 25, 30, 5532, 25, 40, 9093, 25, 42, 7547, 25, 44, 5051, 25, 48, 7603,
+        25, 55, 4878, 25, 58, 6902, 25, 61, 4871, 25, 77, 2705, 25, 80, 1545, 26, 27, 2525, 26, 28, 5270, 26, 32, 20249,
+        26, 33, 5432, 26, 37, 8723, 26, 41, 14168, 26, 49, 4525, 26, 64, 8981, 26, 65, 5682, 27, 26, 2551, 28, 26, 4426,
+        28, 33, 4599, 28, 64, 4428, 29, 22, 5227, 29, 25, 4477, 29, 38, 4297, 30, 22, 6764, 30, 25, 5810, 30, 40, 2782,
+        30, 42, 3685, 30, 77, 4111, 31, 32, 4780, 31, 39, 5122, 31, 41, 5335, 32, 26, 18600, 32, 31, 4887, 32, 37, 10013,
+        32, 39, 4694, 32, 64, 7052, 32, 80, 3446, 33, 26, 5304, 33, 28, 4613, 33, 37, 3803, 37, 26, 8458, 37, 32, 9220,
+        37, 33, 3581, 37, 41, 6949, 38, 22, 5342, 38, 29, 5966, 38, 42, 5873, 39, 31, 5304, 39, 32, 4606, 39, 73, 5907,
+        39, 79, 3115, 40, 22, 9107, 40, 23, 10495, 40, 25, 9008, 40, 30, 2602, 40, 42, 5973, 40, 55, 6647, 40, 72, 6976,
+        40, 79, 3218, 41, 26, 14014, 41, 31, 4635, 41, 37, 6797, 41, 73, 4774, 42, 22, 7777, 42, 25, 7915, 42, 30, 3215,
+        42, 38, 6016, 42, 40, 6024, 42, 72, 3897, 43, 6, 7658, 43, 14, 2039, 43, 16, 2267, 43, 66, 1590, 43, 67, 4922,
+        44, 22, 7700, 44, 23, 3622, 44, 25, 5163, 44, 48, 6955, 44, 53, 3905, 44, 61, 2795, 45, 2, 5672, 45, 12, 2748,
+        45, 71, 6251, 48, 23, 7747, 48, 25, 7227, 48, 44, 7221, 48, 53, 5700, 48, 69, 4947, 49, 26, 4247, 49, 52, 3900,
+        49, 65, 1840, 52, 49, 3639, 52, 64, 5265, 52, 65, 3670, 53, 23, 9115, 53, 44, 4041, 53, 48, 5853, 53, 69, 4016,
+        55, 22, 6729, 55, 23, 6496, 55, 25, 4848, 55, 40, 6660, 56, 18, 7798, 56, 20, 5646, 56, 21, 8555, 56, 70, 5916,
+        58, 25, 6827, 58, 61, 5013, 61, 23, 2869, 61, 25, 4806, 61, 44, 2870, 61, 58, 4995, 62, 27, 4559, 63, 22, 16313,
+        64, 26, 9038, 64, 28, 4578, 64, 32, 7242, 64, 52, 5355, 64, 65, 8502, 64, 80, 4062, 65, 26, 5622, 65, 49, 2005,
+        65, 52, 3601, 65, 64, 8465, 66, 6, 7782, 66, 14, 2559, 66, 43, 1958, 66, 67, 4390, 67, 6, 11024, 67, 43, 4871,
+        67, 66, 4484, 68, 11, 7837, 68, 76, 4232, 69, 48, 4713, 69, 53, 4256, 70, 21, 2994, 70, 56, 6376, 70, 75, 2154,
+        71, 2, 4528, 71, 5, 1884, 71, 45, 6288, 71, 74, 3090, 72, 40, 7224, 72, 42, 3895, 72, 79, 2896, 73, 39, 5652,
+        73, 41, 5239, 73, 79, 2745, 74, 6, 2802, 74, 71, 2865, 75, 21, 2090, 75, 70, 2297, 76, 11, 8538, 76, 13, 4767,
+        76, 17, 2785, 76, 68, 4159, 77, 22, 3410, 77, 25, 2380, 77, 30, 3750, 79, 39, 3100, 79, 40, 3396, 79, 72, 3003,
+        79, 73, 2823, 80, 25, 2041, 80, 32, 3149, 80, 64, 3960,
+    }
+    local flown
+    local function Flown()
+        if not flown then
+            flown = {}
+            for i = 1, #TAXI_FLOWN - 2, 3 do
+                local a = TAXI_FLOWN[i]
+                flown[a] = flown[a] or {}
+                flown[a][TAXI_FLOWN[i + 1]] = TAXI_FLOWN[i + 2]
+            end
+        end
+        return flown
+    end
+    -- The node id of a flight point (one of FlightPoints'), by where it is.
+    local function TaxiID(node)
+        if type(node) ~= "table" then return nil end
+        for id, n in pairs(TAXI_NODES) do
+            if n[1] == node.c and Yards(node[1], node[2], n[2], n[3]) <= 60 then return id end
+        end
+        return nil
+    end
+    -- The shortest way from node id a to b through the flights (only
+    -- through ids in allowed, when given): yards and hops.
+    local function ShortestFlight(a, b, allowed)
+        local graph = Flown()
+        local dist, hops, done = { [a] = 0 }, { [a] = 0 }, {}
+        while true do
+            local u, best
+            for id, d in pairs(dist) do
+                if not done[id] and (not best or d < best) then u, best = id, d end
+            end
+            if not u then return nil end
+            if u == b then return best, hops[u] end
+            done[u] = true
+            for v, yards in pairs(graph[u] or {}) do
+                if (v == b or not allowed or allowed[v]) and not done[v] and (not dist[v] or best + yards < dist[v]) then
+                    dist[v], hops[v] = best + yards, hops[u] + 1
+                end
+            end
+        end
+    end
+    -- Seconds a picked flight takes: hop by hop as the flight map lists
+    -- them, else the shortest way through the flight points the character
+    -- has found, else the straight line bent by FLIGHT_CURVE.
+    local function FlightGuess(slot, from, to)
+        local function Node(name) return name and NodeNamed(PlaceName(name)) or nil end
+        if type(GetNumRoutes) == "function" and type(TaxiGetNodeSlot) == "function" then
+            local ok, count = pcall(GetNumRoutes, slot)
+            count = ok and Number(count) or 0
+            local total = 0
+            for hop = 1, count do
+                local okA, sa = pcall(TaxiGetNodeSlot, slot, hop, true)
+                local okB, sb = pcall(TaxiGetNodeSlot, slot, hop, false)
+                local a, b = okA and Node(TaxiName(sa)), okB and Node(TaxiName(sb))
+                local ia, ib = TaxiID(a), TaxiID(b)
+                local yards = ia and ib and Flown()[ia] and Flown()[ia][ib]
+                if not yards and a and b then yards = Yards(a[1], a[2], b[1], b[2]) * FLIGHT_CURVE end
+                if not yards then total = nil break end
+                total = total + yards / FLIGHT_SPEED + FLIGHT_STOP
+            end
+            if total and count > 0 then return total end
+        end
+        local a, b = Node(from), Node(to)
+        local ia, ib = TaxiID(a), TaxiID(b)
+        if ia and ib then
+            local allowed = {}
+            for _, list in pairs(flights or {}) do
+                for _, node in ipairs(list) do
+                    local id = TaxiID(node)
+                    if id then allowed[id] = true end
+                end
+            end
+            local yards, hops = ShortestFlight(ia, ib, allowed)
+            if not yards then yards, hops = ShortestFlight(ia, ib) end
+            if yards then return yards / FLIGHT_SPEED + FLIGHT_STOP * hops end
+        end
+        if a and b then return Yards(a[1], a[2], b[1], b[2]) * FLIGHT_CURVE / FLIGHT_SPEED + FLIGHT_STOP end
+        return nil
     end
     local function Clock(seconds)
         seconds = math.max(0, math.floor(seconds + 0.5))
@@ -2129,10 +2314,22 @@ do
         hooksecurefunc("TakeTaxiNode", function(slot)
             local from, to = TaxiNames(slot)
             local picked = { from = from, to = to, at = (GetTime and GetTime()) or 0 }
-            local a, b = NodeNamed(from and PlaceName(from)), NodeNamed(to and PlaceName(to))
-            if a and b then picked.guess = Yards(a[1], a[2], b[1], b[2]) / FLIGHT_YPS + 10 end
+            picked.guess = FlightGuess(slot, from, to)
             Watch(picked)
         end)
+    end
+
+    -- The map the player stands on (a zone, or a city), for the zone rule.
+    local function PlayerMap()
+        if not (C_Map and type(C_Map.GetBestMapForUnit) == "function") then return nil end
+        local ok, mapID = pcall(C_Map.GetBestMapForUnit, "player")
+        return ok and Number(mapID) or nil
+    end
+    -- What a flight point costs on top when it is not on the given map
+    -- (nil map, or a flight point whose maps are not known: nothing).
+    local function Far(node, mapID)
+        if not mapID or not node.maps then return 0 end
+        return node.maps[mapID] and 0 or FAR_ZONE
     end
 
     -- The three flight points nearest to (x, y).
@@ -2152,14 +2349,16 @@ do
     end
     -- The best flight from (px, py) to (qx, qy) on continent c: from, to and
     -- what it costs (in yards on foot), counting the walks to and from it.
-    local function FlyCost(c, px, py, qx, qy)
+    -- fromMap / toMap: the maps (zones) where (px, py) and (qx, qy) are; a
+    -- flight point on another map counts FAR_ZONE yards farther.
+    local function FlyCost(c, px, py, qx, qy, fromMap, toMap)
         local nodes = FlightPoints(c)
         if not nodes or #nodes < 2 then return nil end
         local best, bestTo, least
         for _, a in ipairs(Nearest(nodes, px, py)) do
             for _, b in ipairs(Nearest(nodes, qx, qy)) do
                 if a ~= b then
-                    local cost = Yards(px, py, a[1], a[2]) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy)
+                    local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
                     if not least or cost < least then best, bestTo, least = a, b, cost end
                 end
             end
@@ -2167,23 +2366,23 @@ do
         return best, bestTo, least
     end
     -- How long the way is, in yards on foot: walking, or flying when quicker.
-    local function Travel(c, px, py, qx, qy)
+    local function Travel(c, px, py, qx, qy, fromMap, toMap)
         local walk = Yards(px, py, qx, qy)
         if walk < FLY_MIN then return walk end
-        local _, _, cost = FlyCost(c, px, py, qx, qy)
+        local _, _, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap)
         return (cost and cost < walk) and cost or walk
     end
     -- The flight to take from (px, py) to (qx, qy), when it saves enough of
     -- the way (keep: the one already chosen, kept while it saves any).
-    local function Flight(c, px, py, qx, qy, keep)
+    local function Flight(c, px, py, qx, qy, keep, fromMap, toMap)
         local walk = Yards(px, py, qx, qy)
         if keep and keep[1].c == c then
             local a, b = keep[1], keep[2]
-            local cost = Yards(px, py, a[1], a[2]) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy)
+            local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
             if cost < walk then return a, b end
         end
         if walk < FLY_MIN then return nil end
-        local a, b, cost = FlyCost(c, px, py, qx, qy)
+        local a, b, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap)
         if a and cost < walk * FLY_WORTH then return a, b end
         return nil
     end
@@ -2191,23 +2390,24 @@ do
     -- The boat or zeppelin to take first from (px, py) on continent `here`
     -- to `target` { x, y, continent }: the quickest way, flights counted, with
     -- a second ride when one does not get there.
-    local function FirstRide(px, py, here, target)
+    local function FirstRide(px, py, here, target, playerMap)
         local faction = Faction()
         local best, least
         for _, first in ipairs(RIDES) do
             local from, to = nil, nil
             if Rides(faction, first) then from, to = Ends(first) end
             if from and from[3] == here then
-                local walk = Travel(here, px, py, from[1], from[2])
+                local walk = Travel(here, px, py, from[1], from[2], playerMap, first.from[1])
                 if to[3] == target[3] then
-                    local cost = walk + Travel(to[3], to[1], to[2], target[1], target[2])
+                    local cost = walk + Travel(to[3], to[1], to[2], target[1], target[2], first.to[1], target.map)
                     if not least or cost < least then best, least = first, cost end
                 else
                     for _, second in ipairs(RIDES) do
                         local from2, to2 = nil, nil
                         if second ~= first and Rides(faction, second) then from2, to2 = Ends(second) end
                         if from2 and from2[3] == to[3] and to2[3] == target[3] then
-                            local cost = walk + Travel(to[3], to[1], to[2], from2[1], from2[2]) + Travel(to2[3], to2[1], to2[2], target[1], target[2])
+                            local cost = walk + Travel(to[3], to[1], to[2], from2[1], from2[2], first.to[1], second.from[1])
+                                + Travel(to2[3], to2[1], to2[2], target[1], target[2], second.to[1], target.map)
                             if not least or cost < least then best, least = first, cost end
                         end
                     end
@@ -2224,6 +2424,7 @@ do
     local function Plan(entry, px, py, here, target)
         local plan = { here = here }
         local gx, gy = target[1], target[2]
+        local playerMap, goalMap = PlayerMap(), target.map
         if target[3] and here and target[3] ~= here then
             local ride = entry.ride
             if ride then
@@ -2234,7 +2435,7 @@ do
                 end
                 entry.ride = nil
             end
-            ride = FirstRide(px, py, here, target)
+            ride = FirstRide(px, py, here, target, playerMap)
             if not ride then return nil end
             plan.ride = ride
             local from = Ends(ride)
@@ -2244,11 +2445,12 @@ do
                 return plan
             end
             gx, gy = from[1], from[2]
+            goalMap = ride.from[1]
         else
             entry.ride = nil
             plan.final = true
         end
-        local a, b = Flight(here, px, py, gx, gy, entry.fly)
+        local a, b = Flight(here, px, py, gx, gy, entry.fly, playerMap, goalMap)
         entry.fly = a and { a, b } or nil
         if a then
             plan.final, plan.fly = nil, b
@@ -2262,6 +2464,139 @@ do
         return plan
     end
 
+    -- arrowvia: the way to a spot the straight line does not reach
+    -- (FDJ.ARROW_VIAS[SpotKey]: a mountain in the way, a Horde post to go
+    -- round): the arrow leads to each point of a route in turn, then to
+    -- the spot. A spot has one route (a list of points) or several
+    -- ({ routes = { list, list } }: from each place players come from); the
+    -- route followed is the one whose next point is the quickest to reach
+    -- (on foot or by flight), and it is only changed for one whose next
+    -- point is much quicker (VIA_SWITCH). A point
+    -- counts as passed within VIA_REACHED yards of it, and so does every
+    -- point before it on its route (a player joining the route halfway).
+    local VIA_REACHED = 30
+    local VIA_LEG = 25      -- yards from the way between a point and the next: already past the point
+    local VIA_AT_SPOT = 60  -- yards from the spot itself: no point on the way is left
+    local VIA_SWITCH = 0.5
+    local VIA_JUMP = 200    -- yards moved since the last look (a flight, a hearthstone): the route is chosen afresh
+    local function ViaRoutes(entry)
+        local vias = FDJ.ARROW_VIAS and entry.spot and FDJ.ARROW_VIAS[SpotKey(entry.spot)]
+        if type(vias) ~= "table" then return nil end
+        if type(vias.routes) == "table" then return vias.routes end
+        return { vias }
+    end
+    -- Yards from (px, py) to the line between two points.
+    local function LegYards(px, py, ax, ay, bx, by)
+        local dx, dy = bx - ax, by - ay
+        local len2 = dx * dx + dy * dy
+        local t = 0
+        if len2 > 0 then t = math.max(0, math.min(1, ((px - ax) * dx + (py - ay) * dy) / len2)) end
+        return Yards(px, py, ax + t * dx, ay + t * dy)
+    end
+    -- climb (1.8.4): a point passed only once the player is up there (the
+    -- fallen cart at Thoradin's Wall). The game gives no height, so a small
+    -- grid of the place from walking maps (via.climb: rows of '#' only
+    -- raised ground, '.' only plain ground, '+' both or beside it) says it
+    -- by where the player stands: the cell under the player, or nil off the
+    -- grid.
+    local climbFrames = setmetatable({}, { __mode = "k" })
+    local function ClimbCell(grid, px, py, here)
+        if type(grid) ~= "table" or type(grid.rows) ~= "table" then return nil end
+        local f = climbFrames[grid]
+        if f == nil then
+            local a = SpotWorld({ mapID = grid.mapID, x = grid.x0, y = grid.y0 })
+            local b = SpotWorld({ mapID = grid.mapID, x = grid.x0 + grid.step, y = grid.y0 })
+            local c = SpotWorld({ mapID = grid.mapID, x = grid.x0, y = grid.y0 + grid.step })
+            f = false
+            if a and b and c and a[3] == b[3] and a[3] == c[3] then
+                local ux, uy, vx, vy = b[1] - a[1], b[2] - a[2], c[1] - a[1], c[2] - a[2]
+                local det = ux * vy - uy * vx
+                if det ~= 0 then f = { a[1], a[2], ux, uy, vx, vy, det, a[3] } end
+            end
+            climbFrames[grid] = f
+        end
+        if not f or f[8] ~= here then return nil end
+        local dx, dy = px - f[1], py - f[2]
+        local i = math.floor((dx * f[6] - dy * f[5]) / f[7] + 0.5) + 1
+        local j = math.floor((f[3] * dy - f[4] * dx) / f[7] + 0.5) + 1
+        local line = grid.rows[j]
+        if type(line) ~= "string" or i < 1 or i > #line then return nil end
+        return line:sub(i, i)
+    end
+
+    -- The route's next point for this player: its world position and the
+    -- point; nil when the route is walked or not for this faction. A point
+    -- is passed within VIA_REACHED yards of it, or VIA_LEG yards of the way
+    -- from it to the route's next point. A climb point only within its
+    -- reach (yards) or on its grid's raised ground; it is taken back on its
+    -- grid's plain ground and after a jump (the spirit healer, a flight).
+    local function RouteNext(route, done, px, py, here, faction, jumped)
+        local worlds = {}
+        for i, via in ipairs(route) do
+            if type(via) == "table" and (not via.faction or via.faction == faction) then worlds[i] = SpotWorld(via) end
+        end
+        for i, via in ipairs(route) do
+            if worlds[i] and via.climb and (jumped or ClimbCell(via.climb, px, py, here) == ".") then done[i] = nil end
+        end
+        local reached
+        for i = #route, 1, -1 do
+            local w, via = worlds[i], route[i]
+            if w and w[3] == here then
+                if via.climb then
+                    if ClimbCell(via.climb, px, py, here) == "#"
+                        or (tonumber(via.reach) and Yards(px, py, w[1], w[2]) <= tonumber(via.reach)) then
+                        reached = i
+                        break
+                    end
+                else
+                    if Yards(px, py, w[1], w[2]) <= VIA_REACHED then reached = i break end
+                    local n
+                    for j = i + 1, #route do if worlds[j] then n = worlds[j] break end end
+                    if n and n[3] == here and LegYards(px, py, w[1], w[2], n[1], n[2]) <= VIA_LEG then reached = i break end
+                end
+            end
+        end
+        if reached then
+            for i = 1, reached do done[i] = true end
+        end
+        for i, via in ipairs(route) do
+            if not done[i] and worlds[i] then return worlds[i], via end
+        end
+        return nil
+    end
+    local function NextVia(entry, px, py, here)
+        local routes = ViaRoutes(entry)
+        if not routes then return nil end
+        local target = SpotWorld(entry.spot)
+        local nearSpot = target and target[3] == here and Yards(px, py, target[1], target[2]) <= VIA_AT_SPOT
+        local faction = Faction()
+        entry.viaDone = entry.viaDone or {}
+        local jumped = entry.viaX and Yards(px, py, entry.viaX, entry.viaY) > VIA_JUMP or false
+        if jumped then entry.viaRoute = nil end
+        entry.viaX, entry.viaY = px, py
+        local best, bestW, bestVia, bestD
+        local playerMap = PlayerMap()
+        for r, route in ipairs(routes) do
+            if type(route) == "table" then
+                if type(entry.viaDone[r]) ~= "table" then entry.viaDone[r] = {} end
+                local w, via = RouteNext(route, entry.viaDone[r], px, py, here, faction, jumped)
+                if not w and r == entry.viaRoute then return nil end -- the route followed is walked: the spot itself
+                if w then
+                    -- the way there on foot or by flight (Travel): from
+                    -- Orgrimmar the Sun Rock Retreat route, by wind rider
+                    local d = w[3] == here and Travel(here, px, py, w[1], w[2], playerMap, w.map) or Yards(px, py, w[1], w[2]) + FAR_ZONE * 10
+                    if r == entry.viaRoute then d = d * VIA_SWITCH end -- the route being followed keeps the arrow
+                    if not bestD or d < bestD then best, bestW, bestVia, bestD = r, w, via, d end
+                end
+            end
+        end
+        entry.viaRoute = best
+        -- Near the spot: straight to it, unless a climb comes first (the
+        -- Messenger Bag is up on the wall, over the heads of those below).
+        if nearSpot and not (bestVia and bestVia.climb) then return nil end
+        return bestW, bestVia
+    end
+
     -- Distance (yards) and the turn from where the player faces to where the
     -- arrow points, and the plan (Plan above). nil: no position, or no way.
     local function Measure(entry)
@@ -2269,6 +2604,8 @@ do
         if not target then return nil end
         local px, py, here = PlayerWorld()
         if not px then return nil end
+        local viaWorld, via = NextVia(entry, px, py, here) -- arrowvia
+        if viaWorld then target = viaWorld end
         -- Worked out again every half second, or sooner after a jump (a
         -- hearthstone, a landing).
         local now = (GetTime and GetTime()) or 0
@@ -2276,6 +2613,7 @@ do
         local moved = entry.plannedX and Yards(px, py, entry.plannedX, entry.plannedY) or math.huge
         if plan == nil or now - (entry.plannedAt or 0) >= PLAN_EVERY or moved > 25 or (plan and plan.here ~= here) then
             plan = Plan(entry, px, py, here, target) or false
+            if plan and via then plan.via, plan.final = via, nil end -- arrowvia: not the spot itself yet
             entry.plan, entry.plannedAt, entry.plannedX, entry.plannedY = plan, now, px, py
         end
         if not plan then return nil end
@@ -2345,7 +2683,7 @@ do
         if not plan then return "" end
         if plan.fly then return FDJ.L("ARROW_FLY", plan.fly.name or "") end
         local ride = plan.ride
-        if not ride then return "" end
+        if not ride then return plan.via and FreeText(plan.via.label) or "" end -- arrowvia: the point on the way
         if not ride.toName or ride.toName == "" then ride.toName = ZoneName(ride.to[1]) end
         return FDJ.L(ride.kind == "zeppelin" and "ARROW_ZEPPELIN" or "ARROW_BOAT", ride.toName)
     end
@@ -2392,6 +2730,7 @@ do
         if InCombatLockdown and InCombatLockdown() then return end
         ConfigureTargetAndMarkAction(f, name and spot or NOTHING, false)
         f.fdjClickKey = key
+        f.fdjTargets = name ~= nil -- a left-click targets the NPC (and does not open the map)
     end
 
     local function Redraw(f)
@@ -2416,10 +2755,12 @@ do
             flight.up = flight.up or now
             local gone = now - flight.up
             local took = flight.from and flight.to and FlightTimes()[flight.from .. ">" .. flight.to]
+            -- Past the count-down's end (a slower flight than thought):
+            -- nothing, not 0:00 for the rest of the way.
             if type(took) == "number" then
-                f.distance:SetText(Clock(took - gone))
+                f.distance:SetText(took - gone >= 0 and Clock(took - gone) or "")
             elseif flight.guess then
-                f.distance:SetText("~" .. Clock(flight.guess - gone))
+                f.distance:SetText(flight.guess - gone >= 0 and ("~" .. Clock(flight.guess - gone)) or "")
             else
                 f.distance:SetText(Clock(gone))
             end
@@ -2469,6 +2810,23 @@ do
         end
     end
 
+    -- A left-click on the arrow: its spot (the objective, not a point on
+    -- the way) on the world map, as Show on Map does. The arrow keeps where
+    -- it was on the way (the points passed).
+    local function ShowOnMap(entry)
+        local show = FDJ.MapMarkers and FDJ.MapMarkers.ShowRecordedLocationOnMap
+        if not entry or type(entry.spot) ~= "table" or not show then return end
+        local spot = {}
+        for k, v in pairs(entry.spot) do spot[k] = v end
+        FDJ.pendingMarkerQuestTitle = QuestName(entry.spot)
+        FDJ.pendingMarkerTurnIn = entry.spot.turnIn and true or nil
+        show(spot, spot.label)
+        local now = shown
+        if now and now ~= entry and SpotKey(now.spot) == SpotKey(entry.spot) then
+            now.viaDone, now.viaRoute, now.viaX, now.viaY = entry.viaDone, entry.viaRoute, entry.viaX, entry.viaY
+        end
+    end
+
     local function Build()
         if frame then return frame end
         -- The insecure action template lets a click run the target-and-mark
@@ -2479,6 +2837,9 @@ do
         f._fdjCanTarget = (ok and made) and true or false
         if f._fdjCanTarget then f:SetAttribute("useOnKeyDown", false) end
         f:SetSize(150, 84)
+        -- Only the arrow itself (52 x 52 at the top) takes the mouse: not the
+        -- text under it nor the space round it.
+        if f.SetHitRectInsets then f:SetHitRectInsets(49, 49, 0, 32) end
         f:SetFrameStrata("MEDIUM")
         f:SetClampedToScreen(true)
         f:SetMovable(true)
@@ -2501,17 +2862,26 @@ do
         f.distance:SetPoint("TOP", f.title, "BOTTOM", 0, -2)
         f.route = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         f.route:SetPoint("TOP", f.distance, "BOTTOM", 0, -2)
-        f:SetScript("OnDragStart", function(self) self:StartMoving() end)
+        f:SetScript("OnDragStart", function(self)
+            self.fdjDragging = true
+            self:StartMoving()
+        end)
         f:SetScript("OnDragStop", function(self)
+            self.fdjDragging = nil
+            self.fdjDragEnd = (GetTime and GetTime()) or 0
             self:StopMovingOrSizing()
             local p, _, rp, x, y = self:GetPoint(1)
             if p then Saved().point = { p, rp, x, y } end
         end)
         -- PostClick keeps the template's own click (the target macro).
-        f:SetScript(f._fdjCanTarget and "PostClick" or "OnClick", function(_, button)
+        f:SetScript(f._fdjCanTarget and "PostClick" or "OnClick", function(self, button)
             if button == "RightButton" then
                 GameTooltip:Hide()
                 Dismiss(shown)
+            elseif button == "LeftButton" and not self.fdjTargets and not self.fdjDragging
+                and ((GetTime and GetTime()) or 0) - (self.fdjDragEnd or -10) > 0.3 then
+                GameTooltip:Hide()
+                ShowOnMap(shown)
             end
         end)
         f:SetScript("OnEnter", function(self)
@@ -2523,7 +2893,11 @@ do
             if quest then GameTooltip:AddLine(quest, 1, 1, 1) end
             local detail = FreeText(entry.spot.detail)
             if detail and detail ~= "" then GameTooltip:AddLine(detail, 0.85, 0.85, 0.85, true) end
-            if self._fdjCanTarget and NPC(entry.spot) then GameTooltip:AddLine(FDJ.L("MAP_LEFT_TARGET"), 0.35, 1.00, 0.35) end
+            if self.fdjTargets then
+                GameTooltip:AddLine(FDJ.L("MAP_LEFT_TARGET"), 0.35, 1.00, 0.35)
+            else
+                GameTooltip:AddLine(FDJ.L("ARROW_TIP_MAP"), 0.55, 0.55, 0.55)
+            end
             GameTooltip:AddLine(FDJ.L("ARROW_TIP_MOVE"), 0.55, 0.55, 0.55)
             GameTooltip:AddLine(FDJ.L("ARROW_TIP_HIDE"), 0.55, 0.55, 0.55)
             GameTooltip:Show()

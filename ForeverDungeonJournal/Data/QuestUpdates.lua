@@ -484,6 +484,8 @@ do
     local GROMGOL = "Kin'weelay, Grom'gol Base Camp, Stranglethorn Vale"
     FDJ.QUEST_START_MAPS[95775] = KINWEELAY
     FDJ.QUEST_START_MAPS[96774] = { mapID = 1412, x = 0.325, y = 0.206, label = "Mazu'kon — Mulgore", targetName = "Mazu'kon", detail = "Mazu'kon of the Earthen Ring, north-west Mulgore" }
+    FDJ.QUEST_START_MAPS[95789] = { mapID = 1434, x = 0.269, y = 0.772, label = "Krazek — Booty Bay", targetName = "Krazek", detail = "Krazek, upstairs in Booty Bay, Stranglethorn Vale" }
+    FDJ.QUEST_START_MAPS[95791] = FDJ.QUEST_START_MAPS[95789]
     FDJ.QUEST_START_MAPS[95787] = { mapID = 1424, x = 0.506, y = 0.571, label = "Loremaster Dibbs — Southshore", targetName = "Loremaster Dibbs", detail = "Loremaster Dibbs in Southshore, Hillsbrad Foothills" }
 
     FDJ.QUEST_PREREQ_CHAINS[95775] = {
@@ -545,6 +547,28 @@ do
 end
 -- END drownedcity
 
+-- BEGIN glowingshard
+-- The Glowing Shard: first speak with Sputtervalve in Ratchet (the quest's
+-- objective; he has no ? over his head), then hand it in to Falla Sagewind on
+-- top of the mountain above Wailing Caverns (Forever client tables via
+-- Polestar forever-db: end NPC 8418, Sputtervalve 3442 and their spawns). The
+-- tracker's ? shows Ratchet until he has been spoken to, then Falla.
+do
+    local FALLA = { mapID = 1413, x = 0.482, y = 0.328, label = "Falla Sagewind — above Wailing Caverns", targetName = "Falla Sagewind", detail = "In a tent on top of the mountain above Wailing Caverns" }
+    for _, quest in ipairs((FDJ.DB["Wailing Caverns"] and FDJ.DB["Wailing Caverns"].quests) or {}) do
+        if quest.id == 6981 then
+            quest.objective = "Speak with Sputtervalve in Ratchet about the Glowing Shard, then deliver it to Falla Sagewind on top of the mountain above Wailing Caverns."
+            quest.turnin = "Falla Sagewind, on top of the mountain above Wailing Caverns, The Barrens (48.2, 32.8)"
+            quest.turninMap = FALLA
+            quest.objectiveMap = { mapID = 1413, x = 0.630, y = 0.372, label = "Sputtervalve — Ratchet", targetName = "Sputtervalve", detail = "By the flight master in Ratchet; he has no ? over his head" }
+            quest.objectiveWhere = "Sputtervalve, by the flight master in Ratchet (63.0, 37.2); he has no ? over his head"
+        end
+    end
+    -- Falla Sagewind was put in Thunder Bluff here by mistake.
+    FDJ.QUEST_START_MAPS[6981] = FALLA
+end
+-- END glowingshard
+
 -- BEGIN sleepingbag
 -- The Cozy Sleeping Bag (WoW Forever 1.60.1): its quest chain as a page of
 -- its own (questChainPage), opened from the button left of Favourites on the
@@ -572,6 +596,136 @@ do
     local FIGURINE = Spot(1432, 0.494, 0.129, "Carved Figurine — Stonewrought Dam", "On the carved heads of the dam, facing the Wetlands")
     local BAG = Spot(1424, 0.857, 0.522, "Messenger Bag — Thoradin's Wall", "Hanging outside the room in Thoradin's Wall")
     local SATCHEL = Spot(1424, 0.857, 0.522, "Hastily Rolled-Up Satchel — Thoradin's Wall", "Right under the Messenger Bag")
+
+    -- arrowvia: the way to a spot the straight line does not reach: points
+    -- the waypoint arrow leads to first, in order (the Polestar guide to the
+    -- chain: the path into the Stonetalon hills, the fallen cart at
+    -- Thoradin's Wall; for the Alliance the way round Honor's Stand).
+    FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+    local function Via(spot, list)
+        FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)] = list
+    end
+    -- The way to the abandoned camp, worked out on Polestar's walking maps
+    -- of Kalimdor (1.8.1): the camp sits on a shelf in the hills, reached
+    -- only by the path that leaves the main road at 52.2, 53.4 (or, from
+    -- the north, by the path off the Charred Vale descent); Sun Rock
+    -- Retreat's crater walls are cliffs on every other side.
+    Via(POCKET_LITTER, { routes = {
+        { -- from Sun Rock Retreat (Horde)
+            { mapID = 1442, x = 0.500, y = 0.610, label = "Out of Sun Rock Retreat: its east exit, to the road", faction = "Horde" },
+            { mapID = 1442, x = 0.520, y = 0.579, label = "The main road, north", faction = "Horde" },
+            { mapID = 1442, x = 0.522, y = 0.560, label = "The main road, north" },
+            { mapID = 1442, x = 0.522, y = 0.534, label = "Where the path into the hills leaves the road (left side)" },
+            { mapID = 1442, x = 0.510, y = 0.524, label = "Up the path into the hills" },
+            { mapID = 1442, x = 0.488, y = 0.542, label = "The hill path, west" },
+            { mapID = 1442, x = 0.430, y = 0.541, label = "The hill path, west" },
+        },
+        { -- from the Barrens road (both factions; the Alliance round Honor's Stand)
+            { mapID = 1413, x = 0.402, y = 0.249, label = "The road into Stonetalon (round Honor's Stand)", faction = "Alliance" },
+            { mapID = 1442, x = 0.605, y = 0.817, label = "The road west out of the Barrens" },
+            { mapID = 1442, x = 0.580, y = 0.672, label = "The road north, past Webwinder Path" },
+            { mapID = 1442, x = 0.540, y = 0.614, label = "The road north, past Webwinder Path" },
+            { mapID = 1442, x = 0.522, y = 0.560, label = "The main road, north" },
+            { mapID = 1442, x = 0.522, y = 0.534, label = "Where the path into the hills leaves the road (left side)" },
+            { mapID = 1442, x = 0.510, y = 0.524, label = "Up the path into the hills" },
+            { mapID = 1442, x = 0.488, y = 0.542, label = "The hill path, west" },
+            { mapID = 1442, x = 0.430, y = 0.541, label = "The hill path, west" },
+        },
+        { -- from Stonetalon Peak (Alliance)
+            { mapID = 1442, x = 0.410, y = 0.157, label = "The road south out of Stonetalon Peak", faction = "Alliance" },
+            { mapID = 1442, x = 0.438, y = 0.164, label = "The road south out of Stonetalon Peak", faction = "Alliance" },
+            { mapID = 1442, x = 0.467, y = 0.291, label = "The road south", faction = "Alliance" },
+            { mapID = 1442, x = 0.467, y = 0.358, label = "The road south", faction = "Alliance" },
+            { mapID = 1442, x = 0.455, y = 0.385, label = "West, down towards the Charred Vale", faction = "Alliance" },
+            { mapID = 1442, x = 0.426, y = 0.425, label = "West, down towards the Charred Vale", faction = "Alliance" },
+            { mapID = 1442, x = 0.390, y = 0.428, label = "Down the path towards the Charred Vale", faction = "Alliance" },
+            { mapID = 1442, x = 0.373, y = 0.445, label = "Down the path towards the Charred Vale", faction = "Alliance" },
+            { mapID = 1442, x = 0.376, y = 0.527, label = "Halfway down: the path right (east), into the mountains", faction = "Alliance" },
+            { mapID = 1442, x = 0.407, y = 0.552, label = "Up the mountain path to the camp", faction = "Alliance" },
+        },
+    } })
+    -- The Mound of Dirt: straight on from the camp, north over the ridge
+    -- and down the hillside (no via point).
+    -- Thoradin's Wall round the Messenger Bag (1.8.4), from Polestar's
+    -- walking maps of the Eastern Kingdoms: the fallen cart (its bed about
+    -- 6 yards up, centre 88.0, 47.1), a few yards of ground, then rubble that
+    -- ramps up south-west onto the wall and along it to the bag. The game
+    -- gives no height, so where the player stands on this grid (0.1 % map
+    -- steps from 85.0, 46.4) says whether they are up: '#' rubble, ramp and
+    -- wall top (only raised ground), '+' the cart and the structure's edges
+    -- (on or beside it), '.' plain ground, ' ' nothing to stand on. The
+    -- arrow keeps to the cart until the player is on it (within 5 yards of
+    -- its centre) or up on the rubble, and goes back to it on plain ground.
+    local WALL = { mapID = 1424, x0 = 0.850, y0 = 0.464, step = 0.001, rows = {
+            "............................+++++",
+            "........................... +++++",
+            "........................... +++++",
+            "............................+++++",
+            "............................+++++",
+            "............................+++++",
+            "...........................++++++",
+            "...........................++++++",
+            "...........................++++++",
+            "...........................++++++",
+            "...........................++++++",
+            "...........................++++++",
+            "............................+++++",
+            "............................+++++",
+            ".........................+++++.++",
+            ".........................++#++.++",
+            ".........................++#++++.",
+            ".........................++#++++.",
+            ".........................++#+++++",
+            ".........................++####++",
+            ".......................++++####++",
+            ".......................+++######+",
+            "......................++++######+",
+            "......................++#########",
+            ".....................+++#########",
+            ".....................++#########+",
+            "...................++++#########+",
+            "...................+++#########++",
+            "...................+++#########++",
+            "...................+#########++++",
+            "..................++#########+++.",
+            "..................+#########++++.",
+            ".................++#########++...",
+            ".................++########+++...",
+            ".............++++++########++....",
+            ".............+++++#########++....",
+            "...........+++++++#########+.....",
+            "...........+++############++.....",
+            "...........+############++++.....",
+            ".........+++############+++......",
+            ".........++############++++......",
+            ".........++############++........",
+            ".........+############+++........",
+            "........++############+++........",
+            "........+##############++........",
+            "........+##############++........",
+            ".......  #############+++........",
+            "......+  #############++.........",
+            "...... #############++++.........",
+            ".....+ #############+++..........",
+            ".....+############# +++..........",
+            "....++############# .............",
+            "....+##############+.............",
+            "..+++##############+.............",
+            "..+++############# +.............",
+            ".++++############# ..............",
+            ".++#############  +..............",
+            "+++#############  ...............",
+            "++############# +................",
+            "++############# .................",
+            "++############ +.................",
+            "++############ ..................",
+            "++##########  +..................",
+            "++##########  ...................",
+            "+###########+....................",
+    } }
+    local CART = { mapID = 1424, x = 0.8804, y = 0.4708, label = "The fallen cart at Thoradin's Wall: climb it", climb = WALL, reach = 5 }
+    Via(BAG, { CART })
+    Via(SATCHEL, { CART })
 
     -- Where each step is picked up and handed in, written out with the
     -- coordinates (shown on the step's page under Starts at / Turn in).
@@ -684,28 +838,6 @@ do
     end
 end
 -- END sleepingbag
-
--- BEGIN glowingshard
--- The Glowing Shard: first speak with Sputtervalve in Ratchet (the quest's
--- objective; he has no ? over his head), then hand it in to Falla Sagewind on
--- top of the mountain above Wailing Caverns (Forever client tables via
--- Polestar forever-db: end NPC 8418, Sputtervalve 3442 and their spawns). The
--- tracker's ? shows Ratchet until he has been spoken to, then Falla.
-do
-    local FALLA = { mapID = 1413, x = 0.482, y = 0.328, label = "Falla Sagewind — above Wailing Caverns", targetName = "Falla Sagewind", detail = "In a tent on top of the mountain above Wailing Caverns" }
-    for _, quest in ipairs((FDJ.DB["Wailing Caverns"] and FDJ.DB["Wailing Caverns"].quests) or {}) do
-        if quest.id == 6981 then
-            quest.objective = "Speak with Sputtervalve in Ratchet about the Glowing Shard, then deliver it to Falla Sagewind on top of the mountain above Wailing Caverns."
-            quest.turnin = "Falla Sagewind, on top of the mountain above Wailing Caverns, The Barrens (48.2, 32.8)"
-            quest.turninMap = FALLA
-            quest.objectiveMap = { mapID = 1413, x = 0.630, y = 0.372, label = "Sputtervalve — Ratchet", targetName = "Sputtervalve", detail = "By the flight master in Ratchet; he has no ? over his head" }
-            quest.objectiveWhere = "Sputtervalve, by the flight master in Ratchet (63.0, 37.2); he has no ? over his head"
-        end
-    end
-    -- Falla Sagewind was put in Thunder Bluff here by mistake.
-    FDJ.QUEST_START_MAPS[6981] = FALLA
-end
--- END glowingshard
 
 -- BEGIN lesstext
 -- Step pages show the objective, the quest givers and where to go. Notes that only
@@ -1009,3 +1141,26 @@ do
     end
 end
 -- END drownedloot
+
+-- BEGIN kroldokquests
+-- Krol'dok Stronghold: the Alliance Tome of Twilight follows A Small Favor
+-- (Wowhead Forever).
+do
+    FDJ.QUEST_PREREQ_CHAINS[94984] = {
+        { id = 94907, name = "A Small Favor" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[94907] = {
+        objective = "Summon a Twilight's Thrall from a conduit within the Twilight's Shroud and capture it with Amberhall's Soulstone.",
+        pickup = "Ashe Amberhall, Riverglades (exact spot not known yet)",
+        turnin = "Ashe Amberhall, Riverglades",
+        providedItem = {0, "Amberhall's Soulstone", 1, "Given by Ashe Amberhall when you accept the quest"},
+    }
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94968] = 13000
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94972] = 12450
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94975] = 9250
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94982] = 13000
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94983] = 11500
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94984] = 12450
+    FDJ.FOREVER_QUEST_XP_FALLBACK[96771] = 13000
+end
+-- END kroldokquests

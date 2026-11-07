@@ -417,6 +417,23 @@ FDJ.MAP_QUEST_PINS = {
             } },
         } },
     },
+    -- No spawn data for WoW Forever's own dungeons: placed from Warcraft
+    -- Tavern's screenshots (Ardin on the wooden tower by the Relic Guardian,
+    -- beside its portrait; Daewyn's body in a tent at the Lost Dig Site).
+    ["Excavation Site: Wetlands"] = {
+        { floor = 1, x = 0.262, y = 0.668, spots = {
+            { name = "Ardin Grassman", quests = {
+                { id = 95647, name = "Lost in the Thicket Things", dungeon = "Excavation Site: Wetlands", main = 95809, acts = { "end" } },
+                { id = 95809, name = "Heartwoven", dungeon = "Excavation Site: Wetlands", acts = { "start" } },
+            } },
+        } },
+        { floor = 1, x = 0.074, y = 0.497, spots = {
+            { name = "Daewyn Songblade", quests = {
+                { id = 95772, name = "Songblade Search", dungeon = "Excavation Site: Wetlands", acts = { "end" } },
+                { id = 95795, name = "Fallen in the Fen", dungeon = "Excavation Site: Wetlands", acts = { "start" } },
+            } },
+        } },
+    },
     ["Gnomeregan"] = {
         { floor = 1, x = 0.427, y = 0.660, spots = {
             { name = "The Sparklematic 5200", quests = {

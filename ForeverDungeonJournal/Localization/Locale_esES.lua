@@ -57,6 +57,7 @@ FDJ.Locales.esES = {
     ["CHOOSE_ONE_REWARD"] = "Elige una recompensa",
     ["SHOW_ON_MAP"] = "Ver mapa",
     ["SHOW_TURN_IN"] = "Ver entrega",
+    ["TURN_IN_DUNGEON"] = "Entregar: mazmorra",
     ["ROUTE_FP_TARREN_MILL_TEXT"] = "La ruta se desvía aquí para que consigas la ruta de vuelo. Después, vuelve por el camino y sigue hacia el este, hacia Arathi.",
     ["ROUTE_FP_TARREN_MILL"] = "Ruta de vuelo de Molino Tarren",
     ["ROUTE_REMOVE_HINT"] = "Clic derecho para quitar la ruta",

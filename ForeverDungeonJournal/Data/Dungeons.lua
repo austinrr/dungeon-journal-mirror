@@ -2825,6 +2825,7 @@ FDJ.DB["Scarlet Monastery: Library"] = {
                 {7756, "Dog Training Gloves", "Hands, Leather", 3},
                 {3456, "Dog Whistle", "Trinket", 3},
                 {7710, "Loksey's Training Stick", "Two-Hand, Staff", 3},
+                {274292, "Houndmaster Boomerang", "Thrown", 3},
             },
         },
         {
@@ -2838,6 +2839,7 @@ FDJ.DB["Scarlet Monastery: Library"] = {
                 {274293, "Spellsever Crossbow", "Ranged, Crossbow", 3},
                 {7712, "Mantle of Doan", "Shoulder, Cloth", 2},
                 {7711, "Robe of Doan", "Chest, Cloth", 2},
+                {274294, "Library Walkers", "Feet, Cloth", 2},
                 {7146, "The Scarlet Key", "Key", 2},
             },
         },
@@ -2932,6 +2934,7 @@ FDJ.DB["Scarlet Monastery: Armory"] = {
                 {7719, "Raging Berserker's Helm", "Head, Mail", 3},
                 {7717, "Ravager", "Two-Hand, Axe", 3},
                 {10330, "Scarlet Leggings", "Legs, Mail", 3},
+                {274295, "Band of Crimson Light", "Finger", 3},
             },
         },
         {
@@ -3952,11 +3955,43 @@ FDJ.DB["The Drowned City"] = {
         liveXPFallback = 10450,
         rewardSummary = "50s  •  Kirin Tor +300  •  Stormwind +150",
         requiredItem = {276894, "Ancient Gurubashi Idol", 1, 1, "From the most powerful priest in the Drowned City"},
+    }, {
+        -- Krazek's two quests for the Steamwheedle Cartel (Wowhead Forever;
+        -- both factions). The Saltseer Captain has no giver listed there:
+        -- its text is Krazek's ("the artifacts I've been after").
+        id = 95789,
+        name = "Shady Saltseers",
+        level = 40,
+        requires = 34,
+        faction = "Both",
+        pickup = "Krazek, Booty Bay, Stranglethorn Vale",
+        objective = "Collect 10 Voodoo-Infused Artifacts from the Saltseer pirates in the Drowned City.",
+        turnin = "Krazek, Booty Bay, Stranglethorn Vale",
+        liveXPFallback = 10450,
+        rewardSummary = "1g  •  Booty Bay +100  •  Ratchet +50  •  Gadgetzan +50  •  Everlook +50",
+        rewards = "Choose: Rusted Troll War Belt or Saltseer's Helm\n10,450 XP • 1g • Booty Bay +100 • Ratchet +50 • Gadgetzan +50 • Everlook +50",
+        rewardItems = {{279882, "Rusted Troll War Belt", 2}, {279930, "Saltseer's Helm", 2}},
+        rewardChoice = true,
+        requiredItem = {270333, "Voodoo-Infused Artifact", 1, 10, "Dropped by the Saltseer pirates in the Drowned City"},
+    }, {
+        id = 95791,
+        name = "The Saltseer Captain",
+        level = 40,
+        requires = 34,
+        faction = "Both",
+        pickup = "Krazek, Booty Bay, Stranglethorn Vale (not confirmed)",
+        objective = "Slay Captain Dreadrise and 3 Saltseer Coroners in the Drowned City.",
+        turnin = "Krazek, Booty Bay, Stranglethorn Vale (not confirmed)",
+        liveXPFallback = 10450,
+        rewardSummary = "Booty Bay +100  •  Ratchet +50  •  Gadgetzan +50  •  Everlook +50",
+        rewards = "Choose: Mutinous Cuffs or South Seas Shroud\n10,450 XP • Booty Bay +100 • Ratchet +50 • Gadgetzan +50 • Everlook +50",
+        rewardItems = {{279883, "Mutinous Cuffs", 2}, {279884, "South Seas Shroud", 2}},
+        rewardChoice = true,
     }},
     bosses = {
         {
             name = "Zul'Alai",
-            portraitNpcID = 270882, -- the client's "Staging Area" copy, for the picture only
+            npcID = 258905, -- Wowhead Forever (1.7.5); 270882 is the client's "Staging Area" copy
             aliases = {"Zul'Alai"},
             description = "First boss, an undead troll. Enrages near death and hits the whole group hard.",
             loot = {},
@@ -3970,7 +4005,7 @@ FDJ.DB["The Drowned City"] = {
         },
         {
             name = "Captain Dreadrise",
-            portraitNpcID = 270884, -- the client's "Staging Area" copy, for the picture only
+            npcID = 260042, -- the quest The Saltseer Captain's target (Wowhead Forever); 270884 is the client's "Staging Area" copy
             aliases = {"Captain Dreadrise"},
             loot = {},
         },
@@ -3982,10 +4017,23 @@ FDJ.DB["The Drowned City"] = {
             loot = {},
         },
         {
+            -- A rare, seen dropping Gill's Gills (Nov 2026). The items numbered
+            -- right after it (same item level and level, bind on pickup) are
+            -- listed as probable: nobody has seen them drop yet.
             name = "Gill",
-            portraitNpcID = 270888, -- the client's "Staging Area" copy, for the picture only
+            npcID = 264177, -- Wowhead Forever (1.7.5); 270888 is the client's "Staging Area" copy
             aliases = {"Gill"},
-            loot = {},
+            rare = true,
+            loot = {
+                {286646, "Gill's Gills", "Trinket", 3},
+            },
+            probableLoot = {
+                {286649, "Tidebound Dagger", "Main Hand, Dagger", 3},
+                {286650, "Pyromancer's Baton", "One-Hand, Mace", 3},
+                {286651, "Flamestarter's Signet", "Finger", 3},
+                {286658, "Umbral Scaled Belt", "Waist, Mail", 3},
+                {286662, "Deep-Dweller's Grips", "Hands, Cloth", 3},
+            },
         },
         {
             -- 260274: the creature the Legacy challenge counts as this
@@ -4000,14 +4048,216 @@ FDJ.DB["The Drowned City"] = {
 }
 
 FDJ.DB["Krol'dok Stronghold"] = {
-    -- Announced by Blizzard; not playable yet, so no boss, loot or quest data.
-    previewOnly = true,
+    -- Seen in the game (a stream, 2026-11-07): five bosses, their levels and
+    -- one drop each. Handler Ashka is in the game's own data and in
+    -- Blizzard's preview (the ogre woman with two wolves) but was not met in
+    -- that run. NPC IDs from Wowhead Forever (1.7.5). Loot only partly known.
+    fullItemsTBD = true,
     level = "40-45",
     location = "Riverglades",
-    description = "Ogre outrunners have been kidnapping travelers and raiding settlements across the Riverglades. Their trail leads to a fortress of workshops, encampments and guarded inner passages, where strange chanting is heard after nightfall. Known so far: the Krol'dok Compound Key and Krol'dok Ogre Key.",
+    description = "Ogre outrunners have been kidnapping travelers and raiding settlements across the Riverglades. Their trail leads to a fortress of workshops, encampments and guarded inner passages, where strange chanting is heard after nightfall.",
     icon = "Interface\\Icons\\INV_Misc_Key_13",
-    quests = {},
-    bosses = {},
+    -- Quests: Wowhead Forever's list for the dungeon (1.7.7). Their givers
+    -- stand in the Riverglades (Krom'rosh for the Horde, Commander Demar
+    -- Brant and Ashe Amberhall for the Alliance); where exactly is not known
+    -- yet.
+    quests = {{
+        id = 94968,
+        name = "Eye of Mugg",
+        level = 45,
+        requires = 40,
+        faction = "Horde",
+        pickup = "Krom'rosh, Riverglades (exact spot not known yet)",
+        objective = "Infiltrate Krol'dok Stronghold and return to Krom'rosh with proof of their leader's demise.",
+        turnin = "Krom'rosh, Riverglades",
+        liveXPFallback = 13000,
+        rewardSummary = "1g 30s",
+        rewards = "Choose: Rock on Stick, Bigger Rock on Bigger Stick or Stick No Rock\n13,000 XP • 1g 30s",
+        rewardItems = {{279852, "Rock on Stick", 3}, {279480, "Bigger Rock on Bigger Stick", 3}, {279853, "Stick No Rock", 3}},
+        rewardChoice = true,
+        requiredItem = {267086, "Eye of Mugg", 1, 1, "From Overlord Mugg, the last boss of Krol'dok Stronghold"},
+    }, {
+        id = 94972,
+        name = "Tome of Twilight",
+        level = 44,
+        requires = 39,
+        faction = "Horde",
+        pickup = "Riverglades (giver not known yet)",
+        objective = "Recover the Tome of Twilight from Krol'dok Stronghold.",
+        turnin = "Riverglades (not known yet)",
+        liveXPFallback = 12450,
+        rewardSummary = "",
+        rewards = "Choose: Indoctrinated Choker or Convert's Bindings\n12,450 XP",
+        rewardItems = {{279859, "Indoctrinated Choker", 2}, {279860, "Convert's Bindings", 2}},
+        rewardChoice = true,
+        requiredItem = {267104, "Tome of Twilight", 1, 1, "In Krol'dok Stronghold (the Alliance quest of the same name takes it from Nar'gurk)"},
+    }, {
+        id = 94975,
+        name = "A Token of Vengeance",
+        level = 42,
+        requires = 38,
+        faction = "Horde",
+        pickup = "Riverglades (giver not known yet)",
+        objective = "Collect 15 Cultist Ears from the Twilight's Hammer in Krol'dok Stronghold.",
+        turnin = "Riverglades (not known yet)",
+        liveXPFallback = 9250,
+        rewardSummary = "",
+        rewards = "Semblance of Twilight\n9,250 XP",
+        rewardItems = {{267090, "Semblance of Twilight", 2}},
+        requiredItem = {267091, "Cultist Ear", 1, 15, "Dropped by the Twilight's Hammer cultists in Krol'dok Stronghold"},
+    }, {
+        id = 94982,
+        name = "Eye of Mugg",
+        level = 45,
+        requires = 40,
+        faction = "Alliance",
+        pickup = "Commander Demar Brant, Farholde Keep, Riverglades (exact spot not known yet)",
+        objective = "Infiltrate Krol'dok Stronghold and return to Commander Brant with proof of their leader's demise.",
+        turnin = "Commander Demar Brant, Farholde Keep, Riverglades",
+        liveXPFallback = 13000,
+        rewardSummary = "1g 30s  •  Brotherhood of the Horse +150",
+        rewards = "Choose: Rock on Stick, Stick No Rock or Bigger Rock on Bigger Stick\n13,000 XP • 1g 30s • Brotherhood of the Horse +150",
+        rewardItems = {{279852, "Rock on Stick", 3}, {279853, "Stick No Rock", 3}, {279480, "Bigger Rock on Bigger Stick", 3}},
+        rewardChoice = true,
+        requiredItem = {267086, "Eye of Mugg", 1, 1, "From Overlord Mugg, the last boss of Krol'dok Stronghold"},
+    }, {
+        id = 94983,
+        name = "Twilight Mementos",
+        level = 42,
+        requires = 38,
+        faction = "Alliance",
+        pickup = "Farholde Keep, Riverglades (giver not known yet)",
+        objective = "Collect 8 Twilight Bangles from the Twilight's Hammer in Krol'dok Stronghold.",
+        turnin = "Farholde Keep, Riverglades (not known yet)",
+        liveXPFallback = 11500,
+        rewardSummary = "Brotherhood of the Horse +150",
+        requiredItem = {267234, "Twilight Bangle", 1, 8, "Dropped by the Twilight's Hammer cultists in Krol'dok Stronghold"},
+    }, {
+        id = 94984,
+        name = "Tome of Twilight",
+        level = 44,
+        requires = 39,
+        faction = "Alliance",
+        pickup = "Ashe Amberhall, Riverglades (exact spot not known yet)",
+        objective = "Kill Nar'gurk in Krol'dok Stronghold and recover any valuable information.",
+        turnin = "Ashe Amberhall, Riverglades",
+        liveXPFallback = 12450,
+        rewardSummary = "Brotherhood of the Horse +150",
+        rewards = "Choose: Twilight Initiate's Belt or Torn Cultist Cloak\n12,450 XP • Brotherhood of the Horse +150",
+        rewardItems = {{279854, "Twilight Initiate's Belt", 2}, {279855, "Torn Cultist Cloak", 2}},
+        rewardChoice = true,
+        requiredItem = {267104, "Tome of Twilight", 1, 1, "From Nar'gurk in Krol'dok Stronghold"},
+    }, {
+        id = 96771,
+        name = "Vengeance of the Highborne",
+        level = 45,
+        requires = 37,
+        faction = "Alliance",
+        pickup = "Not known yet (a highborne; Kirin Tor reputation, so probably in Dalaran)",
+        objective = "Travel to Krol'dok Stronghold and slay Zalfan Moonshadow.",
+        turnin = "Not known yet",
+        liveXPFallback = 13000,
+        rewardSummary = "65s  •  Kirin Tor +250  •  Brotherhood of the Horse +150",
+        note = "Zalfan Moonshadow, a highborne among the Twilight's Hammer inside the stronghold; where he stands is not known yet.",
+    }},
+    bosses = {
+        {
+            name = "Slavecrusher Grox",
+            npcID = 258966,
+            aliases = {"Slavecrusher Grox"},
+            loot = {
+                {274996, "Resistance Breaker Spaulder", "Shoulder, Mail", 3},
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Chain of Binding", "Waist, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Waist", "Mail"},
+                    "152 Armor",
+                    "+15 Stamina",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 12.|r",
+                    "Requires Level 39",
+                    "Sell Price: 52|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 16|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            name = "Twilight Commander Zarmok",
+            npcID = 258972,
+            aliases = {"Twilight Commander Zarmok", "Zarmok"},
+            loot = {
+                {275000, "Zarmok's Plated Signet", "Finger", 3},
+                {274998, "Shadowlight Athame", "Main Hand, Dagger", 3},
+            },
+        },
+        {
+            -- In the game's data and Blizzard's preview; not met in the run seen so far.
+            name = "War Handler Ashka",
+            npcID = 259281,
+            aliases = {"War Handler Ashka", "Handler Ashka"},
+            loot = {},
+            -- A war handler's helm, numbered with Zarmok's Plated Signet.
+            probableLoot = {
+                {275002, "War Handler's Gaze", "Head", 3},
+            },
+        },
+        {
+            name = "Nar'gurk",
+            npcID = 258964,
+            aliases = {"Nar'gurk"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Chain of the Corruptor", "Neck", 3, tip = {
+                    "Binds when picked up",
+                    "Neck",
+                    "+4 Agility",
+                    "+12 Stamina",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 5.|r",
+                    "Requires Level 41",
+                    "Sell Price: 83|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 28|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            name = "Bossman Toof",
+            npcID = 264773,
+            aliases = {"Bossman Toof"},
+            loot = {
+                {286430, "Toofbreaker", "One-Hand, Mace", 3},
+                {286429, "Big-Belly Belt", "Waist, Cloth", 3},
+            },
+        },
+        {
+            -- Final boss. The game's data calls him Overseer Mugg.
+            name = "Overlord Mugg",
+            npcID = 258968,
+            aliases = {"Overlord Mugg", "Overseer Mugg"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Emblem of Slamming", "Trinket", 3, tip = {
+                    "Binds when picked up",
+                    "Unique-Equipped",
+                    "Trinket",
+                    "|cff1eff00Equip: +14 Attack Power.|r",
+                    "|cff1eff00Use: Stuns target and yourself for 3 sec. Ogres are Stunned for 5 sec and refund 50% of the cooldown. (15 Min Cooldown)|r",
+                    "Requires Level 42",
+                    "Sell Price: 94|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 1|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            -- The dungeon's own armor set (Krol'dok Battlegear); where its
+            -- pieces drop is not known yet.
+            name = "Trash Drops",
+            trash = true,
+            loot = {},
+            probableLoot = {
+                {275006, "Krol'dok Warplate Helmet", "Head, Plate", 3},
+                {287014, "Krol'dok Warplate Pauldrons", "Shoulder, Plate", 3},
+                {275005, "Krol'dok Warplate Chest", "Chest, Plate", 3},
+                {287012, "Krol'dok Warplate Gauntlets", "Hands, Plate", 3},
+                {287013, "Krol'dok Warplate Legplates", "Legs, Plate", 3},
+            },
+        },
+    },
 }
 
 FDJ.DB["Alcaz Prison"] = {
