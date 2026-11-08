@@ -16,6 +16,20 @@ FDJ.BOSS_LEVELS = {
         ["Arcanic Enigma"] = "30",
         ["Shade of the Archmage"] = "33",
     },
+    ["Blackmaw Hold"] = {
+        ["Withermaw"] = "58",
+        ["Impaan the Imprisoner"] = "57",
+        ["Bonesnout the Unbroken"] = "58",
+        ["Varrox Bleakhoof"] = "60",
+        ["Moontouched Wanderer"] = "55",
+    },
+    ["Alcaz Prison"] = {
+        ["Overseer Wrex"] = "50",
+        ["Tidemistress Ca'zass"] = "50",
+        ["Katerina the Cleaner"] = "52",
+        ["The Questioner"] = "51",
+        ["Blazeroar"] = "53",
+    },
     ["Krol'dok Stronghold"] = {
         ["Slavecrusher Grox"] = "42",
         ["Twilight Commander Zarmok"] = "43",
@@ -592,7 +606,49 @@ FDJ.STATIC_DISPLAY_IDS = {
     [10081] = 9292,  -- Dustwraith
     [7797] = 6687,  -- Ruuzlu
     [7267] = 6439,  -- Chief Ukorz Sandscalp
+
+    -- 1.9.4: the Forever dungeons added since, so their portraits are drawn
+    -- at login with the rest instead of waiting for the game to know the
+    -- creature (question marks until then). Wowhead Forever NPC pages' model.
+    -- The Drowned City
+    [258905] = 144475,  -- Zul'Alai
+    [258924] = 144487,  -- Var'Taka
+    [260042] = 142144,  -- Captain Dreadrise
+    [270885] = 142245,  -- Deathless Marrow (the client's "Staging Area" copy)
+    [270887] = 129945,  -- Primeval Elemental (the client's "Staging Area" copy)
+    [264177] = 144023,  -- Gill
+    [260274] = 142322,  -- Min'loth the Serpent
+    -- Krol'dok Stronghold
+    [258966] = 141217,  -- Slavecrusher Grox
+    [258972] = 141219,  -- Twilight Commander Zarmok
+    [259281] = 141443,  -- War Handler Ashka
+    [258964] = 141215,  -- Nar'gurk
+    [264773] = 14424,   -- Bossman Toof
+    [258968] = 141218,  -- Overlord Mugg
+    -- Alcaz Prison
+    [255997] = 4973,    -- Tidemistress Ca'zass
+    [257016] = 2317,    -- Katerina the Cleaner
+    [256236] = 140092,  -- The Questioner
+    [255702] = 6374,    -- Blazeroar
+    -- Blackmaw Hold
+    [247195] = 140708,  -- Withermaw
+    [247206] = 130432,  -- Impaan the Imprisoner
+    [247209] = 130440,  -- Elder Shaman Bloodmane
+    [247198] = 130427,  -- Bonesnout the Unbroken
+    [247234] = 130447,  -- Varrox Bleakhoof
+    [247207] = 130436,  -- Blackmaw Behemoth
+    [247231] = 131644,  -- Unbound Spirit
+    [269104] = 12235,   -- Moontouched Wanderer
 }
+
+-- 1.9.4: Primeval Elemental (The Drowned City) has no NPC ID of its own yet:
+-- its picture from the client's "Staging Area" copy, like Deathless Marrow.
+do
+    local drowned = FDJ.DB and FDJ.DB["The Drowned City"]
+    for _, boss in ipairs((drowned and drowned.bosses) or {}) do
+        if boss.name == "Primeval Elemental" and not boss.npcID and not boss.portraitNpcID then boss.portraitNpcID = 270887 end
+    end
+end
 
 -- Trash mobs named as the source of a trash drop: name -> creature display ID
 -- (Wowhead Forever NPC pages). Used to draw their portraits on the loot row.
@@ -621,6 +677,7 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Dark Caster"] = 7555, -- npc 255072
     ["Fallen Mage"] = 9783, -- npc 255066
     ["Kirin Tor Necromancer"] = 145809, -- npc 269134
+    ["Fragmented Sentry"] = 130102, -- npc 246664
     -- Scarlet Monastery
     ["Scarlet Defender"] = 2462, -- npc 4298
     ["Scarlet Myrmidon"] = 2514, -- npc 4295

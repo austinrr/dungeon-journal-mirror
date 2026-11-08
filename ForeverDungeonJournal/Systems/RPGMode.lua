@@ -804,6 +804,9 @@ events:RegisterUnitEvent("UNIT_HEALTH", "target", "focus", "boss1", "boss2", "bo
 events:RegisterEvent("ENCOUNTER_END")
 events:RegisterEvent("BOSS_KILL")
 events:RegisterEvent("QUEST_TURNED_IN")
+pcall(events.RegisterEvent, events, "NAME_PLATE_UNIT_REMOVED")
+pcall(events.RegisterEvent, events, "UNIT_DIED")
+pcall(events.RegisterEvent, events, "PARTY_KILL")
 
 local function NpcFromGUID(guid)
     guid = Plain(guid)
@@ -812,13 +815,15 @@ local function NpcFromGUID(guid)
     if kind == "Creature" or kind == "Vehicle" then return tonumber(id) end
 end
 
--- kroldok: a final boss known by name only counts inside its own dungeon.
-local function NameFinalHere(unit)
-    local okN, who = pcall(UnitName, unit)
-    who = okN and Plain(who) or nil
+-- A final boss by its name (localized, or an alias): for one known by name
+-- only (kroldok), and for one whose live NPC ID differs from the journal's
+-- (Rath'Mael). Counts inside its own dungeon only.
+local function NameFinalHere(who)
+    who = Plain(who)
     if type(who) ~= "string" or who == "" then return nil end
-    local name = finalNames[string.lower(who)]
-    if not name or not nameFinal[name] then return nil end
+    local lower = string.lower(who)
+    local name = finalNames[lower] or finalNames[(lower:gsub("\226\128\153", "'"))]
+    if not name then return nil end
     local okH, here = pcall(function() return FDJ.CurrentDungeon and FDJ.CurrentDungeon() end)
     if okH and here == name then return name end
 end
@@ -833,13 +838,36 @@ local function CheckDead(unit)
     local okG, guid = pcall(UnitGUID, unit)
     local id = okG and NpcFromGUID(guid)
     local name = id and finalByNpc[id]
-    if not name and id and next(nameFinal) then name = NameFinalHere(unit) end -- kroldok
+    if not name and id then
+        local okN, who = pcall(UnitName, unit)
+        name = okN and NameFinalHere(who) or nil
+    end
+    if name then Unlock(name) end
+end
+
+-- A final boss dying near the character (no need to target it): the game's
+-- UNIT_DIED and PARTY_KILL events, which carry the GUID only. Not the combat
+-- log: WoW Forever closes COMBAT_LOG_EVENT_* to addons (registering for it
+-- gets the addon blocked).
+local function DiedGUID(guid)
+    local id = NpcFromGUID(guid)
+    if not id then return end
+    Build()
+    local name = finalByNpc[id]
     if name then Unlock(name) end
 end
 
 local chooserPending = false
 events:SetScript("OnEvent", function(_, event, ...)
-    if event == "UNIT_HEALTH" or event == "PLAYER_TARGET_CHANGED" or event == "UPDATE_MOUSEOVER_UNIT" or event == "LOOT_OPENED" then
+    if event == "UNIT_DIED" then
+        DiedGUID((...))
+    elseif event == "PARTY_KILL" then
+        local _, target = ...
+        DiedGUID(target)
+    elseif event == "NAME_PLATE_UNIT_REMOVED" then
+        local unit = ...
+        if type(unit) == "string" then pcall(CheckDead, unit) end
+    elseif event == "UNIT_HEALTH" or event == "PLAYER_TARGET_CHANGED" or event == "UPDATE_MOUSEOVER_UNIT" or event == "LOOT_OPENED" then
         local unit = (event == "UNIT_HEALTH" and ...) or (event == "UPDATE_MOUSEOVER_UNIT" and "mouseover") or "target"
         CheckDead(unit)
     elseif event == "ENCOUNTER_END" or event == "BOSS_KILL" then
@@ -1762,6 +1790,8 @@ do
         ["Ruins of Lordaeron"] = 120, -- estimate
         ["The Drowned City"] = 120, -- estimate
         ["Krol'dok Stronghold"] = 120, -- estimate
+        ["Alcaz Prison"] = 120, -- estimate
+        ["Blackmaw Hold"] = 140, -- estimate (seven bosses)
     }
     local SHARE = 0.20
 
@@ -2069,6 +2099,7 @@ do
                 if FDJ.IsRPGMode() and not final and not CharDB().rpgKills[name] and QuestOpen(name) then
                     print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_BOSS_REVEALED_MSG", BossLabel(b.name)) .. "|r")
                 end
+                if final then Unlock(name) end -- the final boss found: the whole page
             end
         end
         if any then Changed() end
@@ -2189,9 +2220,30 @@ do
         elseif event == "BOSS_KILL" then
             pcall(Encounter, b)
         else
+            if event == "PLAYER_ENTERING_WORLD" then pcall(FDJ.RPGRecoverFinalKills) end
             pcall(Where)
         end
     end)
+
+    -- A final boss saved as seen (rpgBosses) whose dungeon did not unlock
+    -- (an older version missed it: Rath'Mael): unlocked at login / reload.
+    function FDJ.RPGRecoverFinalKills()
+        Build()
+        local db = CharDB()
+        if type(db.rpgBosses) ~= "table" then return end
+        for name, seen in pairs(db.rpgBosses) do
+            if type(seen) == "table" and not db.rpgKills[name] and FDJ.DB and FDJ.DB[name] then
+                local hit = false
+                for id, dungeon in pairs(finalByNpc or {}) do
+                    if dungeon == name and seen[id] then hit = true end
+                end
+                for lower, dungeon in pairs(finalNames or {}) do
+                    if dungeon == name and seen[lower] then hit = true end
+                end
+                if hit then Unlock(name) end
+            end
+        end
+    end
 end
 -- END rpgpartial
 

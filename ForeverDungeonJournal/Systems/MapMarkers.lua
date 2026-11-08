@@ -217,6 +217,33 @@ end
 local DUNGEON_ENTRANCE_ICON_SCALE = 1.4
 local DUNGEON_ENTRANCE_ICON_FALLBACK = 24
 
+-- Turn-in pins use the game's own quest button for a quest to hand in (as
+-- on the world map and in the objective tracker): round dark button with a
+-- gold ring and the yellow ?, lit up on mouse-over. A game without that art
+-- gets the journal's own drawing of it (Media/TurnInMark.tga).
+-- (One table, not separate locals: this file is at Lua's 200-local limit.)
+local TURN_IN = {
+    size = 38,
+    ring = "UI-QuestPoi-QuestNumber",
+    lit = "UI-QuestPoi-InnerGlow",
+    icon = "UI-QuestIcon-TurnIn-Normal",
+    art = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TurnInMark",
+}
+function TURN_IN.HasAtlas()
+    if TURN_IN.hasAtlas == nil then
+        local get = C_Texture and C_Texture.GetAtlasInfo
+        local ok = type(get) == "function"
+        for _, atlas in ipairs({ TURN_IN.ring, TURN_IN.lit, TURN_IN.icon }) do
+            if ok then
+                local fine, info = pcall(get, atlas)
+                ok = fine and info ~= nil
+            end
+        end
+        TURN_IN.hasAtlas = ok
+    end
+    return TURN_IN.hasAtlas
+end
+
 local function CreateMapMarker(key)
     local parent = GetWorldMapCanvasChild()
     if not parent then return nil end
@@ -298,6 +325,37 @@ local function CreateMapMarker(key)
     marker.x:SetText("X")
     marker.x:SetTextColor(1.00, 0.88, 0.10, 1)
     marker.x:SetScale(1.35)
+
+    -- Turn-in pin: the game's quest button instead of the X.
+    do
+        local button = CreateFrame("Frame", nil, marker)
+        marker.turnInButton = button
+        button:SetSize(TURN_IN.size, TURN_IN.size)
+        button:SetPoint("CENTER")
+        button:EnableMouse(false)
+        if TURN_IN.HasAtlas() then
+            button.ring = button:CreateTexture(nil, "ARTWORK")
+            button.ring:SetAtlas(TURN_IN.ring)
+            button.ring:SetSize(TURN_IN.size, TURN_IN.size)
+            button.ring:SetPoint("CENTER")
+            button.lit = button:CreateTexture(nil, "OVERLAY", nil, 1)
+            button.lit:SetAtlas(TURN_IN.lit)
+            button.lit:SetBlendMode("ADD")
+            button.lit:SetSize(TURN_IN.size, TURN_IN.size)
+            button.lit:SetPoint("CENTER")
+            button.lit:Hide()
+            button.icon = button:CreateTexture(nil, "OVERLAY", nil, 2)
+            button.icon:SetAtlas(TURN_IN.icon)
+            button.icon:SetSize(TURN_IN.size, TURN_IN.size)
+            button.icon:SetPoint("CENTER")
+        else
+            button.icon = button:CreateTexture(nil, "OVERLAY")
+            button.icon:SetTexture(TURN_IN.art)
+            button.icon:SetSize(TURN_IN.size, TURN_IN.size)
+            button.icon:SetPoint("CENTER")
+        end
+        button:Hide()
+    end
 
     marker.dungeonIcon = marker:CreateTexture(nil, "OVERLAY")
     marker.dungeonIcon:SetPoint("CENTER")
@@ -394,6 +452,15 @@ local function CreateMapMarker(key)
         GameTooltip:Show()
     end)
     marker:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    -- The turn-in button lights up on mouse-over, like the game's.
+    marker:HookScript("OnEnter", function(self)
+        local lit = self.turnInButton and self.turnInButton.lit
+        if lit and self.turnInButton:IsShown() then lit:Show() end
+    end)
+    marker:HookScript("OnLeave", function(self)
+        local lit = self.turnInButton and self.turnInButton.lit
+        if lit then lit:Hide() end
+    end)
     marker:Hide()
     return marker
 end
@@ -440,12 +507,15 @@ local function PositionMarker(marker, target, parent)
     end
 
     local isDungeon = target.markerType == "dungeon"
+    local isTurnIn = not isDungeon and target.turnIn and marker.turnInButton ~= nil
+    local showX = not isDungeon and not isTurnIn
     marker.dungeonIcon:SetShown(isDungeon)
     marker.dungeonGlow:SetShown(isDungeon)
-    marker.glow:SetShown(not isDungeon)
-    marker.x:SetShown(not isDungeon)
-    for _, shadow in ipairs(marker.outline) do shadow:SetShown(not isDungeon) end
-    if marker.backing then marker.backing:SetShown(not isDungeon) end
+    if marker.turnInButton then marker.turnInButton:SetShown(isTurnIn and true or false) end
+    marker.glow:SetShown(showX)
+    marker.x:SetShown(showX)
+    for _, shadow in ipairs(marker.outline) do shadow:SetShown(showX) end
+    if marker.backing then marker.backing:SetShown(showX) end
     if marker.pulse then
         marker.pulse:SetShown(not isDungeon)
         if marker.pulseAnim then
@@ -1208,6 +1278,12 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
     -- Opened from a Show Turn In button: the pin is where it is handed in.
     target.turnIn = FDJ.pendingMarkerTurnIn and true or nil
     FDJ.pendingMarkerTurnIn = nil
+    -- autoclear: the quest this pin is for; the pin goes away by itself
+    -- once that quest is picked up / handed in / its objective done.
+    target.fdjAutoQuest = tonumber(FDJ.pendingMarkerQuestID)
+    target.fdjAutoObjective = FDJ.pendingMarkerObjective and true or nil
+    FDJ.pendingMarkerQuestID, FDJ.pendingMarkerObjective = nil, nil
+    if target.fdjAutoQuest and FDJ.MapMarkers.SnapshotAutoClear then FDJ.MapMarkers.SnapshotAutoClear(target) end
     local existing = mapTargets[key]
     if existing and existing.raidMarkIndex then
         target.raidMarkIndex = existing.raidMarkIndex
@@ -1327,6 +1403,60 @@ FDJ.MapMarkers.ConfigureTargetAndMarkAction = ConfigureTargetAndMarkAction
 FDJ.MapMarkers.ApplyQuestGiverRaidMark = ApplyQuestGiverRaidMark
 FDJ.MapMarkers.RaidMarkIndexForTarget = RaidMarkIndexForTarget
 FDJ.MapMarkers.QuestGiverName = QuestGiverName
+
+-- BEGIN autoclear
+-- A pin put on the map for a quest clears itself: a quest giver's once the
+-- quest is picked up, a turn-in pin once it is handed in, an objective pin
+-- (Sputtervalve) once the objective is done. Only a change after the pin was
+-- placed counts (marking the giver of a quest already in the log leaves the
+-- pin until that quest is handed in). Built inside a function: this file is
+-- at Lua's 200-local limit.
+FDJ.MapMarkers.InitAutoClear = function()
+    local justTurnedIn = {}
+    local function State(id)
+        return {
+            log = (FDJ.IsQuestInLog and FDJ.IsQuestInLog(id)) and true or false,
+            done = (justTurnedIn[id] or (FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(id))) and true or false,
+            finished = (FDJ.IsQuestFinished and FDJ.IsQuestFinished(id)) and true or false,
+        }
+    end
+    FDJ.MapMarkers.SnapshotAutoClear = function(target)
+        if target and target.fdjAutoQuest then target.fdjAutoWas = State(target.fdjAutoQuest) end
+    end
+    local function Sweep()
+        local gone = {}
+        for _, target in pairs(mapTargets) do
+            local id, was = target.fdjAutoQuest, target.fdjAutoWas
+            if id and was then
+                local now = State(id)
+                local handedIn = now.done and not was.done
+                local clear
+                if target.turnIn then
+                    clear = handedIn
+                elseif target.fdjAutoObjective then
+                    clear = handedIn or (now.finished and not was.finished)
+                else
+                    clear = handedIn or (now.log and not was.log)
+                end
+                if clear then gone[#gone + 1] = target end
+            end
+        end
+        for _, target in ipairs(gone) do RemoveTarget(target) end
+        if #gone > 0 then UpdateMapMarkers() end
+    end
+    local watch = CreateFrame("Frame")
+    watch:RegisterEvent("QUEST_ACCEPTED")
+    watch:RegisterEvent("QUEST_TURNED_IN")
+    watch:RegisterEvent("QUEST_LOG_UPDATE")
+    watch:SetScript("OnEvent", function(_, event, a)
+        if event == "QUEST_TURNED_IN" and tonumber(a) then justTurnedIn[tonumber(a)] = true end
+        if next(mapTargets) == nil then return end
+        local ok = pcall(Sweep)
+        if not ok then return end
+    end)
+end
+FDJ.MapMarkers.InitAutoClear()
+-- END autoclear
 FDJ.MapMarkers.QUEST_GIVER_MARK_PRIORITY = QUEST_GIVER_MARK_PRIORITY
 FDJ.MapMarkers.QUEST_GIVER_MARK_NAMES = QUEST_GIVER_MARK_NAMES
 
@@ -1720,6 +1850,7 @@ do
                     end
                     if b:GetParent() ~= holder then b:SetParent(holder) end
                     b.fdjSpots, b.fdjFirst, b.fdjStart = spots, firstQuest, start
+                    b.fdjFloor, b.fdjX, b.fdjY = pin.floor or 1, pin.x, pin.y -- mapfocus
                     b.icon:SetTexture(start and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
                     local size = math.max(22, math.floor((baseH or 0) * 0.07))
                     b:SetSize(size, size)
@@ -1753,7 +1884,7 @@ do
                 for _, spot in ipairs(pin.spots or {}) do
                     for _, q in ipairs(spot.quests or {}) do
                         if q.item == itemID and (q.id == questID or q.main == questID) then
-                            return { dungeon = name, floor = pin.floor or 1, x = pin.x, y = pin.y, label = spot.name }
+                            return { dungeon = name, floor = pin.floor or 1, x = pin.x, y = pin.y, label = spot.name, questID = questID }
                         end
                     end
                 end
@@ -1825,16 +1956,26 @@ do
                 ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
         }
         local more = {
-            enUS = { ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map." },
-            deDE = { ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte." },
-            frFR = { ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte." },
-            esES = { ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa." },
-            itIT = { ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa." },
-            ptBR = { ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa." },
-            ruRU = { ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте." },
-            koKR = { ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다." },
-            zhCN = { ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。" },
-            zhTW = { ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。" },
+            enUS = { ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
+                ARROW_PORTAL = "Take the portal to %s", ARROW_HEARTH = "Hearth to %s" },
+            deDE = { ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte.",
+                ARROW_PORTAL = "Nimm das Portal nach %s", ARROW_HEARTH = "Ruhestein nach %s" },
+            frFR = { ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte.",
+                ARROW_PORTAL = "Prenez le portail vers %s", ARROW_HEARTH = "Pierre de foyer vers %s" },
+            esES = { ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa.",
+                ARROW_PORTAL = "Toma el portal a %s", ARROW_HEARTH = "Piedra de hogar a %s" },
+            itIT = { ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa.",
+                ARROW_PORTAL = "Prendi il portale per %s", ARROW_HEARTH = "Pietra del ritorno: %s" },
+            ptBR = { ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa.",
+                ARROW_PORTAL = "Pegue o portal para %s", ARROW_HEARTH = "Pedra de regresso para %s" },
+            ruRU = { ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте.",
+                ARROW_PORTAL = "Портал: %s", ARROW_HEARTH = "Камень возвращения: %s" },
+            koKR = { ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다.",
+                ARROW_PORTAL = "%s행 차원문을 타세요", ARROW_HEARTH = "귀환석: %s" },
+            zhCN = { ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。",
+                ARROW_PORTAL = "使用传送门前往%s", ARROW_HEARTH = "炉石回到%s" },
+            zhTW = { ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。",
+                ARROW_PORTAL = "使用傳送門前往%s", ARROW_HEARTH = "爐石回到%s" },
         }
         for locale, entries in pairs(more) do
             for key, value in pairs(entries) do strings[locale][key] = value end
@@ -1950,6 +2091,58 @@ do
         return faction
     end
 
+    -- way (1.9.2): places the straight line cannot be walked out of. Each is
+    -- a region of its own, joined to the rest only by RIDES (portals, boats)
+    -- and flights: Darnassus and the top of Teldrassil (1001), and Rut'theran
+    -- Village at the foot of the tree (1002: the Teldrassil map south of
+    -- SHORE). Anywhere else a region is the continent.
+    local Way = {
+        ISLANDS = { [1457] = 1001, [1438] = 1001 },
+        SHORE = { [1438] = { 0.84, 1002 } },
+        axes = {},
+        RIDE_COST = { boat = 1200, zeppelin = 1200, portal = 30 }, -- yards' worth of time: waiting for it and the crossing
+        RIDE_WORTH = 3000,  -- yards: a way this long in one region also looks for boats on the way
+        HEARTH_ITEM = 6948, HEARTH_SPELL = 8690,
+        HEARTH_CAST = 100,  -- yards' worth: casting it
+        HEARTH_SAVES = 800, -- yards: only said when it saves this much
+        HEARTH_NEAR = 300,  -- yards: standing about there already
+        NAME_NEAR = 600,    -- yards: a flight point this close to where a ride lands names the place
+        -- The capitals' innkeepers (Wowhead Forever): where a hearthstone
+        -- set there lands, with the English names of the place.
+        INNS = {
+            { 1457, 0.672, 0.156, "Craftsmen's Terrace", "Darnassus" },
+            { 1453, 0.526, 0.656, "Trade District", "Stormwind", "Stormwind City" },
+            { 1455, 0.185, 0.515, "The Commons", "Ironforge" },
+            { 1454, 0.541, 0.685, "Valley of Strength", "Orgrimmar" },
+            { 1456, 0.457, 0.640, "Thunder Bluff" },
+            { 1458, 0.674, 0.382, "Trade Quarter", "Undercity" },
+        },
+    }
+    -- Map y (0 north .. 1 south) of a world point on a map.
+    function Way.MapY(mapID, wx, wy)
+        local axis = Way.axes[mapID]
+        if axis == nil then
+            local ax, ay = World(mapID, 0, 0)
+            local bx, by = World(mapID, 0, 1)
+            axis = (ax and bx) and { ax, ay, bx - ax, by - ay } or false
+            Way.axes[mapID] = axis
+        end
+        if not axis then return nil end
+        local len2 = axis[3] * axis[3] + axis[4] * axis[4]
+        if len2 == 0 then return nil end
+        return ((wx - axis[1]) * axis[3] + (wy - axis[2]) * axis[4]) / len2
+    end
+    function Way.Region(continent, mapID, wx, wy)
+        local region = mapID and Way.ISLANDS[mapID]
+        if not region or not continent then return continent end
+        local shore = Way.SHORE[mapID]
+        if shore and wx and wy then
+            local y = Way.MapY(mapID, wx, wy)
+            if y and y >= shore[1] then return shore[2] end
+        end
+        return region
+    end
+
     -- Boats and zeppelins between the continents (WoW Forever's own routes,
     -- Auberdine -> Menethil -> Southshore -> Auberdine being one way round):
     -- from where it leaves to where it lands, { map, x, y }: where the game's
@@ -1972,6 +2165,15 @@ do
         { kind = "zeppelin", faction = "Horde", from = { 1434, 0.3143, 0.2991 }, to = { 1411, 0.5069, 0.1289 } }, -- Grom'gol -> Orgrimmar
         { kind = "zeppelin", faction = "Alliance", from = { 2521, 0.6569, 0.8322 }, to = { 1416, 0.1230, 0.5649 } }, -- Zephras Isle -> Dalaran
         { kind = "zeppelin", faction = "Horde", from = { 2521, 0.5798, 0.8057 }, to = { 1412, 0.3340, 0.2250 } }, -- Zephras Isle -> Mulgore
+        -- way (1.9.2): Teldrassil. The portals: west of the Temple Gardens
+        -- in Darnassus (30, 41) and on the hill in Rut'theran Village (55,
+        -- 89); the Moonspray's piers in Rut'theran (south of Nessa
+        -- Shadowsong, 56.2, 92.4) and Auberdine (the northern pier): where
+        -- they are on the maps, to a few yards.
+        { kind = "portal", from = { 1457, 0.3000, 0.4120 }, to = { 1438, 0.5530, 0.8930 } }, -- Darnassus -> Rut'theran Village
+        { kind = "portal", from = { 1438, 0.5520, 0.8920 }, to = { 1457, 0.3010, 0.4130 } }, -- Rut'theran Village -> Darnassus
+        { kind = "boat", from = { 1438, 0.5560, 0.9650 }, to = { 1439, 0.3240, 0.3980 } }, -- Rut'theran Village -> Auberdine
+        { kind = "boat", from = { 1439, 0.3240, 0.3980 }, to = { 1438, 0.5560, 0.9650 } }, -- Auberdine -> Rut'theran Village
     }
     local rideWorld = {}
     -- Both ends in world yards { x, y, continent } (nil: not on this client).
@@ -1980,7 +2182,10 @@ do
         if hit == nil then
             local fx, fy, fc = World(ride.from[1], ride.from[2], ride.from[3])
             local tx, ty, tc = World(ride.to[1], ride.to[2], ride.to[3])
-            hit = (fx and fc and tx and tc) and { { fx, fy, fc }, { tx, ty, tc } } or false
+            -- way: each end's region and map too.
+            hit = (fx and fc and tx and tc) and {
+                { fx, fy, fc, region = Way.Region(fc, ride.from[1], fx, fy), map = ride.from[1] },
+                { tx, ty, tc, region = Way.Region(tc, ride.to[1], tx, ty), map = ride.to[1] } } or false
             rideWorld[ride] = hit
         end
         if hit then return hit[1], hit[2] end
@@ -2004,33 +2209,40 @@ do
         return true
     end
     -- The flight points this character has found, by the flight map's names
-    -- (lower case): every name the flight map listed when it was open, kept
-    -- in the character's saved variables. The game's own list of flight
-    -- points says on some clients which are found (isUndiscovered); WoW
-    -- Forever's lists them all alike, so there only the flight map tells.
+    -- (lower case): the ones a flight master's map listed as where the
+    -- character is (CURRENT) or can fly to (REACHABLE), kept in the
+    -- character's saved variables. Only the flight map tells: the world
+    -- map's isUndiscovered is not to be trusted on WoW Forever. 1.7.4: the
+    -- list kept before took more than that, so it is started again once
+    -- (flightPointsVersion) and filled at the next flight master.
+    local FLIGHT_POINTS_VERSION = 2
+    local flightsLearned = 0 -- goes up when the flight map shows a newly found one
     local function FoundFlights()
         if type(ForeverDungeonJournalCharacterDB) ~= "table" then ForeverDungeonJournalCharacterDB = {} end
-        if type(ForeverDungeonJournalCharacterDB.flightPoints) ~= "table" then ForeverDungeonJournalCharacterDB.flightPoints = {} end
-        return ForeverDungeonJournalCharacterDB.flightPoints
+        local db = ForeverDungeonJournalCharacterDB
+        if db.flightPointsVersion ~= FLIGHT_POINTS_VERSION or type(db.flightPoints) ~= "table" then
+            db.flightPoints = {}
+            db.flightPointsVersion = FLIGHT_POINTS_VERSION
+        end
+        return db.flightPoints
     end
     local function RecordFlightMap()
         if type(NumTaxiNodes) ~= "function" or type(TaxiNodeName) ~= "function" then return end
         local ok, count = pcall(NumTaxiNodes)
         local found, any = FoundFlights(), false
+        if type(TaxiNodeGetType) ~= "function" then return end -- no way to tell which are found
         for i = 1, (ok and Number(count)) or 0 do
-            local okType, kind = true, "REACHABLE"
-            if type(TaxiNodeGetType) == "function" then okType, kind = pcall(TaxiNodeGetType, i) end
+            local okType, kind = pcall(TaxiNodeGetType, i)
             local okName, name = pcall(TaxiNodeName, i)
             if type(issecretvalue) == "function" and issecretvalue(name) then name = nil end
-            if okType and kind ~= "NONE" and okName and type(name) == "string" and name ~= "" then
-                if not found[string.lower(name)] then any = true end
+            if okType and (kind == "CURRENT" or kind == "REACHABLE") and okName and type(name) == "string" and name ~= "" then
+                if not found[string.lower(name)] then any = true flightsLearned = flightsLearned + 1 end
                 found[string.lower(name)] = true
             end
         end
         if any then flights = nil end
     end
     local function Found(node)
-        if node.isUndiscovered ~= nil then return node.isUndiscovered ~= true end
         local name = type(node.name) == "string" and string.lower(node.name) or nil
         return name ~= nil and FoundFlights()[name] == true
     end
@@ -2052,7 +2264,8 @@ do
                         if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
                         local wx, wy, c = World(mapID, Number(nx), Number(ny))
                         if wx and c then
-                            local entry = { wx, wy, name = PlaceName(node.name), c = c, maps = zoned and { [mapID] = true } or nil }
+                            local entry = { wx, wy, name = PlaceName(node.name), c = c, maps = zoned and { [mapID] = true } or nil,
+                                region = Way.Region(c, zoned and mapID or nil, wx, wy) } -- way: Rut'theran's is on its own
                             seen[id] = entry
                             flights[c] = flights[c] or {}
                             table.insert(flights[c], entry)
@@ -2351,12 +2564,23 @@ do
     -- what it costs (in yards on foot), counting the walks to and from it.
     -- fromMap / toMap: the maps (zones) where (px, py) and (qx, qy) are; a
     -- flight point on another map counts FAR_ZONE yards farther.
-    local function FlyCost(c, px, py, qx, qy, fromMap, toMap)
+    -- way: fromR / toR, the regions the flight leaves from and lands in
+    -- (nil: any).
+    local function FlyCost(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
         local nodes = FlightPoints(c)
         if not nodes or #nodes < 2 then return nil end
+        local starts, ends = nodes, nodes
+        if fromR or toR then
+            starts, ends = {}, {}
+            for _, node in ipairs(nodes) do
+                local r = node.region or node.c
+                if not fromR or r == fromR then starts[#starts + 1] = node end
+                if not toR or r == toR then ends[#ends + 1] = node end
+            end
+        end
         local best, bestTo, least
-        for _, a in ipairs(Nearest(nodes, px, py)) do
-            for _, b in ipairs(Nearest(nodes, qx, qy)) do
+        for _, a in ipairs(Nearest(starts, px, py)) do
+            for _, b in ipairs(Nearest(ends, qx, qy)) do
                 if a ~= b then
                     local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
                     if not least or cost < least then best, bestTo, least = a, b, cost end
@@ -2366,91 +2590,320 @@ do
         return best, bestTo, least
     end
     -- How long the way is, in yards on foot: walking, or flying when quicker.
-    local function Travel(c, px, py, qx, qy, fromMap, toMap)
+    -- way: between two regions only a flight gets there (nil: none).
+    local function Travel(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
+        if fromR and toR and fromR ~= toR then
+            local _, _, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
+            return cost
+        end
         local walk = Yards(px, py, qx, qy)
         if walk < FLY_MIN then return walk end
-        local _, _, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap)
+        local _, _, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
         return (cost and cost < walk) and cost or walk
     end
     -- The flight to take from (px, py) to (qx, qy), when it saves enough of
     -- the way (keep: the one already chosen, kept while it saves any).
-    local function Flight(c, px, py, qx, qy, keep, fromMap, toMap)
-        local walk = Yards(px, py, qx, qy)
-        if keep and keep[1].c == c then
+    -- way: between two regions (fromR, toR) the flight is the only way.
+    local function Flight(c, px, py, qx, qy, keep, fromMap, toMap, fromR, toR)
+        local across = fromR ~= nil and toR ~= nil and fromR ~= toR
+        local walk = across and math.huge or Yards(px, py, qx, qy)
+        if keep and keep[1].c == c and (not fromR or (keep[1].region or keep[1].c) == fromR)
+            and (not toR or (keep[2].region or keep[2].c) == toR) then
             local a, b = keep[1], keep[2]
             local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
             if cost < walk then return a, b end
         end
-        if walk < FLY_MIN then return nil end
-        local a, b, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap)
-        if a and cost < walk * FLY_WORTH then return a, b end
+        if not across and walk < FLY_MIN then return nil end
+        local a, b, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
+        if a and (across or cost < walk * FLY_WORTH) then return a, b end
         return nil
     end
 
-    -- The boat or zeppelin to take first from (px, py) on continent `here`
-    -- to `target` { x, y, continent }: the quickest way, flights counted, with
-    -- a second ride when one does not get there.
-    local function FirstRide(px, py, here, target, playerMap)
+    -- way (1.9.2): the quickest way from p to t, points { x, y, continent,
+    -- region =, map = }: on foot or by flight, and through as many boats,
+    -- zeppelins and portals as it takes (Darnassus -> the portal -> the
+    -- Moonspray -> Auberdine -> the boat to Stormwind). Returns the first
+    -- ride to take (nil: none, straight there or by flight) and what the
+    -- whole way costs in yards on foot (nil: no way known).
+    function Way.Leg(a, b)
+        if not a[3] or a[3] ~= b[3] then return nil end
+        return Travel(a[3], a[1], a[2], b[1], b[2], a.map, b.map, a.region, b.region)
+    end
+    -- Ride end to ride end: the same until another flight point is found.
+    function Way.CachedLeg(a, b)
+        if Way.cacheFlights ~= flights then Way.cache, Way.cacheFlights = {}, flights end
+        local row = Way.cache[a]
+        if not row then
+            row = {}
+            Way.cache[a] = row
+        end
+        local hit = row[b]
+        if hit == nil then
+            hit = Way.Leg(a, b) or false
+            row[b] = hit
+        end
+        return hit or nil
+    end
+    function Way.Search(p, t)
         local faction = Faction()
-        local best, least
-        for _, first in ipairs(RIDES) do
-            local from, to = nil, nil
-            if Rides(faction, first) then from, to = Ends(first) end
-            if from and from[3] == here then
-                local walk = Travel(here, px, py, from[1], from[2], playerMap, first.from[1])
-                if to[3] == target[3] then
-                    local cost = walk + Travel(to[3], to[1], to[2], target[1], target[2], first.to[1], target.map)
-                    if not least or cost < least then best, least = first, cost end
-                else
-                    for _, second in ipairs(RIDES) do
-                        local from2, to2 = nil, nil
-                        if second ~= first and Rides(faction, second) then from2, to2 = Ends(second) end
-                        if from2 and from2[3] == to[3] and to2[3] == target[3] then
-                            local cost = walk + Travel(to[3], to[1], to[2], from2[1], from2[2], first.to[1], second.from[1])
-                                + Travel(to2[3], to2[1], to2[2], target[1], target[2], second.to[1], target.map)
-                            if not least or cost < least then best, least = first, cost end
+        local best = Way.Leg(p, t)
+        local bestFirst
+        local rides = {}
+        for _, ride in ipairs(RIDES) do
+            if Rides(faction, ride) then
+                local from, to = Ends(ride)
+                if from then rides[#rides + 1] = { ride = ride, from = from, to = to } end
+            end
+        end
+        local cost, first, done = {}, {}, {}
+        for i, r in ipairs(rides) do
+            local leg = r.from[3] == p[3] and Way.Leg(p, r.from) or nil
+            if leg then cost[i], first[i] = leg + (Way.RIDE_COST[r.ride.kind] or 0), r.ride end
+        end
+        while true do
+            local u
+            for i, c in pairs(cost) do
+                if not done[i] and (not u or c < cost[u]) then u = i end
+            end
+            if not u or (best and cost[u] >= best) then break end
+            done[u] = true
+            local land = rides[u].to
+            local rest = land[3] == t[3] and Way.Leg(land, t) or nil
+            if rest and (not best or cost[u] + rest < best) then best, bestFirst = cost[u] + rest, first[u] end
+            for i, r in ipairs(rides) do
+                if not done[i] and r.from[3] == land[3] then
+                    local leg = Way.CachedLeg(land, r.from)
+                    if leg then
+                        local c = cost[u] + leg + (Way.RIDE_COST[r.ride.kind] or 0)
+                        if not cost[i] or c < cost[i] then cost[i], first[i] = c, first[u] end
+                    end
+                end
+            end
+        end
+        return bestFirst, best
+    end
+
+    -- way: the hearthstone. Where it goes: where this character last set
+    -- it or came out of it (ForeverDungeonJournalCharacterDB.hearthSpot,
+    -- under the game's own name of the place), else the flight point of
+    -- that name (most inns stand by one), else a capital's inn.
+    function Way.MapName(mapID)
+        if not (C_Map and type(C_Map.GetMapInfo) == "function") then return "" end
+        local ok, info = pcall(C_Map.GetMapInfo, mapID)
+        local name = ok and type(info) == "table" and info.name or nil
+        if type(issecretvalue) == "function" and issecretvalue(name) then name = nil end
+        return type(name) == "string" and name or ""
+    end
+    function Way.BindName()
+        if type(GetBindLocation) ~= "function" then return nil end
+        local ok, name = pcall(GetBindLocation)
+        if not ok or (type(issecretvalue) == "function" and issecretvalue(name)) then return nil end
+        return type(name) == "string" and name ~= "" and name or nil
+    end
+    function Way.Point(mapID, x, y)
+        local w = SpotWorld({ mapID = mapID, x = x, y = y })
+        if not w then return nil end
+        return { w[1], w[2], w[3], region = Way.Region(w[3], mapID, w[1], w[2]), map = mapID }
+    end
+    -- Every flight point of the world (found or not), for their names.
+    function Way.AllNodes()
+        if Way.nodes then return Way.nodes end
+        local list = {}
+        if C_TaxiMap and type(C_TaxiMap.GetTaxiNodesForMap) == "function" and C_Map and type(C_Map.GetMapChildrenInfo) == "function" then
+            local seen = {}
+            for _, continentMap in ipairs(CONTINENT_MAPS) do
+                local okZones, zones = pcall(C_Map.GetMapChildrenInfo, continentMap, 3, true)
+                for _, zone in ipairs((okZones and type(zones) == "table") and zones or {}) do
+                    local okNodes, nodes = pcall(C_TaxiMap.GetTaxiNodesForMap, zone.mapID)
+                    for _, node in ipairs((okNodes and type(nodes) == "table") and nodes or {}) do
+                        local id = type(node) == "table" and Number(node.nodeID)
+                        if id and not seen[id] and type(node.position) == "table" and type(node.name) == "string" then
+                            local nx, ny = node.position.x, node.position.y
+                            if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
+                            local point = Way.Point(zone.mapID, Number(nx), Number(ny))
+                            if point then
+                                seen[id] = true
+                                point.name = PlaceName(node.name)
+                                list[#list + 1] = point
+                            end
                         end
                     end
                 end
             end
         end
-        return best
+        if #list > 0 then Way.nodes = list end
+        return list
+    end
+    -- The place a ride lands at, by the flight point there ("Rut'theran
+    -- Village", "Menethil Harbor"), else the zone or city.
+    function Way.PlaceAt(mapID, x, y)
+        local point = Way.Point(mapID, x, y)
+        local best, bestD
+        if point then
+            for _, node in ipairs(Way.AllNodes()) do
+                if node[3] == point[3] then
+                    local d = Yards(node[1], node[2], point[1], point[2])
+                    if d <= Way.NAME_NEAR and (not bestD or d < bestD) then best, bestD = node, d end
+                end
+            end
+        end
+        if best and best.name ~= "" then return best.name end
+        return Way.MapName(mapID)
+    end
+    function Way.CharDB()
+        if type(ForeverDungeonJournalCharacterDB) ~= "table" then ForeverDungeonJournalCharacterDB = {} end
+        return ForeverDungeonJournalCharacterDB
+    end
+    function Way.BindSpot()
+        local name = Way.BindName()
+        if not name then return nil end
+        local saved = Way.CharDB().hearthSpot
+        if type(saved) == "table" and saved.name == name and saved.mapID and saved.x and saved.y then
+            local point = Way.Point(saved.mapID, saved.x, saved.y)
+            if point then return name, point end
+        end
+        local lower = string.lower(name)
+        for _, inn in ipairs(Way.INNS) do
+            local match = string.lower(Way.MapName(inn[1])) == lower
+            for i = 4, #inn do
+                if string.lower(inn[i]) == lower then match = true end
+            end
+            if match then return name, Way.Point(inn[1], inn[2], inn[3]) end
+        end
+        for _, node in ipairs(Way.AllNodes()) do
+            if string.lower(node.name) == lower then return name, node end
+        end
+        return nil
+    end
+    function Way.HearthReady()
+        local count = (C_Item and C_Item.GetItemCount) or GetItemCount
+        if type(count) ~= "function" then return false end
+        local ok, n = pcall(count, Way.HEARTH_ITEM)
+        n = ok and Number(n) or nil
+        if not n or n < 1 then return false end
+        local cooldown = (C_Container and C_Container.GetItemCooldown) or GetItemCooldown
+        if type(cooldown) ~= "function" then return true end
+        local okCD, start, duration, enable = pcall(cooldown, Way.HEARTH_ITEM)
+        if not okCD then return true end
+        start, duration = Number(start) or 0, Number(duration) or 0
+        if enable == 0 or enable == false then return false end -- held back (in combat)
+        if start == 0 or duration <= 1.5 then return true end -- 1.5: the global cooldown
+        return start + duration - ((GetTime and GetTime()) or 0) <= 0
+    end
+    -- plan.hearth = the place's name when the hearthstone is ready and
+    -- going from there is the quicker way by HEARTH_SAVES at least (looked
+    -- at every 2 seconds).
+    function Way.Hearth(entry, plan, p, t, cost)
+        local now = (GetTime and GetTime()) or 0
+        if entry.hearthAt and now - entry.hearthAt < 2 then
+            plan.hearth = entry.hearth
+            return
+        end
+        entry.hearthAt, entry.hearth = now, nil
+        if not cost or cost < Way.HEARTH_SAVES + Way.HEARTH_CAST or not Way.HearthReady() then return end
+        local name, spot = Way.BindSpot()
+        if not spot then return end
+        if spot[3] == p[3] and Yards(p[1], p[2], spot[1], spot[2]) < Way.HEARTH_NEAR then return end
+        local _, from = Way.Search(spot, t)
+        if from and Way.HEARTH_CAST + from + Way.HEARTH_SAVES <= cost then entry.hearth = name end
+        plan.hearth = entry.hearth
+    end
+    do
+        -- Where the hearthstone goes: the inn where it is set, and where it
+        -- lands (any language: under the game's own name of the place).
+        local pending
+        local function Record()
+            local name = Way.BindName()
+            if not name or InInstance() or OnTaxi() then return end
+            if not (C_Map and type(C_Map.GetBestMapForUnit) == "function" and type(C_Map.GetPlayerMapPosition) == "function") then return end
+            local okMap, mapID = pcall(C_Map.GetBestMapForUnit, "player")
+            mapID = okMap and Number(mapID) or nil
+            if not mapID then return end
+            local okPos, pos = pcall(C_Map.GetPlayerMapPosition, mapID, "player")
+            if not okPos or type(pos) ~= "table" then return end
+            local mx, my = pos.x, pos.y
+            if (mx == nil or my == nil) and pos.GetXY then mx, my = pos:GetXY() end
+            mx, my = Number(mx), Number(my)
+            if not mx or not my then return end
+            Way.CharDB().hearthSpot = { name = name, mapID = mapID, x = mx, y = my }
+        end
+        local watch = CreateFrame("Frame")
+        for _, event in ipairs({ "HEARTHSTONE_BOUND", "UNIT_SPELLCAST_SUCCEEDED", "PLAYER_ENTERING_WORLD" }) do
+            pcall(watch.RegisterEvent, watch, event)
+        end
+        watch:SetScript("OnEvent", function(_, event, unit, _, spellID)
+            local now = (GetTime and GetTime()) or 0
+            if event == "HEARTHSTONE_BOUND" then
+                if C_Timer and C_Timer.After then C_Timer.After(0.5, Record) else Record() end
+            elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
+                if unit == "player" and spellID == Way.HEARTH_SPELL then
+                    pending = now
+                    if C_Timer and C_Timer.After then
+                        C_Timer.After(2, function()
+                            if pending then
+                                pending = nil
+                                Record()
+                            end
+                        end)
+                    end
+                end
+            elseif event == "PLAYER_ENTERING_WORLD" and pending and now - pending < 60 then
+                pending = nil
+                Record()
+            end
+        end)
     end
 
     -- What to do next on the way to the spot: x, y where the arrow points;
     -- ride: the boat or zeppelin to take (aboard: at its dock or on it);
     -- fly: the flight point to fly to (atMaster: at the flight master);
     -- final: the arrow points at the spot itself. nil: no way known.
+    -- way (1.9.2): by regions (Teldrassil's portals and pier), through any
+    -- number of rides, and with the hearthstone when it is the quicker way.
     local function Plan(entry, px, py, here, target)
-        local plan = { here = here }
         local gx, gy = target[1], target[2]
         local playerMap, goalMap = PlayerMap(), target.map
-        if target[3] and here and target[3] ~= here then
-            local ride = entry.ride
-            if ride then
-                local from = Ends(ride)
-                if from and from[3] == here and Yards(px, py, from[1], from[2]) <= OFF_DOCK then
-                    plan.ride, plan.aboard = ride, true
-                    return plan
-                end
-                entry.ride = nil
+        local hereR = Way.Region(here, playerMap, px, py)
+        local goalR = Way.Region(target[3], goalMap, gx, gy)
+        local plan = { here = hereR }
+        if not target[3] or not here then
+            plan.final, plan.x, plan.y = true, gx, gy
+            return plan
+        end
+        local p = { px, py, here, region = hereR, map = playerMap }
+        local t = { gx, gy, target[3], region = goalR, map = goalMap }
+        -- On the boat or zeppelin taken, until well away from where it left.
+        local ride = entry.ride
+        if ride then
+            local from = Ends(ride)
+            if from and from.region == hereR and Yards(px, py, from[1], from[2]) <= OFF_DOCK then
+                plan.ride, plan.aboard = ride, true
+                return plan
             end
-            ride = FirstRide(px, py, here, target, playerMap)
-            if not ride then return nil end
+            entry.ride = nil
+        end
+        local cost = hereR == goalR and Way.Leg(p, t) or nil
+        if hereR ~= goalR or not cost or cost > Way.RIDE_WORTH then
+            ride, cost = Way.Search(p, t)
+            if not cost then return nil end
+        else
+            ride = nil
+        end
+        local toR = goalR
+        if ride then
             plan.ride = ride
             local from = Ends(ride)
-            if Yards(px, py, from[1], from[2]) <= DOCK then
+            if ride.kind ~= "portal" and Yards(px, py, from[1], from[2]) <= DOCK then
                 entry.ride = ride
                 plan.aboard = true
                 return plan
             end
             gx, gy = from[1], from[2]
-            goalMap = ride.from[1]
+            goalMap, toR = ride.from[1], from.region
         else
-            entry.ride = nil
             plan.final = true
         end
-        local a, b = Flight(here, px, py, gx, gy, entry.fly, playerMap, goalMap)
+        local a, b = Flight(here, px, py, gx, gy, entry.fly, playerMap, goalMap, hereR, toR)
         entry.fly = a and { a, b } or nil
         if a then
             plan.final, plan.fly = nil, b
@@ -2461,6 +2914,7 @@ do
             gx, gy = a[1], a[2]
         end
         plan.x, plan.y = gx, gy
+        Way.Hearth(entry, plan, p, t, cost)
         return plan
     end
 
@@ -2573,6 +3027,9 @@ do
         entry.viaDone = entry.viaDone or {}
         local jumped = entry.viaX and Yards(px, py, entry.viaX, entry.viaY) > VIA_JUMP or false
         if jumped then entry.viaRoute = nil end
+        -- A flight point newly found: the route is chosen afresh (flying
+        -- there may now be the quicker way).
+        if entry.viaLearned ~= flightsLearned then entry.viaRoute, entry.viaLearned = nil, flightsLearned end
         entry.viaX, entry.viaY = px, py
         local best, bestW, bestVia, bestD
         local playerMap = PlayerMap()
@@ -2611,7 +3068,8 @@ do
         local now = (GetTime and GetTime()) or 0
         local plan = entry.plan
         local moved = entry.plannedX and Yards(px, py, entry.plannedX, entry.plannedY) or math.huge
-        if plan == nil or now - (entry.plannedAt or 0) >= PLAN_EVERY or moved > 25 or (plan and plan.here ~= here) then
+        local region = Way.Region(here, PlayerMap(), px, py) -- way
+        if plan == nil or now - (entry.plannedAt or 0) >= PLAN_EVERY or moved > 25 or (plan and plan.here ~= region) then
             plan = Plan(entry, px, py, here, target) or false
             if plan and via then plan.via, plan.final = via, nil end -- arrowvia: not the spot itself yet
             entry.plan, entry.plannedAt, entry.plannedX, entry.plannedY = plan, now, px, py
@@ -2684,7 +3142,9 @@ do
         if plan.fly then return FDJ.L("ARROW_FLY", plan.fly.name or "") end
         local ride = plan.ride
         if not ride then return plan.via and FreeText(plan.via.label) or "" end -- arrowvia: the point on the way
-        if not ride.toName or ride.toName == "" then ride.toName = ZoneName(ride.to[1]) end
+        -- way: the place it lands at ("Rut'theran Village", "Auberdine").
+        if not ride.toName or ride.toName == "" then ride.toName = Way.PlaceAt(ride.to[1], ride.to[2], ride.to[3]) end
+        if ride.kind == "portal" then return FDJ.L("ARROW_PORTAL", ride.toName) end
         return FDJ.L(ride.kind == "zeppelin" and "ARROW_ZEPPELIN" or "ARROW_BOAT", ride.toName)
     end
 
@@ -2765,6 +3225,7 @@ do
                 f.distance:SetText(Clock(gone))
             end
             f.route:SetText(flight.to and FDJ.L("ARROW_FLYING", PlaceName(flight.to)) or "")
+            f.hearth:SetText("")
             return
         end
         local distance, turn, plan
@@ -2792,15 +3253,23 @@ do
         ClickTargets(f, (not hide and final and distance and distance <= NEAR_NPC) and entry.spot or nil)
         if hide then return end
         local doing = Doing(plan)
+        -- way: the hearthstone, when it is the quicker way: a line of its
+        -- own under the next step (or in its place when there is none).
+        local hearth = plan and plan.hearth and FDJ.L("ARROW_HEARTH", plan.hearth) or ""
         if plan and (plan.aboard or plan.atMaster) then
             f.distance:SetText(doing)
             f.route:SetText("")
+            f.hearth:SetText("")
         elseif distance then
             f.distance:SetText(FDJ.L("ARROW_DISTANCE", math.floor(distance + 0.5)))
-            f.route:SetText((below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE")) or doing)
+            local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE")) or doing
+            if step == "" and hearth ~= "" then step, hearth = "|cff8fd0ff" .. hearth .. "|r", "" end
+            f.route:SetText(step)
+            f.hearth:SetText(hearth)
         else
             f.distance:SetText(entry.zone)
             f.route:SetText("")
+            f.hearth:SetText("")
         end
         if turn then
             if f.arrow.SetRotation then f.arrow:SetRotation(turn) end
@@ -2862,6 +3331,10 @@ do
         f.distance:SetPoint("TOP", f.title, "BOTTOM", 0, -2)
         f.route = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
         f.route:SetPoint("TOP", f.distance, "BOTTOM", 0, -2)
+        -- way: "Hearth to Auberdine", in the hearthstone's blue.
+        f.hearth = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        f.hearth:SetPoint("TOP", f.route, "BOTTOM", 0, -2)
+        f.hearth:SetTextColor(0.56, 0.82, 1.00)
         f:SetScript("OnDragStart", function(self)
             self.fdjDragging = true
             self:StartMoving()

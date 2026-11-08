@@ -2135,6 +2135,8 @@ FDJ.DB["City of Dalaran"] = {
                 {286987, "Violet Sorcerer's Sandals", "Feet, Cloth", 3, "Dark Caster / Kirin Tor Necromancer"},
                 {286989, "Violet Sorcerer's Wraps", "Hands, Cloth", 3, "Kirin Tor Necromancer / Fallen Mage"},
                 {286988, "Violet Sorcerer's Leggings", "Legs, Cloth", 3, "Fallen Mage / Dark Caster"},
+                -- Seen dropping from a Fragmented Sentry (Discord, Nov 2026).
+                {286995, "Guardian's Emblem", "Neck", 3, "Fragmented Sentry"},
             },
         },
     },
@@ -3205,6 +3207,7 @@ FDJ.DB["Razorfen Downs"] = {
                 {10764, "Deathchill Armor", "Chest, Mail", 3},
                 {10765, "Bonefingers", "Hands, Leather", 3},
                 {10761, "Coldrage Dagger", "One-Hand, Dagger", 3},
+                {274381, "Coldbringer Spine", "Two-Hand, Staff", 3}, -- seen dropping (Nov 2026)
             },
         },
     },
@@ -3899,9 +3902,10 @@ FDJ.DB["The Drowned City"] = {
         level = 38,
         requires = 30,
         faction = "Horde",
-        pickup = "Grom'gol Base Camp, Stranglethorn Vale (quest giver not known yet)",
+        pickup = "Commander Aggro'gosh, Grom'gol Base Camp, Stranglethorn Vale",
         objective = "Kill Var'Taka in the Drowned City.",
-        turnin = "Grom'gol Base Camp, Stranglethorn Vale (not known yet)",
+        turnin = "Commander Aggro'gosh, Grom'gol Base Camp, Stranglethorn Vale",
+        note = "Commander Aggro'gosh offers it once Enemies in the Water and Locating the Lost City (Kin'weelay) are both handed in.",
         liveXPFallback = 9500,
         rewardSummary = "",
         rewardChoice = true,
@@ -3935,30 +3939,62 @@ FDJ.DB["The Drowned City"] = {
         level = 40,
         requires = 30,
         faction = "Alliance",
-        pickup = "Not known yet",
+        pickup = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
         objective = "Collect 5 I'lalai Fetishes from the trolls in the Drowned City.",
-        turnin = "Not known yet",
+        turnin = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
         rewardSummary = "",
         requiredItem = {270343, "I'lalai Fetish", 1, 5, "Dropped by the trolls in the Drowned City"},
     }, {
+        -- Follow-up to Take Two With Water (Wowhead Forever quest 95799).
+        id = 95799,
+        name = "Findings for the Explorer's League",
+        level = 40,
+        requires = 30,
+        faction = "Alliance",
+        pickup = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
+        objective = "Take Dibbs' I'lalai Translations to Historian Karnik in Ironforge.",
+        turnin = "Historian Karnik, Hall of Explorers, Ironforge",
+        liveXPFallback = 2350,
+        rewardSummary = "35s  •  Stormwind +75  •  Ironforge +50",
+        rewards = "Choose: Ancient Voodoo Pouch or Intrepid Explorer's Chainmail\nAlso: Translated Tale of I'lalai\n2,350 XP • 35s • Stormwind +75 • Ironforge +50",
+        rewardItems = {{279880, "Ancient Voodoo Pouch", 2}, {279881, "Intrepid Explorer's Chainmail", 2}},
+        rewardChoice = true,
+    }, {
+        -- Follow-up to Magics of the Drowned City (Wowhead Forever quest 95798).
+        id = 95798,
+        name = "The Web of Magic",
+        level = 40,
+        requires = 30,
+        faction = "Alliance",
+        pickup = "Loremaster Dibbs, Southshore, Hillsbrad Foothills",
+        objective = "Take the I'lalai Fetish to Abra Cadabra in Dalaran.",
+        turnin = "Abra Cadabra, Dalaran",
+        liveXPFallback = 2350,
+        rewardSummary = "35s  •  Stormwind +75",
+        rewards = "Choose: Rune-Etched Epaulets or Apprentice Sorcerer's Slacks\n2,350 XP • 35s • Stormwind +75",
+        rewardItems = {{279879, "Rune-Etched Epaulets", 2}, {279878, "Apprentice Sorcerer's Slacks", 2}},
+        rewardChoice = true,
+        note = "The Kirin Tor only let noteworthy visitors into Dalaran.",
+    }, {
         -- The Alliance side of Ancient Gurubashi Idol (Wowhead Forever quest
-        -- 97130). Wowhead has no giver yet; the quest text names Archmage
-        -- Lan'dalock of the Kirin Tor, who stands in Dalaran.
+        -- 97130). Archmage Timear gives it, outside where the Violet Hold
+        -- stood in Dalaran (a player, Nov 2026); who takes it back is not
+        -- confirmed yet.
         id = 97130,
         name = "Ancient Gurubashi Secrets",
         level = 40,
         requires = 34,
         faction = "Alliance",
-        pickup = "Not known yet (a Kirin Tor mage who works with Archmage Lan'dalock in Dalaran)",
+        pickup = "Archmage Timear, outside where the Violet Hold stood, Dalaran, Alterac Mountains",
         objective = "Recover an Ancient Gurubashi Idol from the Drowned City.",
-        turnin = "Not known yet",
+        turnin = "Archmage Timear, Dalaran (not confirmed)",
         liveXPFallback = 10450,
         rewardSummary = "50s  •  Kirin Tor +300  •  Stormwind +150",
         requiredItem = {276894, "Ancient Gurubashi Idol", 1, 1, "From the most powerful priest in the Drowned City"},
     }, {
         -- Krazek's two quests for the Steamwheedle Cartel (Wowhead Forever;
-        -- both factions). The Saltseer Captain has no giver listed there:
-        -- its text is Krazek's ("the artifacts I've been after").
+        -- both factions). The Saltseer Captain has no giver listed there;
+        -- players confirm Krazek gives both (Nov 2026).
         id = 95789,
         name = "Shady Saltseers",
         level = 40,
@@ -3979,9 +4015,9 @@ FDJ.DB["The Drowned City"] = {
         level = 40,
         requires = 34,
         faction = "Both",
-        pickup = "Krazek, Booty Bay, Stranglethorn Vale (not confirmed)",
+        pickup = "Krazek, Booty Bay, Stranglethorn Vale",
         objective = "Slay Captain Dreadrise and 3 Saltseer Coroners in the Drowned City.",
-        turnin = "Krazek, Booty Bay, Stranglethorn Vale (not confirmed)",
+        turnin = "Krazek, Booty Bay, Stranglethorn Vale",
         liveXPFallback = 10450,
         rewardSummary = "Booty Bay +100  •  Ratchet +50  •  Gadgetzan +50  •  Everlook +50",
         rewards = "Choose: Mutinous Cuffs or South Seas Shroud\n10,450 XP • Booty Bay +100 • Ratchet +50 • Gadgetzan +50 • Everlook +50",
@@ -4153,9 +4189,9 @@ FDJ.DB["Krol'dok Stronghold"] = {
         level = 45,
         requires = 37,
         faction = "Alliance",
-        pickup = "Not known yet (a highborne; Kirin Tor reputation, so probably in Dalaran)",
+        pickup = "Ranath Nightstride, in the inn in Dalaran, Alterac Mountains",
         objective = "Travel to Krol'dok Stronghold and slay Zalfan Moonshadow.",
-        turnin = "Not known yet",
+        turnin = "Ranath Nightstride, in the inn in Dalaran, Alterac Mountains",
         liveXPFallback = 13000,
         rewardSummary = "65s  •  Kirin Tor +250  •  Brotherhood of the Horse +150",
         note = "Zalfan Moonshadow, a highborne among the Twilight's Hammer inside the stronghold; where he stands is not known yet.",
@@ -4167,16 +4203,8 @@ FDJ.DB["Krol'dok Stronghold"] = {
             aliases = {"Slavecrusher Grox"},
             loot = {
                 {274996, "Resistance Breaker Spaulder", "Shoulder, Mail", 3},
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Chain of Binding", "Waist, Mail", 3, tip = {
-                    "Binds when picked up",
-                    {"Waist", "Mail"},
-                    "152 Armor",
-                    "+15 Stamina",
-                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 12.|r",
-                    "Requires Level 39",
-                    "Sell Price: 52|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 16|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
-                }},
+                {274997, "Chain of Binding", "Waist, Mail", 3},
+                {274995, "Slavecrusher Scepter", "One-Hand, Mace", 3},
             },
         },
         {
@@ -4193,7 +4221,9 @@ FDJ.DB["Krol'dok Stronghold"] = {
             name = "War Handler Ashka",
             npcID = 259281,
             aliases = {"War Handler Ashka", "Handler Ashka"},
-            loot = {},
+            loot = {
+                {275001, "Bloodied Gutslicer", "Two-Hand, Sword", 3},
+            },
             -- A war handler's helm, numbered with Zarmok's Plated Signet.
             probableLoot = {
                 {275002, "War Handler's Gaze", "Head", 3},
@@ -4204,16 +4234,8 @@ FDJ.DB["Krol'dok Stronghold"] = {
             npcID = 258964,
             aliases = {"Nar'gurk"},
             loot = {
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Chain of the Corruptor", "Neck", 3, tip = {
-                    "Binds when picked up",
-                    "Neck",
-                    "+4 Agility",
-                    "+12 Stamina",
-                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 5.|r",
-                    "Requires Level 41",
-                    "Sell Price: 83|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 28|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
-                }},
+                {275004, "Chain of the Corruptor", "Neck", 3},
+                {275005, "Krol'dok Warplate Chest", "Chest, Plate", 3},
             },
         },
         {
@@ -4231,28 +4253,19 @@ FDJ.DB["Krol'dok Stronghold"] = {
             npcID = 258968,
             aliases = {"Overlord Mugg", "Overseer Mugg"},
             loot = {
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Emblem of Slamming", "Trinket", 3, tip = {
-                    "Binds when picked up",
-                    "Unique-Equipped",
-                    "Trinket",
-                    "|cff1eff00Equip: +14 Attack Power.|r",
-                    "|cff1eff00Use: Stuns target and yourself for 3 sec. Ogres are Stunned for 5 sec and refund 50% of the cooldown. (15 Min Cooldown)|r",
-                    "Requires Level 42",
-                    "Sell Price: 94|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 1|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
-                }},
+                {275009, "Emblem of Slamming", "Trinket", 3},
+                {275007, "Mugg's Jabber", "One-Hand, Fist Weapon", 3},
             },
         },
         {
-            -- The dungeon's own armor set (Krol'dok Battlegear); where its
-            -- pieces drop is not known yet.
+            -- The dungeon's own armor set (Krol'dok Battlegear): the chest
+            -- drops from Nar'gurk; where the other pieces drop is not known yet.
             name = "Trash Drops",
             trash = true,
             loot = {},
             probableLoot = {
                 {275006, "Krol'dok Warplate Helmet", "Head, Plate", 3},
                 {287014, "Krol'dok Warplate Pauldrons", "Shoulder, Plate", 3},
-                {275005, "Krol'dok Warplate Chest", "Chest, Plate", 3},
                 {287012, "Krol'dok Warplate Gauntlets", "Hands, Plate", 3},
                 {287013, "Krol'dok Warplate Legplates", "Legs, Plate", 3},
             },
@@ -4261,25 +4274,253 @@ FDJ.DB["Krol'dok Stronghold"] = {
 }
 
 FDJ.DB["Alcaz Prison"] = {
-    -- Announced by Blizzard; not playable yet, so no boss, loot or quest data.
-    previewOnly = true,
+    -- Seen in the game (a stream, 2026-11-07): the bosses' levels, one drop
+    -- each and the Horde quest Thrall Needs to Know. Boss list: the game's
+    -- DungeonEncounter data (map 2994); The Questioner comes second (a
+    -- player, Nov 2026). NPC IDs from Wowhead Forever; Overseer Wrex's is not
+    -- known yet (he is found by name). Loot only partly known.
+    -- Quests still being found: "Full Quests TBD" on its Quests tab.
+    fullQuestsTBD = true,
+    fullItemsTBD = true,
     level = "48-53",
     location = "Dustwallow Marsh",
-    description = "Long rumored to hold high-ranking prisoners, including King Varian Wrynn, the prison on Alcaz Island has been out of reach until now. Inside, the Defias Brotherhood and the naga are at war. Known bosses so far: Blazeroar.",
+    description = "Long rumored to hold high-ranking prisoners, including King Varian Wrynn, the prison on Alcaz Island has been out of reach until now. Inside, the Defias Brotherhood and the naga are at war.",
     icon = "Interface\\Icons\\INV_Misc_Key_14",
+    -- Quests: Thrall Needs to Know (with its chain) and Blood Red Bandanas
+    -- are added in Data/QuestUpdates.lua (dalaranquests: their quest IDs
+    -- are not public yet).
     quests = {},
-    bosses = {},
+    bosses = {
+        {
+            name = "Overseer Wrex",
+            aliases = {"Overseer Wrex", "Wrex"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Grips of Control", "Hands, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Hands", "Plate"},
+                    "342 Armor",
+                    "+12 Stamina",
+                    "+12 Intellect",
+                    "|cff1eff00Equip: Restores 5 mana per 5 sec.|r",
+                    "Requires Level 47",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 11|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 47|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {276734, "Wrex's Pinky Ring", "Finger", 3}, -- seen dropping (Nov 2026)
+            },
+        },
+        {
+            name = "The Questioner",
+            npcID = 256236,
+            aliases = {"The Questioner", "Questioner"},
+            loot = {
+                {276742, "Girdle of Extracted Answers", "Waist, Plate", 3},
+                {276743, "Fingerbreaker Stamp", "Trinket", 3}, -- seen dropping (Nov 2026)
+                {276741, "Defias Enforcer's Shoulderpads", "Shoulder, Leather", 3}, -- seen dropping (Nov 2026)
+            },
+        },
+        {
+            name = "Tidemistress Ca'zass",
+            npcID = 255997,
+            aliases = {"Tidemistress Ca'zass", "Ca'zass"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Tidesong Wand", "Ranged, Wand", 3, tip = {
+                    "Binds when picked up",
+                    {"Ranged", "Wand"},
+                    {"71 - 133 Frost Damage", "Speed 2.00"},
+                    "(51.0 damage per second)",
+                    "+3 Stamina",
+                    "+4 Intellect",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.5%.|r",
+                    "Requires Level 47",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 39|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 26|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {276736, "Seascale Bracers", "Wrist, Mail", 3}, -- seen dropping (Nov 2026)
+            },
+            -- Named after her; nobody has seen it drop yet.
+            probableLoot = {
+                {276737, "Cloak of the Tidemistress", "Back", 3},
+            },
+        },
+        {
+            name = "Katerina the Cleaner",
+            npcID = 257016,
+            aliases = {"Katerina the Cleaner", "Katerina"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Cutthroat Chestguard", "Chest, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Mail"},
+                    "322 Armor",
+                    "+20 Stamina",
+                    "|cff1eff00Equip: Improves your chance to hit by 1%.|r",
+                    "|cff1eff00Equip: +32 Attack Power.|r",
+                    "Requires Level 49",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 18|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 22|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            -- Final boss.
+            name = "Blazeroar",
+            npcID = 255702,
+            aliases = {"Blazeroar"},
+            loot = {},
+        },
+        {
+            -- Defias Enforcer's Prowlers seen dropping from the trash (Nov
+            -- 2026). The rest: items numbered with the drops above, at the
+            -- same item levels, and the other pieces of the Defias
+            -- Enforcer's Garb (its Shoulderpads drop from The Questioner);
+            -- which boss drops them is not known yet.
+            name = "Trash Drops",
+            trash = true,
+            loot = {
+                {287021, "Defias Enforcer's Prowlers", "Feet, Leather", 3},
+            },
+            probableLoot = {
+                {276740, "Sentimental Locket", "Neck", 3},
+                {287019, "Defias Enforcer's Mask", "Head, Leather", 3},
+                {287020, "Defias Enforcer's Chest", "Chest, Leather", 3},
+                {276746, "Defias Enforcer's Legguards", "Legs, Leather", 3},
+            },
+        },
+    },
 }
 
 FDJ.DB["Blackmaw Hold"] = {
-    -- Announced by Blizzard; not playable yet, so no boss, loot or quest data.
-    previewOnly = true,
+    -- Seen in the game (a stream, 2026-11-07): boss levels and the drops
+    -- seen so far. Boss list and order: the game's DungeonEncounter data
+    -- (map 2974). NPC IDs from Wowhead Forever. Loot only partly known.
+    -- Quests still being found: "Full Quests TBD" on its Quests tab.
+    fullQuestsTBD = true,
+    fullItemsTBD = true,
     level = "55-60",
     location = "Azshara",
     description = "Beyond a long-sealed gate in Azshara lies the furbolg city of the Blackmaw clan, fighting a corruption that spreads through its groves and mountain tunnels. A large max-level dungeon with several routes and bosses; its depths may lead even farther below Azeroth.",
     icon = "Interface\\Icons\\INV_Misc_MonsterClaw_04",
     quests = {},
-    bosses = {},
+    bosses = {
+        {
+            name = "Withermaw",
+            npcID = 247195,
+            aliases = {"Withermaw"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in
+                -- by ItemIdLearner). The tooltip was cut off: armor type,
+                -- required level and sell price not seen.
+                {0, "Withering Grips", "Hands", 3, tip = {
+                    "Hands",
+                    "106 Armor",
+                    "+14 Stamina",
+                    "+12 Intellect",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 16.|r",
+                }},
+            },
+        },
+        {
+            name = "Impaan the Imprisoner",
+            npcID = 247206,
+            aliases = {"Impaan the Imprisoner", "Impaan"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Impish Chain Hood", "Head, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Head", "Mail"},
+                    "284 Armor",
+                    "+19 Stamina",
+                    "+16 Spirit",
+                    "|cff1eff00Equip: +34 Attack Power.|r",
+                    "Requires Level 54",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 9|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 35|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            name = "Elder Shaman Bloodmane",
+            npcID = 247209,
+            aliases = {"Elder Shaman Bloodmane", "Bloodmane"},
+            loot = {},
+        },
+        {
+            name = "Bonesnout the Unbroken",
+            npcID = 247198,
+            aliases = {"Bonesnout the Unbroken", "Bonesnout"},
+            loot = {
+                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Lucky Shovelnose Tuft", "Trinket", 3, tip = {
+                    "Binds when picked up",
+                    "Unique-Equipped",
+                    "Trinket",
+                    "+11 Strength",
+                    "+11 Spirit",
+                    "|cff1eff00Use: Increases your chance to Dodge by 5% for 15 sec. (5 Min Cooldown)|r",
+                    "Requires Level 55",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 95|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 98|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            name = "Varrox Bleakhoof",
+            npcID = 247234,
+            aliases = {"Varrox Bleakhoof", "Varrox"},
+            loot = {},
+        },
+        {
+            name = "Blackmaw Behemoth",
+            npcID = 247207,
+            aliases = {"Blackmaw Behemoth"},
+            loot = {},
+        },
+        {
+            -- Last in the game's encounter order.
+            name = "Unbound Spirit",
+            npcID = 247231,
+            aliases = {"Unbound Spirit"},
+            loot = {},
+        },
+        {
+            -- A rare, seen dropping Claymore of Two Moons (Nov 2026).
+            name = "Moontouched Wanderer",
+            npcID = 269104,
+            aliases = {"Moontouched Wanderer"},
+            description = "Rare spawn.",
+            rare = true,
+            loot = {
+                -- Item ID not known yet (0, filled in by ItemIdLearner).
+                {0, "Claymore of Two Moons", "Two-Hand, Sword", 3, tip = {
+                    "Binds when picked up",
+                    {"Two-Hand", "Sword"},
+                    {"121 - 182 Damage", "Speed 3.10"},
+                    "(48.9 damage per second)",
+                    "+17 Stamina",
+                    "|cff1eff00Equip: Your attacks have a chance to Wax, dealing 189 Arcane damage or Wane, granting 40 Strength for 10 sec.|r",
+                    "Requires Level 52",
+                    "Sell Price: 5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 24|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 1|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            -- Only dungeon-specific non-boss drops belong here.
+            name = "Trash Drops",
+            trash = true,
+            loot = {
+                -- Seen dropping from a Legashi Ritualist (Nov 2026); item ID
+                -- not known yet (0, filled in by ItemIdLearner).
+                {0, "Satyr's Touch", "Ranged, Wand", 3, "Legashi Ritualist", tip = {
+                    "Binds when equipped",
+                    {"Ranged", "Wand"},
+                    {"111 Damage", "Speed 1.90"},
+                    "(58.4 damage per second)",
+                    "+9 Stamina",
+                    "|cff1eff00Equip: Improves your chance to hit by 0.5%.|r",
+                    "Requires Level 54",
+                    "Sell Price: 3|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 46|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 34|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+    },
 }
 
 FDJ.DB["Shaper's Terrace"] = {

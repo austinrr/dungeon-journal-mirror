@@ -153,6 +153,17 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
+        -- Same switch as the WoW Forever emblem at the top left of the
+        -- dungeon list (Systems/ForeverFilter.lua), for players who clicked
+        -- the emblem by mistake and can't find the other dungeons. Off by
+        -- default.
+        label = "OPT_FOREVER_ONLY",
+        tip = "OPT_FOREVER_ONLY_TIP",
+        get = function() return FDJ.IsForeverOnly and FDJ.IsForeverOnly() or false end,
+        set = function(on) if FDJ.SetForeverOnly then FDJ.SetForeverOnly(on) end end,
+        refreshHome = true,
+    },
+    {
         label = "OPT_HIDE_OUTLEVELED",
         tip = "OPT_HIDE_OUTLEVELED_TIP",
         get = function() return Store().autoHideOutleveled == true end,
@@ -953,6 +964,16 @@ local function CreatePanel()
         end
     end)
     panel:Hide()
+end
+
+-- Ticks follow changes made elsewhere while the panel is open (the WoW
+-- Forever emblem).
+function FDJ.RefreshSettingsChecks()
+    if not (panel and panel.checks) then return end
+    for _, check in ipairs(panel.checks) do
+        local ok, value = pcall(check.option.get)
+        check:SetChecked(ok and value or false)
+    end
 end
 
 function FDJ.ToggleSettingsPanel()

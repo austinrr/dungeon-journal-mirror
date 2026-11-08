@@ -13,6 +13,25 @@ local NAME_TOKEN = "\001N" -- the player's name is stored as a token
 local function Secret(v) return type(issecretvalue) == "function" and issecretvalue(v) end
 local function Str(v) return type(v) == "string" and not Secret(v) and v ~= "" and v or nil end
 
+-- glowingshard: a quest objective line the game words vaguely ("Speak with
+-- someone in Ratchet") named and counted like a WoW objective: "0/1 Speak
+-- with Sputtervalve in Ratchet", "1/1 ..." once done (or the quest is ready
+-- to hand in). FDJ.OBJECTIVE_LINE_OVERRIDES[questID] = { match = text found
+-- in the game's line (lower case), text = the line }. Returns text, finished.
+function FDJ.ObjectiveLineOverride(questID, text, finished)
+    local o = questID and FDJ.OBJECTIVE_LINE_OVERRIDES and FDJ.OBJECTIVE_LINE_OVERRIDES[questID]
+    if type(o) ~= "table" or type(text) ~= "string" then return text, finished end
+    if not string.lower(text):find(o.match, 1, true) then return text, finished end
+    local done = finished == true or (FDJ.IsQuestFinished and FDJ.IsQuestFinished(questID)) or false
+    return (done and "1/1 " or "0/1 ") .. o.text, done
+end
+-- The same line for a quest in the log whose objective the game does not list.
+function FDJ.ObjectiveLineMissing(questID)
+    local o = questID and FDJ.OBJECTIVE_LINE_OVERRIDES and FDJ.OBJECTIVE_LINE_OVERRIDES[questID]
+    if type(o) ~= "table" then return nil end
+    return FDJ.ObjectiveLineOverride(questID, o.match, false)
+end
+
 local function Locale() return (GetLocale and GetLocale()) or "enUS" end
 
 local function Store()
@@ -110,6 +129,11 @@ local function ProgressLines(questID)
     local okI, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
     if not okI or type(index) ~= "number" or index <= 0 then return nil end
     local ok, objectives = pcall(C_QuestLog.GetQuestObjectives, questID)
+    if ok and type(objectives) == "table" and #objectives == 0 then
+        -- glowingshard: the line the game leaves out, named.
+        local text, done = FDJ.ObjectiveLineMissing(questID)
+        if text then return done and ("|cff6e5c40" .. text .. "|r") or text end
+    end
     if not ok or type(objectives) ~= "table" or #objectives == 0 then return nil end
     -- objectivetext: in the journal's language when that is not the game's.
     local own = FDJ.LocalizeObjectives and FDJ.LocalizeObjectives(questID, objectives, nil, true)
@@ -124,8 +148,10 @@ local function ProgressLines(questID)
     for _, o in ipairs(objectives) do
         local text = type(o) == "table" and Str(o.text)
         if text then
+            local finished = o.finished
+            text, finished = FDJ.ObjectiveLineOverride(questID, text, finished) -- glowingshard
             -- Finished objectives are muted, like the game's quest log.
-            lines[#lines + 1] = o.finished and ("|cff6e5c40" .. text .. "|r") or text
+            lines[#lines + 1] = finished and ("|cff6e5c40" .. text .. "|r") or text
         end
     end
     return #lines > 0 and table.concat(lines, "\n") or nil
@@ -972,8 +998,13 @@ do
                 for _, objective in ipairs(list) do
                     local text = type(objective) == "table" and Plain(objective.text) or nil
                     if type(text) == "string" and text ~= "" then
-                        lines[#lines + 1] = { CountFirst(text), objective.finished == true }
+                        local named, done = FDJ.ObjectiveLineOverride(id, text, objective.finished == true) -- glowingshard
+                        lines[#lines + 1] = { named ~= text and named or CountFirst(text), done }
                     end
+                end
+                if #lines == 0 and #list == 0 and LogIndex(id) then
+                    local named, done = FDJ.ObjectiveLineMissing(id) -- glowingshard
+                    if named then lines[1] = { named, done } end
                 end
                 return lines
             end
@@ -985,7 +1016,8 @@ do
                 local ok, text, _, finished = pcall(GetQuestLogLeaderBoard, i, index)
                 text = ok and Plain(text) or nil
                 if type(text) == "string" and text ~= "" then
-                    lines[#lines + 1] = { CountFirst(text), finished == true or finished == 1 }
+                    local named, done = FDJ.ObjectiveLineOverride(id, text, finished == true or finished == 1) -- glowingshard
+                    lines[#lines + 1] = { named ~= text and named or CountFirst(text), done }
                 end
             end
         end
@@ -1134,26 +1166,22 @@ do
                     end
                 end
             end
+            -- turninall: a boss who takes quests once beaten or won over
+            -- (Captain Kromcrush): his spot on the map.
+            for dungeon, data in pairs(FDJ.DUNGEON_MAPS or {}) do
+                for _, boss in ipairs(type(data) == "table" and data.bosses or {}) do
+                    local key = type(boss) == "table" and type(boss.name) == "string" and boss.name:lower()
+                    if key and boss.x and boss.y and not dungeonNpcs[key] then
+                        dungeonNpcs[key] = { dungeon = dungeon, spot = { floor = boss.floor or 1, x = boss.x, y = boss.y, npc = boss.name } }
+                    end
+                end
+            end
         end
         return dungeonNpcs[name]
     end
-    local function TurnInSpot(quest)
-        -- The spot given with the quest first: two places can share a name
-        -- (the Burned-Out Remains in The Barrens and in Westfall).
-        local given = quest.turninMap
-        if type(given) == "table" and given.mapID then return given end
-        local name = NpcName(quest.turnin)
-        if not name then return nil end
-        local own = FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[quest.id]
-        if own and NpcOf(own) == name then return own end
-        return NpcSpot(name)
-    end
-    -- Handed in inside the dungeon it is listed under ("..., inside
-    -- Shadowfang Keep") that has a map page, where on it not known.
+    -- The dungeon page that lists a quest (a chain step: its quest's page).
     local questDungeons
-    local function InsideDungeon(quest)
-        local where = type(quest) == "table" and quest.turnin
-        if type(where) ~= "string" or not where:lower():find("inside", 1, true) then return nil end
+    local function QuestDungeon(id)
         if not questDungeons then
             questDungeons = {}
             for dungeon, data in pairs(FDJ.DB or {}) do
@@ -1161,17 +1189,138 @@ do
                     if type(listed) == "table" and listed.id and not questDungeons[listed.id] then questDungeons[listed.id] = dungeon end
                 end
             end
+            for mainID, chain in pairs(FDJ.QUEST_PREREQ_CHAINS or {}) do
+                local dungeon = questDungeons[mainID]
+                for _, step in ipairs((dungeon and type(chain) == "table") and chain or {}) do
+                    if type(step) == "table" and step.id and not questDungeons[step.id] then questDungeons[step.id] = dungeon end
+                end
+            end
         end
-        local dungeon = quest.id and questDungeons[quest.id]
-        return dungeon and FDJ.DUNGEON_MAPS and FDJ.DUNGEON_MAPS[dungeon] and dungeon or nil
+        return id and questDungeons[id] or nil
     end
-    -- Handed in inside a dungeon: the NPC's spot on its map, else just its map.
+    -- turninall: the dungeon a turn-in names in its last part ("Bijou, Lower
+    -- Blackrock Spire", "Lorekeeper Lydros, Athenaeum, Dire Maul", "...,
+    -- inside Shadowfang Keep"). A name shared by several pages (Dire Maul,
+    -- Stratholme): the page that lists the quest, else one with a map.
+    local dungeonNames
+    local function NamedDungeon(quest)
+        local where = type(quest) == "table" and quest.turnin
+        if type(where) ~= "string" then return nil end
+        local last = where:gsub("%b()", ""):match("([^,]*)$") or ""
+        last = last:lower():gsub("^%s+", ""):gsub("%s+$", "")
+        last = last:gsub("^just ", ""):gsub("^inside ", "")
+        if last == "" then return nil end
+        if not dungeonNames then
+            dungeonNames = {}
+            local function Add(key, dungeon)
+                dungeonNames[key] = dungeonNames[key] or {}
+                table.insert(dungeonNames[key], dungeon)
+            end
+            for dungeon in pairs(FDJ.DB or {}) do
+                local full = dungeon:lower()
+                Add(full, dungeon)
+                local base = full:match("^(.-):")
+                if base and base ~= "" then Add(base, dungeon) end
+            end
+            for _, list in pairs(dungeonNames) do table.sort(list) end
+        end
+        local list = dungeonNames[last]
+        if not list then return nil end
+        local own = QuestDungeon(quest.id)
+        for _, dungeon in ipairs(list) do
+            if dungeon == own then return dungeon end
+        end
+        for _, dungeon in ipairs(list) do
+            if FDJ.DUNGEON_MAPS and FDJ.DUNGEON_MAPS[dungeon] then return dungeon end
+        end
+        return list[1]
+    end
+    -- Handed in inside a dungeon with a map page: the one it names, else
+    -- ("..., inside the dungeon") the one that lists it.
+    local function InsideDungeon(quest)
+        local maps = FDJ.DUNGEON_MAPS or {}
+        local named = NamedDungeon(quest)
+        if named then return maps[named] and named or nil end
+        local where = type(quest) == "table" and quest.turnin
+        if type(where) ~= "string" or not where:lower():find("inside", 1, true) then return nil end
+        local dungeon = QuestDungeon(quest.id)
+        return dungeon and maps[dungeon] and dungeon or nil
+    end
+    -- turninall: where on a dungeon map a quest is handed in, from the map's
+    -- own quest spots (FDJ.MAP_QUEST_PINS, act "end"): the NPC or object its
+    -- turn-in names first (Belnistrasz's Brazier, not Belnistrasz).
+    local questPins
+    local function QuestPin(quest)
+        local id = type(quest) == "table" and quest.id
+        if not id then return nil end
+        if not questPins then
+            questPins = {}
+            for dungeon, pins in pairs(FDJ.MAP_QUEST_PINS or {}) do
+                for _, pin in ipairs(type(pins) == "table" and pins or {}) do
+                    for _, spot in ipairs(type(pin) == "table" and pin.spots or {}) do
+                        for _, q in ipairs(type(spot) == "table" and spot.quests or {}) do
+                            local ends = false
+                            for _, act in ipairs(type(q) == "table" and q.acts or {}) do
+                                if act == "end" then ends = true end
+                            end
+                            if ends and q.id and pin.x and pin.y then
+                                local list = questPins[q.id] or {}
+                                questPins[q.id] = list
+                                list[#list + 1] = { dungeon = dungeon, spot = { floor = pin.floor or 1, x = pin.x, y = pin.y, npc = spot.name } }
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        local list = questPins[id]
+        if not list then return nil end
+        local name = NpcName(quest.turnin)
+        for _, hit in ipairs(list) do
+            if name and type(hit.spot.npc) == "string" and hit.spot.npc:lower() == name then return hit end
+        end
+        return list[1]
+    end
+    -- Handed in inside a dungeon: the spot on its map (the map's quest spot,
+    -- else the NPC's), else just its map.
     local function DungeonTurnIn(quest)
+        local pinned = QuestPin(quest)
+        if pinned then return pinned end
         local name = NpcName(quest.turnin)
         local known = name and DungeonNpc(name)
         if known then return known end
         local dungeon = InsideDungeon(quest)
         return dungeon and { dungeon = dungeon, spot = {} } or nil
+    end
+    -- turninall: inside a dungeon with no map page here (Lower Blackrock
+    -- Spire, Scholomance): its entrance on the world map.
+    local function EntranceSpot(quest)
+        local dungeon = NamedDungeon(quest)
+        if not dungeon and type(quest.turnin) == "string" and quest.turnin:lower():find("inside", 1, true) then
+            dungeon = QuestDungeon(quest.id)
+        end
+        local data = dungeon and FDJ.DB and FDJ.DB[dungeon]
+        local entrance = type(data) == "table" and data.entrance
+        if type(entrance) ~= "table" or not entrance.mapID or not entrance.x or not entrance.y then return nil end
+        return { mapID = entrance.mapID, x = entrance.x, y = entrance.y, label = entrance.label, detail = entrance.detail }
+    end
+    local function TurnInSpot(quest)
+        -- The spot given with the quest first: two places can share a name
+        -- (the Burned-Out Remains in The Barrens and in Westfall).
+        local given = quest.turninMap
+        if type(given) == "table" and given.mapID then return given end
+        -- turninall: a quest handed in at one of a dungeon map's quest spots
+        -- goes there (Dark Iron Legacy: Franclorn's monument in the Depths,
+        -- not his ghost outside).
+        if QuestPin(quest) then return nil end
+        local name = NpcName(quest.turnin)
+        if not name then return nil end
+        local own = FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[quest.id]
+        if own and NpcOf(own) == name then return own end
+        local spot = NpcSpot(name)
+        if spot then return spot end
+        if DungeonTurnIn(quest) then return nil end
+        return EntranceSpot(quest)
     end
     -- Where a quest is picked up: the journal's Show on Map spot, else the
     -- giver's spot by name. A quest started by an item has none.
@@ -1234,8 +1383,19 @@ do
         else
             info.low = type(quest.requires) == "number" and level ~= nil and level < quest.requires
             info.icon, info.grey, info.color = ICON_TODO, info.low, info.low and GREY or TODO
-            -- The ! shows where to pick the quest up.
+            -- The ! shows where to pick the quest up: a chain's next step
+            -- first, while none of its steps is in the log.
             info.start = StartSpot(quest)
+            local chain = FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[quest.id]
+            if type(chain) == "table" and not ChainStep(quest) then
+                for _, s in ipairs(chain) do
+                    if type(s) == "table" and type(s.id) == "number" and not s.itemStep and not TurnedIn(s.id) then
+                        local d = (FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[s.id]) or {}
+                        info.start = StartSpot({ id = s.id, pickup = d.pickup, startMap = d.map, startItem = d.startItem }) or info.start
+                        break
+                    end
+                end
+            end
             if not info.start then info.dungeonStart = DungeonStart(quest) end
             local step = ChainStep(quest)
             if step then
@@ -1728,6 +1888,7 @@ do
             spot = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(spot)) or spot
             FDJ.pendingMarkerQuestTitle = entry.name
             FDJ.pendingMarkerTurnIn = turnIn
+            FDJ.pendingMarkerQuestID = entry.step and entry.step.id -- autoclear
             show(spot, spot.label)
         end)
         mark:SetScript("OnEnter", function(self)
@@ -1822,7 +1983,12 @@ do
         -- The icon is a button: the ? of a quest ready to turn in is the
         -- game's own quest button and shows on the map where to hand the
         -- quest in (like Show Turn In).
-        local mark = CreateFrame("Button", nil, row)
+        -- The insecure action template lets a click target the NPC when
+        -- near (FDJ.MapMarkers.ConfigureTargetAndMarkAction, set on mouse-over).
+        local okMark, made = pcall(CreateFrame, "Button", nil, row, "InsecureActionButtonTemplate")
+        local mark = okMark and made or CreateFrame("Button", nil, row)
+        mark._fdjCanTarget = (okMark and made) and true or false
+        if mark._fdjCanTarget then mark:SetAttribute("useOnKeyDown", false) end
         row.mark = mark
         mark:SetSize(ICON_SIZE, ICON_SIZE)
         mark:SetPoint("CENTER", row, "TOPLEFT", ICON_X, -7)
@@ -1871,7 +2037,8 @@ do
         mark.glow:SetAllPoints(row.icon)
         mark.glow:SetTexture(ICON_LOG)
         mark.glow:SetBlendMode("ADD")
-        mark:SetScript("OnClick", function(self)
+        -- PostClick keeps the template's own click (the target macro).
+        mark:SetScript(mark._fdjCanTarget and "PostClick" or "OnClick", function(self)
             local info = self:GetParent().info
             if JustDragged() or not info then return end
             if info.state == "todo" then
@@ -1882,6 +2049,7 @@ do
                     local show = FDJ.MapMarkers and FDJ.MapMarkers.ShowRecordedLocationOnMap
                     if not show then return end
                     FDJ.pendingMarkerQuestTitle = info.name
+                    FDJ.pendingMarkerQuestID = info.quest and info.quest.id -- autoclear
                     show(spot, spot.label or info.quest.pickup)
                 elseif info.dungeonStart and FDJ.ShowTurnInOnDungeonMap and ShowJournal() then
                     FDJ.ShowTurnInOnDungeonMap(info.dungeonStart.dungeon, info.dungeonStart.spot, info.name, info.quest.id, true)
@@ -1902,6 +2070,8 @@ do
             if not show then return end
             FDJ.pendingMarkerQuestTitle = info.name
             FDJ.pendingMarkerTurnIn = not info.goTo
+            FDJ.pendingMarkerQuestID = info.quest and info.quest.id -- autoclear
+            FDJ.pendingMarkerObjective = info.goTo and true or nil
             show(spot, spot.label)
         end)
         mark:SetScript("OnMouseDown", function(self, button)
@@ -1913,6 +2083,9 @@ do
         mark:SetScript("OnEnter", function(self)
             local info = self:GetParent().info
             if not info then return end
+            -- The NPC this ? / ! leads to: targeted by the click when near.
+            local configure = FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction
+            if configure then configure(self, (info.state == "todo" and info.start) or info.turnin or nil, true) end
             if info.state == "todo" then
                 if not (info.start or info.dungeonStart) then return end
                 TooltipBeside(self, SIDE + 4)
@@ -2744,6 +2917,7 @@ do
             spot = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(spot)) or spot
             FDJ.pendingMarkerQuestTitle = title
             FDJ.pendingMarkerTurnIn = true
+            FDJ.pendingMarkerQuestID = type(quest) == "table" and quest.id or nil -- autoclear
             show(spot, spot.label)
             return
         end

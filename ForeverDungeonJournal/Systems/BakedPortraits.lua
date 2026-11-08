@@ -47,3 +47,162 @@ FDJ.AcquirePortrait = function(host, displayID)
     if liveAcquire then return liveAcquire(host, displayID) end
     return false
 end
+
+-- Portrait baking (1.9.4): /dj bake photographs the creature portraits that
+-- are not bundled yet (Systems/BakedPortraits.lua), so they can be bundled as
+-- Media\Portraits\<displayID>.tga and appear at once like the original
+-- dungeons' bosses. A full-screen sheet shows every portrait at 64 x 64
+-- screen pixels, once on black and once on white (the round edge's exact
+-- alpha comes from the two), and the game saves a lossless screenshot of
+-- each (Screenshots folder). Nothing else is changed; the sheet closes by
+-- itself.
+-- In this order on the sheet, left to right, top to bottom.
+FDJ.BAKE_DISPLAY_IDS = {
+    2317, 2460, 2462, 2499, 2514, 4973, 6124, 6374, 6687, 7971,
+    8687, 9291, 12235, 14424, 129891, 129894, 129895, 129900, 129945, 129954,
+    130061, 130102, 130235, 130427, 130432, 130436, 130440, 130447, 131644, 138667,
+    139455, 140092, 140708, 141215, 141217, 141218, 141219, 141443, 142144, 142245,
+    142322, 142826, 142837, 142840, 143673, 144023, 144170, 144175, 144188, 144189,
+    144209, 144210, 144224, 144378, 144475, 144487, 145787, 145809,
+}
+
+local SIZE, PITCH, MARGIN = 64, 80, 16 -- screen pixels
+local LOAD_WAIT, SHOT_WAIT = 6, 1.5    -- seconds
+
+local function Say(text)
+    print("|cffffd100Dungeon Journal|r " .. text)
+end
+
+local sheet
+local function Sheet()
+    if sheet then return sheet end
+    sheet = CreateFrame("Frame", nil, UIParent)
+    sheet:SetFrameStrata("TOOLTIP")
+    sheet:SetFrameLevel(9000)
+    sheet:EnableMouse(true)
+    sheet.back = sheet:CreateTexture(nil, "BACKGROUND")
+    sheet.back:SetAllPoints()
+    sheet.marks = {}
+    for i = 1, 2 do
+        local mark = sheet:CreateTexture(nil, "ARTWORK")
+        mark:SetColorTexture(1, 0, 0, 1)
+        sheet.marks[i] = mark
+    end
+    sheet.cells = {}
+    sheet:Hide()
+    return sheet
+end
+
+-- Lay one page of portraits out on the sheet, one sheet unit = one screen
+-- pixel. Returns how many fit on a page.
+local function Layout(page, ids)
+    local s = Sheet()
+    local w, h = 1920, 1080
+    if type(GetPhysicalScreenSize) == "function" then
+        local okSize, pw, ph = pcall(GetPhysicalScreenSize)
+        if okSize and tonumber(pw) and tonumber(ph) then w, h = pw, ph end
+    end
+    local parentScale = UIParent:GetEffectiveScale()
+    s:SetScale((768 / h) / parentScale)
+    s:ClearAllPoints()
+    s:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+    s:SetSize(w, h)
+    -- Red 4 x 4 marks at (4, 4) and (w - 8, h - 8): where the sheet's
+    -- corners are in the screenshot.
+    s.marks[1]:SetSize(4, 4)
+    s.marks[1]:ClearAllPoints()
+    s.marks[1]:SetPoint("TOPLEFT", s, "TOPLEFT", 4, -4)
+    s.marks[2]:SetSize(4, 4)
+    s.marks[2]:ClearAllPoints()
+    s.marks[2]:SetPoint("TOPLEFT", s, "TOPLEFT", w - 8, -(h - 8))
+    local cols = math.max(1, math.floor((w - 2 * MARGIN) / PITCH))
+    local rows = math.max(1, math.floor((h - 2 * MARGIN) / PITCH))
+    local per = cols * rows
+    for _, cell in ipairs(s.cells) do
+        cell.tex:Hide()
+        cell.label:Hide()
+    end
+    local first = (page - 1) * per
+    for i = 1, per do
+        local id = ids[first + i]
+        if not id then break end
+        local cell = s.cells[i]
+        if not cell then
+            cell = { tex = s:CreateTexture(nil, "ARTWORK"), label = s:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall") }
+            cell.label:SetTextColor(0.5, 0.5, 0.5)
+            s.cells[i] = cell
+        end
+        local col, row = (i - 1) % cols, math.floor((i - 1) / cols)
+        local x, y = MARGIN + col * PITCH, MARGIN + row * PITCH
+        cell.tex:SetSize(SIZE, SIZE)
+        cell.tex:ClearAllPoints()
+        cell.tex:SetPoint("TOPLEFT", s, "TOPLEFT", x, -y)
+        cell.tex:SetTexCoord(0, 1, 0, 1)
+        cell.tex:SetTexture(nil)
+        pcall(SetPortraitTextureFromCreatureDisplayID, cell.tex, id)
+        cell.tex:Show()
+        cell.label:ClearAllPoints()
+        cell.label:SetPoint("TOP", cell.tex, "BOTTOM", 0, -1)
+        cell.label:SetText(id)
+        cell.label:Show()
+    end
+    return per
+end
+
+function FDJ.BakePortraits()
+    if sheet and sheet:IsShown() then return end
+    if type(Screenshot) ~= "function" or not (C_Timer and C_Timer.After) then
+        Say("bake: this client cannot take screenshots from an addon.")
+        return
+    end
+    if InCombatLockdown and InCombatLockdown() then
+        Say("bake: not in combat.")
+        return
+    end
+    local ids = FDJ.BAKE_DISPLAY_IDS
+    local oldFormat = GetCVar and GetCVar("screenshotFormat")
+    pcall(SetCVar, "screenshotFormat", "tga")
+    if GameTooltip then GameTooltip:Hide() end
+    local s = Sheet()
+    local page, pages = 1, 1
+    local shots = 0
+    local function Finish()
+        s:Hide()
+        if oldFormat then pcall(SetCVar, "screenshotFormat", oldFormat) end
+        Say(string.format("bake: done, %d screenshots of %d portraits (Screenshots folder). Tell Claude.", shots, #ids))
+    end
+    local function Shot()
+        local ok = pcall(Screenshot)
+        if ok then shots = shots + 1 end
+        return ok
+    end
+    local function Page()
+        local per = Layout(page, ids)
+        pages = math.ceil(#ids / per)
+        s.back:SetColorTexture(0, 0, 0, 1)
+        s:Show()
+        C_Timer.After(LOAD_WAIT, function()
+            if not Shot() then
+                Say("bake: the game would not take the screenshot.")
+                Finish()
+                return
+            end
+            C_Timer.After(SHOT_WAIT, function()
+                s.back:SetColorTexture(1, 1, 1, 1)
+                C_Timer.After(SHOT_WAIT, function()
+                    Shot()
+                    C_Timer.After(SHOT_WAIT, function()
+                        if page < pages then
+                            page = page + 1
+                            Page()
+                        else
+                            Finish()
+                        end
+                    end)
+                end)
+            end)
+        end)
+    end
+    Say(string.format("bake: photographing %d portraits (about 15 seconds). Don't press any keys.", #ids))
+    Page()
+end

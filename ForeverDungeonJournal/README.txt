@@ -1,4 +1,4 @@
-DungeonJournal 1.7.2
+DungeonJournal 1.7.3
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +9,147 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 1.7.3
+- New option "Forever Dungeons Only" (Options > Dungeon List, off by
+  default): the same switch as the WoW Forever emblem at the top left of the
+  dungeon list. If the list only shows the Forever dungeons, untick it (or
+  click the emblem again) to see every dungeon.
+- Alcaz Prison and Blackmaw Hold: their Quests tab says "Full Quests TBD",
+  and a faction with no quests listed yet reads "No Alliance quests known
+  for this dungeon yet" (they are new and their quests are still being
+  found).
+- Alcaz Prison is open:
+  - Its page has the five bosses in order (Overseer Wrex, The Questioner,
+    Tidemistress Ca'zass, Katerina the Cleaner, Blazeroar), their levels,
+    the drops seen so far and probable drops, a map with the entrance, and
+    new card art (its loading screen).
+  - Loot seen dropping: Grips of Control and Wrex's Pinky Ring (Overseer
+    Wrex), Girdle of Extracted Answers, Fingerbreaker Stamp and Defias
+    Enforcer's Shoulderpads (The Questioner), Tidesong Wand and Seascale
+    Bracers (Tidemistress Ca'zass), Cutthroat Chestguard (Katerina the
+    Cleaner), Defias Enforcer's Prowlers (trash). The Garb's Mask and Chest
+    are listed as probable trash drops.
+  - Horde quests: Thrall Needs to Know with its chain (No Orc Left Behind
+    from Sergeant Ulka outside the prison, The Honor of the Kor'kron and Bad
+    News for Folkar with Commander Folkar inside), handed in to Thrall for
+    Fatebound Buckler, Courier's Clasp or Dustwallow Dirk. Blood Red
+    Bandanas (8 from the Defias guards, to Eitrigg in Orgrimmar). A Little
+    Payback (level 53: 15 Strashaz Soldiers, 8 Strashaz Enchantresses and
+    Ca'zass's Head; who gives it is not known yet). Their quest IDs are not
+    public yet: the journal learns them when you take the quests.
+- Blackmaw Hold is open: its page has the seven bosses in order (Withermaw,
+  Impaan the Imprisoner, Elder Shaman Bloodmane, Bonesnout the Unbroken,
+  Varrox Bleakhoof, Blackmaw Behemoth, Unbound Spirit), the levels seen so
+  far and the drops seen so far (Withering Grips, Impish Chain Hood, Lucky
+  Shovelnose Tuft). The rare Moontouched Wanderer drops Claymore of Two
+  Moons; Satyr's Touch is a trash drop from the Legashi Ritualists. New card
+  art (its loading screen).
+- Boss portraits of The Drowned City, Krol'dok Stronghold, Alcaz Prison and
+  Blackmaw Hold no longer stay question marks: they are drawn at login with
+  the other dungeons' (Overseer Wrex's once his NPC ID is known).
+- The Drowned City:
+  - New map, with the Eternal Amphitheater and the Abyssal Dais named.
+  - Alliance quests are chains now: Findings for the Explorer's League and
+    The Web of Magic show the whole chain. The Second Rebellion and Bad
+    Medicine (Sergeant Yohwa, done together), Kurzen's Mystery, Troll
+    Witchery, An Acquaintance in Southshore (Brother Nimetz, Rebel Camp),
+    then Take Two With Water or Magics of the Drowned City (Loremaster
+    Dibbs, Southshore), handed in to Historian Karnik in Ironforge or Abra
+    Cadabra in Dalaran. Each step has its givers on the map; Kurzen's
+    Mystery marks the four troll tablets.
+  - Ancient Gurubashi Secrets is given by Archmage Timear, outside where the
+    Violet Hold stood in Dalaran. Shady Saltseers and The Saltseer Captain:
+    Krazek in Booty Bay.
+  - Horde: The Only Good Brinescale... and Enemies in the Water are given
+    and handed in by Commander Aggro'gosh at Grom'gol. Its chain shows the
+    way there: The Vile Reef, The Gurubashi Legends of Old, Enemies in the
+    Water, then Locating the Lost City.
+  - Robe of the Drowned (Primeval Elemental), Harpoon of Command (Var'Taka)
+    and Oathbound Bracers (Zul'Alai) are confirmed drops now.
+- Krol'dok Stronghold:
+  - Loot: Mugg's Jabber (Overlord Mugg), Krol'dok Warplate Chest (Nar'gurk),
+    Slavecrusher Scepter (Slavecrusher Grox) and Bloodied Gutslicer (War
+    Handler Ashka). Emblem of Slamming, Chain of Binding and Chain of the
+    Corruptor now have their item IDs (real tooltips).
+  - Vengeance of the Highborne is given and handed in by Ranath Nightstride,
+    in the inn in Dalaran.
+- City of Dalaran: Guardian's Emblem, from Fragmented Sentries (trash).
+- Razorfen Downs: Coldbringer Spine (staff) drops from Amnennar the
+  Coldbringer. The Coldbringer's Eye for the Horde (who gives it is not
+  known yet); the Alliance one is confirmed from Archmage Lan'dalock in
+  Dalaran.
+- The Deadmines: Destruction in Deadmines now lists the storyline's final
+  quest (use the detonator) with the dungeon step (plant the explosives at
+  the forge) as step 10 of its chain, instead of the dungeon step repeating
+  itself inside its own chain. Alba Fairmoon waits at the Deadmines exit for
+  both Destruction in Deadmines quests (not at the Sentinel Hill inn).
+- Gnomeregan: Rig Wars is listed as a quest of its own (it stays the first
+  step of Gnomer-gooooone!), and its pin on the dungeon map opens Rig Wars.
+- The Glowing Shard: the objective reads "0/1 Speak with Sputtervalve in
+  Ratchet" (then "1/1 ...", greyed, once you have spoken to him), with a
+  Show on Map button under it that marks Sputtervalve by the flight master
+  in Ratchet. Falla Sagewind is still where it is handed in.
+- Quests:
+  - The turn-in ? (quest list, quest page, quest tracker) works for every
+    quest whose hand-in place is known. NPCs in the world have their spots
+    (Darnassus, Ironforge, Moonglade, Felwood, Azshara, Winterspring, Tarren
+    Mill, Blackrock Mountain, Riverglades, Skywatcher Plateau...); quests
+    handed in inside a dungeon open its map on the right level with the ? on
+    the NPC or object; inside Lower/Upper Blackrock Spire and Scholomance
+    (no map page yet), the dungeon's entrance on the world map. Detonation
+    at a Distance is handed in to Jasper Fel (SI:7).
+  - A quest ready to hand in shows only the big ? and "Turn in" in the quest
+    list; the chain, In Dungeon, class and faction icons come back with the
+    green tick once handed in.
+  - Lead-in quests that end inside a dungeon work like In Search of Thaelrid
+    > Blackfathom Villainy: the lead-in is its own entry with "Leads to" in
+    its Notes, and the next quest starts inside the dungeon with "Requires:
+    <lead-in>" and a button back to it. Songblade Search > Fallen in the Fen
+    and Lost in the Thicket Things > Heartwoven (Excavation Site: Wetlands),
+    Searching for the Lost Satchel > Returning the Lost Satchel (Ragefire
+    Chasm), Operative Bijou > Bijou's Belongings (Lower Blackrock Spire),
+    Legends of Maraudon > The Scepter of Celebras (Maraudon).
+  - Quest tracker: clicking a ? or ! marks the NPC on the map and, when you
+    are close, targets them too. The ! of a chain you have not started
+    points to where its first step is picked up.
+- Maps:
+  - World map: a turn-in spot marked from the journal (Show Turn In, the
+    tracker's ?) shows the game's own yellow ? quest button, bigger, instead
+    of the X; quest givers keep the X. A pin you put on the map for a quest
+    clears itself: a quest giver's once you pick the quest up, a turn-in ?
+    once you hand it in, an objective pin once the objective is done.
+  - Dungeon map: when the quest tracker, Turn in: Dungeon, the quest list's
+    Turn in or an item opens the dungeon map for a quest, its ? or ! pulses
+    for a few seconds. Its tooltip reads "NPC - Quest".
+- Loot Filter:
+  - The Armor drop-down also has Ring, Neck, Trinket and Cloak. Tick one (or
+    more) to see only those items; combine them with an armor type (e.g.
+    Cloth + Ring) or a weapon type (e.g. Trinket + Dagger).
+  - Show results with stats ticked: an item the game had not loaded yet
+    could be left out the first time (Old Serra'kis' Glowing Thresher Cape
+    for Cloak + Healing). Such items are now read again a second later and
+    the results update.
+- Cozy Sleeping Bag arrow:
+  - Knows Teldrassil is an island: in Darnassus it points to the portal west
+    of the Temple Gardens ("Take the portal to Rut'theran Village"), then on
+    to the hippogryph master or the boat to Auberdine, and the other way
+    round.
+  - Plans through as many boats, zeppelins and portals as the way takes, and
+    on one continent too when a boat is quicker than the long walk. Boats
+    and portals say where they land ("Take the boat to Auberdine").
+  - Hearthstone: when it is ready and going from where it takes you is
+    quicker, the arrow says so ("Hearth to Auberdine"). Where it takes you
+    is learnt when you set it at an innkeeper or use it; until then from the
+    flight point of that name or the capital's inn.
+  - Flight points are only taken from a flight master's map (where you are,
+    and where you can fly). The list kept so far is started again once: open
+    the flight map at any flight master to fill it.
+- RPG Mode: killing Rath'Mael unlocks Ruins of Lordaeron again. A final boss
+  now also counts by name inside its own dungeon (when the game uses another
+  NPC ID), when you see it die nearby (not only as your target), and as soon
+  as it is found; a final boss you already killed whose dungeon did not
+  unlock is unlocked at login.
 
 CHANGES IN 1.7.2
 - Krol'dok Stronghold: a full page now, with its loading screen. Its bosses

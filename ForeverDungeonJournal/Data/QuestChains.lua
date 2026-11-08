@@ -117,7 +117,7 @@ FDJ.QUEST_PREREQ_CHAINS = {
     -- Rig Wars only needs to be accepted/in progress to make Chief Engineer
     -- Scooty available; it does not need to be completed first.
     [2843] = {
-        { id = 2841, name = "Rig Wars" },
+        { id = 2841, name = "Rig Wars", standalone = true }, -- also listed on its own (players looked for it)
         { id = 2842, name = "Chief Engineer Scooty" },
     },
 
@@ -1985,7 +1985,8 @@ for _, dungeon in pairs(FDJ.DB or {}) do
             local chain = quest.id and FDJ.QUEST_PREREQ_CHAINS[quest.id]
             if chain then
                 for _, step in ipairs(chain) do
-                    if step.id and step.id ~= quest.id then steps[step.id] = true end
+                    -- standalone: a step also listed on its own (Rig Wars)
+                    if step.id and step.id ~= quest.id and not step.standalone then steps[step.id] = true end
                 end
             end
         end

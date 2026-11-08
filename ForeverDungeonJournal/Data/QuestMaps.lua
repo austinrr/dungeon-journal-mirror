@@ -445,7 +445,7 @@ FDJ.MAP_QUEST_PINS = {
         } },
         { floor = 4, x = 0.354, y = 0.177, spots = {
             { name = "Thermaplugg's Safe", quests = {
-                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", main = 2843, acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" },
+                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" }, -- its own quest (still a step of Gnomer-gooooone!)
             } },
         } },
     },

@@ -36,7 +36,8 @@ local function Settings()
     if type(db.armor) == "string" then db.armorTypes[db.armor] = true end
     db.armor = nil
     for key in pairs(db.armorTypes) do
-        if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate" then db.armorTypes[key] = nil end
+        if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate"
+            and key ~= "Cloak" and key ~= "Ring" and key ~= "Neck" and key ~= "Trinket" then db.armorTypes[key] = nil end
     end
     -- Weapon types ticked in the Weapon Filter (none ticked = no filter).
     if type(db.weaponTypes) ~= "table" then db.weaponTypes = {} end
@@ -77,7 +78,8 @@ end
 -- ------------------------------------------------------------ armor type
 -- Armor filter: "Cloth" / "Leather" / "Mail" / "Plate", or nil for all.
 -- Only armor pieces of another type are filtered out; weapons, shields,
--- rings, necks, trinkets and cloaks have no armor type and always stay.
+-- rings, necks, trinkets and cloaks have no armor type and stay (unless
+-- Cloak / Ring / Neck / Trinket is ticked too, see below).
 local ARMOR_TYPES = { "Cloth", "Leather", "Mail", "Plate" }
 -- Cloaks are stored as "Back, Cloth" but every armor type wears them.
 local function IsCloak(item)
@@ -97,6 +99,30 @@ local function ArmorType(item)
         end
     end
     return nil
+end
+-- Cloak / Ring / Neck / Trinket sit in the same drop-down, under the armor
+-- types. They have no armor type, so they are matched on the item's slot.
+-- Ticking any of them turns the drop-down into "show only these": ticked
+-- slots and armor of ticked types stay, the rest goes; weapons are left to
+-- the Weapon filter.
+local JEWELRY_TYPES = { "Cloak", "Ring", "Neck", "Trinket" }
+local JEWELRY_SLOT = { Back = "Cloak", Finger = "Ring", Neck = "Neck", Trinket = "Trinket" }
+local ARMOR_CHOICES = { "Cloth", "Leather", "Mail", "Plate", "Cloak", "Ring", "Neck", "Trinket" }
+local ARMOR_LABEL_KEY = { Cloak = "LF_CLOAK", Ring = "LF_RING", Neck = "LF_NECK", Trinket = "LF_TRINKET" }
+local function JewelryType(item)
+    local slot = type(item) == "table" and item[3]
+    if type(slot) ~= "string" then return nil end
+    local first = slot:match("^%s*([^,]+)")
+    if not first then return nil end
+    return JEWELRY_SLOT[(first:gsub("%s+$", ""))]
+end
+local function AnyJewelryTicked(t)
+    for _, key in ipairs(JEWELRY_TYPES) do if t[key] then return true end end
+    return false
+end
+local function ArmorLabel(key)
+    if ARMOR_LABEL_KEY[key] then return L(ARMOR_LABEL_KEY[key]) end
+    return (FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(key)) or key
 end
 FDJ.LootFilterSettings = Settings
 
@@ -516,12 +542,21 @@ function FDJ.FilterBossLoot(boss)
             if keep and armor then
                 local itemArmor = ArmorType(item)
                 if itemArmor and not armor[itemArmor] then keep = false end
+                if keep and AnyJewelryTicked(armor) then
+                    local jewel = JewelryType(item)
+                    if jewel then
+                        if not armor[jewel] then keep = false end
+                    elseif not itemArmor
+                        and not (weapons and WeaponType(item)) then
+                        keep = false
+                    end
+                end
             end
             if keep and weapons then
                 local itemWeapon = WeaponType(item)
                 if itemWeapon then
                     if not weapons[itemWeapon] then keep = false end
-                elseif not (armor and (ArmorType(item) or IsCloak(item))) then
+                elseif not (armor and (ArmorType(item) or IsCloak(item) or armor[JewelryType(item) or ""])) then
                     keep = false
                 end
             end
@@ -700,16 +735,16 @@ local function RefreshWindow(frame)
     if win.armor then
         local ticked = Settings().armorTypes or {}
         local names = {}
-        for _, armor in ipairs(ARMOR_TYPES) do
+        for _, armor in ipairs(ARMOR_CHOICES) do
             if ticked[armor] then
-                names[#names + 1] = (FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(armor)) or armor
+                names[#names + 1] = ArmorLabel(armor)
             end
         end
         -- Like Resistances: "Armor", or "Armor (2)" with ticks (nothing ticked = all).
         win.armor.text:SetText(#names > 0 and (L("LF_ARMOR_BTN") .. " (" .. #names .. ")") or L("LF_ARMOR_BTN"))
         for _, option in ipairs(win.armor.options or {}) do
             local value = option.fdjArmor
-            option.text:SetText(value and ((FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(value)) or value) or L("LF_ARMOR_ALL"))
+            option.text:SetText(value and ArmorLabel(value) or L("LF_ARMOR_ALL"))
             local checked
             if value then checked = ticked[value] and true or false else checked = #names == 0 end
             option.check:SetShown(checked)
@@ -854,8 +889,18 @@ local function CreateWindow(frame)
 
     local menu = CreateFrame("Frame", nil, win.armor, "BackdropTemplate")
     win.armor.menu = menu
-    local choices = { "Cloth", "Leather", "Mail", "Plate" }
-    menu:SetSize(130, #choices * 22 + 10)
+    local choices = ARMOR_CHOICES
+    -- A thin divider separates the armor types from Cloak / Ring / Neck / Trinket.
+    local GAP = 7
+    local function RowY(i) return -5 - (i - 1) * 22 - ((i > #ARMOR_TYPES) and GAP or 0) end
+    menu:SetSize(130, #choices * 22 + 10 + GAP)
+    do
+        local line = menu:CreateTexture(nil, "ARTWORK")
+        line:SetColorTexture(0.57, 0.43, 0.20, 0.6)
+        line:SetHeight(1)
+        line:SetPoint("TOPLEFT", 10, RowY(#ARMOR_TYPES) - 22 - math.floor(GAP / 2))
+        line:SetPoint("TOPRIGHT", -10, RowY(#ARMOR_TYPES) - 22 - math.floor(GAP / 2))
+    end
     menu:SetPoint("TOPLEFT", win.armor, "BOTTOMLEFT", -4, -4)
     menu:SetFrameStrata("TOOLTIP")
     menu:SetFrameLevel(win:GetFrameLevel() + 30)
@@ -871,8 +916,8 @@ local function CreateWindow(frame)
     win.armor.options = {}
     for i, value in ipairs(choices) do
         local option = CreateFrame("Button", nil, menu)
-        option:SetPoint("TOPLEFT", 6, -5 - (i - 1) * 22)
-        option:SetPoint("TOPRIGHT", -6, -5 - (i - 1) * 22)
+        option:SetPoint("TOPLEFT", 6, RowY(i))
+        option:SetPoint("TOPRIGHT", -6, RowY(i))
         option:SetHeight(21)
         option:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         option.fdjArmor = value or nil
@@ -1633,6 +1678,7 @@ end
 
 -- Read the tooltips of every loot item a few per frame, then call onDone.
 local warmWorker, warmQueue, warmDone, requestedData
+local warmLeft = 0 -- settle: items whose tooltip was still empty at the last read
 local WARM_PER_FRAME = 8
 local function WarmTooltips(onDone)
     local queue = {}
@@ -1646,6 +1692,7 @@ local function WarmTooltips(onDone)
         end
     end
     warmDone = onDone
+    warmLeft = 0
     if #queue == 0 or not CreateFrame then
         warmQueue = nil
         if onDone then onDone() end
@@ -1663,7 +1710,7 @@ local function WarmTooltips(onDone)
                 if not requestedData and C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
                     pcall(C_Item.RequestLoadItemDataByID, id)
                 end
-                TooltipText(id)
+                if not TooltipText(id) then warmLeft = warmLeft + 1 end -- settle
             end
             if #q == 0 then
                 warmQueue = nil
@@ -1692,6 +1739,7 @@ OpenLootFilterPage = function(frame, keepBoss)
     local bosses, itemCount = BuildPage()
     if #bosses == 0 then
         FDJ.ShowLootFilterList(frame) -- shows the "no items match" message
+        if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end -- settle
         return
     end
     if frame.lootFilterResults then frame.lootFilterResults:Hide() end
@@ -1720,6 +1768,7 @@ OpenLootFilterPage = function(frame, keepBoss)
         ForeverDungeonJournalDB.lastDungeon = previous or (FDJ.ORDER and FDJ.ORDER[1])
         ForeverDungeonJournalDB.lastBoss = 1
     end
+    if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end -- settle
 end
 
 local function PageIsOpen(frame)
@@ -1734,6 +1783,43 @@ local function RebuildOpenPage(frame)
     FDJ.ShowLootFilterResults(frame, page and page.bosses and page.bosses[bossIndex])
 end
 FDJ.RebuildLootFilterPage = RebuildOpenPage
+
+-- settle (1.9.3): an item the game had not loaded yet when the results were
+-- built (its tooltip still empty) cannot be checked, so it is left out. Its
+-- data usually came in while the other tooltips were still being read, and
+-- the page, not open yet, missed the news: the item only showed at the next
+-- Show results (Old Serra'kis' Glowing Thresher Cape). Now such items are
+-- read again a second later, up to 5 times, and the results are built again
+-- when the count of matching items changes.
+local settleToken, SETTLE_TRIES = 0, 5
+function FDJ.SettleLootFilterResults(frame, tries)
+    if not (C_Timer and type(C_Timer.After) == "function") then return end
+    if not tries then
+        settleToken = settleToken + 1
+        tries = 0
+    end
+    if warmLeft == 0 or tries >= SETTLE_TRIES then return end
+    local token = settleToken
+    local panel = frame and frame.lootFilterResults
+    local function Showing()
+        return PageIsOpen(frame) or (panel ~= nil and panel:IsShown())
+    end
+    C_Timer.After(1, function()
+        if token ~= settleToken or not Showing() then return end
+        WarmTooltips(function()
+            if token ~= settleToken or not Showing() then return end
+            local open = PageIsOpen(frame)
+            local _, count = BuildPage()
+            local page = FDJ.DB[PAGE_KEY]
+            local before = (open and page and page.fdjItemCount) or 0
+            if count ~= before then
+                if open then RebuildOpenPage(frame) else FDJ.ShowLootFilterResults(frame) end
+            else
+                FDJ.SettleLootFilterResults(frame, tries + 1)
+            end
+        end)
+    end)
+end
 
 -- Item data arrives asynchronously; pick up items that could not be checked yet.
 local pageWatcher = CreateFrame and CreateFrame("Frame")
