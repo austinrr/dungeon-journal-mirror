@@ -34,7 +34,14 @@ FDJ.QUEST_START_MAPS = {
     [386] = { mapID = 1433, x = 0.212, y = 0.466, label = "Guard Berton — Lakeshire" },
     [377] = { mapID = 1431, x = 0.720, y = 0.478, label = "Councilman Millstipe — Darkshire" },
     [387] = { mapID = 1453, x = 0.518, y = 0.693, label = "Warden Thelwater — The Stockade", targetName = "Warden Thelwater" },
-    [388] = { mapID = 1453, x = 0.736, y = 0.466, label = "Nikova Raskol — Old Town" },
+    -- Nikova Raskol walks a loop around Old Town. The old spot was Classic's
+    -- (73.6, 46.6), which on Forever's Stormwind map is north of Old Town.
+    -- Her path: Wowhead's sightings moved onto Forever's map (they match the
+    -- spots Forever players report: 73.4, 62.3 and 71.8, 60.1).
+    -- On the map the pin walks her loop (x/y: the middle of it, for
+    -- "near the spot" checks).
+    [388] = { mapID = 1453, x = 0.744, y = 0.600, label = "Nikova Raskol — Old Town", targetName = "Nikova Raskol",
+        patrol = { { 0.734, 0.554 }, { 0.763, 0.602 }, { 0.761, 0.637 }, { 0.737, 0.622 }, { 0.722, 0.608 } } },
     [378] = { mapID = 1437, x = 0.496, y = 0.182, label = "Motley Garmason — Dun Modr" },
     [391] = { mapID = 1453, x = 0.518, y = 0.693, label = "Warden Thelwater — The Stockade", targetName = "Warden Thelwater" },
 

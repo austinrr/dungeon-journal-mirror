@@ -445,6 +445,9 @@ local function CreateMapMarker(key)
         local fallbackDetail = target.markerType == "dungeon" and L("DUNGEON_ENTRANCE") or L("QUEST_STARTS_HERE")
         if target.turnIn then detailText, fallbackDetail = nil, L("TURN_IN_HERE") end
         GameTooltip:AddLine(detailText or fallbackDetail, 1, 0.82, 0.05)
+        if type(target.patrol) == "table" then
+            GameTooltip:AddLine(L("MAP_PATROL"), 1.00, 0.86, 0.35, true)
+        end
         if IsTargetableNPCMarker(target) and self._fdjCanTarget then
             GameTooltip:AddLine(L("MAP_LEFT_TARGET"), 0.35, 1.00, 0.35)
         end
@@ -494,16 +497,22 @@ local function PositionMarker(marker, target, parent)
         ConfigureMarkerTargetAction(marker, target)
     end
 
+    -- patrolpath: the pin of an NPC that walks around walks its path.
+    local px, py = target.x, target.y
+    if type(target.patrol) == "table" and FDJ.MapPatrol and FDJ.MapPatrol.Position then
+        local ok, ax, ay = pcall(FDJ.MapPatrol.Position, target, marker, parent)
+        if ok and ax and ay then px, py = ax, ay end
+    end
     local positioned = false
     if type(WorldMapFrame.SetPinPosition) == "function" then
-        local ok = pcall(WorldMapFrame.SetPinPosition, WorldMapFrame, marker, target.x, target.y)
+        local ok = pcall(WorldMapFrame.SetPinPosition, WorldMapFrame, marker, px, py)
         positioned = ok
     end
     if not positioned then
         local width, height = parent:GetWidth(), parent:GetHeight()
         if not width or not height or width <= 1 or height <= 1 then return end
         marker:ClearAllPoints()
-        marker:SetPoint("CENTER", parent, "TOPLEFT", width * target.x, -height * target.y)
+        marker:SetPoint("CENTER", parent, "TOPLEFT", width * px, -height * py)
     end
 
     local isDungeon = target.markerType == "dungeon"
@@ -524,6 +533,214 @@ local function PositionMarker(marker, target, parent)
     end
 
     marker:Show()
+end
+
+-- patrolpath: an NPC that walks around (target.patrol = points on the pin's
+-- own map, x/y 0-1) gets its path drawn as a closed loop, in the travel
+-- route's style (a line with a dark edge), and its pin walks along it so it
+-- reads as a patrol. The pin stops while the mouse is on it, so it can be
+-- clicked. target.patrolLoop = false: walked back and forth, not a loop.
+-- (In a do-block, reached through FDJ.MapPatrol: this file is at Lua's
+-- 200-locals limit.)
+do
+local Patrol = {
+    lines = {}, shadowLines = {}, joints = {}, shadowJoints = {},
+    state = setmetatable({}, { __mode = "k" }),
+    COLOR = { 1.00, 0.55, 0.15 }, SHADOW_COLOR = { 0.05, 0.01, 0.01, 0.75 },
+    THICK = 3, SHADOW_THICK = 6,
+}
+FDJ.MapPatrol = Patrol
+
+function Patrol.Hide()
+    Patrol.key = nil
+    for _, pool in ipairs({ Patrol.lines, Patrol.shadowLines, Patrol.joints, Patrol.shadowJoints }) do
+        for _, piece in ipairs(pool) do piece:Hide() end
+    end
+end
+
+function Patrol.Line(index, shadow)
+    local pool = shadow and Patrol.shadowLines or Patrol.lines
+    local line = pool[index]
+    if not line and type(Patrol.frame.CreateLine) == "function" then
+        line = Patrol.frame:CreateLine(nil, "OVERLAY", nil, shadow and 5 or 6)
+        if shadow then
+            local c = Patrol.SHADOW_COLOR
+            line:SetColorTexture(c[1], c[2], c[3], c[4])
+        else
+            local c = Patrol.COLOR
+            line:SetColorTexture(c[1], c[2], c[3], 1)
+        end
+        line:SetThickness(shadow and Patrol.SHADOW_THICK or Patrol.THICK)
+        pool[index] = line
+    end
+    return line
+end
+
+-- Round joints, like the route's: no notches where the short pieces meet.
+function Patrol.Joint(index, shadow)
+    local pool = shadow and Patrol.shadowJoints or Patrol.joints
+    local dot = pool[index]
+    if not dot then
+        dot = Patrol.frame:CreateTexture(nil, "OVERLAY", nil, shadow and 5 or 6)
+        dot:SetTexture("Interface\\CHARACTERFRAME\\TempPortraitAlphaMask")
+        local c = shadow and Patrol.SHADOW_COLOR or Patrol.COLOR
+        dot:SetVertexColor(c[1], c[2], c[3], c[4] or 1)
+        local size = shadow and Patrol.SHADOW_THICK or Patrol.THICK
+        dot:SetSize(size, size)
+        pool[index] = dot
+    end
+    return dot
+end
+
+-- Catmull-Rom through the points (pixels), closed for a loop.
+function Patrol.Curve(points, loop)
+    local n = #points
+    local function P(i)
+        if loop then return points[(i - 1) % n + 1] end
+        if i < 1 then i = 1 elseif i > n then i = n end
+        return points[i]
+    end
+    local out = {}
+    for i = 1, loop and n or (n - 1) do
+        local p0, p1, p2, p3 = P(i - 1), P(i), P(i + 1), P(i + 2)
+        for s = 0, 15 do
+            local t = s / 16
+            local t2, t3 = t * t, t * t * t
+            out[#out + 1] = {
+                x = 0.5 * (2 * p1.x + (p2.x - p0.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2
+                    + (3 * p1.x - p0.x - 3 * p2.x + p3.x) * t3),
+                y = 0.5 * (2 * p1.y + (p2.y - p0.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2
+                    + (3 * p1.y - p0.y - 3 * p2.y + p3.y) * t3),
+            }
+        end
+    end
+    local last = loop and points[1] or points[n]
+    out[#out + 1] = { x = last.x, y = last.y }
+    return out
+end
+
+-- The path of a target on a canvas of this size, in canvas units, with the
+-- distance along it at every point (cached on the target).
+function Patrol.Path(target, width, height)
+    if type(target.patrol) ~= "table" or not width or not height or width <= 1 or height <= 1 then return nil end
+    local key = math.floor(width + 0.5) .. "x" .. math.floor(height + 0.5)
+    local cached = target._fdjPatrolPath
+    if cached and cached.key == key then return cached end
+    local points = {}
+    for _, p in ipairs(target.patrol) do
+        local px, py = tonumber(p[1] or p.x), tonumber(p[2] or p.y)
+        if px and py then points[#points + 1] = { x = px * width, y = py * height } end
+    end
+    if #points < 2 then return nil end
+    local curve = Patrol.Curve(points, target.patrolLoop ~= false)
+    local cum, total = { 0 }, 0
+    for i = 2, #curve do
+        local dx, dy = curve[i].x - curve[i - 1].x, curve[i].y - curve[i - 1].y
+        total = total + math.sqrt(dx * dx + dy * dy)
+        cum[i] = total
+    end
+    if total <= 0 then return nil end
+    cached = { key = key, curve = curve, cum = cum, total = total, loop = target.patrolLoop ~= false }
+    target._fdjPatrolPath = cached
+    return cached
+end
+
+-- Where the walking pin is now (x/y 0-1). One lap takes 6-16 seconds.
+function Patrol.Position(target, marker, parent)
+    local width, height = parent:GetWidth(), parent:GetHeight()
+    local path = Patrol.Path(target, width, height)
+    if not path then return nil end
+    local now = (GetTime and GetTime()) or 0
+    local st = Patrol.state[target]
+    if not st then
+        st = { dist = 0, last = now }
+        Patrol.state[target] = st
+    end
+    local dt = now - st.last
+    st.last = now
+    if dt < 0 or dt > 0.5 then dt = 0 end -- the map was closed: carry on from there
+    local lap = math.max(6, math.min(16, path.total / 16))
+    local span = path.loop and path.total or path.total * 2
+    if not (marker and marker.IsMouseOver and marker:IsMouseOver()) then
+        st.dist = (st.dist + dt * path.total / lap) % span
+    end
+    local d = st.dist
+    if not path.loop and d > path.total then d = span - d end -- on the way back
+    local cum, curve = path.cum, path.curve
+    local lo, hi = 1, #cum
+    while hi - lo > 1 do
+        local mid = math.floor((lo + hi) / 2)
+        if cum[mid] <= d then lo = mid else hi = mid end
+    end
+    local seg = cum[hi] - cum[lo]
+    local f = seg > 0 and (d - cum[lo]) / seg or 0
+    local a, b = curve[lo], curve[hi]
+    return (a.x + (b.x - a.x) * f) / width, (a.y + (b.y - a.y) * f) / height
+end
+
+function Patrol.Update(parent, currentMapID)
+    local list = {}
+    for _, target in pairs(mapTargets) do
+        if type(target.patrol) == "table" and #target.patrol >= 2 and target.mapID == currentMapID then
+            list[#list + 1] = target
+        end
+    end
+    local width, height = parent:GetWidth(), parent:GetHeight()
+    if #list == 0 or not width or not height or width <= 1 or height <= 1 then
+        Patrol.Hide()
+        return
+    end
+    table.sort(list, function(a, b) return tostring(a._fdjKey) < tostring(b._fdjKey) end)
+    local key = tostring(currentMapID) .. ":" .. math.floor(width + 0.5) .. "x" .. math.floor(height + 0.5)
+    for _, target in ipairs(list) do key = key .. ":" .. tostring(target._fdjKey) end
+    if not Patrol.frame then
+        Patrol.frame = CreateFrame("Frame", nil, parent)
+        Patrol.frame:EnableMouse(false)
+    end
+    local frame = Patrol.frame
+    if frame:GetParent() ~= parent then
+        frame:SetParent(parent)
+        Patrol.key = nil
+    end
+    frame:ClearAllPoints()
+    frame:SetAllPoints(parent)
+    frame:SetFrameLevel(9990) -- under the pins (10000)
+    frame:Show()
+    if Patrol.key == key then return end
+    Patrol.key = key
+
+    local usedLines, usedJoints = 0, 0
+    for _, target in ipairs(list) do
+        local path = Patrol.Path(target, width, height)
+        local curve = path and path.curve or {}
+        for i = 1, #curve do
+            local a = curve[i]
+            usedJoints = usedJoints + 1
+            for _, shadow in ipairs({ true, false }) do
+                local dot = Patrol.Joint(usedJoints, shadow)
+                dot:ClearAllPoints()
+                dot:SetPoint("CENTER", frame, "TOPLEFT", a.x, -a.y)
+                dot:Show()
+            end
+            local b = curve[i + 1]
+            if b then
+                usedLines = usedLines + 1
+                for _, shadow in ipairs({ true, false }) do
+                    local line = Patrol.Line(usedLines, shadow)
+                    if line then
+                        line:SetStartPoint("TOPLEFT", frame, a.x, -a.y)
+                        line:SetEndPoint("TOPLEFT", frame, b.x, -b.y)
+                        line:Show()
+                    end
+                end
+            end
+        end
+    end
+    for i = usedLines + 1, #Patrol.lines do Patrol.lines[i]:Hide() end
+    for i = usedLines + 1, #Patrol.shadowLines do Patrol.shadowLines[i]:Hide() end
+    for i = usedJoints + 1, #Patrol.joints do Patrol.joints[i]:Hide() end
+    for i = usedJoints + 1, #Patrol.shadowJoints do Patrol.shadowJoints[i]:Hide() end
+end
 end
 
 -- The smoothed polyline only depends on the route, the open map and the canvas
@@ -1209,6 +1426,7 @@ end
 local function UpdateMapMarkers()
     if not WorldMapFrame or not WorldMapFrame:IsShown() then
         for _, marker in pairs(mapMarkers) do marker:Hide() end
+        FDJ.MapPatrol.Hide()
         return false
     end
 
@@ -1231,6 +1449,7 @@ local function UpdateMapMarkers()
     for key, marker in pairs(mapMarkers) do
         if not mapTargets[key] then marker:Hide() end
     end
+    pcall(FDJ.MapPatrol.Update, parent, currentMapID)
     UpdateRouteOverlay()
     return true
 end

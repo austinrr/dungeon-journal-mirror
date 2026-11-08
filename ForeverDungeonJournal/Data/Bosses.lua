@@ -16,11 +16,24 @@ FDJ.BOSS_LEVELS = {
         ["Arcanic Enigma"] = "30",
         ["Shade of the Archmage"] = "33",
     },
+    ["Shaper's Terrace"] = {
+        ["Titanosaur"] = "61",
+        ["Venomridge"] = "61",
+        ["Thunderhoof"] = "61",
+        ["Direhorn Matriarch"] = "61",
+        ["Bolt"] = "62",
+        ["Vitrix"] = "62",
+        ["Izha'Rel and Tor'Rel"] = "61",
+        ["Nanaya"] = "62",
+    },
     ["Blackmaw Hold"] = {
         ["Withermaw"] = "58",
         ["Impaan the Imprisoner"] = "57",
         ["Bonesnout the Unbroken"] = "58",
         ["Varrox Bleakhoof"] = "60",
+        ["Elder Shaman Bloodmane"] = "59",
+        ["Blackmaw Behemoth"] = "59",
+        ["Unbound Spirit"] = "59",
         ["Moontouched Wanderer"] = "55",
     },
     ["Alcaz Prison"] = {
@@ -132,6 +145,7 @@ FDJ.BOSS_LEVELS = {
         ["Princess Theradras"] = "51",
     },
     ["Dire Maul: East"] = {
+        ["Pusillin"] = "57",
         ["Zevrim Thornhoof"] = "57",
         ["Hydrospawn"] = "57",
         ["Lethtendris"] = "57",
@@ -509,6 +523,7 @@ FDJ.STATIC_DISPLAY_IDS = {
 
     -- Dire Maul: East
     [11490] = 11335,  -- Zevrim Thornhoof
+    [14354] = 7552,   -- Pusillin
     [13280] = 5489,   -- Hydrospawn
     [14327] = 14378,  -- Lethtendris
     [11492] = 14416,  -- Alzzin the Wildshaper
@@ -630,6 +645,16 @@ FDJ.STATIC_DISPLAY_IDS = {
     [257016] = 2317,    -- Katerina the Cleaner
     [256236] = 140092,  -- The Questioner
     [255702] = 6374,    -- Blazeroar
+    -- Shaper's Terrace
+    [253201] = 142989,  -- Titanosaur
+    [261813] = 144511,  -- Venomridge
+    [261812] = 144514,  -- Thunderhoof
+    [262127] = 144515,  -- Direhorn Matriarch
+    [262081] = 143063,  -- Bolt
+    [272561] = 147098,  -- Vitrix
+    [261809] = 143832,  -- Nanaya
+    [253218] = 143040,  -- Izha'Rel
+    [261811] = 143039,  -- Tor'Rel
     -- Blackmaw Hold
     [247195] = 140708,  -- Withermaw
     [247206] = 130432,  -- Impaan the Imprisoner

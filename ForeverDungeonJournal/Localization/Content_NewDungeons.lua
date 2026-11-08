@@ -2121,6 +2121,50 @@ for lang, data in pairs(HIGHLAND_HIDES_PREREQ_150) do
 end
 
 
+-- In Search of Thaelrid breadcrumb warning (1.7.4): %s is Blackfathom
+-- Villainy's title in the client's language.
+do
+    local TEMPLATE_EN = "Warning: if not completed before accepting %s, this quest becomes unavailable."
+    local TEMPLATES = {
+        deDE = "Achtung: Wird diese Quest nicht vor der Annahme von %s abgeschlossen, ist sie danach nicht mehr verfügbar.",
+        frFR = "Attention : si cette quête n'est pas rendue avant d'accepter %s, elle devient indisponible.",
+        esES = "Atención: si no completas esta misión antes de aceptar %s, dejará de estar disponible.",
+        itIT = "Attenzione: se questa missione non viene completata prima di accettare %s, non sarà più disponibile.",
+        ptBR = "Atenção: se esta missão não for concluída antes de aceitar %s, ela ficará indisponível.",
+        ruRU = "Внимание: если не сдать это задание до того, как взять «%s», оно станет недоступным.",
+        koKR = "경고: %s 퀘스트를 받기 전에 이 퀘스트를 완료하지 않으면 더 이상 완료할 수 없습니다.",
+        zhCN = "警告：如果在接取%s之前没有完成此任务，此任务将无法再完成。",
+        zhTW = "警告：如果在接取%s之前沒有完成此任務，此任務將無法再完成。",
+    }
+    for lang, template in pairs(TEMPLATES) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places[TEMPLATE_EN] = template
+        end
+    end
+    -- Blackfathom Villainy's side: %s is In Search of Thaelrid's title.
+    local BV_EN = "Warning: Accept after completing %s, or you will lose that quest."
+    local BV = {
+        deDE = "Achtung: Erst annehmen, nachdem %s abgeschlossen ist, sonst verlierst du diese Quest.",
+        frFR = "Attention : acceptez-la après avoir rendu %s, sinon vous perdrez cette quête.",
+        esES = "Atención: acéptala después de completar %s o perderás esa misión.",
+        itIT = "Attenzione: accettala dopo aver completato %s, altrimenti perderai quella missione.",
+        ptBR = "Atenção: aceite depois de concluir %s, ou você perderá essa missão.",
+        ruRU = "Внимание: берите это задание только после сдачи «%s», иначе то задание будет потеряно.",
+        koKR = "경고: %s 퀘스트를 완료한 뒤에 받으세요. 그렇지 않으면 그 퀘스트를 잃게 됩니다.",
+        zhCN = "警告：请在完成%s之后再接取，否则会失去那个任务。",
+        zhTW = "警告：請在完成%s之後再接取，否則會失去那個任務。",
+    }
+    for lang, template in pairs(BV) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places[BV_EN] = template
+        end
+    end
+end
+
 -- Rig Wars pickup-order warning (1.5.2).
 local RIG_WARS_WARNING_EN = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear."
 local RIG_WARS_WARNING_TEMPLATE_EN = "Accept %s before %s. If %s disappears, abandon %s and it will reappear."

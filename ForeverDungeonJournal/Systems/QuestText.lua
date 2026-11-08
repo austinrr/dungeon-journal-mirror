@@ -1401,11 +1401,22 @@ do
             if step then
                 info.step = step
                 info.stepName = Field(step.id, "name", step.name or "")
+                -- Its number in the chain first ("1. The Greenwarden"), as in
+                -- the journal's chain list and the opened chain here.
+                local stepIndex
+                for i, s in ipairs(FDJ.QUEST_PREREQ_CHAINS[quest.id] or {}) do
+                    if s == step then stepIndex = i break end
+                end
+                info.stepLabel = stepIndex and (stepIndex .. ". " .. info.stepName) or info.stepName
                 -- No chain glyph of its own: the quest's chain icon says it.
-                local parts = { Hex(GOLD) .. info.stepName .. "|r" }
+                local parts = { Hex(GOLD) .. info.stepLabel .. "|r" }
                 local stepDetails = FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[step.id]
                 for _, line in ipairs(ObjectiveText(step.id, "   ", stepDetails and stepDetails.objective)) do parts[#parts + 1] = line end
                 info.stepText = table.concat(parts, "\n")
+                -- Ready to hand in: the round ? after its name shows where.
+                if FDJ.IsQuestFinished and FDJ.IsQuestFinished(step.id) then
+                    info.stepTurnIn = { id = step.id, turnin = stepDetails and stepDetails.turnin, turninMap = stepDetails and stepDetails.turninMap }
+                end
             end
             local chain = FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[quest.id]
             if type(chain) == "table" and #chain > 0 then
@@ -2599,6 +2610,25 @@ do
                 step:SetSize(textW, stepHeight)
                 step:Show()
                 height = height + 3 + stepHeight
+                -- The step ready to hand in: the round ? right after its
+                -- name; a click shows where it is handed in.
+                if info.stepTurnIn and FDJ.CreateTurnInButton then
+                    if not step.mark then
+                        step.mark = FDJ.CreateTurnInButton(step, 16)
+                        step.mark:SetFrameLevel(step:GetFrameLevel() + 3)
+                        step.measure = step:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                        step.measure:Hide()
+                    end
+                    step.measure:SetText(info.stepLabel or info.stepName or "")
+                    local nameW = step.measure:GetStringWidth() or 0
+                    local size = FDJ.StepMarkSize()
+                    FDJ.ResizeTurnInButton(step.mark, size)
+                    step.mark:ClearAllPoints()
+                    step.mark:SetPoint("LEFT", step, "TOPLEFT", math.min(nameW + 4, math.max(0, textW - size)), -6)
+                    FDJ.SetTurnInButton(step.mark, info.stepTurnIn, info.stepName)
+                elseif step.mark then
+                    FDJ.SetTurnInButton(step.mark, nil)
+                end
             else
                 row.step:Hide()
             end
@@ -2928,7 +2958,12 @@ do
     end
 
     function FDJ.CreateTurnInButton(parent, size)
-        local b = CreateFrame("Button", nil, parent)
+        -- The insecure action template lets the click target and mark the
+        -- NPC when near, like Show on Map (set up on mouse-over).
+        local okB, made = pcall(CreateFrame, "Button", nil, parent, "InsecureActionButtonTemplate")
+        local b = okB and made or CreateFrame("Button", nil, parent)
+        b._fdjCanTarget = (okB and made) and true or false
+        if b._fdjCanTarget then b:SetAttribute("useOnKeyDown", false) end
         b:SetSize(size, size)
         b:RegisterForClicks("LeftButtonUp")
         if HasQuestButton() then
@@ -2981,6 +3016,8 @@ do
         b:SetScript("OnMouseUp", function(self) PressMark(self, false) end)
         b:SetScript("OnEnter", function(self)
             if not self.quest then return end
+            local configure = FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction
+            if configure then configure(self, TurnInSpot(self.quest), true) end
             if self.button then self.button.lit:Show() end
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:SetText(T("SHOW_TURN_IN"), 1, 0.82, 0)
@@ -2992,11 +3029,40 @@ do
             if self.button then self.button.lit:Hide() end
             GameTooltip:Hide()
         end)
-        b:SetScript("OnClick", function(self)
+        -- PostClick keeps the template's own click (the target macro).
+        b.fdjClick = function(self)
             if self.quest then ShowTurnIn(self.quest, self.title) end
-        end)
+        end
+        b:SetScript(b._fdjCanTarget and "PostClick" or "OnClick", b.fdjClick)
         b:Hide()
         return b
+    end
+
+    -- The chain steps' round ? (journal chain list, tracker step line): 24,
+    -- the size picked with the 1.7.4 test slider.
+    function FDJ.StepMarkSize()
+        return 24
+    end
+    function FDJ.ResizeTurnInButton(b, size)
+        if not b or not size then return end
+        b:SetSize(size, size)
+        local button = b.button
+        if button then
+            button:SetSize(size, size)
+            if button.ring then button.ring:SetSize(size, size) end
+            if button.lit then button.lit:SetSize(size, size) end
+            if button.display then button.display:SetSize(size, size) end
+            if button.icon then button.icon:SetSize(size, size) end
+        end
+        if b.sharp then b.sharp:SetSize(size, size) end
+    end
+
+    -- Where a quest or chain step ({ id, turnin, turninMap }) is handed in on
+    -- the world map, found the same way as the tracker's ? (its turninMap,
+    -- else the turn-in NPC's spot by name). nil when not known.
+    function FDJ.TurnInSpotFor(quest)
+        if type(quest) ~= "table" then return nil end
+        return TurnInSpot(quest)
     end
 
     -- quest: the quest (or chain step: id + turnin text) ready to hand in, or
@@ -3051,3 +3117,26 @@ do
     end
 end
 -- END questtracker
+
+-- malletchain: the Mallet of Zul'Farrak page's title is the mallet's own name
+-- when the journal speaks the game's language (data: Data/QuestUpdates.lua).
+do
+    local PAGE = FDJ.MALLET_PAGE
+    if PAGE and FDJ.DB and FDJ.DB[PAGE] then
+        local baseName = FDJ.LocalizeDungeonName
+        FDJ.LocalizeDungeonName = function(name, ...)
+            if name == PAGE and FDJ.CanUseClientLocalizedText and FDJ.CanUseClientLocalizedText() then
+                local get = (C_Item and C_Item.GetItemNameByID) or GetItemInfo
+                if type(get) == "function" then
+                    local ok, itemName = pcall(get, 9240)
+                    if ok and type(itemName) == "string" and itemName ~= ""
+                        and not (type(issecretvalue) == "function" and issecretvalue(itemName)) then
+                        return itemName
+                    end
+                end
+            end
+            if baseName then return baseName(name, ...) end
+            return name
+        end
+    end
+end

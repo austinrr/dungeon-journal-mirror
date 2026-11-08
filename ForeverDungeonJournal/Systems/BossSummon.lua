@@ -1,13 +1,20 @@
 -- Bosses that have to be summoned with an item (boss.summonItem = itemID).
--- The boss page shows "Summoned by: [item]" under the boss name; hovering it
--- shows the item and how to get it.
+-- The boss page shows "Summon with: [item]" under the boss name, in the
+-- quest list's font; hovering it shows the item and how to get it.
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 local LABEL = {
-    enUS = "Summoned by:", deDE = "Beschworen mit:", frFR = "Invoqué avec :",
-    esES = "Invocado con:", itIT = "Evocato con:", ptBR = "Invocado com:",
-    ruRU = "Призывается с помощью:", koKR = "소환 아이템:", zhCN = "召唤物品：", zhTW = "召喚物品：",
+    enUS = "Summon with:", deDE = "Beschwören mit:", frFR = "Invoquer avec :",
+    esES = "Invocar con:", itIT = "Evoca con:", ptBR = "Invocar com:",
+    ruRU = "Призвать с помощью:", koKR = "소환 아이템:", zhCN = "召唤物品：", zhTW = "召喚物品：",
+}
+-- An item whose quest chain the journal has (boss.summonChain): the extra
+-- line under its tooltip.
+local CLICK_QUEST = {
+    enUS = "Click to show quest", deDE = "Klicken, um die Quest anzuzeigen", frFR = "Cliquez pour afficher la quête",
+    esES = "Haz clic para ver la misión", itIT = "Clicca per mostrare la missione", ptBR = "Clique para ver a missão",
+    ruRU = "Нажмите, чтобы показать задание", koKR = "클릭하여 퀘스트 보기", zhCN = "点击查看任务", zhTW = "點擊查看任務",
 }
 local HOWTO_TITLE = {
     enUS = "How to get it", deDE = "So bekommt ihr es", frFR = "Comment l'obtenir",
@@ -70,7 +77,7 @@ local HOWTO = {
         },
     },
 }
-local FALLBACK_NAMES = { [275989] = "Tome of Dalaran" }
+local FALLBACK_NAMES = { [275989] = "Tome of Dalaran", [9240] = "Mallet of Zul'Farrak" }
 
 local function Lang()
     local lang = FDJ.GetLanguage and FDJ.GetLanguage() or "enUS"
@@ -101,38 +108,128 @@ end
 
 local button
 
+-- The quest list's look: QuestFont, the font of a quest's name in the list
+-- (and of its "Available from Level" line), in the dungeon theme's colours.
+local function QuestListStyle(fs, color)
+    local font = _G.QuestFont or _G.GameFontNormal
+    if font and fs.SetFontObject then fs:SetFontObject(font) end
+    if type(color) == "table" and color[1] then
+        fs:SetTextColor(color[1], color[2], color[3], color[4] or 1)
+    end
+end
+
+-- The lines under the item tooltip. An item the client has not cached yet
+-- (the Tome of Dalaran on the first hover) shows "Retrieving item
+-- information" and is rebuilt once its data arrives, which wiped the lines
+-- added after SetHyperlink. They are now put back every time the tooltip
+-- is built while the summon button owns it.
+local function Marker(self)
+    if HOWTO[self.itemID] then return Pick(HOWTO_TITLE) end
+    if self.chain then return Pick(CLICK_QUEST) end
+end
+
+local function HasLine(tooltip, text)
+    local name = tooltip.GetName and tooltip:GetName()
+    if not name or not text then return false end
+    for i = 1, (tooltip:NumLines() or 0) do
+        local fs = _G[name .. "TextLeft" .. i]
+        local t = fs and fs:GetText()
+        if t ~= nil and not (type(issecretvalue) == "function" and issecretvalue(t)) and t == text then
+            return true
+        end
+    end
+    return false
+end
+
+local function AddSummonLines(tooltip, self)
+    local marker = Marker(self)
+    if not marker or HasLine(tooltip, marker) then return false end
+    if FDJ.AddUnseenItemHint then pcall(FDJ.AddUnseenItemHint, tooltip) end
+    local steps = Pick(HOWTO[self.itemID])
+    if steps then
+        tooltip:AddLine(" ")
+        tooltip:AddLine(Pick(HOWTO_TITLE), 1, 0.82, 0)
+        for _, line in ipairs(steps) do tooltip:AddLine(line, 1, 1, 1, true) end
+    end
+    if self.chain then
+        tooltip:AddLine(" ")
+        tooltip:AddLine(Pick(CLICK_QUEST), 0.35, 1.00, 0.35)
+    end
+    return true
+end
+
+local function OwnsTooltip(tooltip)
+    return button and button.itemID and button:IsShown() and tooltip == GameTooltip
+        and tooltip.GetOwner and tooltip:GetOwner() == button
+end
+
+local function ResizeSoon()
+    if not (C_Timer and C_Timer.After) then return end
+    C_Timer.After(0, function()
+        if OwnsTooltip(GameTooltip) and GameTooltip:IsShown() then GameTooltip:Show() end
+    end)
+end
+
+local function OnItemTooltip(tooltip)
+    if not OwnsTooltip(tooltip) then return end
+    if AddSummonLines(tooltip, button) then ResizeSoon() end
+end
+
+local hooked = false
+local function InstallHooks()
+    if hooked or not GameTooltip then return end
+    hooked = true
+    local viaProcessor = false
+    if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall
+        and Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item then
+        viaProcessor = pcall(TooltipDataProcessor.AddTooltipPostCall, Enum.TooltipDataType.Item,
+            function(tooltip) pcall(OnItemTooltip, tooltip) end)
+    end
+    if not viaProcessor and GameTooltip.HookScript then
+        pcall(GameTooltip.HookScript, GameTooltip, "OnTooltipSetItem", function(tooltip) pcall(OnItemTooltip, tooltip) end)
+    end
+    -- And once the item's data has arrived, show the whole tooltip again.
+    local watcher = CreateFrame("Frame")
+    for _, event in ipairs({ "GET_ITEM_INFO_RECEIVED", "ITEM_DATA_LOAD_RESULT" }) do
+        pcall(watcher.RegisterEvent, watcher, event)
+    end
+    watcher:SetScript("OnEvent", function(_, _, itemID)
+        if not button or tonumber(itemID) ~= button.itemID or not OwnsTooltip(GameTooltip) then return end
+        if not (C_Timer and C_Timer.After) then return end
+        C_Timer.After(0, function()
+            if OwnsTooltip(GameTooltip) and button:IsMouseOver() then
+                local onEnter = button:GetScript("OnEnter")
+                if onEnter then pcall(onEnter, button) end
+            end
+        end)
+    end)
+end
+
 local function Create(frame)
     local anchor = frame.selectedBossName
     local parent = anchor and anchor:GetParent()
     if not parent then return nil end
+    InstallHooks()
     local b = CreateFrame("Button", nil, parent)
     b:SetHeight(18)
-    b.label = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    -- "Summon with:" and the item name in the quest list's font.
+    b.label = b:CreateFontString(nil, "OVERLAY")
+    QuestListStyle(b.label)
     b.label:SetPoint("LEFT", b, "LEFT", 0, 0)
-    -- Yellow with a soft light outline so it reads on every journal theme.
-    b.label:SetTextColor(1.00, 0.82, 0.00)
-    b.label:SetShadowColor(1, 1, 1, 0.55)
-    b.label:SetShadowOffset(1, -1)
     b.icon = b:CreateTexture(nil, "OVERLAY")
     b.icon:SetSize(16, 16)
     b.icon:SetPoint("LEFT", b.label, "RIGHT", 5, 0)
-    b.name = b:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    b.name = b:CreateFontString(nil, "OVERLAY")
+    QuestListStyle(b.name)
     b.name:SetPoint("LEFT", b.icon, "RIGHT", 4, 0)
-    b.name:SetShadowColor(1, 1, 1, 0.55)
-    b.name:SetShadowOffset(1, -1)
     b:SetScript("OnEnter", function(self)
         if not GameTooltip or not self.itemID then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         local _, link = ItemData(self.itemID)
         local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, link or ("item:" .. self.itemID))
         if not ok then GameTooltip:AddLine(ItemData(self.itemID), 0, 0.44, 0.87) end
-        if ok and FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
-        local steps = Pick(HOWTO[self.itemID])
-        if steps then
-            GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(Pick(HOWTO_TITLE), 1, 0.82, 0)
-            for _, line in ipairs(steps) do GameTooltip:AddLine(line, 1, 1, 1, true) end
-        end
+        -- The item hook may already have added them (HasLine skips them then).
+        AddSummonLines(GameTooltip, self)
         GameTooltip:Show()
     end)
     b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
@@ -141,12 +238,27 @@ local function Create(frame)
         if IsModifiedClick and IsModifiedClick("CHATLINK") and self.itemID then
             local _, link = ItemData(self.itemID)
             if link and ChatEdit_InsertLink then ChatEdit_InsertLink(link) end
+            return
+        end
+        -- The item's quest chain (the Mallet of Zul'Farrak), at the step not
+        -- done yet.
+        local chain = self.chain
+        if chain and FDJ.OpenQuestChain then
+            local stepID
+            for _, step in ipairs((FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[chain.quest]) or {}) do
+                if type(step) == "table" and step.id and not (FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(step.id)) then
+                    stepID = step.id
+                    break
+                end
+            end
+            if GameTooltip then GameTooltip:Hide() end
+            FDJ.OpenQuestChain(chain.page, chain.quest, stepID)
         end
     end)
     return b
 end
 
-function FDJ.UpdateBossSummon(frame, boss)
+function FDJ.UpdateBossSummon(frame, boss, theme)
     local id = boss and tonumber(boss.summonItem)
     if not id then
         if button then button:Hide() end
@@ -156,10 +268,15 @@ function FDJ.UpdateBossSummon(frame, boss)
     if not button then return end
     local name, _, _, icon = ItemData(id)
     button.itemID = id
+    button.chain = type(boss.summonChain) == "table" and boss.summonChain or nil
     button.label:SetText(Pick(LABEL))
     button.icon:SetTexture(icon)
     button.name:SetText(name)
-    button.name:SetTextColor(1.00, 0.82, 0.00)
+    -- Like a quest in the list: "Summon with:" in the colour of its
+    -- "Available from Level" line, the item in the selected quest's gold.
+    theme = type(theme) == "table" and theme or {}
+    QuestListStyle(button.label, theme.muted or { 0.80, 0.72, 0.56 })
+    QuestListStyle(button.name, theme.title or { 1.00, 0.82, 0.00 })
     button:ClearAllPoints()
     local below = (frame.selectedBossType and frame.selectedBossType:IsShown()) and frame.selectedBossType or frame.selectedBossName
     button:SetPoint("TOPLEFT", below, "BOTTOMLEFT", 0, -4)
