@@ -1569,6 +1569,7 @@ do
             ["Min'loth the Serpent"] = {
                 { 274610, "Ritual-Binder's Gloves", "Hands, Leather", 3 },
                 { 274608, "Maw of Min'loth", "Off Hand, Shield", 3 }, -- confirmed (a player, Nov 2026)
+                { 274609, "Serpentbane Crown", "Head, Mail", 3 }, -- confirmed (a player, Nov 2026)
             },
         }
         -- The rest of the dungeon's loot (the same batch of item IDs,
@@ -1577,9 +1578,6 @@ do
         -- "Not confirmed, but probable drop" on the boss page.
         local PROBABLE = {
             ["Deathless Marrow"] = { { 274607, "Viscera Spaulders", "Shoulder, Mail", 3 } },
-            ["Min'loth the Serpent"] = {
-                { 274609, "Serpentbane Crown", "Head, Mail", 3 },
-            },
         }
         local have = false
         for _, b in ipairs(d.bosses) do
@@ -1619,6 +1617,9 @@ do
         levels["Captain Dreadrise"] = "38"
         levels["Deathless Marrow"] = "39"
         levels["Primeval Elemental"] = "38"
+        levels["Gill"] = "38"
+        levels["Umbra"] = "38" -- rare; level from its nameplate (Discord screenshot, Nov 2026)
+        levels["\"Pyromancer\" Braxton"] = "38" -- rare elite; level from its nameplate (a stream, Nov 2026)
         levels["Min'loth the Serpent"] = "40"
     end
 end
@@ -2029,14 +2030,22 @@ end
 -- BEGIN coldbringerhorde
 -- The Coldbringer's Eye, Horde (quest 97196): level 41, from level 34,
 -- shareable, 8,600 XP, 55s, Earthen Ring +300 and Thunder Bluff +150
--- (Wowhead Forever). Who gives it and takes it back is not known yet.
+-- (Wowhead Forever). Given and taken back by Sutara Plainstalker
+-- <Quartermaster> of the Earthen Ring (NPC 264078), Skywatcher Plateau,
+-- Mulgore 34.4, 22.8 (Wowhead Forever).
 do
+    local SUTARA = { mapID = 1412, x = 0.344, y = 0.228, label = "Sutara Plainstalker — Mulgore", targetName = "Sutara Plainstalker", detail = "Sutara Plainstalker of the Earthen Ring, north-west Mulgore" }
     local d = FDJ.DB and FDJ.DB["Razorfen Downs"]
     if d then
         d.quests = d.quests or {}
         local have, after = false, nil
         for i, q in ipairs(d.quests) do
-            if q.id == 97196 then have = true end
+            if q.id == 97196 then
+                have = true
+                q.pickup = "Sutara Plainstalker, Skywatcher Plateau, Mulgore"
+                q.turnin = "Sutara Plainstalker, Skywatcher Plateau, Mulgore"
+                q.startMap, q.turninMap, q.note = SUTARA, SUTARA, nil
+            end
             if q.name == "The Coldbringer's Eye" and q.faction == "Alliance" then after = i end
         end
         if not have then
@@ -2046,13 +2055,14 @@ do
                 level = 41,
                 requires = 34,
                 faction = "Horde",
-                pickup = "Not known yet",
+                pickup = "Sutara Plainstalker, Skywatcher Plateau, Mulgore",
                 objective = "Recover The Coldbringer's Eye from Razorfen Downs.",
-                turnin = "Not known yet",
+                turnin = "Sutara Plainstalker, Skywatcher Plateau, Mulgore",
                 liveXPFallback = 8600,
                 rewardSummary = "55s  •  Earthen Ring +300  •  Thunder Bluff +150",
                 requiredItem = { 276916, "The Coldbringer's Eye", 1, 1, "From Amnennar the Coldbringer, the last boss of Razorfen Downs" },
-                note = "Quest giver not known yet. Amnennar the Coldbringer, the last boss, has the orb.",
+                startMap = SUTARA,
+                turninMap = SUTARA,
             })
         end
     end

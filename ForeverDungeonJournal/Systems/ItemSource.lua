@@ -149,6 +149,59 @@ local function SourceText(source)
     return boss, dungeon
 end
 
+-- Quest items a boss drops (An Unsent Letter from Edwin VanCleef): the quest
+-- page's item says "Looted from <boss>, <dungeon>", and clicking it opens
+-- that boss's loot with the item glowing (3 seconds, or until hovered).
+do
+    local strings = {
+        enUS = { LOOTED_FROM = "Looted from %s, %s", ITEM_CLICK_BOSS = "Click to show" },
+        deDE = { LOOTED_FROM = "Erbeutet von %s, %s", ITEM_CLICK_BOSS = "Klicken zum Anzeigen" },
+        frFR = { LOOTED_FROM = "Butin de %s, %s", ITEM_CLICK_BOSS = "Cliquer pour afficher" },
+        esES = { LOOTED_FROM = "Botín de %s, %s", ITEM_CLICK_BOSS = "Clic para mostrar" },
+        esMX = { LOOTED_FROM = "Botín de %s, %s", ITEM_CLICK_BOSS = "Clic para mostrar" },
+        itIT = { LOOTED_FROM = "Bottino di %s, %s", ITEM_CLICK_BOSS = "Clicca per mostrare" },
+        ptBR = { LOOTED_FROM = "Saque de %s, %s", ITEM_CLICK_BOSS = "Clique para mostrar" },
+        ruRU = { LOOTED_FROM = "Добыча: %s, %s", ITEM_CLICK_BOSS = "Нажмите, чтобы показать" },
+        koKR = { LOOTED_FROM = "획득처: %s, %s", ITEM_CLICK_BOSS = "클릭하여 보기" },
+        zhCN = { LOOTED_FROM = "拾取自%s，%s", ITEM_CLICK_BOSS = "点击显示" },
+        zhTW = { LOOTED_FROM = "拾取自%s，%s", ITEM_CLICK_BOSS = "點擊顯示" },
+    }
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
+function FDJ.BossDropSource(itemID)
+    itemID = tonumber(itemID)
+    if not itemID or itemID <= 0 then return nil end
+    if FDJ.SHARED_LOOT_IDS and FDJ.SHARED_LOOT_IDS[itemID] then return nil end
+    local source = FDJ.GetItemSource(itemID)
+    if source and source.mode == "bosses" and not source.trash and source.bossIndex then return source end
+    return nil
+end
+
+function FDJ.BossDropText(itemID)
+    local source = FDJ.BossDropSource(itemID)
+    if not source then return nil end
+    local boss, dungeon = SourceText(source)
+    local L = FDJ.L or function(key) return key end
+    return L("LOOTED_FROM", boss, dungeon)
+end
+
+function FDJ.JumpToBossDrop(itemID)
+    local source = FDJ.BossDropSource(itemID)
+    if not source or not FDJ.OpenSearchResult then return false end
+    local result = {}
+    for k, v in pairs(source) do result[k] = v end
+    result.glowFor = 3
+    return pcall(FDJ.OpenSearchResult, result)
+end
+
 function FDJ.OpenItemSource(itemID)
     local source = FDJ.GetItemSource(itemID)
     if not source or not FDJ.OpenSearchResult then return false end

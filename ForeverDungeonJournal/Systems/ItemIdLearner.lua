@@ -123,7 +123,8 @@ local function Learn(id, name)
     local key = Norm(name)
     if not key or not missing[key] then return end
     Store()[key] = { id = id, name = missing[key][1][2] }
-    Apply(key, id, true)
+    -- Silent: players saw a chat line for every item found. /dj newids lists them.
+    Apply(key, id, false)
 end
 
 local function NameOfID(id)

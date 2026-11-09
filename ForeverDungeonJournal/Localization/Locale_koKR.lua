@@ -294,6 +294,7 @@ FDJ.Locales.koKR = {
     ["MAP_LEFT_TARGET"] = "왼쪽 클릭: 근처에 있으면 퀘스트 제공자를 대상으로 지정하고 표시",
     ["MAP_RIGHT_REMOVE"] = "오른쪽 클릭: 표시 제거",
     ["MAP_PATROL"] = "돌아다니는 NPC: 선이 이동 경로입니다",
+    ["MAP_QUEST_TARGET"] = "퀘스트 대상",
     ["MAP_MARKED"] = "%s 위치를 지도에 표시했습니다.",
     ["MAP_OPEN_FAILED"] = "기록된 지도 위치를 열 수 없습니다.",
     ["MAP_COMBAT"] = "전투 중에는 지도를 열 수 없습니다. %s 키를 누르면 표시된 위치를 볼 수 있습니다.",

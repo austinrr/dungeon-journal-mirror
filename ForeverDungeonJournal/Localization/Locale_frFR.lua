@@ -291,6 +291,7 @@ FDJ.Locales.frFR = {
     ["MAP_LEFT_TARGET"] = "Clic gauche pour cibler et marquer le donneur de quête s’il est proche",
     ["MAP_RIGHT_REMOVE"] = "Clic droit pour retirer le marqueur",
     ["MAP_PATROL"] = "Se déplace : la ligne montre le trajet",
+    ["MAP_QUEST_TARGET"] = "Cible de quête",
     ["MAP_MARKED"] = "%s marqué sur la carte.",
     ["MAP_OPEN_FAILED"] = "Impossible d’ouvrir l’emplacement enregistré.",
     ["MAP_COMBAT"] = "La carte ne peut pas s’ouvrir en combat. Appuyez sur %s pour voir l’endroit marqué.",

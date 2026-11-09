@@ -58,6 +58,63 @@ local function Paint(btn)
     btn.glow:SetShown(on)
 end
 
+-- The first time ever the emblem is clicked (the list now shows only WoW
+-- Forever dungeons), a note with a red arrow, fading in and out like the
+-- Group Browser one, points at the emblem from its left: Switch back to full
+-- view. It goes away once the full list is back (or the page is left).
+local HINT = {
+    enUS = "Switch back to full view", deDE = "Zurück zur vollen Ansicht",
+    frFR = "Revenir à la vue complète", esES = "Volver a la vista completa", esMX = "Volver a la vista completa",
+    itIT = "Torna alla vista completa", ptBR = "Voltar à visão completa",
+    ruRU = "Вернуться к полному списку", koKR = "전체 보기로 돌아가기",
+    zhCN = "切换回完整视图", zhTW = "切換回完整檢視",
+}
+local function ShowFullViewHint(btn)
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if ForeverDungeonJournalDB.foreverHintShown then return end
+    ForeverDungeonJournalDB.foreverHintShown = true
+    local h = FDJ.foreverHint
+    if not h then
+        h = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+        FDJ.foreverHint = h
+        h:SetFrameStrata("FULLSCREEN_DIALOG")
+        h:SetSize(240, 32)
+        h:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 12,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        h:SetBackdropColor(0, 0, 0, 0.92)
+        h:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+        h.arrow = h:CreateTexture(nil, "OVERLAY")
+        h.arrow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\QuestNextArrow")
+        h.arrow:SetVertexColor(1, 0.12, 0.08)
+        h.arrow:SetSize(24, 24)
+        h.arrow:SetPoint("RIGHT", -6, 0)
+        h.text = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+        h.text:SetPoint("RIGHT", h.arrow, "LEFT", -6, 0)
+        h.text:SetTextColor(1, 1, 1)
+        h.text:SetShadowColor(0, 0, 0, 1)
+        h.text:SetShadowOffset(1, -1)
+        h:SetScript("OnUpdate", function(self, elapsed)
+            self.t = (self.t or 0) + elapsed
+            -- Fade in and out, and nudge the arrow toward the emblem.
+            self:SetAlpha(0.55 + 0.45 * math.sin(self.t * 4))
+            self.arrow:SetPoint("RIGHT", -6 + 3 * math.abs(math.sin(self.t * 4)), 0)
+            if not Active() or not (self.fdjTarget and self.fdjTarget:IsVisible()) then self:Hide() end
+        end)
+    end
+    local lang = FDJ.GetLanguage and FDJ.GetLanguage() or "enUS"
+    h.text:SetText(HINT[lang] or HINT.enUS)
+    h:SetWidth((h.text:GetStringWidth() or 180) + 50)
+    h:ClearAllPoints()
+    h:SetPoint("RIGHT", btn, "LEFT", -8, 0)
+    h.fdjTarget = btn
+    h.t = 0
+    h:Show()
+end
+
 local function Build(frame)
     local home = frame.homePanel
     local btn = CreateFrame("Button", nil, home)
@@ -97,6 +154,7 @@ local function Build(frame)
         if PlaySound and SOUNDKIT then pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) end
         Paint(self)
         if FDJ.RefreshHomeCards then FDJ.RefreshHomeCards() end
+        if Active() then ShowFullViewHint(self) end
         if self:IsMouseOver() and self:GetScript("OnEnter") then self:GetScript("OnEnter")(self) end
     end)
     btn:SetScript("OnEnter", function(self)

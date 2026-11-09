@@ -291,6 +291,7 @@ FDJ.Locales.ptBR = {
     ["MAP_LEFT_TARGET"] = "Clique esquerdo para selecionar e marcar o NPC da missão se estiver por perto",
     ["MAP_RIGHT_REMOVE"] = "Clique direito para remover o marcador",
     ["MAP_PATROL"] = "Anda por aí: a linha mostra o caminho",
+    ["MAP_QUEST_TARGET"] = "Alvo de missão",
     ["MAP_MARKED"] = "%s marcado no mapa.",
     ["MAP_OPEN_FAILED"] = "Não foi possível abrir o local salvo no mapa.",
     ["MAP_COMBAT"] = "O mapa não pode ser aberto em combate. Aperte %s para ver o local marcado.",

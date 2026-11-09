@@ -9,6 +9,14 @@ local LABEL = {
     esES = "Invocar con:", itIT = "Evoca con:", ptBR = "Invocar com:",
     ruRU = "Призвать с помощью:", koKR = "소환 아이템:", zhCN = "召唤物品：", zhTW = "召喚物品：",
 }
+-- Bosses that come during a quest (boss.spawnQuest = { quest = id, page =
+-- dungeon }): "Spawns at the end of ? <quest>", the quest clickable.
+local SPAWN_LABEL = {
+    enUS = "Spawns at the end of", deDE = "Erscheint am Ende von", frFR = "Apparaît à la fin de",
+    esES = "Aparece al final de", itIT = "Compare alla fine di", ptBR = "Aparece no fim de",
+    ruRU = "Появляется в конце задания", koKR = "등장 시점: 퀘스트 끝", zhCN = "出现于任务结尾：", zhTW = "出現於任務結尾：",
+}
+local QUEST_ICON = "Interface\\GossipFrame\\ActiveQuestIcon"
 -- An item whose quest chain the journal has (boss.summonChain): the extra
 -- line under its tooltip.
 local CLICK_QUEST = {
@@ -223,6 +231,13 @@ local function Create(frame)
     QuestListStyle(b.name)
     b.name:SetPoint("LEFT", b.icon, "RIGHT", 4, 0)
     b:SetScript("OnEnter", function(self)
+        if GameTooltip and self.questID then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(self.name:GetText() or "", 1, 0.82, 0)
+            GameTooltip:AddLine(Pick(CLICK_QUEST), 0.35, 1.00, 0.35)
+            GameTooltip:Show()
+            return
+        end
         if not GameTooltip or not self.itemID then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         local _, link = ItemData(self.itemID)
@@ -234,6 +249,11 @@ local function Create(frame)
     end)
     b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     b:SetScript("OnClick", function(self)
+        if self.questID then
+            if GameTooltip then GameTooltip:Hide() end
+            if FDJ.OpenQuestPage then FDJ.OpenQuestPage(self.questPage, self.questID) end
+            return
+        end
         -- Shift-click links the item in chat, like any item button.
         if IsModifiedClick and IsModifiedClick("CHATLINK") and self.itemID then
             local _, link = ItemData(self.itemID)
@@ -260,12 +280,39 @@ end
 
 function FDJ.UpdateBossSummon(frame, boss, theme)
     local id = boss and tonumber(boss.summonItem)
-    if not id then
+    local spawn = boss and type(boss.spawnQuest) == "table" and tonumber(boss.spawnQuest.quest) and boss.spawnQuest or nil
+    if not id and not spawn then
         if button then button:Hide() end
         return
     end
     button = button or Create(frame)
     if not button then return end
+    if spawn then
+        local qid = tonumber(spawn.quest)
+        local qname
+        for _, q in ipairs((FDJ.DB and FDJ.DB[spawn.page] and FDJ.DB[spawn.page].quests) or {}) do
+            if q.id == qid then qname = q.name break end
+        end
+        if FDJ.LocalizeQuestField then
+            local ok, loc = pcall(FDJ.LocalizeQuestField, qid, "name", qname)
+            if ok and type(loc) == "string" and loc ~= "" then qname = loc end
+        end
+        button.itemID, button.chain = nil, nil
+        button.questID, button.questPage = qid, spawn.page
+        button.label:SetText(Pick(SPAWN_LABEL))
+        button.icon:SetTexture(QUEST_ICON)
+        button.name:SetText(qname or ("#" .. qid))
+        theme = type(theme) == "table" and theme or {}
+        QuestListStyle(button.label, theme.muted or { 0.80, 0.72, 0.56 })
+        QuestListStyle(button.name, theme.title or { 1.00, 0.82, 0.00 })
+        button:ClearAllPoints()
+        local below = (frame.selectedBossType and frame.selectedBossType:IsShown()) and frame.selectedBossType or frame.selectedBossName
+        button:SetPoint("TOPLEFT", below, "BOTTOMLEFT", 0, -4)
+        button:SetWidth((button.label:GetStringWidth() or 60) + 25 + (button.name:GetStringWidth() or 100))
+        button:Show()
+        return
+    end
+    button.questID, button.questPage = nil, nil
     local name, _, _, icon = ItemData(id)
     button.itemID = id
     button.chain = type(boss.summonChain) == "table" and boss.summonChain or nil

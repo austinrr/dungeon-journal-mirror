@@ -294,6 +294,7 @@ FDJ.Locales.zhCN = {
     ["MAP_LEFT_TARGET"] = "左键：若在附近则选中并标记任务发布者",
     ["MAP_RIGHT_REMOVE"] = "右键：移除标记",
     ["MAP_PATROL"] = "会四处走动：线条为其路线",
+    ["MAP_QUEST_TARGET"] = "任务目标",
     ["MAP_MARKED"] = "已在地图上标记%s。",
     ["MAP_OPEN_FAILED"] = "无法打开记录的地图位置。",
     ["MAP_COMBAT"] = "战斗中无法打开地图。按 %s 查看标记的位置。",

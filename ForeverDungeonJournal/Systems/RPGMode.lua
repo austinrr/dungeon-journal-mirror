@@ -25,6 +25,145 @@ local function Plain(v)
     return v
 end
 
+-- ------------------------------------------------------------ RPG options
+-- Options > RPG Mode (account-wide): hide the quest or the boss (page)
+-- achievement popups, mute their fanfare, and its volume (85% by default).
+-- WoW plays a sound at its channel's volume only, so a quieter fanfare is
+-- played on the Dialog channel with that channel's volume set to the
+-- chosen share for a few seconds, then put back (also at the next login,
+-- should the game close in between).
+local RPG_DEFAULT_VOLUME = 85
+function FDJ.RPGOption(key)
+    local db = ForeverDungeonJournalDB
+    local o = db and type(db.rpgOptions) == "table" and db.rpgOptions or {}
+    if key == "volume" then
+        local v = tonumber(o.volume)
+        return v and math.max(0, math.min(100, v)) or RPG_DEFAULT_VOLUME
+    end
+    return o[key] == true
+end
+function FDJ.SetRPGOption(key, value)
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if type(ForeverDungeonJournalDB.rpgOptions) ~= "table" then ForeverDungeonJournalDB.rpgOptions = {} end
+    local o = ForeverDungeonJournalDB.rpgOptions
+    if key == "volume" then
+        o.volume = math.floor((tonumber(value) or RPG_DEFAULT_VOLUME) + 0.5)
+    else
+        o[key] = value and true or nil
+    end
+end
+local function GetCV(name)
+    if C_CVar and C_CVar.GetCVar then local ok, v = pcall(C_CVar.GetCVar, name) if ok then return v end end
+    if GetCVar then local ok, v = pcall(GetCVar, name) if ok then return v end end
+end
+local function SetCV(name, value)
+    if C_CVar and C_CVar.SetCVar then if pcall(C_CVar.SetCVar, name, value) then return end end
+    if SetCVar then pcall(SetCVar, name, value) end
+end
+local function RestoreDialog()
+    local db = ForeverDungeonJournalDB
+    local saved = db and db.rpgDialogRestore
+    if type(saved) ~= "table" then return end
+    if saved.volume ~= nil then SetCV("Sound_DialogVolume", saved.volume) end
+    if saved.enable ~= nil then SetCV("Sound_EnableDialog", saved.enable) end
+    db.rpgDialogRestore = nil
+end
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_LOGIN")
+    f:SetScript("OnEvent", RestoreDialog)
+end
+-- Plays a fanfare: play(id, channel) is PlaySound or PlaySoundFile.
+-- Returns whether it will play.
+local function PlayAtVolume(play, id)
+    if FDJ.RPGOption("mute") then return true end -- muted: counts as handled
+    local share = FDJ.RPGOption("volume") / 100
+    if share >= 0.995 then
+        local ok, will = pcall(play, id, "Master")
+        return ok and will
+    end
+    if share <= 0 then return true end
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if type(ForeverDungeonJournalDB.rpgDialogRestore) ~= "table" then
+        ForeverDungeonJournalDB.rpgDialogRestore = { volume = GetCV("Sound_DialogVolume"), enable = GetCV("Sound_EnableDialog") }
+    end
+    SetCV("Sound_EnableDialog", "1")
+    SetCV("Sound_DialogVolume", tostring(share))
+    local ok, will = pcall(play, id, "Dialog")
+    FDJ.rpgSoundToken = (FDJ.rpgSoundToken or 0) + 1
+    local token = FDJ.rpgSoundToken
+    if C_Timer and C_Timer.After then
+        C_Timer.After(6, function() if FDJ.rpgSoundToken == token then RestoreDialog() end end)
+    else
+        RestoreDialog()
+    end
+    return ok and will
+end
+
+do
+    local strings = {
+        enUS = { OPT_RPG_ENABLE = "Enable", OPT_RPG_PAGE = "RPG Mode",
+            OPT_RPG_HIDE_QUEST = "Hide Quest Achievement Popups", OPT_RPG_HIDE_QUEST_TIP = "No popup when a dungeon quest unlocks in RPG Mode (the line in chat stays).",
+            OPT_RPG_HIDE_BOSS = "Hide Boss Achievement Popups", OPT_RPG_HIDE_BOSS_TIP = "No popup when a final boss unlocks a journal page in RPG Mode (the line in chat stays).",
+            OPT_RPG_MUTE = "Mute Achievements", OPT_RPG_MUTE_TIP = "The achievement popups make no sound.",
+            OPT_RPG_VOLUME = "Achievement Popup sound", OPT_RPG_VOLUME_TIP = "How loud the achievement fanfare plays (100% = as loud as the game's own)." },
+        deDE = { OPT_RPG_ENABLE = "Aktivieren", OPT_RPG_PAGE = "RPG-Modus",
+            OPT_RPG_HIDE_QUEST = "Quest-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_QUEST_TIP = "Kein Popup, wenn im RPG-Modus eine Dungeon-Quest freigeschaltet wird (die Chatzeile bleibt).",
+            OPT_RPG_HIDE_BOSS = "Boss-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_BOSS_TIP = "Kein Popup, wenn im RPG-Modus ein Endboss eine Journalseite freischaltet (die Chatzeile bleibt).",
+            OPT_RPG_MUTE = "Erfolge stummschalten", OPT_RPG_MUTE_TIP = "Die Erfolgs-Popups spielen keinen Ton.",
+            OPT_RPG_VOLUME = "Lautstärke der Erfolgs-Popups", OPT_RPG_VOLUME_TIP = "Wie laut die Erfolgsfanfare spielt (100% = so laut wie die des Spiels)." },
+        frFR = { OPT_RPG_ENABLE = "Activer", OPT_RPG_PAGE = "Mode RPG",
+            OPT_RPG_HIDE_QUEST = "Masquer les hauts faits de quête", OPT_RPG_HIDE_QUEST_TIP = "Pas de fenêtre quand une quête de donjon se débloque en mode RPG (la ligne dans le chat reste).",
+            OPT_RPG_HIDE_BOSS = "Masquer les hauts faits de boss", OPT_RPG_HIDE_BOSS_TIP = "Pas de fenêtre quand un boss final débloque une page du journal en mode RPG (la ligne dans le chat reste).",
+            OPT_RPG_MUTE = "Couper le son des hauts faits", OPT_RPG_MUTE_TIP = "Les fenêtres de haut fait ne font aucun son.",
+            OPT_RPG_VOLUME = "Volume des hauts faits", OPT_RPG_VOLUME_TIP = "Le volume de la fanfare (100% = aussi fort que celle du jeu)." },
+        esES = { OPT_RPG_ENABLE = "Activar", OPT_RPG_PAGE = "Modo RPG",
+            OPT_RPG_HIDE_QUEST = "Ocultar logros de misiones", OPT_RPG_HIDE_QUEST_TIP = "Sin ventana cuando se desbloquea una misión de mazmorra en el modo RPG (la línea del chat se mantiene).",
+            OPT_RPG_HIDE_BOSS = "Ocultar logros de jefes", OPT_RPG_HIDE_BOSS_TIP = "Sin ventana cuando un jefe final desbloquea una página del diario en el modo RPG (la línea del chat se mantiene).",
+            OPT_RPG_MUTE = "Silenciar logros", OPT_RPG_MUTE_TIP = "Las ventanas de logro no suenan.",
+            OPT_RPG_VOLUME = "Volumen de los logros", OPT_RPG_VOLUME_TIP = "El volumen de la fanfarria (100% = tan alto como la del juego)." },
+        itIT = { OPT_RPG_ENABLE = "Attiva", OPT_RPG_PAGE = "Modalità RPG",
+            OPT_RPG_HIDE_QUEST = "Nascondi imprese delle missioni", OPT_RPG_HIDE_QUEST_TIP = "Nessun riquadro quando si sblocca una missione di dungeon in modalità RPG (la riga in chat resta).",
+            OPT_RPG_HIDE_BOSS = "Nascondi imprese dei boss", OPT_RPG_HIDE_BOSS_TIP = "Nessun riquadro quando un boss finale sblocca una pagina del diario in modalità RPG (la riga in chat resta).",
+            OPT_RPG_MUTE = "Silenzia imprese", OPT_RPG_MUTE_TIP = "I riquadri delle imprese non fanno suoni.",
+            OPT_RPG_VOLUME = "Volume delle imprese", OPT_RPG_VOLUME_TIP = "Quanto forte suona la fanfara (100% = forte come quella del gioco)." },
+        ptBR = { OPT_RPG_ENABLE = "Ativar", OPT_RPG_PAGE = "Modo RPG",
+            OPT_RPG_HIDE_QUEST = "Ocultar conquistas de missões", OPT_RPG_HIDE_QUEST_TIP = "Sem janela quando uma missão de masmorra é desbloqueada no modo RPG (a linha no chat continua).",
+            OPT_RPG_HIDE_BOSS = "Ocultar conquistas de chefes", OPT_RPG_HIDE_BOSS_TIP = "Sem janela quando um chefe final desbloqueia uma página do diário no modo RPG (a linha no chat continua).",
+            OPT_RPG_MUTE = "Silenciar conquistas", OPT_RPG_MUTE_TIP = "As janelas de conquista não tocam som.",
+            OPT_RPG_VOLUME = "Volume das conquistas", OPT_RPG_VOLUME_TIP = "O volume da fanfarra (100% = tão alto quanto a do jogo)." },
+        ruRU = { OPT_RPG_ENABLE = "Включить", OPT_RPG_PAGE = "Режим RPG",
+            OPT_RPG_HIDE_QUEST = "Скрыть достижения заданий", OPT_RPG_HIDE_QUEST_TIP = "Без окна, когда в режиме RPG открывается задание подземелья (строка в чате остаётся).",
+            OPT_RPG_HIDE_BOSS = "Скрыть достижения боссов", OPT_RPG_HIDE_BOSS_TIP = "Без окна, когда в режиме RPG последний босс открывает страницу журнала (строка в чате остаётся).",
+            OPT_RPG_MUTE = "Без звука достижений", OPT_RPG_MUTE_TIP = "Окна достижений не издают звука.",
+            OPT_RPG_VOLUME = "Громкость достижений", OPT_RPG_VOLUME_TIP = "Громкость фанфар (100% = как у самой игры)." },
+        koKR = { OPT_RPG_ENABLE = "사용", OPT_RPG_PAGE = "RPG 모드",
+            OPT_RPG_HIDE_QUEST = "퀘스트 업적 팝업 숨기기", OPT_RPG_HIDE_QUEST_TIP = "RPG 모드에서 던전 퀘스트가 열려도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
+            OPT_RPG_HIDE_BOSS = "우두머리 업적 팝업 숨기기", OPT_RPG_HIDE_BOSS_TIP = "RPG 모드에서 마지막 우두머리가 도감 페이지를 열어도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
+            OPT_RPG_MUTE = "업적 소리 끄기", OPT_RPG_MUTE_TIP = "업적 팝업에서 소리가 나지 않습니다.",
+            OPT_RPG_VOLUME = "업적 팝업 소리", OPT_RPG_VOLUME_TIP = "업적 팡파르의 음량 (100% = 게임 기본과 같음)." },
+        zhCN = { OPT_RPG_ENABLE = "启用", OPT_RPG_PAGE = "RPG模式",
+            OPT_RPG_HIDE_QUEST = "隐藏任务成就弹窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任务解锁时不弹窗（聊天提示保留）。",
+            OPT_RPG_HIDE_BOSS = "隐藏首领成就弹窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最终首领解锁日志页面时不弹窗（聊天提示保留）。",
+            OPT_RPG_MUTE = "成就静音", OPT_RPG_MUTE_TIP = "成就弹窗不播放声音。",
+            OPT_RPG_VOLUME = "成就弹窗音量", OPT_RPG_VOLUME_TIP = "成就号角的音量（100% = 与游戏自带相同）。" },
+        zhTW = { OPT_RPG_ENABLE = "啟用", OPT_RPG_PAGE = "RPG模式",
+            OPT_RPG_HIDE_QUEST = "隱藏任務成就彈窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任務解鎖時不彈窗（聊天提示保留）。",
+            OPT_RPG_HIDE_BOSS = "隱藏首領成就彈窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最終首領解鎖日誌頁面時不彈窗（聊天提示保留）。",
+            OPT_RPG_MUTE = "成就靜音", OPT_RPG_MUTE_TIP = "成就彈窗不播放聲音。",
+            OPT_RPG_VOLUME = "成就彈窗音量", OPT_RPG_VOLUME_TIP = "成就號角的音量（100% = 與遊戲內建相同）。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
 -- ------------------------------------------------------------ final bosses
 -- The boss that unlocks each dungeon (NPC IDs). Where the journal lists a
 -- side boss after the real end boss, the end boss is named here.
@@ -95,6 +234,18 @@ local function Build()
     end
 end
 
+-- The run log (Systems/RunLog.lua) ends a run's timer on the same final boss
+-- that unlocks the dungeon here: its NPC ID (or nil) and its names (lower case).
+function FDJ.FinalBossOf(dungeon)
+    Build()
+    local id = finalNpcOf[dungeon]
+    local names = {}
+    for lower, d in pairs(finalNames) do
+        if d == dungeon then names[lower] = true end
+    end
+    return id or nil, names
+end
+
 -- ------------------------------------------------------------------- mode
 function FDJ.IsRPGMode()
     return CharDB().journalMode == "rpg"
@@ -156,7 +307,8 @@ local function Progress()
             local forFaction = q.faction == nil or q.faction == "Both" or q.faction == "Neutral" or q.faction == faction
             local forClass = not q.classOnly or (class and tostring(q.classOnly):upper() == class)
             local forProfession = not q.profession or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(q.profession)
-            if q.id and forFaction and forClass and forProfession and not q.hideFromMainList and not q.repeatable and not seen[q.id] then
+            if q.id and forFaction and forClass and forProfession and not q.hideFromMainList and not q.repeatable and not seen[q.id]
+                and not (FDJ.IsQuestLost and FDJ.IsQuestLost(q)) then -- a lost quest doesn't count
                 seen[q.id] = true
                 total = total + 1
                 if FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(q.id) then done = done + 1 end -- questdone: handed in
@@ -263,13 +415,12 @@ local function FanfareCandidates()
 end
 
 local function PlayFanfare()
+    if FDJ.RPGOption("mute") then return end -- Options > RPG Mode > Mute Achievements
     for _, c in ipairs(FanfareCandidates()) do
-        if c[2] then
-            local ok, willPlay = pcall(c[2], c[3], "Master")
-            if ok and willPlay then return c[1] end
-        end
+        if c[2] and PlayAtVolume(c[2], c[3]) then return c[1] end
     end
 end
+FDJ.PlayRPGFanfare = PlayFanfare -- the volume slider plays a sample
 
 local function BuildPlainToast()
     local t = CreateFrame("Button", "ForeverDungeonJournalUnlockToast", UIParent, "BackdropTemplate")
@@ -521,6 +672,7 @@ local function BuildAchievementToast()
 end
 
 ShowUnlockToast = function(name)
+    if FDJ.RPGOption("hideBossPopups") then return end -- Options > RPG Mode
     if not toast then
         toast = HasAtlas("ui-achievement-guild-background") and BuildAchievementToast() or BuildPlainToast()
     end
@@ -1260,7 +1412,8 @@ local function PlaceRPGModeButton(frame)
     b.text:SetText(L("MODE_RPG"))
     b:SetWidth(math.max(96, math.min(170, math.ceil((b.text:GetStringWidth() or 60) + 44))))
     b:ClearAllPoints()
-    local right = frame.favouritesButton or frame.lootFilterButton or frame.hideDungeonsButton
+    local runLog = frame.runLogButton and frame.runLogButton:IsShown() and frame.runLogButton
+    local right = runLog or frame.favouritesButton or frame.lootFilterButton or frame.hideDungeonsButton
     if right then
         b:SetPoint("RIGHT", right, "LEFT", -8, 0)
     else
@@ -1334,7 +1487,7 @@ end
 -- mode chosen, RPG note unseen; RPG progress is kept) and opens the mode
 -- chooser, to test the whole first-time flow.
 local SlashWithoutDevPopup = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
-if SlashWithoutDevPopup then
+if false and SlashWithoutDevPopup then -- dev command, off for release
     SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)
         local cmd = tostring(msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
         if cmd == "devpopup" then
@@ -1586,6 +1739,8 @@ do
     end
 
     local function Enqueue(entry)
+        -- Options > RPG Mode > Hide Quest Achievement Popups
+        if (entry.kind or "quest") == "quest" and FDJ.RPGOption("hideQuestPopups") then return end
         local t = Toast()
         if not t:IsShown() then return Show(entry) end
         local current = t.questEntry
@@ -1702,7 +1857,7 @@ do
     -- if one more of its quests was just unlocked. Any mode; nothing saved.
     local devNext = 0
     local SlashWithoutDevQuest = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
-    if SlashWithoutDevQuest then
+    if false and SlashWithoutDevQuest then -- dev command, off for release
         SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)
             local cmd = tostring(msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
             if cmd ~= "devquest" then return SlashWithoutDevQuest(msg, ...) end

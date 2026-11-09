@@ -291,6 +291,7 @@ FDJ.Locales.esES = {
     ["MAP_LEFT_TARGET"] = "Clic izquierdo para seleccionar y marcar al otorgante de misión si está cerca",
     ["MAP_RIGHT_REMOVE"] = "Clic derecho para quitar el marcador",
     ["MAP_PATROL"] = "Se desplaza: la línea muestra el recorrido",
+    ["MAP_QUEST_TARGET"] = "Objetivo de misión",
     ["MAP_MARKED"] = "%s marcado en el mapa.",
     ["MAP_OPEN_FAILED"] = "No se pudo abrir la ubicación guardada.",
     ["MAP_COMBAT"] = "El mapa no se puede abrir en combate. Pulsa %s para ver el punto marcado.",

@@ -66,7 +66,8 @@ local function AllQuestsDone(dungeon)
             or (class and tostring(quest.classOnly):upper() == class)
         local forProfession = not quest.profession or Store().showAllProfessionQuests
             or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(quest.profession)
-        if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id then
+        if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id
+            and not (FDJ.IsQuestLost and FDJ.IsQuestLost(quest)) then -- a lost quest doesn't count
             count = count + 1
             if not FDJ.QuestTurnedIn(quest.id) then return false end
         end
@@ -133,6 +134,12 @@ local OPTIONS = {
         tip = "OPT_HIDE_SLEEPING_BAG_TIP",
         get = function() return FDJ.IsSleepingBagHidden and FDJ.IsSleepingBagHidden() or false end,
         set = function(on) if FDJ.SetSleepingBagHidden then FDJ.SetSleepingBagHidden(on) end end,
+    },
+    {
+        label = "OPT_HIDE_RUNLOG",
+        tip = "OPT_HIDE_RUNLOG_TIP",
+        get = function() return FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden() or false end,
+        set = function(on) if FDJ.SetRunLogButtonHidden then FDJ.SetRunLogButtonHidden(on) end end,
     },
     {
         label = "OPT_HIDE_DUNGEON_MAP",
@@ -203,6 +210,80 @@ local OPTIONS = {
             if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
         end,
         refreshHome = true,
+    },
+    -- The on-screen dungeon tracker (Systems/RunLogUI.lua).
+    { header = "OPT_TRACKER" },
+    {
+        label = "OPT_TRACK_NEVER",
+        tip = "OPT_TRACK_NEVER_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("never") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("never", on) end end,
+    },
+    {
+        label = "OPT_TRACK_SOLO",
+        tip = "OPT_TRACK_SOLO_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("solo") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("solo", on) end end,
+    },
+    {
+        label = "OPT_TRACK_HIDE_TIME",
+        tip = "OPT_TRACK_HIDE_TIME_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideTime") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideTime", on) end end,
+    },
+    {
+        label = "OPT_TRACK_HIDE_XP",
+        tip = "OPT_TRACK_HIDE_XP_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideXP") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideXP", on) end end,
+    },
+    {
+        label = "OPT_TRACK_HIDE_GOLD",
+        tip = "OPT_TRACK_HIDE_GOLD_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideGold") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideGold", on) end end,
+    },
+    {
+        label = "OPT_TRACK_HIDE_BOSSES",
+        tip = "OPT_TRACK_HIDE_BOSSES_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideBosses") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideBosses", on) end end,
+    },
+    -- RPG Mode's achievement popups (Systems/RPGMode.lua).
+    { header = "OPT_RPG_PAGE" },
+    {
+        -- the same switch as RPG Mode on the Dungeon list page
+        label = "OPT_RPG_ENABLE",
+        tip = "OPT_RPG_MODE_TIP",
+        get = function() return FDJ.IsRPGMode and FDJ.IsRPGMode() or false end,
+        set = function(on) if FDJ.SetJournalMode then FDJ.SetJournalMode(on and "rpg" or "gamer") end end,
+        refreshHome = true,
+    },
+    {
+        label = "OPT_RPG_HIDE_QUEST",
+        tip = "OPT_RPG_HIDE_QUEST_TIP",
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("hideQuestPopups") or false end,
+        set = function(on) if FDJ.SetRPGOption then FDJ.SetRPGOption("hideQuestPopups", on) end end,
+    },
+    {
+        label = "OPT_RPG_HIDE_BOSS",
+        tip = "OPT_RPG_HIDE_BOSS_TIP",
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("hideBossPopups") or false end,
+        set = function(on) if FDJ.SetRPGOption then FDJ.SetRPGOption("hideBossPopups", on) end end,
+    },
+    {
+        label = "OPT_RPG_MUTE",
+        tip = "OPT_RPG_MUTE_TIP",
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("mute") or false end,
+        set = function(on) if FDJ.SetRPGOption then FDJ.SetRPGOption("mute", on) end end,
+    },
+    {
+        slider = true,
+        label = "OPT_RPG_VOLUME",
+        tip = "OPT_RPG_VOLUME_TIP",
+        min = 0, max = 100, step = 5,
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("volume") or 85 end,
+        set = function(v) if FDJ.SetRPGOption then FDJ.SetRPGOption("volume", v) end end,
     },
 }
 
@@ -616,6 +697,8 @@ local function CreateOptionRow(page, option, y)
         local on = self:GetChecked() and true or false
         pcall(self.option.set, on)
         if self.option.refreshHome and FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+        -- a switch shown on two pages (RPG Mode) ticks on both
+        if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
     end)
     local band = RowHover(page, y)
     check:SetScript("OnEnter", function(self)
@@ -633,6 +716,61 @@ local function CreateOptionRow(page, option, y)
         if GameTooltip then GameTooltip:Hide() end
     end)
     panel.checks[#panel.checks + 1] = check
+end
+
+-- A row with a slider (0-100%), e.g. Options > RPG Mode > Achievement
+-- Popup sound. Letting go of it plays a sample (the RPG fanfare).
+local function CreateSliderRow(page, option, y)
+    local label = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    label:SetPoint("TOPLEFT", LABEL_X, y - 7)
+    label:SetJustifyH("LEFT")
+    label:SetText(L(option.label))
+    panel.texts[#panel.texts + 1] = { label, option.label }
+
+    local slider = CreateFrame("Slider", nil, page, "BackdropTemplate")
+    slider:SetOrientation("HORIZONTAL")
+    slider:SetSize(190, 16)
+    slider:SetPoint("TOPLEFT", LABEL_X + 4, y - 30)
+    slider:SetBackdrop({
+        bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+        edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+        tile = true, tileSize = 8, edgeSize = 8,
+        insets = { left = 3, right = 3, top = 6, bottom = 6 },
+    })
+    slider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal")
+    slider:SetMinMaxValues(option.min or 0, option.max or 100)
+    slider:SetValueStep(option.step or 5)
+    if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
+    slider.option = option
+    local value = page:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    value:SetPoint("LEFT", slider, "RIGHT", 12, 0)
+    slider.valueText = value
+    slider:SetScript("OnValueChanged", function(self, v)
+        v = math.floor(v + 0.5)
+        self.valueText:SetText(v .. "%")
+        if self.fdjSetting then return end
+        pcall(self.option.set, v)
+    end)
+    slider:SetScript("OnMouseUp", function()
+        if FDJ.PlayRPGFanfare then pcall(FDJ.PlayRPGFanfare) end
+    end)
+    slider:SetScript("OnEnter", function(self)
+        if not GameTooltip then return end
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(L(self.option.label), 1, 0.82, 0.27)
+        GameTooltip:AddLine(L(self.option.tip), 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    slider:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+    slider.Refresh = function(self)
+        local ok, v = pcall(self.option.get)
+        self.fdjSetting = true
+        self:SetValue(ok and tonumber(v) or 85)
+        self.valueText:SetText(math.floor(self:GetValue() + 0.5) .. "%")
+        self.fdjSetting = nil
+    end
+    panel.sliders = panel.sliders or {}
+    panel.sliders[#panel.sliders + 1] = slider
 end
 
 local function BuildDiscordPage(page)
@@ -830,6 +968,9 @@ local function CreatePanel()
             local row = CreateKeybindRow(page, option, y - 4)
             panel.keybinds[#panel.keybinds + 1] = row
             y = y - 36
+        elseif option.slider then
+            CreateSliderRow(page, option, y)
+            y = y - 54
         elseif not option.action then
             CreateOptionRow(page, option, y)
             y = y - 35
@@ -958,6 +1099,7 @@ local function CreatePanel()
         SelectTab(self.selectedTab or 1)
         SelectPage(self.selectedPage or 1)
         for _, button in ipairs(self.keybinds) do button.Refresh() end
+        for _, slider in ipairs(self.sliders or {}) do slider:Refresh() end
         for _, check in ipairs(self.checks) do
             local ok, value = pcall(check.option.get)
             check:SetChecked(ok and value or false)
@@ -1039,7 +1181,8 @@ local function PulseRow(check)
     check.fdjPulse:Play()
 end
 
-function FDJ.OpenSettingsAt(label)
+-- quiet: just open that page, no flashing row.
+function FDJ.OpenSettingsAt(label, quiet)
     if not panel then CreatePanel() end
     local pageIndex, pages = 1, 0
     for _, option in ipairs(OPTIONS) do
@@ -1054,6 +1197,7 @@ function FDJ.OpenSettingsAt(label)
     if panel:IsShown() then panel:Hide() end
     panel:Show()
     if panel.Raise then panel:Raise() end
+    if quiet then return end
     for _, check in ipairs(panel.checks or {}) do
         if check.option and check.option.label == label then PulseRow(check) end
     end

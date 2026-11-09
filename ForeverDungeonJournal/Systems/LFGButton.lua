@@ -81,6 +81,20 @@ local function FindActivity(dungeonName)
                     return aid, i
                 end
             end
+            -- Names that differ a little ("The Stockade" / "Stormwind
+            -- Stockades"): one contains the other, plural "s" ignored.
+            local stem = wanted:gsub("s$", "")
+            if #stem >= 5 then
+                for _, aid in ipairs(ids) do
+                    local ok2, i = pcall(C_LFGList.GetActivityInfoTable, aid)
+                    if ok2 and type(i) == "table" then
+                        for _, n in ipairs({ Norm(i.fullName), Norm(i.shortName) }) do
+                            local ns = n:gsub("s$", "")
+                            if ns ~= "" and (ns:find(stem, 1, true) or stem:find(ns, 1, true)) then return aid, i end
+                        end
+                    end
+                end
+            end
         end
     end
     return id, info

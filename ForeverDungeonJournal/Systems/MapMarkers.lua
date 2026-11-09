@@ -1849,9 +1849,9 @@ combatEvents:SetScript("OnEvent", function(_, event)
         pcall(DisarmCombatClicks)
     elseif event == "PLAYER_LOGIN" then
         for i = 1, 2 do combatClicks[i] = combatClicks[i] or MakeCombatClick(i) end
-        -- Dev: /dj devmap says what the combat path found.
+        -- Dev: /dj devmap says what the combat path found (off for release).
         local base = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
-        if base then
+        if false and base then
             SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)
                 local cmd = tostring(msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
                 if cmd == "devmap" then
@@ -1891,6 +1891,11 @@ end)
 -- done on the spot (an object to loot or use, a place to explore). Only
 -- the quests the quest list shows (its faction, class quests as set, RPG
 -- Mode's unlocked ones). Hover: what to do there; click: the quest's page.
+-- pinlog: a spot with something to do for a quest in the player's log (hand
+-- it in, loot, use, explore) shows ?, like the game's own NPCs, even when
+-- another quest also starts there (Daewyn Songblade: Songblade Search is
+-- handed in, Fallen in the Fen starts); a quest already taken or done does
+-- not make a !. The pins follow the quest log while the map is open.
 do
     local pool = {}
 
@@ -2039,22 +2044,38 @@ do
         local tracked = mapData and FDJ.dungeonTurnIns and FDJ.dungeonTurnIns[mapData]
         local skip = tracked and (tracked.floor or 1) == floorIndex and tracked.questID or nil
         local n = 0
+        local inLog = FDJ.IsQuestInLog or function() return false end
+        local turnedIn = FDJ.QuestTurnedIn or function() return false end
         for _, pin in ipairs(list) do
             if (pin.floor or 1) == floorIndex then
                 local spots, start, firstQuest = {}, false, nil
+                local logged, available, firstLogged = false, false, nil -- pinlog
                 for _, spot in ipairs(pin.spots or {}) do
                     local shown = {}
                     for _, q in ipairs(spot.quests or {}) do
                         if q.id ~= skip and Shown(q, faction) then
                             shown[#shown + 1] = q
                             firstQuest = firstQuest or q
+                            local have = inLog(q.id) and true or false
                             for _, act in ipairs(q.acts or {}) do
-                                if act == "start" then start = true end
+                                if act == "start" then
+                                    start = true
+                                    if not have and not turnedIn(q.id) then available = true end
+                                elseif have then
+                                    logged = true
+                                    firstLogged = firstLogged or q
+                                end
                             end
                         end
                     end
                     if #shown > 0 then spots[#spots + 1] = { name = spot.name, shown = shown } end
                 end
+                -- pinlog: ? for a quest in the log, else ! for one to take;
+                -- nothing to do there now (quests not taken yet, or taken or
+                -- done already): its usual icon, greyed.
+                local bang = (not logged) and (available or start)
+                local idle = not logged and not available
+                firstQuest = firstLogged or firstQuest
                 if #spots > 0 then
                     n = n + 1
                     local b = pool[n]
@@ -2068,9 +2089,11 @@ do
                         pool[n] = b
                     end
                     if b:GetParent() ~= holder then b:SetParent(holder) end
-                    b.fdjSpots, b.fdjFirst, b.fdjStart = spots, firstQuest, start
+                    b.fdjSpots, b.fdjFirst, b.fdjStart = spots, firstQuest, bang
                     b.fdjFloor, b.fdjX, b.fdjY = pin.floor or 1, pin.x, pin.y -- mapfocus
-                    b.icon:SetTexture(start and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
+                    b.icon:SetTexture(bang and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
+                    if b.icon.SetDesaturated then b.icon:SetDesaturated(idle) end
+                    b.icon:SetAlpha(idle and 0.75 or 1)
                     local size = math.max(22, math.floor((baseH or 0) * 0.07))
                     b:SetSize(size, size)
                     FDJ.StrokeIcon(b, b.icon, size)
@@ -2090,6 +2113,23 @@ do
     function FDJ.RefreshMapQuestPins()
         if last then return FDJ.RenderMapQuestPins(unpack(last, 1, 7)) end
     end
+
+    -- pinlog: a quest taken, handed in or dropped while the map is open
+    -- turns its spot's ! into ? (and back) right away.
+    local watcher = CreateFrame("Frame")
+    for _, event in ipairs({ "QUEST_ACCEPTED", "QUEST_TURNED_IN", "QUEST_REMOVED" }) do
+        pcall(watcher.RegisterEvent, watcher, event)
+    end
+    local pending = false
+    watcher:SetScript("OnEvent", function()
+        if pending or not last or not (last[3] and last[3].IsVisible and last[3]:IsVisible()) then return end
+        pending = true
+        local function Redraw()
+            pending = false
+            if last and last[3] and last[3]:IsVisible() then pcall(FDJ.RefreshMapQuestPins) end
+        end
+        if C_Timer and C_Timer.After then C_Timer.After(0.5, Redraw) else Redraw() end
+    end)
 
     -- The pins (shown ones first), for the tests.
     function FDJ.MapQuestPinButtons() return pool end

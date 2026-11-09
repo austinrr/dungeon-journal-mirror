@@ -1951,6 +1951,11 @@ do
         elseif state == "next" then
             icon, clickable = ICON_TODO, entry.start ~= nil
         end
+        -- chainready: a step ready to hand in gets the round ? right after
+        -- its name, as in the one-step view (not the small icon in front):
+        -- a click shows where it is handed in and targets the NPC when near.
+        local roundMark = state == "ready" and entry.turnin ~= nil and FDJ.CreateTurnInButton ~= nil
+        if roundMark then icon = nil end
         mark.icon:SetTexture(icon)
         mark.icon:SetDesaturated(grey == true)
         mark.icon:SetAlpha(grey and 0.75 or 1)
@@ -1960,12 +1965,33 @@ do
         mark:SetShown(icon ~= nil)
         local color = (state == "done" and DONE) or ((state == "ready" or state == "log") and GOLD)
             or (state == "next" and TODO) or GREY
-        local parts = { Hex(color) .. entry.index .. ". " .. (entry.name or "") .. "|r" }
+        local label = entry.index .. ". " .. (entry.name or "")
+        local parts = { Hex(color) .. label .. "|r" }
         for _, text in ipairs(entry.parts or {}) do parts[#parts + 1] = text end
-        line.text:SetWidth(math.max(40, width - STEP_TEXT_X))
+        local textW = math.max(40, width - STEP_TEXT_X)
+        line.text:SetWidth(textW)
         line.text:SetText(table.concat(parts, "\n"))
         local height = math.max(12, line.text:GetStringHeight() or 12)
         line:SetSize(width, height)
+        if roundMark then
+            if not line.turnInMark then
+                line.turnInMark = FDJ.CreateTurnInButton(line, 16)
+                line.turnInMark:SetFrameLevel(line:GetFrameLevel() + 3)
+                line.measure = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                line.measure:Hide()
+            end
+            line.measure:SetText(label)
+            local nameW = line.measure:GetStringWidth() or 0
+            local size = FDJ.StepMarkSize()
+            FDJ.ResizeTurnInButton(line.turnInMark, size)
+            line.turnInMark:ClearAllPoints()
+            line.turnInMark:SetPoint("LEFT", line, "TOPLEFT", STEP_TEXT_X + math.min(nameW + 4, math.max(0, textW - size)), -6)
+            local details = entry.details or {}
+            FDJ.SetTurnInButton(line.turnInMark,
+                { id = entry.step and entry.step.id, turnin = details.turnin, turninMap = details.turninMap }, entry.name)
+        elseif line.turnInMark then
+            FDJ.SetTurnInButton(line.turnInMark, nil)
+        end
         line:Show()
         return height
     end

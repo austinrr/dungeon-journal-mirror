@@ -1,25 +1,33 @@
--- CharacterExport: "/dj export" builds a short code for the website, so a
--- character's progress can be read there without the addon.
---
--- Quest completion is never saved to disk - the journal asks the game for it
--- every time it draws - so the code carries a snapshot taken at export time.
--- Cleared dungeons come from rpgKills, which is saved per character.
---
--- The code is one base64url token so it survives a paste into a chat box or a
--- URL. Inside it is plain text, which keeps it readable while debugging:
---
---   FDJ2|name|realm|race|class|level|faction|quests|dungeons|time|checksum
---
--- "quests" is the completed journal quest IDs, sorted, each stored as the gap
--- from the one before it in base 36; gaps are far shorter than the IDs. The
--- website keeps its own quest list, so an ID it does not know is ignored and a
--- newer addon never breaks an older site.
+-- /dj export: FDJ3 compressed snapshot. See Systems/CharacterSnapshot.lua.
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 -- FDJ2 added the race. The website still reads FDJ1 codes, which have no
 -- race field, so an older export keeps working.
-local FORMAT = "FDJ2"
+
+-- Export dialog strings in every supported locale.
+do
+    local strings = {
+        enUS = {EXPORT_TITLE = "Dungeon Journal - character code", EXPORT_COPY = "Ctrl+A then Ctrl+C, and paste it on the website.", EXPORT_HINT = "%s - %d quests done. Paste this on the website.", EXPORT_ERROR = "Could not build the character code."},
+        deDE = {EXPORT_TITLE = "Dungeon Journal - Charaktercode", EXPORT_COPY = "Strg+A, dann Strg+C; auf der Website einfügen.", EXPORT_HINT = "%s - %d Quests erledigt. Auf der Website einfügen.", EXPORT_ERROR = "Der Charaktercode konnte nicht erstellt werden."},
+        frFR = {EXPORT_TITLE = "Dungeon Journal - code du personnage", EXPORT_COPY = "Ctrl+A puis Ctrl+C, et collez sur le site.", EXPORT_HINT = "%s - %d quêtes terminées. Collez sur le site.", EXPORT_ERROR = "Impossible de créer le code du personnage."},
+        esES = {EXPORT_TITLE = "Dungeon Journal - código del personaje", EXPORT_COPY = "Ctrl+A y luego Ctrl+C; pégalo en el sitio web.", EXPORT_HINT = "%s - %d misiones completadas. Pégalo en el sitio web.", EXPORT_ERROR = "No se pudo crear el código del personaje."},
+        itIT = {EXPORT_TITLE = "Dungeon Journal - codice personaggio", EXPORT_COPY = "Ctrl+A, poi Ctrl+C; incolla sul sito web.", EXPORT_HINT = "%s - %d missioni completate. Incolla sul sito web.", EXPORT_ERROR = "Impossibile creare il codice del personaggio."},
+        ptBR = {EXPORT_TITLE = "Dungeon Journal - código do personagem", EXPORT_COPY = "Ctrl+A e depois Ctrl+C; cole no site.", EXPORT_HINT = "%s - %d missões concluídas. Cole no site.", EXPORT_ERROR = "Não foi possível criar o código do personagem."},
+        ruRU = {EXPORT_TITLE = "Dungeon Journal - код персонажа", EXPORT_COPY = "Нажмите Ctrl+A, затем Ctrl+C и вставьте код на сайте.", EXPORT_HINT = "%s - выполнено заданий: %d. Вставьте код на сайте.", EXPORT_ERROR = "Не удалось создать код персонажа."},
+        koKR = {EXPORT_TITLE = "Dungeon Journal - 캐릭터 코드", EXPORT_COPY = "Ctrl+A, Ctrl+C를 누른 후 웹사이트에 붙여넣으세요.", EXPORT_HINT = "%s - 완료한 퀘스트 %d개. 웹사이트에 붙여넣으세요.", EXPORT_ERROR = "캐릭터 코드를 만들 수 없습니다."},
+        zhCN = {EXPORT_TITLE = "Dungeon Journal - 角色代码", EXPORT_COPY = "按 Ctrl+A，再按 Ctrl+C，然后粘贴到网站。", EXPORT_HINT = "%s - 已完成 %d 个任务。请粘贴到网站。", EXPORT_ERROR = "无法生成角色代码。"},
+        zhTW = {EXPORT_TITLE = "Dungeon Journal - 角色代碼", EXPORT_COPY = "按 Ctrl+A，再按 Ctrl+C，然後貼到網站。", EXPORT_HINT = "%s - 已完成 %d 個任務。請貼到網站。", EXPORT_ERROR = "無法產生角色代碼。"},
+        esMX = {EXPORT_TITLE = "Dungeon Journal - código del personaje", EXPORT_COPY = "Ctrl+A y luego Ctrl+C; pégalo en el sitio web.", EXPORT_HINT = "%s - %d misiones completadas. Pégalo en el sitio web.", EXPORT_ERROR = "No se pudo crear el código del personaje."},
+    }
+    for locale, values in pairs(strings) do
+        if FDJ.Locales and FDJ.Locales[locale] then
+            for key, value in pairs(values) do FDJ.Locales[locale][key] = value end
+        end
+    end
+end
+local function ExportText(key) return FDJ.L and FDJ.L(key) or key end
+
 
 -- ------------------------------------------------------------------ encoding
 
@@ -74,99 +82,14 @@ local function Checksum(s)
     return b * 65536 + a
 end
 
--- The website's slug for a dungeon. Must match its slugify(): lower case,
--- apostrophes dropped, every other run of non-alphanumerics becomes one dash.
-local function Slug(name)
-    local s = tostring(name or ""):lower()
-    s = s:gsub("\226\128\153", "")   -- the curly apostrophe, as UTF-8 bytes
-    s = s:gsub("'", "")
-    s = s:gsub("[^a-z0-9]+", "-")
-    s = s:gsub("^%-+", "")
-    s = s:gsub("%-+$", "")
-    return s
-end
-
--- ------------------------------------------------------------------- payload
-
--- Every quest the journal lists, deduplicated: a quest can appear under more
--- than one dungeon, and the code should only ever carry it once.
-local function JournalQuestIDs()
-    local seen, ids = {}, {}
-    for _, dungeonName in ipairs(FDJ.ORDER or {}) do
-        local dungeon = FDJ.DB and FDJ.DB[dungeonName]
-        local quests = type(dungeon) == "table" and dungeon.quests
-        if type(quests) == "table" then
-            for _, q in ipairs(quests) do
-                local id = type(q) == "table" and tonumber(q.id)
-                if id and not seen[id] then
-                    seen[id] = true
-                    ids[#ids + 1] = id
-                end
-            end
-        end
-    end
-    table.sort(ids)
-    return ids
-end
-
-local function CompletedQuests()
-    local done = {}
-    if type(FDJ.IsQuestFinished) ~= "function" then return done end
-    for _, id in ipairs(JournalQuestIDs()) do
-        local ok, finished = pcall(FDJ.IsQuestFinished, id)
-        if ok and finished == true then done[#done + 1] = id end
-    end
-    return done
-end
-
-local function ClearedDungeons()
-    local out = {}
-    local db = _G.ForeverDungeonJournalCharacterDB
-    local kills = type(db) == "table" and db.rpgKills
-    if type(kills) ~= "table" then return out end
-    for _, dungeonName in ipairs(FDJ.ORDER or {}) do
-        if kills[dungeonName] == true then out[#out + 1] = Slug(dungeonName) end
-    end
-    return out
-end
-
--- Sorted IDs as gaps: the first is itself, each one after it is the step up
--- from the last. Only the first can be negative, so only it can carry a sign.
-local function DeltaEncode(ids)
-    local out, last = {}, 0
-    for i, id in ipairs(ids) do
-        out[i] = Base36(id - last)
-        last = id
-    end
-    return table.concat(out, ",")
-end
-
+-- FDJ3: raw DEFLATE JSON, base64url, Adler-32 of the UTF-8 JSON.
 FDJ.BuildExportCode = function()
-    local name = UnitName("player") or "?"
-    local realm = (GetRealmName and GetRealmName()) or ""
-    -- Second return of each is the language-independent token, so a French
-    -- client and an English one export the same code.
-    local _, race = UnitRace("player")
-    local _, class = UnitClass("player")
-    local level = UnitLevel("player") or 0
-    local faction = (UnitFactionGroup and UnitFactionGroup("player")) or ""
-
-    local quests = CompletedQuests()
-    local body = table.concat({
-        FORMAT,
-        name,
-        realm,
-        race or "",
-        class or "",
-        tostring(level),
-        faction:sub(1, 1),                      -- "A", "H", or empty
-        DeltaEncode(quests),
-        table.concat(ClearedDungeons(), ","),
-        tostring(time and time() or 0),
-    }, "|")
-
-    local code = Base64Url(body .. "|" .. Base36(Checksum(body)))
-    return code, #quests, name
+    local snapshot = FDJ.BuildCharacterSnapshot()
+    local body = FDJ.ExportJSON(snapshot)
+    local lib = (LibStub and LibStub:GetLibrary("LibDeflate", true)) or _G.FDJLibDeflate
+    assert(lib, "LibDeflate unavailable")
+    local code = "FDJ3." .. Base64Url(lib:CompressDeflate(body, {level = 5})) .. "." .. Base36(Checksum(body))
+    return code, #snapshot.completed, snapshot.name
 end
 
 -- ------------------------------------------------------------------------ UI
@@ -196,7 +119,7 @@ local function BuildDialog()
 
     local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -14)
-    title:SetText("Dungeon Journal - character code")
+    title:SetText(ExportText("EXPORT_TITLE"))
 
     f.hint = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     f.hint:SetPoint("TOP", title, "BOTTOM", 0, -6)
@@ -204,6 +127,7 @@ local function BuildDialog()
     -- A read-only looking box the player can select all of and copy.
     local box = CreateFrame("EditBox", nil, f)
     box:SetMultiLine(true)
+    box:SetMaxLetters(0)
     box:SetFontObject("GameFontHighlightSmall")
     box:SetPoint("TOPLEFT", 18, -62)
     box:SetPoint("BOTTOMRIGHT", -18, 46)
@@ -236,7 +160,7 @@ local function BuildDialog()
 
     local foot = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     foot:SetPoint("BOTTOMLEFT", 18, 20)
-    foot:SetText("Ctrl+A then Ctrl+C, and paste it on the website.")
+    foot:SetText(ExportText("EXPORT_COPY"))
 
     local close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     close:SetSize(80, 22)
@@ -251,12 +175,12 @@ end
 FDJ.ShowExportDialog = function()
     local ok, code, questCount, name = pcall(FDJ.BuildExportCode)
     if not ok or type(code) ~= "string" then
-        print("|cffd8a83cDungeon Journal:|r could not build the character code.")
+        print("|cffd8a83cDungeon Journal:|r " .. ExportText("EXPORT_ERROR"))
         return
     end
     dialog = dialog or BuildDialog()
     dialog.code = code
-    dialog.hint:SetText(string.format("%s - %d quests done. Paste this on the website.",
+    dialog.hint:SetText(string.format(ExportText("EXPORT_HINT"),
         name or "?", questCount or 0))
     dialog.box:SetText(code)
     dialog:Show()

@@ -294,6 +294,7 @@ FDJ.Locales.zhTW = {
     ["MAP_LEFT_TARGET"] = "左鍵：若在附近則選中並標記任務釋出者",
     ["MAP_RIGHT_REMOVE"] = "右鍵：移除標記",
     ["MAP_PATROL"] = "會四處走動：線條為其路線",
+    ["MAP_QUEST_TARGET"] = "任務目標",
     ["MAP_MARKED"] = "已在地圖上標記%s。",
     ["MAP_OPEN_FAILED"] = "無法開啟記錄的地圖位置。",
     ["MAP_COMBAT"] = "戰鬥中無法開啟地圖。按 %s 查看標記的位置。",

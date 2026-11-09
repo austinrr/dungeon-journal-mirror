@@ -291,6 +291,7 @@ FDJ.Locales.itIT = {
     ["MAP_LEFT_TARGET"] = "Clic sinistro per selezionare e marcare il PNG della missione se è vicino",
     ["MAP_RIGHT_REMOVE"] = "Clic destro per rimuovere il segnalino",
     ["MAP_PATROL"] = "Si sposta: la linea mostra il percorso",
+    ["MAP_QUEST_TARGET"] = "Bersaglio della missione",
     ["MAP_MARKED"] = "%s segnato sulla mappa.",
     ["MAP_OPEN_FAILED"] = "Impossibile aprire la posizione salvata.",
     ["MAP_COMBAT"] = "La mappa non si può aprire in combattimento. Premi %s per vedere il punto segnato.",
