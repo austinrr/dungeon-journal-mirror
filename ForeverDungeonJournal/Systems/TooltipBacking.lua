@@ -13,7 +13,9 @@ local function OwnedByJournal(tooltip)
     local journal, favourites = _G.ForeverDungeonJournalFrame, _G.ForeverDungeonJournalFavourites
     for _ = 1, 20 do
         if not owner or type(owner) ~= "table" or not owner.GetParent then return false end
-        if owner == journal or owner == favourites then return true end
+        if owner.fdjSolidTooltip or owner == journal or owner == favourites
+            or owner == _G.ForeverDungeonJournalRunTracker
+            or owner == _G.ForeverDungeonJournalRunLog then return true end
         owner = owner:GetParent()
     end
     return false

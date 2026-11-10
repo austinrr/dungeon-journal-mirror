@@ -368,10 +368,10 @@ local function BossLabel(name)
 end
 
 local function RunStart(run)
-    return run.firstTrash or run.firstKill
+    return run.startedAt or run.firstTrash or run.firstKill
 end
 
--- Speed: first trash kill to the final boss (or the last boss so far).
+-- Speed: first trash kill (or Pusillin conversation) to the final boss.
 -- Returns seconds and whether the clock is still running.
 local function Speed(run)
     local start = RunStart(run)
@@ -379,7 +379,7 @@ local function Speed(run)
     local stop = run.finalKill or run.lastBoss
     if stop and stop < start then start = run.firstKill or start end
     if run.completed and stop then return stop - start, false end
-    if not run.closed and (run.preview or (FDJ.RunLog and FDJ.RunLog.Current() == run)) then return Now() - start, true end
+    if not run.closed and FDJ.RunLog and FDJ.RunLog.Current() == run then return Now() - start, true end
     if stop then return stop - start, false end
     return nil
 end
@@ -406,7 +406,7 @@ local function MoneyView()
 end
 local function ShowsGold(run)
     if not run then return false end
-    return (run.capped or (run.preview and FDJ.RunLogIsCapped and FDJ.RunLogIsCapped())) and true or false
+    return run.capped and true or false
 end
 -- Gold and silver once there is a gold; below that, silver and copper.
 local function GoldText(copper)
@@ -596,7 +596,26 @@ end
 
 -- The run's bosses in the journal's order (killed or not, rares only once
 -- killed), then any other boss that died. { boss = <journal record>, kill = k }
+-- Runs recorded while the dungeon wasn't recognised (e.g. The Drowned City
+-- before 2.0.18) only have the game's instance name: find the dungeon now.
+function FDJ.RunLogFixDungeon(run)
+    -- Older Shaper's Terrace runs can carry the raw instance name
+    -- "The Shaper's Terrace", which isn't the journal's canonical DB key.
+    -- Recover both missing and unrecognized dungeon keys without changing
+    -- runs that already have valid boss data.
+    if run and (not run.dungeon or not (FDJ.DB and FDJ.DB[run.dungeon]))
+        and FDJ.DungeonFromInstanceName then
+        local name = run.instanceName or run.dungeon
+        if type(name) == "string" then
+            local ok, key = pcall(FDJ.DungeonFromInstanceName, name)
+            if ok and key then run.dungeon = key end
+        end
+    end
+    return run and run.dungeon
+end
+
 local function BossList(run)
+    FDJ.RunLogFixDungeon(run)
     local killed = {}
     for _, k in ipairs(run.kills or {}) do
         if k.b and not killed[k.b] then killed[k.b] = k end
@@ -718,6 +737,7 @@ local function BossTooltip(owner, boss, kill, start)
         end
     end
     GameTooltip:Show()
+    if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
 end
 FDJ.RunLogBossTooltip = BossTooltip
 
@@ -1662,9 +1682,7 @@ end
 
 -- The run to show: the one being recorded, or an unfinished one we are
 -- outside of (a corpse run or a trip to a vendor).
-local previewRun -- /dj testlog: a made-up run, never saved
 local function TrackedRun()
-    if previewRun then return previewRun end
     local api = FDJ.RunLog
     if not api then return nil end
     local cur = api.Current()
@@ -1825,6 +1843,68 @@ local function Draggable(f)
     f:SetScript("OnDragStop", function() FDJ.RunTrackerDrag(false) end)
 end
 
+-- Shown only when the player explicitly closes the real dungeon tracker
+-- with its X. Match the original "New Dungeon Tracker" notice styling,
+-- but use an OK-only message so players learn the recovery command.
+local trackerClosedNotice
+local function ShowTrackerClosedNotice()
+    -- Once per account across sessions and characters.
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if ForeverDungeonJournalDB.trackerClosedNoticeShown then return end
+    ForeverDungeonJournalDB.trackerClosedNoticeShown = true
+    if not trackerClosedNotice then
+        local h = CreateFrame("Frame", "ForeverDungeonJournalTrackerClosedNotice", UIParent, "BackdropTemplate")
+        trackerClosedNotice = h
+        h:SetSize(380, 102)
+        h:SetFrameStrata("DIALOG")
+        h:SetClampedToScreen(true)
+        h:EnableMouse(true)
+        h:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 12,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        h:SetBackdropColor(0, 0, 0, 1)
+        h:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+        h.title = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+        h.title:SetPoint("TOP", 0, -12)
+        h.title:SetWidth(350)
+        h.title:SetJustifyH("CENTER")
+        h.title:SetTextColor(1, 1, 1)
+        h.title:SetShadowColor(0, 0, 0, 1)
+        h.title:SetShadowOffset(1, -1)
+        h.help = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+        h.help:SetPoint("TOP", h.title, "BOTTOM", 0, -7)
+        h.help:SetWidth(350)
+        h.help:SetJustifyH("CENTER")
+        h.help:SetTextColor(1, 0.82, 0.27)
+        h.help:SetShadowColor(0, 0, 0, 1)
+        h.help:SetShadowOffset(1, -1)
+        h.ok = CreateFrame("Button", nil, h, "UIPanelButtonTemplate")
+        h.ok:SetSize(96, 26)
+        h.ok:SetPoint("TOP", h.help, "BOTTOM", 0, -8)
+        h.ok:SetNormalFontObject(GameFontNormalLarge)
+        h.ok:SetHighlightFontObject(GameFontHighlightLarge)
+        h.ok:SetText(OKAY or "OK")
+        h.ok:SetScript("OnClick", function() h:Hide() end)
+        h:Hide()
+    end
+    local h = trackerClosedNotice
+    h.title:SetText(L("TRACKER_CLOSED_TITLE"))
+    h.help:SetText(L("TRACKER_CLOSED_HELP"))
+    -- Fit wrapped translations while keeping the button close to the message.
+    h:SetHeight(12 + h.title:GetStringHeight() + 7 + h.help:GetStringHeight() + 8 + 26 + 10)
+    h:ClearAllPoints()
+    if tracker then
+        -- Replaces the vanished tracker in the same part of the screen.
+        h:SetPoint("CENTER", tracker, "CENTER", 0, 0)
+    else
+        h:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end
+    h:Show()
+end
+
 local function BuildTracker()
     local t = CreateFrame("Frame", "ForeverDungeonJournalRunTracker", UIParent, "BackdropTemplate")
     tracker = t
@@ -1871,7 +1951,12 @@ local function BuildTracker()
     local close = CreateFrame("Button", nil, t, "UIPanelCloseButton")
     close:SetSize(22, 22)
     close:SetPoint("TOPRIGHT", -2, -2)
-    close:SetScript("OnClick", function() FDJ.ToggleRunTracker(false) FDJ.RefreshRunLog() end)
+    close:SetScript("OnClick", function()
+        FDJ.ToggleRunTracker(false)
+        if FDJ.trackerHint then FDJ.trackerHint:Hide() end
+        if FDJ.RefreshRunLog then FDJ.RefreshRunLog() end
+        ShowTrackerClosedNotice()
+    end)
 
     t.timeLabel = t:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     t.timeLabel:SetPoint("TOPLEFT", 10, -30)
@@ -1980,21 +2065,52 @@ end
 
 local PER_ROW, SIZE, GAP = 5, 38, 6
 
+-- Faction-only bosses remain visible in the Dungeon Journal, but the
+-- on-screen tracker must not ask a player to kill a friendly boss (e.g.
+-- The Lost Dwarves in Uldaman for Alliance players).
+local function TrackerPlayerFaction()
+    if type(UnitFactionGroup) ~= "function" then return nil end
+    local ok, faction = pcall(UnitFactionGroup, "player")
+    if not ok or type(faction) ~= "string" then return nil end
+    if type(issecretvalue) == "function" and issecretvalue(faction) then return nil end
+    return faction
+end
+
+local function TrackerBossAllowed(b, faction)
+    if b.trackerHidden then return false end
+    return not b.factionOnly or not faction or b.factionOnly == faction
+end
+
 -- The tracker's two rows: the bosses (journal order, killed or not) and the
 -- dungeon's rares (all of them: not seen yet, found alive, or killed).
 local function TrackerLists(run)
+    FDJ.RunLogFixDungeon(run)
     local bosses, rares = {}, {}
     local test = FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[run.dungeon]
+    local faction = TrackerPlayerFaction()
+    local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
+    -- Also exclude faction-only and explicitly hidden bosses from fallback
+    -- kills in old runs; these can lack the original journal boss record.
+    local excludedNames = {}
+    for _, b in ipairs((d and d.bosses) or {}) do
+        if type(b) == "table" and type(b.name) == "string" and not TrackerBossAllowed(b, faction) then
+            excludedNames[b.name] = true
+            for _, alias in ipairs(b.aliases or {}) do excludedNames[alias] = true end
+        end
+    end
     for _, e in ipairs(BossList(run)) do
-        if not e.boss.rare and not test then bosses[#bosses + 1] = e end
+        if not e.boss.rare and not test and not excludedNames[e.boss.name]
+            and TrackerBossAllowed(e.boss, faction) then
+            bosses[#bosses + 1] = e
+        end
     end
     local killed = {}
     for _, k in ipairs(run.kills or {}) do
         if k.b and not killed[k.b] then killed[k.b] = k end
     end
-    local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
-        if type(b) == "table" and (b.rare or (test and not b.trash and not b.recipeTab)) and type(b.name) == "string" then
+        if type(b) == "table" and (b.rare or (test and not b.trash and not b.recipeTab))
+            and type(b.name) == "string" and TrackerBossAllowed(b, faction) then
             rares[#rares + 1] = { boss = b, kill = killed[b.name], seen = run.rareSeen and run.rareSeen[b.name],
                 ack = run.rareAck and run.rareAck[b.name] }
         end
@@ -2052,6 +2168,7 @@ local function SecureButton(i)
     local b = secureButtons[i]
     if b then return b end
     b = CreateFrame("Button", "ForeverDungeonJournalRareTarget" .. i, UIParent, "SecureActionButtonTemplate")
+    b.fdjSolidTooltip = true
     b:RegisterForClicks("AnyUp", "AnyDown")
     b:SetAttribute("type", "macro")
     b:SetAttribute("type2", "fdjmenu") -- right-click: no game action, the Options menu
@@ -2120,6 +2237,7 @@ local function BossButton(i)
     local b = bossButtons[i]
     if b then return b end
     b = CreateFrame("Button", "ForeverDungeonJournalBossTarget" .. i, UIParent, "SecureActionButtonTemplate")
+    b.fdjSolidTooltip = true
     b:RegisterForClicks("AnyUp", "AnyDown")
     b:SetAttribute("type", "macro")
     b:SetAttribute("type2", "fdjmenu") -- right-click: no game action, the Options menu
@@ -2177,7 +2295,7 @@ end
 
 local function ShouldShow(run)
     if not run then return false end
-    if run.preview then return true end
+    if FDJ.RunLog and FDJ.RunLog.IsAwaitingWing and FDJ.RunLog.IsAwaitingWing() then return false end
     if FDJ.TrackerOption("never") then return false end
     local db = TrackerDB()
     if db.dismissedRun == run.id then return false end
@@ -2324,13 +2442,8 @@ function FDJ.ToggleRunTracker(on)
     local db = TrackerDB()
     local run = TrackedRun()
     if on == nil then on = not FDJ.IsRunTrackerOn() end
-    if previewRun and not on then
-        -- closing the test tracker just ends the test
-        previewRun = nil
-        FDJ.UpdateRunTracker()
-        return
-    end
     if on then
+        if trackerClosedNotice then trackerClosedNotice:Hide() end
         db.on = true
         db.dismissedRun = nil
         -- asked for it with Track on screen: that overrides "Never track"
@@ -2342,6 +2455,39 @@ function FDJ.ToggleRunTracker(on)
     FDJ.UpdateRunTracker()
 end
 
+-- /dj tracker always tries to SHOW the current run (never toggles it off).
+-- When there is no active/recoverable run, do not leave a sticky on flag.
+function FDJ.ReopenDungeonTracker()
+    if not TrackedRun() then return false end
+    FDJ.ToggleRunTracker(true)
+    return FDJ.IsRunTrackerOn()
+end
+
+-- The close reminder uses the same localized popup system as the initial
+-- tracker hint. Keep the slash command itself identical in every locale.
+do
+    local strings = {
+        enUS = { "Tracker Closed", "type \"/dj tracker\" to show again" },
+        deDE = { "Tracker geschlossen", "mit \"/dj tracker\" erneut anzeigen" },
+        frFR = { "Suivi fermé", "tapez \"/dj tracker\" pour le rouvrir" },
+        esES = { "Rastreador cerrado", "escribe \"/dj tracker\" para volver a abrirlo" },
+        itIT = { "Tracker chiuso", "digita \"/dj tracker\" per riaprirlo" },
+        ptBR = { "Rastreador fechado", "digite \"/dj tracker\" para reabri-lo" },
+        ruRU = { "Трекер закрыт", "введите \"/dj tracker\", чтобы открыть снова" },
+        koKR = { "추적기를 닫았습니다", "다시 열려면 \"/dj tracker\" 입력" },
+        zhCN = { "追踪器已关闭", "输入 \"/dj tracker\" 可再次打开" },
+        zhTW = { "追蹤器已關閉", "輸入 \"/dj tracker\" 可再次開啟" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.TRACKER_CLOSED_TITLE == nil then t.TRACKER_CLOSED_TITLE = pair[1] end
+            if t.TRACKER_CLOSED_HELP == nil then t.TRACKER_CLOSED_HELP = pair[2] end
+        end
+    end
+end
+
 -- The first time ever the tracker shows up in a real run, a note with a
 -- red arrow (steady, black) points at it from its left:
 --   New Dungeon Tracker
@@ -2349,8 +2495,7 @@ end
 -- It stays until OK is clicked (hidden while the tracker is, back with
 -- it). While it's up, right-clicking the note or the tracker opens Options
 -- > Dungeon Tracker at once with Never track dungeons highlighted; after
--- OK, right-click is the usual Options menu again. The test tracker
--- (/dj testlog) shows it every time, without using it up.
+-- OK, right-click is the usual Options menu again.
 do
     local strings = {
         enUS = { "New Dungeon Tracker", "\"Right Click\" to disable" },
@@ -2407,12 +2552,8 @@ local function TrackerHintFrame()
     h.ok:SetScript("OnClick", function()
         h:Hide()
         h.fdjDone = true
-        if h.fdjPreview then
-            h.fdjPreview.fdjHintDone = true
-        else
-            ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
-            ForeverDungeonJournalDB.trackerHintShown = true
-        end
+        ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+        ForeverDungeonJournalDB.trackerHintShown = true
     end)
     h:SetScript("OnClick", function(self, button)
         if button == "RightButton" then ShowTrackerMenu(tracker) end
@@ -2438,14 +2579,9 @@ function FDJ.ShowTrackerHint(t, run)
     if not run then return end
     local h = FDJ.trackerHint
     if h and h:IsShown() then return end
-    if run.preview then
-        if run.fdjHintDone then return end -- OK'd for this test tracker
-    else
-        ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
-        if ForeverDungeonJournalDB.trackerHintShown then return end
-    end
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if ForeverDungeonJournalDB.trackerHintShown then return end
     h = TrackerHintFrame()
-    h.fdjPreview = run.preview and run or nil
     h.line1:SetText(L("TRACKER_HINT_1"))
     h.line2:SetText(L("TRACKER_HINT_2"))
     local w1 = h.line1:GetStringWidth() or 0
@@ -2522,129 +2658,6 @@ local function ChimeTick()
     end
 end
 FDJ.RunLogChimeTick = ChimeTick
-
--- /dj testlog <dungeon>: shows the tracker for a made-up run in that
--- dungeon so its look can be checked anywhere. Lives only in memory: it is
--- not added to the Run Log and is gone with /dj testlog off or a reload.
--- About half the bosses are shown killed (with some of their loot), the
--- first rare as found alive (glowing), a second one killed, the rest not
--- found yet.
-local function SimpleName(v)
-    v = string.lower(tostring(v or ""))
-    v = v:gsub("^the%s+", ""):gsub("[^%w]", "")
-    return v
-end
-local function FindDungeon(query)
-    local want = SimpleName(query)
-    if want == "" or not FDJ.DB then return nil end
-    local keys = {}
-    for key, d in pairs(FDJ.DB) do
-        if type(key) == "string" and type(d) == "table" and type(d.bosses) == "table" then keys[#keys + 1] = key end
-    end
-    table.sort(keys)
-    local function Names(key)
-        local out = { SimpleName(key) }
-        if FDJ.LocalizeDungeonName then
-            local ok, loc = pcall(FDJ.LocalizeDungeonName, key)
-            if ok and type(loc) == "string" then out[#out + 1] = SimpleName(loc) end
-        end
-        return out
-    end
-    local starts, contains = {}, {}
-    for _, key in ipairs(keys) do
-        local hitStart, hitIn = false, false
-        for _, n in ipairs(Names(key)) do
-            if n == want or n == want .. "s" or n .. "s" == want then return key end
-            if n:sub(1, #want) == want then hitStart = true
-            elseif n:find(want, 1, true) then hitIn = true end
-        end
-        if hitStart then starts[#starts + 1] = key elseif hitIn then contains[#contains + 1] = key end
-    end
-    local list = #starts > 0 and starts or contains
-    if #list == 1 then return list[1] end
-    return nil, list
-end
-
-local function PreviewLoot(boss, index)
-    local out = {}
-    local me = UnitName and UnitName("player")
-    if type(me) ~= "string" or (issecretvalue and issecretvalue(me)) then me = "You" end
-    for _, item in ipairs(boss.loot or {}) do
-        if type(item) == "table" and item.id and not item.trashSource and (item.quality or 3) >= 2 then
-            local _, link = nil, nil
-            if GetItemInfo then
-                local ok, _, l = pcall(GetItemInfo, item.id)
-                if ok then link = l end
-            end
-            if not link and item.name then
-                local r, g, b = FDJ.RunLogItemColor(item.id)
-                local c = not FDJ.RunLogItemQuality(item.id) and ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[item.quality or 1]
-                if c then r, g, b = c.r, c.g, c.b end
-                link = string.format("|cff%02x%02x%02x[%s]|r", math.floor((r or 1) * 255), math.floor((g or 1) * 255), math.floor((b or 1) * 255), item.name)
-            end
-            local n = #out + 1
-            out[n] = { id = item.id, link = link, w = (n == 1) and me or "Partymember",
-                r = ((index + n) % 2 == 0) and "need" or "greed", n = 40 + (index * 23 + n * 17) % 60 }
-            if n >= 2 then break end
-        end
-    end
-    return out
-end
-
-function FDJ.RunTrackerPreview(arg)
-    local tag = "|cffffd100Dungeon Journal|r "
-    arg = tostring(arg or ""):gsub("^%s+", ""):gsub("%s+$", "")
-    if arg == "" or arg:lower() == "off" then
-        if previewRun then
-            previewRun = nil
-            FDJ.UpdateRunTracker()
-            print(tag .. "test tracker off.")
-        else
-            print(tag .. "/dj testlog <dungeon>  (e.g. /dj testlog deadmines)  |  /dj testlog off")
-        end
-        return
-    end
-    local key, options = FindDungeon(arg)
-    if not key then
-        if options and #options > 0 then
-            print(tag .. "\"" .. arg .. "\" matches: " .. table.concat(options, ", "))
-        else
-            print(tag .. "no dungeon called \"" .. arg .. "\".")
-        end
-        return
-    end
-    local now = Now()
-    local run = { id = "preview", preview = true, dungeon = key, created = now - 900,
-        firstKill = now - 840, firstTrash = now - 840, kills = {}, rareSeen = {}, rareAck = {} }
-    local bosses, rares = {}, {}
-    for _, b in ipairs(FDJ.DB[key].bosses or {}) do
-        if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab then
-            if b.rare then rares[#rares + 1] = b else bosses[#bosses + 1] = b end
-        end
-    end
-    -- some trash along the way
-    for i = 1, 12 do
-        run.kills[#run.kills + 1] = { t = now - 840 + i * 50, n = "Trash", x = 60 + (i * 7) % 40 }
-    end
-    local killCount = math.floor(#bosses / 2 + 0.5)
-    if #bosses == 1 then killCount = 0 end
-    for i = 1, killCount do
-        local b = bosses[i]
-        local t = now - 840 + i * math.floor(780 / (killCount + 1))
-        run.kills[#run.kills + 1] = { t = t, n = b.name, b = b.name, x = 250 + i * 40, loot = PreviewLoot(b, i) }
-        run.lastBoss = t
-    end
-    if rares[1] then run.rareSeen[rares[1].name] = true end
-    if rares[2] then
-        run.rareSeen[rares[2].name] = true
-        run.kills[#run.kills + 1] = { t = now - 300, n = rares[2].name, b = rares[2].name, x = 300, loot = PreviewLoot(rares[2], 1) }
-    end
-    previewRun = run
-    if tracker then tracker.secureSig = nil end
-    FDJ.UpdateRunTracker()
-    if rares[1] and FDJ.RunLogRareSpotted then FDJ.RunLogRareSpotted(run, rares[1]) end
-    print(tag .. "test tracker: " .. DungeonLabel(run) .. " (not saved; /dj testlog off to close).")
-end
 
 do
     local strings = {

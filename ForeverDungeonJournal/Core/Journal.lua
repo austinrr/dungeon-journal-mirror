@@ -711,12 +711,12 @@ local function UpdateQuestActionButtonSizes()
     if not frame then return end
 
     if frame.questMapButton then
-        local mapText = L(frame.questMapButton.fdjLabelKey or "SHOW_ON_MAP") or ""
+        local mapText = frame.questMapButton.fdjCustomLabel or L(frame.questMapButton.fdjLabelKey or "SHOW_ON_MAP") or ""
         frame.questMapButton:SetText(mapText)
         local fs = frame.questMapButton:GetFontString()
         local textWidth = fs and fs:GetStringWidth() or 0
         local iconPad = (frame.questMapButton.icon and frame.questMapButton.icon:IsShown()) and 20 or 0
-        local width = math.max(96, math.min(frame.questMapButton.fdjLabelKey and 210 or 150, math.ceil(textWidth + 24 + iconPad)))
+        local width = math.max(96, math.min((frame.questMapButton.fdjLabelKey or frame.questMapButton.fdjCustomLabel) and 210 or 150, math.ceil(textWidth + 24 + iconPad)))
         frame.questMapButton:SetWidth(width)
     end
 
@@ -1491,6 +1491,9 @@ local function NormalizeDungeonName(name)
     if n:find("hall of thanes", 1, true) then
         return "Hall of Thanes"
     end
+    if n:find("shaper's terrace", 1, true) or n:find("shapers terrace", 1, true) then
+        return "Shaper's Terrace"
+    end
     if n:find("deadmines", 1, true) then
         return "The Deadmines"
     end
@@ -1566,6 +1569,7 @@ FDJ.INSTANCE_ID_TO_DUNGEON = {
     [389] = "Ragefire Chasm", [36] = "The Deadmines", [43] = "Wailing Caverns", [33] = "Shadowfang Keep",
     [34] = "The Stockade", [48] = "Blackfathom Deeps", [90] = "Gnomeregan", [47] = "Razorfen Kraul",
     [189] = "Scarlet Monastery", [2999] = "Ruins of Lordaeron", [2959] = "City of Dalaran",
+    [3001] = "Shaper's Terrace", -- Forever instance map, shown as "The Shaper's Terrace" in game
     [2998] = "Excavation Site: Wetlands", [3065] = "Hall of Thanes", [2994] = "Alcaz Prison", [2974] = "Blackmaw Hold", [129] = "Razorfen Downs", [70] = "Uldaman", [209] = "Zul'Farrak", [109] = "Sunken Temple", [289] = "Scholomance", [349] = "Maraudon", [230] = "Blackrock Depths",
 }
 FDJ.SCARLET_WING_MAPS = { [302] = "Scarlet Monastery: Graveyard", [303] = "Scarlet Monastery: Library",
@@ -1602,6 +1606,12 @@ local function CurrentDungeon()
     local instanceName = GetInstanceInfo and GetInstanceInfo()
     local n = NormalizeDungeonName(instanceName)
     if n then return n end
+    -- Any journal dungeon by its exact name, "The" or not (The Drowned City,
+    -- Krol'dok Stronghold and other newer dungeons with no rule above).
+    if FDJ.DungeonFromInstanceName then
+        local exact = FDJ.DungeonFromInstanceName(instanceName)
+        if exact then return exact end
+    end
     -- Localised instance name: compare with the journal's own translations.
     if type(instanceName) == "string" and instanceName ~= "" then
         local wanted = instanceName:lower()
@@ -1642,6 +1652,16 @@ local function CurrentDungeon()
     return nil
 end
 FDJ.CurrentDungeon = CurrentDungeon
+function FDJ.DungeonFromInstanceName(name)
+    if type(name) ~= "string" or name == "" then return nil end
+    if type(issecretvalue) == "function" and issecretvalue(name) then return nil end
+    local function Bare(x) return (x:lower():gsub("^the%s+", ""):gsub("[%s%p]", "")) end
+    local wanted = Bare(name)
+    if DB[name] then return name end
+    for key in pairs(DB) do
+        if type(key) == "string" and Bare(key) == wanted then return key end
+    end
+end
 
 -- Profession quests: only for characters with that profession (unless
 -- "Show All Profession Quests" is on). The profession names come from the
@@ -2713,6 +2733,11 @@ local function SetBossPortrait(texture, dungeonName, boss)
     -- NPC/model portrait resolver.
     if boss and boss.recipeTab then
         texture:SetTexture("Interface\\Icons\\INV_Scroll_05")
+        texture:SetTexCoord(0, 1, 0, 1)
+        return true
+    end
+    if boss and boss.lootChest then
+        texture:SetTexture("Interface\\Icons\\INV_Box_01")
         texture:SetTexCoord(0, 1, 0, 1)
         return true
     end
@@ -4986,14 +5011,15 @@ local function RefreshPrerequisiteQuestDetail(step)
     local inLog = (questID and not isItemStep and IsQuestInLog(questID)) or false
     local logIndex = (questID and not isItemStep and GetQuestLogIndexForQuestIDSafe(questID)) or nil
     local details = (questID and QUEST_PREREQ_DETAILS[questID]) or {}
+    local hubPlaceholder = details.hubPlaceholder == true
     local level = step.level or details.level
     local requiredLevel = step.requires or details.requires
     local description = QuestField(questID, "description", details.description)
-    local objectiveText = QuestField(questID, "objective", details.objective)
-    if details.suppressDescription then description = nil end
+    local objectiveText = hubPlaceholder and details.objective or QuestField(questID, "objective", details.objective)
+    if hubPlaceholder or details.suppressDescription then description = nil end
     local canUseClientQuestText = not FDJ.CanUseClientLocalizedText or FDJ.CanUseClientLocalizedText()
 
-    if logIndex and canUseClientQuestText then
+    if logIndex and canUseClientQuestText and not hubPlaceholder then
         if C_QuestLog and type(C_QuestLog.GetInfo) == "function" then
             local ok, info = pcall(C_QuestLog.GetInfo, logIndex)
             if ok and type(info) == "table" and type(info.level) == "number" and info.level > 0 then
@@ -5009,7 +5035,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         end
     end
 
-    if inLog and canUseClientQuestText and questID and C_QuestLog and type(C_QuestLog.GetQuestObjectives) == "function" then
+    if inLog and not hubPlaceholder and canUseClientQuestText and questID and C_QuestLog and type(C_QuestLog.GetQuestObjectives) == "function" then
         local ok, objectives = pcall(C_QuestLog.GetQuestObjectives, questID)
         if ok and type(objectives) == "table" and #objectives > 0 then
             local parts = {}
@@ -5128,6 +5154,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questMapButton.quest = nil
         frame.questMapButton.prereqLocation = nil
         frame.questMapButton.fdjLabelKey = nil
+        frame.questMapButton.fdjCustomLabel = nil
         if frame.questMapButton.icon then frame.questMapButton.icon:Hide() end
         frame.questMapButton:Hide()
     end
@@ -5195,6 +5222,36 @@ local function RefreshPrerequisiteQuestDetail(step)
     frame.questDetailText:SetTextColor(0.10, 0.065, 0.025)
     frame.questDetailText:Show()
     cursorY = cursorY + (frame.questDetailText:GetStringHeight() or 40) + 14
+
+    -- Word of the Woods placeholder: no old story, pickup or turn-in text.
+    -- Show the short notice and a single hub map button until the chain is known.
+    if hubPlaceholder then
+        if frame.questNotesHeader then frame.questNotesHeader:Hide() end
+        if frame.questNotesText then frame.questNotesText:SetText(""); frame.questNotesText:Hide() end
+        local loc = details.hubMap
+        if loc and frame.questMapButton then
+            local button = frame.questMapButton
+            button:ClearAllPoints()
+            button.quest = nil
+            button.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(loc)) or loc
+            button.fdjQuestTitle = "Shen'dralas quest hub"
+            button.fdjQuestID = nil
+            button.fdjLabelKey = nil
+            button.fdjCustomLabel = "Show quest hub"
+            if button.icon then button.icon:Hide() end
+            UpdateQuestActionButtonSizes()
+            if FDJ.MapMarkers and FDJ.MapMarkers.ConfigureTargetAndMarkAction then
+                FDJ.MapMarkers.ConfigureTargetAndMarkAction(button, button.prereqLocation, true)
+            end
+            button:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+            button:Show()
+            cursorY = cursorY + 34
+        end
+        frame.questDetailContent:SetHeight(math.max(1, cursorY))
+        FDJ.ApplyQuestDetailScroll("step:" .. tostring(selectedDungeon) .. ":" .. tostring(selectedPrereqParentQuestID) .. ":" .. tostring(step.id or step.name), cursorY)
+        UpdateScrollBarVisibility(frame.questDetailScroll, cursorY)
+        return true
+    end
 
     local stepRequired = details.requiredItems
     -- Required-item cards are only useful when we can tell the player where the
@@ -5875,6 +5932,7 @@ RefreshQuestDetail = function()
     local hasChain = QUEST_PREREQ_CHAINS[quest.id] ~= nil
 
     frame.questMapButton:ClearAllPoints()
+    frame.questMapButton.fdjCustomLabel = nil
     frame.questMapButton.prereqLocation = quest.startMap
     frame.questMapButton.quest = quest
     if frame.questMapButton.icon then frame.questMapButton.icon:Hide() end
@@ -7803,6 +7861,8 @@ RefreshBossList = function()
             end
 
             local isRare = boss.rare == true
+            button.fdjRareLabel = boss.rareLabel
+            button.rare:SetText(button.fdjRareLabel or L("RARE"))
             button.rare:SetShown(isRare)
             -- v1.0.29: rares use a dedicated silver-dragon portrait overlay.
             -- Bosses with a fully bundled custom portrait (currently Lordaeron Captain)
@@ -7994,6 +8054,9 @@ RefreshLoot = function()
         elseif boss.recipeTab then
             frame.selectedBossType:SetText("")
             frame.selectedBossType:Hide()
+        elseif boss.lootChest then
+            frame.selectedBossType:SetText("Tribute Chest")
+            frame.selectedBossType:Show()
         elseif boss.trash then
             frame.selectedBossType:SetText(L("UNIQUE_TRASH"))
             frame.selectedBossType:Show()
@@ -8614,7 +8677,7 @@ ApplyLocalization = function()
         end
     end
     for _, button in ipairs(bossButtons) do
-        if button and button.rare then button.rare:SetText(L("RARE")) end
+        if button and button.rare then button.rare:SetText(button.fdjRareLabel or L("RARE")) end
     end
 end
 
@@ -8889,38 +8952,7 @@ local function CreateGlobalSearchUI()
     -- Deadmines is commonly called both DM and VC; Stockade is commonly "Stocks".
     -- RoL is already in use for Ruins of Lordaeron. Hall of Thanes is new, so
     -- support both natural initialisms players are likely to type (HoT / HT).
-    local DUNGEON_SEARCH_ALIASES = {
-        ["Hall of Thanes"] = { "hot", "ht", "halls of thanes", "halls" },
-        ["Ragefire Chasm"] = { "rfc" },
-        ["Ruins of Lordaeron"] = { "rol", "rl" },
-        ["The Deadmines"] = { "dm", "vc", "deadmines" },
-        ["Wailing Caverns"] = { "wc" },
-        ["Shadowfang Keep"] = { "sfk" },
-        ["The Stockade"] = { "stocks", "stockades", "stockade", "sw stocks" },
-        ["Blackfathom Deeps"] = { "bfd" },
-        ["Gnomeregan"] = { "gnomer", "gnomergan" },
-        ["Razorfen Kraul"] = { "rfk", "kraul" },
-        ["City of Dalaran"] = { "dala", "dal", "dalaran" },
-        ["Excavation Site: Wetlands"] = { "excavation", "exca", "wetlands" },
-        ["Scarlet Monastery: Graveyard"] = { "smgy", "gy", "sm gy", "sm graveyard" },
-        ["Scarlet Monastery: Library"] = { "smlib", "lib", "sm lib", "sm library" },
-        ["Scarlet Monastery: Armory"] = { "smarm", "arm", "armory", "sm arm", "sm armory" },
-        ["Scarlet Monastery: Cathedral"] = { "smcath", "cath", "cathedral", "sm cath", "sm cathedral" },
-        ["Razorfen Downs"] = { "rfd", "downs" },
-        ["Uldaman"] = { "ulda", "uld" },
-        ["Zul'Farrak"] = { "zf", "zul", "zulfarrak", "zul farrak" },
-        ["Sunken Temple"] = { "st", "sunken", "atal'hakkar", "temple of atal'hakkar" },
-        ["Scholomance"] = { "scholo", "scholomance" },
-        ["Maraudon"] = { "mara", "maraudon" },
-        ["Blackrock Depths"] = { "brd", "depths", "blackrock depths" },
-        ["Lower Blackrock Spire"] = { "lbrs", "lower blackrock", "lower spire", "blackrock spire" },
-        ["Upper Blackrock Spire"] = { "ubrs", "upper blackrock", "upper spire" },
-        ["Dire Maul: East"] = { "dme", "dm east", "dire maul east", "dmeast" },
-        ["Dire Maul: West"] = { "dmw", "dm west", "dire maul west", "dmwest" },
-        ["Dire Maul: North"] = { "dmn", "dm north", "dire maul north", "dmnorth", "tribute" },
-        ["Stratholme: Living"] = { "strat", "strat live", "strat living", "stratlive" },
-        ["Stratholme: Undead"] = { "strat ud", "strat undead", "stratud", "baron" },
-    }
+    local DUNGEON_SEARCH_ALIASES = FDJ.DUNGEON_SEARCH_ALIASES or {}
 
     -- Search speed: lower-cased strings, item names and filtered loot lists
     -- are cached, so each keystroke only does plain string matching.
@@ -9369,7 +9401,7 @@ local function CreateGlobalSearchUI()
                 for _, sourceBoss in ipairs(sourceDungeon.bosses or {}) do
                     -- Recipe-tab rows are synthetic duplicates. Build this hidden
                     -- page from the real bosses only.
-                    if not sourceBoss.recipeTab and not sourceBoss.trash
+                    if not sourceBoss.recipeTab
                         and not (FDJ.RPGBossHidden and FDJ.RPGBossHidden(sourceDungeonName, sourceBoss)) then
                         for _, sourceItem in ipairs(sourceBoss.loot or {}) do
                             if tonumber(sourceItem[1]) == itemID then
@@ -10926,8 +10958,12 @@ local function CreateMainFrame()
             FDJ.MapMarkers.ConfigureTargetAndMarkAction(self, loc, true)
         end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L("SHOW_GIVER_ON_MAP"))
-        GameTooltip:AddLine(L("MAP_TOOLTIP"), 1, 1, 1, true)
+        GameTooltip:SetText(self.fdjCustomLabel or L("SHOW_GIVER_ON_MAP"))
+        if self.fdjCustomLabel then
+            GameTooltip:AddLine("Evenshade's Overlook, Shen'dralas (35.0, 46.6)", 1, 1, 1, true)
+        else
+            GameTooltip:AddLine(L("MAP_TOOLTIP"), 1, 1, 1, true)
+        end
         GameTooltip:Show()
     end)
     frame.questMapButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -11671,6 +11707,12 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
         return
     end
+    if msg == "tracker" then
+        if not (FDJ.ReopenDungeonTracker and FDJ.ReopenDungeonTracker()) then
+            print("|cffd8a83cDungeonJournal|r No active dungeon run to show.")
+        end
+        return
+    end
     if msg == "log" or msg == "runs" then -- Run Log (Systems/RunLogUI.lua)
         if FDJ.ToggleRunLog then FDJ.ToggleRunLog() end
         return
@@ -11870,7 +11912,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.19"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

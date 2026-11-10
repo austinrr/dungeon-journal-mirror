@@ -241,6 +241,7 @@ end
 -- ------------------------------------------------------------ where we are
 local inside, insideMap, insideDungeon = false, nil, nil
 local current            -- the run being recorded (inside the dungeon)
+local unitEvidence = { guid = {}, name = {} } -- session-only creature eligibility
 local recent = {}        -- kills of the last seconds (session only): merging
 local session = {}       -- run.id -> { killed = {guidKey}, seen = {guidKey} } kept in memory too
 
@@ -255,6 +256,15 @@ local function InDungeon()
         local ok, d = pcall(FDJ.CurrentDungeon)
         if ok then dungeon = d end
     end
+    -- A remembered/default Scarlet choice is not evidence for this run.
+    -- Keep a fresh tracker generic until the room/door or a kill identifies it.
+    if tonumber(map) == 189 and FDJ.ResolveScarletWing then
+        local ok, wing, _, certain = pcall(FDJ.ResolveScarletWing)
+        if ok then dungeon = certain and wing or nil end
+    end
+    -- Both Spire routes share an entrance. Even a named room may be shared
+    -- (Hall of Blackhand); only a wing-specific kill chooses the run's wing.
+    if tonumber(map) == 229 then dungeon = nil end
     return true, tonumber(map), dungeon, Plain(name)
 end
 
@@ -287,7 +297,7 @@ local function TrashSeen(run)
 end
 
 local function IsEmpty(run)
-    return #(run.kills or {}) == 0 and (run.deaths or 0) == 0 and #(run.needs or {}) == 0
+    return not run.startedAt and #(run.kills or {}) == 0 and (run.deaths or 0) == 0 and #(run.needs or {}) == 0
 end
 
 local function CloseRun(run)
@@ -328,7 +338,13 @@ local function OpenRunOf(map)
     end
 end
 
+local function AwaitingWing()
+    return inside and FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[insideMap]
+        and not insideDungeon
+end
+
 local function EnsureRun()
+    if AwaitingWing() then return nil end
     if current then return current end
     if not inside then return nil end
     local log = Store()
@@ -498,6 +514,124 @@ local function TakePendingXP(kill)
     end
 end
 
+-- A wing-specific mob or boss is stronger evidence than a generic instance
+-- name. Ambiguous/shared names never choose a wing.
+local function WingFor(npc, name)
+    local group = FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[insideMap]
+    local found
+    for _, wing in ipairs(group or {}) do
+        local matched = BossFor(wing, npc, name) ~= nil
+        for id, english in pairs((FDJ.RunLogWingTrash or {})[wing] or {}) do
+            if npc == id or (Lower(name) and (Lower(name) == Lower(english)
+                or Lower(name) == Lower(NameOfNpc(id)))) then matched = true break end
+        end
+        if matched then
+            if found and found ~= wing then return nil end
+            found = wing
+        end
+    end
+    return found
+end
+
+local function ApplyWing(wing, confirmed)
+    if not wing then return end
+    -- A positive kill in another wing begins its own log, even when both
+    -- wings share a physical instance. Merely walking through a room does not.
+    -- Do not carry a generic run's entrance timer from older addon versions
+    -- into a newly identified wing. Keep that old log as a separate record.
+    if current and not current.dungeon and FDJ.RunLogWingGroups[insideMap] then
+        CloseRun(current)
+        recent = {}
+    end
+    if current and current.wingConfirmed and current.dungeon ~= wing then
+        if not confirmed then return end
+        CloseRun(current)
+        recent = {}
+    end
+    insideDungeon = wing
+    if current then
+        if current.dungeon ~= wing then
+            current.dungeon = wing
+            current.firstKill, current.firstTrash, current.lastBoss = nil, nil, nil
+            current.completed, current.finalKill = nil, nil
+            for _, k in ipairs(current.kills) do
+                k.b, k.wb, k.p, k.r, k.f = nil, nil, nil, nil, nil
+                ClassifyKill(current, k)
+            end
+            for _, k in ipairs(current.kills) do SetKillTimes(current, k) end
+        end
+        if confirmed then current.wingConfirmed = true end
+    end
+end
+
+local function ExcludedType(ctype)
+    if type(ctype) ~= "string" then return false end
+    -- UnitCreatureType is localized; these are the client critter labels.
+    local critters = { ["Critter"] = true, ["Kleintier"] = true, ["Bestiole"] = true,
+        ["Alma"] = true, ["Animale"] = true, ["Bicho"] = true,
+        ["Существо"] = true, ["小动物"] = true, ["小動物"] = true, ["동물"] = true }
+    return critters[ctype] or ctype == _G.CRITTER or ctype == "Totem"
+        or ctype == "Non-combat Pet" or ctype == "Wild Pet"
+end
+
+local function ObserveUnit(unit)
+    if not inside or not UnitExists or not Plain(UnitExists(unit)) then return end
+    local guid = Plain(UnitGUID(unit))
+    local name = Plain(UnitName(unit))
+    local ctype = Plain(UnitCreatureType(unit))
+    local controlled = Plain(UnitPlayerControlled(unit))
+    local hostile = Plain(UnitCanAttack("player", unit))
+    local eligible
+    if ExcludedType(ctype) or controlled then eligible = false
+    elseif type(ctype) == "string" and hostile then eligible = true end
+    if eligible == nil then return end
+    if type(guid) == "string" then unitEvidence.guid[guid] = eligible end
+    if Lower(name) then unitEvidence.name[Lower(name)] = eligible end
+    local npc = ParseGUID(guid)
+    if npc then LearnName(npc, name) end
+end
+
+local function ObserveTargets()
+    -- Party/raid targets cover the first pull even with enemy nameplates off.
+    ObserveUnit("target")
+    ObserveUnit("mouseover")
+    if IsInRaid and IsInRaid() then
+        for i = 1, 40 do ObserveUnit("raid" .. i .. "target") end
+    else
+        for i = 1, 4 do ObserveUnit("party" .. i .. "target") end
+    end
+end
+
+local function EligibleKill(guid, npc, name, how)
+    local evidence = guid and unitEvidence.guid[guid]
+    if evidence == nil and Lower(name) then evidence = unitEvidence.name[Lower(name)] end
+    if evidence == false then return false end
+    if evidence == true then return true end
+    if WingFor(npc, name) or BossFor((current and current.dungeon) or insideDungeon, npc, name) then return true end
+    for id, english in pairs((FDJ.RunLogSharedTrash or {})[insideMap] or {}) do
+        if npc == id or (Lower(name) and (Lower(name) == Lower(english)
+            or Lower(name) == Lower(NameOfNpc(id)))) then return true end
+    end
+    -- Positive XP is proof of a real kill. Unknown death/GUID-only reports
+    -- cannot distinguish an unseen critter, so do not create a run from them.
+    return how == "xp" or how == "boss"
+end
+
+local function OnPusillinGossip()
+    if not inside or insideMap ~= 429 then return end
+    -- "npc" is the actual gossip partner; a selected target is not proof.
+    local npc = ParseGUID(Plain(UnitGUID("npc")))
+    local name = Plain(UnitName("npc"))
+    local boss = BossFor("Dire Maul: East", npc, name)
+    if npc ~= 14354 and not (boss and boss.name == "Pusillin") then return end
+    ApplyWing("Dire Maul: East", true)
+    local run = EnsureRun()
+    if not run then return end
+    run.wingConfirmed = true
+    if not run.startedAt and not run.firstKill then run.startedAt = Now() end
+    Changed()
+end
+
 -- Adds a kill, or completes one already reported by another event.
 -- guid: the GUID if known; name: the mob's name if known. how: which kind
 -- of report this is ("guid" PARTY_KILL/UNIT_DIED/corpse, "xp" the XP chat
@@ -507,20 +641,27 @@ end
 local function AddKill(guid, name, how)
     if not inside then return nil end
     how = how or "guid"
+    guid, name = Plain(guid), Plain(name)
     local npc, zone, map, key = ParseGUID(guid)
+    if map and insideMap and map ~= insideMap then return nil end
+    if type(name) ~= "string" or name == "" then name = nil end
+    name = name or NameOfNpc(npc)
+    if not npc and not name then return nil end
+    ObserveTargets()
+    name = name or NameOfNpc(npc)
+    if not EligibleKill(guid, npc, name, how) then return nil end
+    -- Old corpses visible on entry must not start a fresh timer.
+    if how == "corpse" and not current then return nil end
+    if zone then CheckZone(zone, map) end
+    local wing = WingFor(npc, name)
+    if how == "corpse" and wing and current.dungeon ~= wing then return nil end
+    ApplyWing(wing, true)
     if not EnsureRun() then return nil end
     if zone then CheckZone(zone, map) end
     local run = current
-    if not run then return nil end
+    if wing then run.wingConfirmed = true end
     RunSets(run)
-    name = Plain(name)
-    -- A death with neither ID nor name (Forever hides them inside
-    -- instances) says nothing: the XP or death chat line counts it instead.
-    if not npc and not name then return nil end
-    if npc then
-        if run.killedG[key] then return nil end
-        name = name or NameOfNpc(npc)
-    end
+    if npc and run.killedG[key] then return nil end
     local now = Clock()
     local dungeon = run.dungeon or insideDungeon
     local boss = BossFor(dungeon, npc, name)
@@ -714,7 +855,8 @@ function FDJ.RunLogRareCandidates(unit, dungeon, test)
     end
     local all, byLevel = {}, {}
     for _, b in ipairs((d and d.bosses) or {}) do
-        if type(b) == "table" and type(b.name) == "string" and b.rare and not killed[b.name] then
+        if type(b) == "table" and type(b.name) == "string" and b.rare
+            and not b.trackerHidden and not killed[b.name] then
             all[#all + 1] = b
             if type(lvl) == "number" and tonumber(levels[b.name]) == lvl then byLevel[#byLevel + 1] = b end
         end
@@ -727,6 +869,7 @@ function FDJ.RunLogRareCandidates(unit, dungeon, test)
 end
 
 local function OnUnit(unit)
+    if type(unit) == "string" then ObserveUnit(unit) end
     if not inside or type(unit) ~= "string" then return end
     local okE, exists = pcall(UnitExists, unit)
     if not okE or not Plain(exists) then return end
@@ -741,7 +884,7 @@ local function OnUnit(unit)
     local test = FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon]
     local found = {}
     local boss = (npc or name) and BossFor(dungeon, npc, name)
-    if boss and (boss.rare or test) then
+    if boss and not boss.trackerHidden and (boss.rare or test) then
         found[1] = boss
     elseif not boss and not npc and not name then
         -- ID and name both hidden: a unit the game calls "rare" is one of
@@ -777,7 +920,7 @@ local function OnUnit(unit)
     if not okA or not Plain(hostile) then return end
     local okT, ctype = pcall(UnitCreatureType, unit)
     ctype = okT and Plain(ctype)
-    if ctype and (ctype == (_G.CRITTER or "Critter") or ctype == "Critter" or ctype == "Totem" or ctype == "Non-combat Pet" or ctype == "Wild Pet") then return end
+    if ExcludedType(ctype) then return end
     CheckZone(zone, map)
     local run = current
     if not run then return end
@@ -1160,6 +1303,7 @@ end
 local function Leave()
     local run = current
     inside, insideMap, insideDungeon = false, nil, nil
+    unitEvidence = { guid = {}, name = {} }
     current = nil
     recent = {}
     if not run or run.closed then return end
@@ -1174,6 +1318,7 @@ local function Leave()
 end
 
 local function Enter(map, dungeon)
+    if not inside or insideMap ~= map then unitEvidence = { guid = {}, name = {} } end
     inside, insideMap, insideDungeon = true, map, dungeon
     recent = {}
     local run = OpenRunOf(map)
@@ -1220,12 +1365,8 @@ local function RefreshDungeon()
     if not inside then return end
     local isIn, map, dungeon = InDungeon()
     if isIn and map == insideMap and dungeon then
-        insideDungeon = dungeon
-        if current and (not current.dungeon or #current.kills == 0) and current.dungeon ~= dungeon then
-            current.dungeon = dungeon
-            for _, k in ipairs(current.kills) do ClassifyKill(current, k) end
-            Changed()
-        end
+        ApplyWing(dungeon, false)
+        Changed()
     end
 end
 
@@ -1235,7 +1376,7 @@ for _, e in ipairs({
     "PLAYER_ENTERING_WORLD", "PLAYER_LEAVING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED",
     "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "PLAYER_DEAD", "QUEST_TURNED_IN",
     "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED",
-    "ENCOUNTER_END", "BOSS_KILL", "PARTY_KILL", "UNIT_DIED",
+    "ENCOUNTER_END", "BOSS_KILL", "PARTY_KILL", "UNIT_DIED", "GOSSIP_SHOW", "UNIT_TARGET",
     "CHAT_MSG_COMBAT_XP_GAIN", "CHAT_MSG_COMBAT_HOSTILE_DEATH", "CHAT_MSG_LOOT",
     "START_LOOT_ROLL", "CANCEL_LOOT_ROLL", "LOOT_OPENED", "LOOT_READY", "PLAYER_MONEY",
 }) do
@@ -1318,6 +1459,10 @@ events:SetScript("OnEvent", function(_, event, ...)
                 Changed()
             end
         end
+    elseif event == "GOSSIP_SHOW" then
+        OnPusillinGossip()
+    elseif event == "UNIT_TARGET" then
+        ObserveTargets()
     elseif event == "PLAYER_TARGET_CHANGED" then
         OnUnit("target")
     elseif event == "UPDATE_MOUSEOVER_UNIT" then
@@ -1330,12 +1475,8 @@ events:SetScript("OnEvent", function(_, event, ...)
     elseif event == "UNIT_DIED" then
         local guid = ...
         -- Only mobs: something the group fought (seen as hostile) or a boss.
-        local npc, _, _, key = ParseGUID(guid)
-        if npc and current then
-            RunSets(current)
-            local dungeon = current.dungeon or insideDungeon
-            if current.seen[key] or BossFor(dungeon, npc, NameOfNpc(npc)) then AddKill(guid, nil) end
-        end
+        local npc = ParseGUID(guid)
+        if npc then AddKill(guid, nil) end
     elseif event == "ENCOUNTER_END" or event == "BOSS_KILL" then
         local name, success
         if event == "ENCOUNTER_END" then
@@ -1385,6 +1526,8 @@ function FDJ.RunLogDebug()
     local boss = BossFor(dungeon, npc, Plain(name))
     Say("inside=" .. tostring(inside) .. " dungeon=" .. tostring(dungeon) .. " run=" .. tostring(current and current.id))
     Say("target guid=" .. show(okG and guid) .. " name=" .. show(okN and name) .. " npc=" .. tostring(npc))
+    Say("wing evidence=" .. tostring(WingFor(npc, Plain(name)))
+        .. " eligible=" .. tostring(EligibleKill(Plain(guid), npc, Plain(name), "guid")))
     Say("boss=" .. tostring(boss and boss.name) .. " rare=" .. tostring(boss and (boss.rare or (FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon])) or false))
     local function try(fn, ...) local ok, v = pcall(fn, ...) return ok and show(v) or "error" end
     Say("class=" .. try(UnitClassification, "target") .. " level=" .. try(UnitLevel, "target")
@@ -1403,6 +1546,7 @@ FDJ.RunLog = {
     Runs = function() return Store().runs end,
     Current = function() return current end,
     IsInside = function() return inside end,
+    IsAwaitingWing = AwaitingWing,
     TrashKilled = TrashKilled,
     TrashSeen = TrashSeen,
     TrashTotal = function(run)

@@ -330,6 +330,13 @@ FDJ.QUEST_PREREQ_CHAINS = {
     [7046] = {
         { id = 7044, name = "Legends of Maraudon" },
     },
+    -- Forever Maraudon: Word of the Woods (93594) is the direct prerequisite
+    -- for Rot and Regret (93404), as listed in the Forever quest series.
+    -- Hub-unlock prerequisites are not yet independently verified; use the
+    -- temporary map placeholder on the Word of the Woods chain step.
+    [93404] = {
+        { id = 93594, name = "Word of the Woods", level = 43, requires = 35 },
+    },
     [4263] = {
         { id = 4262, name = "Overmaster Pyron" },
     },
@@ -573,6 +580,24 @@ FDJ.QUEST_PREREQ_CHAINS = {
 }
 
 FDJ.QUEST_PREREQ_DETAILS = {
+    -- Maraudon (Forever): temporary, offline-safe first-step page while
+    -- the Shen'dralas quest-hub unlock requirements are being researched.
+    [93594] = {
+        level = 43,
+        requires = 35,
+        -- Temporary instruction page until the complete hub-unlock chain is verified.
+        hubPlaceholder = true,
+        objective = "Need to unlock |cffffd36bShen'dralas|r quest hub.\nUpdating soon with full details",
+        -- Evenshade's Overlook: documented location of Mordent Evenshade.
+        -- This marks a known Shen'dralas questing landmark, not a verified
+        -- exact pickup NPC for Word of the Woods.
+        hubMap = {
+            mapID = 2652, x = 0.350, y = 0.466,
+            label = "Shen'dralas quest hub - Evenshade's Overlook",
+            detail = "Evenshade's Overlook, Shen'dralas (35.0, 46.6); temporary hub marker",
+        },
+    },
+
     -- Pre-quests for the dungeons added in 1.6.5.
 
     [261] = {

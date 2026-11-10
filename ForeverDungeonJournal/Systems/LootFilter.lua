@@ -485,10 +485,12 @@ do
             dungeon.fdjRecipeTabBuilt = true
             local order, byID = {}, {}
             for _, boss in ipairs(dungeon.bosses) do
-                if not boss.trash and type(boss.loot) == "table" then
-                    -- Let the row portraits (shared with Trash Drops) draw this boss.
-                    -- " / " separates sources on a row, so a boss whose own name
-                    -- contains it ("Fel Steed / Shadow Charger") is listed with "&".
+                -- Include dungeon-specific trash recipes as well as boss recipes.
+                -- Exclude only the synthetic Recipes & Patterns page itself.
+                if not boss.recipeTab and type(boss.loot) == "table" then
+                    -- Let the row portraits (shared with Trash Drops) draw named
+                    -- sources. " / " separates sources on a row, so a boss
+                    -- whose name contains it uses "&" instead.
                     local sourceName = boss.name:gsub(" / ", " & ")
                     local displayID = boss.npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[boss.npcID]
                     if displayID and FDJ.TRASH_MOB_DISPLAY_IDS and not FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] then
@@ -497,11 +499,22 @@ do
                     for _, item in ipairs(boss.loot) do
                         if IsRecipe(item) and not IsBlueprint(item) then
                             boss.fdjHasRecipeTab = true
+                            -- Use a known trash mob when available, otherwise
+                            -- clearly attribute the plans to the Trash Drops page.
+                            local source = sourceName
+                            if boss.trash and type(item[5]) == "string" and item[5] ~= "" then
+                                if not item[5]:lower():find(" trash", 1, true)
+                                    and item[5]:lower() ~= "trash" then
+                                    source = item[5]
+                                end
+                            end
                             local entry = byID[item[1]]
                             if entry then
-                                entry[5] = entry[5] .. " / " .. sourceName
+                                if not entry[5]:find(source, 1, true) then
+                                    entry[5] = entry[5] .. " / " .. source
+                                end
                             else
-                                entry = { item[1], item[2], item[3], item[4], sourceName }
+                                entry = { item[1], item[2], item[3], item[4], source, tip = item.tip }
                                 byID[item[1]] = entry
                                 order[#order + 1] = entry
                             end

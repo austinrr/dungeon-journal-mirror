@@ -3,6 +3,7 @@ FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
 FDJ.FOREVER_QUEST_XP_FALLBACK = {
     -- Offline quest XP. Client-cache values replace superseded server multipliers.
+    [93594] = 360, -- Word of the Woods (Maraudon prerequisite; Forever)
     [96391] = 1050, -- Underground Map
     [95647] = 4900, -- Lost in the Thicket Things (Excavation Site prerequisite)
     [870] = 680,    -- The Forgotten Pools

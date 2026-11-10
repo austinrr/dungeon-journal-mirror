@@ -618,3 +618,17 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 - 1.7.4 (players' loot screenshots, Nov 2026; IDs from Wowhead Forever): Legplates of Reinforced Crystal 280024 from Nanaya; Pusillin (NPC 14354, display 7552, level 57) drops Obsidian Bauble 18316 and Recipe: Runn Tum Tuber Surprise 18267; Fervent Helm 18319 drops with a random enchantment (seen: of Frost Resistance).
 - 1.7.4 (a player's quest log, Discord, Nov 2026; Wowhead Forever quests 96775 and 96770): Zum'rah's Head from Mazu'kon (Horde; level 46, from 42; 10,100 XP, 65s, Earthen Ring +300, Darkspear Trolls +150); The Witch Doctor's Head is 96770 (from 39; Kirin Tor +300).
 - 1.7.4 (a player's loot screenshot, Nov 2026): Stoneflower Staff 18353 from Tendris Warpwood (Dire Maul West).
+
+2026-11-10 Zul'Farrak boss loot
+- Nekrum Gutchewer (NPC 7796, level 45) drops Desert Ziggurat Drape (274645): player screenshots from a live Forever dungeon run; item ID and item stats corroborated by https://www.wowhead.com/forever/item=274645/desert-ziggurat-drape . Nekrum portrait display 6690 from Classic NPC model data. Boss inserted before Shadowpriest Sezz'ziz.
+
+- 2.0.16 (2026-11-10): Overseer Wrex in Alcaz Prison is NPC 255391 with creature display ID 7914 (https://www.wowhead.com/forever/npc=255391/overseer-wrex); the display ID is also documented in DFL Dungeon Journal 5.21.18 release notes. These IDs drive the existing boss portrait renderer. No loot data changed.
+
+- 2.0.17 (2026-11-10): Fixed three overlapping boss-level lookup keys
+  in Data/Bosses.lua. BRD (26 entries), UBRS (9) retained existing level values
+  confirmed against https://www.60.tools/dungeons/blackrock-depths and
+  https://foreverchanges.pro/dungeons/upper-blackrock-spire . LBRS (15)
+  corrected using https://foreverchanges.pro/dungeons/lower-blackrock-spire
+  and https://www.eversixty.com/dungeons/lower-blackrock-spire . These sources
+  identify the per-NPC levels as Classic-based; direct Forever live levels
+  may diverge. No unrelated dungeon data altered.

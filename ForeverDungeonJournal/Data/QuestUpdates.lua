@@ -728,6 +728,13 @@ do
     -- Hold stood in Dalaran (a player, Nov 2026; Wowhead Forever's spawn of
     -- 31439).
     FDJ.QUEST_START_MAPS[97130] = { mapID = 1416, x = 0.154, y = 0.740, label = "Archmage Timear — Dalaran", targetName = "Archmage Timear", detail = "Archmage Timear, outside where the Violet Hold stood in Dalaran, Alterac Mountains" }
+    -- Confirmed turn-in: Archmage Timear is the same NPC as the quest giver.
+    for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
+        if quest.id == 97130 then
+            quest.turninMap = FDJ.QUEST_START_MAPS[97130]
+            break
+        end
+    end
 
     -- The steps are listed inside their chains only (QuestChains.lua's pass
     -- ran before these chains were added), and the follow-ups' hand-in NPCs
@@ -1748,9 +1755,76 @@ do
     FDJ.FOREVER_QUEST_XP_FALLBACK[94984] = 12450
     FDJ.FOREVER_QUEST_XP_FALLBACK[96771] = 13000
 end
+-- BEGIN kroldokeyeofmugglocations
+-- Eye of Mugg uses different faction quest IDs. The two versions of
+-- Bring Me His Head are different quests as well; never share one ID.
+-- Locations: Krom'rosh at Rog'mar (59.4,45.5); Demar Brant at Farholde
+-- Keep (66.6,79.9); Da'grosh at the Shroud (33.4,38.0); Sgt. Riftan
+-- with the Farholde Lookouts (30.4,49.0), all on Riverglades map 2548.
+do
+    local ROGMAR = {
+        mapID = 2548, x = 0.594, y = 0.455,
+        label = "Krom'rosh — Rog'mar, Riverglades", targetName = "Krom'rosh",
+        detail = "Eye of Mugg (Horde): pick up and return to Krom'rosh at Rog'mar."
+    }
+    local FARHOLDE = {
+        mapID = 2548, x = 0.666, y = 0.799,
+        label = "Commander Demar Brant — Farholde Keep, Riverglades", targetName = "Demar Brant",
+        detail = "Eye of Mugg (Alliance): pick up and return to Commander Demar Brant at Farholde Keep."
+    }
+    local DAGROSH = {
+        mapID = 2548, x = 0.334, y = 0.380,
+        label = "Da'grosh — Twilight's Shroud, Riverglades", targetName = "Da'grosh"
+    }
+    local RIFTAN = {
+        mapID = 2548, x = 0.304, y = 0.490,
+        label = "Sergeant Riftan — Farholde Lookouts, Twilight's Shroud", targetName = "Sergeant Riftan"
+    }
+    FDJ.QUEST_START_MAPS[94968] = ROGMAR
+    FDJ.QUEST_START_MAPS[94982] = FARHOLDE
+    FDJ.QUEST_START_MAPS[94768] = DAGROSH
+    FDJ.QUEST_START_MAPS[94890] = RIFTAN
+
+    -- Separate prerequisite records avoid cross-faction completion checks.
+    FDJ.QUEST_PREREQ_CHAINS[94968] = { { id = 94768, name = "Bring Me His Head" } }
+    FDJ.QUEST_PREREQ_CHAINS[94982] = { { id = 94890, name = "Bring Me His Head" } }
+    FDJ.QUEST_PREREQ_DETAILS[94768] = {
+        level = 46, requires = 38,
+        objective = "Defeat Overlord Kilgar within the Twilight's Shroud and bring his head to Da'grosh.",
+        pickup = "Da'grosh, Twilight's Shroud, Riverglades (33.4, 38.0)",
+        turnin = "Da'grosh, Twilight's Shroud, Riverglades (33.4, 38.0)",
+        map = DAGROSH, turninMap = DAGROSH,
+        requiredItems = { {265837, "Kilgar's Head", 1, "From Overlord Kilgar at Twilight's Shroud"} },
+        note = "Horde version. Finish this outdoor quest before picking up Eye of Mugg at Rog'mar."
+    }
+    -- Preserve the Alliance record already used by Twilight Mementos.
+    local ally = FDJ.QUEST_PREREQ_DETAILS[94890] or {}
+    ally.pickup = "Sergeant Riftan, Farholde Lookouts, Twilight's Shroud, Riverglades (30.4, 49.0)"
+    ally.turnin = "Sergeant Riftan, Farholde Lookouts, Twilight's Shroud, Riverglades (30.4, 49.0)"
+    ally.map = RIFTAN
+    ally.turninMap = RIFTAN
+    ally.note = "Alliance version. Return Kilgar's Head to Sergeant Riftan; completing this step unlocks Eye of Mugg."
+    FDJ.QUEST_PREREQ_DETAILS[94890] = ally
+    FDJ.FOREVER_QUEST_XP_FALLBACK[94768] = 5050
+
+    for _, quest in ipairs((FDJ.DB["Krol'dok Stronghold"] and FDJ.DB["Krol'dok Stronghold"].quests) or {}) do
+        if quest.id == 94968 then
+            quest.startMap = ROGMAR
+            quest.turninMap = ROGMAR
+        elseif quest.id == 94982 then
+            quest.startMap = FARHOLDE
+            quest.turninMap = FARHOLDE
+        end
+    end
+end
+-- END kroldokeyeofmugglocations
+
 -- END kroldokquests
 
 -- BEGIN blackmawquests
+-- A Lost Memento (92070) begins when a player uses their own
+-- Feathered Charm Necklace, not from a shareable NPC quest.
+FDJ.QUEST_SHAREABILITY_AUDIT[92070] = false
 -- Blackmaw Hold: Beneath Nordrassil leads to Get to the Roots of It (a
 -- Blackmaw Hold guide, Nov 2026, with Wowhead Forever quest IDs 92343-92346
 -- and 92069). Where the NPCs stand: the reported coordinates.

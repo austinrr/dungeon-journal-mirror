@@ -99,7 +99,7 @@ function FDJ.BuildCharacterSnapshot()
     local faction=UnitFactionGroup('player') or 'Unknown'
     local metadata=(C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
     local out={v=3,name=UnitName('player'),realm=GetRealmName(),raceToken=race or '',classToken=class or '',
-        level=UnitLevel('player'),faction=faction,version=metadata and metadata('ForeverDungeonJournal','Version') or '2.0',
+        level=UnitLevel('player'),faction=faction,version=metadata and metadata('ForeverDungeonJournal','Version') or '2.0.19',
         exportedAt=now,exportKey=db.exportKey,rpg=FDJ.IsRPGMode and FDJ.IsRPGMode() or false,
         completed=Array(),lost=Array(),inLog=Array(),dungeons=Array(),runs=Array()}
     local seen={}

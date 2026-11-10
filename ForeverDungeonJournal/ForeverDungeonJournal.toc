@@ -2,7 +2,7 @@
 ## Title: DungeonJournal
 ## Notes: Boss, loot and quest journal for WoW Classic dungeons.
 ## Author: Exehn
-## Version: 2.0
+## Version: 2.0.1
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## AddonCompartmentFunc: ForeverDungeonJournal_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ForeverDungeonJournal_OnAddonCompartmentEnter
@@ -47,6 +47,8 @@ Systems\MapMarkers.lua
 Systems\VersionCheck.lua
 Systems\LootFilter.lua
 Systems\Favourites.lua
+Data\DungeonAliases.lua
+Data\RunLogWings.lua
 Systems\RunLog.lua
 Systems\RunLogUI.lua
 Systems\BugReport.lua

@@ -262,6 +262,7 @@ FDJ.QUEST_START_MAPS = {
     [5727] = { mapID = 1454, x = 0.317, y = 0.378, label = "Thrall — Orgrimmar", targetName = "Thrall", detail = "Thrall: Grommash Hold, Orgrimmar" },
     [6141] = { mapID = 1453, x = 0.526, y = 0.432, label = "Brother Crowley — Stormwind", targetName = "Brother Crowley", detail = "Brother Crowley: Cathedral of Light, Stormwind" },
     [7044] = { mapID = 1443, x = 0.321, y = 0.640, label = "Cavindra — Desolace", targetName = "Cavindra", detail = "Cavindra: Maraudon orange-side caverns, Desolace" },
+    [96776] = { mapID = 1412, x = 0.338, y = 0.237, label = "Olana Brighthoof - Skywatcher Plateau, Mulgore", targetName = "Olana Brighthoof", detail = "Olana Brighthoof: Camp Gev'rek, Skywatcher Plateau, Mulgore (33.8, 23.7)" },
     [7492] = { mapID = 1458, x = 0.639, y = 0.441, label = "Harbinger Balthazad — Undercity (walks around)", targetName = "Harbinger Balthazad", detail = "Harbinger Balthazad: Trade Quarter, Undercity (walks around)" },
     [7494] = { mapID = 1453, x = 0.564, y = 0.741, label = "Crier Goodman — Stormwind (walks around)", targetName = "Crier Goodman", detail = "Crier Goodman: Trade District, Stormwind (walks around)" },
     [8945] = { mapID = 1423, x = 0.261, y = 0.113, label = "Anthion Harmon — outside the Stratholme main gate (needs the Ghost Revealer)", targetName = "Anthion Harmon", detail = "Anthion Harmon: outside the Stratholme main gate (needs the Ghost Revealer)" },

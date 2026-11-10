@@ -1,4 +1,31 @@
-DungeonJournal 2.0
+DungeonJournal 2.0.19
+
+CHANGES IN 2.0.19
+- Zul'Farrak: added Sandfury Pauldrons (item 274638) to Theka the Martyr's
+  normal boss loot alongside Sacrificial Chain Vest.
+
+CHANGES IN 2.0.18
+- Dungeon Tracker / Character Logs: The Drowned City (and other newer dungeons)
+  is recognised again, so the tracker lists all its bosses, not only the ones
+  killed. Runs already recorded there get their dungeon back too.
+
+CHANGES IN 2.0.17
+- Blackrock Depths: fixed missing boss levels for all 26 boss entries.
+- Lower Blackrock Spire: fixed missing boss levels for all 15 boss entries;
+  aligned seven old level values with published Classic Era references.
+- Upper Blackrock Spire: fixed missing boss levels for all 9 boss entries.
+- Cause: three boss-level tables accidentally used the same Blackrock Depths
+  dictionary key; LBRS/UBRS now have their own dungeon keys.
+- No loot, quests, portraits, boss order, or other dungeons changed.
+- Boss-level references are from Classic-era tables published on Forever
+  reference sites; live Forever changes may differ.
+
+
+CHANGES IN 2.0.16
+- Alcaz Prison: Overseer Wrex now has a boss portrait. The boss entry uses
+  NPC ID 255391 and creature display ID 7914 from Wowhead Forever. Both the
+  list portrait and the boss-detail portrait use the existing live portrait
+  renderer; no changes to loot or other bosses.
 
 INSTALLATION
 Exit WoW, then extract this ZIP so
@@ -9,6 +36,48 @@ SETTINGS
 The addon folder, keybinding and saved-variable names are unchanged, so existing
 preferences carry over. Character progress is read from the game.
 Command: /dj.
+
+CHANGES IN 2.0.5
+- Blackmaw Hold: Plans: Breastplate of Salvation now appears in the separate
+  Recipes & Patterns tab, sourced from Trash Drops. It is no longer displayed
+  on the normal Trash Drops loot page.
+- The recipe tab now collects recipes from trash pages as well as bosses and
+  shows their source. Recipe search can also resolve trash-only recipes.
+
+CHANGES IN 2.0.4
+- Scholomance / Kirtonos the Herald: completed the nine-piece boss-specific
+  loot list from https://www.wowhead.com/forever/npc=10506/kirtonos-the-herald.
+- Added Stoneform Shoulders (#13955), Clutch of Andros (#13956), and
+  Gravestone War Axe (#13983). The other six Kirtonos loot entries were
+  already present and remain unchanged.
+- Excluded generic world BoE drops, materials, and other non-boss-specific
+  entries from the NPC's much larger aggregate drop list.
+- Source caveat: the Forever loot table may change; in-game tooltips take
+  precedence over older Classic item stats.
+
+CHANGES IN 2.0.3
+- Blackmaw Hold trash: Plans: Breastplate of Salvation (Blacksmithing 300),
+  Grove Subjugator's Blade, and Tormented Cuffs. The plans are listed in
+  the dungeon-wide Recipes & Patterns tab (source: Trash Drops).
+- Blackmaw Hold bosses: Apprentice's Protective Treads (Gortek),
+  Horns of Varrox (Varrox Bleakhoof), Cowl of Dark Ambition (Unbound Spirit).
+- Removed Feathered Charm Necklace from the dungeon Trash Drops page pending
+  drop-source confirmation. It remains the starting item for A Lost Memento
+  on the Quests tab; the quest and its reward are unchanged.
+
+CHANGES IN 2.0.2
+- Blackmaw Hold: Den Champion's Binding (trash), Cloak of the Fleshborer
+  (Withermaw), and Tuskblade Halberd (Bonesnout the Unbroken).
+- Blackmaw Hold: level 55 rare elite Tunnelweb Matriarch with its
+  Tunnelweb Pincer dagger.
+- Blackmaw Hold: A Lost Memento, an item-start quest from Feathered Charm
+  Necklace, with Nama's Cherished Necklace as the reward. Quest item also
+  was initially in Trash Drops (removed in 2.0.3 pending drop verification).
+  Exact loot mob, quest turn-in NPC, and quest level (provisional 57) await verification.
+
+CHANGES IN 2.0.1
+- City of Dalaran: Starving Arcane shows level 30, like An Alarming Request,
+  the quest that must be done before it.
 
 CHANGES IN 2.0
 - The Drowned City: Serpentbane Crown confirmed for Min'loth the Serpent.
@@ -317,7 +386,7 @@ CHANGES IN 1.7.3
   art (its loading screen).
 - Boss portraits of The Drowned City, Krol'dok Stronghold, Alcaz Prison and
   Blackmaw Hold no longer stay question marks: they are drawn at login with
-  the other dungeons' (Overseer Wrex's once his NPC ID is known).
+  the other dungeons' (including Overseer Wrex, whose NPC ID is now known).
 - The Drowned City:
   - New map, with the Eternal Amphitheater and the Abyssal Dais named.
   - Alliance quests are chains now: Findings for the Explorer's League and

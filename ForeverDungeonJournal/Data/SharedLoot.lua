@@ -8,6 +8,7 @@ if not FDJ or not FDJ.DB then return end
 -- its loot (see RefreshLoot in Core/Journal.lua).
 local BFD, STOCKS, RFK, SMGY = "Blackfathom Deeps", "The Stockade", "Razorfen Kraul", "Scarlet Monastery: Graveyard"
 
+
 local SHARED = {
     { 252512, "Brawler's Leather Helm", {
         [BFD] = { "Gelihast", "Aku'mai", "Lorgus Jett" },
@@ -43,6 +44,7 @@ local SHARED = {
         [STOCKS] = { "Kam Deepfury", "Bazil Thredd", "Dextren Ward" },
         [RFK] = { "Death Speaker Jargba", "Overlord Ramtusk", "Charlga Razorflank" },
     } },
+
 }
 
 FDJ.SHARED_LOOT_IDS = FDJ.SHARED_LOOT_IDS or {}
@@ -87,12 +89,12 @@ for dungeonName, dungeon in pairs(FDJ.DB) do
 end
 
 for _, entry in ipairs(SHARED) do
-    local itemID, itemName, drops = entry[1], entry[2], entry[3]
+    local itemID, itemName, drops, itemType = entry[1], entry[2], entry[3], entry[4]
     for dungeonName, bosses in pairs(drops) do
         local dungeon = FDJ.DB[dungeonName]
         for _, bossName in ipairs(bosses) do
             if dungeon and FindBoss(dungeon, bossName) then
-                AddShared(dungeonName, bossName, { itemID, itemName, "Head, Leather", 3 })
+                AddShared(dungeonName, bossName, { itemID, itemName, itemType or "Head, Leather", 3 })
             else
                 FDJ.sharedLootMissing[#FDJ.sharedLootMissing + 1] = dungeonName .. " / " .. bossName
             end

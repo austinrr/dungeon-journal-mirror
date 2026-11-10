@@ -1953,7 +1953,7 @@ FDJ.DB["City of Dalaran"] = {
         id = 92457,
         name = "Starving Arcane",
         level = 33,
-        requires = 24,
+        requires = 30, -- its pre-quest An Alarming Request needs 30
         faction = "Alliance",
         pickup = "Image of Archmage Modera, Lordamere Lake near Dalaran",
         objective = "Defeat 8 Seeking Remnants, 8 Saturated Remnants, and 8 Mana Echoes inside the City of Dalaran for Archmage Modera outside of Dalaran.",
@@ -3178,7 +3178,9 @@ FDJ.DB["Razorfen Downs"] = {
         pickup = "Andrew Brownell, Undercity",
         level = 42,
         requires = 37,
-        rewardItems = {{10823, "Vanquisher's Sword", 3}, {10824, "Amberglow Talisman", 3}},
+        rewardChoice = true,
+        rewardItems = {{10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3}},
+        additionalRewardItems = {{10823, "Vanquisher's Sword", 3}},
         turnin = "Andrew Brownell, Undercity",
         liveXPFallback = 4300,
     }, {
@@ -3190,7 +3192,9 @@ FDJ.DB["Razorfen Downs"] = {
         pickup = "Archbishop Benedictus, Stormwind",
         level = 42,
         requires = 39,
-        rewardItems = {{10823, "Vanquisher's Sword", 3}, {10824, "Amberglow Talisman", 3}},
+        rewardChoice = true,
+        rewardItems = {{10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3}},
+        additionalRewardItems = {{10823, "Vanquisher's Sword", 3}},
         turnin = "Archbishop Benedictus, Stormwind",
         liveXPFallback = 4300,
     },
@@ -3656,6 +3660,19 @@ FDJ.DB["Uldaman"] = {
             },
         },
         {
+            name = "Obsidian Sentinel",
+            npcID = 7023,
+            aliases = {"Obsidian Sentinel"},
+            description = "Level 42 mechanical guardian near the back entrance to Uldaman, after Ironaya. Drops the Obsidian Power Source for the Mage quest Power in Uldaman.",
+            loot = {
+                {274430, "Rock Sentinel Slicer", "Two-Hand, Axe", 3},
+                {274428, "Dark Golem Breastplate", "Chest, Plate", 3},
+                {274425, "White Obsidian Wand", "Ranged, Wand", 3},
+                {274485, "Axe of Lingering Dread", "Two-Hand, Axe", 3},
+                {251400, "Plans: Warder's Boots", "Recipe, Blacksmithing", 3}, -- Recipes & Patterns tab; drop source Obsidian Sentinel
+            },
+        },
+        {
             name = "Ancient Stone Keeper",
             npcID = 7206,
             aliases = {"Ancient Stone Keeper"},
@@ -3697,6 +3714,38 @@ FDJ.DB["Uldaman"] = {
                 {11118, "Archaedic Stone", "Finger", 3, "", "RANDOM_ENCHANT"},
                 {9413, "The Rockpounder", "Two-Hand, Mace", 3},
                 {9418, "Stoneslayer", "Two-Hand, Sword", 3},
+                {274432, "Stone Keeper Spire", "Two-Hand, Staff", 3}, -- Player-confirmed Archaedas drop (Nov 2026)
+            },
+        },
+        {
+            name = "Trash Drops",
+            trash = true,
+            loot = {
+                -- Classic-derived Uldaman zone drops. Not all have been confirmed live in Forever.
+                -- Pendulum of Doom intentionally FIRST (same-quality items retain data order).
+                {9425, "Pendulum of Doom", "Two-Hand, Axe", 3},
+                {9431, "Papal Fez", "Head, Cloth", 3},
+                {9396, "Legguards of the Vault", "Legs, Mail", 3},
+                {9393, "Beacon of Hope", "Held In Off-Hand", 3},
+                {9429, "Miner's Hat of the Deep", "Head, Cloth", 3},
+                {9424, "Ginn-su Sword", "One-Hand, Sword", 3},
+                {9427, "Stonevault Bonebreaker", "One-Hand, Mace", 3},
+                {9426, "Monolithic Bow", "Ranged, Bow", 3},
+                {9422, "Shadowforge Bushmaster", "Ranged, Gun", 3},
+                {9465, "Digmaster 5000", "One-Hand, Axe", 3},
+                {9423, "The Jackhammer", "Two-Hand, Mace", 3},
+                {9391, "The Shoveler", "Two-Hand, Mace", 3},
+                {9392, "Annealed Blade", "One-Hand, Sword", 3},
+                {9383, "Obsidian Cleaver", "Two-Hand, Axe", 3},
+                {9381, "Earthen Rod", "Ranged, Wand", 3},
+                {9386, "Excavator's Brand", "One-Hand, Mace", 3},
+                {9384, "Stonevault Shiv", "One-Hand, Dagger", 3},
+                {9430, "Spaulders of a Lost Age", "Shoulder, Mail", 3},
+                {9432, "Skullplate Bracers", "Wrist, Plate", 3},
+                {9397, "Energy Cloak", "Back", 3},
+                {9420, "Adventurer's Pith Helmet", "Head, Leather", 3},
+                {9406, "Spirewind Fetter", "Chest, Leather", 3},
+                {9428, "Unearthed Bands", "Wrist, Leather", 3},
             },
         },
     },
@@ -3864,6 +3913,36 @@ FDJ.DB["Zul'Farrak"] = {
     },
     bosses = {
         {
+            -- Player-confirmed Forever drop (screenshot, 10 Nov 2026).
+            name = "Theka the Martyr",
+            npcID = 7272,
+            aliases = {"Theka the Martyr"},
+            description = "Undead Sandfury boss. Drops the First Mosh'aru Tablet for The Prophecy of Mosh'aru.",
+            loot = {
+                {274639, "Sacrificial Chain Vest", "Chest, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Mail"},
+                    "284 Armor",
+                    "+6 Intellect",
+                    "+16 Spirit",
+                    "|cff1eff00Equip: +34 Attack Power.|r",
+                    "Requires Level 42",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 31|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 93|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                -- Player-confirmed Forever drop (screenshot, 10 Nov 2026).
+                {274638, "Sandfury Pauldrons", "Shoulder, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Shoulder", "Mail"},
+                    "213 Armor",
+                    "+7 Intellect",
+                    "+11 Spirit",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 15.|r",
+                    "Requires Level 42",
+                    "Sell Price: 99|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 1|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
             name = "Antu'sul",
             npcID = 8127,
             aliases = {"Antu'sul"},
@@ -3886,6 +3965,37 @@ FDJ.DB["Zul'Farrak"] = {
             },
         },
         {
+            -- Player-confirmed Forever drop (screenshot, 10 Nov 2026).
+            name = "Nekrum Gutchewer",
+            npcID = 7796,
+            aliases = {"Nekrum Gutchewer"},
+            description = "Encountered alongside Shadowpriest Sezz'ziz during the Zul'Farrak pyramid event. Also drops Nekrum's Medallion for the Alliance quest.",
+            loot = {
+                -- Player-confirmed Forever drop (screenshot, 10 Nov 2026).
+                {274644, "Undying Headdress", "Head, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Head", "Mail"},
+                    "235 Armor",
+                    "+17 Stamina",
+                    "+8 Intellect",
+                    "|cff1eff00Equip: +26 Attack Power.|r",
+                    "|cff1eff00Equip: Restores 8 health per 5 sec.|r",
+                    "Requires Level 43",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 9|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 37|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {274645, "Desert Ziggurat Drape", "Back", 3, tip = {
+                    "Binds when picked up",
+                    "Back",
+                    "34 Armor",
+                    "+9 Stamina",
+                    "+7 Fire Resistance",
+                    "+7 Nature Resistance",
+                    "Requires Level 43",
+                    "Sell Price: 72|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 86|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
             name = "Shadowpriest Sezz'ziz",
             npcID = 7275,
             aliases = {"Shadowpriest Sezz'ziz"},
@@ -3895,6 +4005,25 @@ FDJ.DB["Zul'Farrak"] = {
                 {9473, "Jinxed Hoodoo Skin", "Chest, Leather", 3},
                 {9474, "Jinxed Hoodoo Kilt", "Legs, Leather", 3},
                 {9475, "Diabolic Skiver", "Two-Hand, Polearm", 3},
+            },
+        },
+        {
+            -- Player-confirmed Forever drop (screenshot, 10 Nov 2026).
+            name = "Hydromancer Velratha",
+            npcID = 7795,
+            aliases = {"Hydromancer Velratha"},
+            description = "Patrols near the pool and the Gong of Zul'Farrak. Drops the Tiara of the Deep and Second Mosh'aru Tablet for their quests.",
+            loot = {
+                {274653, "Deep Ritual Girdle", "Waist, Mail", 3, tip = {
+                    "Binds when picked up",
+                    {"Waist", "Mail"},
+                    "163 Armor",
+                    "+11 Strength",
+                    "+12 Spirit",
+                    "|cff1eff00Equip: Increases healing done by up to 16 and damage done by up to 6 for all magical spells and effects.|r",
+                    "Requires Level 43",
+                    "Sell Price: 76|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 97|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
         },
         {
@@ -3914,6 +4043,18 @@ FDJ.DB["Zul'Farrak"] = {
             aliases = {"Zerillis"},
             description = "Rare spawn, patrols the sand dunes outside the temple.",
             loot = {
+                -- Player-confirmed Zerillis drop (screenshot, 10 Nov 2026).
+                {274658, "Dune Hacker", "Main Hand, Axe", 3, tip = {
+                    "Binds when picked up",
+                    {"Main Hand", "Axe"},
+                    {"34 - 63 Damage", "Speed 2.30"},
+                    "(21.1 damage per second)",
+                    "+10 Stamina",
+                    "+10 Nature Resistance",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 54.|r",
+                    "Requires Level 42",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 19|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 3|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 {12470, "Sandstalker Ankleguards", "Feet, Leather", 3},
             },
         },
@@ -4077,8 +4218,8 @@ FDJ.DB["The Drowned City"] = {
     }, {
         -- The Alliance side of Ancient Gurubashi Idol (Wowhead Forever quest
         -- 97130). Archmage Timear gives it, outside where the Violet Hold
-        -- stood in Dalaran (a player, Nov 2026); who takes it back is not
-        -- confirmed yet.
+        -- stood in Dalaran (a player, Nov 2026); the same NPC also
+        -- accepts the turn-in (confirmed by player screenshot, Nov 10, 2026).
         id = 97130,
         name = "Ancient Gurubashi Secrets",
         level = 40,
@@ -4086,7 +4227,7 @@ FDJ.DB["The Drowned City"] = {
         faction = "Alliance",
         pickup = "Archmage Timear, outside where the Violet Hold stood, Dalaran, Alterac Mountains",
         objective = "Recover an Ancient Gurubashi Idol from the Drowned City.",
-        turnin = "Archmage Timear, Dalaran (not confirmed)",
+        turnin = "Archmage Timear, outside where the Violet Hold stood, Dalaran, Alterac Mountains",
         liveXPFallback = 10450,
         rewardSummary = "50s  •  Kirin Tor +300  •  Stormwind +150",
         requiredItem = {276894, "Ancient Gurubashi Idol", 1, 1, "From the most powerful priest in the Drowned City"},
@@ -4204,6 +4345,8 @@ FDJ.DB["The Drowned City"] = {
             loot = {
                 -- Seen dropping from a Risen Sentry (elite undead troll trash, Nov 2026).
                 {287002, "Risen Sentry's Links", "Legs, Mail", 3, "Risen Sentry"},
+                -- Reported as a Drowned City trash drop (Nov 2026); exact mob not confirmed.
+                {286997, "Depth-Risen Leggings", "Legs, Cloth", 3},
             },
         },
     },
@@ -4229,7 +4372,7 @@ FDJ.DB["Krol'dok Stronghold"] = {
         level = 45,
         requires = 40,
         faction = "Horde",
-        pickup = "Krom'rosh, Riverglades (exact spot not known yet)",
+        pickup = "Krom'rosh, Rog'mar, Riverglades (59.4, 45.5)",
         objective = "Infiltrate Krol'dok Stronghold and return to Krom'rosh with proof of their leader's demise.",
         turnin = "Krom'rosh, Riverglades",
         liveXPFallback = 13000,
@@ -4273,7 +4416,7 @@ FDJ.DB["Krol'dok Stronghold"] = {
         level = 45,
         requires = 40,
         faction = "Alliance",
-        pickup = "Commander Demar Brant, Farholde Keep, Riverglades (exact spot not known yet)",
+        pickup = "Commander Demar Brant, Farholde Keep, Riverglades (66.6, 79.9)",
         objective = "Infiltrate Krol'dok Stronghold and return to Commander Brant with proof of their leader's demise.",
         turnin = "Commander Demar Brant, Farholde Keep, Riverglades",
         liveXPFallback = 13000,
@@ -4462,8 +4605,7 @@ FDJ.DB["Alcaz Prison"] = {
     -- Seen in the game (a stream, 2026-11-07): the bosses' levels, one drop
     -- each and the Horde quest Thrall Needs to Know. Boss list: the game's
     -- DungeonEncounter data (map 2994); The Questioner comes second (a
-    -- player, Nov 2026). NPC IDs from Wowhead Forever; Overseer Wrex's is not
-    -- known yet (he is found by name). Loot only partly known.
+    -- player, Nov 2026). NPC IDs from Wowhead Forever. Loot only partly known.
     -- Quests still being found: "Full Quests TBD" on its Quests tab.
     fullQuestsTBD = true,
     fullItemsTBD = true,
@@ -4493,6 +4635,8 @@ FDJ.DB["Alcaz Prison"] = {
     bosses = {
         {
             name = "Overseer Wrex",
+            npcID = 255391, -- Wowhead Forever
+            displayID = 7914, -- Overseer Wrex creature display, for boss portrait
             aliases = {"Overseer Wrex", "Wrex"},
             loot = {
                 -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
@@ -4507,6 +4651,7 @@ FDJ.DB["Alcaz Prison"] = {
                     "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 11|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 47|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
                 {276734, "Wrex's Pinky Ring", "Finger", 3}, -- seen dropping (Nov 2026)
+                {276732, "Alcaz Willcrusher", "Two-Hand, Mace", 3}, -- confirmed in-game Loot Rolls from Overseer Wrex (Nov 2026)
             },
         },
         {
@@ -4673,6 +4818,23 @@ FDJ.DB["Blackmaw Hold"] = {
             {249696, "Tusks of the Unbroken", 1, "From Bonesnout the Unbroken in Blackmaw Hold"},
         },
         note = "Withermaw and Bonesnout are on different paths: take both.",
+    }, {
+        -- Item-start quest seen in game, 10 Nov 2026. Quest #92070 is
+        -- initiated by Feathered Charm Necklace (item #249698). The reward
+        -- is confirmed by the in-game quest offer screenshot; the owner's
+        -- identity and exact hand-in location have not yet been confirmed.
+        id = 92070,
+        name = "A Lost Memento",
+        level = 57, -- provisional; item requires level 47; quest level unverified
+        requires = 47,
+        faction = "Both",
+        pickup = "Item start: Feathered Charm Necklace, looted in Blackmaw Hold",
+        startsInDungeon = true,
+        startItem = {249698, "Feathered Charm Necklace", 1, "Looted in Blackmaw Hold; specific drop source not yet confirmed"},
+        objective = "Find the owner of the Feathered Charm Necklace.",
+        turnin = "The necklace's original Blackmaw owner (location not yet confirmed)",
+        rewardItems = {{279893, "Nama's Cherished Necklace", 3}},
+        note = "Item-start quest. The necklace is a handmade furbolg keepsake. The exact NPC and hand-in location are still being verified.",
     }},
     bosses = {
         {
@@ -4680,6 +4842,17 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247206,
             aliases = {"Impaan the Imprisoner", "Impaan"},
             loot = {
+                -- Confirmed Impaan drop from player screenshot, 10 Nov 2026; verified Forever item ID.
+                {280057, "Robes of Dark Summons", "Chest, Cloth", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Cloth"},
+                    "84 Armor",
+                    "+14 Stamina",
+                    "|cff1eff00Equip: Improves your chance to hit by 1.8%.|r",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 21.|r",
+                    "Requires Level 54",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 84|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 56|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {0, "Flameslash Crescent", "Two-Hand, Axe", 3, tip = {
                     "Binds when picked up",
@@ -4711,6 +4884,18 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247198,
             aliases = {"Bonesnout the Unbroken", "Bonesnout"},
             loot = {
+                -- Confirmed in-game (10 Nov 2026); Forever item ID verified.
+                {280059, "Tuskblade Halberd", "Two-Hand, Polearm", 3, tip = {
+                    "Binds when picked up",
+                    {"Two-Hand", "Polearm"},
+                    {"148 - 222 Damage", "Speed 3.60"},
+                    "(51.4 damage per second)",
+                    "+18 Stamina",
+                    "+14 Agility",
+                    "|cff1eff00Equip: Reduces chance to be Dodged or Parried by 2.0%.|r",
+                    "Requires Level 55",
+                    "Sell Price: 6|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 10|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 14|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {0, "Lucky Shovelnose Tuft", "Trinket", 3, tip = {
                     "Binds when picked up",
@@ -4765,6 +4950,39 @@ FDJ.DB["Blackmaw Hold"] = {
             rare = true,
             loot = {
                 {280077, "Fist of Revelation", "One-Hand, Fist Weapon", 3},
+                -- Gortek rare drop, screenshot 10 Nov 2026.
+                {280078, "Apprentice's Protective Treads", "Feet, Leather", 3, tip = {
+                    "Binds when picked up",
+                    {"Feet", "Leather"},
+                    "112 Armor",
+                    "+11 Agility",
+                    "+12 Stamina",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "Requires Level 52",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 56|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 43|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
+            -- Rare elite spider, level 55, confirmed in-game (10 Nov 2026).
+            -- NPC #250034: Wowhead Forever.
+            name = "Tunnelweb Matriarch",
+            npcID = 250034,
+            aliases = {"Tunnelweb Matriarch"},
+            description = "Rare spawn.",
+            rare = true,
+            loot = {
+                {280085, "Tunnelweb Pincer", "One-Hand, Dagger", 3, tip = {
+                    "Binds when picked up",
+                    {"One-Hand", "Dagger"},
+                    {"42 - 78 Damage", "Speed 1.60"},
+                    "(37.5 damage per second)",
+                    "+7 Agility",
+                    "+8 Stamina",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.4%.|r",
+                    "Requires Level 52",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 38|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 27|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
         },
         {
@@ -4772,6 +4990,31 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247195,
             aliases = {"Withermaw"},
             loot = {
+                -- Confirmed Withermaw drop from player screenshot, 10 Nov 2026; verified Forever item ID.
+                {280063, "Bloodfur Bulwark", "Off Hand, Shield", 3, tip = {
+                    "Binds when picked up",
+                    {"Off Hand", "Shield"},
+                    "2057 Armor",
+                    "38 Block",
+                    "+10 Stamina",
+                    "|cff1eff00Equip: Increases your chance to Block attacks with a shield by 2.0%.|r",
+                    "|cff1eff00Equip: Increases the Block Value of your shield by 15.|r",
+                    "Requires Level 55",
+                    "Sell Price: 3|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 17|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                -- Confirmed in-game (10 Nov 2026).
+                {280062, "Cloak of the Fleshborer", "Back, Cloth", 3, tip = {
+                    "Binds when picked up",
+                    {"Back", "Cloth"},
+                    "43 Armor",
+                    "+6 Strength",
+                    "+6 Agility",
+                    "+6 Stamina",
+                    "+6 Intellect",
+                    "+6 Spirit",
+                    "Requires Level 55",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 48|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen in-game (Nov 2026); item ID not known yet (0, filled in
                 -- by ItemIdLearner). The tooltip was cut off: armor type,
                 -- required level and sell price not seen.
@@ -4849,6 +5092,17 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247231,
             aliases = {"Unbound Spirit"},
             loot = {
+                -- Confirmed from Unbound Spirit, screenshot 10 Nov 2026.
+                {280072, "Cowl of Dark Ambition", "Head, Cloth", 3, tip = {
+                    "Binds when picked up",
+                    {"Head", "Cloth"},
+                    "70 Armor",
+                    "+18 Stamina",
+                    "+16 Intellect",
+                    "|cff1eff00Equip: Increases damage done by magical spells and effects by up to 21.|r",
+                    "Requires Level 56",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 49|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 71|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {0, "Burnished Pridescales", "Chest, Plate", 3, tip = {
                     "Binds when picked up",
@@ -4872,6 +5126,17 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247234,
             aliases = {"Varrox Bleakhoof", "Varrox"},
             loot = {
+                -- Confirmed from Varrox, screenshot 10 Nov 2026.
+                {280076, "Horns of Varrox", "Head, Leather", 3, tip = {
+                    "Binds when picked up",
+                    {"Head", "Leather"},
+                    "141 Armor",
+                    "+18 Stamina",
+                    "+12 Shadow Resistance",
+                    "|cff1eff00Equip: +48 Attack Power.|r",
+                    "Requires Level 57",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 0|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 5|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {0, "Bleak Eye Shoulderplates", "Shoulder, Plate", 3, tip = {
                     "Binds when picked up",
@@ -4904,6 +5169,51 @@ FDJ.DB["Blackmaw Hold"] = {
             name = "Trash Drops",
             trash = true,
             loot = {
+                -- Confirmed on Blackmaw Hold trash (10 Nov 2026);
+                -- exact furbolg mob name not yet confirmed.
+                {287032, "Den Champion's Binding", "Waist, Plate", 3, "Blackmaw Hold trash", tip = {
+                    "Binds when equipped",
+                    {"Waist", "Plate"},
+                    "336 Armor",
+                    "+16 Strength",
+                    "+8 Spirit",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 14.|r",
+                    "Requires Level 52",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 43|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 84|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                -- Confirmed in Blackmaw Hold trash, 10 Nov 2026 (specific mobs TBD).
+                -- Epic Blacksmithing plans. Shown in the dungeon-wide
+                -- Recipes & Patterns tab, sourced from Blackmaw Hold trash.
+                {251453, "Plans: Breastplate of Salvation", "Recipe, Blacksmithing", 4, "Blackmaw Hold trash", tip = {
+                    "Binds when picked up",
+                    "Requires Blacksmithing (300)",
+                    "|cff1eff00Use: Teaches you how to craft Breastplate of Salvation.|r",
+                    "Sell Price: 50|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t",
+                }},
+                -- Confirmed BoE trash loot, 10 Nov 2026.
+                {287034, "Grove Subjugator's Blade", "One-Hand, Dagger", 3, "Blackmaw Hold trash", tip = {
+                    "Binds when equipped",
+                    {"One-Hand", "Dagger"},
+                    {"33 - 62 Damage", "Speed 1.80"},
+                    "(26.4 damage per second)",
+                    "+6 Stamina",
+                    "-10 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 68.|r",
+                    "Requires Level 55",
+                    "|cffffd100To subjugate a soul takes a toll on one's own.|r",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 81|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 25|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {287028, "Tormented Cuffs", "Wrist, Cloth", 3, "Blackmaw Hold trash", tip = {
+                    "Binds when equipped",
+                    {"Wrist", "Cloth"},
+                    "36 Armor",
+                    "+13 Stamina",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 9.|r",
+                    "|cff1eff00Equip: Restores 14 Health per 5 sec.|r",
+                    "Requires Level 53",
+                    "Sell Price: 94|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 34|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen dropping from a Legashi Ritualist (Nov 2026); item ID
                 -- not known yet (0, filled in by ItemIdLearner).
                 {0, "Satyr's Touch", "Ranged, Wand", 3, "Legashi Ritualist", tip = {
@@ -5019,6 +5329,18 @@ FDJ.DB["Shaper's Terrace"] = {
             npcID = 261812,
             aliases = {"Thunderhoof"},
             loot = {
+                -- Player-confirmed drop, 10 Nov 2026 (screenshot).
+                {280018, "Hammer of Thundering Hooves", "Two-Hand, Mace", 3, tip = {
+                    "Binds when picked up",
+                    {"Two-Hand", "Mace"},
+                    {"142 - 214 Damage", "Speed 3.30"},
+                    "(53.9 damage per second)",
+                    "+24 Strength",
+                    "+17 Stamina",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "Requires Level 58",
+                    "Sell Price: 6|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 84|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 80|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {280020, "Deep Jungle Rifle", "Ranged, Gun", 3, tip = {
                     "Binds when picked up",
@@ -5049,6 +5371,17 @@ FDJ.DB["Shaper's Terrace"] = {
             npcID = 262127,
             aliases = {"Direhorn Matriarch"},
             loot = {
+                -- Player-confirmed drop, 10 Nov 2026 (screenshot).
+                {280045, "Regal Direhorn Drape", "Back, Cloth", 3, tip = {
+                    "Binds when picked up",
+                    "Back",
+                    "45 Armor",
+                    "+11 Stamina",
+                    "|cff1eff00Equip: +18 Attack Power.|r",
+                    "|cff1eff00Equip: Increases damage and healing done by magical spells and effects by up to 12.|r",
+                    "Requires Level 58",
+                    "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 73|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 35|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {280022, "Scaleguard Scimitar", "One-Hand, Sword", 3, tip = {
                     "Binds when picked up",
@@ -5076,10 +5409,41 @@ FDJ.DB["Shaper's Terrace"] = {
             },
         },
         {
+            -- Player-confirmed Shaper's Terrace boss and drop (screenshot, 10 Nov 2026).
+            name = "Cinder",
+            npcID = 261974,
+            aliases = {"Cinder"},
+            loot = {
+                {280029, "Cinderedge Crescent", "One-Hand, Axe", 3, tip = {
+                    "Binds when picked up",
+                    {"One-Hand", "Axe"},
+                    {"69 - 129 Damage", "Speed 2.40"},
+                    "(41.2 damage per second)",
+                    "+10 Stamina",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.5%.|r",
+                    "|cff1eff00Equip: +14 Attack Power.|r",
+                    "Requires Level 58",
+                    "Sell Price: 5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 86|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 36|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+            },
+        },
+        {
             name = "Bolt",
             npcID = 262081,
             aliases = {"Bolt"},
             loot = {
+                -- Player-confirmed drop, 10 Nov 2026 (screenshot).
+                {280031, "Sparklance Wand", "Ranged, Wand", 3, tip = {
+                    "Binds when picked up",
+                    {"Ranged", "Wand"},
+                    {"76 - 142 Nature Damage", "Speed 1.70"},
+                    "(64.1 damage per second)",
+                    "+4 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.5%.|r",
+                    "|cff1eff00Equip: Increases damage done by Nature spells and effects by up to 7.|r",
+                    "Requires Level 58",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 42|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 96|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
                 {280032, "Bolt's Charged Eyeball", "Trinket", 3, tip = {
                     "Binds when picked up",
@@ -5092,15 +5456,36 @@ FDJ.DB["Shaper's Terrace"] = {
             },
         },
         {
+            -- Player-confirmed Snowtalon drop, 10 Nov 2026 (screenshot).
+            -- Encounter NPC ID is verified on Wowhead Forever.
+            name = "Snowtalon",
+            npcID = 262297,
+            aliases = {"Snowtalon"},
+            loot = {
+                {280026, "Albinofur Grips", "Hands, Mail", 3},
+            },
+        },
+        {
             name = "Vitrix",
             npcID = 272561,
             aliases = {"Vitrix"},
             loot = {
+                -- Player-confirmed drop, 10 Nov 2026 (screenshot).
+                {280031, "Sparklance Wand", "Ranged, Wand", 3, tip = {
+                    "Binds when picked up",
+                    {"Ranged", "Wand"},
+                    {"76 - 142 Nature Damage", "Speed 1.70"},
+                    "(64.1 damage per second)",
+                    "+4 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.5%.|r",
+                    "|cff1eff00Equip: Increases damage done by Arcane spells and effects by up to 7.|r",
+                    "Requires Level 58",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 42|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 96|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
-            -- The batch's two items no boss is known to drop yet (Wowhead
-            -- Forever 280026-280027): a guess, Vitrix has none listed.
+            -- Crownroar Chestplate has not yet been observed dropping from a
+            -- specific boss, so leave it as unconfirmed/probable for now.
             probableLoot = {
-                {280026, "Albinofur Grips", "Hands, Mail", 3},
                 {280027, "Crownroar Chestplate", "Chest, Plate", 3},
             },
         },
@@ -5819,12 +6204,17 @@ FDJ.DB["Scholomance"] = {
             aliases = {"Kirtonos the Herald"},
             description = "Summoned on the porch with the Blood of Innocents (Kirtonos the Herald).",
             loot = {
+                -- Kirtonos boss-specific drops (Forever Wowhead NPC 10506).
+                -- Excludes global BoE/world-drop loot and generic reagents.
                 {13960, "Heart of the Fiend", "Neck", 3},
                 {13967, "Windreaver Greaves", "Feet, Mail", 3},
                 {13969, "Loomguard Armbraces", "Wrist, Mail", 3},
                 {14024, "Frightalon", "One-Hand, Dagger", 3},
                 {13957, "Gargoyle Slashers", "Hands, Leather", 3},
                 {16734, "Boots of Valor", "Feet, Plate", 3},
+                {13955, "Stoneform Shoulders", "Shoulder, Plate", 3},
+                {13956, "Clutch of Andros", "Waist, Cloth", 3},
+                {13983, "Gravestone War Axe", "Two-Hand, Axe", 3},
             },
         },
         {
@@ -5902,6 +6292,33 @@ FDJ.DB["Scholomance"] = {
             description = "One of the six bosses in the side rooms; all six must die to summon Gandling.",
             loot = {
                 {16710, "Shadowcraft Bracers", "Wrist, Leather", 3},
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
+                {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
+                {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
+                {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
+                {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
             },
         },
         {
@@ -5911,6 +6328,34 @@ FDJ.DB["Scholomance"] = {
             description = "The Butcher, in the side rooms. Burn the Sarkhoff remains after killing him.",
             loot = {
                 {16684, "Magister's Gloves", "Hands, Cloth", 3},
+                {14617, "Sawbones Shirt", "Shirt", 1},
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
+                {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
+                {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
+                {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
+                {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
             },
         },
         {
@@ -5920,6 +6365,33 @@ FDJ.DB["Scholomance"] = {
             description = "One of the six bosses in the side rooms.",
             loot = {
                 {16705, "Dreadmist Wraps", "Wrist, Cloth", 3},
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
+                {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
+                {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
+                {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
+                {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
             },
         },
         {
@@ -5929,6 +6401,33 @@ FDJ.DB["Scholomance"] = {
             description = "One of the six bosses in the side rooms.",
             loot = {
                 {16716, "Wildheart Belt", "Waist, Leather", 3},
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
+                {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
+                {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
+                {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
+                {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
             },
         },
         {
@@ -5937,16 +6436,34 @@ FDJ.DB["Scholomance"] = {
             aliases = {"Lord Alexei Barov"},
             description = "One of the six bosses in the side rooms. Drops a Barov deed.",
             loot = {
-                {14626, "Necropile Robe", "Chest, Cloth", 3},
-                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {16722, "Lightforge Bracers", "Wrist, Plate", 3},
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
                 {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
                 {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
                 {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
                 {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
-                {18684, "Dimly Opalescent Ring", "Finger", 3},
-                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
-                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
-                {16722, "Lightforge Bracers", "Wrist, Plate", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
             },
         },
         {
@@ -5954,7 +6471,35 @@ FDJ.DB["Scholomance"] = {
             npcID = 10502,
             aliases = {"Lady Illucia Barov"},
             description = "One of the six bosses in the side rooms. Drops a Barov deed.",
-            loot = {},
+            loot = {
+                {23201, "Libram of Divinity", "Relic, Libram", 3},
+                {23200, "Totem of Sustaining", "Relic, Totem", 3},
+                {18680, "Ancient Bone Bow", "Ranged, Bow", 3},
+                {14614, "Bloodmail Belt", "Waist, Mail", 3},
+                {14616, "Bloodmail Boots", "Feet, Mail", 3},
+                {14615, "Bloodmail Gauntlets", "Hands, Mail", 3},
+                {14611, "Bloodmail Hauberk", "Chest, Mail", 3},
+                {14612, "Bloodmail Legguards", "Legs, Mail", 3},
+                {18681, "Burial Shawl", "Shoulder, Cloth", 3},
+                {14637, "Cadaverous Armor", "Chest, Leather", 3},
+                {14636, "Cadaverous Belt", "Waist, Leather", 3},
+                {14640, "Cadaverous Gloves", "Hands, Leather", 3},
+                {14638, "Cadaverous Leggings", "Legs, Leather", 3},
+                {14641, "Cadaverous Walkers", "Feet, Leather", 3},
+                {14624, "Deathbone Chestplate", "Chest, Plate", 3},
+                {14622, "Deathbone Gauntlets", "Hands, Plate", 3},
+                {14620, "Deathbone Girdle", "Waist, Plate", 3},
+                {14623, "Deathbone Legguards", "Legs, Plate", 3},
+                {14621, "Deathbone Sabatons", "Feet, Plate", 3},
+                {18684, "Dimly Opalescent Ring", "Finger", 3},
+                {18682, "Ghoul Skin Leggings", "Legs, Leather", 3},
+                {18683, "Hammer of the Vesper", "One-Hand, Mace", 3},
+                {14631, "Necropile Boots", "Feet, Cloth", 3},
+                {14629, "Necropile Cuffs", "Wrist, Cloth", 3},
+                {14632, "Necropile Leggings", "Legs, Cloth", 3},
+                {14633, "Necropile Mantle", "Shoulder, Cloth", 3},
+                {14626, "Necropile Robe", "Chest, Cloth", 3},
+            },
         },
         {
             name = "Darkmaster Gandling",
@@ -6134,6 +6679,34 @@ FDJ.DB["Maraudon"] = {
         note = "Kill Princess Theradras in the inner cavern.",
         turnin = "Keeper Marandis, Nijel's Point, Desolace",
         liveXPFallback = 6100,
+    },
+    {
+        id = 93404,
+        name = "Rot and Regret",
+        faction = "Both",
+        level = 49,
+        requires = 35,
+        pickup = "Woodwyrd, Forlorn Gardens, Shen'dralas (south of Desolace)",
+        objective = "Venture into Maraudon and recover a Vial of Earth Song Water. Use it to extinguish Woodwyrd, then return to Woodwyrd at the Forlorn Gardens.",
+        turnin = "Woodwyrd, Forlorn Gardens, Shen'dralas (south of Desolace)",
+        rewardChoice = true,
+        rewardItems = {{272186, "Overgrown Cuffs", 3}, {272187, "Thornplated Cord", 3}},
+        liveXPFallback = 11100,
+        note = "The quest tracks two objectives: 1 Vial of Earth Song Water and Woodwyrd extinguished. Complete Word of the Woods to encounter Woodwyrd at the Forlorn Gardens. Recover the vial inside Maraudon, then return to Woodwyrd.",
+    },
+    {
+        id = 96776,
+        name = "An'she's Radiance",
+        faction = "Horde",
+        level = 51,
+        requires = 43,
+        pickup = "Olana Brighthoof, Skywatcher Plateau, Mulgore",
+        objective = "Recover the crystal known as An'she's Radiance from Maraudon and return it to Olana Brighthoof in Mulgore.",
+        turnin = "Olana Brighthoof, Skywatcher Plateau, Mulgore",
+        rewardSummary = "75s",
+        rewardItems = {},
+        liveXPFallback = 11900,
+        note = "Beyond Earth Song Falls, find the chamber of brilliant white crystals guarded by giants. Retrieve An'she's Radiance from the crystal near the highest part of the chamber. Rewards 300 Earthen Ring and 200 Thunder Bluff reputation.",
     },
     {
         objective = "Seek out Remulos in Moonglade and give him the Seed of Life.",
@@ -6571,6 +7144,7 @@ FDJ.DB["Dire Maul: West"] = {
             loot = {
                 {18390, "Tanglemoss Leggings", "Legs, Leather", 3},
                 {18393, "Warpwood Binding", "Waist, Mail", 3},
+                {18352, "Petrified Bark Shield", "Off Hand, Shield", 2},
                 -- Seen dropping (a player, Nov 2026).
                 {18353, "Stoneflower Staff", "Two-Hand, Staff", 3},
             },
@@ -7040,6 +7614,46 @@ FDJ.DB["Dire Maul: North"] = {
                 {18520, "Barbarous Blade", "Two-Hand, Sword", 3},
                 {18522, "Band of the Ogre King", "Finger", 3},
                 {18523, "Brightly Glowing Stone", "Held In Off-hand", 3},
+            },
+        },
+        {
+            -- Non-killable loot container. Keep it on the Bosses page after
+            -- King Gordok, but exclude it from the run tracker and boss kills.
+            name = "Gordok Tribute Chest",
+            trash = true,
+            lootChest = true,
+            description = "Tribute chest awarded by Mizzle the Crafty after King Gordok is defeated. The tribute improves when Gordok guards and Captain Kromcrush are spared. Equipment pool is based on Classic-derived Forever reference data; individual drops still need live verification.",
+            loot = {
+                -- Epic (first for highest-value item visibility).
+                {18538, "Treant's Bane", "Two-Hand, Axe", 4},
+                -- Rare equipment.
+                {18528, "Cyclone Spaulders", "Shoulder, Leather", 3},
+                {18529, "Elemental Plate Girdle", "Waist, Plate", 3},
+                {18500, "Tarnished Elven Ring", "Finger", 3},
+                {18537, "Counterattack Lodestone", "Trinket", 3},
+                {18533, "Gordok Bracers of Power", "Wrist, Plate", 3},
+                {18495, "Redoubt Cloak", "Back", 3},
+                {18534, "Rod of the Ogre Magi", "Two-Hand, Staff", 3},
+                {18499, "Barrier Shield", "Off Hand, Shield", 3},
+                {18532, "Mindsurge Robe", "Chest, Cloth", 3},
+                {18530, "Ogre Forged Hauberk", "Chest, Mail", 3},
+                {18531, "Unyielding Maul", "Two-Hand, Mace", 3},
+                -- Uncommon equipment.
+                {18479, "Carrion Scorpid Helm", "Head, Mail", 2},
+                {18480, "Scarab Plate Helm", "Head, Plate", 2},
+                {18478, "Hyena Hide Jerkin", "Chest, Leather", 2},
+                {18476, "Mud Stained Boots", "Feet, Leather", 2},
+                {18475, "Oddly Magical Belt", "Waist, Cloth", 2},
+                {18482, "Ogre Toothpick Shooter", "Ranged, Bow", 2},
+                {18477, "Shaggy Leggings", "Legs, Leather", 2},
+                {18481, "Skullcracking Mace", "Two-Hand, Mace", 2},
+                -- Schematic is automatically indexed on Recipes & Patterns.
+                {18655, "Schematic: Major Recombobulator", "Recipe, Engineering", 2},
+                -- Consumables recorded on the Wowhead Forever chest object.
+                {13446, "Major Healing Potion", "Consumable, Potion", 1},
+                {13444, "Major Mana Potion", "Consumable, Potion", 1},
+                {8766, "Morning Glory Dew", "Consumable, Drink", 1},
+                {8952, "Roasted Quail", "Consumable, Food", 1},
             },
         },
     },
@@ -8573,6 +9187,8 @@ FDJ.DB["Upper Blackrock Spire"] = {
             name = "Lord Valthalak",
             npcID = 16042,
             rare = true,
+            rareLabel = "0.5 Quest Event",
+            trackerHidden = true, -- Quest-summoned boss: keep in the journal, omit from Dungeon Tracker.
             aliases = {"Lord Valthalak"},
             description = "Summoned with the Brazier of Beckoning from the Dungeon Set 2 quests.",
             loot = {
