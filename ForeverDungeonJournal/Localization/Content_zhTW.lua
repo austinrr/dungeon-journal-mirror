@@ -52,7 +52,7 @@ FDJ.ContentLocales.zhTW.slotParts = {
     ["Chest"] = "胸部", ["Leather"] = "皮甲", ["Wrist"] = "手腕", ["Cloth"] = "布甲",
     ["Back"] = "背部", ["Waist"] = "腰部", ["Mail"] = "鎖甲", ["Hands"] = "手",
     ["Feet"] = "腳", ["Legs"] = "腿部", ["Neck"] = "頸部", ["Finger"] = "手指",
-    ["Trinket"] = "飾品", ["Bag"] = "揹包", ["One-Hand"] = "單手", ["Main Hand"] = "主手",
+    ["Trinket"] = "飾品", ["Bag"] = "揹包", ["Quiver"] = "箭袋", ["Ammo Pouch"] = "彈藥包", ["One-Hand"] = "單手", ["Main Hand"] = "主手",
     ["Off Hand"] = "副手", ["Two-Hand"] = "雙手", ["Dagger"] = "匕首", ["Sword"] = "劍",
     ["Axe"] = "斧", ["Mace"] = "錘", ["Staff"] = "法杖", ["Shield"] = "盾牌",
     ["Polearm"] = "長柄武器", ["Ranged"] = "遠端", ["Wand"] = "魔杖", ["Thrown"] = "投擲武器",

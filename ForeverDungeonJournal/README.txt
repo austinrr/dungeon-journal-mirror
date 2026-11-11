@@ -1,4 +1,223 @@
-DungeonJournal 2.0.19
+DungeonJournal 2.0.2
+
+CHANGES IN 2.0.37
+- Razorfen Kraul: the level 20 Warrior armor chains were missing.
+  - Alliance: Furen's Armor (Fire Hardened Hauberk). Steps: The Rethban
+    Gauntlet, The Shieldsmith, Fire Hardened Mail.
+  - Horde: Brutal Hauberk. Steps: Trial at the Field of Giants, Speak with
+    Thun'grim, Brutal Armor.
+  - Fire Hardened Mail and Brutal Armor need the Vial of Phlogiston from
+    Roogug; every other material is listed with where it drops.
+  - The optional follow-up pieces (Coif/Helm, Gauntlets, Leggings/
+    Legguards) are shown under the note.
+  - Roogug's loot shows the Vial of Phlogiston (quest item).
+
+CHANGES IN 2.0.36
+- Razorfen Kraul: the Shaman weapon chain (reported on Discord by
+  kAldown: Elemental Aid was missing).
+  - New Shaman entry The Tempest's Weapons (Alliance and Horde), like the
+    other class chains: Elemental Aid is its Razorfen Kraul step, then
+    Storm, Earth, and Fire (20 Twisted Totems; the Horde also has Eyes on
+    the Sky) and the elite Heed My Call ritual in Thousand Needles.
+  - Rewards: Rage of the Storm, Lightning's Grasp or Tidebringer's Claw;
+    Alliance Shamans also get Elementalist's Guard.
+  - Charlga Razorflank's loot shows the Tattered Note (quest item).
+  - The Horde quest givers after the dungeon aren't confirmed yet; the
+    entry says to follow the quest log.
+
+CHANGES IN 2.0.35
+- Dungeon Tracker on solo runs (reported on Discord by Zanth, Ragefire
+  Chasm): the tracker only appeared at the first boss. Inside Forever
+  dungeons the game hides what a mob is, so a trash kill counted only when
+  it gave XP. Overlevelled or level-capped players get no XP, and their
+  trash kills were ignored.
+  - A trash death during a fight (yours or your party's, or up to 3 seconds
+    after it ends) now counts, so the tracker starts on the first trash kill.
+  - Common critters (rats, roaches, beetles, snakes...) still don't count.
+
+CHANGES IN 2.0.34
+- Blackrock Depths: Theldren is marked "0.5 Quest Event", like Lord
+  Valthalak in Upper Blackrock Spire.
+
+CHANGES IN 2.0.33
+- Dungeon Tracker on non-English clients (reported on Discord, City of
+  Dalaran in German): bosses killed under their German names showed up a
+  second time as unknown skulls, and the run could never be completed.
+  - German names added for 19 bosses of the Forever dungeons.
+  - Bosses are also matched by their name in the game's own language: the
+    one seen on the boss, and the one in the Encounter Journal (matched by
+    model, so it works in every language).
+  - Runs already recorded are repaired at login: the bosses get their
+    journal names and a run with every boss down counts as completed.
+  - As a last resort, a run completes once as many unknown-named boss kills
+    as bosses still open are recorded.
+
+CHANGES IN 2.0.32
+- Blackmaw Hold quests checked against Forever's official list:
+  - New: The Twin Bears (Lorekeeper Nok, Ursolan), Blackmaw Reclamation
+    (Varrox Bleakhoof's head for Gatekeeper Rageroar, Ursolan), and the
+    repeatable Feeding Time! and Blackmaw Pouches.
+  - Blackmaw Pouches: its real quest ID, both factions, Timbermaw +150.
+  - A Lost Memento: 11,300 XP.
+- Sunken Temple:
+  - Into the Depths and Secret of the Circle now start with The Sunken
+    Temple (Angelas Moonbreeze for the Alliance, Witch Doctor Uzer'i for the
+    Horde, both in Feralas), then The Stone Circle.
+  - XP corrected to WoW Forever's values for every quest and chain step,
+    class quests included (most showed Classic's, about half).
+
+CHANGES IN 2.0.31
+- Blackrock Depths: new Forever quest Fragment of the Firelands (Horde,
+  Alaana Stormwalker on Skywatcher Plateau, Mulgore; 14,800 XP, 85s,
+  Cenarion Circle +300). Reported by Snax on Discord.
+- Blackrock Depths: The Challenge added (Banner of Provocation, Theldren),
+  with its chain: Anthion's Old Friend, Falrin's Vendetta, The Instigator's
+  Enchantment.
+- Blackrock Depths: quest XP corrected to WoW Forever's values for every
+  quest and chain step (most showed Classic's, about half).
+
+CHANGES IN 2.0.30
+- Blackrock Depths loot completed:
+  - Lord Incendius: Incendic Bracers. Phalanx: Rockfist. Ambassador
+    Flamelash: Circle of Flame. Emperor Dagran Thaurissan: Ironfoe.
+  - The Seven (Chest of The Seven): The Hammer of Grace, Ghostshroud and
+    Haunting Specter Leggings.
+  - New: Theldren (Ring of Law, summoned with the Banner of Provocation;
+    not on the Dungeon Tracker) with his and the Arena Spoils' loot.
+  - New: Secret Safe (Black Vault, after Watchman Doomgrip) with its four
+    items.
+  - New: Trash Drops with the 13 Blackrock Depths zone drops.
+- Maraudon: checked, nothing missing (the extra items some sites list are
+  random world drops).
+
+CHANGES IN 2.0.29
+- Data Rescue: the punch card steps say "Obtain" instead of "Starts at".
+- Dungeon Tracker: when the group resets a dungeon ("<Dungeon> has been
+  reset."), an unfinished run of it ends and its tracker goes away. Corpse
+  runs and vendor trips still continue the same run.
+- Dungeon Tracker: entering a dungeon no longer shows another dungeon's
+  unfinished run (wrong title and bosses) until the first kill.
+- Dungeon Tracker, Stratholme: the run and its tracker now start with the
+  first Crimson (Living) or Black Guard / Acolyte / Crypt / Bile Spewer /
+  Venom Belcher (Undead) kill; before, only a boss kill or an English room
+  name started them.
+
+CHANGES IN 2.0.28
+- Blackmaw Hold: Blackmaw Chain Belt added to Blackmaw Behemoth's loot.
+- Blackrock Depths: Ribbly Screwspigot now also lists Wayfarer's Knapsack,
+  Ribbly's Quiver and Ribbly's Bandolier.
+
+CHANGES IN 2.0.27
+- Gnomeregan, Data Rescue: the punch cards are no longer shown as a quest
+  chain you need first. You take Data Rescue straight from Master Mechanic
+  Castpipe; the cards are how you complete it.
+  - Quest list: a small red Guide button replaces the chain icon and opens
+    the punch card steps under the quest, as before.
+  - Quest page: a How to complete button at the top replaces "Requires a
+    quest chain first." and Show Quest Chain. It opens the step you are on
+    (with a Yellow Punch Card in your bags it opens the Blue card step).
+  - Step pages say "Guide: step 2 of 5" instead of "Required prerequisite".
+  - Any quest can be switched to this in Data/QuestChains.lua with
+    FDJ.QUEST_GUIDE_CHAINS[questID] = true.
+
+
+CHANGES IN 2.0.26
+- Uldaman and Zul'Farrak: every quest and chain step that asks for items now
+  shows them as item cards with the count and where to get them (for
+  example Lore for a Price: Silver Bar ×5).
+- Scarab Shells: red note that Tran'rek must be handed in first if it is in
+  your quest log, or you can't accept Scarab Shells (not even shared).
+
+CHANGES IN 2.0.25
+- Uldaman: the necklace quests now end where the game ends them:
+  - Alliance: Restoring the Necklace (Talvash del Kissel) gives Talvash's
+    Enhancing Necklace; the earlier steps are in its chain.
+  - Horde: Deliver the Gems and Necklace Recovery, Take 3 added; Jarkal
+    Mossmeld gives Jarkal's Enhancing Necklace at the end.
+- Uldaman: The Platinum Discs (Alliance) ends with Dinita Stonemantle in the
+  Vault of Ironforge, who gives the potion / Thawpelt Sack choice.
+- Uldaman and Zul'Farrak: quest XP corrected to WoW Forever's values (most
+  pay about twice their Classic XP).
+
+CHANGES IN 2.0.24
+- Razorfen Downs: new quest Agamaggan's Blood (Kog'thug the Brave, Bristleback
+  Retreat in Shen'dralas), the end of Rot and Regret's chain, with how to get
+  the blood (click a Cauldron of Agamaggan's Blood in the tents).
+- Razorfen Downs: quest XP corrected to WoW Forever's values (A Host of Evil
+  8,200, Extinguishing the Idol 10,100, Bring the End 9,050, Bring the Light
+  10,200, An Unholy Alliance 7,350, The Coldbringer's Eye 8,600).
+- Bring the End / Bring the Light: Vanquisher's Sword added to the reward
+  choices, plus Undercity / Stormwind reputation. An Unholy Alliance:
+  Cultist's Chestguard added to the reward choices.
+- The Coldbringer's Eye (Alliance): real quest ID, level 41 (from 34), and
+  Archmage Lan'dalock's exact spot at the Violet Hold entrance.
+
+CHANGES IN 2.0.23
+- Maraudon: Rot and Regret now shows how to unlock it. The Shen'dralas pylon
+  quests (Strange Pylons, Fragments of the Pylons, Powering the Pylons, A
+  Brief History Lesson, Meeting the Magister) open the area; Mithera then
+  gives Word of the Woods, which leads to Woodwyrd. Every step has its NPC,
+  map spot and tips.
+- Rot and Regret: where the Vial of Earth Song Water is (the pools Rotgrip
+  swims in) and how to finish it (use it on the burning tree next to
+  Woodwyrd).
+- Maraudon: quest XP corrected to WoW Forever's values (about twice the
+  Classic amounts), plus Darkspear Trolls and Cenarion Circle reputation.
+
+CHANGES IN 2.0.22
+- Alcaz Prison: every quest now has its quest giver and real quest ID.
+  - Horde: Eitrigg (Grommash Hold) > Nazeer Bloodspike (Brackenwall Village)
+    > Sergeant Ulka on Alcaz Island, who gives No Orc Left Behind, A Little
+    Payback and Blood Red Bandanas. Thrall Needs to Know shows the whole chain.
+  - A Little Payback: given and taken back by Sergeant Ulka; its three
+    reward choices added.
+  - New Alliance quests: Somber News (with The Secret Prison in its chain)
+    and A Bit of Wet Work, from Mathias Shaw (SI:7) and Sully McCleary in
+    Theramore, with the Jaina disguise step explained.
+  - New for both factions: More Valuable Than Gold (free Mason Connery with
+    The Questioner's key, then find his treasure in Moonbrook). Warning:
+    don't kill The Questioner before the last boss.
+  - The Dragon's Journal: Archmage Lan'dalock at the Violet Hold entrance
+    (15.4, 73.8) gives it and takes it back.
+  - XP corrected to the current values.
+- Krol'dok Stronghold (Horde): Show Them How It's Done added at the start of
+  the chains (players' report).
+
+CHANGES IN 2.0.21
+- Quest item cards now show how many you need after the item's name (for
+  example Key Ingredients: Thick Leather ×4, Iron Bar ×12).
+- Krol'dok Stronghold:
+  - Key Ingredients (both factions): red note at the top, "The key from this
+    quest unlocks the upper side of the dungeon."
+  - Alliance Eye of Mugg has its full chain: Scraps of Knowledge, The Western
+    Front, No Soldier Left Behind, Carving a Path, Bring Me His Head, News to
+    Farholde (then Demar Brant offers Eye of Mugg).
+  - Twilight Mementos chain now starts with Saving Sunnyglade and goes
+    through Sergeant Riftan's quests before Bring Me His Head.
+  - Horde chains start with Encroaching Twilight and Clugfist's Decree; real
+    givers and spots for The Wayward Warrior, Carving a Path, Rise Up! and
+    It Is Time, Brother....
+  - Map spots corrected: Demar Brant (66.6, 81.0), Tran'gul (59.4, 44.0),
+    Sergeant Riftan (30.6, 49.0).
+
+CHANGES IN 2.0.20
+- Krol'dok Stronghold quests, checked against Wowhead Forever and players'
+  reports on Discord:
+  - Horde: Tome of Twilight comes from Tran'gul at Rog'mar and A Token of
+    Vengeance from Da'grosh at the Twilight's Shroud. All three Horde dungeon
+    quests now show their chain (The Wayward Warrior, Break Their Chains,
+    Carving a Path, Rise Up!, Bring Me His Head; then It Is Time, Brother...
+    for Eye of Mugg and Tome of Twilight).
+  - Alliance: Sergeant Riftan gives and takes Twilight Mementos and gives
+    Lingering Essence; Curios of Curiosity is confirmed as the last step and
+    ends at Melanie Sable in Farholde Keep. Ashe Amberhall's spot is marked.
+  - Key quests: the Krol'dok Moulding drops from Tunk, at the forge beside
+    War Handler Ashka; Alphonse Dumas and Kreza Darkthorn are marked.
+  - Quest XP set to the current values (Eye of Mugg 11,500, Tome of Twilight
+    11,050, Twilight Mementos 10,200, A Token of Vengeance 8,200, Vengeance
+    of the Highborne 11,500); Zalfan Moonshadow's whereabouts in the notes.
+- Alcaz Prison: The Dragon's Journal starts from Archmage Lan'dalock at the
+  Violet Hold entrance in Dalaran.
 
 CHANGES IN 2.0.19
 - Zul'Farrak: added Sandfury Pauldrons (item 274638) to Theka the Martyr's

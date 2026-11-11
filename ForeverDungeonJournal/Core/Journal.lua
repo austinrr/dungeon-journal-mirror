@@ -676,11 +676,9 @@ FDJ.DUNGEON_MAPS = {
             { name = "Avatar of Hakkar",       x = 0.243, y = 0.459 },
             { name = "Jammal'an the Prophet",  x = 0.760, y = 0.370 },
             { name = "Ogom the Wretched",      x = 0.780, y = 0.385 },
-            -- The four dragonkin wait together on the same ledge.
-            { name = "Dreamscythe",            x = 0.430, y = 0.865 },
-            { name = "Weaver",                 x = 0.478, y = 0.830 },
-            { name = "Morphaz",                x = 0.461, y = 0.845 },
-            { name = "Hazzas",                 x = 0.448, y = 0.851 },
+            -- One map link for each combined dragon encounter.
+            { name = "Dreamscythe & Weaver",   x = 0.430, y = 0.865 },
+            { name = "Morphaz & Hazzas",       x = 0.461, y = 0.845 },
             { name = "Shade of Eranikus",      x = 0.686, y = 0.874 },
         },
     },
@@ -2155,7 +2153,7 @@ local function QuestNeedsSameStepShareNote(questID)
     if type(questID) ~= "number" then return false end
 
     -- The dungeon/final quest itself is a gated chain step.
-    if QUEST_PREREQ_CHAINS[questID] ~= nil then
+    if QUEST_PREREQ_CHAINS[questID] ~= nil and not FDJ.IsGuideQuest(questID) then
         return true
     end
 
@@ -2367,6 +2365,147 @@ local RefreshBossList
 local RefreshLoot
 local RefreshQuestList
 local RefreshQuestDetail
+
+-- questguide: a quest whose steps are HOW to complete it (Data Rescue's
+-- punch cards), not quests needed before it (FDJ.QUEST_GUIDE_CHAINS in
+-- Data/QuestChains.lua). Its list row gets a small red Guide button in
+-- place of the chain icon, its page a How to complete button at the top in
+-- place of "Requires a quest chain first." and Show Quest Chain. Both open
+-- the steps under the quest in the list, as the chain icon does.
+FDJ.IsGuideQuest = function(questID)
+    return questID ~= nil and type(FDJ.QUEST_GUIDE_CHAINS) == "table"
+        and FDJ.QUEST_GUIDE_CHAINS[questID] == true and QUEST_PREREQ_CHAINS[questID] ~= nil
+end
+-- The chain a quest needs FIRST: nil for a guide quest.
+FDJ.PrereqChainOf = function(questID)
+    if questID == nil or FDJ.IsGuideQuest(questID) then return nil end
+    return QUEST_PREREQ_CHAINS[questID]
+end
+-- The step to open: the one after the last step whose item is in the bags
+-- (a Yellow Punch Card in the bags opens step 3), else the first.
+FDJ.GuideTargetStep = function(chain)
+    if type(chain) ~= "table" or #chain == 0 then return nil end
+    local getCount = (C_Item and C_Item.GetItemCount) or GetItemCount
+    local last
+    for i, step in ipairs(chain) do
+        if type(step) == "table" and step.id and not step.itemStep and IsQuestInLog(step.id) then return step end
+        local details = type(step) == "table" and step.id and QUEST_PREREQ_DETAILS[step.id]
+        local item = type(details) == "table" and type(details.startItem) == "table" and details.startItem[1]
+        if type(item) == "number" and getCount then
+            local ok, has = pcall(function() local n = getCount(item) return type(n) == "number" and n > 0 end)
+            if ok and has == true then last = i end
+        end
+    end
+    return chain[last and math.min(last + 1, #chain) or 1]
+end
+FDJ.OpenQuestGuide = function(questID, parentName)
+    local chain = questID and QUEST_PREREQ_CHAINS[questID]
+    if type(chain) ~= "table" then return end
+    expandedQuestChains[questID] = true
+    local target = FDJ.GuideTargetStep(chain)
+    selectedPrereqStep = target
+    selectedPrereqParentQuestName = parentName
+    selectedPrereqParentQuestID = questID
+    if target and target.id and not target.itemStep then RequestQuestRewardData(target.id) end
+    RefreshQuestList()
+    RefreshQuestDetail()
+end
+-- The red Guide button of a guide quest's list row, in the chain icon's
+-- spot right after "Available from Level X". Created on first use.
+FDJ.SetRowGuideButton = function(button, show)
+    local guide = button.guideToggle
+    if not show then
+        if guide then guide:Hide() end
+        return nil
+    end
+    if not guide then
+        guide = CreateFrame("Button", nil, button, "UIPanelButtonTemplate")
+        button.guideToggle = guide
+        guide:SetHeight(18)
+        guide:SetFrameLevel(button:GetFrameLevel() + 6)
+        guide:RegisterForClicks("LeftButtonUp")
+        guide:SetNormalFontObject("GameFontNormalSmall")
+        guide:SetHighlightFontObject("GameFontHighlightSmall")
+        guide:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:AddLine(L("HOW_TO_COMPLETE"), 1, 0.82, 0.25)
+            GameTooltip:AddLine(L("GUIDE_TIP"), 0.85, 0.85, 0.85)
+            GameTooltip:Show()
+        end)
+        guide:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        guide:SetScript("OnClick", function(self)
+            local owner = self:GetParent()
+            if not owner or not owner.questID then return end
+            expandedQuestChains[owner.questID] = not expandedQuestChains[owner.questID]
+            RefreshQuestList()
+        end)
+    end
+    guide:SetText(L("GUIDE"))
+    local fs = guide:GetFontString()
+    if fs then fs:SetTextColor(1.00, 0.82, 0.27) end -- as the Dungeons button
+    guide:SetWidth(math.max(42, math.ceil(((fs and fs:GetStringWidth()) or 28) + 14)))
+    guide:ClearAllPoints()
+    local metaWidth, wrappedY = FDJ.MetaIconSpot(button.meta)
+    if wrappedY then
+        guide:SetPoint("LEFT", button.meta, "BOTTOMLEFT", metaWidth + 6, wrappedY)
+    else
+        guide:SetPoint("LEFT", button.meta, "LEFT", metaWidth + 6, 0)
+    end
+    guide:Show()
+    return guide
+end
+-- The row control that opens the steps: the Guide button or the chain icon.
+FDJ.RowChainControl = function(button)
+    if button.guideToggle and button.guideToggle:IsShown() then return button.guideToggle end
+    return button.chainToggle
+end
+-- The How to complete button at the top of a guide quest's page (after a
+-- red warning, before Objective). Returns the new cursorY.
+FDJ.PlaceGuideButton = function(quest, cursorY)
+    local button = frame and frame.questGuideButton
+    if not (type(quest) == "table" and FDJ.IsGuideQuest(quest.id)) then
+        if button then button.questID = nil; button:Hide() end
+        return cursorY
+    end
+    if not button then
+        button = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+        frame.questGuideButton = button
+        button:SetHeight(24)
+        button:RegisterForClicks("LeftButtonUp")
+        button:SetScript("OnClick", function(self)
+            if self.questID then FDJ.OpenQuestGuide(self.questID, self.parentQuestName) end
+        end)
+        button:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:AddLine(L("HOW_TO_COMPLETE"), 1, 0.82, 0.25)
+            GameTooltip:AddLine(L("GUIDE_TIP"), 0.85, 0.85, 0.85)
+            GameTooltip:Show()
+        end)
+        button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
+    button.questID = quest.id
+    button.parentQuestName = quest.name
+    button:SetText(L("HOW_TO_COMPLETE"))
+    local fs = button:GetFontString()
+    button:SetWidth(math.max(112, math.min(220, math.ceil(((fs and fs:GetStringWidth()) or 90) + 24))))
+    button:ClearAllPoints()
+    button:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+    button:Show()
+    return cursorY + 33
+end
+-- A step page's label under its title: "Guide: step 2 of 5" for a guide
+-- quest's steps, "Required prerequisite" otherwise.
+FDJ.StepMetaLabel = function(step)
+    local parentID = selectedPrereqParentQuestID
+    if parentID and FDJ.IsGuideQuest(parentID) then
+        local chain = QUEST_PREREQ_CHAINS[parentID]
+        for i, s in ipairs(chain) do
+            if s == step or (type(step) == "table" and s.id and s.id == step.id) then return L("GUIDE_STEP", i, #chain) end
+        end
+        return L("GUIDE")
+    end
+    return L("REQUIRED_PREREQUISITE")
+end
 local SetMode
 local SelectBoss
 local SelectQuest
@@ -4368,9 +4507,12 @@ RefreshQuestList = function()
             local chain = (not ready) and rawChain or nil
 
             local chainExpanded = chain and expandedQuestChains[quest.id] == true
+            -- questguide: a guide quest's steps open from a red Guide
+            -- button instead of the chain icon.
+            button.fdjGuide = chain ~= nil and FDJ.IsGuideQuest(quest.id)
 
             if button.chainToggle then
-                button.chainToggle:SetShown(chain ~= nil)
+                button.chainToggle:SetShown(chain ~= nil and not button.fdjGuide)
                 button.chainToggle:ClearAllPoints()
                 -- Keep the chain control directly to the right of the
                 -- "Available from Level X" text. This keeps it away from long
@@ -4382,6 +4524,7 @@ RefreshQuestList = function()
                     button.chainToggle:SetPoint("LEFT", button.meta, "LEFT", metaWidth + 6, 0)
                 end
             end
+            FDJ.SetRowGuideButton(button, button.fdjGuide)
             -- startsInDungeon = true on a quest forces the icon even when the
             -- quest has a chain (its chain starts inside the dungeon); the icon
             -- then sits to the right of the chain control.
@@ -4389,15 +4532,15 @@ RefreshQuestList = function()
             -- after its last line, side by side (room enough there).
             local metaLastWidth, metaWrappedY = FDJ.MetaIconSpot(button.meta)
             local rowIconOffset = metaLastWidth + 6
-            if chain and button.chainToggle then rowIconOffset = rowIconOffset + (button.chainToggle:GetWidth() or 20) + 4 end
-            FDJ.SetRowDungeonIcon(button, (not rpgHidden) and (not ready) and (quest.startsInDungeon or ((not chain) and (FDJ.StartsInsideDungeon(quest.pickup)
+            if chain and button.chainToggle then rowIconOffset = rowIconOffset + (FDJ.RowChainControl(button):GetWidth() or 20) + 4 end
+            FDJ.SetRowDungeonIcon(button, (not rpgHidden) and (not ready) and (quest.startsInDungeon or ((not chain or button.fdjGuide) and (FDJ.StartsInsideDungeon(quest.pickup)
                 or FDJ.StartItemDropsIn(quest, selectedDungeon)))
-                or (chain and FDJ.ChainStartsInside(quest, selectedDungeon) == true)), rowIconOffset, metaWrappedY)
+                or (chain and not button.fdjGuide and FDJ.ChainStartsInside(quest, selectedDungeon) == true)), rowIconOffset, metaWrappedY)
             -- With a chain control, the faction icons leave no room to its
             -- right: stack the dungeon icon on top of the chain control.
             if not metaWrappedY and chain and button.chainToggle and button.dungeonStartIcon and button.dungeonStartIcon:IsShown() then
                 button.dungeonStartIcon:ClearAllPoints()
-                button.dungeonStartIcon:SetPoint("BOTTOM", button.chainToggle, "TOP", 0, -2)
+                button.dungeonStartIcon:SetPoint("BOTTOM", FDJ.RowChainControl(button), "TOP", 0, -2)
             end
 
             if chain and chainExpanded and button.chainPanel then
@@ -4983,7 +5126,12 @@ FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
         end
         local itemName, itemLink, quality = ItemInfo(item[1])
         local r, g, b = GetAuthoritativeItemQuality(item[1], itemLink, quality, item[3] or 1)
-        button.name:SetText(itemName or item[2])
+        -- How many are needed: item.count, or the "(N needed)" in its
+        -- source text; shown after the name inside the card (×4, ×12).
+        local needed = tonumber(item.count)
+        if not needed and type(item[4]) == "string" then needed = tonumber(item[4]:match("%((%d+) needed%)")) end
+        local countText = (needed and needed > 1) and (" ×" .. tostring(needed)) or ""
+        button.name:SetText((itemName or item[2] or "") .. countText)
         button.name:SetTextColor(r, g, b)
         button:SetBackdropColor(unpack(theme.lootRow))
         button:SetBackdropBorderColor(unpack(theme.border))
@@ -5058,7 +5206,7 @@ local function RefreshPrerequisiteQuestDetail(step)
     frame.selectedQuestName:SetPoint("TOPLEFT", frame.questTextInset, "TOPLEFT", 16, -15)
     frame.selectedQuestName:SetPoint("RIGHT", frame.questTextInset, "RIGHT", -92, 0)
 
-    local meta = L("REQUIRED_PREREQUISITE")
+    local meta = FDJ.StepMetaLabel(step) -- questguide
     if requiredLevel then
         meta = meta .. "  |  " .. L("AVAILABLE_FROM_LEVEL", tostring(requiredLevel))
     end
@@ -5163,6 +5311,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questChainButton.parentQuestName = nil
         frame.questChainButton:Hide()
     end
+    FDJ.PlaceGuideButton(nil, 0) -- questguide
     if frame.questStartLinkButton then
         frame.questStartLinkButton.questID = nil
         frame.questStartLinkButton:Hide()
@@ -5284,6 +5433,9 @@ local function RefreshPrerequisiteQuestDetail(step)
 
 
     if details.pickup and details.pickup ~= "" then
+        -- Item steps (Data Rescue's punch cards) are cards to get, not
+        -- quests to pick up: "Obtain" instead of "Starts at".
+        frame.questStartsHeader:SetText(isItemStep and L("OBTAIN") or L("STARTS_AT"))
         frame.questStartsHeader:ClearAllPoints()
         frame.questStartsHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questStartsHeader:Show()
@@ -5621,6 +5773,7 @@ RefreshQuestDetail = function()
         if frame.questStartDungeonIcon then frame.questStartDungeonIcon:Hide() end
         FDJ.PlaceStepHaveItRow(false) -- chainturnin
         FDJ.PlaceObjectiveMapButton(nil, 0) -- glowingshard
+        FDJ.PlaceGuideButton(nil, 0) -- questguide
         FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon") -- insidequest
         FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon")
         if frame.questTurninText then frame.questTurninText:SetText("") end
@@ -5784,6 +5937,7 @@ RefreshQuestDetail = function()
     elseif frame.questWarningText then
         frame.questWarningText:Hide()
     end
+    cursorY = FDJ.PlaceGuideButton(quest, cursorY) -- questguide: How to complete
 
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
     -- insidequest: done and handed in inside the dungeon.
@@ -5860,6 +6014,7 @@ RefreshQuestDetail = function()
         frame.questProvidedItemHeader:Hide()
     end
 
+    frame.questStartsHeader:SetText(L("STARTS_AT")) -- a step page may have set "Obtain"
     cursorY = PlaceHeader(frame.questStartsHeader, cursorY)
     frame.questStartsText:ClearAllPoints()
     frame.questStartItemButton:ClearAllPoints()
@@ -5884,7 +6039,7 @@ RefreshQuestDetail = function()
         if frame.questStartDungeonIcon then
             frame.questStartDungeonIcon:Hide()
             if quest.startsInDungeon or ((FDJ.StartsInsideDungeon(quest.pickup) or FDJ.StartItemDropsIn(quest, selectedDungeon))
-                and not QUEST_PREREQ_CHAINS[quest.id]) then FDJ.PositionInDungeonIcon() end
+                and not FDJ.PrereqChainOf(quest.id)) then FDJ.PositionInDungeonIcon() end
         end
         cursorY = cursorY + 44
     elseif quest.startItem then
@@ -5907,7 +6062,7 @@ RefreshQuestDetail = function()
         if frame.questStartDungeonIcon then
             frame.questStartDungeonIcon:Hide()
             if quest.startsInDungeon or ((FDJ.StartsInsideDungeon(quest.pickup) or FDJ.StartItemDropsIn(quest, selectedDungeon))
-                and not QUEST_PREREQ_CHAINS[quest.id]) then FDJ.PositionInDungeonIcon() end
+                and not FDJ.PrereqChainOf(quest.id)) then FDJ.PositionInDungeonIcon() end
         end
         cursorY = cursorY + 44
     else
@@ -5921,7 +6076,7 @@ RefreshQuestDetail = function()
         frame.questStartsText:Show()
         if frame.questStartDungeonIcon then
             frame.questStartDungeonIcon:Hide()
-            if quest.startsInDungeon or (FDJ.StartsInsideDungeon(pickupText) and not QUEST_PREREQ_CHAINS[quest.id]) then
+            if quest.startsInDungeon or (FDJ.StartsInsideDungeon(pickupText) and not FDJ.PrereqChainOf(quest.id)) then
                 FDJ.PositionInDungeonIcon()
             end
         end
@@ -5929,7 +6084,7 @@ RefreshQuestDetail = function()
     end
 
     local loc = quest.startMap or QUEST_START_MAPS[quest.id]
-    local hasChain = QUEST_PREREQ_CHAINS[quest.id] ~= nil
+    local hasChain = FDJ.PrereqChainOf(quest.id) ~= nil -- questguide: not for guide quests
 
     frame.questMapButton:ClearAllPoints()
     frame.questMapButton.fdjCustomLabel = nil
@@ -8055,7 +8210,7 @@ RefreshLoot = function()
             frame.selectedBossType:SetText("")
             frame.selectedBossType:Hide()
         elseif boss.lootChest then
-            frame.selectedBossType:SetText("Tribute Chest")
+            frame.selectedBossType:SetText(boss.chestLabel or "Tribute Chest")
             frame.selectedBossType:Show()
         elseif boss.trash then
             frame.selectedBossType:SetText(L("UNIQUE_TRASH"))
@@ -11912,7 +12067,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.19"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.2"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

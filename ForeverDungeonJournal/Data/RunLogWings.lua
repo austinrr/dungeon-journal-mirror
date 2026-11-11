@@ -76,6 +76,31 @@ FDJ.RunLogWingTrash = {
         [9818] = "Blackhand Summoner",
         [9819] = "Blackhand Veteran",
     },
+    -- Stratholme had no signatures: a run (and the tracker) only started
+    -- at the first boss kill unless an English room name matched. IDs and
+    -- names checked on Wowhead (Nov 2026); mobs found on both sides
+    -- (ghouls, skeletons, gargoyles, cadavers, banshees) are left out.
+    ["Stratholme: Living"] = {
+        [10418] = "Crimson Guardsman",
+        [10419] = "Crimson Conjuror",
+        [10420] = "Crimson Initiate",
+        [10421] = "Crimson Defender",
+        [10422] = "Crimson Sorcerer",
+        [10423] = "Crimson Priest",
+        [10424] = "Crimson Gallant",
+        [10425] = "Crimson Battle Mage",
+        [10426] = "Crimson Inquisitor",
+        [11043] = "Crimson Monk",
+        [11054] = "Crimson Rifleman",
+    },
+    ["Stratholme: Undead"] = {
+        [10394] = "Black Guard Sentry",
+        [10399] = "Thuzadin Acolyte",
+        [10412] = "Crypt Crawler",
+        [10413] = "Crypt Beast",
+        [10416] = "Bile Spewer",
+        [10417] = "Venom Belcher",
+    },
     ["Lower Blackrock Spire"] = {
         [9197] = "Spirestone Battle Mage",
         [9198] = "Spirestone Mystic",

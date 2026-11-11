@@ -1687,9 +1687,13 @@ local function TrackedRun()
     if not api then return nil end
     local cur = api.Current()
     if cur then return cur end
+    -- Inside a dungeon (before its first kill): only an unfinished run of
+    -- THIS instance. A run left unfinished in another dungeon showed up
+    -- here, with the wrong title and bosses, until the first kill.
+    local map = api.InsideMap and api.InsideMap()
     local runs = api.Runs()
     for i = #runs, 1, -1 do
-        if RunInProgress(runs[i]) then return runs[i] end
+        if RunInProgress(runs[i]) and (not map or runs[i].map == map) then return runs[i] end
     end
 end
 

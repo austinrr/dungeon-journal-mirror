@@ -632,3 +632,139 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
   and https://www.eversixty.com/dungeons/lower-blackrock-spire . These sources
   identify the per-NPC levels as Classic-based; direct Forever live levels
   may diverge. No unrelated dungeon data altered.
+
+2026-11-11 Krol'dok Stronghold quests (2.0.20)
+- Givers, coordinates, series and XP: Wowhead Forever quest pages 94983, 94984, 94968, 94981, 94980 (https://www.wowhead.com/forever/quest=<id>); the Horde unlock order from a comment on 94968.
+- Quest names and XP of the Riverglades steps: https://forever-tool.com/en/quests/zone/16591/ and https://forever-tool.com/en/quests/zone/16842/
+- Tran'gul (Horde Tome of Twilight), Break Their Chains, It Is Time, Brother..., Tunk and the Moulding, Riftan, Melanie Sable, Lan'dalock (The Dragon's Journal): players' reports and screenshots in the Discord's report-new-loot-quests forum.
+- Cross-check of givers and coordinates: https://conquestcapped.com/guides/wow-forever/wow-forever-kroldok-stronghold-guide/
+- Not added: Krol'dok No More! (94969 / 95056), in the game data as a 3,450 XP dungeon quest but with no giver, level or objective known.
+
+2026-11-11 Krol'dok Stronghold chains (2.0.21)
+- Alliance Eye of Mugg chain start (Scraps of Knowledge), Twilight Mementos start (Saving Sunnyglade), Horde start (Encroaching Twilight): https://mobalytics.gg/wow-forever/dungeons/krol-dok-stronghold-complete-dungeon-guide-uncas
+- Steps, givers, coordinates, series and comments: Wowhead Forever quests 94982, 94890, 94891, 94886, 94888, 94889, 94877, 94879, 94672, 95428, 94744, 94745, 94748, 95432, 95278, 94968 (https://www.wowhead.com/forever/quest=<id>)
+- Cross-checked, no chain info for Alliance Eye of Mugg: https://www.zockify.com/forever/dungeons/kroldok-stronghold/ , https://wow4ever.quest/en/articles/misiones-mazmorras-nuevas-wow-forever , https://mmonster.co/wow-forever/guides/dungeons/kroldok-stronghold , https://gamingguidearchives.com/guide/wow-forever-kroldok-stronghold-dungeon-guide/
+- Key Ingredients note (key opens the upper side of the dungeon): the author, Nov 2026.
+
+2026-11-11 Alcaz Prison quests (2.0.22)
+- Quest IDs, series, objectives, reward items, reputation and comments: Wowhead Forever quests 95483, 96369, 95454, 95309, 95283, 95284, 95285, 96332, 96334, 95262, 95263, 96335, 96337, 96376, 96377, 96379, 96381, 95194, 95196, 95198, 96772 (https://www.wowhead.com/forever/quest=<id>); NPC spots: Wowhead Forever NPCs 260146 / 260271 (Sully McCleary), 260383 (Sergeant Ulka), 332 (Mathias Shaw)
+- XP: https://forever-tool.com/en/quests/zone/16620/ , https://forever-tool.com/en/quests/zone/15/ , https://foreverchanges.pro/quests/alcaz-prison
+- Horde givers and order (Eitrigg, Nazeer Bloodspike, Sergeant Ulka): Ke on the Discord (report-new-loot-quests, 'Alcaz Prison Quests Horde'); The Dragon's Journal giver and turn-in: Ed on the Discord
+- Mason Connery's text and treasure: https://foreverchanges.pro/quest/96337/more-valuable-than-gold , https://foreverchanges.pro/quest/96335/the-man-in-the-iron-chains
+- Krol'dok Horde chain: Show Them How It's Done needed first, Snax on the Discord ('Riverglades Dungeon Chain')
+
+2026-11-11 Maraudon (2.0.23)
+- Rot and Regret's unlock chain, givers, coordinates and tips: Wowhead Forever quests 93594, 93404, 92914, 96010, 96018, 93016, 93394, 93341, 93601, 93604 and NPC 254578 (Mithera) (https://www.wowhead.com/forever/quest=<id>)
+- Chain and XP: https://foreverchanges.pro/quest/93404/rot-and-regret ; quest list and XP: https://forever-tool.com/en/quests/zone/2100/ , https://foreverchanges.pro/quests/maraudon
+- Players' screenshots of Rot and Regret and An'she's Radiance: the Discord (Bov, Snax)
+
+2026-11-11 Razorfen Downs (2.0.24)
+- Agamaggan's Blood and Passing the Blame: Wowhead Forever quests 93604, 93601 (comments: the cauldron), NPC 253527 Kog'thug the Brave (Shen'dralas 72.6, 31.4)
+- XP, rewards, reputation, givers: Wowhead Forever quests 6626, 3341, 3636, 3525, 3523, 6521, 6522, 96773, 97196 (https://www.wowhead.com/forever/quest=<id>)
+- XP cross-check: https://forever-tool.com/en/quests/zone/722/ ; quest list: https://foreverchanges.pro/quests/razorfen-downs
+
+2026-11-11 Uldaman and Zul'Farrak (2.0.25)
+- XP: https://forever-tool.com/en/quests/zone/1517/ , https://forever-tool.com/en/quests/zone/978/ ; spot-checks on Wowhead Forever quests 2398, 2418, 2279, 2280, 1956, 2936, 3527, 2769, 707
+- New steps (givers, rewards, reputation): Wowhead Forever quests 2361, 2340, 2341, 2439 (https://www.wowhead.com/forever/quest=<id>)
+- Quest lists and reward items: https://foreverchanges.pro/quests/uldaman , https://foreverchanges.pro/quests/zulfarrak
+- Discord (report-new-loot-quests): Zum'rah's Head (Magisch), Arch of the Covenant / Theka's Last Breath / Blood Ritual Ring (Ed): already in the journal
+
+2026-11-11 Uldaman / Zul'Farrak items (2.0.26)
+- Item IDs and where they come from: Wowhead Forever quests 2199, 1954, 2201, 2204, 2258, 2500, 2339, 2934, 2990, 704, 17, 709, 2418, 1360, 2342; ForeverChanges quest pages 722, 1139, 1956, 2283, 2770, 2846, 2768, 3042, 3527, 2991, 2865 (https://foreverchanges.pro/quest/<id>)
+- Scarab Shells / Tran'rek: Ed on the Discord (bug-reports, 'Scarab Shells ZF quest - needs prequest'); Wowhead Forever 2865 / 2864 (series and the Classic-era comment that Tran'rek isn't required); breadcrumb behaviour: https://github.com/ccshiro/cc-buglist/issues/730 , https://eu.forums.blizzard.com/en/wow/t/unavailable-pre-quests-due-to-completed-follow-up-quests/120333
+
+2.0.27 (2026-11-11)
+- Data Rescue guide display: no new quest data; the punch card steps are the
+  ones already sourced in 2.0.x (Wowhead quest 2930, Matrix Punchograph 3005-A..D).
+  Change requested by the addon author from in-game testing.
+
+2.0.28 (2026-11-11)
+- Blackmaw Chain Belt (Blackmaw Behemoth): player screenshot from the addon author;
+  item ID and tooltip: https://www.wowhead.com/forever/item=280067/blackmaw-chain-belt
+- Wayfarer's Knapsack, Ribbly's Quiver, Ribbly's Bandolier (Ribbly Screwspigot):
+  https://www.wowhead.com/forever/npc=9543/ribbly-screwspigot (drops tab)
+  https://www.wowhead.com/forever/item=11742/wayfarers-knapsack
+  https://warcraft.wiki.gg/wiki/Wayfarer%27s_Knapsack
+
+2.0.29 (2026-11-11)
+- Stratholme wing NPC IDs checked on Wowhead Classic (tooltip data), e.g.
+  https://www.wowhead.com/classic/npc=10418/crimson-guardsman (10418-10426, 11043,
+  11054 Crimson; 10394, 10399, 10412, 10413, 10416, 10417 Undead side).
+- Discord (read only): suggestions threads "Dungeontracker" and "Add a way to
+  re-open Dungeon Tracker after closing it please".
+
+2.0.30 (2026-11-11)
+- BRD / Maraudon loot cross-check:
+  https://wowtbc.gg/warcraftforever/loot-tables/dungeons/blackrock-depths/
+  https://wowtbc.gg/warcraftforever/loot-tables/dungeons/maraudon/
+  https://conquestcapped.com/guides/wow-forever/wow-forever-maraudon-guide/ (no Forever changes to Maraudon bosses)
+- Sources of each item (Warcraft Wiki): https://warcraft.wiki.gg/wiki/Chest_of_The_Seven ,
+  https://warcraft.wiki.gg/wiki/Secret_Safe , https://warcraft.wiki.gg/wiki/Theldren ,
+  item pages (Incendic Bracers, Rockfist, Circle of Flame, Ghostshroud, the 13 zone drops, Highborne Bracelets = world drop)
+- IDs, quality and slots: Wowhead tooltip data, e.g. https://nether.wowhead.com/classic/tooltip/item/11684
+
+2.0.31 (2026-11-11)
+- Discord report-new-loot-quests: "Blackrock Depths Quest" by Snax (screenshot, level 49).
+- Forever BRD quest list + XP (official data): https://forever-tool.com/quests/zone/1584/
+  https://forever-tool.com/quests/97197/ , /quests/9015/ , /quests/8948/ , /8949/ , /8950/ , /4004/ , /4363/ , /3911/
+- Wowhead Forever tooltip: https://nether.wowhead.com/forever/tooltip/quest/97197 (level 55, Alaana Stormwalker, Mulgore)
+- The Challenge chain: https://warcraft.wiki.gg/wiki/The_Challenge_(quest) , https://classicdb.ch/?quest=8949 ,
+  https://warcraft.wiki.gg/wiki/Top_Piece_of_Lord_Valthalak%27s_Amulet , https://warcraft.wiki.gg/wiki/Jeering_Spectre%27s_Essence
+
+2.0.32 (2026-11-11)
+- Official quest lists: https://forever-tool.com/quests/zone/16554/ (Blackmaw Hold), https://forever-tool.com/quests/zone/1417/ (Sunken Temple)
+- Quest pages https://forever-tool.com/quests/<id>/ for 92065, 92066, 92067, 97327, 96246, 97173, 97198, 6031, 3380, 3445, 3444,
+  4143, 4146, the class quests and every chain step (XP, money, reputation)
+- Wowhead Forever tooltips https://nether.wowhead.com/forever/tooltip/quest/<id> (92065, 92066, 92067, 97327, 96246, 97173, 97198)
+- The Sunken Temple chain: https://warcraft.wiki.gg/wiki/The_Sunken_Temple_(quest) , https://classicdb.ch/?quest=3444 ,
+  https://www.zockify.com/classic/dungeons/sunken-temple/ (NPC coordinates)
+
+2.0.33 (2026-11-11)
+- Discord bug-reports: "Can't finish Dungeon" by KleineTascha (German client, City of Dalaran, screenshot).
+- German boss names: Wowhead Forever German tooltip data, https://nether.wowhead.com/forever/de/tooltip/npc/<npcID>
+  (e.g. 247126 Atrexis der Grabritter). Bosses Wowhead shows in [brackets] have no German data yet and were not added.
+
+2.0.35 (2026-11-11)
+- Discord #help: Zanth (solo Ragefire Chasm, English client, tracker shown only after the first boss; tracker kept after reset on public 2.0.1), with replies from Yuma, Saintblade and Exehn (screenshots).
+- No outside data: the fix is in the addon's kill detection (Systems/RunLog.lua), tested with a simulated client.
+
+2.0.36 (2026-11-11)
+- Discord: kAldown, "Elemental aid for RFK" missing from the quests tab (screenshot).
+- Quest IDs, levels, objectives, totems (Wowhead Forever tooltips):
+  https://nether.wowhead.com/forever/tooltip/quest/96264 (Elemental Aid, Alliance, level 33, Tattered Note)
+  https://nether.wowhead.com/forever/tooltip/quest/79360 (Elemental Aid, Horde)
+  https://nether.wowhead.com/forever/tooltip/quest/79364 (Eyes on the Sky, Horde)
+  https://nether.wowhead.com/forever/tooltip/quest/79358 and /79361 (Storm, Earth, and Fire; Veyric / Prate)
+  https://nether.wowhead.com/forever/tooltip/quest/96135 and /79366 (Heed My Call, level 40)
+  https://nether.wowhead.com/forever/tooltip/quest/96016 and /79442 (The Tempest's Weapons)
+  https://nether.wowhead.com/forever/tooltip/quest/94789 and /1531 (Call of Air)
+  https://nether.wowhead.com/forever/tooltip/item/274463 (Tattered Note, Charlga Razorflank)
+  https://nether.wowhead.com/forever/tooltip/item/280604, /280605, /280607, /280696 (rewards)
+- XP, money and Alliance rewards (official data, build 1.60.1.70399):
+  https://forever-tool.com/quests/96264/ (6,950 XP, 35s)
+  https://forever-tool.com/quests/96135/ (3,150 XP, 50s)
+  https://forever-tool.com/quests/96016/ (3,900 XP, Elementalist's Guard + weapon choice)
+- Chain order, givers, totem drops, ritual, sharing:
+  https://conquestcapped.com/guides/wow-forever/wow-forever-shaman-weapon-quest/
+  https://expcarry.com/wow-forever-tempests-weapons-quest (Veyric 59.6, 27.6 - only source; Rau 46.1, 51.7)
+  https://www.icy-veins.com/wow-forever/shaman-class-quests (search excerpt; the page itself didn't load)
+  https://epiccarry.com/blogs/rage-of-the-storm-wow-forever/ (search excerpt; sharing, Horde reward rune)
+- NPC spots: Prate Cloudseer 53, 42 https://warcraft.wiki.gg/wiki/Call_of_Air_(Orgrimmar) and https://classicdb.ch/?quest=1531 ;
+  Rau Cliffrunner 46.0, 51.6 https://warcrafttavern.com/wow-classic/guides/maelstrom-weapon-rune-season-of-discovery-sod
+- Not confirmed: Horde givers after Razorfen Kraul (records name both Prate and Rau), Horde XP and money.
+
+2.0.37 (2026-11-11)
+- Razorfen Kraul Warrior quests (gap found while checking 2.0.36):
+  https://www.warcrafttavern.com/forever/guides/razorfen-kraul-quests/ (both chains, materials and drop locations)
+  https://www.icy-veins.com/wow-forever/warrior-class-quests (search excerpt: Forever chain order, follow-up smiths)
+- Wowhead Forever tooltips:
+  quests https://nether.wowhead.com/forever/tooltip/quest/1699 , /1702 , /1701 (level 28, materials) , /1782 , /1698 ,
+  /1823 , /1824 , /1825 , /1838 , /1848 , /1844
+  items https://nether.wowhead.com/forever/tooltip/item/6841 (Vial of Phlogiston, Roogug) , /6838 , /6839 , /6840 , /6842 ,
+  /6843 , /7126 , /7127 , /6972 , /7133 , /6971 , /6973 , /6974 , /7129 , /7130 , /7132
+- XP (official data, build 1.60.1.70399): https://forever-tool.com/quests/1701/ (2,300) , https://forever-tool.com/quests/1838/ (3,650) ,
+  https://forever-tool.com/quests/1848/ (3,050, Brutal Hauberk 7133)
+- Furen's Armor is quest 1782, 3,400 XP (Classic value; forever-tool has no page for it): https://warcraft.wiki.gg/wiki/Furen's_Armor
+- Follow-up smiths: https://warcraft.wiki.gg/wiki/Thun%27grim_Firegaze , https://classicdb.ch/?quest=1701
+- NPC spots: Thun'grim 57, 30 https://classicdb.ch/?quest=1502 ; Furen Longbeard 58, 16.8 https://wow.gg/guides/razorfen-kraul ;
+  Camp Taurajo 45, 59 https://warcraft.wiki.gg/wiki/Barrens_quests ; 30-minute timer https://warcraft.wiki.gg/wiki/The_Barrens_questing_guide/Southern_Barrens
