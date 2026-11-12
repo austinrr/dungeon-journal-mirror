@@ -72,6 +72,12 @@ FDJ.FOREVER_QUEST_XP_FALLBACK[1806] = 5500
 -- needs Whitestone Oak Lumber (The Deadmines), the Enchanted Silver Ingot
 -- (Shadowfang Keep) and the Purified Kor Gem (Blackfathom Deeps naga).
 FDJ.QUEST_PREREQ_CHAINS[95140] = {
+    { id = 91858, name = "Diplomatic Incident" },
+    { id = 91859, name = "A Curious Pair" },
+    { id = 91860, name = "A Grim Fate" },
+    { id = 91861, name = "Into Fenris Keep" },
+    { id = 91862, name = "Lumina Windsinger" },
+    { id = 96204, name = "The Windshaper's Wrath" },
     { id = 95034, name = "The Debt" },
     { id = 95036, name = "A Moon-Kissed Blade" },
     { id = 95111, name = "An Underrated Talent" },
@@ -128,7 +134,121 @@ FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95126] = { items = { {268484, "Moonsilver Blade
 FDJ.QUEST_PREREQ_DETAILS[95140] = { level = 26, requires = 20, objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.", pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest", turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest", description = "Final step. Old Fire-Eye is at the Greymane Wall in southern Silverpine Forest. Rewards Wolfsbane." }
 FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95140] = { items = { {267369, "Wolfsbane", 3} }, choice = false }
 FDJ.FOREVER_QUEST_XP_FALLBACK[95140] = 2650
+-- The six steps before The Debt (Wowhead Forever series of quest 91858;
+-- reported on Discord by belpickle and xperl73): all level 22, from 18.
+do
+    local DANITHA = { mapID = 1420, x = 0.220, y = 0.446, label = "Danitha Morr — Bandarion Keep, Tirisfal Glades", targetName = "Danitha Morr" }
+    local TREVAN = { mapID = 1421, x = 0.434, y = 0.410, label = "Trevan Rol — The Sepulcher", targetName = "Trevan Rol" }
+    local BALDREN = { mapID = 1421, x = 0.456, y = 0.418, label = "Deathguard Baldren — The Sepulcher", targetName = "Deathguard Baldren" }
+    local REMAINS = { mapID = 1421, x = 0.650, y = 0.342, label = "Charred Remains — Fenris Isle", targetName = "Charred Remains" }
+    local LUMINA_KEEP = { mapID = 1421, x = 0.657, y = 0.274, label = "Lumina Windsinger — Fenris Keep", targetName = "Lumina Windsinger" }
+    local LUMINA = { mapID = 1421, x = 0.433, y = 0.410, label = "Lumina Windsinger — The Sepulcher", targetName = "Lumina Windsinger" }
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    D[91858] = {
+        level = 22, requires = 18,
+        objective = "Travel to The Sepulcher in Silverpine Forest and speak with Trevan Rol about the missing Earthen Ring travelers.",
+        pickup = "Danitha Morr, Bandarion Keep, Tirisfal Glades",
+        turnin = "Trevan Rol, The Sepulcher, Silverpine Forest",
+        map = DANITHA, turninMap = TREVAN,
+    }
+    D[91859] = {
+        level = 22, requires = 18,
+        objective = "Speak with Deathguard Baldren about the mysterious Earthen Ring travelers who recently passed through The Sepulcher.",
+        pickup = "Trevan Rol, The Sepulcher, Silverpine Forest",
+        turnin = "Deathguard Baldren, The Sepulcher, Silverpine Forest",
+        map = TREVAN, turninMap = BALDREN,
+    }
+    D[91860] = {
+        level = 22, requires = 18,
+        objective = "Investigate Fenris Isle to the east and learn the fate of the Earthen Ring traveling party.",
+        pickup = "Deathguard Baldren, The Sepulcher, Silverpine Forest",
+        turnin = "Charred Remains, Fenris Isle, Silverpine Forest",
+        map = BALDREN, turninMap = REMAINS,
+    }
+    D[91861] = {
+        level = 22, requires = 18,
+        objective = "Investigate Fenris Keep to the north and attempt to locate the missing member of the Earthen Ring party.",
+        pickup = "Charred Remains, Fenris Isle, Silverpine Forest",
+        turnin = "Lumina Windsinger, Fenris Keep, Silverpine Forest",
+        map = REMAINS, turninMap = LUMINA_KEEP,
+    }
+    D[91862] = {
+        level = 22, requires = 18,
+        objective = "Retrieve the Fenris Isle Key from the Rot Hide Gnolls and use it to free Lumina Windsinger.",
+        requiredItems = { {267412, "Fenris Isle Key", 1, "Dropped by the Rot Hide gnolls on Fenris Isle (Rot Hide Savage, Raging Rot Hide, Rot Hide Bruiser, Snarlmane)", map = { mapID = 1421, x = 0.656, y = 0.238, label = "Rot Hide gnolls — Fenris Isle", detail = "Dropped by the Rot Hide gnolls on Fenris Isle (Rot Hide Savage, Raging Rot Hide, Rot Hide Bruiser, Snarlmane)" }} },
+        pickup = "Lumina Windsinger, Fenris Keep, Silverpine Forest",
+        turnin = "Lumina Windsinger, Fenris Keep, Silverpine Forest",
+        map = LUMINA_KEEP,
+    }
+    D[96204] = {
+        level = 22, requires = 18,
+        objective = "Accompany Lumina Windsinger and help her escape Fenris Keep.",
+        pickup = "Lumina Windsinger, Fenris Keep, Silverpine Forest",
+        turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest",
+        map = LUMINA_KEEP, turninMap = LUMINA,
+    }
+end
 -- END hordepaladin
+
+-- BEGIN ritualsofpower
+-- Mage, Scarlet Monastery Library: Hidden Secrets -> Get the Scoop ->
+-- Rituals of Power (the journal entry). Wowhead Forever quests 1949-1951.
+do
+    local TABETHA = { mapID = 1445, x = 0.460, y = 0.570, label = "Tabetha — Dustwallow Marsh", targetName = "Tabetha" }
+    local TIRTH = { mapID = 1441, x = 0.782, y = 0.758, label = "Magus Tirth — Shimmering Flats", targetName = "Magus Tirth" }
+    FDJ.QUEST_PREREQ_CHAINS[1951] = {
+        { id = 1949, name = "Hidden Secrets" },
+        { id = 1950, name = "Get the Scoop" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[1949] = {
+        level = 38, requires = 30,
+        objective = "Speak with Magus Tirth in the Shimmering Flats.",
+        pickup = "Tabetha, Dustwallow Marsh",
+        turnin = "Magus Tirth, Shimmering Flats, Thousand Needles",
+        map = TABETHA, turninMap = TIRTH,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[1950] = {
+        level = 30, requires = 30,
+        objective = "Find the phrase to Tirth's strongbox, then return to Tirth.",
+        pickup = "Magus Tirth, Shimmering Flats, Thousand Needles",
+        turnin = "Magus Tirth, Shimmering Flats, Thousand Needles",
+        map = TIRTH,
+    }
+end
+-- END ritualsofpower
+
+-- BEGIN lessoninliteracy
+-- A Lesson in Literacy (mage, Zul'Farrak): one quest ID, a giver per faction
+-- (Wowhead Forever quest 82084). The player's own giver once the faction is
+-- known; until then the entry names both.
+do
+    local GIVER = {
+        Alliance = { text = "Garion Wendell, Stormwind",
+            map = { mapID = 1453, x = 0.488, y = 0.866, label = "Garion Wendell — Stormwind", targetName = "Garion Wendell" } },
+        Horde = { text = "Owen Thadd, Undercity",
+            map = { mapID = 1458, x = 0.736, y = 0.330, label = "Owen Thadd — Undercity", targetName = "Owen Thadd" } },
+    }
+    local function Apply()
+        if type(UnitFactionGroup) ~= "function" then return end
+        local ok, faction = pcall(UnitFactionGroup, "player")
+        if not ok or (type(issecretvalue) == "function" and issecretvalue(faction)) then return end
+        local giver = GIVER[faction]
+        local d = FDJ.DB and FDJ.DB["Zul'Farrak"]
+        if not giver or not d then return end
+        for _, q in ipairs(d.quests or {}) do
+            if q.id == 82084 then
+                q.pickup, q.turnin, q.startMap = giver.text, giver.text, giver.map
+            end
+        end
+    end
+    Apply()
+    if CreateFrame then
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("PLAYER_LOGIN")
+        f:SetScript("OnEvent", Apply)
+    end
+end
+-- END lessoninliteracy
 
 -- An Unholy Alliance (Horde): the journal entry is the final step (6521); part 1 starts from the Small Scroll in Razorfen
 -- Kraul; the final step is completed in the area outside Razorfen Downs and gives the item reward.
@@ -1209,8 +1329,12 @@ do
             startMap = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
             turninMap = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
         } },
+        -- shapersquests (2.0.4): real IDs, XP and reputation from Wowhead
+        -- Forever (quest tooltips) and ForeverChanges, cross-checked with the
+        -- reported research (Shaper's Terrace Quest Research, 11 Nov 2026).
+        -- Givers are still not known.
         { dungeon = "Shaper's Terrace", quest = {
-            id = -97202,
+            id = 97049, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97202
             learnTitle = "Essence of Seeping Slimes",
             learnItem = 276235,
             name = "Essence of Seeping Slimes",
@@ -1220,14 +1344,15 @@ do
             pickup = "Not known yet",
             objective = "Gather 8 Seeping Slime Essence in the Shaper's Terrace.",
             turnin = "Not known yet",
-            rewardSummary = "90s",
+            liveXPFallback = 17650,
+            rewardSummary = "90s  •  Undercity +100  •  Orgrimmar +50",
             rewardItems = { {279932, "Slime-Resistant Shroud", 3}, {279902, "Reinforced Muck Protectors", 3} },
             rewardChoice = true,
             requiredItem = { 276235, "Seeping Slime Essence", 1, 8, "From the slimes in the pools inside Shaper's Terrace" },
-            note = "Quest giver not known yet. Seen by a Horde player; whether the Alliance gets it too is not known yet.",
+            note = "Quest giver not known yet.",
         } },
         { dungeon = "Shaper's Terrace", quest = {
-            id = -97203,
+            id = 95926, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97203
             learnTitle = "The Dark Crystal",
             learnItem = 271771,
             name = "The Dark Crystal",
@@ -1237,11 +1362,64 @@ do
             pickup = "Not known yet",
             objective = "Gather a colorless Drained Crystal Fragment near the Achromatic Crystal in the Shaper's Terrace.",
             turnin = "Not known yet",
-            rewardSummary = "",
+            liveXPFallback = 6600,
+            rewardSummary = "Undercity +100  •  Orgrimmar +50",
             rewardItems = { {279908, "Crystal-Infused Cleaver", 3}, {279910, "Beastslayer's Trident", 3}, {279912, "Faintly Glowing Orb", 3} },
             rewardChoice = true,
             requiredItem = { 271771, "Drained Crystal Fragment", 1, 1, "Near the Achromatic Crystal inside Shaper's Terrace" },
-            note = "Quest giver not known yet. Seen by a Horde player; whether the Alliance gets it too is not known yet.",
+            note = "Quest giver not known yet.",
+        } },
+        -- The Alliance's three (reported, 11 Nov 2026).
+        { dungeon = "Shaper's Terrace", quest = {
+            id = 95924, -- Wowhead Forever, ForeverChanges
+            learnTitle = "Panic at the Digsite",
+            name = "Panic at the Digsite",
+            level = 60,
+            requires = 55,
+            faction = "Alliance",
+            pickup = "Not known yet",
+            objective = "Slay Venomridge, 6 Ravasaur Matriarchs and 8 Ironhide Ravasaurs in Shaper's Terrace.",
+            turnin = "Not known yet",
+            liveXPFallback = 17650,
+            rewardSummary = "90s  •  Ironforge +100  •  Stormwind +50",
+            rewardItems = { {279903, "Diemetradon Scale Spaulders", 3}, {279905, "Ravasaur Hide Footpads", 3} },
+            rewardChoice = true,
+            note = "Quest giver not known yet. The quest text asks for 9 Ironhide Ravasaurs, its objective counts 8.",
+        } },
+        { dungeon = "Shaper's Terrace", quest = {
+            id = 95925, -- Wowhead Forever, ForeverChanges
+            learnTitle = "Mapping the Way Forward",
+            name = "Mapping the Way Forward",
+            level = 60,
+            requires = 55,
+            faction = "Alliance",
+            pickup = "Not known yet",
+            objective = "Find Interesting Landmarks in Shaper's Terrace and fill out the explorer's map at each: the Pillar of Assimilation, the Achromatic Crystal, the Western Gates, the Regrowth Vestibule and the Unearthed Stone Watcher.",
+            turnin = "Not known yet",
+            liveXPFallback = 17650,
+            rewardSummary = "Ironforge +100  •  Stormwind +50",
+            rewardItems = { {279908, "Crystal-Infused Cleaver", 3}, {279910, "Beastslayer's Trident", 3}, {279912, "Faintly Glowing Orb", 3} },
+            rewardChoice = true,
+            note = "Quest giver not known yet. You map them with an Explorers' League Cartographer's Kit.",
+        } },
+        -- Digestible Research: only in the report (95790 there); neither
+        -- Wowhead nor ForeverChanges has it yet, so it has a stand-in ID
+        -- until the game names it, and its reward items have no IDs yet (0,
+        -- filled in by ItemIdLearner).
+        { dungeon = "Shaper's Terrace", quest = {
+            id = -97204,
+            learnTitle = "Digestible Research",
+            name = "Digestible Research",
+            level = 60,
+            requires = 55,
+            faction = "Alliance",
+            pickup = "Not known yet",
+            objective = "Collect 15 Partially Digested Journal Pages in Shaper's Terrace.",
+            turnin = "Not known yet",
+            rewardSummary = "Ironforge +100  •  Stormwind +100",
+            rewardItems = { {0, "Lost Researcher's Hood", 3}, {0, "Expeditionary Legplates", 3} },
+            rewardChoice = true,
+            note = "Quest giver not known yet (its text suggests a torn journal may start it).",
         } },
         { dungeon = "Razorfen Downs", quest = {
             id = 96773,
@@ -2665,6 +2843,7 @@ do
             ["Deathless Marrow"] = {
                 { 274606, "Bloodspine Staff", "Two-Hand, Staff", 3 },
                 { 274614, "Knucklebone Ring", "Finger", 3 }, -- confirmed (a player, Nov 2026)
+                { 274607, "Viscera Spaulders", "Shoulder, Mail", 3 }, -- confirmed (Nov 2026)
             },
             ["Primeval Elemental"] = {
                 { 274612, "Waterlogged Burial Shroud", "Back", 3 },
@@ -2682,7 +2861,7 @@ do
         -- and required level, nobody has seen it drop yet. Shown folded under
         -- "Not confirmed, but probable drop" on the boss page.
         local PROBABLE = {
-            ["Deathless Marrow"] = { { 274607, "Viscera Spaulders", "Shoulder, Mail", 3 } },
+            -- (Viscera Spaulders, Deathless Marrow: confirmed, now in his loot)
         }
         local have = false
         for _, b in ipairs(d.bosses) do
@@ -2712,6 +2891,17 @@ do
                 if not dup then table.insert(b.loot, item) end
             end
             if PROBABLE[b.name] and not b.probableLoot then b.probableLoot = PROBABLE[b.name] end
+        end
+        -- Primeval Elemental's page is made here, after Data/SharedLoot.lua:
+        -- his share of the dungeon's shared loot (Linken's Boots of Iron).
+        if FDJ.SHARED_BY_BOSS then
+            local byBoss = FDJ.SHARED_BY_BOSS["The Drowned City"] or {}
+            FDJ.SHARED_BY_BOSS["The Drowned City"] = byBoss
+            local list = byBoss["Primeval Elemental"] or {}
+            byBoss["Primeval Elemental"] = list
+            local have = false
+            for _, item in ipairs(list) do if tonumber(item[1]) == 271718 then have = true end end
+            if not have then list[#list + 1] = { 271718, "Linken's Boots of Iron", "Feet, Mail", 3 } end
         end
     end
     if FDJ.BOSS_LEVELS then
@@ -3208,6 +3398,18 @@ do
     local MAYENA = { mapID = 1412, x = 0.348, y = 0.222, label = "Mayena Earthseeker — Mulgore", targetName = "Mayena Earthseeker" }
     FDJ.QUEST_START_MAPS[95928] = MAYENA
     FDJ.FOREVER_QUEST_XP_FALLBACK[95928] = 17655
+    -- 2.0.4: the other five (XP: ForeverChanges; sharing: ForeverChanges and
+    -- the reported research).
+    FDJ.FOREVER_QUEST_XP_FALLBACK[97049] = 17650
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95926] = 6600
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95924] = 17650
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95925] = 17650
+    FDJ.QUEST_SHAREABILITY_AUDIT[95928] = true  -- Crystalline Elements
+    FDJ.QUEST_SHAREABILITY_AUDIT[97049] = true  -- Essence of Seeping Slimes
+    FDJ.QUEST_SHAREABILITY_AUDIT[95926] = true  -- The Dark Crystal
+    FDJ.QUEST_SHAREABILITY_AUDIT[95924] = true  -- Panic at the Digsite
+    FDJ.QUEST_SHAREABILITY_AUDIT[95925] = false -- Mapping the Way Forward
+    FDJ.QUEST_SHAREABILITY_AUDIT[-97204] = false -- Digestible Research (stand-in)
 end
 -- END shapersquests
 
@@ -3328,32 +3530,20 @@ end
 -- END leadinlinks
 
 -- BEGIN toxicsoilfinal
--- The Deadmines: the Toxic Soil storyline ends with the second Destruction in
--- Deadmines (92819, use the detonator), so that quest is the journal entry and
--- the dungeon step (92753, plant the explosives at the forge) is step 10 of its
--- chain, like every other chain: the final quest is listed, not repeated as a
--- step. Wowhead Forever: 92753 ends with Alba Fairmoon at the Deadmines exit
--- ("I will wait for you in the hills behind Moonbrook"), where 92819 is taken
--- and handed in; 92753 gives Stormwind +100, 92819 Stormwind +50.
+-- The Deadmines: the Toxic Soil storyline's journal entry is the dungeon step,
+-- Destruction in Deadmines (92753, plant the explosives beside the forge
+-- inside the Deadmines), with the nine quests before it as its chain (2.0.4:
+-- the quest you do in the dungeon is the one listed; the second Destruction in
+-- Deadmines, 92819, just "use the detonator" at the exit, is not shown).
+-- Wowhead Forever: 92753 ends with Alba Fairmoon at the Deadmines exit ("I
+-- will wait for you in the hills behind Moonbrook") and gives Stormwind +100.
 do
     local ALBA_EXIT = "Alba Fairmoon, in the hills behind Moonbrook (at the Deadmines exit), Westfall"
     local d = FDJ.DB and FDJ.DB["The Deadmines"]
-    for i, q in ipairs((d and d.quests) or {}) do
+    for _, q in ipairs((d and d.quests) or {}) do
         if q.id == 92753 then
-            d.quests[i] = {
-                id = 92819,
-                name = "Destruction in Deadmines",
-                faction = "Alliance",
-                level = 18,
-                requires = 9,
-                pickup = ALBA_EXIT,
-                objective = "Use the detonator.",
-                turnin = ALBA_EXIT,
-                note = "The Deadmines part is step 10 of the chain: plant the Extra-Destructive Explosives beside the forge inside the Deadmines, then meet Alba Fairmoon at the Deadmines exit.",
-                rewardSummary = "Stormwind +50",
-                rewardItems = {},
-                liveXPFallback = 680,
-            }
+            q.turnin = ALBA_EXIT
+            q.rewardSummary = "Stormwind +100"
             break
         end
     end
@@ -3361,23 +3551,22 @@ do
     if chains and chains[92753] then
         local steps = {}
         for _, step in ipairs(chains[92753]) do
-            if step.id ~= 92819 then steps[#steps + 1] = step end
+            if step.id ~= 92753 and step.id ~= 92819 then steps[#steps + 1] = step end
         end
-        chains[92819] = steps
-        chains[92753] = nil
+        chains[92753] = steps
     end
     local details = FDJ.QUEST_PREREQ_DETAILS
     if details and details[92753] then
         details[92753].turnin = ALBA_EXIT
         details[92753].description = "Plant the explosives beside the forge, then meet Alba Fairmoon at the Deadmines exit."
     end
-    -- 92819 is no longer a step: its old step data pointed at the Sentinel Hill inn.
+    -- 92819 is not a step any more: its old step data pointed at the Sentinel Hill inn.
     if details then details[92819] = nil end
     if FDJ.QUEST_START_MAPS then FDJ.QUEST_START_MAPS[92819] = nil end
+    -- The translated hand-in still named the Sentinel Hill inn.
     for _, content in pairs(FDJ.ContentLocales or {}) do
         local quests = content.quests or {}
         if quests[92753] then quests[92753].turnin = nil end
-        if quests[92819] then quests[92819].pickup, quests[92819].turnin = nil, nil end
     end
 end
 -- END toxicsoilfinal

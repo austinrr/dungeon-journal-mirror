@@ -564,7 +564,11 @@ function FDJ.ShowLFGMenu(anchor)
         end
         -- (A "List me for this dungeon" entry was tried: the game does not
         -- let addons create listings, so it was removed.)
-        m.disable = Item(1, function() FDJ.SetLFGButtonHidden(true) end)
+        -- 2.0.4: Disable opens Options at its line (highlighted); the player
+        -- ticks it there, so they know where to undo it.
+        m.disable = Item(1, function()
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_LFG") else FDJ.SetLFGButtonHidden(true) end
+        end)
         -- Closes on its own once the mouse has been away for a moment.
         m:SetScript("OnUpdate", function(self, elapsed)
             if self:IsMouseOver() or (self.fdjAnchor and self.fdjAnchor:IsMouseOver()) then

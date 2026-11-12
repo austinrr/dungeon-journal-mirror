@@ -5,7 +5,7 @@ FDJ.ContentLocales.itIT = FDJ.ContentLocales.itIT or {}
 
 FDJ.ContentLocales.itIT.dungeons = {
     ["Hall of Thanes"] = {
-        ["name"] = "Sala dei Thane",
+        ["name"] = "Hall of Thanes",
         ["location"] = "Sotto Forgiardente, Dun Morogh",
         ["description"] = "Qualcuno si è introdotto nella cripta reale dei nani sotto Forgiardente.",
     },
@@ -15,7 +15,7 @@ FDJ.ContentLocales.itIT.dungeons = {
         ["description"] = "Trogg e cultisti della Lama Infuocata infestano le caverne roventi sotto Orgrimmar.",
     },
     ["Ruins of Lordaeron"] = {
-        ["name"] = "Rovine di Lordaeron",
+        ["name"] = "Ruins of Lordaeron",
         ["location"] = "La città in rovina di Lordaeron",
         ["description"] = "Le forze del Flagello infestano ancora l’antica capitale mentre un negromante accresce il proprio potere tra le rovine.",
     },

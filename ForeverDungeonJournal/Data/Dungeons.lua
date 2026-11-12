@@ -763,6 +763,10 @@ DB["The Deadmines"] = {
         }, {
             name = "Sneed",
             aliases = {"Sneed"},
+            -- He comes out of his Shredder once it is destroyed: the
+            -- Dungeon Tracker counts the Shredder killed with him (it has no
+            -- boss event of its own).
+            killedBefore = { "Sneed's Shredder", 642 },
             loot = {{5194, "Taskmaster Axe", "Two-Hand, Axe", 3}, {5195, "Gold-flecked Gloves", "Hands, Cloth", 3}, {273293, "Bandsaw Wristbands", "Wrist, Mail", 3}, {273092, "Blueprint: Repair Bot", "Engineering", 2}, {251360, "Plans: Veteran's Gloves", "Recipe, Blacksmithing", 3}, {251364, "Plans: Crusader's Gloves", "Recipe, Blacksmithing", 3}, {253902, "Pattern: Filigreed Pristine Gown", "Recipe, Tailoring", 3}},
             npcID = 643,
         }, {
@@ -1422,6 +1426,7 @@ DB["Shadowfang Keep"] = {
                 {1292, "Butcher's Cleaver", "One-Hand, Axe", 3},
                 {6226, "Bloody Apron", "Chest, Cloth", 3},
                 {6633, "Butcher's Slicer", "One-Hand, Sword", 3},
+                {273096, "Blueprint: Tanning Rack", "Blueprint", 2}, -- Wowhead Forever: Razorclaw the Butcher 192/2533; seen dropping (KramS, Discord)
             },
         },
         {
@@ -2887,6 +2892,23 @@ FDJ.DB["Scarlet Monastery: Library"] = {
         note = "Rogue class quest after The Horn of Xelthos; C's next letter (around level 30) sends you back to the Dead Drop. Wear the Scarlet Initiate's Uniform in every wing: stealth or attacking removes it.",
         turnin = "Dead Drop, Pyrewood Village, Silverpine Forest",
         liveXPFallback = 6900,
+    }, {
+        -- Wowhead Forever quest 1951 (reported on Discord by Phoen1x).
+        classOnly = "MAGE",
+        objective = "Bring the book Rituals of Power to Tabetha in Dustwallow Marsh.",
+        rewardSummary = "",
+        id = 1951,
+        name = "Rituals of Power",
+        faction = "Both",
+        pickup = "Magus Tirth, Shimmering Flats, Thousand Needles",
+        startMap = { mapID = 1441, x = 0.782, y = 0.758, label = "Magus Tirth — Shimmering Flats", targetName = "Magus Tirth" },
+        level = 40,
+        requires = 30,
+        note = "Mage class quest.",
+        turnin = "Tabetha, Dustwallow Marsh",
+        turninMap = { mapID = 1445, x = 0.460, y = 0.570, label = "Tabetha — Dustwallow Marsh", targetName = "Tabetha" },
+        liveXPFallback = 6300,
+        requiredItem = {7274, "Rituals of Power", 1, 1, "On a bookshelf in the last hallway before Arcanist Doan, Scarlet Monastery Library"},
     }},
     bosses = {
         {
@@ -3921,6 +3943,30 @@ FDJ.DB["Zul'Farrak"] = {
         turnin = "Master Gadrin, Sen'jin Village, Durotar",
         liveXPFallback = 4850,
     },
+    {
+        -- Wowhead Forever quest 82084 (reported on Discord by Vakos and
+        -- Phoen1x). Alliance: Garion Wendell in Stormwind; Horde: Owen Thadd
+        -- in Undercity (Data/QuestUpdates.lua picks the player's own at login).
+        classOnly = "MAGE",
+        objective = "Track down and collect the spellbook materials requested by the librarian.",
+        rewardSummary = "",
+        id = 82084,
+        name = "A Lesson in Literacy",
+        faction = "Both",
+        pickup = "Garion Wendell, Stormwind (Alliance) or Owen Thadd, Undercity (Horde)",
+        startMap = { mapID = 1453, x = 0.488, y = 0.866, label = "Garion Wendell — Stormwind", targetName = "Garion Wendell" },
+        level = 45,
+        requires = 42,
+        rewardItems = {{221344, "Personal Spellbook", 3}},
+        note = "Mage class quest.",
+        turnin = "Garion Wendell, Stormwind (Alliance) or Owen Thadd, Undercity (Horde)",
+        liveXPFallback = 3900,
+        requiredItems = {
+            {221359, "Pristine Owlbeast Quill", 1, "Dropped by Vicious, Primitive and Savage Owlbeasts in The Hinterlands", map = { mapID = 1425, x = 0.540, y = 0.452, label = "Owlbeasts — The Hinterlands", detail = "Dropped by Vicious, Primitive and Savage Owlbeasts in The Hinterlands" }},
+            {221361, "Zukk'ash Resin", 1, "Dropped by the Zukk'ash silithid in Feralas, south of Camp Mojache (around 73, 63)", count = 5, map = { mapID = 1444, x = 0.730, y = 0.630, label = "Zukk'ash silithid — Feralas", detail = "Dropped by the Zukk'ash silithid south of Camp Mojache (around 73, 63)" }},
+            {221360, "Farraki Papyrus", 1, "Dropped by the Zul'Farrak Zombies that rise from the graves in Zul'Farrak", count = 8},
+        },
+    },
     },
     bosses = {
         {
@@ -4024,6 +4070,7 @@ FDJ.DB["Zul'Farrak"] = {
                     "Requires Level 43",
                     "Sell Price: 72|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 86|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                {274643, "Gutcutter Hatchet", "Thrown", 3}, -- Wowhead Forever: Nekrum Gutchewer 51/151
             },
         },
         {
@@ -4089,6 +4136,7 @@ FDJ.DB["Zul'Farrak"] = {
             loot = {
                 {9467, "Gahz'rilla Fang", "One-Hand, Dagger", 3},
                 {9469, "Gahz'rilla Scale Armor", "Chest, Mail", 3},
+                {274657, "Hydra Leather Legs", "Legs, Leather", 3}, -- Wowhead Forever: Gahz'rilla 51/130
             },
         },
         {
@@ -4119,7 +4167,11 @@ FDJ.DB["Zul'Farrak"] = {
             rare = true,
             aliases = {"Sandarr Dunereaver"},
             description = "Rare spawn, on the sand dunes outside the temple.",
-            loot = {},
+            loot = {
+                -- Wowhead Forever: Sandarr Dunereaver 9/18 and 8/18.
+                {274660, "Sandarr's Shoulders", "Shoulder, Mail", 3},
+                {274659, "Bloodsand Belt", "Waist, Plate", 3},
+            },
         },
         {
             name = "Dustwraith",
@@ -4129,13 +4181,28 @@ FDJ.DB["Zul'Farrak"] = {
             description = "Rare spawn, near the top of the pyramid.",
             loot = {
                 {12471, "Desertwalker Cane", "Held In Off-hand", 3}, -- Wowhead Forever
+                {12469, "Mutilator", "Two-Hand, Sword", 3}, -- Wowhead Forever: Dustwraith 11/20
+            },
+        },
+        {
+            -- 2.0.4: a boss of his own, before Chief Ukorz Sandscalp (one
+            -- fight with him). His own loot: Wowhead Forever, Ruuzlu 54/150
+            -- and 35/150. Embrace of the Lycan (Ruuzlu 51/150, the Chief
+            -- 14/147) stays on the Chief's page.
+            name = "Ruuzlu",
+            npcID = 7797,
+            aliases = {"Ruuzlu"},
+            description = "Fought together with Chief Ukorz Sandscalp, on the top of the temple.",
+            loot = {
+                {274654, "Sandfury Guillotine", "Two-Hand, Axe", 3},
+                {274655, "Peacekeeper Wand", "Ranged, Wand", 3},
             },
         },
         {
             name = "Chief Ukorz Sandscalp",
             npcID = 7267,
-            -- Ruuzlu (fought with him) has no page of his own. In the
-            -- Character Logs the fight ends once both are dead.
+            -- Ruuzlu (fought with him) has his own page (2.0.4). In the
+            -- Character Logs the Chief's fight ends once both are dead.
             aliases = {"Chief Ukorz Sandscalp"},
             killWith = { {"Ruuzlu", 7797} },
             description = "Final boss, on the top of the temple. One fight together with Ruuzlu.",
@@ -4366,10 +4433,7 @@ FDJ.DB["The Drowned City"] = {
             rare = true,
             loot = {
                 {286662, "Deep-Dweller's Grips", "Hands, Cloth", 3},
-            },
-            probableLoot = {
-                -- not seen dropping yet; the name fits Umbra
-                {286658, "Umbral Scaled Belt", "Waist, Mail", 3},
+                {286658, "Umbral Scaled Belt", "Waist, Mail", 3}, -- confirmed (Nov 2026)
             },
         },
         {
@@ -4402,6 +4466,9 @@ FDJ.DB["The Drowned City"] = {
                 {287002, "Risen Sentry's Links", "Legs, Mail", 3, "Risen Sentry"},
                 -- Reported as a Drowned City trash drop (Nov 2026); exact mob not confirmed.
                 {286997, "Depth-Risen Leggings", "Legs, Cloth", 3},
+                -- Wowhead Forever: Risen Sentry 1/2310, Champion of the Deep 1/1051,
+                -- Brinescale Sorceress 1/1153, Makrura Snapper 2/228 (binds when equipped).
+                {287005, "Sword of Dismemberment", "Two-Hand, Sword", 3, "Risen Sentry / Champion of the Deep / Brinescale Sorceress / Makrura Snapper"},
             },
         },
     },
@@ -4634,11 +4701,8 @@ FDJ.DB["Krol'dok Stronghold"] = {
             loot = {
                 {275009, "Emblem of Slamming", "Trinket", 3},
                 {275007, "Mugg's Jabber", "One-Hand, Fist Weapon", 3},
+                {275008, "Mugg's Crosser", "One-Hand, Fist Weapon", 3}, -- drop confirmed by Meteora, 2026-11-11
                 {275010, "Strongly Scented Hood", "Head, Cloth", 3}, -- seen dropping (a player, Nov 2026)
-            },
-            -- Named for him, in the dungeon's batch of item IDs; not seen yet.
-            probableLoot = {
-                {275008, "Mugg's Crosser", "One-Hand, Fist Weapon", 3},
             },
         },
         {
@@ -4651,6 +4715,8 @@ FDJ.DB["Krol'dok Stronghold"] = {
                 {287012, "Krol'dok Warplate Gauntlets", "Hands, Plate", 3},
                 {287013, "Krol'dok Warplate Legplates", "Legs, Plate", 3},
                 {287010, "Outrider's Gloves", "Hands, Leather", 3},
+                -- Wowhead Forever: Twilight Grunt 3/1408, Twilight Lieutenant 1/416, Redridge Prisoner 1/254.
+                {287007, "Stretched Footpads", "Feet, Cloth", 3, "Twilight Grunt / Twilight Lieutenant / Redridge Prisoner"},
             },
         },
     },
@@ -4660,7 +4726,9 @@ FDJ.DB["Alcaz Prison"] = {
     -- Seen in the game (a stream, 2026-11-07): the bosses' levels, one drop
     -- each and the Horde quest Thrall Needs to Know. Boss list: the game's
     -- DungeonEncounter data (map 2994); The Questioner comes second (a
-    -- player, Nov 2026). NPC IDs from Wowhead Forever. Loot only partly known.
+    -- player, Nov 2026). NPC IDs from Wowhead Forever. Boss loot: every item
+    -- is on its Wowhead Forever item page as dropped by that boss (checked
+    -- 2026-11-11, with the "Alcaz Prison Boss & Loot Audit").
     -- Quests still being found: "Full Quests TBD" on its Quests tab.
     fullQuestsTBD = true,
     fullItemsTBD = true,
@@ -4693,8 +4761,8 @@ FDJ.DB["Alcaz Prison"] = {
             displayID = 7914, -- Overseer Wrex creature display, for boss portrait
             aliases = {"Overseer Wrex", "Wrex"},
             loot = {
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Grips of Control", "Hands, Plate", 3, tip = {
+                -- Seen in-game (Nov 2026); Wowhead Forever: Overseer Wrex 11/31.
+                {276733, "Grips of Control", "Hands, Plate", 3, tip = {
                     "Binds when picked up",
                     {"Hands", "Plate"},
                     "342 Armor",
@@ -4716,6 +4784,7 @@ FDJ.DB["Alcaz Prison"] = {
                 {276742, "Girdle of Extracted Answers", "Waist, Plate", 3},
                 {276743, "Fingerbreaker Stamp", "Trinket", 3}, -- seen dropping (Nov 2026)
                 {276741, "Defias Enforcer's Shoulderpads", "Shoulder, Leather", 3}, -- seen dropping (Nov 2026)
+                {274029, "Ornate Shackle Key", "Quest Item", 1}, -- The Man in the Iron Chains (Wowhead Forever: The Questioner)
             },
         },
         {
@@ -4723,8 +4792,8 @@ FDJ.DB["Alcaz Prison"] = {
             npcID = 255997,
             aliases = {"Tidemistress Ca'zass", "Ca'zass"},
             loot = {
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Tidesong Wand", "Ranged, Wand", 3, tip = {
+                -- Seen in-game (Nov 2026); Wowhead Forever: Tidemistress Ca'zass 14/48.
+                {276735, "Tidesong Wand", "Ranged, Wand", 3, tip = {
                     "Binds when picked up",
                     {"Ranged", "Wand"},
                     {"71 - 133 Frost Damage", "Speed 2.00"},
@@ -4736,10 +4805,8 @@ FDJ.DB["Alcaz Prison"] = {
                     "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 39|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 26|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
                 {276736, "Seascale Bracers", "Wrist, Mail", 3}, -- seen dropping (Nov 2026)
-            },
-            -- Named after her; nobody has seen it drop yet.
-            probableLoot = {
-                {276737, "Cloak of the Tidemistress", "Back", 3},
+                {276737, "Cloak of the Tidemistress", "Back", 3}, -- Wowhead Forever: Tidemistress Ca'zass 21/48
+                {273883, "Ca'zass's Head", "Quest Item", 1}, -- A Little Payback / A Bit of Wet Work
             },
         },
         {
@@ -4747,8 +4814,8 @@ FDJ.DB["Alcaz Prison"] = {
             npcID = 257016,
             aliases = {"Katerina the Cleaner", "Katerina"},
             loot = {
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Cutthroat Chestguard", "Chest, Mail", 3, tip = {
+                -- Seen in-game (Nov 2026); Wowhead Forever: Katerina the Cleaner 21/39.
+                {276739, "Cutthroat Chestguard", "Chest, Mail", 3, tip = {
                     "Binds when picked up",
                     {"Chest", "Mail"},
                     "322 Armor",
@@ -4758,6 +4825,8 @@ FDJ.DB["Alcaz Prison"] = {
                     "Requires Level 49",
                     "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 18|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 22|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                {276738, "Katerina's Shanker", "One-Hand, Dagger", 3}, -- Wowhead Forever: Katerina the Cleaner 10/39
+                {276740, "Sentimental Locket", "Neck", 3}, -- Wowhead Forever: Katerina the Cleaner 8/39
             },
         },
         {
@@ -4765,24 +4834,32 @@ FDJ.DB["Alcaz Prison"] = {
             name = "Blazeroar",
             npcID = 255702,
             aliases = {"Blazeroar"},
-            loot = {},
+            -- Wowhead Forever: Blazeroar (16/50, 16/50, 18/50; the journal 4/50).
+            loot = {
+                {276744, "Zarla's Snack Pouch", "Trinket", 3},
+                {276745, "Beastbond Robe", "Chest, Cloth", 3},
+                {276746, "Defias Enforcer's Legguards", "Legs, Leather", 3},
+                {276890, "Zarla's Journal", "Quest Item", 1}, -- The Dragon's Journal
+            },
         },
         {
             -- Defias Enforcer's Prowlers seen dropping from the trash (Nov
-            -- 2026). The rest: items numbered with the drops above, at the
-            -- same item levels, and the other pieces of the Defias
-            -- Enforcer's Garb (its Shoulderpads drop from The Questioner);
-            -- which boss drops them is not known yet.
+            -- 2026). Wowhead Forever: the Prowlers from Alcaz Chaplain, Alcaz
+            -- Jailer and Strashaz Soldier, the Mask from Slavering Hound,
+            -- Strashaz Soldier and Alcaz Jailer, Compound Gloves from Defias
+            -- Truthfinder. The Chest (the last piece of the Defias Enforcer's
+            -- Garb) has no drop recorded yet.
+            -- Sentimental Locket and the Legguards drop from Katerina the
+            -- Cleaner and Blazeroar (listed there).
             name = "Trash Drops",
             trash = true,
             loot = {
-                {287021, "Defias Enforcer's Prowlers", "Feet, Leather", 3},
+                {287021, "Defias Enforcer's Prowlers", "Feet, Leather", 3, "Alcaz Chaplain / Alcaz Jailer / Strashaz Soldier"},
+                {287019, "Defias Enforcer's Mask", "Head, Leather", 3, "Slavering Hound / Strashaz Soldier / Alcaz Jailer"},
+                {287018, "Compound Gloves", "Hands, Cloth", 3, "Defias Truthfinder"}, -- Wowhead Forever: Defias Truthfinder, Alcaz Prison
             },
             probableLoot = {
-                {276740, "Sentimental Locket", "Neck", 3},
-                {287019, "Defias Enforcer's Mask", "Head, Leather", 3},
                 {287020, "Defias Enforcer's Chest", "Chest, Leather", 3},
-                {276746, "Defias Enforcer's Legguards", "Legs, Leather", 3},
             },
         },
     },
@@ -5037,6 +5114,7 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 52",
                     "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 38|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 27|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                {280086, "Octofinger Gauntlets", "Hands, Plate", 3}, -- Wowhead Forever: Tunnelweb Matriarch 2/2
             },
         },
         {
@@ -5306,7 +5384,8 @@ FDJ.DB["Shaper's Terrace"] = {
     location = "Un'Goro Crater",
     -- Quests: Horde players' quest logs (Nov 2026); Crystalline Elements is
     -- on Wowhead Forever (95928, its giver's spawn and rewards). The other
-    -- two have stand-in IDs (Data/QuestUpdates.lua, dalaranquests).
+    -- five (three Alliance, two Horde) are in Data/QuestUpdates.lua
+    -- (dalaranquests, shapersquests).
     description = "An ancient titan facility in the northern hills of Un'Goro Crater, overlooking dinosaurs, tar pits and powerful crystals. Collect power crystals across Un'Goro and use them at the consoles inside the terrace.",
     icon = "Interface\\Icons\\INV_Misc_Gem_Crystal_02",
     quests = {{
@@ -5490,6 +5569,18 @@ FDJ.DB["Shaper's Terrace"] = {
                     "Requires Level 58",
                     "Sell Price: 5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 86|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 36|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                -- Seen in a Loot Roll from Cinder (player screenshot, 12 Nov 2026);
+                -- Wowhead Forever: Cinder 5/7. Vitrix drops it too.
+                {280028, "Heartflame Gauntlets", "Hands, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Hands", "Plate"},
+                    "410 Armor",
+                    "+14 Intellect",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases damage done by Holy spells and effects by up to 18.|r",
+                    "Requires Level 58",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 5|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 67|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
         },
         {
@@ -5528,6 +5619,17 @@ FDJ.DB["Shaper's Terrace"] = {
             aliases = {"Snowtalon"},
             loot = {
                 {280026, "Albinofur Grips", "Hands, Mail", 3},
+                -- Seen in a Loot Roll from Snowtalon (player screenshot, 12 Nov 2026).
+                {280027, "Crownroar Chestplate", "Chest, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Plate"},
+                    "657 Armor",
+                    "+21 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases healing done by up to 40 and damage done by up to 13 for all magical spells and effects.|r",
+                    "Requires Level 58",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 51|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
         },
         {
@@ -5547,9 +5649,22 @@ FDJ.DB["Shaper's Terrace"] = {
                     "Requires Level 58",
                     "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 42|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 96|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                -- Seen in a Loot Roll from Vitrix (player screenshot, 12 Nov 2026).
+                -- Cinder drops it too (Wowhead Forever: Cinder 5/7).
+                {280028, "Heartflame Gauntlets", "Hands, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Hands", "Plate"},
+                    "410 Armor",
+                    "+14 Intellect",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases damage done by Holy spells and effects by up to 18.|r",
+                    "Requires Level 58",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 5|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 67|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
             },
-            -- Crownroar Chestplate has not yet been observed dropping from a
-            -- specific boss, so leave it as unconfirmed/probable for now.
+            -- Crownroar Chestplate: seen dropping from Snowtalon (12 Nov 2026);
+            -- still listed here as probable until it's known whether Vitrix
+            -- drops it too.
             probableLoot = {
                 {280027, "Crownroar Chestplate", "Chest, Plate", 3},
             },
@@ -7285,6 +7400,10 @@ FDJ.DB["Dire Maul: West"] = {
         {
             name = "Lord Hel'nurath",
             npcID = 14506,
+            -- Warlock-summoned (Dreadsteed of Xoroth): kept in the journal,
+            -- left off the Dungeon Tracker and not needed to complete a run.
+            trackerHidden = true,
+            optional = true,
             aliases = {"Lord Hel'nurath"},
             description = "Summoned by warlocks in the pentagram near Immol'thar (Dreadsteed of Xoroth).",
             -- Red line under his name on the loot page.
@@ -7930,9 +8049,30 @@ FDJ.DB["Stratholme: Living"] = {
             },
         },
         {
+            -- Forever boss loot verified against Wowhead NPC 11032 (2026-11-11).
+            -- Optional: a run is complete without him.
+            name = "Malor the Zealous",
+            npcID = 11032,
+            aliases = {"Malor the Zealous"},
+            optional = true,
+            description = "In the Scarlet Bastion, past Timmy. Optional: next to him stands Malor's Strongbox with the Medallion of Faith for The Medallion of Faith (Aurius, at the start of the Undead side).",
+            loot = {
+                {276398, "Scarlet Malice", "One-Hand, Mace", 3},
+                {276399, "Plate of the Scarlet Bastion", "Chest, Plate", 3},
+                {12845, "Medallion of Faith", "Quest Item", 1, tip = {
+                    "Quest Item",
+                    "From Malor's Strongbox, next to Malor the Zealous",
+                    "The Medallion of Faith (Aurius, Stratholme)",
+                }},
+            },
+        },
+        {
             name = "Postmaster Malown",
             npcID = 11143,
             aliases = {"Postmaster Malown"},
+            -- 2.0.3: only there when the group opens the mailboxes: a Live run is
+            -- complete without him (it never finished before).
+            optional = true,
             description = "Summoned by opening the three mailboxes with the Key to the City.",
             loot = {
                 {13392, "The Postmaster's Seal", "Finger", 3},
@@ -8654,6 +8794,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Gorosh the Dervish",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9027,
             aliases = {"Gorosh the Dervish"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8666,6 +8807,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Grizzle",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9028,
             aliases = {"Grizzle"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8679,6 +8821,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Eviscerator",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9029,
             aliases = {"Eviscerator"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8691,6 +8834,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Ok'thor the Breaker",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9030,
             aliases = {"Ok'thor the Breaker"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8703,6 +8847,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Anub'shiah",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9031,
             aliases = {"Anub'shiah"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8715,6 +8860,7 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Hedrum the Creeper",
+            fightGroup = "Ring of Law", -- Dungeon Tracker: one entry for the fight
             npcID = 9032,
             aliases = {"Hedrum the Creeper"},
             description = "Ring of Law: one of six possible challengers.",
@@ -8952,6 +9098,9 @@ FDJ.DB["Blackrock Depths"] = {
         },
         {
             name = "Princess Moira Bronzebeard",
+            -- Can be saved: not needed to complete a run; on the tracker only once killed.
+            optional = true,
+            trackerOnlyIfKilled = true,
             npcID = 8929,
             aliases = {"Princess Moira Bronzebeard"},
             description = "Heals the Emperor. Don't kill her if you are on the Royal Rescue or Fate of the Kingdom quest.",

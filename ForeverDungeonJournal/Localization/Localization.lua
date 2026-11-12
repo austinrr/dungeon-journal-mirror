@@ -927,6 +927,21 @@ function FDJ.LocalizeDungeonField(internalName, field, fallback)
 end
 
 function FDJ.LocalizeQuestField(questID, field, fallback)
+    -- Quest lists, trackers and prerequisite pages must use the same title as
+    -- the player's client. Only query it for the matching journal language;
+    -- another language still uses the verified static translations below.
+    if field == "name" and FDJ.GetLanguage() ~= "itIT"
+        and FDJ.CanUseClientLocalizedText() and type(questID) == "number"
+        and questID > 0 and questID < 1000000 and C_QuestLog then
+        local getter = C_QuestLog.GetTitleForQuestID or C_QuestLog.GetQuestInfo
+        if type(getter) == "function" then
+            local ok, title = pcall(getter, questID)
+            if ok and not (type(issecretvalue) == "function" and issecretvalue(title))
+                and type(title) == "string" and title ~= "" then
+                return title
+            end
+        end
+    end
     local content = ContentTable()
     local entry = content and content.quests and content.quests[questID]
     local value = entry and entry[field]

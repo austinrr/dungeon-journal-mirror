@@ -379,12 +379,26 @@ local function Speed(run)
     local stop = run.finalKill or run.lastBoss
     if stop and stop < start then start = run.firstKill or start end
     if run.completed and stop then return stop - start, false end
-    if not run.closed and FDJ.RunLog and FDJ.RunLog.Current() == run then return Now() - start, true end
+    -- In progress, inside or stepped out (corpse run, vendor): the clock
+    -- keeps going (2.0.4: outside it showed 0:00).
+    if not run.closed and not run.completed then return math.max(0, Now() - start), true end
+    -- 2.0.4: not finished (reset, left, ended by hand): until it ended.
+    -- Runs saved before 2.0.4: until the last time inside, or the last kill.
+    local ended = run.endedAt or run.lastSeen
+    if not ended then
+        for _, k in ipairs(run.kills or {}) do
+            if type(k.t) == "number" and (not ended or k.t > ended) then ended = k.t end
+        end
+    end
+    if ended and ended >= start then return ended - start, false end
     if stop then return stop - start, false end
     return nil
 end
 
 local function Status(run)
+    if run.test then
+        return (run.completed and L("RUNLOG_COMPLETED") or L("RUNLOG_IN_PROGRESS")) .. " (test)", 0.45, 0.75, 1.0
+    end
     if run.completed then return L("RUNLOG_COMPLETED"), 0.25, 1.0, 0.35 end
     if not run.closed then return L("RUNLOG_IN_PROGRESS"), 1.0, 0.82, 0.27 end
     return L("RUNLOG_UNFINISHED"), 0.75, 0.42, 0.36
@@ -603,6 +617,13 @@ function FDJ.RunLogFixDungeon(run)
     -- "The Shaper's Terrace", which isn't the journal's canonical DB key.
     -- Recover both missing and unrecognized dungeon keys without changing
     -- runs that already have valid boss data.
+    -- 2.0.3: by the instance ID first, the same on every client language
+    -- (a German Drowned City run only has "Die Versunkene Stadt").
+    if run and (not run.dungeon or not (FDJ.DB and FDJ.DB[run.dungeon])) and run.map
+        and FDJ.INSTANCE_ID_TO_DUNGEON then
+        local key = FDJ.INSTANCE_ID_TO_DUNGEON[tonumber(run.map) or -1]
+        if key and key ~= "Scarlet Monastery" and FDJ.DB and FDJ.DB[key] then run.dungeon = key end
+    end
     if run and (not run.dungeon or not (FDJ.DB and FDJ.DB[run.dungeon]))
         and FDJ.DungeonFromInstanceName then
         local name = run.instanceName or run.dungeon
@@ -614,20 +635,48 @@ function FDJ.RunLogFixDungeon(run)
     return run and run.dungeon
 end
 
+local FIGHT_PLACEHOLDERS = {} -- ringoflaw: the fight's entry before its boss is known
 local function BossList(run)
     FDJ.RunLogFixDungeon(run)
     local killed = {}
     for _, k in ipairs(run.kills or {}) do
         if k.b and not killed[k.b] then killed[k.b] = k end
     end
-    local list, shown, rares = {}, {}, {}
+    local list, shown, rares, groups = {}, {}, {}, {}
     local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
         if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string" then
             shown[b.name] = true
-            local e = { boss = b, kill = killed[b.name], seen = run.rareSeen and run.rareSeen[b.name] }
-            -- Rares come after the bosses.
-            if b.rare then rares[#rares + 1] = e else list[#list + 1] = e end
+            if type(b.fightGroup) == "string" then
+                -- ringoflaw (2.0.4): one entry for the fight; it shows the boss
+                -- that came (killed, else targeted) once that is known.
+                local g = groups[b.fightGroup]
+                if not g then
+                    g = { group = b.fightGroup, members = {} }
+                    groups[b.fightGroup] = g
+                    shown[b.fightGroup] = true
+                    list[#list + 1] = g
+                end
+                g.members[#g.members + 1] = b
+                if killed[b.name] and not g.kill then g.kill, g.boss = killed[b.name], b end
+            elseif b.trackerOnlyIfKilled and not killed[b.name] then
+                -- optional (Princess Moira): listed only once killed
+            else
+                local e = { boss = b, kill = killed[b.name], seen = run.rareSeen and run.rareSeen[b.name] }
+                -- Rares come after the bosses.
+                if b.rare then rares[#rares + 1] = e else list[#list + 1] = e end
+            end
+        end
+    end
+    for name, g in pairs(groups) do
+        local pick = run.groupPick and run.groupPick[name]
+        if not g.boss and pick then
+            for _, m in ipairs(g.members) do if m.name == pick then g.boss = m end end
+        end
+        g.kill = g.kill or killed[name]
+        if not g.boss then
+            FIGHT_PLACEHOLDERS[name] = FIGHT_PLACEHOLDERS[name] or { name = name, fightPlaceholder = true }
+            g.boss = FIGHT_PLACEHOLDERS[name]
         end
     end
     for _, e in ipairs(rares) do list[#list + 1] = e end
@@ -712,12 +761,15 @@ local function BossLine(parent)
 end
 
 -- Hover a boss: what it dropped (and who got it), or that it is still alive.
-local function BossTooltip(owner, boss, kill, start)
+local function BossTooltip(owner, boss, kill, start, onTracker)
     if not boss then return end
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
     GameTooltip:SetText(BossLabel(boss.name), GOLD[1], GOLD[2], GOLD[3])
     if not kill then
-        GameTooltip:AddLine(owner.notFound and L("RUNLOG_NOT_FOUND") or L("RUNLOG_NOT_KILLED"), 0.75, 0.72, 0.66)
+        -- 2.0.4: the tracker's boss portraits show just the name until killed
+        if not onTracker then
+            GameTooltip:AddLine(owner.notFound and L("RUNLOG_NOT_FOUND") or L("RUNLOG_NOT_KILLED"), 0.75, 0.72, 0.66)
+        end
     else
         GameTooltip:AddLine("+" .. Duration(kill.t - (start or kill.t)), 0.25, 1.0, 0.35) -- killed: green
         local loot = kill.loot or {}
@@ -735,6 +787,10 @@ local function BossTooltip(owner, boss, kill, start)
                 GameTooltip:AddLine(text, 1, 1, 1)
             end
         end
+    end
+    -- 2.0.4: the tracker's boss portraits open the boss's loot on a click
+    if onTracker and FDJ.TrackerBossLoot and #FDJ.TrackerBossLoot(boss) > 0 then
+        GameTooltip:AddLine(L("TRACKER_SHOW_LOOT"), 1, 0.82, 0)
     end
     GameTooltip:Show()
     if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
@@ -1145,7 +1201,7 @@ local function ListRow(parent, win)
 end
 
 local function RefreshList(win)
-    local runs = FDJ.RunLog and FDJ.RunLog.Runs() or {}
+    local runs = FDJ.RunLogListRuns()
     -- Without a scroll bar the runs reach the line between the two sides.
     local need = #runs * 44 > (win.listScroll:GetHeight() or 0) + 1
     if win.listScroll.fdjBar ~= need then
@@ -1342,7 +1398,7 @@ function FDJ.RefreshRunLog()
     if not win or not win:IsShown() then return end
     win.windowTitle:SetText(L("RUNLOG"))
     win.empty:SetText(L("RUNLOG_EMPTY"))
-    local runs = FDJ.RunLog and FDJ.RunLog.Runs() or {}
+    local runs = FDJ.RunLogListRuns()
     local found = false
     for _, run in ipairs(runs) do
         if run == win.selected then found = true break end
@@ -1381,7 +1437,11 @@ if StaticPopupDialogs then
         button2 = NO or "No",
         OnAccept = function(self, data)
             local run = data or self.data
-            if run and FDJ.RunLog then FDJ.RunLog.Delete(run) end
+            if run and run.test then
+                FDJ.RunLogTestRemove(run)
+            elseif run and FDJ.RunLog then
+                FDJ.RunLog.Delete(run)
+            end
             if window and window.selected == run then window.selected = nil end
             FDJ.RefreshRunLog()
         end,
@@ -1491,7 +1551,9 @@ local function ShowIconMenu(anchor)
         item.text:SetPoint("LEFT", 6, 0)
         item:SetScript("OnClick", function()
             menu:Hide()
-            FDJ.SetRunLogButtonHidden(true)
+            -- 2.0.4: Hide opens Options at its line (highlighted); the player
+            -- ticks it there, so they know where to undo it.
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_RUNLOG") else FDJ.SetRunLogButtonHidden(true) end
         end)
         menu.hide = item
         -- Closes on its own once the mouse has been away for a moment.
@@ -1680,13 +1742,56 @@ local function TrackerDB()
     return db.runTracker
 end
 
+-- resetblank (2.0.4): after the tracker's reset button, the tracker stays
+-- up for the same dungeon at 0 (time, XP, gold) with every boss alive,
+-- until the next kill starts the new run. Saved (per character), so a
+-- /reload keeps it; gone once another dungeon is entered, or after 90
+-- minutes outside. Not a run of the log.
+local blankRun
+local function BlankRun()
+    local db = TrackerDB()
+    local b = db.blankRun
+    if type(b) ~= "table" then return nil end
+    local api = FDJ.RunLog
+    local map = api and api.InsideMap and api.InsideMap()
+    if (map and b.map and map ~= b.map) or (not map and Now() - (b.created or 0) > 90 * 60) then
+        db.blankRun = nil
+        return nil
+    end
+    if not (blankRun and blankRun.id == b.id) then
+        blankRun = { blank = true, id = b.id, dungeon = b.dungeon, map = b.map, instanceName = b.instanceName,
+            capped = b.capped, created = b.created, kills = {} }
+    end
+    return blankRun
+end
+function FDJ.StartBlankRun(run)
+    if not (run and run.dungeon) then return end
+    local now = Now()
+    if run.test then -- /dj testlog: a blank test run, never saved
+        FDJ.testRunID = (FDJ.testRunID or 0) - 1
+        FDJ.testRun = { test = true, blank = true, id = FDJ.testRunID, dungeon = run.dungeon, map = run.map,
+            capped = run.capped, created = now, kills = {} }
+        return
+    end
+    TrackerDB().blankRun = { id = -1000000 - now, dungeon = run.dungeon, map = run.map,
+        instanceName = run.instanceName, capped = run.capped, created = now }
+end
+
 -- The run to show: the one being recorded, or an unfinished one we are
 -- outside of (a corpse run or a trip to a vendor).
 local function TrackedRun()
+    if FDJ.testRun then return FDJ.testRun end -- /dj testlog
     local api = FDJ.RunLog
     if not api then return nil end
     local cur = api.Current()
-    if cur then return cur end
+    if cur then
+        -- resetblank: the next kill started the new run
+        local db = TrackerDB()
+        if db.blankRun then db.blankRun = nil end
+        return cur
+    end
+    local blank = BlankRun()
+    if blank then return blank end
     -- Inside a dungeon (before its first kill): only an unfinished run of
     -- THIS instance. A run left unfinished in another dungeon showed up
     -- here, with the wrong title and bosses, until the first kill.
@@ -1709,6 +1814,48 @@ function FDJ.SetTrackerOption(key, on)
     ForeverDungeonJournalDB.trackerOptions[key] = on and true or nil
     if FDJ.UpdateRunTracker then FDJ.UpdateRunTracker() end
     if FDJ.RefreshRunLog then FDJ.RefreshRunLog() end
+    -- an open Options panel ticks along (Hide Tracker set by the X)
+    if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
+end
+-- hidetracker (2.0.4): Options > Dungeon Tracker > Hide Tracker. The
+-- tracker's X ticks it; "/dj tracker", Track on screen or unticking it
+-- shows the tracker again (for players who never read "/dj tracker"). It
+-- hides the run it was ticked for: a new run unticks it by itself and the
+-- tracker works as usual.
+function FDJ.SetTrackerHidden(on)
+    if on then
+        if FDJ.trackerHint then FDJ.trackerHint:Hide() end
+        local run = TrackedRun()
+        TrackerDB().hideRun = run and run.id or nil
+        FDJ.SetTrackerOption("hide", true)
+    else
+        TrackerDB().hideRun = nil
+        FDJ.SetTrackerOption("hide", false)
+        if FDJ.ReopenDungeonTracker then FDJ.ReopenDungeonTracker() end
+    end
+end
+do
+    local strings = {
+        enUS = { OPT_TRACK_HIDE = "Hide Tracker", OPT_TRACK_HIDE_TIP = "Hides the tracker for this run. Closing it with its X ticks this; a new run unticks it by itself. \"/dj tracker\" or unticking it shows the tracker again." },
+        deDE = { OPT_TRACK_HIDE = "Tracker ausblenden", OPT_TRACK_HIDE_TIP = "Blendet den Tracker für diesen Run aus. Schließen mit dem X setzt diesen Haken; ein neuer Run entfernt ihn von selbst. „/dj tracker“ oder Haken entfernen zeigt den Tracker wieder." },
+        frFR = { OPT_TRACK_HIDE = "Masquer le suivi", OPT_TRACK_HIDE_TIP = "Masque le suivi pour ce run. Le fermer avec son X coche cette case ; un nouveau run la décoche tout seul. « /dj tracker » ou la décocher réaffiche le suivi." },
+        esES = { OPT_TRACK_HIDE = "Ocultar el seguimiento", OPT_TRACK_HIDE_TIP = "Oculta el seguimiento en esta run. Cerrarlo con su X marca esta casilla; una run nueva la desmarca sola. «/dj tracker» o desmarcarla vuelve a mostrar el seguimiento." },
+        itIT = { OPT_TRACK_HIDE = "Nascondi tracker", OPT_TRACK_HIDE_TIP = "Nasconde il tracker per questa run. Chiuderlo con la X spunta questa casella; una nuova run la toglie da sola. «/dj tracker» o togliere la spunta mostra di nuovo il tracker." },
+        ptBR = { OPT_TRACK_HIDE = "Ocultar rastreador", OPT_TRACK_HIDE_TIP = "Oculta o rastreador nesta run. Fechá-lo no X marca esta opção; uma nova run a desmarca sozinha. «/dj tracker» ou desmarcá-la mostra o rastreador de novo." },
+        ruRU = { OPT_TRACK_HIDE = "Скрыть трекер", OPT_TRACK_HIDE_TIP = "Скрывает трекер в этом забеге. Закрытие крестиком ставит эту галочку; новый забег снимает её сам. «/dj tracker» или снятие галочки снова показывает трекер." },
+        koKR = { OPT_TRACK_HIDE = "추적기 숨기기", OPT_TRACK_HIDE_TIP = "이번 던전 진행에서 추적기를 숨깁니다. X로 닫으면 자동으로 체크되고, 새 진행이 시작되면 저절로 해제됩니다. \"/dj tracker\"를 입력하거나 체크를 해제하면 다시 표시됩니다." },
+        zhCN = { OPT_TRACK_HIDE = "隐藏追踪器", OPT_TRACK_HIDE_TIP = "本次副本中隐藏追踪器。用 X 关闭时会自动勾选；开始新的副本时会自动取消。输入“/dj tracker”或取消勾选即可再次显示。" },
+        zhTW = { OPT_TRACK_HIDE = "隱藏追蹤器", OPT_TRACK_HIDE_TIP = "本次副本中隱藏追蹤器。用 X 關閉時會自動勾選；開始新的副本時會自動取消。輸入「/dj tracker」或取消勾選即可再次顯示。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
 end
 do
     local strings = {
@@ -1801,29 +1948,222 @@ local function ShowTrackerMenu(anchor)
             if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_TRACK_NEVER", true) end
         end)
         menu.item = item
+        -- 2.0.4: gone as soon as the mouse leaves it (it opens under the
+        -- cursor; a moment's grace while it first appears).
         menu:SetScript("OnUpdate", function(self, elapsed)
-            if self:IsMouseOver() or (self.fdjAnchor and self.fdjAnchor:IsMouseOver()) then
-                self.fdjAway = 0
-            else
-                self.fdjAway = (self.fdjAway or 0) + elapsed
-                if self.fdjAway > 0.6 then self:Hide() end
-            end
+            self.fdjAge = (self.fdjAge or 0) + elapsed
+            if self.fdjAge < 0.1 then return end
+            if not self:IsMouseOver() then self:Hide() end
         end)
     end
     local menu = trackerMenu
     menu.item.text:SetText(L("RUNLOG_OPTIONS"))
     menu:SetSize(math.max(110, (menu.item.text:GetStringWidth() or 0) + 24), 30)
     menu.fdjAnchor = anchor
-    menu.fdjAway = 0
+    menu.fdjAge = 0
     menu:ClearAllPoints()
     local x, y = GetCursorPosition()
     local es = UIParent:GetEffectiveScale()
-    -- above the cursor, so the pointer doesn't cover it
-    menu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", x / es - 8, y / es + 6)
+    -- 2.0.4: right on the cursor (the pointer on "Options")
+    menu:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", x / es - 12, y / es + 12)
     menu:Show()
     if GameTooltip then GameTooltip:Hide() end
 end
 FDJ.ShowTrackerMenu = ShowTrackerMenu
+
+-- groupreset (2.0.4): /dj reset and the tracker's reset button: the run
+-- shown ends; the next kill starts a new one.
+function FDJ.EndTrackedRun()
+    local run = TrackedRun()
+    if run and run.blank then return false end -- resetblank: nothing to end yet
+    if run and run.test then -- /dj testlog: just off the tracker
+        FDJ.testRun = nil
+        FDJ.UpdateRunTracker()
+        return true
+    end
+    if not (run and FDJ.RunLog and FDJ.RunLog.EndRun) then return false end
+    return FDJ.RunLog.EndRun(run)
+end
+
+function FDJ.ResetTrackedRun()
+    local run = TrackedRun()
+    if FDJ.EndTrackedRun() then
+        -- resetblank: the tracker stays up, at 0 with every boss alive,
+        -- until the next kill starts the new run
+        if run and FDJ.StartBlankRun then FDJ.StartBlankRun(run) end
+        if FDJ.UpdateRunTracker then FDJ.UpdateRunTracker() end
+        print("|cffd8a83cDungeonJournal|r " .. L("TRACKER_NEW_RUN_DONE"))
+        return true
+    end
+    return false
+end
+
+if StaticPopupDialogs then
+    StaticPopupDialogs["FDJ_TRACKER_RESET"] = {
+        text = "%s",
+        button1 = YES or "Yes",
+        button2 = NO or "No",
+        OnAccept = function() FDJ.ResetTrackedRun() end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+    }
+end
+
+do
+    -- reset button, its tooltip, the confirmation, the chat line, the boss portraits' loot line
+    local strings = {
+        enUS = { "Reset Tracker", "Ends this run. The next kill starts a new run.", "Reset the tracker? This run ends and the next kill starts a new one.", "Tracker reset: the next kill starts a new run.", "Right-click to show loot" },
+        deDE = { "Tracker zurücksetzen", "Beendet diesen Run. Der nächste Kill startet einen neuen Run.", "Tracker zurücksetzen? Dieser Run endet und der nächste Kill startet einen neuen.", "Tracker zurückgesetzt: Der nächste Kill startet einen neuen Run.", "Rechtsklick, um die Beute zu zeigen" },
+        frFR = { "Réinitialiser le suivi", "Termine ce run. Le prochain kill lance un nouveau run.", "Réinitialiser le suivi ? Ce run se termine et le prochain kill en lance un nouveau.", "Suivi réinitialisé : le prochain kill lance un nouveau run.", "Clic droit pour afficher le butin" },
+        esES = { "Reiniciar el seguimiento", "Termina esta run. La próxima muerte inicia una nueva run.", "¿Reiniciar el seguimiento? Esta run termina y la próxima muerte inicia una nueva.", "Seguimiento reiniciado: la próxima muerte inicia una nueva run.", "Clic derecho para mostrar el botín" },
+        itIT = { "Resetta il tracker", "Termina questa run. La prossima uccisione avvia una nuova run.", "Resettare il tracker? Questa run finisce e la prossima uccisione ne avvia una nuova.", "Tracker resettato: la prossima uccisione avvia una nuova run.", "Clic destro per mostrare il bottino" },
+        ptBR = { "Reiniciar o rastreador", "Encerra esta run. A próxima morte inicia uma nova run.", "Reiniciar o rastreador? Esta run termina e a próxima morte inicia uma nova.", "Rastreador reiniciado: a próxima morte inicia uma nova run.", "Clique com o botão direito para mostrar o saque" },
+        ruRU = { "Сбросить трекер", "Завершает этот забег. Следующее убийство начнёт новый забег.", "Сбросить трекер? Этот забег завершится, а следующее убийство начнёт новый.", "Трекер сброшен: следующее убийство начнёт новый забег.", "Правый клик — показать добычу" },
+        koKR = { "추적기 초기화", "이 런을 끝냅니다. 다음 처치로 새 런이 시작됩니다.", "추적기를 초기화할까요? 이 런이 끝나고 다음 처치로 새 런이 시작됩니다.", "추적기 초기화됨: 다음 처치로 새 런이 시작됩니다.", "우클릭하여 전리품 보기" },
+        zhCN = { "重置追踪器", "结束本轮。下一次击杀将开始新的一轮。", "重置追踪器？本轮将结束，下一次击杀将开始新的一轮。", "追踪器已重置：下一次击杀将开始新的一轮。", "右键点击显示掉落" },
+        zhTW = { "重置追蹤器", "結束本輪。下一次擊殺將開始新的一輪。", "重置追蹤器？本輪將結束，下一次擊殺將開始新的一輪。", "追蹤器已重置：下一次擊殺將開始新的一輪。", "右鍵點擊顯示掉落" },
+    }
+    strings.esMX = strings.esES
+    local keys = { "TRACKER_RESET", "TRACKER_RESET_TIP", "TRACKER_RESET_CONFIRM", "TRACKER_NEW_RUN_DONE", "TRACKER_SHOW_LOOT" }
+    for locale, list in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for n, key in ipairs(keys) do
+                if t[key] == nil then t[key] = list[n] end
+            end
+        end
+    end
+end
+
+-- ------------------------------------------------------------ /dj testlog
+-- 2.0.4: a made-up run of any dungeon, on the tracker and in the Character
+-- Logs, to check its bosses, portraits and layout. Kept for this session
+-- only: never saved, never in the real log (it can't push real runs out).
+--   /dj testlog            the list of dungeons and their abbreviations
+--   /dj testlog rfc        half the bosses down, the clock running
+--   /dj testlog rfc done   all bosses down, completed
+--   /dj testlog off        all test runs gone
+FDJ.TESTLOG_DUNGEONS = {
+    { "rfc", "Ragefire Chasm" }, { "wc", "Wailing Caverns" }, { "dm", "The Deadmines" },
+    { "sfk", "Shadowfang Keep" }, { "bfd", "Blackfathom Deeps" }, { "stocks", "The Stockade" },
+    { "gnomer", "Gnomeregan" }, { "rfk", "Razorfen Kraul" }, { "smgy", "Scarlet Monastery: Graveyard" },
+    { "smlib", "Scarlet Monastery: Library" }, { "smarm", "Scarlet Monastery: Armory" },
+    { "smcath", "Scarlet Monastery: Cathedral" }, { "rfd", "Razorfen Downs" }, { "ulda", "Uldaman" },
+    { "zf", "Zul'Farrak" }, { "mara", "Maraudon" }, { "st", "Sunken Temple" }, { "brd", "Blackrock Depths" },
+    { "lbrs", "Lower Blackrock Spire" }, { "ubrs", "Upper Blackrock Spire" }, { "dme", "Dire Maul: East" },
+    { "dmw", "Dire Maul: West" }, { "dmn", "Dire Maul: North" }, { "scholo", "Scholomance" },
+    { "stratlive", "Stratholme: Living" }, { "stratud", "Stratholme: Undead" },
+    { "hot", "Hall of Thanes" }, { "rol", "Ruins of Lordaeron" }, { "dala", "City of Dalaran" },
+    { "exca", "Excavation Site: Wetlands" }, { "alcaz", "Alcaz Prison" }, { "bmh", "Blackmaw Hold" },
+    { "krol", "Krol'dok Stronghold" }, { "shaper", "Shaper's Terrace" }, { "dc", "The Drowned City" },
+}
+FDJ.testRuns = FDJ.testRuns or {}
+
+-- the real runs, then this session's test runs (newest at the top)
+function FDJ.RunLogListRuns()
+    local real = FDJ.RunLog and FDJ.RunLog.Runs() or {}
+    if #FDJ.testRuns == 0 then return real end
+    local all = {}
+    for _, r in ipairs(real) do all[#all + 1] = r end
+    for _, r in ipairs(FDJ.testRuns) do all[#all + 1] = r end
+    return all
+end
+
+function FDJ.RunLogTestRemove(run)
+    for i = #FDJ.testRuns, 1, -1 do
+        if FDJ.testRuns[i] == run then table.remove(FDJ.testRuns, i) end
+    end
+    if FDJ.testRun == run then FDJ.testRun = nil end
+    FDJ.UpdateRunTracker()
+    FDJ.RefreshRunLog()
+end
+
+local function TestDungeon(word)
+    local key = (word or ""):lower():gsub("[^%w]", "")
+    if key == "" then return nil end
+    for _, e in ipairs(FDJ.TESTLOG_DUNGEONS) do
+        if key == e[1] or key == e[2]:lower():gsub("[^%w]", "") then return e[2] end
+    end
+end
+
+-- Returns a message for the chat.
+function FDJ.RunLogTest(args)
+    args = (args or ""):lower()
+    local tag = "|cffd8a83cDungeonJournal|r "
+    if args == "off" or args == "clear" then
+        FDJ.testRuns, FDJ.testRun = {}, nil
+        FDJ.UpdateRunTracker()
+        FDJ.RefreshRunLog()
+        return { tag .. "Test runs removed." }
+    end
+    local word, rest = args:match("^(%S+)%s*(.*)$")
+    local dungeon = TestDungeon(word)
+    local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
+    if not d then
+        local lines, line = { tag .. "/dj testlog <abbreviation> [done]   |   /dj testlog off" }, ""
+        for _, e in ipairs(FDJ.TESTLOG_DUNGEONS) do
+            if FDJ.DB and FDJ.DB[e[2]] then
+                local part = "|cffffd100" .. e[1] .. "|r " .. DungeonLabel({ dungeon = e[2] })
+                if #line > 0 and #line + #part > 230 then lines[#lines + 1] = line line = "" end
+                line = line .. (#line > 0 and ",  " or "") .. part
+            end
+        end
+        if #line > 0 then lines[#lines + 1] = line end
+        return lines
+    end
+    local done = rest == "done" or rest == "complete" or rest == "completed"
+    local bosses = {}
+    for _, b in ipairs(d.bosses or {}) do
+        if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab and not b.rare then
+            bosses[#bosses + 1] = b
+        end
+    end
+    local now = Now()
+    FDJ.testRunID = (FDJ.testRunID or 0) - 1
+    local map
+    for id, name in pairs(FDJ.INSTANCE_ID_TO_DUNGEON or {}) do
+        if name == dungeon then map = id break end
+    end
+    local upto = done and #bosses or math.max(1, math.ceil(#bosses / 2))
+    local start = now - (upto * 160 + 30)
+    local run = {
+        id = FDJ.testRunID, test = true, dungeon = dungeon, map = map, created = start,
+        kills = {}, needs = {}, exits = {}, deathTimes = {}, deaths = done and 0 or 1, otherXP = 0,
+        startedAt = start, firstTrash = start, firstKill = start, money = 1234 + #bosses * 321,
+    }
+    local colors = { [2] = "ff1eff00", [3] = "ff0070dd", [4] = "ffa335ee" }
+    local t = start
+    for i = 1, upto do
+        for _ = 1, 3 do
+            t = t + 30
+            run.kills[#run.kills + 1] = { t = t, m = "Test trash", x = 40 }
+        end
+        t = t + 70
+        local b = bosses[i]
+        local kill = { t = t, m = b.name, b = b.name, n = tonumber(b.npcID), x = 160, loot = {} }
+        local item = type(b.loot) == "table" and b.loot[1]
+        if type(item) == "table" and item[1] then
+            kill.loot[1] = { id = tonumber(item[1]),
+                link = "|c" .. (colors[tonumber(item[4]) or 0] or "ffffffff") .. "[" .. tostring(item[2] or item[1]) .. "]|r" }
+        end
+        if done and i == upto then kill.f = 1 end
+        run.kills[#run.kills + 1] = kill
+        run.lastBoss = t
+    end
+    if done then
+        run.completed, run.finalKill, run.closed = true, t, true
+    end
+    FDJ.testRuns[#FDJ.testRuns + 1] = run
+    FDJ.testRun = run
+    local db = TrackerDB()
+    if db.dismissedRun and db.dismissedRun < 0 then db.dismissedRun = nil end
+    FDJ.UpdateRunTracker()
+    FDJ.RefreshRunLog()
+    return { tag .. "Test run: " .. DungeonLabel(run) .. " (" .. upto .. "/" .. #bosses .. " bosses"
+        .. (done and ", completed" or "") .. "). Also in /dj log.  /dj testlog off removes it." }
+end
 
 local tracker
 -- Dragging the tracker: by its top part (title, time and XP).
@@ -1947,10 +2287,47 @@ local function BuildTracker()
     t.logo:SetPoint("TOPLEFT", 9, -7)
     t.title = t:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     t.title:SetPoint("LEFT", t.logo, "RIGHT", 5, 0)
-    t.title:SetPoint("RIGHT", -26, 0)
     t.title:SetJustifyH("LEFT")
     t.title:SetWordWrap(false)
     t.title:SetTextColor(1.00, 0.78, 0.20)
+
+    -- 2.0.4: reset the tracker (the dungeon was reset and nothing told us):
+    -- right after the dungeon's name, away from the X. The game's own
+    -- refresh button, as on the Looking For Group panel.
+    local reset = CreateFrame("Button", nil, t)
+    reset:SetSize(27, 27) -- size picked in game with the resizer (2.0.4)
+    reset:SetPoint("LEFT", t.title, "RIGHT", 4, 0)
+    reset:SetFrameLevel(handle:GetFrameLevel() + 5)
+    reset:SetNormalTexture("Interface\\Buttons\\UI-SquareButton-Up")
+    reset:SetPushedTexture("Interface\\Buttons\\UI-SquareButton-Down")
+    reset:SetDisabledTexture("Interface\\Buttons\\UI-SquareButton-Disabled")
+    reset:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
+    reset.Icon = reset:CreateTexture(nil, "ARTWORK", nil, 5)
+    reset.Icon:SetTexture("Interface\\Buttons\\UI-RefreshButton")
+    reset.Icon:SetSize(13, 13)
+    reset.Icon:SetPoint("CENTER", -0.5, 0)
+    reset:SetScript("OnMouseDown", function(self) self.Icon:SetPoint("CENTER", -1.5, -1) end)
+    reset:SetScript("OnMouseUp", function(self) self.Icon:SetPoint("CENTER", -0.5, 0) end)
+    reset:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(L("TRACKER_RESET"), 1, 0.82, 0)
+        GameTooltip:AddLine(L("TRACKER_RESET_TIP"), 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    reset:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    reset:SetScript("OnClick", function()
+        if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then
+            pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+        end
+        GameTooltip:Hide()
+        if StaticPopup_Show and StaticPopupDialogs and StaticPopupDialogs.FDJ_TRACKER_RESET then
+            StaticPopup_Show("FDJ_TRACKER_RESET", L("TRACKER_RESET_CONFIRM"))
+        else
+            FDJ.ResetTrackedRun()
+        end
+    end)
+    reset:Hide()
+    t.reset = reset
 
     local close = CreateFrame("Button", nil, t, "UIPanelCloseButton")
     close:SetSize(22, 22)
@@ -1958,6 +2335,8 @@ local function BuildTracker()
     close:SetScript("OnClick", function()
         FDJ.ToggleRunTracker(false)
         if FDJ.trackerHint then FDJ.trackerHint:Hide() end
+        -- hidetracker: Options > Dungeon Tracker > Hide Tracker ticks itself
+        FDJ.SetTrackerHidden(true)
         if FDJ.RefreshRunLog then FDJ.RefreshRunLog() end
         ShowTrackerClosedNotice()
     end)
@@ -2122,13 +2501,230 @@ local function TrackerLists(run)
     return bosses, rares
 end
 
+-- 2.0.4: a click on a boss's portrait opens a line of its loot (the
+-- journal's) right under the portrait; a click on that boss again closes it.
+-- One line at a time.
+
+-- How many bosses (trash drops too) list each recipe, in every dungeon.
+function FDJ.TrackerRecipeSources()
+    if FDJ.trackerRecipeSources then return FDJ.trackerRecipeSources end
+    local count = {}
+    for _, d in pairs(FDJ.DB or {}) do
+        for _, b in ipairs((type(d) == "table" and d.bosses) or {}) do
+            local seen = {}
+            for _, e in ipairs((type(b) == "table" and b.loot) or {}) do
+                local id = type(e) == "table" and tonumber(e[1])
+                if id and type(e[3]) == "string" and e[3]:find("^Recipe") and not seen[id] then
+                    seen[id] = true
+                    count[id] = (count[id] or 0) + 1
+                end
+            end
+        end
+    end
+    FDJ.trackerRecipeSources = count
+    return count
+end
+
+-- Repeatable quests: their item keeps showing (it's needed again). The
+-- journal's own repeatable flags, plus these (classicdb.ch: Repeatable).
+FDJ.TRACKER_REPEATABLE_QUESTS = FDJ.TRACKER_REPEATABLE_QUESTS or {
+    [5122] = true, -- The Medallion of Faith (Aurius, Stratholme)
+}
+
+-- The quests each quest item is for (it starts them or they need it).
+function FDJ.TrackerQuestItemQuests()
+    if FDJ.trackerQuestItems then return FDJ.trackerQuestItems end
+    local map = {}
+    local function add(item, questID)
+        local id = type(item) == "table" and tonumber(item[1])
+        questID = tonumber(questID)
+        if not (id and questID) then return end
+        map[id] = map[id] or {}
+        map[id][questID] = true
+    end
+    local function scan(q, questID)
+        if type(q) ~= "table" then return end
+        if q.repeatable and tonumber(questID) then FDJ.TRACKER_REPEATABLE_QUESTS[tonumber(questID)] = true end
+        add(q.startItem, questID)
+        add(q.requiredItem, questID)
+        for _, item in ipairs(q.requiredItems or {}) do add(item, questID) end
+    end
+    for _, d in pairs(FDJ.DB or {}) do
+        for _, q in ipairs((type(d) == "table" and d.quests) or {}) do scan(q, q.id) end
+    end
+    for questID, q in pairs(FDJ.QUEST_PREREQ_DETAILS or {}) do scan(q, questID) end
+    for _, floors in pairs(FDJ.MAP_QUEST_PINS or {}) do
+        for _, floor in ipairs(type(floors) == "table" and floors or {}) do
+            for _, spot in ipairs((type(floor) == "table" and floor.spots) or {}) do
+                for _, q in ipairs((type(spot) == "table" and spot.quests) or {}) do
+                    if type(q) == "table" and q.item then add({ q.item }, q.id) end
+                end
+            end
+        end
+    end
+    FDJ.trackerQuestItems = map
+    return map
+end
+
+-- The boss's loot for the tracker's line:
+--   recipes only when epic or dropped by this boss alone (not the ones
+--   shared by several bosses);
+--   quest items no more once you have done every quest they are for
+--   (never for a repeatable quest).
+function FDJ.TrackerBossLoot(boss)
+    local items = {}
+    local recipes = FDJ.TrackerRecipeSources()
+    local quests = FDJ.TrackerQuestItemQuests()
+    for _, e in ipairs((boss and boss.loot) or {}) do
+        local id = type(e) == "table" and tonumber(e[1])
+        local keep = id ~= nil
+        if keep and type(e[3]) == "string" and e[3]:find("^Recipe") then
+            keep = (tonumber(e[4]) or 0) >= 4 or (recipes[id] or 0) <= 1
+        end
+        if keep and quests[id] and FDJ.QuestTurnedIn then
+            local allDone = true
+            for questID in pairs(quests[id]) do
+                if FDJ.TRACKER_REPEATABLE_QUESTS[questID] or not FDJ.QuestTurnedIn(questID) then allDone = false break end
+            end
+            if allDone then keep = false end
+        end
+        if keep then items[#items + 1] = e end
+    end
+    return items
+end
+
+-- A rare's tooltip on the tracker: the same loot line as the bosses'.
+function FDJ.TrackerRareLootHint(boss)
+    if boss and #FDJ.TrackerBossLoot(boss) > 0 then
+        GameTooltip:AddLine(L("TRACKER_SHOW_LOOT"), 1, 0.82, 0)
+        GameTooltip:Show()
+    end
+end
+
+function FDJ.TrackerLootIcon(row)
+    local b = CreateFrame("Button", nil, row, "BackdropTemplate")
+    b:SetSize(24, 24)
+    b:SetBackdrop({ edgeFile = "Interface\\Buttons\\WHITE8X8", edgeSize = 1 })
+    b.icon = b:CreateTexture(nil, "ARTWORK")
+    b.icon:SetPoint("TOPLEFT", 1, -1)
+    b.icon:SetPoint("BOTTOMRIGHT", -1, 1)
+    b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+    b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    b:SetScript("OnEnter", function(self)
+        if not self.item then return end
+        -- the journal's own item tooltip (Forever item data, notes)
+        if FDJ.ShowJournalItemTooltip and FDJ.ShowJournalItemTooltip(self, self.item) then return end
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        pcall(GameTooltip.SetHyperlink, GameTooltip, "item:" .. tostring(self.item[1]))
+        GameTooltip:Show()
+    end)
+    b:SetScript("OnLeave", function()
+        if FDJ.HideJournalItemTooltip then FDJ.HideJournalItemTooltip() end
+        GameTooltip:Hide()
+    end)
+    -- 2.0.4: Shift-click links the item in chat, as in the journal.
+    b:SetScript("OnClick", function(self)
+        local id = self.item and tonumber(self.item[1])
+        if not (id and IsModifiedClick and IsModifiedClick("CHATLINK") and ChatEdit_InsertLink) then return end
+        local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+        local link = getInfo and select(2, getInfo(id))
+        if link then
+            ChatEdit_InsertLink(link)
+        elseif C_Item and C_Item.RequestLoadItemDataByID then
+            pcall(C_Item.RequestLoadItemDataByID, id)
+        end
+    end)
+    return b
+end
+
+function FDJ.TrackerLootToggle(f)
+    local t = tracker
+    if not (t and f and f.boss) then return end
+    -- bosshint: they found out: the "Right-click bosses" note is done
+    if FDJ.BossHintDone and ForeverDungeonJournalDB and not ForeverDungeonJournalDB.bossHintShown then FDJ.BossHintDone() end
+    local row = t.lootRow
+    if row and row:IsShown() and row.portrait == f and row.boss == f.boss then
+        row:Hide()
+        return
+    end
+    local items = FDJ.TrackerBossLoot(f.boss)
+    if #items == 0 then
+        if row then row:Hide() end
+        return
+    end
+    if not row then
+        row = CreateFrame("Frame", nil, t, "BackdropTemplate")
+        row:SetBackdrop(BACKDROP)
+        row:SetBackdropColor(0.07, 0.065, 0.06, 0.96)
+        row:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
+        row:EnableMouse(true)
+        row.icons = {}
+        -- Out of the tracker and the line for 2 seconds: it closes.
+        row:SetScript("OnUpdate", function(self, elapsed)
+            if (tracker and tracker:IsMouseOver()) or self:IsMouseOver() then
+                self.away = 0
+                return
+            end
+            self.away = (self.away or 0) + elapsed
+            if self.away >= 2 then self:Hide() end
+        end)
+        row:SetScript("OnHide", function() if t.lootGlow then t.lootGlow:Hide() end end)
+        t.lootRow = row
+    end
+    row.away = 0
+    -- The boss whose loot is open gets the soft golden glow of the journal's
+    -- emblems (the Sleeping Bag's), behind its portrait.
+    if not t.lootGlow then
+        t.lootGlow = t:CreateTexture(nil, "ARTWORK", nil, -8)
+        t.lootGlow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
+        t.lootGlow:SetBlendMode("ADD")
+        t.lootGlow:SetVertexColor(1, 0.82, 0.35)
+        t.lootGlow:SetAlpha(0.75)
+    end
+    local glowSize = math.floor((f:GetWidth() or 36) * 1.92 + 0.5)
+    t.lootGlow:SetSize(glowSize, glowSize)
+    t.lootGlow:ClearAllPoints()
+    t.lootGlow:SetPoint("CENTER", f, "CENTER", 0, 0)
+    t.lootGlow:Show()
+    row:SetFrameLevel(t:GetFrameLevel() + 30)
+    for i, e in ipairs(items) do
+        local b = row.icons[i] or FDJ.TrackerLootIcon(row)
+        row.icons[i] = b
+        b:ClearAllPoints()
+        -- 2.0.4: at most 5 to a row, then the next row below
+        b:SetPoint("TOPLEFT", row, "TOPLEFT", 5 + ((i - 1) % 5) * 27, -5 - math.floor((i - 1) / 5) * 27)
+        b.item = e
+        local id = tonumber(e[1])
+        local icon = (C_Item and C_Item.GetItemIconByID and C_Item.GetItemIconByID(id)) or (GetItemIcon and GetItemIcon(id))
+        b.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_QuestionMark")
+        local q = ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[tonumber(e[4]) or 1]
+        if q then b:SetBackdropBorderColor(q.r, q.g, q.b, 1) else b:SetBackdropBorderColor(0.6, 0.6, 0.6, 1) end
+        b:Show()
+    end
+    for i = #items + 1, #row.icons do row.icons[i]:Hide() row.icons[i].item = nil end
+    local cols, rows = math.min(#items, 5), math.ceil(#items / 5)
+    row:SetSize(10 + cols * 27 - 3, 10 + rows * 27 - 3)
+    row:SetClampedToScreen(true)
+    row:ClearAllPoints()
+    row:SetPoint("TOPLEFT", f, "BOTTOMLEFT", 0, -2)
+    row.portrait, row.boss = f, f.boss
+    row:Show()
+end
+
 local function PortraitButton(parent)
     local f = Portrait(parent, SIZE)
     f:EnableMouse(true)
-    f:SetScript("OnEnter", function(self) BossTooltip(self, self.boss, self.kill, self.runStart) end)
+    f:SetScript("OnEnter", function(self)
+        BossTooltip(self, self.boss, self.kill, self.runStart, not self.isRare)
+        if self.isRare then FDJ.TrackerRareLootHint(self.boss) end
+    end)
     f:SetScript("OnLeave", function() GameTooltip:Hide() end)
     f:SetScript("OnMouseUp", function(self, button)
-        if button == "RightButton" then ShowTrackerMenu(tracker) return end
+        if button == "RightButton" then
+            -- 2.0.4: a boss's or a rare's portrait (found or not) shows its loot
+            if self.boss then FDJ.TrackerLootToggle(self) else ShowTrackerMenu(tracker) end
+            return
+        end
         -- a drag that ends here is not a click
         if tracker and (tracker.fdjMoving or (tracker.fdjDragStop and GetTime() - tracker.fdjDragStop < 0.2)) then return end
         if self.boss and FDJ.RunLogAckRare then FDJ.RunLogAckRare(self.boss.name) end
@@ -2182,12 +2778,14 @@ local function SecureButton(i)
         if not f or not f.boss then return end
         BossTooltip(self, f.boss, f.kill, f.runStart)
         if not f.kill then GameTooltip:AddLine(L("RUNLOG_RARE_CLICK"), 1, 0.82, 0) GameTooltip:Show() end
+        FDJ.TrackerRareLootHint(f.boss)
     end)
     b:SetScript("OnLeave", function() GameTooltip:Hide() end)
     -- Clicking it stops the glow and the chime for that rare.
     b:SetScript("PostClick", function(self, button, down)
         if button == "RightButton" then
-            if not down then ShowTrackerMenu(tracker) end
+            -- 2.0.4: a rare's loot, as for bosses
+            if not down and self.portrait then FDJ.TrackerLootToggle(self.portrait) end
             return
         end
         local f = self.portrait
@@ -2245,15 +2843,15 @@ local function BossButton(i)
     b:RegisterForClicks("AnyUp", "AnyDown")
     b:SetAttribute("type", "macro")
     b:SetAttribute("type2", "fdjmenu") -- right-click: no game action, the Options menu
-    b:SetScript("PostClick", function(_, button, down)
-        if button == "RightButton" and not down then ShowTrackerMenu(tracker) end
+    b:SetScript("PostClick", function(self, button, down)
+        -- 2.0.4: right-click shows the boss's loot (left-click targets it)
+        if button == "RightButton" and not down and self.portrait then FDJ.TrackerLootToggle(self.portrait) end
     end)
     b:SetFrameStrata("MEDIUM")
     b:SetScript("OnEnter", function(self)
         local f = self.portrait
         if not f or not f.boss then return end
-        BossTooltip(self, f.boss, f.kill, f.runStart)
-        if not f.kill then GameTooltip:AddLine(L("RUNLOG_BOSS_CLICK"), 1, 0.82, 0) GameTooltip:Show() end
+        BossTooltip(self, f.boss, f.kill, f.runStart, true)
     end)
     b:SetScript("OnLeave", function() GameTooltip:Hide() end)
     bossButtons[i] = b
@@ -2299,14 +2897,24 @@ end
 
 local function ShouldShow(run)
     if not run then return false end
+    if run.test then return TrackerDB().dismissedRun ~= run.id end -- /dj testlog
     if FDJ.RunLog and FDJ.RunLog.IsAwaitingWing and FDJ.RunLog.IsAwaitingWing() then return false end
     if FDJ.TrackerOption("never") then return false end
     local db = TrackerDB()
+    -- hidetracker: Options > Hide Tracker hides the run it was ticked for;
+    -- a new run unticks it and the tracker works as usual
+    if FDJ.TrackerOption("hide") then
+        if db.hideRun ~= nil and db.hideRun == run.id then return false end
+        ForeverDungeonJournalDB.trackerOptions.hide = nil
+        db.hideRun = nil
+        if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
+    end
     if db.dismissedRun == run.id then return false end
     if db.on then return true end
     -- by itself only in a group, unless "Show Tracker for solo runs too"
     if not (InGroup() or FDJ.TrackerOption("solo")) or not FDJ.RunLog then return false end
     if FDJ.RunLog.Current() == run then return true end
+    if run.blank then return true end -- resetblank: until the next kill
     -- Stepped out (a corpse run, a vendor trip) before the run is done: it
     -- stays up, for as long as coming back still continues the same run.
     return RunInProgress(run) and Now() - (run.lastSeen or run.created or 0) < 90 * 60
@@ -2319,6 +2927,7 @@ end
 function FDJ.UpdateRunTracker()
     local run = TrackedRun()
     if not ShouldShow(run) then
+        if tracker and tracker.lootRow then tracker.lootRow:Hide() end
         if tracker and tracker:IsShown() then
             tracker:Hide()
             LayoutSecure({})
@@ -2329,6 +2938,13 @@ function FDJ.UpdateRunTracker()
     local t = tracker or BuildTracker()
     t.run = run
     t.title:SetText(DungeonLabel(run))
+    -- the name as wide as it is (cut short with "..." only when it has to),
+    -- the reset button right after it while the run is going
+    local canReset = (RunInProgress(run) and not run.blank) and true or false
+    t.title:SetWidth(0)
+    local full = (t.title.GetUnboundedStringWidth and t.title:GetUnboundedStringWidth()) or t.title:GetStringWidth() or 0
+    t.title:SetWidth(math.max(1, math.min(full + 1, 236 - 30 - 26 - (canReset and t.reset and math.floor(t.reset:GetWidth() + 6.5) or 0))))
+    if t.reset then t.reset:SetShown(canReset) end
     t.timeLabel:SetText(L("RUNLOG_TIME"))
     t.xpLabel:SetText(L("RUNLOG_MOBS_XP"))
     t.goldLabel:SetText(L("RUNLOG_GOLD"))
@@ -2381,6 +2997,7 @@ function FDJ.UpdateRunTracker()
             SetPortrait(f, run.dungeon, e.boss, e.kill ~= nil)
             f.ring:Hide()
             f.kill, f.runStart = e.kill, start
+            f.isRare = isRare and true or nil
             f.notFound = isRare and not e.seen and not e.kill
             local glowing = isRare and e.seen and not e.kill and not e.ack
             if isRare and not e.kill and not e.seen then
@@ -2404,6 +3021,11 @@ function FDJ.UpdateRunTracker()
         return frames
     end
     local bossFrames = Place(bosses, false)
+    local lootRow = t.lootRow
+    if lootRow and lootRow:IsShown() and not (lootRow.portrait and lootRow.portrait:IsShown()
+        and lootRow.portrait.boss == lootRow.boss) then
+        lootRow:Hide()
+    end
     t.raresLabel:SetShown(#rares > 0)
     local rareFrames = {}
     if #rares > 0 then
@@ -2420,6 +3042,7 @@ function FDJ.UpdateRunTracker()
     t:SetHeight(y + 4)
     if not t:IsShown() then t:Show() end
     if FDJ.ShowTrackerHint then FDJ.ShowTrackerHint(t, run) end
+    if FDJ.ShowBossHint then FDJ.ShowBossHint(t, run, bossFrames[1], left) end
     -- Click areas only on rares found alive (no use on one not seen yet or
     -- dead), laid out again only when that list changes.
     local alive = {}
@@ -2452,6 +3075,7 @@ function FDJ.ToggleRunTracker(on)
         db.dismissedRun = nil
         -- asked for it with Track on screen: that overrides "Never track"
         if FDJ.TrackerOption("never") then FDJ.SetTrackerOption("never", false) end
+        if FDJ.TrackerOption("hide") then db.hideRun = nil FDJ.SetTrackerOption("hide", false) end
     else
         db.on = nil
         db.dismissedRun = run and run.id or nil
@@ -2462,6 +3086,8 @@ end
 -- /dj tracker always tries to SHOW the current run (never toggles it off).
 -- When there is no active/recoverable run, do not leave a sticky on flag.
 function FDJ.ReopenDungeonTracker()
+    -- hidetracker: /dj tracker always unticks Options > Hide Tracker
+    if FDJ.TrackerOption("hide") then TrackerDB().hideRun = nil FDJ.SetTrackerOption("hide", false) end
     if not TrackedRun() then return false end
     FDJ.ToggleRunTracker(true)
     return FDJ.IsRunTrackerOn()
@@ -2558,6 +3184,7 @@ local function TrackerHintFrame()
         h.fdjDone = true
         ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
         ForeverDungeonJournalDB.trackerHintShown = true
+        ForeverDungeonJournalDB.trackerHintPending = nil
     end)
     h:SetScript("OnClick", function(self, button)
         if button == "RightButton" then ShowTrackerMenu(tracker) end
@@ -2577,6 +3204,23 @@ local function TrackerHintFrame()
         end
     end)
     return h
+end
+
+-- 2.0.4: the note is for new installs only, not for updates. At login: no
+-- saved data yet = just installed, the note waits for the first tracker
+-- (and keeps waiting until OK). Saved data from before = an update: no note.
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_LOGIN")
+    f:SetScript("OnEvent", function()
+        local db = ForeverDungeonJournalDB
+        if type(db) ~= "table" then return end
+        if db == FDJ.bootDB then
+            db.trackerHintPending = true
+        elseif not db.trackerHintPending then
+            db.trackerHintShown = true
+        end
+    end)
 end
 
 function FDJ.ShowTrackerHint(t, run)
@@ -2617,6 +3261,170 @@ function FDJ.ShowTrackerHint(t, run)
     end
     h:SetAlpha(1)
     h:Show()
+end
+
+-- bosshint (2.0.4): once per account, on new installs only (like the New
+-- Dungeon Tracker note, after it): a note with a yellow arrow pointing at
+-- the tracker's first boss portrait:
+--   Right-click bosses
+--   to see loot on tracker   [OK]
+-- It stays until OK is clicked or a boss is right-clicked (hidden while
+-- the tracker or its bosses are, back with them).
+do
+    -- two lines
+    local strings = {
+        enUS = { "Right-click bosses", "to see loot on tracker" },
+        deDE = { "Rechtsklick auf Bosse", "zeigt ihre Beute im Tracker" },
+        frFR = { "Clic droit sur les boss", "pour voir leur butin dans le suivi" },
+        esES = { "Clic derecho en los jefes", "para ver su botín en el seguimiento" },
+        itIT = { "Clic destro sui boss", "per vedere il bottino nel tracker" },
+        ptBR = { "Clique direito nos chefes", "para ver o saque no rastreador" },
+        ruRU = { "Правый клик по боссам:", "их добыча в трекере" },
+        koKR = { "우두머리를 우클릭하면", "추적기에서 전리품을 봅니다" },
+        zhCN = { "右键点击首领", "可在追踪器中查看掉落" },
+        zhTW = { "右鍵點擊首領", "可在追蹤器中查看掉落" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.TRACKER_BOSS_HINT_1 == nil then t.TRACKER_BOSS_HINT_1 = pair[1] end
+            if t.TRACKER_BOSS_HINT_2 == nil then t.TRACKER_BOSS_HINT_2 = pair[2] end
+        end
+    end
+    -- At login: no saved data yet = just installed, the note waits for the
+    -- tracker's bosses (until OK). Saved data from before = an update: none.
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_LOGIN")
+    f:SetScript("OnEvent", function()
+        local db = ForeverDungeonJournalDB
+        if type(db) ~= "table" then return end
+        if db == FDJ.bootDB then
+            db.bossHintPending = true
+        elseif not db.bossHintPending then
+            db.bossHintShown = true
+        end
+    end)
+end
+
+local function BossHintDone()
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    ForeverDungeonJournalDB.bossHintShown = true
+    ForeverDungeonJournalDB.bossHintPending = nil
+    if FDJ.bossHint then
+        FDJ.bossHint.fdjDone = true
+        FDJ.bossHint:Hide()
+    end
+end
+FDJ.BossHintDone = BossHintDone
+
+local function BossHintFrame()
+    if FDJ.bossHint then return FDJ.bossHint end
+    local h = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+    FDJ.bossHint = h
+    h:SetFrameStrata("DIALOG")
+    h:SetClampedToScreen(true)
+    h:EnableMouse(true)
+    h:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    })
+    h:SetBackdropColor(0, 0, 0, 1)
+    h:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+    -- the arrow's own colour is yellow
+    h.arrow = h:CreateTexture(nil, "OVERLAY")
+    h.arrow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\QuestNextArrow")
+    h.arrow:SetSize(18, 18)
+    h.line1 = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    h.line2 = h:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    for _, line in ipairs({ h.line1, h.line2 }) do
+        line:SetTextColor(1, 1, 1)
+        line:SetShadowColor(0, 0, 0, 1)
+        line:SetShadowOffset(1, -1)
+        line:SetJustifyH("LEFT")
+    end
+    h.ok = CreateFrame("Button", nil, h, "UIPanelButtonTemplate")
+    h.ok:SetSize(34, 16)
+    h.ok:SetNormalFontObject(GameFontNormalSmall)
+    h.ok:SetHighlightFontObject(GameFontHighlightSmall)
+    h.ok:SetText(OKAY or "OK")
+    h.ok:SetScript("OnClick", BossHintDone)
+    h:SetScript("OnUpdate", function(self, elapsed)
+        local p = self.portrait
+        if not (tracker and tracker:IsShown() and p and p:IsShown() and p.boss) then self:Hide() return end
+        self.t = (self.t or 0) + elapsed
+        local s = math.sin(self.t * 4)
+        self.arrow:SetAlpha(0.55 + 0.45 * s)
+        self.arrow:ClearAllPoints()
+        if self.flipped then
+            self.arrow:SetPoint("LEFT", 6 - 2 * math.abs(s), 0)
+        else
+            self.arrow:SetPoint("RIGHT", -6 + 2 * math.abs(s), 0)
+        end
+    end)
+    h:Hide()
+    return h
+end
+
+-- first: the tracker's first boss portrait; left: its distance from the
+-- tracker's left edge. force: show it now (/dj bosshint, to look at it).
+function FDJ.ShowBossHint(t, run, first, left, force)
+    if not (t and run and first and first:IsShown() and first.boss) then return end
+    local db = ForeverDungeonJournalDB
+    if not force then
+        if type(db) ~= "table" or db.bossHintShown or not db.bossHintPending then return end
+        -- after the New Dungeon Tracker note, not together with it
+        if not db.trackerHintShown or (FDJ.trackerHint and FDJ.trackerHint:IsShown()) then return end
+    end
+    local h = BossHintFrame()
+    if h:IsShown() and h.portrait == first then return end
+    h.portrait = first
+    h.line1:SetText(L("TRACKER_BOSS_HINT_1"))
+    h.line2:SetText(L("TRACKER_BOSS_HINT_2"))
+    -- the OK button after the second line
+    local w = math.max(h.line1:GetStringWidth() or 0, (h.line2:GetStringWidth() or 0) + 4 + 34)
+    local lh = math.max(h.line1:GetStringHeight() or 0, 10)
+    h:SetSize(w + 42, lh * 2 + 3 + 16)
+    -- left of the tracker, level with the first boss, arrow pointing right
+    -- at it; no room on the left (tracker at the screen's edge): on its
+    -- right, arrow flipped
+    local tl = t:GetLeft() and t:GetLeft() * t:GetEffectiveScale() / UIParent:GetEffectiveScale() or 999
+    local flipped = tl < h:GetWidth() + 12
+    h.flipped = flipped
+    h.t = 0
+    local gapLeft = (left or 10) + 8
+    local gapRight = ((t:GetWidth() or 236) - (left or 10) - (first:GetWidth() or 38)) + 8
+    h.line1:ClearAllPoints()
+    h.line1:SetPoint("TOPLEFT", flipped and 30 or 9, -8)
+    h.line2:ClearAllPoints()
+    h.line2:SetPoint("TOPLEFT", h.line1, "BOTTOMLEFT", 0, -3)
+    h.ok:ClearAllPoints()
+    h.ok:SetPoint("LEFT", h.line2, "RIGHT", 4, 0)
+    h.arrow:ClearAllPoints()
+    h:ClearAllPoints()
+    if flipped then
+        h.arrow:SetTexCoord(1, 0, 0, 1)
+        h.arrow:SetPoint("LEFT", 6, 0)
+        h:SetPoint("LEFT", first, "RIGHT", gapRight, 0)
+    else
+        h.arrow:SetTexCoord(0, 1, 0, 1)
+        h.arrow:SetPoint("RIGHT", -6, 0)
+        h:SetPoint("RIGHT", first, "LEFT", -gapLeft, 0)
+    end
+    h:SetAlpha(1)
+    h:Show()
+end
+
+-- /dj bosshint: the note on the tracker now, to look at it.
+function FDJ.PreviewBossHint()
+    local f = tracker and tracker:IsShown() and tracker.portraits and tracker.portraits[1]
+    if not (f and f:IsShown() and f.boss and not f.isRare) then return false end
+    local left = math.floor((236 - (PER_ROW * SIZE + (PER_ROW - 1) * GAP)) / 2)
+    if FDJ.bossHint then FDJ.bossHint:Hide() end
+    FDJ.ShowBossHint(tracker, tracker.run, f, left, true)
+    return FDJ.bossHint and FDJ.bossHint:IsShown() or false
 end
 
 -- A rare found: its portrait glows and a soft chime plays until its

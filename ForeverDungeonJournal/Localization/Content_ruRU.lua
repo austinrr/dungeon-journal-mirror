@@ -5,12 +5,12 @@ FDJ.ContentLocales.ruRU = FDJ.ContentLocales.ruRU or {}
 
 FDJ.ContentLocales.ruRU.dungeons = {
     ["Hall of Thanes"] = {
-        ["name"] = "Зал танов",
+        ["name"] = "Чертоги танов",
         ["location"] = "Под Стальгорном, Дун Морог",
         ["description"] = "Кто-то проник в королевскую дворфийскую усыпальницу под Стальгорном.",
     },
     ["Ragefire Chasm"] = {
-        ["name"] = "Огненная пропасть",
+        ["name"] = "Огненная Пропасть",
         ["location"] = "Расселина Теней, Оргриммар",
         ["description"] = "Трогги и сектанты Пылающего Клинка заполонили раскалённые пещеры под Оргриммаром.",
     },
@@ -59,7 +59,7 @@ FDJ.ContentLocales.ruRU.quests = {
     },
     [96403] = {
         ["name"] = "Важные реликвии",
-        ["objective"] = "Соберите 8 дворфийских реликвий в Зале танов.",
+        ["objective"] = "Соберите 8 дворфийских реликвий в Чертогах танов.",
     },
     [96394] = {
         ["name"] = "Беспокойные мертвецы",
@@ -68,7 +68,7 @@ FDJ.ContentLocales.ruRU.quests = {
     },
     [96393] = {
         ["name"] = "Вторжение в Старый Стальгорн",
-        ["objective"] = "Войдите в Зал танов и добудьте голову Дургена Мрачного Молота.",
+        ["objective"] = "Войдите в Чертоги танов и добудьте голову Дургена Мрачного Молота.",
         ["note"] = "Цепочка начинается с Карты Черного Железа, которую можно получить со шпионов Черного Железа в Дун Мороге.",
     },
     [98423] = {
@@ -635,14 +635,14 @@ FDJ.ContentLocales.ruRU.replacements = {
     {"inside Shadowfang Keep", "в Крепости Темного Клыка"},
     {"inside Ragefire Chasm", "в Огненной пропасти"},
     {"inside Ruins of Lordaeron", "в Руинах Лордерона"},
-    {"inside Hall of Thanes", "в Зале танов"},
+    {"inside Hall of Thanes", "в Чертогах танов"},
     {"inside the Deadmines", "в Мертвых копях"},
     {"Wailing Caverns", "Пещеры Стенаний"},
     {"Blackfathom Deeps", "Непроглядная Пучина"},
     {"Shadowfang Keep", "Крепость Темного Клыка"},
-    {"Ragefire Chasm", "Огненная пропасть"},
+    {"Ragefire Chasm", "Огненная Пропасть"},
     {"Ruins of Lordaeron", "Руины Лордерона"},
-    {"Hall of Thanes", "Зал танов"},
+    {"Hall of Thanes", "Чертоги танов"},
     {"The Deadmines", "Мертвые копи"},
     {"Deadmines", "Мертвые копи"},
     {"Item start:", "Предмет, начинающий задание:"},

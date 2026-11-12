@@ -92,6 +92,7 @@ FDJ.RunLogWingTrash = {
         [10426] = "Crimson Inquisitor",
         [11043] = "Crimson Monk",
         [11054] = "Crimson Rifleman",
+        [11032] = "Malor the Zealous",
     },
     ["Stratholme: Undead"] = {
         [10394] = "Black Guard Sentry",

@@ -8,7 +8,7 @@ FDJ.ContentLocales.zhCN = FDJ.ContentLocales.zhCN or {}
 
 FDJ.ContentLocales.zhCN.dungeons = {
     ["Hall of Thanes"] = {
-        ["name"] = "领主之厅",
+        ["name"] = "领主大厅",
         ["location"] = "铁炉堡地下，丹莫罗",
         ["description"] = "有人闯入了铁炉堡地下的矮人王室墓室。",
     },
@@ -43,7 +43,7 @@ FDJ.ContentLocales.zhCN.dungeons = {
         ["description"] = "佐拉姆海岸一座被淹没的暗夜精灵遗迹，被纳迦、鱼人和效忠阿库麦尔的暮光之锤教徒占据。",
     },
     ["The Stockade"] = {
-        ["name"] = "暴风城监狱",
+        ["name"] = "监狱",
         ["location"] = "暴风城",
         ["description"] = "暴乱的迪菲亚囚犯占领了暴风城的监狱。",
     },

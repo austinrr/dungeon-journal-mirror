@@ -768,3 +768,98 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 - Follow-up smiths: https://warcraft.wiki.gg/wiki/Thun%27grim_Firegaze , https://classicdb.ch/?quest=1701
 - NPC spots: Thun'grim 57, 30 https://classicdb.ch/?quest=1502 ; Furen Longbeard 58, 16.8 https://wow.gg/guides/razorfen-kraul ;
   Camp Taurajo 45, 59 https://warcraft.wiki.gg/wiki/Barrens_quests ; 30-minute timer https://warcraft.wiki.gg/wiki/The_Barrens_questing_guide/Southern_Barrens
+
+2.0.3 (2026-11-11)
+- Discord #help: Krixx (Zul'Farrak, German client, run not reset, extra bosses), Trinii (Die Versunkene Stadt, German client, tracker never finished).
+- Instance IDs The Drowned City 2970, Krol'dok Stronghold 3039 (Forever Map.db2 / Group Finder activities), three projects agree:
+  https://github.com/fooxytv/AdventureGuideClassic/issues/153
+  https://github.com/cjber/adventure-guide-forever/pull/510
+  https://github.com/xIGBClutchIx/ForeverPlusPlus/blob/main/docs/forever-api.md
+- Encounter IDs (Data/RunLogEncounters.lua):
+  Forever dungeons: DungeonEncounter.db2, build 1.60.1.70862 - https://github.com/fooxytv/AdventureGuideClassic/issues/153 and data/Dungeons/forever in https://github.com/fooxytv/AdventureGuideClassic
+  Classic dungeons with newer boss events (RFC, SFK, Stockade, BFD, RFK, RFD, UBRS): https://github.com/DeadlyBossMods/DBM-Dungeons (DBM-Party-Vanilla/Classic)
+  Zul'Farrak, Dire Maul, Stratholme: https://github.com/BigWigsMods/LittleWigs (Classic)
+  All Classic dungeons: https://warcraft.wiki.gg/wiki/DungeonEncounterID (Classic section)
+  Deadmines (Classic IDs 2741-2747): LittleWigs Classic/Deadmines; Blackfathom Deeps Forever IDs 2910-2916: DBM-Party-Vanilla
+- German boss names: https://nether.wowhead.com/forever/de/tooltip/npc/7023 , /9218 , /9217 (Sergeant Bly 7604 and Pusillin 14354 are the same in German)
+- Discord #help: Leiv (English client, closed the tracker, /dj tracker inside the dungeon said there was no run).
+- Client names (Systems/ClientNames.lua): C_TooltipInfo.GetHyperlink and GetRealZoneText(mapID), no secret returns in Blizzard's
+  Forever API docs (1.60.1.70888): https://github.com/Gethe/wow-ui-source/tree/forever (TooltipInfoDocumentation.lua, ZoneScriptDocumentation.lua)
+- Malor the Zealous (npc 11032, encounter 476): https://nether.wowhead.com/forever/tooltip/npc/11032 ; loot: https://mmonster.co/wow-forever/guides/dungeons/stratholme-main-gate (no boss loot in Forever yet) ,
+  https://www.zockify.com/forever/dungeons/stratholme/ (Medallion of Faith) , https://nether.wowhead.com/forever/tooltip/item/12845 ; Classic: https://vanilla-wow-archive.fandom.com/wiki/Malor_the_Zealous ,
+  https://www.warcrafttavern.com/forever/guides/stratholme-living-quests/ , https://almarsguides.com/wow/instances/classic/stratholmeliving/ ; display ID 10458: https://octowow.st/db/?npc=11032 ; encounter: LittleWigs Classic/Stratholme/CommanderMalor.lua
+
+2026-11-11 localization audit (Italian excluded)
+- All effective boss pages and quest/prerequisite translation IDs checked against current Wowhead Forever localized tooltip data.
+- Secondary name and client DungeonEncounter references: https://github.com/fitzforge/polestar/tree/next/addon (Polestar_<locale>/Names.lua and LICENSE-DATA.txt).
+- See LOCALIZATION-AUDIT.md for source hierarchy, corrections, coverage, unverified entries and validation.
+
+2026-11-11 Dungeon Tracker, kills without XP (2.0.4)
+- PARTY_KILL is flagged SecretWhenUnitIdentityRestricted (the target GUID is hidden inside instances, the event still fires); Forever's chat events have no CHAT_MSG_COMBAT_HOSTILE_DEATH: https://github.com/Gethe/wow-ui-source/tree/forever (Blizzard_APIDocumentationGenerated, UnitDocumentation.lua and ChatInfoDocumentation.lua, build 1.60.1)
+
+2026-11-11 Dungeon names (2.0.4): the nine Forever dungeons (Hall of Thanes, Ruins of Lordaeron, Excavation Site: Wetlands, City of Dalaran, The Drowned City, Krol'dok Stronghold, Alcaz Prison, Blackmaw Hold, Shaper's Terrace) in de/fr/es/pt/ru/ko/zhCN/zhTW from "WoW Forever | Dungeon Localizations" (corrected reference, Wowhead Forever localized zone records); Italian keeps the English names (no official Italian Forever client).
+- https://www.wowhead.com/forever/de/zones/instances/dungeons
+- https://www.wowhead.com/forever/fr/zones/instances/dungeons
+- https://www.wowhead.com/forever/es/zones/instances/dungeons
+- https://www.wowhead.com/forever/pt/zones/instances/dungeons
+- https://www.wowhead.com/forever/ru/zones/instances/dungeons
+- https://www.wowhead.com/forever/ko/zones/instances/dungeons
+- https://www.wowhead.com/forever/cn/zones/instances/dungeons
+- https://www.wowhead.com/forever/tw/zones/instances/dungeons
+- zhTW checked against Blizzard's announcement of 20 Oct 2026: https://worldofwarcraft.blizzard.com/zh-tw/news/24301455
+
+2026-11-11 Shaper's Terrace quests (2.0.4): reported research "Shaper's Terrace — Quest research" (11 Nov 2026), cross-checked:
+- Panic at the Digsite 95924 (Alliance, 60/55, Venomridge + 6 Ravasaur Matriarchs + 8 Ironhide Ravasaurs, text says 9; Diemetradon Scale Spaulders 279903 / Ravasaur Hide Footpads 279905; 17,650 XP; 90s; Ironforge +100, Stormwind +50; shareable): https://foreverchanges.pro/quest/95924/panic-at-the-digsite , https://nether.wowhead.com/forever/tooltip/quest/95924
+- Mapping the Way Forward 95925 (Alliance, 60/55, five landmarks; Crystal-Infused Cleaver 279908 / Beastslayer's Trident 279910 / Faintly Glowing Orb 279912; 17,650 XP; Ironforge +100, Stormwind +50; not shareable per the report): https://foreverchanges.pro/quest/95925/mapping-the-way-forward , https://nether.wowhead.com/forever/tooltip/quest/95925
+- The Dark Crystal 95926 (Horde, 60/55; same three rewards; 6,600 XP; Undercity +100, Orgrimmar +50; shareable per the report): https://foreverchanges.pro/quest/95926/the-dark-crystal , https://nether.wowhead.com/forever/tooltip/quest/95926
+- Essence of Seeping Slimes 97049 (Horde, 60/55; 8 Seeping Slime Essence; Slime-Resistant Shroud 279932 / Reinforced Muck Protectors 279902; 17,650 XP; 90s; Undercity +100, Orgrimmar +50; shareable): https://foreverchanges.pro/quest/97049/essence-of-seeping-slimes , https://nether.wowhead.com/forever/tooltip/quest/97049
+- Crystalline Elements 95928 (shareable): https://foreverchanges.pro/quest/95928/crystalline-elements
+- Digestible Research (Alliance; 15 Partially Digested Journal Pages; Lost Researcher's Hood / Expeditionary Legplates; Ironforge +100, Stormwind +100; not shareable): the report only (ID 95790 there); not found on Wowhead or ForeverChanges, so a stand-in ID learnt in game.
+- Also listed: https://www.wowhead.com/forever/quest=95924 (and =95925, =95790, =95928, =95926, =97049), https://db.icy-veins.com/wow-forever/quests/zones/the-shaper-s-terrace/ (not reachable here), https://github.com/naowh-gaming/NaowhForever/pull/1058 (the same five IDs from ForeverChanges).
+
+2026-11-11 Archmage Tervosh (Shadowshard Fragments 7070, 2.0.4; reported by Nyby on Discord): Theramore Isle tower, Dustwallow Marsh (66.4, 49.3).
+- https://foreverchanges.pro/quest/7070/shadowshard-fragments
+- https://warcraft.wiki.gg/wiki/Archmage_Tervosh
+
+2026-11-11 Classic dungeon names (2.0.4): Ragefire Chasm, Wailing Caverns, The Deadmines, Shadowfang Keep, Blackfathom Deeps, The Stockade, Gnomeregan, Razorfen Kraul, Scarlet Monastery (Graveyard, Library, Armory, Cathedral), Razorfen Downs, Uldaman, Maraudon, Zul'Farrak, Sunken Temple (The Temple of Atal'Hakkar), Blackrock Depths, Lower/Upper Blackrock Spire, Dire Maul (East, North, West), Scholomance, Stratholme (Living = Main Gate, Undead = Service Entrance) in de/fr/es/pt/ru/ko/zhCN/zhTW from "DungeonJournal Classic Translations" (2026-11-11, fixed edition). Italian not changed (the reference gives no Italian names).
+- https://github.com/arithmandar/LibBabble-SubZone-3.0
+- https://www.wowace.com/projects/libbabble-subzone-3-0/files/9524371
+- https://foreverchanges.pro/dungeons
+
+2026-11-11 Alcaz Prison loot (2.0.4): from "Alcaz Prison — Boss & Loot Audit" (11 Nov 2026), each item checked on its Wowhead Forever page ("Dropped by", count/sample): Overseer Wrex 255391 (Alcaz Willcrusher 276732 11/31, Grips of Control 276733 11/31, Wrex's Pinky Ring 276734 9/31); Tidemistress Ca'zass 255997 (Tidesong Wand 276735 14/48, Seascale Bracers 276736 11/48, Cloak of the Tidemistress 276737 21/48, Ca'zass's Head 273883 7/48); Katerina the Cleaner 257016 (Katerina's Shanker 276738 10/39, Cutthroat Chestguard 276739 21/39, Sentimental Locket 276740 8/39); The Questioner 256236 (Defias Enforcer's Shoulderpads 276741 20/65, Girdle of Extracted Answers 276742 18/65, Fingerbreaker Stamp 276743 27/65, Ornate Shackle Key 274029 3/65); Blazeroar 255702 (Zarla's Snack Pouch 276744 16/50, Beastbond Robe 276745 16/50, Defias Enforcer's Legguards 276746 18/50, Zarla's Journal 276890 4/50). Trash: Defias Enforcer's Mask 287019 (Slavering Hound, Strashaz Soldier, Alcaz Jailer), Defias Enforcer's Prowlers 287021 (Alcaz Chaplain, Alcaz Jailer, Strashaz Soldier), Defias Enforcer's Chest 287020 (no drop recorded). Zarla Ober and Commander Folkar: no loot added (none recorded).
+- https://www.wowhead.com/forever/item=276732 (and =276733 to =276746, =276890, =273883, =274029, =287019, =287020, =287021)
+- https://conquestcapped.com/guides/wow-forever/wow-forever-alcaz-prison-guide/
+- https://wowtbc.gg/warcraftforever/loot-tables/dungeons/alcaz-prison/
+- https://foreverchanges.pro/dungeons/alcaz-prison
+- https://metaforge.app/wow-forever/database/keys/overseers-keyring (Overseer's Keyring, not added: no item ID or source yet)
+- Compound Gloves 287018 (blue, cloth hands, binds when equipped): dropped by Defias Truthfinder 255271 (1/32), Alcaz Prison (zone 16620): https://www.wowhead.com/forever/item=287018/compound-gloves and https://www.wowhead.com/forever/npc=255271
+
+2026-11-11 Discord reports, checked on Wowhead Forever (2.0.4):
+- Old Fire-Eye's chain (belpickle, xperl73): the series of quest 91858, with each step's level, giver, turn-in and map spot: https://www.wowhead.com/forever/quest=91858 (and =91859, =91860, =91861, =91862, =96204, =95034); the Fenris Isle Key 267412 from the Rot Hide gnolls.
+- Rituals of Power (Phoen1x): https://www.wowhead.com/forever/quest=1951 (series 1949 Hidden Secrets, 1950 Get the Scoop); the book 7274 is in object 103664 in the Scarlet Monastery Library; "on a bookshelf in the last hallway before Arcanist Doan": Wowhead comments on https://www.wowhead.com/classic/quest=1951
+- A Lesson in Literacy (Vakos, Phoen1x): https://www.wowhead.com/forever/quest=82084 (Garion Wendell, Stormwind 48.8, 86.6; Owen Thadd, Undercity 73.6, 33.0; reward Personal Spellbook 221344; the papyrus from Zul'Farrak Zombie 7286, also a Wowhead comment)
+- Blueprint: Tanning Rack (KramS, screenshot of the loot window on a Russian client): https://www.wowhead.com/forever/item=273096 (dropped by Razorclaw the Butcher, 192/2533)
+
+2026-11-12 Missing loot (2.0.4), Wowhead Forever "Dropped by" (count/sample):
+- Mutilator 12469 from Dustwraith 10081 (11/20; the only other blue on his list is Desertwalker Cane): https://www.wowhead.com/forever/npc=10081/dustwraith
+- Hydra Leather Legs 274657 from Gahz'rilla 7273 (51/130): https://www.wowhead.com/forever/item=274657/hydra-leather-legs
+- Gutcutter Hatchet 274643 (thrown) from Nekrum Gutchewer 7796 (51/151): https://www.wowhead.com/forever/item=274643/gutcutter-hatchet
+- Stretched Footpads 287007 (blue cloth feet) from Twilight Grunt 258042 (3/1408), Twilight Lieutenant 258104 (1/416), Redridge Prisoner 257900 (1/254); the same mobs drop the Krol'dok Warplate Gauntlets 287012, so they are Krol'dok Stronghold trash: https://www.wowhead.com/forever/item=287007/stretched-footpads and https://www.wowhead.com/forever/item=287012
+- Trash portraits (creature display IDs from the Wowhead Forever NPC pages): Twilight Grunt 140001, Twilight Lieutenant 143142, Redridge Prisoner 487, Alcaz Chaplain 138722 (npc 255262), Alcaz Jailer 138843 (npc 255377, 271784), Strashaz Soldier 4764 (npc 255995), Slavering Hound 6195 (npc 255267), Defias Truthfinder 144356 (npc 255271).
+- Other sites checked (no data on these items yet): web search for each item name.
+
+2026-11-12 The Drowned City (2.0.4), Wowhead Forever "Dropped by" (count/sample):
+- Sword of Dismemberment 287005 (blue two-hand sword, binds when equipped): Risen Sentry 258792 1/2310, Champion of the Deep 258797 1/1051, Brinescale Sorceress 258804 1/1153, Makrura Snapper 258897 2/228: https://www.wowhead.com/forever/item=287005/sword-of-dismemberment
+- Linken's Boots of Iron 271718 (blue mail feet, binds when picked up): Zul'Alai 8/936, Var'Taka 1/546, Captain Dreadrise 5/809, Deathless Marrow 4/586, Min'loth the Serpent 8/594, Primeval Elemental 6/350, Gill 1/46: https://www.wowhead.com/forever/item=271718/linkens-boots-of-iron
+- Portraits (creature display IDs, Wowhead Forever NPC pages): Champion of the Deep 145404, Brinescale Sorceress 4975, Makrura Snapper 2426.
+- Umbral Scaled Belt (Umbra) and Viscera Spaulders (Deathless Marrow): confirmed by M (Nov 2026).
+
+2026-11-12 Shaper's Terrace, Vitrix, Cinder and Snowtalon (2.0.4):
+- Heartflame Gauntlets 280028 (blue plate hands, binds when picked up, 410 armor, +14 Intellect, crit 1.0%, Holy damage up to 18, level 58): player screenshots of the Loot Rolls from a dead Vitrix and a dead Cinder (12 Nov 2026). Wowhead Forever's "Dropped by" lists Cinder 261974 (5/7): https://www.wowhead.com/forever/item=280028
+- Crownroar Chestplate 280027 (blue plate chest, binds when picked up, 657 armor, +21 Spirit, crit 1.0%, healing up to 40 / damage up to 13, level 58, sells for 4g 7s 51c): a player's screenshot of the Loot Roll from Snowtalon 262297 (12 Nov 2026): https://www.wowhead.com/forever/item=280027
+
+2026-11-12 Zul'Farrak and Blackmaw Hold loot (2.0.4), Wowhead Forever "Drops" / "Dropped by" (count/sample):
+- Ruuzlu 7797: Sandfury Guillotine 274654 (two-hand axe, 54/150), Peacekeeper Wand 274655 (wand, 35/150); Embrace of the Lycan 9479 drops from him too (51/150) and from Chief Ukorz Sandscalp (14/147), left on the Chief's page: https://www.wowhead.com/forever/npc=7797/ruuzlu and https://www.wowhead.com/forever/npc=7267/chief-ukorz-sandscalp
+- Sandarr Dunereaver 10080: Sandarr's Shoulders 274660 (mail shoulders, 9/18), Bloodsand Belt 274659 (plate belt, 8/18): https://www.wowhead.com/forever/npc=10080/sandarr-dunereaver
+- Octofinger Gauntlets 280086 (blue plate hands, binds when picked up, level 52): Tunnelweb Matriarch 250034 (2/2): https://www.wowhead.com/forever/item=280086/octofinger-gauntlets
+- Other sites: a web search for each item name (12 Nov 2026) found no other site listing these items yet.

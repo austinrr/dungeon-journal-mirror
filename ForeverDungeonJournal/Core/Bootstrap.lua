@@ -11,6 +11,10 @@ FDJ.Constants = FDJ.Constants or {}
 FDJ.Constants.ALBA_FAIRMOON_LOCATION = "Alba Fairmoon, Sentinel Hill inn, Westfall"
 
 ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+-- WoW loads the saved variables after the addon's files and replaces this
+-- table with the saved one. Still this same table at login: nothing was
+-- saved yet, so the addon was just installed (used by the tracker's note).
+FDJ.bootDB = ForeverDungeonJournalDB
 
 -- Native WoW keybinding entry (Options > Keybindings > AddOns).
 

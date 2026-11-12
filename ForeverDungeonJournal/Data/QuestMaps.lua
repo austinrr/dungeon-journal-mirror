@@ -184,7 +184,9 @@ FDJ.QUEST_START_MAPS = {
     [7065] = { mapID = 1443, x = 0.638, y = 0.106, label = "Keeper Marandis — Desolace", targetName = "Keeper Marandis" },
     [7067] = { mapID = 1443, x = 0.434, y = 0.848, label = "Centaur Pariah — Desolace", targetName = "Centaur Pariah" },
     [7068] = { mapID = 1454, x = 0.388, y = 0.854, label = "Uthel'nay — Orgrimmar", targetName = "Uthel'nay" },
-    [7070] = { mapID = 1445, x = 0.452, y = 0.244, label = "Archmage Tervosh — Dustwallow Marsh", targetName = "Archmage Tervosh" },
+    -- 2.0.4 (reported by Nyby): he is in the tower on Theramore Isle, not near
+    -- Brackenwall Village (ForeverChanges: 66.4, 49.3).
+    [7070] = { mapID = 1445, x = 0.664, y = 0.493, label = "Archmage Tervosh — Dustwallow Marsh", targetName = "Archmage Tervosh" },
     [7441] = { mapID = 1444, x = 0.768, y = 0.374, label = "Azj'Tordin — Feralas", targetName = "Azj'Tordin" },
     [7481] = { mapID = 1444, x = 0.744, y = 0.440, label = "Sage Korolusk — Feralas", targetName = "Sage Korolusk" },
     [7482] = { mapID = 1444, x = 0.310, y = 0.442, label = "Scholar Runethorn — Feralas", targetName = "Scholar Runethorn" },

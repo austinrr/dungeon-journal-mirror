@@ -1568,6 +1568,9 @@ FDJ.INSTANCE_ID_TO_DUNGEON = {
     [34] = "The Stockade", [48] = "Blackfathom Deeps", [90] = "Gnomeregan", [47] = "Razorfen Kraul",
     [189] = "Scarlet Monastery", [2999] = "Ruins of Lordaeron", [2959] = "City of Dalaran",
     [3001] = "Shaper's Terrace", -- Forever instance map, shown as "The Shaper's Terrace" in game
+    -- 2.0.3: by ID on every client language ("Die Versunkene Stadt" on German).
+    -- Forever's Map.db2 / Group Finder activity list (build 1.60.1).
+    [2970] = "The Drowned City", [3039] = "Krol'dok Stronghold",
     [2998] = "Excavation Site: Wetlands", [3065] = "Hall of Thanes", [2994] = "Alcaz Prison", [2974] = "Blackmaw Hold", [129] = "Razorfen Downs", [70] = "Uldaman", [209] = "Zul'Farrak", [109] = "Sunken Temple", [289] = "Scholomance", [349] = "Maraudon", [230] = "Blackrock Depths",
 }
 FDJ.SCARLET_WING_MAPS = { [302] = "Scarlet Monastery: Graveyard", [303] = "Scarlet Monastery: Library",
@@ -1612,10 +1615,12 @@ local function CurrentDungeon()
     end
     -- Localised instance name: compare with the journal's own translations.
     if type(instanceName) == "string" and instanceName ~= "" then
-        local wanted = instanceName:lower()
+        -- Straight and curly apostrophes count as the same (Zul'Farrak / Zul’Farrak).
+        local function Same(text) return (text:lower():gsub("\226\128\153", "'")) end
+        local wanted = Same(instanceName)
         for _, content in pairs(FDJ.ContentLocales or {}) do
             for internal, entry in pairs(content.dungeons or {}) do
-                if DB[internal] and type(entry.name) == "string" and entry.name:lower() == wanted then return internal end
+                if DB[internal] and type(entry.name) == "string" and Same(entry.name) == wanted then return internal end
             end
         end
     end
@@ -3565,6 +3570,18 @@ local function ShowItemTooltip(row)
 
     -- Handles Shift already being held when the mouse enters the item.
     UpdateItemComparison(row)
+end
+
+-- 2.0.4: the Dungeon Tracker's boss loot line shows the same item tooltip.
+function FDJ.ShowJournalItemTooltip(owner, item)
+    if not (itemTooltip and owner and type(item) == "table") then return false end
+    owner.item = item
+    local ok = pcall(ShowItemTooltip, owner)
+    return ok
+end
+function FDJ.HideJournalItemTooltip()
+    if itemTooltip then itemTooltip:Hide() end
+    pcall(HideComparisonTooltips)
 end
 
 -- ============================================================
@@ -8172,6 +8189,23 @@ FDJ.UpdateQuestsTBD = function()
     label:SetShown((d and d.fullQuestsTBD and selectedMode == "quests") and true or false)
 end
 
+-- Compact view: every loot page opens in the detailed view; Compact View
+-- applies to the page it was pressed on (remembered for that page only).
+function FDJ.LootCompactKey()
+    local d = selectedDungeon and DB[selectedDungeon]
+    local b = d and d.bosses and d.bosses[selectedBoss]
+    return tostring(selectedDungeon) .. "\001" .. tostring(b and b.name or selectedBoss)
+end
+function FDJ.LootCompactPages()
+    if type(ForeverDungeonJournalDB.compactLootPages) ~= "table" then
+        ForeverDungeonJournalDB.compactLootPages = {}
+    end
+    return ForeverDungeonJournalDB.compactLootPages
+end
+function FDJ.IsLootCompactPage()
+    return ForeverDungeonJournalDB and FDJ.LootCompactPages()[FDJ.LootCompactKey()] == true or false
+end
+
 RefreshLoot = function()
     for _, row in ipairs(lootRows) do HideSearchItemHighlight(row) end
     local dungeon = DB[selectedDungeon]
@@ -8321,22 +8355,31 @@ RefreshLoot = function()
     end
     -- Compact view: offered when even the two-column layout would need
     -- scrolling. Smaller rows with the item name only (like AtlasLoot),
-    -- toggled with the button on the "N items" line and remembered.
+    -- toggled with the button on the "N items" line. Pages open detailed;
+    -- the choice is remembered for the page it was made on.
+    -- Pages with trash-mob portraits (one column, full rows) get it too when
+    -- their one column needs scrolling (Krol'dok's trash): compact rows drop
+    -- the portraits, the mobs stay in the item's tooltip ("Drops from").
+    local mobPortraits = HasMobPortraits()
     do
         local vp = frame.lootScroll:GetHeight() or 0
         local many = false
-        if vp > 0 and #loot > 1 and not HasMobPortraits() then
+        if vp > 0 and #loot > 1 then
             local h = (#sections - 1) * LINE_STEP
-            for _, sec in ipairs(sections) do h = h + math.ceil(math.max(0, sec.last - sec.first + 1) / 2) * ROW_STEP end
+            for _, sec in ipairs(sections) do
+                local n = math.max(0, sec.last - sec.first + 1)
+                h = h + (mobPortraits and n or math.ceil(n / 2)) * ROW_STEP
+            end
             many = h > vp + 4
         end
         FDJ.lootManyItems = many
-        FDJ.lootCompact = many and ForeverDungeonJournalDB and ForeverDungeonJournalDB.compactLoot == true or false
+        FDJ.lootCompact = many and FDJ.IsLootCompactPage() or false
         if FDJ.lootCompact then ROW_STEP = 31 end
     end
     local singleHeight = #loot * ROW_STEP + (#sections - 1) * LINE_STEP
     local viewport = frame.lootScroll:GetHeight() or 0
-    local twoColumns = viewport > 0 and singleHeight > viewport + 4 and #loot > 1 and not HasMobPortraits()
+    local twoColumns = viewport > 0 and singleHeight > viewport + 4 and #loot > 1
+        and not (mobPortraits and not FDJ.lootCompact)
     local availableWidth = math.max(SINGLE_WIDTH, math.floor(frame.lootScroll:GetWidth() or SINGLE_WIDTH))
     local rowWidth = twoColumns and math.floor((availableWidth - COL_GAP) / 2) or SINGLE_WIDTH
     frame.lootContent:SetWidth(twoColumns and availableWidth or SINGLE_WIDTH)
@@ -8441,8 +8484,9 @@ RefreshLoot = function()
                 row.slot:SetText(ItemSlot(item[3]))
                 row.fdjSourceText = nil
             end
-            -- Named trash mobs are shown as hoverable portraits instead of text.
-            if FDJ.SetRowMobs and FDJ.SetRowMobs(row, showTrashSource and trashSource or nil) then
+            -- Named trash mobs are shown as hoverable portraits instead of text
+            -- (not in the compact view: no room; the tooltip still names them).
+            if FDJ.SetRowMobs and FDJ.SetRowMobs(row, (showTrashSource and not FDJ.lootCompact) and trashSource or nil) then
                 row.slot:SetText(ItemSlot(item[3]))
             end
 
@@ -8620,13 +8664,14 @@ RefreshLoot = function()
         b.text:SetPoint("CENTER")
         b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         b:SetScript("OnClick", function()
-            ForeverDungeonJournalDB.compactLoot = not ForeverDungeonJournalDB.compactLoot or nil
+            local pages, key = FDJ.LootCompactPages(), FDJ.LootCompactKey()
+            pages[key] = not pages[key] or nil
             PlayJournalOptionSound()
             RefreshLoot()
         end)
         b:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:SetText(L(ForeverDungeonJournalDB.compactLoot and "LOOT_DETAILED_TIP" or "LOOT_COMPACT_TIP"), 1, 1, 1, true)
+            GameTooltip:SetText(L(FDJ.IsLootCompactPage() and "LOOT_DETAILED_TIP" or "LOOT_COMPACT_TIP"), 1, 1, 1, true)
             GameTooltip:Show()
         end)
         b:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -8878,10 +8923,15 @@ FDJ.NeighbourDungeon = function(step)
 end
 
 -- Grey out the arrow that has nowhere to go (first / last dungeon).
+-- The Cozy Sleeping Bag's quest page is not a dungeon: no arrows there.
 FDJ.UpdateDungeonArrows = function()
     if not frame then return end
+    local noArrows = FDJ.SLEEPING_BAG_PAGE ~= nil and selectedDungeon == FDJ.SLEEPING_BAG_PAGE
     for _, arrow in ipairs({ frame.prevDungeonButton, frame.nextDungeonButton }) do
-        if arrow then arrow:SetEnabled(FDJ.NeighbourDungeon(arrow.step) ~= nil) end
+        if arrow then
+            arrow:SetShown(not noArrows)
+            if not noArrows then arrow:SetEnabled(FDJ.NeighbourDungeon(arrow.step) ~= nil) end
+        end
     end
 end
 
@@ -8938,6 +8988,8 @@ RefreshAll = function()
         frame.dungeonLocationButton:SetShown(dungeon.entrance ~= nil)
     end
     if FDJ.UpdateLFGButton then FDJ.UpdateLFGButton(frame, selectedDungeon, dungeon) end
+    -- < > arrows: hidden on the Sleeping Bag page, back on any other page.
+    if FDJ.UpdateDungeonArrows then FDJ.UpdateDungeonArrows() end
     if frame.dungeonRouteButton then
         local route = dungeon.routeGuide
         local playerFaction = UnitFactionGroup and UnitFactionGroup("player") or nil
@@ -11864,7 +11916,58 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
     end
     if msg == "tracker" then
         if not (FDJ.ReopenDungeonTracker and FDJ.ReopenDungeonTracker()) then
-            print("|cffd8a83cDungeonJournal|r No active dungeon run to show.")
+            -- 2.0.3: inside a dungeon, say when it will appear.
+            local inDungeon = FDJ.RunLog and FDJ.RunLog.IsInside and FDJ.RunLog.IsInside()
+            if inDungeon then
+                print("|cffd8a83cDungeonJournal|r The tracker starts with the first kill in this dungeon.")
+                -- 2.0.4: what the game reported, so a "no tracker" report can be checked.
+                local sig = FDJ.RunLogSignals
+                if sig then
+                    print(string.format("|cffd8a83cDungeonJournal|r Kills seen this session: %d (hidden %d), XP lines %d, bosses %d.",
+                        sig.hidden + sig.plain, sig.hidden, sig.xp, sig.boss))
+                end
+            else
+                print("|cffd8a83cDungeonJournal|r No active dungeon run to show.")
+            end
+        end
+        return
+    end
+    if msg == "reset" then -- 2.0.4: the dungeon was reset, end the run (the tracker's reset button)
+        if not (FDJ.ResetTrackedRun and FDJ.ResetTrackedRun()) then
+            print("|cffd8a83cDungeonJournal|r No active dungeon run to end.")
+        end
+        return
+    end
+    if msg == "bossids" or msg:match("^bossids%s") then
+        -- 2.0.4: the boss events the game has sent (noted by the Dungeon
+        -- Tracker, Systems/RunLog.lua), to check which bosses have one in
+        -- Forever. /dj bossids <word> shows only those whose dungeon or boss
+        -- name has that word. "new": an ID the tracker's list doesn't have.
+        local function Say(text) print("|cffd8a83cDungeonJournal|r " .. text) end
+        local want = msg:match("^bossids%s+(.+)$")
+        local events = ForeverDungeonJournalDB and ForeverDungeonJournalDB.bossEvents
+        local list = {}
+        for id, e in pairs(type(events) == "table" and events or {}) do
+            if type(e) == "table" then
+                local text = (tostring(e.dungeon or "?") .. " " .. tostring(e.name or "?")):lower()
+                if not want or text:find(want, 1, true) then list[#list + 1] = { id = id, e = e } end
+            end
+        end
+        table.sort(list, function(a, b)
+            local da, db = tostring(a.e.dungeon or ""), tostring(b.e.dungeon or "")
+            if da ~= db then return da < db end
+            return a.id < b.id
+        end)
+        if #list == 0 then
+            Say(want and ("No boss events noted yet for: " .. want)
+                or "No boss events noted yet. They are noted from now on in every dungeon: kill some bosses, then type /dj bossids again.")
+            return
+        end
+        local known = FDJ.RUNLOG_ENCOUNTERS or {}
+        for _, x in ipairs(list) do
+            local mapped = known[x.id]
+            local note = mapped and ("= " .. tostring(mapped[2])) or "|cff00ff00new|r"
+            Say(string.format("%s - %s: %d  %s  (x%d)", tostring(x.e.dungeon or "?"), tostring(x.e.name or "?"), x.id, note, x.e.n or 1))
         end
         return
     end
@@ -11965,6 +12068,12 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
             dmn = "Dire Maul: North", dmnorth = "Dire Maul: North", tribute = "Dire Maul: North",
             strat = "Stratholme: Living", stratlive = "Stratholme: Living", stratliving = "Stratholme: Living",
             stratud = "Stratholme: Undead", stratundead = "Stratholme: Undead", baron = "Stratholme: Undead",
+            -- 2.0.4: the Forever dungeons that had none (same as /dj testlog)
+            alcaz = "Alcaz Prison", alcazprison = "Alcaz Prison", bmh = "Blackmaw Hold", blackmaw = "Blackmaw Hold",
+            blackmawhold = "Blackmaw Hold", krol = "Krol'dok Stronghold", kroldok = "Krol'dok Stronghold",
+            kroldokstronghold = "Krol'dok Stronghold", shaper = "Shaper's Terrace", shapers = "Shaper's Terrace",
+            shapersterrace = "Shaper's Terrace", dc = "The Drowned City", drowned = "The Drowned City",
+            drownedcity = "The Drowned City",
         }
         local key = msg:gsub("[%s:%-']", "")
         local target = shortcuts[key]
@@ -12067,7 +12176,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.2"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.3"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

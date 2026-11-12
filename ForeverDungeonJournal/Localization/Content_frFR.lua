@@ -5,7 +5,7 @@ FDJ.ContentLocales.frFR = FDJ.ContentLocales.frFR or {}
 
 FDJ.ContentLocales.frFR.dungeons = {
     ["Hall of Thanes"] = {
-        ["name"] = "Salle des thanes",
+        ["name"] = "La salle des Thanes",
         ["location"] = "Sous Forgefer, Dun Morogh",
         ["description"] = "Quelqu’un s’est introduit dans la crypte royale naine sous Forgefer.",
     },
@@ -25,7 +25,7 @@ FDJ.ContentLocales.frFR.dungeons = {
         ["description"] = "La Confrérie défias construit un navire de guerre dans les mines sous Ruisselune.",
     },
     ["Wailing Caverns"] = {
-        ["name"] = "Cavernes des lamentations",
+        ["name"] = "Cavernes des Lamentations",
         ["location"] = "Tarides du Nord",
         ["description"] = "Sous les Tarides, des druides et des seigneurs du Croc gardent Naralex endormi tandis que des créatures corrompues rôdent dans les cavernes.",
     },
@@ -59,7 +59,7 @@ FDJ.ContentLocales.frFR.quests = {
     },
     [96403] = {
         ["name"] = "Héritages importants",
-        ["objective"] = "Récupérez 8 héritages nains dans la Salle des thanes.",
+        ["objective"] = "Récupérez 8 héritages nains dans la salle des Thanes.",
     },
     [96394] = {
         ["name"] = "Les morts sans repos",
@@ -68,7 +68,7 @@ FDJ.ContentLocales.frFR.quests = {
     },
     [96393] = {
         ["name"] = "Incursion dans l’ancienne Forgefer",
-        ["objective"] = "Entrez dans la Salle des thanes et récupérez la tête de Durgen Dirgehammer.",
+        ["objective"] = "Entrez dans la salle des Thanes et récupérez la tête de Durgen Dirgehammer.",
         ["note"] = "La suite commence avec la Carte des Sombrefers, obtenue sur les espions Sombrefers de Dun Morogh.",
     },
     [98423] = {
@@ -603,14 +603,14 @@ FDJ.ContentLocales.frFR.replacements = {
     {"inside Shadowfang Keep", "dans le Donjon d’Ombrecroc"},
     {"inside Ragefire Chasm", "dans le Gouffre de Ragefeu"},
     {"inside Ruins of Lordaeron", "dans les Ruines de Lordaeron"},
-    {"inside Hall of Thanes", "dans la Salle des thanes"},
+    {"inside Hall of Thanes", "dans la salle des Thanes"},
     {"inside the Deadmines", "dans les Mortemines"},
-    {"Wailing Caverns", "Cavernes des lamentations"},
+    {"Wailing Caverns", "Cavernes des Lamentations"},
     {"Blackfathom Deeps", "Profondeurs de Brassenoire"},
     {"Shadowfang Keep", "Donjon d’Ombrecroc"},
     {"Ragefire Chasm", "Gouffre de Ragefeu"},
     {"Ruins of Lordaeron", "Ruines de Lordaeron"},
-    {"Hall of Thanes", "Salle des thanes"},
+    {"Hall of Thanes", "Salle des Thanes"},
     {"The Deadmines", "Les Mortemines"},
     {"Deadmines", "Mortemines"},
     {"Item start:", "Objet de départ :"},

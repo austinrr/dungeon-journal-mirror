@@ -91,7 +91,9 @@ function FDJ.InScarletMonastery()
             local localName = entry and PlainString(entry.name)
             if localName then
                 -- "Monasterio Escarlata: Cementerio" -> "monasterio escarlata"
-                local base = localName:match("^(.-)%s*[:：]") or localName
+                -- "Scharlachrotes Kloster - Friedhof" -> "scharlachrotes kloster" too
+                local base = localName:match("^(.-)%s*[:：]") or localName:match("^(.-)%s+%-%s")
+                    or localName:match("^(.-)%s+\226\128\147%s") or localName
                 if base ~= "" and n:find(base:lower(), 1, true) then return true end
             end
         end

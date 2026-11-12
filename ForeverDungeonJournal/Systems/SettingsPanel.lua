@@ -214,6 +214,14 @@ local OPTIONS = {
     -- The on-screen dungeon tracker (Systems/RunLogUI.lua).
     { header = "OPT_TRACKER" },
     {
+        -- hidetracker (2.0.4): ticked by the tracker's X, unticked by
+        -- "/dj tracker"; unticking it here shows the tracker again.
+        label = "OPT_TRACK_HIDE",
+        tip = "OPT_TRACK_HIDE_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hide") or false end,
+        set = function(on) if FDJ.SetTrackerHidden then FDJ.SetTrackerHidden(on) end end,
+    },
+    {
         label = "OPT_TRACK_NEVER",
         tip = "OPT_TRACK_NEVER_TIP",
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("never") or false end,

@@ -586,7 +586,9 @@ do
                 item.text:SetPoint("LEFT", 6, 0)
                 item:SetScript("OnClick", function()
                     menu:Hide()
-                    FDJ.SetSleepingBagHidden(true)
+                    -- 2.0.4: Hide opens Options at its line (highlighted); the
+                    -- player ticks it there, so they know where to undo it.
+                    if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_SLEEPING_BAG") else FDJ.SetSleepingBagHidden(true) end
                 end)
                 menu.hide = item
                 -- Closes on its own once the mouse has been away for a moment.

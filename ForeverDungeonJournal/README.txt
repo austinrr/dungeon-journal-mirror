@@ -1,4 +1,185 @@
-DungeonJournal 2.0.2
+DungeonJournal 2.0.3
+
+CHANGES IN 2.0.3
+- Dungeon Tracker on solo runs and grey mobs: the tracker now starts with
+  the first kill of any mob, grey ones included. Inside a dungeon the game
+  hides which mob died, and Forever has no "<mob> dies" chat lines at all, so
+  a kill without XP used to go uncounted (and a solo run with only grey mobs
+  never started). The kill event itself still says your group landed the
+  killing blow, and that is now counted. A mob that also gives XP, or a boss,
+  is still counted once.
+- Dungeon Tracker after stepping out: a kill on a grey mob was thrown away
+  at the next loading screen, so a run that had only those looked empty and
+  the next trip outside deleted it (tracker gone, "/dj tracker" said it
+  starts with the first kill). Those kills are kept now.
+- Dungeon Tracker outside the dungeon (corpse run, vendor): the timer showed
+  0:00 until you went back in. It keeps counting now.
+- Dungeon Tracker reset button, right after the dungeon's name (the game's
+  own refresh button, as on the Looking For Group panel). It asks first,
+  then ends the run; the tracker stays on screen at 0 (time, XP, gold) with
+  every boss alive, and the next kill starts the new run. /dj reset does the
+  same. Use it when your group leader resets the dungeon: only the player
+  who resets gets the game's "has been reset" line, so only their own run
+  ends by itself.
+- Options > Dungeon Tracker > Hide Tracker (at the top): closing the tracker
+  with its X ticks it, and the tracker stays hidden for that run until
+  "/dj tracker" (or Track on screen in the Character Logs) unticks it, or you
+  untick it there. A new run unticks it by itself and the tracker works as
+  usual. For players who missed the "/dj tracker" note.
+- New installs: after the New Dungeon Tracker note, a second note with a
+  yellow arrow points at the tracker's bosses: "Right-click bosses to see
+  loot on tracker" (once per account, until OK or a boss is right-clicked).
+- Not finished runs (reset, left, ended) show their time in the Character
+  Logs instead of "-".
+- Tracker boss portraits: the tooltip shows just the boss's name until it's
+  killed (no more "not killed" and "Click: target it." lines), plus
+  "Right-click to show loot": a right-click opens a line of the boss's loot
+  right under its portrait (hover an item for its tooltip); right-click the
+  boss again to close it, or keep the mouse off the tracker and the line for
+  2 seconds. Left-click still targets the boss. At most 5 items to a row.
+  Rares too (found or not): right-click shows their loot.
+  Shift-click an item there to link it in chat. Patterns shared by several bosses are left out (patterns only
+  that boss drops, and epic ones, are shown), and a quest item no longer
+  shows once you have done its quest (repeatable quests like The Medallion
+  of Faith keep theirs). The boss whose loot is open glows like the journal's
+  emblems.
+- Right-click > Hide on the Sleeping Bag and Character Logs icons (and
+  Disable on the LFG eye) now opens Options at that line, highlighted: tick
+  it there, so you know where to turn it back on.
+- Tracker Options menu (right-click the tracker): opens right on the
+  cursor and goes away as soon as the mouse leaves it.
+- New shortcuts: /dj alcaz, /dj bmh (Blackmaw Hold), /dj krol, /dj shaper,
+  /dj dc (The Drowned City).
+- /dj tracker inside a dungeon now also shows how many kills, XP lines and
+  boss kills the game reported this session (for bug reports).
+- The "New Dungeon Tracker" note only shows on a new install (until you click
+  OK). Updating the addon no longer shows it.
+- Stratholme Living: Malor the Zealous now shows his Forever loot (Scarlet
+  Malice, Plate of the Scarlet Bastion) next to the Medallion of Faith.
+- Krol'dok Stronghold: Mugg's Crosser is now confirmed Overlord Mugg loot
+  (drop confirmed by Meteora), no longer "probable".
+- Dungeon names in every language for the nine Forever dungeons (Hall of
+  Thanes, Ruins of Lordaeron, Excavation Site: Wetlands, City of Dalaran, The
+  Drowned City, Krol'dok Stronghold, Alcaz Prison, Blackmaw Hold, Shaper's
+  Terrace), from Wowhead Forever's localized zone names. The last five had
+  none yet. Italian shows these nine in English (there is no Italian client).
+  Quest texts and quest giver lines use the new names too.
+- Dungeon names for the 26 Classic dungeons and wings in German, French,
+  Spanish, Portuguese, Russian, Korean and both Chinese, as the game client
+  names them: e.g. Schwarzfelstiefen, Profondeurs de Rochenoire, Templo de
+  Atal'Hakkar (Sunken Temple), Stratholme - Haupttor / Dienstboteneingang
+  (Living / Undead), Düsterbruch - Ost. Portuguese Razorfen Kraul is now
+  Urzal dos Tuscos (it had the Razorfen Downs name). Italian keeps its names.
+  The world map's Scarlet Monastery wing buttons still show only the wing.
+- Alcaz Prison loot: every boss now has its full loot, each item checked on
+  Wowhead Forever as dropped by that boss. New: Katerina's Shanker, Zarla's
+  Snack Pouch and Beastbond Robe. Grips of Control, Tidesong Wand and
+  Cutthroat Chestguard have their real item IDs. Cloak of the Tidemistress,
+  Sentimental Locket (Katerina) and Defias Enforcer's Legguards (Blazeroar)
+  are confirmed. Blazeroar was empty. Quest items: Ca'zass's Head, Ornate
+  Shackle Key and Zarla's Journal (hidden on the tracker once their quests
+  are done). Trash: Defias Enforcer's Mask confirmed, Compound Gloves (cloth,
+  from Defias Truthfinder) added, the Chest still probable.
+- Old Fire-Eye (undead paladin): the chain now starts where the game starts
+  it, with the six quests before The Debt: Diplomatic Incident (Danitha Morr,
+  Bandarion Keep, Tirisfal Glades), A Curious Pair, A Grim Fate, Into Fenris
+  Keep, Lumina Windsinger and The Windshaper's Wrath (reported on Discord by
+  belpickle and xperl73).
+- Scarlet Monastery Library: the mage quest Rituals of Power, with Hidden
+  Secrets and Get the Scoop as its chain (reported on Discord by Phoen1x).
+- Zul'Farrak: the mage quest A Lesson in Literacy (Farraki Papyrus from the
+  zombies of the graves); the giver is your faction's: Garion Wendell in
+  Stormwind or Owen Thadd in Undercity (reported on Discord by Vakos and
+  Phoen1x). Clicking the quill or the resin marks where they drop on the map,
+  as does the Fenris Isle Key on its Old Fire-Eye step.
+- Shadowfang Keep: Blueprint: Tanning Rack from Razorclaw the Butcher
+  (reported on Discord by KramS).
+- Zul'Farrak: Mutilator from Dustwraith, Hydra Leather Legs from Gahz'rilla,
+  Gutcutter Hatchet from Nekrum Gutchewer.
+- Krol'dok Stronghold: Stretched Footpads in the trash drops, with the mobs
+  that drop them (Twilight Grunt, Twilight Lieutenant, Redridge Prisoner).
+- Alcaz Prison trash drops now name the mobs each piece drops from, with
+  their portraits (Defias Enforcer's Prowlers and Mask, Compound Gloves).
+- Dungeon Tracker, The Deadmines: Sneed's Shredder now counts as killed
+  when Sneed dies (he comes out of it). On characters that get no XP from
+  it, the Shredder stayed "not killed", so the run never completed
+  (reported on Discord by Panda).
+- Dungeon Tracker, Blackrock Depths: the Ring of Law is one entry (only one
+  challenger comes per run). It shows the challenger once you target or kill
+  it, and counts as killed when the fight ends. Princess Moira is no longer
+  needed to complete a run (she can be saved); she shows up on the tracker
+  only if she is killed.
+- Dungeon Tracker, Dire Maul: West: Lord Hel'nurath (summoned by warlocks for
+  their Dreadsteed) is no longer on the tracker and no longer needed, so a
+  run now completes at Prince Tortheldrin. He stays in the journal.
+- The Drowned City: Sword of Dismemberment in the trash drops (Risen Sentry,
+  Champion of the Deep, Brinescale Sorceress, Makrura Snapper); Linken's
+  Boots of Iron as shared loot of every boss (and the rare Gill); Umbral
+  Scaled Belt (Umbra) and Viscera Spaulders (Deathless Marrow) confirmed.
+- Zul'Farrak: Ruuzlu is a boss of his own now, right before Chief Ukorz
+  Sandscalp, with his own loot (Sandfury Guillotine, Peacekeeper Wand). On
+  the Dungeon Tracker he is counted with the Chief's fight when his own death
+  can't be seen (no XP at a high level). Sandarr Dunereaver's loot added
+  (Sandarr's Shoulders, Bloodsand Belt).
+- Blackmaw Hold: Octofinger Gauntlets added to the Tunnelweb Matriarch.
+- Shaper's Terrace: Heartflame Gauntlets added to Vitrix's and Cinder's
+  loot, Crownroar Chestplate to Snowtalon's (seen in Loot Rolls from them).
+- Trash drop pages with mob portraits (Krol'dok Stronghold, Ruins of
+  Lordaeron, Alcaz Prison) get the Compact view button too when the list is
+  too long; compact rows leave the portraits out, the item's tooltip still
+  names the mobs.
+- Loot pages always open in the detailed view. Compact View is one click on
+  the "N items" line, and it is remembered for that page only.
+- The Cozy Sleeping Bag's quest page no longer has the < > dungeon arrows
+  beside the Dungeons button (it isn't a dungeon).
+- The Deadmines, Toxic Soil (Alliance): the journal entry is now Destruction
+  in Deadmines, the quest you do inside the dungeon (plant the explosives at
+  the forge), with the nine quests before it as its chain; "You have it"
+  shows on it (reported on Discord by oriol600). The last step, using the
+  detonator at the exit, is no longer listed.
+- Maraudon, Shadowshard Fragments (Alliance): Show on Map pointed near
+  Brackenwall Village; Archmage Tervosh is in the tower on Theramore Isle
+  (reported on Discord by Nyby).
+- Shaper's Terrace: all six quests. New for the Alliance: Panic at the
+  Digsite, Mapping the Way Forward and Digestible Research. The Horde's The
+  Dark Crystal and Essence of Seeping Slimes now have their real quest IDs,
+  XP and reputation; Crystalline Elements, The Dark Crystal, Essence of
+  Seeping Slimes and Panic at the Digsite can be shared. Who gives them
+  (except Mayena Earthseeker) is not known yet.
+- Quest titles use the game client's own title on non-English clients
+  (Italian excluded), and the verified localization data
+  (Localization/Content_Verified.lua, see LOCALIZATION-AUDIT.md) is included.
+- Dungeon Tracker on non-English clients (reported on Discord by Krixx and
+  Trinii, German client):
+  - Bosses are matched by the game's encounter ID, the same number on every
+    language, for all Classic and Forever dungeons. A boss kill counts even
+    where the journal has no translation of its name, and the boss learns its
+    local name (no more extra grey skulls for the same boss).
+  - The Drowned City and Krol'dok Stronghold are recognised by their instance
+    ID ("Die Versunkene Stadt" was not), so their runs complete.
+  - Runs saved without their dungeon are fixed when you go back in.
+  - German names for the three bosses with no encounter event (Obsidian
+    Sentinel, Spirestone Battle Lord, Spirestone Lord Magus).
+- Dungeon Tracker after a reset:
+  - A boss that dies again after you left and came back means the dungeon
+    was reset (for example by the group leader, whose reset message the rest
+    of the group doesn't get): the old run ends and a new one starts.
+  - A run whose bosses are all down is no longer resumed when you go back in.
+- Boss and dungeon names from your own game client: on a non-English client
+  the journal asks the game for every boss's and dungeon's name at login and
+  uses those (also for the new Forever dungeons and bosses that had no
+  translation). The tracker matches kills by them too.
+- /dj tracker inside a dungeon before the first kill now says the tracker
+  starts with the first kill.
+- Stratholme Living: Malor the Zealous added after Timmy the Cruel (optional;
+  Medallion of Faith from Malor's Strongbox).
+  Postmaster Malown is optional too: Living runs never counted as complete
+  unless he was summoned.
+- Dungeon Tracker in Scarlet Monastery, Dire Maul, Stratholme and Blackrock
+  Spire (reported on Discord by Leiv): after a corpse run, /reload or relog
+  the tracker stayed hidden and /dj tracker said there was no run until the
+  next kill. Coming back in now continues the run's wing.
+
 
 CHANGES IN 2.0.37
 - Razorfen Kraul: the level 20 Warrior armor chains were missing.

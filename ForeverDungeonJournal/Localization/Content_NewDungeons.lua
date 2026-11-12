@@ -12,9 +12,15 @@ DATA.deDE = {
     dungeons = {
         ["Gnomeregan"] = { name = "Gnomeregan", location = "Dun Morogh", description = "Die verstrahlte unterirdische Stadt der Gnome, überrannt von Troggs und den Truppen von Robogenieur Thermaplugg." },
         ["Razorfen Kraul"] = { name = "Kral der Klingenhauer", location = "Brachland", description = "Ein weitläufiges Dornenlabyrinth, bewohnt von den Stacheleber des Krals der Klingenhauer." },
-        ["Scarlet Monastery: Graveyard"] = { name = "Scharlachrotes Kloster: Friedhof", location = "Tirisfal", description = "Der Friedhofsflügel des Scharlachroten Klosters, heimgesucht von ruhelosen Toten und scharlachroten Verteidigern." },
-        ["City of Dalaran"] = { name = "Stadt Dalaran", location = "Alteracgebirge", description = "Die wiederhergestellte Magierstadt Dalaran ist in WoW Forever ein neuer Dungeon für fünf Spieler. Betretet sie durch die Kanalisation und die Schattenseite und kämpft euch durch die Straßen bis zur Violetten Zitadelle." },
+        ["Scarlet Monastery: Graveyard"] = { name = "Scharlachrotes Kloster - Friedhof", location = "Tirisfal", description = "Der Friedhofsflügel des Scharlachroten Klosters, heimgesucht von ruhelosen Toten und scharlachroten Verteidigern." },
+        ["City of Dalaran"] = { name = "Dalaran", location = "Alteracgebirge", description = "Die wiederhergestellte Magierstadt Dalaran ist in WoW Forever ein neuer Dungeon für fünf Spieler. Betretet sie durch die Kanalisation und die Schattenseite und kämpft euch durch die Straßen bis zur Violetten Zitadelle." },
         ["Excavation Site: Wetlands"] = { name = "Ausgrabungsstätte: Sumpfland", location = "Sumpfland", description = "Eine in der Zeit gefangene Titanen-Ausgrabungsstätte oberhalb von Whelgars Ausgrabungsstätte, deren Titanenkonstrukte niemandem mehr gehorchen. Bereiche: Verlorene Marsch, Pirscherdickicht, Stätte des Wächters und Verlorene Grabungsstätte." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "Die Versunkene Stadt" },
+        ["Krol'dok Stronghold"] = { name = "Feste Krol'dok" },
+        ["Alcaz Prison"] = { name = "Gefängnis von Alcaz" },
+        ["Blackmaw Hold"] = { name = "Die Schwarzschlundfeste" },
+        ["Shaper's Terrace"] = { name = "Die Terrasse des Formers" },
     },
     quests = {
         [2930001] = { name = "Weiße Lochkarte", objective = "Tötet Gegner im äußeren Bereich von Gnomeregan, bis eine weiße Lochkarte erbeutet wird.", pickup = "Höhlentiefplünderer, Höhlentiefeindringlinge, verstrahlte Eindringlinge und verwirrte Aussätzige außerhalb der Instanz", turnin = "Behaltet die Karte für Matrixlochkartograph 3005-A", description = "Zufälliger Fund; meist erhaltet ihr sie schon beim ersten Säubern des Außenbereichs." },
@@ -74,9 +80,15 @@ DATA.frFR = {
     dungeons = {
         ["Gnomeregan"] = { name = "Gnomeregan", location = "Dun Morogh", description = "La cité souterraine irradiée des gnomes, envahie par les troggs et les forces du mekgénieur Thermojoncteur." },
         ["Razorfen Kraul"] = { name = "Kraal de Tranchebauge", location = "Les Tarides", description = "Un vaste labyrinthe de ronces occupé par les huran du Kraal de Tranchebauge." },
-        ["Scarlet Monastery: Graveyard"] = { name = "Monastère écarlate : Cimetière", location = "Clairières de Tirisfal", description = "L'aile du cimetière du Monastère écarlate, hantée par des morts sans repos et des défenseurs écarlates." },
+        ["Scarlet Monastery: Graveyard"] = { name = "Monastère Écarlate - cimetière", location = "Clairières de Tirisfal", description = "L'aile du cimetière du Monastère écarlate, hantée par des morts sans repos et des défenseurs écarlates." },
         ["City of Dalaran"] = { name = "Cité de Dalaran", location = "Montagnes d'Alterac", description = "La cité des mages restaurée de Dalaran est devenue un nouveau donjon à cinq joueurs dans WoW Forever. Entrez par les égouts et les Entrailles, puis frayez-vous un chemin dans les rues jusqu'à la Citadelle pourpre." },
-        ["Excavation Site: Wetlands"] = { name = "Site de fouilles : Les Paluns", location = "Les Paluns", description = "Un site de fouilles titan figé dans le temps au-dessus du site de Whelgar, où des assemblages titans n'obéissent plus à personne. Zones : Marais perdu, Fourré des traqueurs, Site du gardien et Site de fouilles perdu." },
+        ["Excavation Site: Wetlands"] = { name = "Excavations : les Paluns", location = "Les Paluns", description = "Un site de fouilles titan figé dans le temps au-dessus du site de Whelgar, où des assemblages titans n'obéissent plus à personne. Zones : Marais perdu, Fourré des traqueurs, Site du gardien et Site de fouilles perdu." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "La cité Submergée" },
+        ["Krol'dok Stronghold"] = { name = "Bastion Krol’dok" },
+        ["Alcaz Prison"] = { name = "Prison d’Alcaz" },
+        ["Blackmaw Hold"] = { name = "Repaire des Noiregueules" },
+        ["Shaper's Terrace"] = { name = "La terrasse du Façonneur" },
     },
     quests = {
         [2930001] = { name = "Carte perforée blanche", objective = "Tuez des monstres dans la zone extérieure de Gnomeregan jusqu'à obtenir une carte perforée blanche.", pickup = "Pillards des Cavernes, envahisseurs des Cavernes, envahisseurs irradiés et lépreux désorientés, hors de l'instance", turnin = "Gardez la carte pour la Matrice de perforation 3005-A", description = "Butin aléatoire ; on l'obtient en général dès le premier nettoyage de la zone extérieure." },
@@ -139,6 +151,12 @@ DATA.esES = {
         ["Scarlet Monastery: Graveyard"] = { name = "Monasterio Escarlata: Cementerio", location = "Claros de Tirisfal", description = "El ala del cementerio del Monasterio Escarlata, embrujada por muertos inquietos y defensores escarlata." },
         ["City of Dalaran"] = { name = "Ciudad de Dalaran", location = "Montañas de Alterac", description = "La restaurada ciudad de los magos, Dalaran, es una nueva mazmorra para cinco jugadores en WoW Forever. Entra por las cloacas y la Ciénaga, y abre paso por las calles hasta la Ciudadela Violeta." },
         ["Excavation Site: Wetlands"] = { name = "Excavación: Los Humedales", location = "Los Humedales", description = "Una excavación titánica atrapada en el tiempo sobre la Excavación de Whelgar, donde los ensamblajes titánicos ya no obedecen a nadie. Zonas: Marjal Perdido, Espesura del Acechador, Lugar del Guardián y Excavación Perdida." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "La Ciudad Sumergida" },
+        ["Krol'dok Stronghold"] = { name = "Bastión Krol'dok" },
+        ["Alcaz Prison"] = { name = "Prisión de Alcaz" },
+        ["Blackmaw Hold"] = { name = "Bastión Faucenegra" },
+        ["Shaper's Terrace"] = { name = "El Bancal del Creador" },
     },
     quests = {
         [2930001] = { name = "Tarjeta perforada blanca", objective = "Mata enemigos en la zona exterior de Gnomeregan hasta que caiga una tarjeta perforada blanca.", pickup = "Saqueadores, invasores de las Profundidades, invasores irradiados y leprosos aturdidos, fuera de la instancia", turnin = "Guarda la tarjeta para la Perforadora matricial 3005-A", description = "Botín aleatorio; normalmente la consigues en la primera limpieza de la zona exterior." },
@@ -199,8 +217,8 @@ DATA.itIT = {
         ["Gnomeregan"] = { name = "Gnomeregan", location = "Dun Morogh", description = "La città sotterranea irradiata degli gnomi, invasa dai trogg e dalle forze del Meccagegnere Termospina." },
         ["Razorfen Kraul"] = { name = "Kraul di Lamaspina", location = "Savane", description = "Un vasto labirinto di rovi occupato dai cinghialidi del Kraul di Lamaspina." },
         ["Scarlet Monastery: Graveyard"] = { name = "Monastero Scarlatto: Cimitero", location = "Radure di Tirisfal", description = "L'ala del cimitero del Monastero Scarlatto, infestata da morti inquieti e difensori scarlatti." },
-        ["City of Dalaran"] = { name = "Città di Dalaran", location = "Montagne d'Alterac", description = "La restaurata città dei maghi di Dalaran è diventata una nuova spedizione per cinque giocatori in WoW Forever. Entra dalle fogne e dal Sottoventre, poi fatti strada per le vie fino alla Cittadella Violacea." },
-        ["Excavation Site: Wetlands"] = { name = "Sito di scavo: Paludi", location = "Paludi", description = "Un sito di scavo dei Titani intrappolato nel tempo sopra lo Scavo di Whelgar, dove i costrutti titanici non obbediscono più a nessuno. Aree: Palude Perduta, Boscaglia dei Predatori, Sito del Guardiano e Scavo Perduto." },
+        ["City of Dalaran"] = { name = "City of Dalaran", location = "Montagne d'Alterac", description = "La restaurata città dei maghi di Dalaran è diventata una nuova spedizione per cinque giocatori in WoW Forever. Entra dalle fogne e dal Sottoventre, poi fatti strada per le vie fino alla Cittadella Violacea." },
+        ["Excavation Site: Wetlands"] = { name = "Excavation Site: Wetlands", location = "Paludi", description = "Un sito di scavo dei Titani intrappolato nel tempo sopra lo Scavo di Whelgar, dove i costrutti titanici non obbediscono più a nessuno. Aree: Palude Perduta, Boscaglia dei Predatori, Sito del Guardiano e Scavo Perduto." },
     },
     quests = {
         [2930001] = { name = "Scheda perforata bianca", objective = "Uccidi nemici nell'area esterna di Gnomeregan finché non ottieni una scheda perforata bianca.", pickup = "Predoni e invasori delle Caverne, invasori irradiati e lebbrosi confusi, fuori dall'istanza", turnin = "Conserva la scheda per la Perforatrice a Matrice 3005-A", description = "Bottino casuale; di solito la ottieni già alla prima pulizia dell'area esterna." },
@@ -259,10 +277,16 @@ DATA.itIT = {
 DATA.ptBR = {
     dungeons = {
         ["Gnomeregan"] = { name = "Gnomeregan", location = "Dun Morogh", description = "A cidade subterrânea irradiada dos gnomos, tomada por troggs e pelas forças do Mekgenheiro Termaplugue." },
-        ["Razorfen Kraul"] = { name = "Urzal dos Mortos", location = "Sertões", description = "Um enorme labirinto de espinhos ocupado pelos javali do Urzal dos Mortos." },
-        ["Scarlet Monastery: Graveyard"] = { name = "Monastério Escarlate: Cemitério", location = "Clareiras de Tirisfal", description = "A ala do cemitério do Monastério Escarlate, assombrada por mortos inquietos e defensores escarlates." },
-        ["City of Dalaran"] = { name = "Cidade de Dalaran", location = "Montanhas de Alterac", description = "A restaurada cidade dos magos, Dalaran, tornou-se uma nova masmorra para cinco jogadores no WoW Forever. Entre pelos esgotos e pelo Ventre, depois abra caminho pelas ruas até a Cidadela Violeta." },
+        ["Razorfen Kraul"] = { name = "Urzal dos Tuscos", location = "Sertões", description = "Um enorme labirinto de espinhos ocupado pelos javali do Urzal dos Tuscos." },
+        ["Scarlet Monastery: Graveyard"] = { name = "Monastério Escarlate - Cemitério", location = "Clareiras de Tirisfal", description = "A ala do cemitério do Monastério Escarlate, assombrada por mortos inquietos e defensores escarlates." },
+        ["City of Dalaran"] = { name = "Dalaran", location = "Montanhas de Alterac", description = "A restaurada cidade dos magos, Dalaran, tornou-se uma nova masmorra para cinco jogadores no WoW Forever. Entre pelos esgotos e pelo Ventre, depois abra caminho pelas ruas até a Cidadela Violeta." },
         ["Excavation Site: Wetlands"] = { name = "Sítio de Escavação: Pantanal", location = "Pantanal", description = "Um sítio de escavação titânico preso no tempo acima da Escavação de Whelgar, onde os constructos titânicos não obedecem mais a ninguém. Áreas: Pântano Perdido, Mata dos Espreitadores, Local do Guardião e Escavação Perdida." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "A Cidade Afogada" },
+        ["Krol'dok Stronghold"] = { name = "Fortaleza de Krol'Dok" },
+        ["Alcaz Prison"] = { name = "Prisão de Alcaz" },
+        ["Blackmaw Hold"] = { name = "Gruta Bocanera" },
+        ["Shaper's Terrace"] = { name = "O Terraço do Moldador" },
     },
     quests = {
         [2930001] = { name = "Cartão Perfurado Branco", objective = "Mate inimigos na área externa de Gnomeregan até cair um cartão perfurado branco.", pickup = "Saqueadores e invasores das Cavernas, invasores irradiados e leprosos atordoados, fora da instância", turnin = "Guarde o cartão para a Perfuradora Matricial 3005-A", description = "Saque aleatório; normalmente você o consegue na primeira limpeza da área externa." },
@@ -283,7 +307,7 @@ DATA.ptBR = {
         [2951] = { name = "A Brilhomática 5200!", objective = "Coloque um objeto encardido na Brilhomática 5200 com três moedas de prata para ligar a máquina." },
         [2945] = { name = "Anel Encardido", objective = "Descubra um jeito de limpar o anel encardido (use a Brilhomática 5200)." },
         [1221] = { name = "Tubérculos de Folha-azul", objective = "Use o caixote furado para invocar um rato fuçador e o bastão de comando para fazê-lo achar 6 tubérculos de folha-azul. Leve-os, com o bastão e o caixote, a Mebok Mizzyrix." },
-        [1144] = { name = "Willix, o Importador", objective = "Escolte Willix, o Importador, para fora do Urzal dos Mortos." },
+        [1144] = { name = "Willix, o Importador", objective = "Escolte Willix, o Importador, para fora do Urzal dos Tuscos." },
         [1142] = { name = "A Mortalidade Míngua", objective = "Encontre o pingente de Treshala e devolva-o a Treshala Fallowbrook em Darnassus." },
         [1101] = { name = "A Bruxa do Urzal", objective = "Leve o medalhão de Navalhaflanco a Falfindel Waywarder em Thalanaar." },
         [1102] = { name = "Um Destino Vingativo", objective = "Leve o coração de Navalhaflanco a Auld Pedralta em Penhasco do Trovão." },
@@ -304,7 +328,7 @@ DATA.ptBR = {
         ["inside Gnomeregan"] = "dentro de Gnomeregan",
         ["Ratchet"] = "Vila Catraca",
         ["The Barrens"] = "Sertões",
-        ["inside Razorfen Kraul"] = "dentro do Urzal dos Mortos",
+        ["inside Razorfen Kraul"] = "dentro do Urzal dos Tuscos",
         ["Darnassus"] = "Darnassus",
         ["Thalanaar"] = "Thalanaar",
         ["Feralas"] = "Feralas",
@@ -322,9 +346,15 @@ DATA.ruRU = {
     dungeons = {
         ["Gnomeregan"] = { name = "Гномреган", location = "Дун Морог", description = "Облучённый подземный город гномов, захваченный троггами и войсками анжинера Термоштепселя." },
         ["Razorfen Kraul"] = { name = "Лабиринты Иглошкурых", location = "Степи", description = "Огромный терновый лабиринт, занятый свинобразами Лабиринтов Иглошкурых." },
-        ["Scarlet Monastery: Graveyard"] = { name = "Монастырь Алого ордена: Кладбище", location = "Тирисфальские леса", description = "Кладбище Монастыря Алого ордена, где бродят неупокоенные мертвецы и защитники Алого ордена." },
-        ["City of Dalaran"] = { name = "Город Даларан", location = "Альтеракские горы", description = "Восстановленный город магов Даларан стал новым подземельем для пяти игроков в WoW Forever. Войдите через канализацию и Клоаку, затем пробейтесь по улицам к Аметистовой цитадели." },
+        ["Scarlet Monastery: Graveyard"] = { name = "Монастырь Алого ордена: кладбище", location = "Тирисфальские леса", description = "Кладбище Монастыря Алого ордена, где бродят неупокоенные мертвецы и защитники Алого ордена." },
+        ["City of Dalaran"] = { name = "Даларан", location = "Альтеракские горы", description = "Восстановленный город магов Даларан стал новым подземельем для пяти игроков в WoW Forever. Войдите через канализацию и Клоаку, затем пробейтесь по улицам к Аметистовой цитадели." },
         ["Excavation Site: Wetlands"] = { name = "Раскопки: Болотина", location = "Болотина", description = "Застывшие во времени раскопки титанов над раскопками Вельгара, где конструкты титанов больше никому не подчиняются. Области: Затерянная топь, Чаща охотников, Место стража и Затерянные раскопки." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "Затонувший город" },
+        ["Krol'dok Stronghold"] = { name = "Крепость Крол'док" },
+        ["Alcaz Prison"] = { name = "Тюрьма Алькац" },
+        ["Blackmaw Hold"] = { name = "Крепость Черночревов" },
+        ["Shaper's Terrace"] = { name = "Терраса Создателя" },
     },
     quests = {
         [2930001] = { name = "Белая перфокарта", objective = "Убивайте противников во внешней части Гномрегана, пока не выпадет белая перфокарта.", pickup = "Грабители и захватчики глубин, облучённые захватчики и одурманенные прокажённые снаружи подземелья", turnin = "Сохраните карту для матричного перфоратора 3005-A", description = "Случайная добыча; обычно выпадает при первой зачистке внешней зоны." },
@@ -384,9 +414,15 @@ DATA.koKR = {
     dungeons = {
         ["Gnomeregan"] = { name = "놈리건", location = "던 모로", description = "방사능에 오염된 노움의 지하 도시로, 트로그와 텔마플러그의 병력에 점령당했습니다." },
         ["Razorfen Kraul"] = { name = "가시덩굴 우리", location = "불모의 땅", description = "가시덩굴 우리의 멧돼지인간이 차지한 거대한 가시 미로입니다." },
-        ["Scarlet Monastery: Graveyard"] = { name = "붉은십자군 수도원: 묘지", location = "티리스팔 숲", description = "안식을 얻지 못한 망자와 붉은십자군 수호병이 출몰하는 붉은십자군 수도원의 묘지 구역입니다." },
-        ["City of Dalaran"] = { name = "달라란 도시", location = "알터랙 산맥", description = "복원된 마법사의 도시 달라란이 WoW Forever의 새로운 5인 던전이 되었습니다. 하수도와 마법의 지하실을 통해 들어가 거리를 뚫고 보랏빛 성채까지 가세요." },
-        ["Excavation Site: Wetlands"] = { name = "발굴지: 저습지", location = "저습지", description = "웰가르 발굴지 위에 시간 속에 갇힌 티탄 발굴지로, 티탄 피조물이 더 이상 누구에게도 복종하지 않습니다. 구역: 잃어버린 늪, 추적자의 덤불, 수호자의 터, 잃어버린 발굴지." },
+        ["Scarlet Monastery: Graveyard"] = { name = "붉은십자군 수도원 - 묘지", location = "티리스팔 숲", description = "안식을 얻지 못한 망자와 붉은십자군 수호병이 출몰하는 붉은십자군 수도원의 묘지 구역입니다." },
+        ["City of Dalaran"] = { name = "달라란", location = "알터랙 산맥", description = "복원된 마법사의 도시 달라란이 WoW Forever의 새로운 5인 던전이 되었습니다. 하수도와 마법의 지하실을 통해 들어가 거리를 뚫고 보랏빛 성채까지 가세요." },
+        ["Excavation Site: Wetlands"] = { name = "발굴 현장: 저습지", location = "저습지", description = "웰가르 발굴지 위에 시간 속에 갇힌 티탄 발굴지로, 티탄 피조물이 더 이상 누구에게도 복종하지 않습니다. 구역: 잃어버린 늪, 추적자의 덤불, 수호자의 터, 잃어버린 발굴지." },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "가라앉은 도시" },
+        ["Krol'dok Stronghold"] = { name = "크롤도크 보루" },
+        ["Alcaz Prison"] = { name = "알카즈 감옥" },
+        ["Blackmaw Hold"] = { name = "검은아귀 요새" },
+        ["Shaper's Terrace"] = { name = "구체자의 정원" },
     },
     quests = {
         [2930001] = { name = "흰색 천공 카드", objective = "놈리건 외곽 지역의 적을 처치해 흰색 천공 카드를 얻으세요.", pickup = "인스턴스 밖의 동굴 약탈자, 동굴 침략자, 방사능 오염 침략자, 정신 나간 나병 노움", turnin = "카드를 매트릭스 천공기 3005-A용으로 보관하세요", description = "무작위 전리품입니다. 보통 외곽 지역을 처음 정리할 때 얻습니다." },
@@ -446,9 +482,15 @@ DATA.zhCN = {
     dungeons = {
         ["Gnomeregan"] = { name = "诺莫瑞根", location = "丹莫罗", description = "被辐射污染的侏儒地下城市，被穴居人和麦克尼尔·瑟玛普拉格的部队占领。" },
         ["Razorfen Kraul"] = { name = "剃刀沼泽", location = "贫瘠之地", description = "剃刀沼泽的野猪人盘踞的一座巨大荆棘迷宫。" },
-        ["Scarlet Monastery: Graveyard"] = { name = "血色修道院：墓地", location = "提瑞斯法林地", description = "血色修道院的墓地区，游荡着不得安息的亡者和血色十字军的守卫。" },
+        ["Scarlet Monastery: Graveyard"] = { name = "血色修道院 - 墓地", location = "提瑞斯法林地", description = "血色修道院的墓地区，游荡着不得安息的亡者和血色十字军的守卫。" },
         ["City of Dalaran"] = { name = "达拉然城", location = "奥特兰克山脉", description = "重建的法师之城达拉然成为了 WoW Forever 中新的五人地下城。从下水道和达拉然下水道进入，然后沿街道一路杀到紫罗兰城堡。" },
         ["Excavation Site: Wetlands"] = { name = "挖掘场：湿地", location = "湿地", description = "惠尔格挖掘场上方一处被困在时间中的泰坦挖掘场，那里的泰坦造物已不再服从任何人。区域：失落沼泽、潜伏者灌木林、守护者之地和失落挖掘场。" },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "沉没之城" },
+        ["Krol'dok Stronghold"] = { name = "克罗多克要塞" },
+        ["Alcaz Prison"] = { name = "奥卡兹监狱" },
+        ["Blackmaw Hold"] = { name = "黑喉要塞" },
+        ["Shaper's Terrace"] = { name = "塑造者之台" },
     },
     quests = {
         [2930001] = { name = "白色打孔卡", objective = "在诺莫瑞根外围区域击杀敌人，直到获得一张白色打孔卡。", pickup = "副本外的深洞掠夺者、深洞入侵者、受辐射的入侵者和昏乱的麻风侏儒", turnin = "保留这张卡，用于矩阵式打孔计算机3005-A", description = "随机掉落；通常第一次清理外围区域时就能拿到。" },
@@ -508,9 +550,15 @@ DATA.zhTW = {
     dungeons = {
         ["Gnomeregan"] = { name = "諾姆瑞根", location = "丹莫洛", description = "被輻射汙染的侏儒地城市，被穴居人和麥克尼爾·瑟瑪普拉格的部隊佔領。" },
         ["Razorfen Kraul"] = { name = "剃刀沼澤", location = "貧瘠之地", description = "剃刀沼澤的野豬人盤踞的一座巨大荊棘迷宮。" },
-        ["Scarlet Monastery: Graveyard"] = { name = "血色修道院：墓地", location = "提里斯法林地", description = "血色修道院的墓地區，遊蕩著不得安息的亡者和血色十字軍的守衛。" },
+        ["Scarlet Monastery: Graveyard"] = { name = "血色修道院 - 墓園", location = "提里斯法林地", description = "血色修道院的墓地區，遊蕩著不得安息的亡者和血色十字軍的守衛。" },
         ["City of Dalaran"] = { name = "達拉然城", location = "奧特蘭克山脈", description = "重建的法師之城達拉然成為了 WoW Forever 中新的五人地城。從下水道和達拉然下水道進入，然後沿街道一路殺到紫羅蘭城堡。" },
-        ["Excavation Site: Wetlands"] = { name = "挖掘場：濕地", location = "濕地", description = "惠爾格挖掘場上方一處被困在時間中的泰坦挖掘場，那裡的泰坦造物已不再服從任何人。區域：失落沼澤、潛伏者灌木林、守護者之地和失落挖掘場。" },
+        ["Excavation Site: Wetlands"] = { name = "挖掘場", location = "濕地", description = "惠爾格挖掘場上方一處被困在時間中的泰坦挖掘場，那裡的泰坦造物已不再服從任何人。區域：失落沼澤、潛伏者灌木林、守護者之地和失落挖掘場。" },
+        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+        ["The Drowned City"] = { name = "沉沒之城" },
+        ["Krol'dok Stronghold"] = { name = "克羅多克要塞" },
+        ["Alcaz Prison"] = { name = "奧卡茲監獄" },
+        ["Blackmaw Hold"] = { name = "黑喉要塞" },
+        ["Shaper's Terrace"] = { name = "塑造者殿堂" },
     },
     quests = {
         [2930001] = { name = "白色打孔卡", objective = "在諾姆瑞根外圍區域擊殺敵人，直到獲得一張白色打孔卡。", pickup = "副本外的深洞掠奪者、深洞入侵者、受輻射的入侵者和昏亂的麻風侏儒", turnin = "保留這張卡，用於矩陣式打孔計算機3005-A", description = "隨機掉落；通常第一次清理外圍區域時就能拿到。" },
@@ -625,7 +673,7 @@ EXC.frFR = {
     ["Heartwoven"] = "Cœur tressé",
     ["Lost Relic Carry"] = "Transport de relique perdue",
     ["Lost in the Thicket Things"] = "Perdu dans les fourrés",
-    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "Apportez la Dragonmaw Dispatch au Deathstalker Agent, juste à l'extérieur du site de fouilles : Les Paluns.",
+    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "Apportez la Dragonmaw Dispatch au Deathstalker Agent, juste à l'extérieur des Excavations : les Paluns.",
     ["The Deathstalker Agent waits at the new dig camp right outside the portal. He takes the Dragonmaw Dispatch off your hands; where the Dispatch drops has not been confirmed yet."] = "Le Deathstalker Agent attend au nouveau camp de fouilles, juste devant le portail. Il récupère la Dragonmaw Dispatch ; l'endroit où l'obtenir n'est pas encore confirmé.",
     ["Enter the Excavation Sites in the Wetlands and bring back 4 Thicket Raptor Meat."] = "Entrez dans les sites de fouilles des Paluns et rapportez 4 Thicket Raptor Meat.",
     ["Thicket Raptor Meat comes from the Thicket raptors (Thicket Lurker, Thicket Hunter, Thicket Matriarch) in Stalker's Thicket, the area of Shadetooth."] = "Thicket Raptor Meat provient des raptors du fourré (Thicket Lurker, Thicket Hunter, Thicket Matriarch) dans le Fourré des traqueurs, la zone de Shadetooth.",
@@ -645,9 +693,9 @@ EXC.frFR = {
     ["Menethil Harbor"] = "Havre-de-Menethil",
     ["Redridge Mountains"] = "Les Carmines",
     ["Wetlands"] = "Les Paluns",
-    ["inside Excavation Site: Wetlands"] = "dans le site de fouilles : Les Paluns",
-    ["just outside Excavation Site: Wetlands"] = "juste à l'extérieur du site de fouilles : Les Paluns",
-    ["outside Excavation Site: Wetlands"] = "à l'extérieur du site de fouilles : Les Paluns",
+    ["inside Excavation Site: Wetlands"] = "dans les Excavations : les Paluns",
+    ["just outside Excavation Site: Wetlands"] = "juste à l'extérieur des Excavations : les Paluns",
+    ["outside Excavation Site: Wetlands"] = "à l'extérieur des Excavations : les Paluns",
 }
 EXC.esES = {
     ["Open the Maw"] = "Abrir las Fauces",
@@ -795,7 +843,7 @@ EXC.koKR = {
     ["Heartwoven"] = "마음으로 엮다",
     ["Lost Relic Carry"] = "분실된 유물 운반",
     ["Lost in the Thicket Things"] = "덤불 속에서 길을 잃다",
-    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "발굴지: 저습지 바로 바깥에 있는 Deathstalker Agent에게 Dragonmaw Dispatch를 가져가세요.",
+    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "발굴 현장: 저습지 바로 바깥에 있는 Deathstalker Agent에게 Dragonmaw Dispatch를 가져가세요.",
     ["The Deathstalker Agent waits at the new dig camp right outside the portal. He takes the Dragonmaw Dispatch off your hands; where the Dispatch drops has not been confirmed yet."] = "Deathstalker Agent는 포털 바로 바깥의 새 발굴 야영지에 있습니다. Dragonmaw Dispatch를 받아 가며, 입수처는 아직 확인되지 않았습니다.",
     ["Enter the Excavation Sites in the Wetlands and bring back 4 Thicket Raptor Meat."] = "저습지의 발굴지에 들어가 Thicket Raptor Meat 4개를 가져오세요.",
     ["Thicket Raptor Meat comes from the Thicket raptors (Thicket Lurker, Thicket Hunter, Thicket Matriarch) in Stalker's Thicket, the area of Shadetooth."] = "Thicket Raptor Meat는 추적자의 덤불에 있는 덤불 랩터(Thicket Lurker, Thicket Hunter, Thicket Matriarch)에게서 얻습니다. Shadetooth가 있는 구역입니다.",
@@ -815,9 +863,9 @@ EXC.koKR = {
     ["Menethil Harbor"] = "메네실 항구",
     ["Redridge Mountains"] = "붉은마루 산맥",
     ["Wetlands"] = "저습지",
-    ["inside Excavation Site: Wetlands"] = "발굴지: 저습지 내부",
-    ["just outside Excavation Site: Wetlands"] = "발굴지: 저습지 바로 바깥",
-    ["outside Excavation Site: Wetlands"] = "발굴지: 저습지 바깥",
+    ["inside Excavation Site: Wetlands"] = "발굴 현장: 저습지 내부",
+    ["just outside Excavation Site: Wetlands"] = "발굴 현장: 저습지 바로 바깥",
+    ["outside Excavation Site: Wetlands"] = "발굴 현장: 저습지 바깥",
 }
 EXC.zhCN = {
     ["Open the Maw"] = "打开巨口",
@@ -863,7 +911,7 @@ EXC.zhTW = {
     ["Heartwoven"] = "心編",
     ["Lost Relic Carry"] = "遺失遺物運送",
     ["Lost in the Thicket Things"] = "迷失於灌叢",
-    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "把Dragonmaw Dispatch交給挖掘場：濕地外面的Deathstalker Agent。",
+    ["Bring the Dragonmaw Dispatch to the Deathstalker Agent just outside Excavation Site: Wetlands."] = "把Dragonmaw Dispatch交給挖掘場外面的Deathstalker Agent。",
     ["The Deathstalker Agent waits at the new dig camp right outside the portal. He takes the Dragonmaw Dispatch off your hands; where the Dispatch drops has not been confirmed yet."] = "Deathstalker Agent在傳送門外的新挖掘營地等候。他會接收Dragonmaw Dispatch；獲取方式尚未確認。",
     ["Enter the Excavation Sites in the Wetlands and bring back 4 Thicket Raptor Meat."] = "進入濕地的挖掘場，帶回4個Thicket Raptor Meat。",
     ["Thicket Raptor Meat comes from the Thicket raptors (Thicket Lurker, Thicket Hunter, Thicket Matriarch) in Stalker's Thicket, the area of Shadetooth."] = "Thicket Raptor Meat來自潛伏者灌木林（Shadetooth所在區域）的灌叢迅猛龍（Thicket Lurker、Thicket Hunter、Thicket Matriarch）。",
@@ -883,9 +931,9 @@ EXC.zhTW = {
     ["Menethil Harbor"] = "米奈希爾港",
     ["Redridge Mountains"] = "赤脊山",
     ["Wetlands"] = "濕地",
-    ["inside Excavation Site: Wetlands"] = "挖掘場：濕地內部",
-    ["just outside Excavation Site: Wetlands"] = "挖掘場：濕地正外方",
-    ["outside Excavation Site: Wetlands"] = "挖掘場：濕地外面",
+    ["inside Excavation Site: Wetlands"] = "挖掘場內部",
+    ["just outside Excavation Site: Wetlands"] = "挖掘場正外方",
+    ["outside Excavation Site: Wetlands"] = "挖掘場外面",
 }
 for lang, strings in pairs(EXC) do
     local target = FDJ.ContentLocales[lang] or {}
@@ -916,7 +964,7 @@ EXC2.deDE = {
     ["Retrieve a Fel Infused Blossom from Dalaran's central garden."] = "Besorgt eine Fel Infused Blossom aus dem zentralen Garten von Dalaran.",
     ["Quest data is recorded in the beta; dungeon access may be unavailable."] = "Die Questdaten sind in der Beta aufgezeichnet; der Zugang zum Dungeon ist möglicherweise nicht verfügbar.",
     ["Power Overwhelming"] = "Überwältigende Macht",
-    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "Tötet Arcanic Enigma, das Manaelementar in der Stadt Dalaran, und kehrt zu High Sorcerer Andromath in Sturmwind zurück.",
+    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "Tötet Arcanic Enigma, das Manaelementar in Dalaran, und kehrt zu High Sorcerer Andromath in Sturmwind zurück.",
     ["Opportunistic Education"] = "Berechnende Bildung",
     ["Recover The Founding of Dalaran and deliver it to Rexxie Copperclutch."] = "Beschafft The Founding of Dalaran und liefert es bei Rexxie Copperclutch ab.",
     ["Source of Power"] = "Quelle der Macht",
@@ -1060,7 +1108,7 @@ EXC2.ptBR = {
     ["Retrieve a Fel Infused Blossom from Dalaran's central garden."] = "Recupere uma Fel Infused Blossom do jardim central de Dalaran.",
     ["Quest data is recorded in the beta; dungeon access may be unavailable."] = "Os dados da missão estão registrados no beta; o acesso à masmorra pode estar indisponível.",
     ["Power Overwhelming"] = "Poder Esmagador",
-    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "Mate Arcanic Enigma, o elemental de mana na Cidade de Dalaran, e volte a High Sorcerer Andromath em Ventobravo.",
+    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "Mate Arcanic Enigma, o elemental de mana em Dalaran, e volte a High Sorcerer Andromath em Ventobravo.",
     ["Opportunistic Education"] = "Educação Oportunista",
     ["Recover The Founding of Dalaran and deliver it to Rexxie Copperclutch."] = "Recupere The Founding of Dalaran e entregue a Rexxie Copperclutch.",
     ["Source of Power"] = "Fonte de Poder",
@@ -1132,7 +1180,7 @@ EXC2.koKR = {
     ["Retrieve a Fel Infused Blossom from Dalaran's central garden."] = "달라란 중앙 정원에서 Fel Infused Blossom을 구해 오세요.",
     ["Quest data is recorded in the beta; dungeon access may be unavailable."] = "퀘스트 정보는 베타에 기록되어 있으며, 던전에 입장하지 못할 수 있습니다.",
     ["Power Overwhelming"] = "압도적인 힘",
-    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "달라란 도시의 마나 정령 Arcanic Enigma를 처치하고 스톰윈드의 High Sorcerer Andromath에게 돌아가세요.",
+    ["Slay Arcanic Enigma, the Mana Elemental in the City of Dalaran, and return to High Sorcerer Andromath in Stormwind City."] = "달라란의 마나 정령 Arcanic Enigma를 처치하고 스톰윈드의 High Sorcerer Andromath에게 돌아가세요.",
     ["Opportunistic Education"] = "기회주의적 교육",
     ["Recover The Founding of Dalaran and deliver it to Rexxie Copperclutch."] = "The Founding of Dalaran을 회수해 Rexxie Copperclutch에게 전달하세요.",
     ["Source of Power"] = "힘의 근원",
@@ -1286,7 +1334,7 @@ ITEM_SOURCES.frFR = {
 ITEM_SOURCES.esES = {
     ["Dropped by: Dark Iron Agents"] = "Lo suelta: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Lo suelta: Dark Iron Spies en Dun Morogh",
-    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Minas de la Muerte",
+    ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Las Minas de la Muerte",
     ["Dropped by: Mutanus the Devourer"] = "Lo suelta: Mutanus el Devorador",
     ["Dropped by: Relic Guardian"] = "Lo suelta: Relic Guardian",
     ["Dropped by: The Baron"] = "Lo suelta: The Baron",
@@ -1435,7 +1483,7 @@ ITEM_SOURCES.zhTW = {
     ["Dropped by: Relic Guardian"] = "掉落自：Relic Guardian",
     ["Dropped by: The Baron"] = "掉落自：The Baron",
     ["Dropped by: undead enemies inside Ruins of Lordaeron"] = "掉落自：羅德隆廢墟內的不死敵人",
-    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "由通往黑暗深淵的入口通道中的Blackfathom Tide Priestess掉落。",
+    ["Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."] = "由通往黑澗深淵的入口通道中的Blackfathom Tide Priestess掉落。",
     ["Drops from Charlga Razorflank in Razorfen Kraul"] = "由剃刀沼澤的卡爾加·刺肋掉落",
     ["Found in a Pitted Iron Chest underwater in the Pool of Ask'ar, in the northern alcove just past Ghamoo-ra's turtle room."] = "在阿斯卡之池水下的Pitted Iron Chest中，位於加摩拉烏龜房間後面的北側凹室。",
     ["Found in the graveyard inside Ruins of Lordaeron"] = "位於羅德隆廢墟內的墓地",
@@ -1449,7 +1497,7 @@ ITEM_SOURCES.zhTW = {
     ["Random drop from mobs outside the Gnomeregan instance"] = "諾姆瑞根副本外的怪物隨機掉落",
     ["Reported random spawn inside Ruins of Lordaeron; check towers, side rooms and the Bjork area"] = "據回報在羅德隆廢墟內隨機出現；請檢查塔樓、側室和比約克區域",
     ["Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"] = "任務Bailor's Ore Shipment的獎勵：Bailor Stonehand，塞爾薩瑪，洛克莫丹",
-    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任務Seeking the Kor Gem的獎勵：Thundris Windweaver，奧伯丁，黑海岸。所需的Corrupted Kor Gem由黑暗深淵入口處的Blackfathom Tide Priestess和Oracle以及副本內的Blackfathom Sea Witch掉落。",
+    ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任務Seeking the Kor Gem的獎勵：Thundris Windweaver，奧伯丁，黑海岸。所需的Corrupted Kor Gem由黑澗深淵入口處的Blackfathom Tide Priestess和Oracle以及副本內的Blackfathom Sea Witch掉落。",
 }
 for lang, strings in pairs(ITEM_SOURCES) do
     local target = FDJ.ContentLocales[lang] or {}
@@ -1577,15 +1625,15 @@ end
 
 -- Scarlet Monastery: Library: name per language; location reused from the Graveyard.
 local LIBRARY_NAMES = {
-    deDE = "Scharlachrotes Kloster: Bibliothek",
-    frFR = "Monastère écarlate : Bibliothèque",
+    deDE = "Scharlachrotes Kloster - Bibliothek",
+    frFR = "Monastère Écarlate - bibliothèque",
     esES = "Monasterio Escarlata: Biblioteca",
     itIT = "Monastero Scarlatto: Biblioteca",
-    ptBR = "Monastério Escarlate: Biblioteca",
-    ruRU = "Монастырь Алого ордена: Библиотека",
-    koKR = "붉은십자군 수도원: 도서관",
-    zhCN = "血色修道院：图书馆",
-    zhTW = "血色修道院：圖書館",
+    ptBR = "Monastério Escarlate - Biblioteca",
+    ruRU = "Монастырь Алого ордена: библиотека",
+    koKR = "붉은십자군 수도원 - 도서관",
+    zhCN = "血色修道院 - 图书馆",
+    zhTW = "血色修道院 - 圖書館",
 }
 for lang, name in pairs(LIBRARY_NAMES) do
     local content = FDJ.ContentLocales[lang]
@@ -2274,9 +2322,9 @@ local BARON_AQUANIS_6922 = {
         name = "阿奎尼斯男爵",
         objective = "把奇怪的水球交給梣谷佐拉姆加前哨站的耶努薩克雷。",
         warning = "拾取'廢墟之間'任務的深淵之核後，阿奎尼斯男爵會出現。",
-        pickup = "奇怪的水球，由黑暗深淵中的阿奎尼斯男爵掉落",
+        pickup = "奇怪的水球，由黑澗深淵中的阿奎尼斯男爵掉落",
         turnin = "耶努薩克雷，佐拉姆加前哨站，梣谷",
-        source = "由黑暗深淵中的阿奎尼斯男爵掉落。",
+        source = "由黑澗深淵中的阿奎尼斯男爵掉落。",
     },
 }
 
@@ -2453,20 +2501,20 @@ FDJ.ContentLocales.zhTW.quests[96984] = { name = "擾亂之心", objective = "�
 -- the dungeon names.
 local NEW_WINGS = {
   deDE = {
-    dungeons = { "Scharlachrotes Kloster: Waffenkammer", "Scharlachrotes Kloster: Kathedrale", "Hügel von Razorfen" },
+    dungeons = { "Scharlachrotes Kloster - Waffenkammer", "Scharlachrotes Kloster - Kathedrale", "Hügel der Klingenhauer" },
     npc = { ["Herod"] = "Herod", ["High Inquisitor Fairbanks"] = "Hochinquisitor Fairbanks", ["Scarlet Commander Mograine"] = "Scharlachroter Kommandant Mograine", ["High Inquisitor Whitemane"] = "Hochinquisitor Whitemane", ["Tuten'kash"] = "Tuten'kash", ["Mordresh Fire Eye"] = "Mordresh Feuerauge", ["Glutton"] = "Nimmersatt", ["Ragglesnout"] = "Struppmähne", ["Plaguemaw the Rotting"] = "Plaguemaw der Faulende", ["Amnennar the Coldbringer"] = "Amnennar der Kältebringer", ["Varimathras"] = "Varimathras", ["Raleigh the Devout"] = "Raleigh der Andächtige", ["Andrew Brownell"] = "Andrew Brownell", ["Belnistrasz"] = "Belnistrasz", ["Archbishop Benedictus"] = "Erzbischof Benedictus", ["Myriam Moonsinger"] = "Myriam Moonsinger" },
     quests = {
       [1048] = { name = "In das Scharlachrote Kloster", objective = "Tötet Hochinquisitor Whitemane, den Scharlachroten Kommandant Mograine, Herod, den Scharlachroten Helden sowie den Hundemeister Loksey und meldet Euch dann wieder bei Varimathras in Undercity.", pickup = "Varimathras, Unterstadt", turnin = "Varimathras, Unterstadt" },
       [1053] = { name = "Im Namen des Lichts", objective = "Tötet Hochinquisitor Whitemane, den Scharlachroten Kommandant Mograine, Herod, den Scharlachroten Helden sowie den Hundemeister Loksey und meldet Euch dann wieder bei Raleigh dem Andächtigen in Southshore.", pickup = "Raleigh der Andächtige, Süderstade", turnin = "Raleigh der Andächtige, Süderstade" },
       [3341] = { name = "Das Ende bringen", objective = "Andrew Brownell will, dass Ihr Amnennar den Kältebringer tötet und ihm dessen Schädel bringt.", pickup = "Andrew Brownell, Unterstadt", turnin = "Andrew Brownell, Unterstadt" },
       [3636] = { name = "Das Licht bringen", objective = "Erzbischof Benedictus will, dass Ihr Amnennar den Kältebringer in den Hügeln von Razorfen tötet.", pickup = "Erzbischof Benedictus, Sturmwind", turnin = "Erzbischof Benedictus, Sturmwind" },
-      [3523] = { name = "Geißel der Niederungen", objective = "Wenn Ihr Belnistrasz helfen wollt, sprecht noch einmal mit ihm und übergebt ihm den Schwurstein, den er Euch gab.", pickup = "Belnistrasz, Hügel von Razorfen", turnin = "Belnistrasz, Hügel von Razorfen" },
-      [3525] = { name = "Ausschalten des Götzen", objective = "Begleitet Belnistrasz zum Götzen der Stacheleber in den Hügeln von Razorfen. Beschützt Belnistrasz, während er das Ritual durchführt, um den Götzen auszuschalten.", pickup = "Belnistrasz, Hügel von Razorfen" },
-      [6626] = { name = "Ein Hort des Bösen", objective = "Tötet 8 Schlachtwachen von Razorfen, 8 Dornenwirker von Razorfen und 8 Kultistinnen der Totenköpfe und kehrt dann zu Myriam Moonsinger nahe dem Eingang zu den Hügeln von Razorfen zurück.", pickup = "Myriam Moonsinger, Eingang der Hügel von Razorfen", turnin = "Myriam Moonsinger, Eingang der Hügel von Razorfen" },
+      [3523] = { name = "Geißel der Niederungen", objective = "Wenn Ihr Belnistrasz helfen wollt, sprecht noch einmal mit ihm und übergebt ihm den Schwurstein, den er Euch gab.", pickup = "Belnistrasz, Hügel der Klingenhauer", turnin = "Belnistrasz, Hügel der Klingenhauer" },
+      [3525] = { name = "Ausschalten des Götzen", objective = "Begleitet Belnistrasz zum Götzen der Stacheleber in den Hügeln von Razorfen. Beschützt Belnistrasz, während er das Ritual durchführt, um den Götzen auszuschalten.", pickup = "Belnistrasz, Hügel der Klingenhauer" },
+      [6626] = { name = "Ein Hort des Bösen", objective = "Tötet 8 Schlachtwachen von Razorfen, 8 Dornenwirker von Razorfen und 8 Kultistinnen der Totenköpfe und kehrt dann zu Myriam Moonsinger nahe dem Eingang zu den Hügeln von Razorfen zurück.", pickup = "Myriam Moonsinger, Eingang der Hügel der Klingenhauer", turnin = "Myriam Moonsinger, Eingang der Hügel der Klingenhauer" },
     },
   },
   frFR = {
-    dungeons = { "Monastère écarlate : Armurerie", "Monastère écarlate : Cathédrale", "Souilles de Tranchebauge" },
+    dungeons = { "Monastère Écarlate - armurerie", "Monastère Écarlate - cathédrale", "Souilles de Tranchebauge" },
     npc = { ["Herod"] = "Herod", ["High Inquisitor Fairbanks"] = "Grand Inquisiteur Fairbanks", ["Scarlet Commander Mograine"] = "Commandant écarlate Mograine", ["High Inquisitor Whitemane"] = "Grand Inquisiteur Whitemane", ["Tuten'kash"] = "Tuten'kash", ["Mordresh Fire Eye"] = "Mordresh Oeil-de-feu", ["Glutton"] = "Glouton", ["Ragglesnout"] = "Groinfendu", ["Plaguemaw the Rotting"] = "Pestegueule le Pourrissant", ["Amnennar the Coldbringer"] = "Amnennar le Porte-froid", ["Varimathras"] = "Varimathras", ["Raleigh the Devout"] = "Raleigh le Dévot", ["Andrew Brownell"] = "Andrew Brownell", ["Belnistrasz"] = "Belnistrasz", ["Archbishop Benedictus"] = "Archevêque Benedictus", ["Myriam Moonsinger"] = "Myriam Moonsinger" },
     quests = {
       [1048] = { name = "Au monastère écarlate", objective = "Tuer le grand inquisiteur Whitemane, le commandant Mograine de la Croisade, le champion Herod et le maître-chien Loksey, et retourner faire son rapport à Varimathras à Undercity.", pickup = "Varimathras, Fossoyeuse", turnin = "Varimathras, Fossoyeuse" },
@@ -2495,7 +2543,7 @@ local NEW_WINGS = {
     dungeons = { "Monastero Scarlatto: Armeria", "Monastero Scarlatto: Cattedrale", "Razorfen Downs" },
   },
   ptBR = {
-    dungeons = { "Monastério Escarlate: Arsenal", "Monastério Escarlate: Catedral", "Urzal dos Mortos" },
+    dungeons = { "Monastério Escarlate - Armaria", "Monastério Escarlate - Catedral", "Urzal dos Mortos" },
     npc = { ["Herod"] = "Herodes", ["High Inquisitor Fairbanks"] = "Alto-inquisidor Fairbanks", ["Scarlet Commander Mograine"] = "Comandante Escarlate Mograine", ["High Inquisitor Whitemane"] = "Alta-inquisidora Cristalba", ["Tuten'kash"] = "Tutan'kash", ["Mordresh Fire Eye"] = "Mordresh Olho-de-Fogo", ["Glutton"] = "Glutão", ["Ragglesnout"] = "Trombarrão", ["Plaguemaw the Rotting"] = "Pragorja, o Podre", ["Amnennar the Coldbringer"] = "Amnennar, o Frigífero", ["Varimathras"] = "Varimatras", ["Raleigh the Devout"] = "Raul, o Devotado", ["Andrew Brownell"] = "André Rosado", ["Belnistrasz"] = "Belnistrasz", ["Archbishop Benedictus"] = "Arcebispo Benedictus", ["Myriam Moonsinger"] = "Mírian Lunacanto" },
     quests = {
       [1048] = { name = "Adentrando o Monastério Escarlate", objective = "Mate a Alta-inquisidora Cristalba, o Comandante Escarlate Mograine, Herodes, o Campeão Escarlate e o Mestre de Matilha Lobato, depois volte a falar com Varimatras na Cidade Baixa.", pickup = "Varimatras, Cidade Baixa", turnin = "Varimatras, Cidade Baixa" },
@@ -2508,7 +2556,7 @@ local NEW_WINGS = {
     },
   },
   ruRU = {
-    dungeons = { "Монастырь Алого ордена: Оружейная", "Монастырь Алого ордена: Собор", "Курганы Иглошкурых" },
+    dungeons = { "Монастырь Алого ордена: оружейная", "Монастырь Алого ордена: собор", "Курганы Иглошкурых" },
     npc = { ["Herod"] = "Герод", ["High Inquisitor Fairbanks"] = "Верховный инквизитор Фэйрбанкс", ["Scarlet Commander Mograine"] = "Командир Могрейн из Алого ордена", ["High Inquisitor Whitemane"] = "Верховный инквизитор Вайтмейн", ["Tuten'kash"] = "Тутен'каш", ["Mordresh Fire Eye"] = "Мордреш Огненный Глаз", ["Glutton"] = "Обжора", ["Ragglesnout"] = "Круглорыл", ["Plaguemaw the Rotting"] = "Чумобрюх Гнилой", ["Amnennar the Coldbringer"] = "Амненнар Хладовей", ["Varimathras"] = "Вариматрас", ["Raleigh the Devout"] = "Ролей Благочестивый", ["Andrew Brownell"] = "Эндрю Браунелл", ["Belnistrasz"] = "Белнистраз", ["Archbishop Benedictus"] = "Архиепископ Бенедикт", ["Myriam Moonsinger"] = "Мириам Лунная Певица" },
     quests = {
       [1048] = { name = "В монастырь Алого ордена", objective = "Убейте Верховного инквизитора Вайтмейн, командира Могрейна из Алого ордена, воителя Герода из Алого ордена и псаря Локси. Затем возвращайтесь к Вариматрасу в Подгород.", pickup = "Вариматрас, Подгород", turnin = "Вариматрас, Подгород" },
@@ -2521,7 +2569,7 @@ local NEW_WINGS = {
     },
   },
   koKR = {
-    dungeons = { "붉은십자군 수도원: 무기고", "붉은십자군 수도원: 대성당", "가시덩굴 구릉" },
+    dungeons = { "붉은십자군 수도원 - 무기고", "붉은십자군 수도원 - 대성당", "가시덩굴 구릉" },
     npc = { ["Herod"] = "헤로드", ["High Inquisitor Fairbanks"] = "종교재판관 페어뱅크스", ["Scarlet Commander Mograine"] = "붉은십자군 사령관 모그레인", ["High Inquisitor Whitemane"] = "종교재판관 화이트메인", ["Tuten'kash"] = "투텐카쉬", ["Mordresh Fire Eye"] = "불꽃눈 모드레쉬", ["Glutton"] = "게걸먹보", ["Ragglesnout"] = "너덜주둥이", ["Plaguemaw the Rotting"] = "썩어가는 역병아귀", ["Amnennar the Coldbringer"] = "혹한의 암네나르", ["Varimathras"] = "바리마트라스", ["Raleigh the Devout"] = "경건한 신자 랄레이", ["Andrew Brownell"] = "앤드류 브로넬", ["Belnistrasz"] = "벨리스트라즈", ["Archbishop Benedictus"] = "대주교 베네딕투스", ["Myriam Moonsinger"] = "미리암 문싱어" },
     quests = {
       [1048] = { name = "붉은십자군 수도원으로", objective = "종교재판관 화이트메인, 붉은십자군 사령관 모그레인, 붉은십자군 용사 헤로드와 사냥개조련사 록시를 처치한 후 언더시티에 있는 바리마트라스에게 돌아가 보고해야 합니다.", pickup = "바리마트라스, 언더시티", turnin = "바리마트라스, 언더시티" },
@@ -2534,7 +2582,7 @@ local NEW_WINGS = {
     },
   },
   zhCN = {
-    dungeons = { "血色修道院：军械库", "血色修道院：大教堂", "剃刀高地" },
+    dungeons = { "血色修道院 - 军械库", "血色修道院 - 教堂", "剃刀高地" },
     npc = { ["Herod"] = "赫洛德", ["High Inquisitor Fairbanks"] = "大检察官法尔班克斯", ["Scarlet Commander Mograine"] = "血色十字军指挥官莫格莱尼", ["High Inquisitor Whitemane"] = "大检察官怀特迈恩", ["Tuten'kash"] = "图特卡什", ["Mordresh Fire Eye"] = "火眼莫德雷斯", ["Glutton"] = "暴食者", ["Ragglesnout"] = "拉戈斯诺特", ["Plaguemaw the Rotting"] = "腐烂的普雷莫尔", ["Amnennar the Coldbringer"] = "寒冰之王亚门纳尔", ["Varimathras"] = "瓦里玛萨斯", ["Raleigh the Devout"] = "虔诚的莱雷恩", ["Andrew Brownell"] = "安德鲁·布隆奈尔", ["Belnistrasz"] = "奔尼斯特拉兹", ["Archbishop Benedictus"] = "大主教本尼迪塔斯", ["Myriam Moonsinger"] = "麦雷姆·月歌" },
     quests = {
       [1048] = { name = "深入血色修道院", objective = "杀掉大检察官怀特迈恩、血色十字军指挥官莫格莱尼、血色十字军勇士赫洛德和驯犬者洛克希，然后向幽暗城的瓦里玛萨斯回报。", pickup = "瓦里玛萨斯，幽暗城", turnin = "瓦里玛萨斯，幽暗城" },
@@ -2547,7 +2595,7 @@ local NEW_WINGS = {
     },
   },
   zhTW = {
-    dungeons = { "血色修道院：軍械庫", "血色修道院：大教堂", "剃刀高地" },
+    dungeons = { "血色修道院 - 軍械庫", "血色修道院 - 教堂", "剃刀高地" },
     npc = { ["Herod"] = "赫洛德", ["High Inquisitor Fairbanks"] = "大檢察官法爾班克斯", ["Scarlet Commander Mograine"] = "血色十字軍指揮官莫格萊尼", ["High Inquisitor Whitemane"] = "大檢察官懷特邁恩", ["Tuten'kash"] = "圖特卡什", ["Mordresh Fire Eye"] = "火眼莫德雷斯", ["Glutton"] = "暴食者", ["Ragglesnout"] = "拉戈斯諾特", ["Plaguemaw the Rotting"] = "腐爛的普雷莫爾", ["Amnennar the Coldbringer"] = "寒冰之王亞門納爾", ["Varimathras"] = "瓦里瑪薩斯", ["Raleigh the Devout"] = "虔誠的萊雷恩", ["Andrew Brownell"] = "安德魯·布隆奈爾", ["Belnistrasz"] = "奔尼斯特拉茲", ["Archbishop Benedictus"] = "大主教本尼迪塔斯", ["Myriam Moonsinger"] = "麥雷姆·月歌" },
     quests = {
       [1048] = { name = "深入血色修道院", objective = "殺掉大檢察官懷特邁恩、血色十字軍指揮官莫格萊尼、血色十字軍勇士赫洛德和馴犬者洛克希，然後向幽暗城的瓦里瑪薩斯回報。", pickup = "瓦里瑪薩斯，幽暗城", turnin = "瓦里瑪薩斯，幽暗城" },
@@ -2630,7 +2678,7 @@ local ULD_ZF = {
     },
   },
   frFR = {
-    dungeons = { "Uldaman", "Zul'Farrak", "Terres ingrates", "Tanaris" },
+    dungeons = { "Uldaman", "Zul’Farrak", "Terres ingrates", "Tanaris" },
     bosses = { ["Archaedas"] = "Archaedas", ["Grimlok"] = "Grimlok", ["Revelosh"] = "Revelosh", ["Ancient Stone Keeper"] = "Ancien Gardien des pierres", ["Ironaya"] = "Ironaya", ["Chief Ukorz Sandscalp"] = "Chef Ukorz Scalpessable", ["Witch Doctor Zum'rah"] = "Sorcier-docteur Zum'rah", ["Gahz'rilla"] = "Gahz'rilla", ["Shadowpriest Sezz'ziz"] = "Prêtre des ombres Sezz'ziz", ["Galgann Firehammer"] = "Galgann Firehammer", ["Ruuzlu"] = "Ruuzlu", ["Antu'sul"] = "Antu'sul", ["Sandarr Dunereaver"] = "Sandarr Ravadune", ["Dustwraith"] = "Ame en peine poudreuse", ["Zerillis"] = "Zerillis", ["The Lost Dwarves"] = "Les nains perdus" },
     quests = {
       [17] = { name = "Rechercher les composants à Uldaman", objective = "Apporter 12 Champignons magenta à Ghak Healtouch à Thelsamar." },
@@ -2904,7 +2952,7 @@ end
 -- quest texts from the Wowhead Forever tooltips (none published for Italian yet).
 local STSM = {
   deDE = {
-    dungeons = { "Versunkener Tempel", "Scholomance", "Maraudon", "Sümpfe des Elends", "Westliche Pestländer", "Desolace" },
+    dungeons = { "Der Tempel von Atal'Hakkar", "Scholomance", "Maraudon", "Sümpfe des Elends", "Westliche Pestländer", "Desolace" },
     bosses = { ["Darkmaster Gandling"] = "Dunkelmeister Gandling", ["Shade of Eranikus"] = "Eranikus' Schemen", ["Jammal'an the Prophet"] = "Jammal'an der Prophet", ["Ogom the Wretched"] = "Ogom der Elende", ["Morphaz"] = "Morphaz", ["Weaver"] = "Wirker", ["Dreamscythe"] = "Traumsense", ["Hazzas"] = "Hazzas", ["Avatar of Hakkar"] = "Avatar von Hakkar", ["Atal'alarion"] = "Atal'alarion", ["Vectus"] = "Vectus", ["Marduk Blackpool"] = "Marduk Blackpool", ["Lady Illucia Barov"] = "Lady Illucia Barov", ["Jandice Barov"] = "Jandice Barov", ["Lord Alexei Barov"] = "Lord Alexei Barov", ["Instructor Malicia"] = "Instrukteurin Malicia", ["Kirtonos the Herald"] = "Kirtonos der Herold", ["The Ravenian"] = "Der Ravenier", ["Ras Frostwhisper"] = "Ras Frostraunen", ["Lorekeeper Polkelt"] = "Hüter des Wissens Polkelt", ["Doctor Theolen Krastinov"] = "Doktor Theolen Krastinov", ["Rattlegore"] = "Blutrippe", ["Princess Theradras"] = "Prinzessin Theradras", ["Landslide"] = "Erdrutsch", ["Celebras the Cursed"] = "Celebras der Verfluchte", ["Lord Vyletongue"] = "Lord Schlangenzunge", ["Meshlok the Harvester"] = "Meshlok der Ernter", ["Razorlash"] = "Schlingwurzler", ["Noxxion"] = "Noxxion", ["Rotgrip"] = "Faulschnapper", ["Tinkerer Gizlock"] = "Tüftler Gizlock" },
     quests = {
       [1445] = { name = "Der Tempel von Atal'Hakkar", objective = "Sammelt 20 Fetische von Hakkar und bringt sie zu Fel'Zerul in Stonard." },
@@ -2937,7 +2985,7 @@ local STSM = {
     },
   },
   frFR = {
-    dungeons = { "Temple englouti", "Scholomance", "Maraudon", "Marais des Chagrins", "Maleterres de l'Ouest", "Désolace" },
+    dungeons = { "Le temple d'Atal'Hakkar", "Scholomance", "Maraudon", "Marais des Chagrins", "Maleterres de l'Ouest", "Désolace" },
     bosses = { ["Darkmaster Gandling"] = "Sombre Maître Gandling", ["Shade of Eranikus"] = "Ombre d'Eranikus", ["Jammal'an the Prophet"] = "Jammal'an le prophète", ["Ogom the Wretched"] = "Ogom le Misérable", ["Morphaz"] = "Morphaz", ["Weaver"] = "Tisserand", ["Dreamscythe"] = "Fauche-rêve", ["Hazzas"] = "Hazzas", ["Avatar of Hakkar"] = "Avatar d'Hakkar", ["Atal'alarion"] = "Atal'alarion", ["Vectus"] = "Vectus", ["Marduk Blackpool"] = "Marduk Noirétang", ["Lady Illucia Barov"] = "Dame Illucia Barov", ["Jandice Barov"] = "Jandice Barov", ["Lord Alexei Barov"] = "Seigneur Alexei Barov", ["Instructor Malicia"] = "Instructeur Malicia", ["Kirtonos the Herald"] = "Kirtonos le Héraut", ["The Ravenian"] = "Le Voracien", ["Ras Frostwhisper"] = "Ras Murmegivre", ["Lorekeeper Polkelt"] = "Gardien du savoir Polkelt", ["Doctor Theolen Krastinov"] = "Docteur Theolen Krastinov", ["Rattlegore"] = "Cliquettripes", ["Princess Theradras"] = "Princesse Theradras", ["Landslide"] = "Glissement de terrain", ["Celebras the Cursed"] = "Celebras le Maudit", ["Lord Vyletongue"] = "Seigneur Vylelangue", ["Meshlok the Harvester"] = "Meshlok le Moissonneur", ["Razorlash"] = "Tranchefouet", ["Noxxion"] = "Noxxion", ["Rotgrip"] = "Grippe-charogne", ["Tinkerer Gizlock"] = "Artisan Gizlock" },
     quests = {
       [1445] = { name = "Le temple d'Atal'Hakkar", objective = "Rassembler 20 Fétiches d'Hakkar et les apporter à Fel’Zerul à Stonard." },
@@ -2970,7 +3018,7 @@ local STSM = {
     },
   },
   esES = {
-    dungeons = { "Templo Sumergido", "Scholomance", "Maraudon", "Pantano de las Penas", "Tierras de la Peste del Oeste", "Desolace" },
+    dungeons = { "El Templo de Atal'Hakkar", "Scholomance", "Maraudon", "Pantano de las Penas", "Tierras de la Peste del Oeste", "Desolace" },
     bosses = { ["Darkmaster Gandling"] = "Maestro oscuro Gandling", ["Shade of Eranikus"] = "Sombra de Eranikus", ["Jammal'an the Prophet"] = "Jammal'an el Profeta", ["Ogom the Wretched"] = "Ogom el Desdichado", ["Morphaz"] = "Morphaz", ["Weaver"] = "Sastrón", ["Dreamscythe"] = "Guadañasueños", ["Hazzas"] = "Hazzas", ["Avatar of Hakkar"] = "Avatar de Hakkar", ["Atal'alarion"] = "Atal'alarion", ["Vectus"] = "Vectus", ["Marduk Blackpool"] = "Marduz Pozonegro", ["Lady Illucia Barov"] = "Lady Illucia Barov", ["Jandice Barov"] = "Jandice Barov", ["Lord Alexei Barov"] = "Lord Alexei Barov", ["Instructor Malicia"] = "Instructor Malicia", ["Kirtonos the Herald"] = "Kirtonos el Heraldo", ["The Ravenian"] = "El Devorador", ["Ras Frostwhisper"] = "Ras Levescarcha", ["Lorekeeper Polkelt"] = "Tradicionalista Polkelt", ["Doctor Theolen Krastinov"] = "Doctor Theolen Krastinov", ["Rattlegore"] = "Traquesangre", ["Princess Theradras"] = "Princesa Theradras", ["Landslide"] = "Derrumblo", ["Celebras the Cursed"] = "Celebras el Maldito", ["Lord Vyletongue"] = "Lord Lenguavil", ["Meshlok the Harvester"] = "Meshlok el Cosechador", ["Razorlash"] = "Latisable", ["Noxxion"] = "Noxxion", ["Rotgrip"] = "Escamapodrida", ["Tinkerer Gizlock"] = "Manitas Gizlock" },
     quests = {
       [1445] = { name = "El Templo de Atal'Hakkar", objective = "Reúne 20 fetiches de Hakkar y llévaselos a Fel'Zerul en Rocal." },
@@ -3006,7 +3054,7 @@ local STSM = {
     dungeons = { "Tempio Sommerso", "Scholomance", "Maraudon", false, false, false },
   },
   ptBR = {
-    dungeons = { "Templo Submerso", "Scolomântia", "Maraudon", "Pântano das Mágoas", "Terras Pestilentas Ocidentais", "Desolação" },
+    dungeons = { "Templo de Atal'Hakkar", "Scolomântia", "Maraudon", "Pântano das Mágoas", "Terras Pestilentas Ocidentais", "Desolação" },
     bosses = { ["Darkmaster Gandling"] = "Umbromestre Gandling", ["Shade of Eranikus"] = "Vulto de Erânicos", ["Jammal'an the Prophet"] = "Jammal'an, o Profeta", ["Ogom the Wretched"] = "Ogom, o Patife", ["Morphaz"] = "Morphaz", ["Weaver"] = "Tecelão", ["Dreamscythe"] = "Darquimeros", ["Hazzas"] = "Hazzas", ["Avatar of Hakkar"] = "Avatar de Hakkar", ["Atal'alarion"] = "Atal'alarion", ["Vectus"] = "Vectus", ["Marduk Blackpool"] = "Marduque Lagonero", ["Lady Illucia Barov"] = "Lady Ilúcia Barov", ["Jandice Barov"] = "Janice Barov", ["Lord Alexei Barov"] = "Lorde Alexei Barov", ["Instructor Malicia"] = "Instrutora Malícia", ["Kirtonos the Herald"] = "Kirtonos, o Arauto", ["The Ravenian"] = "O Corvino", ["Ras Frostwhisper"] = "Ras Friomúrmuro", ["Lorekeeper Polkelt"] = "Erudito Pulquério", ["Doctor Theolen Krastinov"] = "Doutor Theolen Krastinov", ["Rattlegore"] = "Ossorrange", ["Princess Theradras"] = "Princesa Theradras", ["Landslide"] = "Soterrador", ["Celebras the Cursed"] = "Celebras, o Amaldiçoado", ["Lord Vyletongue"] = "Lorde Torpelíngua", ["Meshlok the Harvester"] = "Meshloc, o Ceifador", ["Razorlash"] = "Azorrague", ["Noxxion"] = "Tóxxico", ["Rotgrip"] = "Putrigarra", ["Tinkerer Gizlock"] = "Engenhoqueiro Bugitranca" },
     quests = {
       [1445] = { name = "O templo de Atal'Hakkar", objective = "Obtenha 20 Fetiches de Hakkar e leve-os para Vil'Zerul em Pedregal." },
@@ -3039,7 +3087,7 @@ local STSM = {
     },
   },
   ruRU = {
-    dungeons = { "Затонувший храм", "Некроситет", "Мародон", "Болото Печали", "Западные Чумные земли", "Пустоши" },
+    dungeons = { "Храм Атал'Хаккар", "Некроситет", "Мародон", "Болото Печали", "Западные Чумные земли", "Пустоши" },
     bosses = { ["Darkmaster Gandling"] = "Темный магистр Гандлинг", ["Shade of Eranikus"] = "Тень Эраникуса", ["Jammal'an the Prophet"] = "Джаммал'ан Пророк", ["Ogom the Wretched"] = "Огом Презренный", ["Morphaz"] = "Морфаз", ["Weaver"] = "Ткачик", ["Dreamscythe"] = "Жнец Снов", ["Hazzas"] = "Хаззас", ["Avatar of Hakkar"] = "Аватара Хаккара", ["Atal'alarion"] = "Атал'аларион", ["Vectus"] = "Вектус", ["Marduk Blackpool"] = "Мардук Блэкпул", ["Lady Illucia Barov"] = "Леди Иллюсия Баров", ["Jandice Barov"] = "Джандис Баров", ["Lord Alexei Barov"] = "Лорд Алексей Баров", ["Instructor Malicia"] = "Инструктор Коварница", ["Kirtonos the Herald"] = "Киртонос Глашатай", ["The Ravenian"] = "Равениан", ["Ras Frostwhisper"] = "Рас Снегошепот", ["Lorekeeper Polkelt"] = "Сказитель Полкелт", ["Doctor Theolen Krastinov"] = "Доктор Теолен Крастинов", ["Rattlegore"] = "Громоклин", ["Princess Theradras"] = "Принцесса Терадрас", ["Landslide"] = "Сель", ["Celebras the Cursed"] = "Селебрас Проклятый", ["Lord Vyletongue"] = "Лорд Злоязыкий", ["Meshlok the Harvester"] = "Мешлок Жнец", ["Razorlash"] = "Бритвохлест", ["Noxxion"] = "Ноксион", ["Rotgrip"] = "Гнилопасть", ["Tinkerer Gizlock"] = "Ремонтник Гизлок" },
     quests = {
       [1445] = { name = "Храм Атал'Хаккара", objective = "Соберите 20 фетишей Хаккара и принесите их Фел'зерулу в Каменор." },
@@ -3072,7 +3120,7 @@ local STSM = {
     },
   },
   koKR = {
-    dungeons = { "가라앉은 사원", "스칼로맨스", "마라우돈", "슬픔의 늪", "서부 역병지대", "잊혀진 땅" },
+    dungeons = { "아탈학카르 신전", "스칼로맨스", "마라우돈", "슬픔의 늪", "서부 역병지대", "잊혀진 땅" },
     bosses = { ["Darkmaster Gandling"] = "암흑스승 간들링", ["Shade of Eranikus"] = "에라니쿠스의 사령", ["Jammal'an the Prophet"] = "예언자 잠말란", ["Ogom the Wretched"] = "비운의 오그옴", ["Morphaz"] = "몰파즈", ["Weaver"] = "위버", ["Dreamscythe"] = "드림사이드", ["Hazzas"] = "하자스", ["Avatar of Hakkar"] = "학카르의 화신", ["Atal'alarion"] = "아탈알라리온", ["Vectus"] = "벡투스", ["Marduk Blackpool"] = "마르두크 블랙풀", ["Lady Illucia Barov"] = "여군주 일루시아 바로브", ["Jandice Barov"] = "잔다이스 바로브", ["Lord Alexei Barov"] = "군주 알렉세이 바로브", ["Instructor Malicia"] = "조교 말리시아", ["Kirtonos the Herald"] = "사자 키르토노스", ["The Ravenian"] = "라베니안", ["Ras Frostwhisper"] = "라스 프로스트위스퍼", ["Lorekeeper Polkelt"] = "현자 폴켈트", ["Doctor Theolen Krastinov"] = "학자 테올렌 크라스티노브", ["Rattlegore"] = "들창어금니", ["Princess Theradras"] = "공주 테라드라스", ["Landslide"] = "산사태", ["Celebras the Cursed"] = "저주받은 셀레브라스", ["Lord Vyletongue"] = "군주 바일텅", ["Meshlok the Harvester"] = "정원사 메슬로크", ["Razorlash"] = "칼날채찍", ["Noxxion"] = "녹시온", ["Rotgrip"] = "썩은아귀", ["Tinkerer Gizlock"] = "땜장이 기즐록" },
     quests = {
       [1445] = { name = "아탈학카르 신전", objective = "스토나드에 있는 펠제룰에게 학카르의 우상 20개를 가져가야 합니다." },
@@ -3105,7 +3153,7 @@ local STSM = {
     },
   },
   zhCN = {
-    dungeons = { "沉没的神庙", "通灵学院", "玛拉顿", "悲伤沼泽", "西瘟疫之地", "凄凉之地" },
+    dungeons = { "阿塔哈卡神庙", "通灵学院", "玛拉顿", "悲伤沼泽", "西瘟疫之地", "凄凉之地" },
     bosses = { ["Darkmaster Gandling"] = "黑暗院长加丁", ["Shade of Eranikus"] = "伊兰尼库斯的阴影", ["Jammal'an the Prophet"] = "预言者迦玛兰", ["Ogom the Wretched"] = "可悲的奥戈姆", ["Morphaz"] = "摩弗拉斯", ["Weaver"] = "德拉维沃尔", ["Dreamscythe"] = "德姆塞卡尔", ["Hazzas"] = "哈扎斯", ["Avatar of Hakkar"] = "哈卡的化身", ["Atal'alarion"] = "阿塔拉利恩", ["Vectus"] = "维克图斯", ["Marduk Blackpool"] = "马杜克·布莱克波尔", ["Lady Illucia Barov"] = "伊露希亚·巴罗夫", ["Jandice Barov"] = "詹迪斯·巴罗夫", ["Lord Alexei Barov"] = "阿雷克斯·巴罗夫", ["Instructor Malicia"] = "讲师玛丽希亚", ["Kirtonos the Herald"] = "传令官基尔图诺斯", ["The Ravenian"] = "拉文尼亚", ["Ras Frostwhisper"] = "莱斯·霜语", ["Lorekeeper Polkelt"] = "博学者普克尔特", ["Doctor Theolen Krastinov"] = "瑟尔林·卡斯迪诺夫教授", ["Rattlegore"] = "血骨傀儡", ["Princess Theradras"] = "瑟莱德丝公主", ["Landslide"] = "兰斯利德", ["Celebras the Cursed"] = "被诅咒的塞雷布拉斯", ["Lord Vyletongue"] = "维利塔恩", ["Meshlok the Harvester"] = "收割者麦什洛克", ["Razorlash"] = "锐刺鞭笞者", ["Noxxion"] = "诺克赛恩", ["Rotgrip"] = "洛特格里普", ["Tinkerer Gizlock"] = "工匠吉兹洛克" },
     quests = {
       [1445] = { name = "阿塔哈卡神庙", objective = "收集20个哈卡神像，把它们带给斯通纳德的费泽鲁尔。" },
@@ -3138,7 +3186,7 @@ local STSM = {
     },
   },
   zhTW = {
-    dungeons = { "沉沒的神廟", "通靈學院", "瑪拉頓", "悲傷沼澤", "西瘟疫之地", "淒涼之地" },
+    dungeons = { "阿塔哈卡神廟", "通靈學院", "瑪拉頓", "悲傷沼澤", "西瘟疫之地", "淒涼之地" },
     bosses = { ["Darkmaster Gandling"] = "黑暗院長加丁", ["Shade of Eranikus"] = "伊蘭尼庫斯的陰影", ["Jammal'an the Prophet"] = "預言者迦瑪蘭", ["Ogom the Wretched"] = "可悲的奧戈姆", ["Morphaz"] = "摩弗拉斯", ["Weaver"] = "德拉維沃爾", ["Dreamscythe"] = "德姆塞卡爾", ["Hazzas"] = "哈扎斯", ["Avatar of Hakkar"] = "哈卡的化身", ["Atal'alarion"] = "阿塔拉利恩", ["Vectus"] = "維克圖斯", ["Marduk Blackpool"] = "馬杜克·布萊克波爾", ["Lady Illucia Barov"] = "伊露希亞·巴羅夫", ["Jandice Barov"] = "詹迪斯·巴羅夫", ["Lord Alexei Barov"] = "阿雷克斯·巴羅夫", ["Instructor Malicia"] = "講師瑪麗希亞", ["Kirtonos the Herald"] = "傳令官基爾圖諾斯", ["The Ravenian"] = "拉文尼亞", ["Ras Frostwhisper"] = "萊斯·霜語", ["Lorekeeper Polkelt"] = "博學者普克爾特", ["Doctor Theolen Krastinov"] = "瑟爾林·卡斯迪諾夫教授", ["Rattlegore"] = "血骨傀儡", ["Princess Theradras"] = "瑟萊德絲公主", ["Landslide"] = "蘭斯利德", ["Celebras the Cursed"] = "被詛咒的塞雷布拉斯", ["Lord Vyletongue"] = "維利塔恩", ["Meshlok the Harvester"] = "收割者麥什洛克", ["Razorlash"] = "銳刺鞭笞者", ["Noxxion"] = "諾克賽恩", ["Rotgrip"] = "洛特格里普", ["Tinkerer Gizlock"] = "工匠吉茲洛克" },
     quests = {
       [1445] = { name = "阿塔哈卡神廟", objective = "收集20個哈卡神像，把它們帶給斯通納德的費澤魯爾。" },
@@ -3193,11 +3241,20 @@ for lang, data in pairs(STSM) do
     end
 end
 
+-- Combined Sunken Temple encounters reuse the existing localized NPC names.
+for _, content in pairs(FDJ.ContentLocales) do
+    local bosses = content.bosses
+    if bosses then
+        bosses["Morphaz & Hazzas"] = (bosses["Morphaz"] or "Morphaz") .. " & " .. (bosses["Hazzas"] or "Hazzas")
+        bosses["Dreamscythe & Weaver"] = (bosses["Dreamscythe"] or "Dreamscythe") .. " & " .. (bosses["Weaver"] or "Weaver")
+    end
+end
+
 -- Dire Maul (East, West, North) and Stratholme (Living, Undead), added 1.6.5:
 -- official names and quest texts from the Wowhead Forever tooltips.
 local DMST = {
   deDE = {
-    dungeons = { "Düsterbruch: Ost", "Düsterbruch: West", "Düsterbruch: Nord", "Stratholme: Lebend", "Stratholme: Untot", "Feralas", "Östliche Pestländer" },
+    dungeons = { "Düsterbruch - Ost", "Düsterbruch - West", "Düsterbruch - Nord", "Stratholme - Haupttor", "Stratholme - Dienstboteneingang", "Feralas", "Östliche Pestländer" },
     bosses = { ["Skul"] = "Skul", ["Magistrate Barthilas"] = "Magistrat Barthilas", ["Baroness Anastari"] = "Baroness Anastari", ["Nerub'enkan"] = "Nerub'enkan", ["Maleki the Pallid"] = "Maleki der Leichenblasse", ["Ramstein the Gorger"] = "Ramstein der Verschlinger", ["Baron Rivendare"] = "Baron Rivendare", ["The Unforgiven"] = "Der Unverziehene", ["Hearthsinger Forresten"] = "Herdsinger Forresten", ["Timmy the Cruel"] = "Timmy der Grausame", ["Stonespine"] = "Steinbuckel", ["Archivist Galford"] = "Archivar Galford", ["Balnazzar"] = "Balnazzar", ["Cannon Master Willey"] = "Kanonenmeister Willey", ["Postmaster Malown"] = "Postmeister Malown", ["Tsu'zee"] = "Tsu'zee", ["Prince Tortheldrin"] = "Prinz Tortheldrin", ["Magister Kalendris"] = "Magister Kalendris", ["Illyanna Ravenoak"] = "Illyanna Rabeneiche", ["Tendris Warpwood"] = "Tendris Wucherborke", ["Zevrim Thornhoof"] = "Zevrim Dornhuf", ["Alzzin the Wildshaper"] = "Alzzin der Wildformer", ["Immol'thar"] = "Immol'thar", ["King Gordok"] = "König Gordok", ["Hydrospawn"] = "Hydrobrut", ["Guard Fengus"] = "Wache Fengus", ["Stomper Kreeg"] = "Stampfer Kreeg", ["Guard Slip'kik"] = "Wache Slip'kik", ["Cho'Rush the Observer"] = "Cho'Rush der Beobachter", ["Captain Kromcrush"] = "Captain Kromcrush", ["Guard Mol'dar"] = "Wache Mol'dar", ["Lethtendris"] = "Lethtendris", ["Lord Hel'nurath"] = "Lord Hel'nurath" },
     quests = {
       [5122] = { name = "Das Medaillon des Glaubens" },
@@ -3226,7 +3283,7 @@ local DMST = {
     },
   },
   frFR = {
-    dungeons = { "Hache-tripes : Est", "Hache-tripes : Ouest", "Hache-tripes : Nord", "Stratholme : Vivants", "Stratholme : Morts-vivants", "Feralas", "Maleterres de l'Est" },
+    dungeons = { "Haches-Tripes - Est", "Haches-Tripes - Ouest", "Haches-Tripes - Nord", "Stratholme - Grande porte", "Stratholme - Entrée de service", "Feralas", "Maleterres de l'Est" },
     bosses = { ["Skul"] = "Krân", ["Magistrate Barthilas"] = "Magistrat Barthilas", ["Baroness Anastari"] = "Baronne Anastari", ["Nerub'enkan"] = "Nerub'enkan", ["Maleki the Pallid"] = "Maleki le Blafard", ["Ramstein the Gorger"] = "Ramstein Grandgosier", ["Baron Rivendare"] = "Baron Rivendare", ["The Unforgiven"] = "Le Condamné", ["Hearthsinger Forresten"] = "Hearthsinger Forresten", ["Timmy the Cruel"] = "Timmy le Cruel", ["Stonespine"] = "Echine-de-pierre", ["Archivist Galford"] = "Archiviste Galford", ["Balnazzar"] = "Balnazzar", ["Cannon Master Willey"] = "Maître canonnier Willey", ["Postmaster Malown"] = "Postier Malown", ["Tsu'zee"] = "Tsu'zee", ["Prince Tortheldrin"] = "Prince Tortheldrin", ["Magister Kalendris"] = "Magistère Kalendris", ["Illyanna Ravenoak"] = "Illyanna Ravenoak", ["Tendris Warpwood"] = "Tendris Crochebois", ["Zevrim Thornhoof"] = "Zevrim Thornhoof", ["Alzzin the Wildshaper"] = "Alzzin le Modeleur", ["Immol'thar"] = "Immol'thar", ["King Gordok"] = "Roi Gordok", ["Hydrospawn"] = "Hydrogénos", ["Guard Fengus"] = "Garde Fengus", ["Stomper Kreeg"] = "Kreeg le Marteleur", ["Guard Slip'kik"] = "Garde Slip'kik", ["Cho'Rush the Observer"] = "Cho'Rush l'Observateur", ["Captain Kromcrush"] = "Capitaine Kromcrush", ["Guard Mol'dar"] = "Garde Mol'dar", ["Lethtendris"] = "Lethtendris", ["Lord Hel'nurath"] = "Seigneur Hel'nurath" },
     quests = {
       [5122] = { name = "Le médaillon de foi" },
@@ -3255,7 +3312,7 @@ local DMST = {
     },
   },
   esES = {
-    dungeons = { "La Masacre: Este", "La Masacre: Oeste", "La Masacre: Norte", "Stratholme: Vivos", "Stratholme: No-muertos", "Feralas", "Tierras de la Peste del Este" },
+    dungeons = { "La Masacre: Este", "La Masacre: Oeste", "La Masacre: Norte", "Stratholme: Entrada Principal", "Stratholme: Entrada de Servicio", "Feralas", "Tierras de la Peste del Este" },
     bosses = { ["Skul"] = "Skul", ["Magistrate Barthilas"] = "Magistrado Barthilas", ["Baroness Anastari"] = "Baronesa Anastari", ["Nerub'enkan"] = "Nerub'enkan", ["Maleki the Pallid"] = "Maleki el Pálido", ["Ramstein the Gorger"] = "Ramstein el Empachador", ["Baron Rivendare"] = "Barón Osahendido", ["The Unforgiven"] = "El imperdonable", ["Hearthsinger Forresten"] = "Escupezones Foreste", ["Timmy the Cruel"] = "Timmy el Cruel", ["Stonespine"] = "Pidrespina", ["Archivist Galford"] = "Archivista Galford", ["Balnazzar"] = "Balnazzar", ["Cannon Master Willey"] = "Maestro cañonero Willey", ["Postmaster Malown"] = "Jefe de correos Gassol", ["Tsu'zee"] = "Tsu'zee", ["Prince Tortheldrin"] = "Príncipe Tortheldrin", ["Magister Kalendris"] = "Magister Kalendris", ["Illyanna Ravenoak"] = "Illyanna Roblecuervo", ["Tendris Warpwood"] = "Tendris Madeguerra", ["Zevrim Thornhoof"] = "Zevrim Pezuñahendida", ["Alzzin the Wildshaper"] = "Alzzin el Formaferal", ["Immol'thar"] = "Immol'thar", ["King Gordok"] = "Rey Gordok", ["Hydrospawn"] = "Hidromilecio", ["Guard Fengus"] = "Guardia Fengus", ["Stomper Kreeg"] = "Vapuleador Kreeg", ["Guard Slip'kik"] = "Guardia Slip'kik", ["Cho'Rush the Observer"] = "Cho'Rush el Observador", ["Captain Kromcrush"] = "Capitán Kromcrush", ["Guard Mol'dar"] = "Guardia Mol'dar", ["Lethtendris"] = "Lethtendris", ["Lord Hel'nurath"] = "Lord Hel'nurath" },
     quests = {
       [5122] = { name = "El medallón de Fe" },
@@ -3287,7 +3344,7 @@ local DMST = {
     dungeons = { "Dire Maul: Est", "Dire Maul: Ovest", "Dire Maul: Nord", "Stratholme: Vivi", "Stratholme: Non Morti", false, false },
   },
   ptBR = {
-    dungeons = { "Gládio Cruel: Leste", "Gládio Cruel: Oeste", "Gládio Cruel: Norte", "Stratholme: Vivos", "Stratholme: Mortos-vivos", "Feralas", "Terras Pestilentas Orientais" },
+    dungeons = { "Gládio Cruel – Leste", "Gládio Cruel – Oeste", "Gládio Cruel – Norte", "Stratholme – Portão Principal", "Stratholme – Entrada de Serviço", "Feralas", "Terras Pestilentas Orientais" },
     bosses = { ["Skul"] = "Kranio", ["Magistrate Barthilas"] = "Magistrado Barthilas", ["Baroness Anastari"] = "Baronesa Anastari", ["Nerub'enkan"] = "Nerub'enkan", ["Maleki the Pallid"] = "Malaki, o Pálido", ["Ramstein the Gorger"] = "Ramstein, o Devorador", ["Baron Rivendare"] = "Barão Rivendare", ["The Unforgiven"] = "O Imperdoável", ["Hearthsinger Forresten"] = "Cantalar Forresten", ["Timmy the Cruel"] = "Tico, o Cruel", ["Stonespine"] = "Petrespáduas", ["Archivist Galford"] = "Arquivista Galford", ["Balnazzar"] = "Balnazzar", ["Cannon Master Willey"] = "Mestre de Canhões Gualter", ["Postmaster Malown"] = "Chefe do Correio Malown", ["Tsu'zee"] = "Tsu'zee", ["Prince Tortheldrin"] = "Príncipe Tortheldrin", ["Magister Kalendris"] = "Magíster Kalendris", ["Illyanna Ravenoak"] = "Illyanna Corvalho", ["Tendris Warpwood"] = "Gavíneo Lenhatorta", ["Zevrim Thornhoof"] = "Zevrim Cascardo", ["Alzzin the Wildshaper"] = "Azzin, o Selvamorfo", ["Immol'thar"] = "Immol'thar", ["King Gordok"] = "Rei Gordok", ["Hydrospawn"] = "Rebentágua", ["Guard Fengus"] = "Guarda Fengus", ["Stomper Kreeg"] = "Pisoteador Kreeg", ["Guard Slip'kik"] = "Guarda Kishutt", ["Cho'Rush the Observer"] = "Ez'Magg, o Observador", ["Captain Kromcrush"] = "Capitão Kebrapaw", ["Guard Mol'dar"] = "Guarda Mol'dar", ["Lethtendris"] = "Letendris", ["Lord Hel'nurath"] = "Lorde Hel'nurath" },
     quests = {
       [5122] = { name = "O Medalhão da Fé" },
@@ -3316,7 +3373,7 @@ local DMST = {
     },
   },
   ruRU = {
-    dungeons = { "Забытый Город: Восток", "Забытый Город: Запад", "Забытый Город: Север", "Стратхольм: Живые", "Стратхольм: Нежить", "Фералас", "Восточные Чумные земли" },
+    dungeons = { "Забытый город: восток", "Забытый город: запад", "Забытый город: север", "Стратхольм – Главные врата", "Стратхольм – Черный ход", "Фералас", "Восточные Чумные земли" },
     bosses = { ["Skul"] = "Череп", ["Magistrate Barthilas"] = "Мировой судья Бартилас", ["Baroness Anastari"] = "Баронесса Анастари", ["Nerub'enkan"] = "Неруб'энкан", ["Maleki the Pallid"] = "Малекай Бледный", ["Ramstein the Gorger"] = "Рамштайн Ненасытный", ["Baron Rivendare"] = "Барон Ривендер", ["The Unforgiven"] = "Непрощенный", ["Hearthsinger Forresten"] = "Певчий Форрестен", ["Timmy the Cruel"] = "Тайлер", ["Stonespine"] = "Каменный Гребень", ["Archivist Galford"] = "Архивариус Галфорд", ["Balnazzar"] = "Балназзар", ["Cannon Master Willey"] = "Мастер-канонир Вилли", ["Postmaster Malown"] = "Почтальон Мэлоун", ["Tsu'zee"] = "Цу'зи", ["Prince Tortheldrin"] = "Принц Тортелдрин", ["Magister Kalendris"] = "Магистр Календрис", ["Illyanna Ravenoak"] = "Иллиана Воронья Ольха", ["Tendris Warpwood"] = "Тендрис Криводрев", ["Zevrim Thornhoof"] = "Зеврим Терновое Копыто", ["Alzzin the Wildshaper"] = "Алззин Перевертень", ["Immol'thar"] = "Бессмер'тер", ["King Gordok"] = "Король Гордок", ["Hydrospawn"] = "Гидротварь", ["Guard Fengus"] = "Стражник Фенгус", ["Stomper Kreeg"] = "Топотун Криг", ["Guard Slip'kik"] = "Стражник Слип'кик", ["Cho'Rush the Observer"] = "Чо'Раш Наблюдатель", ["Captain Kromcrush"] = "Капитан Давигром", ["Guard Mol'dar"] = "Стражник Мол'дар", ["Lethtendris"] = "Лефтендрис", ["Lord Hel'nurath"] = "Лорд Хел'нурат" },
     quests = {
       [5122] = { name = "Медальон Веры" },
@@ -3345,7 +3402,7 @@ local DMST = {
     },
   },
   koKR = {
-    dungeons = { "혈투의 전장: 동쪽", "혈투의 전장: 서쪽", "혈투의 전장: 북쪽", "스트라솔름: 정문", "스트라솔름: 언데드", "페랄라스", "동부 역병지대" },
+    dungeons = { "혈투의 전장 - 동쪽", "혈투의 전장 - 서쪽", "혈투의 전장 - 북쪽", "스트라솔름 - 정문", "스트라솔름 - 공무용 입구", "페랄라스", "동부 역병지대" },
     bosses = { ["Skul"] = "스컬", ["Magistrate Barthilas"] = "집정관 발실라스", ["Baroness Anastari"] = "남작부인 아나스타리", ["Nerub'enkan"] = "네룹엔칸", ["Maleki the Pallid"] = "냉혈한 말레키", ["Ramstein the Gorger"] = "먹보 람스타인", ["Baron Rivendare"] = "남작 리븐데어", ["The Unforgiven"] = "용서받지 못한 자", ["Hearthsinger Forresten"] = "하스싱어 포레스턴", ["Timmy the Cruel"] = "잔혹한 티미", ["Stonespine"] = "뾰족바위", ["Archivist Galford"] = "기록관 갈포드", ["Balnazzar"] = "발나자르", ["Cannon Master Willey"] = "포병대장 윌리", ["Postmaster Malown"] = "우체국장 말로운", ["Tsu'zee"] = "츄지", ["Prince Tortheldrin"] = "왕자 토르텔드린", ["Magister Kalendris"] = "마술사 칼렌드리스", ["Illyanna Ravenoak"] = "일샨나 레이븐오크", ["Tendris Warpwood"] = "굽이나무 텐드리스", ["Zevrim Thornhoof"] = "제브림 쏜후프", ["Alzzin the Wildshaper"] = "칼날바람 알진", ["Immol'thar"] = "이몰타르", ["King Gordok"] = "왕 고르독", ["Hydrospawn"] = "히드로스폰", ["Guard Fengus"] = "경비병 펜구스", ["Stomper Kreeg"] = "천둥발 크리그", ["Guard Slip'kik"] = "경비병 슬립킥", ["Cho'Rush the Observer"] = "정찰병 초루쉬", ["Captain Kromcrush"] = "대장 크롬크러쉬", ["Guard Mol'dar"] = "경비병 몰다르", ["Lethtendris"] = "레스텐드리스", ["Lord Hel'nurath"] = "군주 헬누라스" },
     quests = {
       [5122] = { name = "신념의 메달" },
@@ -3374,7 +3431,7 @@ local DMST = {
     },
   },
   zhCN = {
-    dungeons = { "厄运之槌：东", "厄运之槌：西", "厄运之槌：北", "斯坦索姆：血色区", "斯坦索姆：亡灵区", "菲拉斯", "东瘟疫之地" },
+    dungeons = { "厄运之槌 - 东", "厄运之槌 - 西", "厄运之槌 - 北", "斯坦索姆 - 正门", "斯坦索姆 - 仆从入口", "菲拉斯", "东瘟疫之地" },
     bosses = { ["Skul"] = "斯库尔", ["Magistrate Barthilas"] = "巴瑟拉斯镇长", ["Baroness Anastari"] = "安娜丝塔丽男爵夫人", ["Nerub'enkan"] = "奈鲁布恩坎", ["Maleki the Pallid"] = "苍白的玛勒基", ["Ramstein the Gorger"] = "吞咽者拉姆斯登", ["Baron Rivendare"] = "瑞文戴尔男爵", ["The Unforgiven"] = "不可宽恕者", ["Hearthsinger Forresten"] = "弗雷斯特恩", ["Timmy the Cruel"] = "悲惨的提米", ["Stonespine"] = "石脊", ["Archivist Galford"] = "档案管理员加尔福特", ["Balnazzar"] = "巴纳扎尔", ["Cannon Master Willey"] = "炮手威利", ["Postmaster Malown"] = "邮差马龙", ["Tsu'zee"] = "苏斯", ["Prince Tortheldrin"] = "托塞德林王子", ["Magister Kalendris"] = "卡雷迪斯镇长", ["Illyanna Ravenoak"] = "伊琳娜·暗木", ["Tendris Warpwood"] = "特迪斯·扭木", ["Zevrim Thornhoof"] = "瑟雷姆·刺蹄", ["Alzzin the Wildshaper"] = "奥兹恩", ["Immol'thar"] = "伊莫塔尔", ["King Gordok"] = "戈多克大王", ["Hydrospawn"] = "海多斯博恩", ["Guard Fengus"] = "卫兵芬古斯", ["Stomper Kreeg"] = "践踏者克雷格", ["Guard Slip'kik"] = "卫兵斯里基克", ["Cho'Rush the Observer"] = "观察者克鲁什", ["Captain Kromcrush"] = "克罗卡斯", ["Guard Mol'dar"] = "卫兵摩尔达", ["Lethtendris"] = "蕾瑟塔蒂丝", ["Lord Hel'nurath"] = "赫尔努拉斯" },
     quests = {
       [5122] = { name = "信仰奖章" },
@@ -3403,7 +3460,7 @@ local DMST = {
     },
   },
   zhTW = {
-    dungeons = { "厄運之槌：東", "厄運之槌：西", "厄運之槌：北", "斯坦索姆：血色區", "斯坦索姆：亡靈區", "菲拉斯", "東瘟疫之地" },
+    dungeons = { "厄運之槌 - 東方", "厄運之槌 - 西方", "厄運之槌 - 北方", "斯坦索姆 - 主門", "斯坦索姆 - 僕從入口", "菲拉斯", "東瘟疫之地" },
     bosses = { ["Skul"] = "斯庫爾", ["Magistrate Barthilas"] = "巴瑟拉斯鎮長", ["Baroness Anastari"] = "安娜絲塔麗男爵夫人", ["Nerub'enkan"] = "奈魯布恩坎", ["Maleki the Pallid"] = "蒼白的瑪勒基", ["Ramstein the Gorger"] = "吞嚥者拉姆斯登", ["Baron Rivendare"] = "瑞文戴爾男爵", ["The Unforgiven"] = "不可寬恕者", ["Hearthsinger Forresten"] = "弗雷斯特恩", ["Timmy the Cruel"] = "悲慘的提米", ["Stonespine"] = "石脊", ["Archivist Galford"] = "檔案管理員加爾福特", ["Balnazzar"] = "巴納扎爾", ["Cannon Master Willey"] = "炮手威利", ["Postmaster Malown"] = "郵差馬龍", ["Tsu'zee"] = "蘇斯", ["Prince Tortheldrin"] = "託塞德林王子", ["Magister Kalendris"] = "卡雷迪斯鎮長", ["Illyanna Ravenoak"] = "伊琳娜·暗木", ["Tendris Warpwood"] = "特迪斯·扭木", ["Zevrim Thornhoof"] = "瑟雷姆·刺蹄", ["Alzzin the Wildshaper"] = "奧茲恩", ["Immol'thar"] = "伊莫塔爾", ["King Gordok"] = "戈多克大王", ["Hydrospawn"] = "海多斯博恩", ["Guard Fengus"] = "衛兵芬古斯", ["Stomper Kreeg"] = "踐踏者克雷格", ["Guard Slip'kik"] = "衛兵斯里基克", ["Cho'Rush the Observer"] = "觀察者克魯什", ["Captain Kromcrush"] = "克羅卡斯", ["Guard Mol'dar"] = "衛兵摩爾達", ["Lethtendris"] = "蕾瑟塔蒂絲", ["Lord Hel'nurath"] = "赫爾努拉斯" },
     quests = {
       [5122] = { name = "信仰獎章" },
@@ -3457,7 +3514,7 @@ end
 -- Blackrock Depths
 local BRD_LOC = {
   deDE = {
-    dungeon = "Blackrocktiefen", location = "Blackrock",
+    dungeon = "Schwarzfelstiefen", location = "Blackrock",
     bosses = { ["High Interrogator Gerstahn"] = "Verhörmeisterin Gerstahn", ["Lord Roccor"] = "Lord Roccor", ["Houndmaster Grebmar"] = "Hundemeister Grebmar", ["Gorosh the Dervish"] = "Gorosh der Derwisch", ["Grizzle"] = "Grizzle", ["Eviscerator"] = "Ausweider", ["Ok'thor the Breaker"] = "Ok'thor der Zerstörer", ["Anub'shiah"] = "Anub'shiah", ["Hedrum the Creeper"] = "Hedrum der Krabbler", ["Pyromancer Loregrain"] = "Pyromant Weiskorn", ["Fineous Darkvire"] = "Fineous Darkvire", ["Warder Stilgiss"] = "Wärter Stilgiss", ["Lord Incendius"] = "Lord Incendius", ["Bael'Gar"] = "Bael'Gar", ["General Angerforge"] = "General Zornesschmied", ["Golem Lord Argelmach"] = "Golemlord Argelmach", ["Hurley Blackbreath"] = "Hurley Pestatem", ["Phalanx"] = "Phalanx", ["Ribbly Screwspigot"] = "Ribbly Screwspigot", ["Plugger Spazzring"] = "Plugger Spazzring", ["Ambassador Flamelash"] = "Botschafter Flammenschlag", ["Panzor the Invincible"] = "Panzor der Unbesiegbare", ["The Seven"] = "Die Sieben", ["Magmus"] = "Magmus", ["Princess Moira Bronzebeard"] = "Prinzessin Moira Bronzebeard", ["Emperor Dagran Thaurissan"] = "Imperator Dagran Thaurissan" },
     quests = {
       [3802] = { name = "Dunkeleisenerbe", objective = "Erschlagt Fineous Darkvire und bergt den großen Hammer Ironfel. Bringt Ironfel zum Schrein von Thaurissan und legt ihn auf die Statue von Franclorn Forgewright." },
@@ -3486,7 +3543,7 @@ local BRD_LOC = {
     },
   },
   frFR = {
-    dungeon = "Profondeurs de Blackrock", location = "Mont Blackrock",
+    dungeon = "Profondeurs de Rochenoire", location = "Mont Blackrock",
     bosses = { ["High Interrogator Gerstahn"] = "Grand Interrogateur Gerstahn", ["Lord Roccor"] = "Seigneur Roccor", ["Houndmaster Grebmar"] = "Maître-chien Grebmar", ["Gorosh the Dervish"] = "Gorosh le Derviche", ["Grizzle"] = "Grison", ["Eviscerator"] = "Eviscérateur", ["Ok'thor the Breaker"] = "Ok'thor le Briseur", ["Anub'shiah"] = "Anub'shiah", ["Hedrum the Creeper"] = "Hedrum le Rampant", ["Pyromancer Loregrain"] = "Pyromancien Loregrain", ["Fineous Darkvire"] = "Fineous Darkvire", ["Warder Stilgiss"] = "Gardien Stilgiss", ["Lord Incendius"] = "Seigneur Incendius", ["Bael'Gar"] = "Bael'Gar", ["General Angerforge"] = "Général Forgehargne", ["Golem Lord Argelmach"] = "Seigneur golem Argelmach", ["Hurley Blackbreath"] = "Hurley Blackbreath", ["Phalanx"] = "Phalange", ["Ribbly Screwspigot"] = "Ribbly Screwspigot", ["Plugger Spazzring"] = "Plugger Spazzring", ["Ambassador Flamelash"] = "Ambassadeur Cinglefouet", ["Panzor the Invincible"] = "Panzor l'Invincible", ["The Seven"] = "Les Sept", ["Magmus"] = "Magmus", ["Princess Moira Bronzebeard"] = "Princesse Moira Bronzebeard", ["Emperor Dagran Thaurissan"] = "Empereur Dagran Thaurissan" },
     quests = {
       [3802] = { name = "Héritage Sombrefer", objective = "Tuer Fineous Darkvire et récupérer le grand marteau, Souillefer. Apporter Souillefer au sanctuaire de Thaurissan et le placer sur la statue de Franclorn Forgewright." },
@@ -3715,7 +3772,7 @@ end
 -- Upper Blackrock Spire
 local UBRS_LOC = {
   deDE = {
-    dungeon = "Obere Blackrockspitze", location = "Blackrock",
+    dungeon = "Obere Schwarzfelsspitze", location = "Blackrock",
     bosses = { ["Pyroguard Emberseer"] = "Feuerwache Glutseher", ["Solakar Flamewreath"] = "Solakar Feuerkrone", ["Jed Runewatcher"] = "Jed Runenblick", ["Goraluk Anvilcrack"] = "Goraluk Hammerbruch", ["Gyth"] = "Gyth", ["Warchief Rend Blackhand"] = "Kriegshäuptling Rend Blackhand", ["The Beast"] = "Die Bestie", ["Lord Valthalak"] = "Lord Valthalak", ["General Drakkisath"] = "General Drakkisath" },
     quests = {
       [4734] = { name = "Ei-Frosten", objective = "Benutzt den Prototyp des Eiszilloskops an einem Ei im Horst." },
@@ -3731,7 +3788,7 @@ local UBRS_LOC = {
     },
   },
   frFR = {
-    dungeon = "Pic Blackrock supérieur", location = "Mont Blackrock",
+    dungeon = "Sommet du pic Rochenoire", location = "Mont Blackrock",
     bosses = { ["Pyroguard Emberseer"] = "Pyrogarde Prophète ardent", ["Solakar Flamewreath"] = "Solakar Voluteflamme", ["Jed Runewatcher"] = "Jed Runewatcher", ["Goraluk Anvilcrack"] = "Goraluk Anvilcrack", ["Gyth"] = "Gyth", ["Warchief Rend Blackhand"] = "Chef de guerre Rend Blackhand", ["The Beast"] = "La Bête", ["Lord Valthalak"] = "Seigneur Valthalak", ["General Drakkisath"] = "Général Drakkisath" },
     quests = {
       [4734] = { name = "Un oeuf congelé", objective = "Utiliser le Prototype d'Oeufilloscope sur un oeuf dans la Colonie." },
@@ -3783,7 +3840,7 @@ local UBRS_LOC = {
     },
   },
   ruRU = {
-    dungeon = "Вершина Черной горы (верх)", location = "Черная гора",
+    dungeon = "Верхняя часть пика Черной горы", location = "Черная гора",
     bosses = { ["Pyroguard Emberseer"] = "Пиростраж Созерцатель Углей", ["Solakar Flamewreath"] = "Солакарский огнечервь", ["Jed Runewatcher"] = "Джед Руновед", ["Goraluk Anvilcrack"] = "Горалук Треснувшая Наковальня", ["Gyth"] = "Гит", ["Warchief Rend Blackhand"] = "Вождь Ренд Чернорук", ["The Beast"] = "Зверь", ["Lord Valthalak"] = "Лорд Вальтхалак", ["General Drakkisath"] = "Генерал Драккисат" },
     quests = {
       [4734] = { name = "Заморозка яйца", objective = "Испытайте прототип яйцехладоскопа на одном из яиц в Гнездовье." },
@@ -3869,7 +3926,7 @@ end
 -- Lower Blackrock Spire
 local LBRS_LOC = {
   deDE = {
-    dungeon = "Untere Blackrockspitze", location = "Blackrock",
+    dungeon = "Untere Schwarzfelsspitze", location = "Blackrock",
     bosses = { ["Spirestone Butcher"] = "Metzger der Felsspitzoger", ["Highlord Omokk"] = "Hochlord Omokk", ["Shadow Hunter Vosh'gajin"] = "Schattenjägerin Vosh'gajin", ["War Master Voone"] = "Kriegsmeister Voone", ["Mother Smolderweb"] = "Mutter Glimmernetz", ["Crystal Fang"] = "Kristallfangzahn", ["Urok Doomhowl"] = "Urok Schreckensbote", ["Bannok Grimaxe"] = "Bannok Grimmaxt", ["Quartermaster Zigris"] = "Rüstmeister Zigris", ["Halycon"] = "Halycon", ["Gizrul the Slavener"] = "Gizrul der Geifernde", ["Ghok Bashguud"] = "Ghok Haudrauf", ["Overlord Wyrmthalak"] = "Oberanführer Wyrmthalak" },
     quests = {
       [4701] = { name = "Stellt sie ab", objective = "Begebt Euch zur Blackrockspitze und vernichtet die Quelle der Bedrohung durch die Worgs. Als Ihr Helendis verlasst, ruft er Euch noch einen Namen hinterher: Halycon. Darauf beziehen sich die Orcs im Zusammenhang mit den Worgs." },
@@ -3884,7 +3941,7 @@ local LBRS_LOC = {
     },
   },
   frFR = {
-    dungeon = "Pic Blackrock inférieur", location = "Mont Blackrock",
+    dungeon = "Bas du pic Rochenoire", location = "Mont Blackrock",
     bosses = { ["Spirestone Butcher"] = "Boucher Pierre-du-pic", ["Highlord Omokk"] = "Généralissime Omokk", ["Shadow Hunter Vosh'gajin"] = "Chasseresse des ombres Vosh'gajin", ["War Master Voone"] = "Maître de guerre Voone", ["Mother Smolderweb"] = "Matriarche Couveuse", ["Crystal Fang"] = "Croc cristallin", ["Urok Doomhowl"] = "Urok Hurleruine", ["Bannok Grimaxe"] = "Bannok Grimaxe", ["Quartermaster Zigris"] = "Intendant Zigris", ["Halycon"] = "Halycon", ["Gizrul the Slavener"] = "Gizrul l'esclavagiste", ["Ghok Bashguud"] = "Ghok Bashguud", ["Overlord Wyrmthalak"] = "Seigneur Wyrmthalak" },
     quests = {
       [4701] = { name = "Abattez-la", objective = "Allez au Pic Blackrock et anéantir la menace worg à sa source. Tandis que vous quittiez Helendis, il a crié un nom : Halycon. C'est ce que disent les orcs en parlant des worgs." },
@@ -3933,7 +3990,7 @@ local LBRS_LOC = {
     },
   },
   ruRU = {
-    dungeon = "Вершина Черной горы (низ)", location = "Черная гора",
+    dungeon = "Нижняя часть пика Черной горы", location = "Черная гора",
     bosses = { ["Spirestone Butcher"] = "Мясник из клана Черной Вершины", ["Highlord Omokk"] = "Вождь Омокк", ["Shadow Hunter Vosh'gajin"] = "Темная охотница Вос'гаджин", ["War Master Voone"] = "Воевода Вун", ["Mother Smolderweb"] = "Мать Дымная Паутина", ["Crystal Fang"] = "Хрустальный Клык", ["Urok Doomhowl"] = "Аррок Смертный Вопль", ["Bannok Grimaxe"] = "Баннок Люторез", ["Quartermaster Zigris"] = "Интендант Зигрис", ["Halycon"] = "Халикон", ["Gizrul the Slavener"] = "Гизрул Поработитель", ["Ghok Bashguud"] = "Гок Крепкобив", ["Overlord Wyrmthalak"] = "Властитель Змейталак" },
     quests = {
       [4701] = { name = "Устранение опасности", objective = "Отправьтесь на пик Черной горы и уничтожьте источник опасности. Хелендис кричит вам вслед одно имя: Халикон. Именно его упоминали орки в связи с воргами." },
@@ -6449,7 +6506,7 @@ local PALA_WARNINGS = {
         ruRU = "Это цепочка заданий с этапом в Непроглядной Пучине",
         koKR = "검은심연 나락에서 진행하는 단계가 있는 연계 퀘스트입니다",
         zhCN = "这是一个系列任务，其中一步在黑暗深渊",
-        zhTW = "這是一個系列任務，其中一步在黑暗深淵",
+        zhTW = "這是一個系列任務，其中一步在黑澗深淵",
     },
     ["This is a chain quest with a step in Shadowfang Keep"] = {
         deDE = "Dies ist eine Questreihe mit einem Schritt in Burg Schattenfang",

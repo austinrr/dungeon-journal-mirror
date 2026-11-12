@@ -5,7 +5,7 @@ FDJ.ContentLocales.esES = FDJ.ContentLocales.esES or {}
 
 FDJ.ContentLocales.esES.dungeons = {
     ["Hall of Thanes"] = {
-        ["name"] = "Salón de los Feudales",
+        ["name"] = "El Salón de los Feudales",
         ["location"] = "Bajo Forjaz, Dun Morogh",
         ["description"] = "Alguien ha irrumpido en la cripta real enana bajo Forjaz.",
     },
@@ -20,7 +20,7 @@ FDJ.ContentLocales.esES.dungeons = {
         ["description"] = "Las fuerzas de la Plaga siguen acechando la antigua capital mientras un nigromante gana poder entre las ruinas.",
     },
     ["The Deadmines"] = {
-        ["name"] = "Minas de la Muerte",
+        ["name"] = "Las Minas de la Muerte",
         ["location"] = "Arroyo de la Luna, Páramos de Poniente",
         ["description"] = "La Hermandad de los Defias construye un buque de guerra en las minas bajo Arroyo de la Luna.",
     },
@@ -40,7 +40,7 @@ FDJ.ContentLocales.esES.dungeons = {
         ["description"] = "Una ruina elfa de la noche inundada en la Playa de Zoram, ocupada por nagas, múrlocs y cultores del Martillo Crepuscular al servicio de Aku’mai.",
     },
     ["The Stockade"] = {
-        ["name"] = "Mazmorras de Ventormenta",
+        ["name"] = "Las Mazmorras",
         ["location"] = "Ventormenta",
         ["description"] = "Los prisioneros Defias se han apoderado de la prisión de Ventormenta.",
     },
@@ -624,8 +624,8 @@ FDJ.ContentLocales.esES.replacements = {
     {"Ragefire Chasm", "Sima Ígnea"},
     {"Ruins of Lordaeron", "Ruinas de Lordaeron"},
     {"Hall of Thanes", "Salón de los Feudales"},
-    {"The Deadmines", "Minas de la Muerte"},
-    {"Deadmines", "Minas de la Muerte"},
+    {"The Deadmines", "Las Minas de la Muerte"},
+    {"Deadmines", "Las Minas de la Muerte"},
     {"Item start:", "Objeto que inicia la misión:"},
     {"Use ", "Usa "},
     {"Dropped by:", "Lo suelta:"},

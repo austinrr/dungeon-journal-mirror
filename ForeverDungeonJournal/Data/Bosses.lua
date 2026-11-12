@@ -182,6 +182,7 @@ FDJ.BOSS_LEVELS = {
         ["Hearthsinger Forresten"] = "57",
         ["The Unforgiven"] = "57",
         ["Timmy the Cruel"] = "58",
+        ["Malor the Zealous"] = "60",
         ["Postmaster Malown"] = "60",
         ["Cannon Master Willey"] = "60",
         ["Archivist Galford"] = "60",
@@ -561,6 +562,7 @@ FDJ.STATIC_DISPLAY_IDS = {
     [10558] = 10482,  -- Hearthsinger Forresten
     [10516] = 10771,  -- The Unforgiven
     [10808] = 571,    -- Timmy the Cruel
+    [11032] = 10458,  -- Malor the Zealous
     [11143] = 10669,  -- Postmaster Malown
     [10997] = 10674,  -- Cannon Master Willey
     [10811] = 10544,  -- Archivist Galford
@@ -728,4 +730,17 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Scarlet Centurion"] = 2499, -- npc 4301
     -- The Drowned City
     ["Risen Sentry"] = 145398, -- npc 258792
+    ["Champion of the Deep"] = 145404, -- npc 258797
+    ["Brinescale Sorceress"] = 4975, -- npc 258804
+    ["Makrura Snapper"] = 2426, -- npc 258897
+    -- Krol'dok Stronghold
+    ["Twilight Grunt"] = 140001, -- npc 258042
+    ["Twilight Lieutenant"] = 143142, -- npc 258104
+    ["Redridge Prisoner"] = 487, -- npc 257900
+    -- Alcaz Prison
+    ["Alcaz Chaplain"] = 138722, -- npc 255262
+    ["Alcaz Jailer"] = 138843, -- npc 255377 and 271784
+    ["Strashaz Soldier"] = 4764, -- npc 255995
+    ["Slavering Hound"] = 6195, -- npc 255267
+    ["Defias Truthfinder"] = 144356, -- npc 255271
 }

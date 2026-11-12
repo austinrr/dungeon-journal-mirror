@@ -153,7 +153,9 @@ local function UpdateWingButtons(dungeonName, anchor)
         if button then
             if show then
                 local label = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(wing) or wing
-                label = type(label) == "string" and (label:match("[:：]%s*(.+)$") or label) or wing
+                -- Wing part only: "X: Wing", "X : Wing", "X - Wing", "X – Wing".
+                label = type(label) == "string" and (label:match("[:：]%s*(.+)$")
+                    or label:match("%s%-%s+(.+)$") or label:match("%s\226\128\147%s+(.+)$") or label) or wing
                 button.fdjWing = wing
                 button:SetText(label)
                 button:ClearAllPoints()
