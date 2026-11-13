@@ -8,7 +8,6 @@ FDJ.Locales.koKR = {
     ["RANDOM_ENCHANT"] = "<무작위 마법부여>",
     ["ALSO_RECEIVE"] = "추가 보상:",
     ["MAP_JUMP_LEVEL"] = "%d층으로 뛰어내리기",
-    ["MAP_RFK_WALLJUMP"] = "벽 점프로 문을 넘어 루구그에게 가세요",
     ["MAP_RFK_VINE"] = "이 덩굴 위로 뛰어 루구그에게 가세요",
     ["MAP_OBJ_BFD_CHEST"] = "물속, 웅덩이의 이 구석에 있는 낡은 쇠 상자에서 로르갈리스 원고를 획득하세요.",
     ["MAP_OBJ_BFD_FATHOM"] = "다리 아래 물속의 심연의 돌을 클릭해 심연의 핵을 얻으세요. 이때 남작 아쿠아니스가 나타납니다.",

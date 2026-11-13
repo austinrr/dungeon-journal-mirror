@@ -1,4 +1,70 @@
-DungeonJournal 2.0.4
+DungeonJournal 2.0.5
+
+CHANGES IN 2.0.5
+Quests
+- Shaper's Terrace: all six quests now have their start and turn-in.
+  Essence of Seeping Slimes (Chemist Fuely) and The Dark Crystal (Master
+  Apothecary Faranell) in the Undercity's Apothecarium; Panic at the
+  Digsite and Mapping the Way Forward with Curator Thorius in Ironforge's
+  Hall of Explorers, who also takes Digestible Research. Digestible
+  Research starts from the Partially Digested Journal lying on the ground
+  inside the dungeon (the Verdant Plains). The Dark Crystal gives 17,650 XP.
+- Profession quests (The Spectral Chalice, A Binding Contract, The Demon
+  Forge) only show for characters with that profession again, on every
+  client language. "Show All Profession Quests" still shows them all.
+- Sunken Temple: every class quest gives all of its rewards on WoW
+  Forever, not a choice of one (Destroy Morphaz, A Better Ingredient, The
+  Green Drake, Forging the Mightstone, Blood of Morphaz, The Azure Key, Da
+  Voodoo, Trolls of a Feather, Voodoo Feathers). Quests that give several
+  items without a choice say "Rewards".
+- Razorfen Kraul, Blueleaf Tubers: a reminder to take the Crate with
+  Holes, the Snufflenose Command Stick and the Snufflenose Owner's Manual,
+  which wait beside Mebok Mizzyrix in Ratchet (all ten languages).
+- Excavation Site: Wetlands, Horrors in the Highland: The Greenwarden is
+  only a breadcrumb; the chain starts with Tramping Paws.
+- Scarlet Monastery: Library, Compendium of the Fallen: Undead can't take
+  it, so for Undead characters it is greyed out ("Unavailable to Undead")
+  and left out of the counts and the tracker.
+- Gnomeregan, The Only Cure is More Green Glow: a note that it can take
+  several tries on a living Slime.
+- Quest spots moved to where the NPC really stands: Image of Archmage
+  Modera (Alterac Mountains), Mebok Mizzyrix (Ratchet), Falfindel
+  Waywarder (Thalanaar), Lonebrow's Journal (Thousand Needles).
+
+Loot
+- Zul'Farrak, Hydromancer Velratha: Zealot Plate and Wall of Water beside
+  the Deep Ritual Girdle.
+- Sunken Temple, Shade of Eranikus: Dragon's Call, Pattern: Radiant
+  Gloves, Pattern: Skycaller's Mail Gauntlets, Plans: Officer's Gloves and
+  the Essence of Eranikus.
+- Trash Drops pages for City of Dalaran (ten rare items), Excavation Site:
+  Wetlands (six) and Razorfen Downs (eleven, from the Classic tables).
+- Trash Drops, every dungeon: items are grouped by the mobs that drop them,
+  each mob's portrait keeps one order across the page, and its name shows
+  on hover. Mob portraits are looked up all at once after logging in and
+  saved, so they show at once from then on.
+
+Maps
+- Sunken Temple: one map of the whole temple with boss pins.
+- Blackmaw Hold: six levels. The Drowned City: Atal'Byzal as its second
+  floor.
+- Razorfen Kraul: the "wall jump" note to Roogug is gone (it no longer
+  works); the vine note stays.
+- "Hide quests" ticks itself on the map of a dungeon where your character
+  has done every quest inside. Untick it there to see them again.
+
+Waypoint arrow
+- Near the NPC it leads to (in reach of a click, out of combat), the NPC's
+  portrait shows by the quest's name: one click targets and marks the NPC.
+  The portrait glows under the mouse; the arrow keeps its tooltip.
+
+Other
+- Options: "Show Onyxia Attunement" is now "Hide Onyxia Attunement",
+  ticked until your character can start the chain.
+- Ruins of Lordaeron, Lordaeron Captain: friendly to the Alliance, so
+  marked HORDE ONLY and not tracked for Alliance characters.
+- Dungeon Tracker, Blackrock Depths: the Ring of Law counts again, and its
+  entry shows which challenger came where the game allows it.
 
 CHANGES IN 2.0.4
 - Onyxia Attunement: a round Onyxia icon on the home page, right of the

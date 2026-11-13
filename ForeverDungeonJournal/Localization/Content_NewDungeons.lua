@@ -2132,6 +2132,12 @@ for lang, data in pairs(HIGHLAND_CHAIN_150) do
             content.quests[id] = target
             for field, value in pairs(data[id]) do target[field] = value end
         end
+        -- 2.0.38: The Greenwarden is no longer a required step (a breadcrumb):
+        -- Tramping Paws is the first, Fire Taboo the second.
+        if data[463] and data[276] and data[463].description and data[276].description then
+            content.quests[277].description = data[276].description
+            content.quests[276].description = data[463].description
+        end
         content.places["Start The Greenwarden here"] = data.map[1]
         content.places["Continue with Tramping Paws here"] = data.map[2]
         content.places["Continue with Fire Taboo here"] = data.map[3]
@@ -7102,3 +7108,75 @@ FDJ.OBJECTIVE_NAMES = {
     ["[DNT] Kill Credit: Place Explosives"] = { false, false, false, false, false, false, false, false },
 }
 -- END objectivenames
+
+-- greenglow (2.0.10): The Only Cure is More Green Glow's warning.
+do
+    local GREEN_GLOW_WARNING = {
+        deDE = "Es kann mehrere Versuche dauern: Benutze die Phiole so lange an einem lebenden Schleim, bis es klappt.",
+        frFR = "Il faudra peut-être plusieurs essais : continuez à l’utiliser sur un limon vivant jusqu’à ce que ça marche.",
+        esES = "Puede requerir varios intentos: sigue usándolo en un moco vivo hasta que funcione.",
+        esMX = "Puede requerir varios intentos: sigue usándolo en un moco vivo hasta que funcione.",
+        itIT = "Potrebbero servire diversi tentativi: continua a usarla su una melma viva finché non funziona.",
+        ptBR = "Pode levar várias tentativas: continue usando-o em um limo vivo até funcionar.",
+        ruRU = "Может понадобиться несколько попыток: применяйте его на живом слизне, пока не получится.",
+        koKR = "여러 번 시도해야 할 수 있습니다. 성공할 때까지 살아 있는 수액괴물에게 계속 사용하세요.",
+        zhCN = "可能需要尝试多次：对活着的软泥怪持续使用，直到成功为止。",
+        zhTW = "可能需要嘗試多次：對活著的軟泥怪持續使用，直到成功為止。",
+    }
+    for lang, text in pairs(GREEN_GLOW_WARNING) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.quests = content.quests or {}
+            content.quests[2962] = content.quests[2962] or {}
+            if content.quests[2962].warning == nil then content.quests[2962].warning = text end
+        end
+    end
+end
+
+-- captainhorde (2.0.11): the Lordaeron Captain's description.
+do
+    local CAPTAIN = {
+        deDE = "Seltener Spawn. Der Allianz freundlich gesinnt: Nur die Horde kann ihn töten.",
+        frFR = "Apparition rare. Amical envers l’Alliance : seule la Horde peut le tuer.",
+        esES = "Aparición rara. Amistoso con la Alianza: solo la Horda puede matarlo.",
+        esMX = "Aparición rara. Amistoso con la Alianza: solo la Horda puede matarlo.",
+        itIT = "Spawn raro. Amichevole verso l’Alleanza: solo l’Orda può ucciderlo.",
+        ptBR = "Aparecimento raro. Amigável à Aliança: só a Horda pode matá-lo.",
+        ruRU = "Редкий противник. Дружелюбен к Альянсу: убить его может только Орда.",
+        koKR = "희귀 출현. 얼라이언스에게 우호적이라 호드만 처치할 수 있습니다.",
+        zhCN = "稀有刷新。对联盟友好：只有部落能击杀他。",
+        zhTW = "稀有出現。對聯盟友好：只有部落能擊殺他。",
+    }
+    for lang, text in pairs(CAPTAIN) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places["Rare spawn. Friendly to the Alliance: only the Horde can kill him."] = text
+        end
+    end
+end
+
+
+-- Blueleaf Tubers (1221), 2.0.50: the reminder to take the three quest
+-- items from beside Mebok Mizzyrix. Item names as each client names them
+-- (Wowhead's localized item pages 5880, 6684, 5897). Italian has no
+-- translation of these items (the quest left the game before Italian came),
+-- and Traditional Chinese could not be read yet: both keep the English names.
+for lang, warning in pairs({
+    deDE = "Bevor du hineingehst, nimm die Kiste mit Löchern, den Schnüffelnasenleitstecken und die Schnüffelnasenbesitzeranleitung mit. Sie liegen direkt neben dem Questgeber Mebok Mizzyrix in Ratschet.",
+    frFR = "Avant d'entrer, prenez la Caisse percée, le Bâton de commandement de Sniffetarin et le Manuel d'utilisateur de Sniffetarin. Ils se trouvent juste à côté du donneur de quête, Mebok Mizzyrix, à Cabestan.",
+    esES = "Antes de entrar, coge el Cajón con agujeros, la Vara de mando de Husmeador y el Manual de propietario del Husmeador. Están justo al lado de quien da la misión, Mebok Mizzyrix, en Trinquete.",
+    itIT = "Prima di entrare, prendi questi tre oggetti: Crate with Holes, Snufflenose Command Stick e Snufflenose Owner's Manual. Si trovano proprio accanto a chi assegna la missione, Mebok Mizzyrix, a Porto Paranco.",
+    ptBR = "Antes de entrar, pegue o Caixote com Furos, o Bastão de Adestramento do Fungafuça e o Manual de Proprietário do Fungafuça. Eles ficam bem ao lado de quem dá a missão, Mebok Mizzyrix, em Vila Catraca.",
+    ruRU = "Перед входом возьмите три предмета: «Ящик с отверстиями», «Палочка-погонялочка для шмыгуносов» и «Справочник владельца Шмыгуноса». Они лежат рядом с тем, кто выдает задание, в Кабестане.",
+    koKR = "들어가기 전에 구멍 난 상자, 땅다람쥐 지휘봉, 땅다람쥐 설명서를 챙기세요. 톱니항에서 퀘스트를 주는 NPC 바로 옆에 있습니다.",
+    zhCN = "进去之前，先拿上开孔的箱子、地鼠指挥棒和地鼠训练手册。它们就在棘齿城的任务发布者旁边。",
+    zhTW = "進去之前，先拿上 Crate with Holes、Snufflenose Command Stick 和 Snufflenose Owner's Manual。它們就在棘齒城的任務發布者旁邊。",
+}) do
+    local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+    if content and content.quests then
+        content.quests[1221] = content.quests[1221] or {}
+        content.quests[1221].warning = warning
+    end
+end
+

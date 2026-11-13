@@ -2048,7 +2048,7 @@ do
         local turnedIn = FDJ.QuestTurnedIn or function() return false end
         -- hidequests (2.0.15): Hide quests ticked: only the spot a quest's
         -- Show on Map just opened the map on (its quest, else where it is).
-        local hideAll = FDJ.MapQuestsHidden and FDJ.MapQuestsHidden()
+        local hideAll = FDJ.MapQuestsHidden and FDJ.MapQuestsHidden(dungeonName)
         local focus = FDJ.dungeonMapFocus
         if focus and ((GetTime and GetTime()) or 0) > (focus.untilT or 0) then focus = nil end
         local function Wanted(pin)
@@ -2123,6 +2123,49 @@ do
         end
         for i = n + 1, #pool do pool[i]:Hide() end
         return n
+    end
+
+    -- autohidequests (2.0.52, inside only 2.0.53): true when every quest
+    -- with a mark on this dungeon's map (the character's own: faction,
+    -- class, profession) is done as far as the inside goes: handed in, or
+    -- in the log with its objectives complete and no hand-in inside. A
+    -- quest still to start, do or hand in inside keeps the marks. False
+    -- when the map has no quest of the character's at all.
+    function FDJ.MapQuestsAllDoneInside(dungeonName)
+        local list = dungeonName and FDJ.MAP_QUEST_PINS and FDJ.MAP_QUEST_PINS[dungeonName]
+        if type(list) ~= "table" then return false end
+        local faction = UnitFactionGroup and select(1, UnitFactionGroup("player")) or nil
+        local inLog = FDJ.IsQuestInLog or function() return false end
+        local turnedIn = FDJ.QuestTurnedIn or function() return false end
+        local function Complete(id)
+            if C_QuestLog and C_QuestLog.IsComplete then
+                local ok, done = pcall(C_QuestLog.IsComplete, id)
+                if ok and done ~= nil then return done == true end
+            end
+            if IsQuestComplete then
+                local ok, done = pcall(IsQuestComplete, id)
+                if ok then return done == true or done == 1 end
+            end
+            return false
+        end
+        local seen = 0
+        for _, pin in ipairs(list) do
+            for _, spot in ipairs(pin.spots or {}) do
+                for _, q in ipairs(spot.quests or {}) do
+                    if q.id and Shown(q, faction) then
+                        seen = seen + 1
+                        if not turnedIn(q.id) then
+                            if not inLog(q.id) then return false end -- still to take (or to do)
+                            for _, act in ipairs(q.acts or {}) do
+                                if act == "end" then return false end -- handed in inside
+                            end
+                            if not Complete(q.id) then return false end
+                        end
+                    end
+                end
+            end
+        end
+        return seen > 0
     end
 
     -- The quest tracker's ? taken off the map (right-click): its quest's
@@ -3527,6 +3570,133 @@ do
             f:EnableMouse(not hide)
         end
         ClickTargets(f, (not hide and final and distance and distance <= NEAR_NPC) and entry.spot or nil)
+        -- npcicon (2.0.13)
+        if f.npc then
+            local on = (f.fdjTargets and not hide) and true or false
+            if on ~= (f.fdjNpcOn or false) then
+                f.fdjNpcOn, f.fdjNpcUnit, f.fdjNpcAt = on, nil, nil
+                f.npc:SetShown(on)
+                f.title:SetText((on and "" or (f.fdjMark or "")) .. (f.fdjName or ""))
+                -- npcbig (2.0.16): the picture is bigger (32, was 22), left of the
+                -- name and level with it; a short name moves it out past the
+                -- distance line under it, so the two never overlap.
+                local half = (tonumber(f.title:GetStringWidth()) or 110) / 2
+                local out = math.max(0, ((tonumber(f.distance:GetStringWidth()) or 0) / 2) - half)
+                f.npc:ClearAllPoints()
+                f.npc:SetPoint("RIGHT", f.title, "LEFT", -3 - out, 0)
+                -- The picture and the name take the click too, not only the arrow.
+                -- (The picture sits left of the name, past the frame's own
+                -- edge when the name is long: the hit area reaches out to it.)
+                if f.SetHitRectInsets and not (InCombatLockdown and InCombatLockdown()) then
+                    if on then
+                        local tall = tonumber(f.title:GetStringHeight()) or 14
+                        f:SetHitRectInsets(75 - (half + out + 39), 75 - (half + 2), 0,
+                            math.max(0, math.floor(84 - (53 + tall / 2 + 18))))
+                    else
+                        f:SetHitRectInsets(49, 49, 0, 32)
+                    end
+                end
+                -- npchover (2.0.16, picture only 2.0.17): the mouse already on the
+                -- arrow when the NPC comes in reach (or goes): the next frame's
+                -- check picks the glow (on the picture) or the tooltip again,
+                -- the tooltip rebuilt for the new click.
+                if f.npcHl and not on then f.npcHl:Hide() end
+                f.fdjHoverState = nil
+            end
+            -- portraitfirst (2.0.14): the NPC's portrait before any click, as the
+            -- journal's boss portraits are made: a hidden model of the NPC
+            -- (FDJ.ARROW_NPC_IDS, by name) tells its display, whose portrait
+            -- the game draws. Looked up as soon as the arrow leads to the NPC,
+            -- so it is there by the time the NPC is in reach.
+            do
+                local npcID = FDJ.ARROW_NPC_IDS and FDJ.ARROW_NPC_IDS[NPC(entry.spot) or ""]
+                FDJ.arrowDisplayIDs = FDJ.arrowDisplayIDs or {}
+                if npcID and FDJ.arrowDisplayIDs[npcID] == nil and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
+                    local now = (GetTime and GetTime()) or 0
+                    if f.fdjResolving ~= npcID then
+                        f.fdjResolving, f.fdjResolveAt = npcID, now
+                        if not f.model then
+                            local okM, model = pcall(CreateFrame, "PlayerModel", nil, UIParent)
+                            if okM and model then
+                                model:SetSize(1, 1)
+                                model:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+                                model:SetAlpha(0)
+                                f.model = model
+                            end
+                        end
+                        if f.model then
+                            f.model:Show()
+                            if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
+                            if not pcall(f.model.SetCreature, f.model, npcID) then FDJ.arrowDisplayIDs[npcID] = false end
+                        else
+                            FDJ.arrowDisplayIDs[npcID] = false
+                        end
+                    elseif f.model then
+                        local okD, display = pcall(f.model.GetDisplayInfo, f.model)
+                        if okD and type(display) == "number" and display > 0 then
+                            FDJ.arrowDisplayIDs[npcID] = display
+                            f.fdjResolving, f.fdjNpcUnit, f.fdjNpcAt = nil, nil, nil
+                            f.model:Hide()
+                        elseif now - (f.fdjResolveAt or now) > 8 then
+                            FDJ.arrowDisplayIDs[npcID] = false -- the game does not know it: the mark instead
+                            f.fdjResolving = nil
+                            f.model:Hide()
+                        end
+                    end
+                end
+            end
+            if on then
+                local now = (GetTime and GetTime()) or 0
+                if not f.fdjNpcAt or now - f.fdjNpcAt >= 0.5 then
+                    f.fdjNpcAt = now
+                    local name = NPC(entry.spot)
+                    local unit
+                    local function Is(token)
+                        if type(token) ~= "string" or type(UnitExists) ~= "function" then return false end
+                        local okE, exists = pcall(UnitExists, token)
+                        if not okE or not exists then return false end
+                        local okN, unitName = pcall(UnitName, token)
+                        if not okN or type(unitName) ~= "string" then return false end
+                        if type(issecretvalue) == "function" and issecretvalue(unitName) then return false end
+                        return unitName == name
+                    end
+                    if name then
+                        if Is("target") then unit = "target" elseif Is("mouseover") then unit = "mouseover" end
+                        if not unit and C_NamePlate and type(C_NamePlate.GetNamePlates) == "function" then
+                            local okP, plates = pcall(C_NamePlate.GetNamePlates)
+                            for _, plate in ipairs(okP and type(plates) == "table" and plates or {}) do
+                                local token = plate and plate.namePlateUnitToken
+                                if Is(token) then unit = token break end
+                            end
+                        end
+                    end
+                    local npcID = name and FDJ.ARROW_NPC_IDS and FDJ.ARROW_NPC_IDS[name]
+                    local display = npcID and FDJ.arrowDisplayIDs and FDJ.arrowDisplayIDs[npcID] or nil
+                    local key = unit or (display and ("display" .. display)) or "none"
+                    if key ~= f.fdjNpcUnit or unit then
+                        f.fdjNpcUnit = key
+                        local drawn = false
+                        if unit and type(SetPortraitTexture) == "function" then
+                            f.npc:SetTexCoord(0, 1, 0, 1)
+                            drawn = pcall(SetPortraitTexture, f.npc, unit)
+                        end
+                        if not drawn and display then -- portraitfirst
+                            f.npc:SetTexCoord(0, 1, 0, 1)
+                            drawn = pcall(SetPortraitTextureFromCreatureDisplayID, f.npc, display)
+                        end
+                        if not drawn then
+                            local index = entry.spot.raidMarkIndex or RaidMarkIndexForTarget(entry.spot)
+                            if tonumber(index) then
+                                f.npc:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. tonumber(index))
+                            else
+                                f.npc:SetTexture("Interface\\CharacterFrame\\TempPortrait")
+                            end
+                            f.npc:SetTexCoord(0, 1, 0, 1)
+                        end
+                    end
+                end
+            end
+        end
         if hide then return end
         local doing = Doing(plan)
         -- way: the hearthstone, when it is the quicker way: a line of its
@@ -3605,6 +3775,21 @@ do
         f.title:SetPoint("TOP", f.arrow, "BOTTOM", 0, -1)
         f.distance = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.distance:SetPoint("TOP", f.title, "BOTTOM", 0, -2)
+        -- npcicon (2.0.13): the NPC in reach of a click: in place of the !
+        -- or ?, the NPC's own picture (once the game shows the unit: target,
+        -- mouseover or nameplate), else the mark the click puts on it.
+        f.npc = f:CreateTexture(nil, "OVERLAY")
+        f.npc:SetSize(32, 32) -- npcbig (2.0.16): was 22
+        f.npc:SetPoint("RIGHT", f.title, "LEFT", -3, 0)
+        f.npc:Hide()
+        -- npchover (2.0.16): the soft glow the journal's round icons get under
+        -- the mouse (the Onyxia and Sleeping Bag icons), over the NPC's picture.
+        f.npcHl = f:CreateTexture(nil, "OVERLAY", nil, 7)
+        f.npcHl:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+        f.npcHl:SetBlendMode("ADD")
+        f.npcHl:SetAlpha(0.25)
+        f.npcHl:SetAllPoints(f.npc)
+        f.npcHl:Hide()
         f.route = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.route:SetPoint("TOP", f.distance, "BOTTOM", 0, -2)
         -- way: "Hearth to Auberdine", in the hearthstone's blue.
@@ -3633,7 +3818,9 @@ do
                 ShowOnMap(shown)
             end
         end)
-        f:SetScript("OnEnter", function(self)
+        -- The arrow's tooltip (its spot, the quest, what a click does, move,
+        -- right-click to hide).
+        local function ShowTip(self)
             local entry = shown
             if not entry then return end
             GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
@@ -3650,9 +3837,55 @@ do
             GameTooltip:AddLine(FDJ.L("ARROW_TIP_MOVE"), 0.55, 0.55, 0.55)
             GameTooltip:AddLine(FDJ.L("ARROW_TIP_HIDE"), 0.55, 0.55, 0.55)
             GameTooltip:Show()
+        end
+        -- npchover (2.0.17): is the mouse on the NPC's picture itself (not the
+        -- arrow, not the name)?
+        local function OnPicture(self)
+            local pic = self.npc
+            if not (self.fdjNpcOn and pic and pic:IsShown()) or type(GetCursorPosition) ~= "function" then return false end
+            local l, r, t, b = pic:GetLeft(), pic:GetRight(), pic:GetTop(), pic:GetBottom()
+            if not (l and r and t and b) then return false end
+            local x, y = GetCursorPosition()
+            local scale = (self.GetEffectiveScale and self:GetEffectiveScale()) or 1
+            if not (x and y) or scale <= 0 then return false end
+            x, y = x / scale, y / scale
+            return x >= l - 1 and x <= r + 1 and y >= b - 1 and y <= t + 1
+        end
+        -- npchover (2.0.17): the glow only on the NPC's picture (no tooltip
+        -- there: a click targets and marks); the arrow and the name keep the
+        -- arrow's tooltip (right-click to hide, ...). Checked every frame
+        -- while the mouse is on the arrow.
+        local function Hover(self)
+            local want
+            if not self.fdjMouseIn or self.fdjHidden or not shown then
+                want = "none"
+            elseif OnPicture(self) then
+                want = "picture"
+            else
+                want = "tip"
+            end
+            if want == self.fdjHoverState then return end
+            self.fdjHoverState = want
+            if self.npcHl then self.npcHl:SetShown(want == "picture") end
+            if want == "tip" then
+                ShowTip(self)
+            elseif GameTooltip:GetOwner() == self then
+                GameTooltip:Hide()
+            end
+        end
+        f:SetScript("OnEnter", function(self)
+            self.fdjMouseIn = true
+            self.fdjHoverState = nil
+            Hover(self)
         end)
-        f:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        f:SetScript("OnLeave", function(self)
+            self.fdjMouseIn = nil
+            self.fdjHoverState = nil
+            if self.npcHl then self.npcHl:Hide() end
+            GameTooltip:Hide()
+        end)
         f:SetScript("OnUpdate", function(self, elapsed)
+            if self.fdjMouseIn then Hover(self) end
             self.fdjWait = (self.fdjWait or 0) - (elapsed or 0)
             if self.fdjWait > 0 then return end
             self.fdjWait = STEP
@@ -3688,7 +3921,10 @@ do
         elseif quest then
             mark = "|TInterface\\GossipFrame\\AvailableQuestIcon:0|t "
         end
-        f.title:SetText(mark .. (quest or SpotName(pick.spot)))
+        f.fdjMark, f.fdjName = mark, (quest or SpotName(pick.spot))
+        f.fdjNpcOn, f.fdjNpcUnit, f.fdjNpcAt = nil, nil, nil
+        if f.npc then f.npc:Hide() end
+        f.title:SetText(mark .. f.fdjName)
         pick.zone = pick.zone or ZoneName(pick.spot.mapID)
         pick.plan, pick.plannedAt, pick.plannedX, pick.plannedY = nil, nil, nil, nil
         f.fdjWait, f.fdjNear = 0, nil
@@ -3753,6 +3989,18 @@ do
     end
     function FDJ.WaypointArrowTarget()
         return shown and shown.spot or nil, shown and shown.source or nil
+    end
+
+    -- Where the arrow leads right now (world yards) and, on the way round
+    -- something, that point's label (2.0.12; for tests and /dj debugging).
+    function FDJ.WaypointArrowAim()
+        local plan = shown and shown.plan
+        if not plan then return nil end
+        return plan.x, plan.y, plan.via and plan.via.label or nil
+    end
+    -- A route switched on again: its arrow comes back if it was hidden.
+    function FDJ.ResetWaypointDone(source)
+        if source ~= nil then Done()[source] = nil end
     end
 end
 -- END arrow

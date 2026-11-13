@@ -746,3 +746,31 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Slavering Hound"] = 6195, -- npc 255267
     ["Defias Truthfinder"] = 144356, -- npc 255271
 }
+
+-- trashnpc (2.0.22): trash mobs whose look is not known yet, by NPC ID
+-- (Wowhead Forever and Icy Veins Forever NPC pages). Their portraits are
+-- found in the game as the bosses' are (a hidden model of the NPC tells its
+-- display), then drawn on the loot row like the ones above.
+FDJ.TRASH_MOB_NPC_IDS = {
+    -- City of Dalaran
+    ["Mana Echo"] = 246600,
+    ["Arcane Elemental"] = 246888,
+    ["Phantasm"] = 246990,
+    ["Arcane Echo"] = 246992,
+    ["Mana Stalker"] = 246993,
+    ["Saturated Remnant"] = 247001,
+    ["Seeking Remnant"] = 247003,
+    ["Mindless Horror"] = 255068,
+    ["Fallen Warrior"] = 255069,
+    ["Skeletal Warder"] = 255070,
+    -- Excavation Site: Wetlands (2.0.30; Polestar forever-db npc table)
+    ["Highland Lurker"] = 260804,
+    ["Marsh Crocolisk"] = 260796,
+    ["Highland Spider"] = 260803,
+    ["Thicket Hunter"] = 260801,
+    ["Marsh Skulker"] = 274715,
+    ["Thicket Matriarch"] = 260802,
+    ["Thicket Lurker"] = 260800,
+    ["Young Riptooth"] = 260799,
+    ["Highland Snapper"] = 260810,
+}

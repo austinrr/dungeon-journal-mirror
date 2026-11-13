@@ -8,7 +8,6 @@ FDJ.Locales.zhTW = {
     ["RANDOM_ENCHANT"] = "<隨機附魔>",
     ["ALSO_RECEIVE"] = "你還會得到：",
     ["MAP_JUMP_LEVEL"] = "跳下至第%d層",
-    ["MAP_RFK_WALLJUMP"] = "蹬牆跳過大門以抵達魯古格",
     ["MAP_RFK_VINE"] = "跳上這根藤蔓以抵達魯古格",
     ["MAP_OBJ_BFD_CHEST"] = "在水池這處凹壁的水下，從鏽蝕的鐵箱中拾取洛迦里斯手稿。",
     ["MAP_OBJ_BFD_FATHOM"] = "點擊走道下方水中的深淵之石獲得深淵核心。此時男爵阿奎尼斯會出現。",

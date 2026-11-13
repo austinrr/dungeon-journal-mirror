@@ -27,43 +27,43 @@ do
         enUS = { ATTUNE_ONYXIA = "Onyxia Attunement", ONYXIA_ICON_TIP = "The quest chain for the Drakefire Amulet, the key to Onyxia's Lair.",
             ONYXIA_POPUP = "You can now start Onyxia Attunement", ONYXIA_POPUP_CLICK = "Click to open it in the journal.",
             ONYXIA_HIDE = "Hide", ONYXIA_HIDE_TIP = "Right-click to hide",
-            OPT_SHOW_ONYXIA = "Show Onyxia Attunement", OPT_SHOW_ONYXIA_TIP = "The Onyxia icon on the journal's home page, next to the Sleeping Bag's. It turns on by itself once you can start the chain (level 48 Alliance, 55 Horde). Tick it to see it sooner, untick it to hide it (right-click the icon > Hide does the same)." },
+            OPT_HIDE_ONYXIA = "Hide Onyxia Attunement", OPT_HIDE_ONYXIA_TIP = "Hides the Onyxia icon on the journal's home page (next to the Sleeping Bag's). It stays ticked until you can start the chain (level 48 Alliance, 55 Horde), then it unticks by itself and the icon shows. Untick it to see the icon sooner. You can also right-click the icon and pick Hide." },
         deDE = { ATTUNE_ONYXIA = "Onyxia-Einstimmung", ONYXIA_ICON_TIP = "Die Questreihe, um Onyxias Hort betreten zu dürfen.",
             ONYXIA_POPUP = "Du kannst jetzt die Onyxia-Einstimmung beginnen", ONYXIA_POPUP_CLICK = "Klicken, um sie im Journal zu öffnen.",
             ONYXIA_HIDE = "Ausblenden", ONYXIA_HIDE_TIP = "Rechtsklick zum Ausblenden",
-            OPT_SHOW_ONYXIA = "Onyxia-Einstimmung anzeigen", OPT_SHOW_ONYXIA_TIP = "Das Onyxia-Symbol auf der Startseite des Journals, neben dem des Schlafsacks. Es erscheint von selbst, sobald du die Questreihe beginnen kannst (Stufe 48 Allianz, 55 Horde). Anhaken, um es früher zu sehen, abhaken, um es auszublenden (Rechtsklick auf das Symbol > Ausblenden geht auch)." },
+            OPT_HIDE_ONYXIA = "Onyxia-Einstimmung ausblenden", OPT_HIDE_ONYXIA_TIP = "Blendet das Onyxia-Symbol auf der Startseite des Journals aus (neben dem des Schlafsacks). Es bleibt angehakt, bis du die Questreihe beginnen kannst (Stufe 48 Allianz, 55 Horde), dann hakt es sich von selbst ab und das Symbol erscheint. Abhaken, um es früher zu sehen. Geht auch per Rechtsklick auf das Symbol → Ausblenden." },
         frFR = { ATTUNE_ONYXIA = "Accès à Onyxia", ONYXIA_ICON_TIP = "La suite de quêtes pour entrer dans le repaire d'Onyxia.",
             ONYXIA_POPUP = "Vous pouvez maintenant commencer l'accès à Onyxia", ONYXIA_POPUP_CLICK = "Cliquez pour l'ouvrir dans le journal.",
             ONYXIA_HIDE = "Masquer", ONYXIA_HIDE_TIP = "Clic droit pour masquer",
-            OPT_SHOW_ONYXIA = "Afficher l'accès à Onyxia", OPT_SHOW_ONYXIA_TIP = "L'icône d'Onyxia sur la page d'accueil du journal, à côté de celle du sac de couchage. Elle apparaît d'elle-même dès que vous pouvez commencer la suite (niveau 48 Alliance, 55 Horde). Cochez pour la voir plus tôt, décochez pour la masquer (clic droit sur l'icône > Masquer fonctionne aussi)." },
+            OPT_HIDE_ONYXIA = "Masquer l'accès à Onyxia", OPT_HIDE_ONYXIA_TIP = "Masque l'icône d'Onyxia sur la page d'accueil du journal (à côté de celle du sac de couchage). L'option reste cochée jusqu'à ce que vous puissiez commencer la suite (niveau 48 Alliance, 55 Horde), puis se décoche d'elle-même et l'icône apparaît. Décochez-la pour la voir plus tôt. Clic droit sur l'icône → Masquer fonctionne aussi." },
         esES = { ATTUNE_ONYXIA = "Sintonización de Onyxia", ONYXIA_ICON_TIP = "La cadena de misiones para entrar en la Guarida de Onyxia.",
             ONYXIA_POPUP = "Ya puedes empezar la sintonización de Onyxia", ONYXIA_POPUP_CLICK = "Haz clic para abrirla en el diario.",
             ONYXIA_HIDE = "Ocultar", ONYXIA_HIDE_TIP = "Clic derecho para ocultar",
-            OPT_SHOW_ONYXIA = "Mostrar sintonización de Onyxia", OPT_SHOW_ONYXIA_TIP = "El icono de Onyxia en la página de inicio del diario, junto al del saco de dormir. Aparece solo en cuanto puedes empezar la cadena (nivel 48 Alianza, 55 Horda). Márcalo para verlo antes, desmárcalo para ocultarlo (clic derecho en el icono > Ocultar también sirve)." },
+            OPT_HIDE_ONYXIA = "Ocultar sintonización de Onyxia", OPT_HIDE_ONYXIA_TIP = "Oculta el icono de Onyxia en la página de inicio del diario (junto al del saco de dormir). Sigue marcada hasta que puedas empezar la cadena (nivel 48 Alianza, 55 Horda); entonces se desmarca sola y aparece el icono. Desmárcala para verlo antes. También puedes hacer clic derecho en el icono y elegir Ocultar." },
         itIT = { ATTUNE_ONYXIA = "Sintonia di Onyxia", ONYXIA_ICON_TIP = "La catena di missioni per entrare nella Tana di Onyxia.",
             ONYXIA_POPUP = "Ora puoi iniziare la sintonia di Onyxia", ONYXIA_POPUP_CLICK = "Clicca per aprirla nel diario.",
             ONYXIA_HIDE = "Nascondi", ONYXIA_HIDE_TIP = "Clic destro per nascondere",
-            OPT_SHOW_ONYXIA = "Mostra sintonia di Onyxia", OPT_SHOW_ONYXIA_TIP = "L'icona di Onyxia nella pagina iniziale del diario, accanto a quella del sacco a pelo. Compare da sola appena puoi iniziare la catena (livello 48 Alleanza, 55 Orda). Spuntala per vederla prima, togli la spunta per nasconderla (clic destro sull'icona > Nascondi funziona anche)." },
+            OPT_HIDE_ONYXIA = "Nascondi sintonia di Onyxia", OPT_HIDE_ONYXIA_TIP = "Nasconde l'icona di Onyxia nella pagina iniziale del diario (accanto a quella del sacco a pelo). Resta spuntata finché non puoi iniziare la catena (livello 48 Alleanza, 55 Orda), poi si toglie da sola e l'icona compare. Togli la spunta per vederla prima. Funziona anche il clic destro sull'icona → Nascondi." },
         ptBR = { ATTUNE_ONYXIA = "Sintonização de Onyxia", ONYXIA_ICON_TIP = "A sequência de missões para entrar no Covil da Onyxia.",
             ONYXIA_POPUP = "Agora você pode começar a sintonização de Onyxia", ONYXIA_POPUP_CLICK = "Clique para abri-la no diário.",
             ONYXIA_HIDE = "Ocultar", ONYXIA_HIDE_TIP = "Clique com o botão direito para ocultar",
-            OPT_SHOW_ONYXIA = "Mostrar sintonização de Onyxia", OPT_SHOW_ONYXIA_TIP = "O ícone de Onyxia na página inicial do diário, ao lado do saco de dormir. Ele aparece sozinho assim que você pode começar a sequência (nível 48 Aliança, 55 Horda). Marque para vê-lo antes, desmarque para ocultá-lo (botão direito no ícone > Ocultar também funciona)." },
+            OPT_HIDE_ONYXIA = "Ocultar sintonização de Onyxia", OPT_HIDE_ONYXIA_TIP = "Oculta o ícone de Onyxia na página inicial do diário (ao lado do saco de dormir). Fica marcada até você poder começar a sequência (nível 48 Aliança, 55 Horda); aí se desmarca sozinha e o ícone aparece. Desmarque para vê-lo antes. Também dá para clicar com o botão direito no ícone e escolher Ocultar." },
         ruRU = { ATTUNE_ONYXIA = "Доступ к Ониксии", ONYXIA_ICON_TIP = "Цепочка заданий, чтобы войти в логово Ониксии.",
             ONYXIA_POPUP = "Теперь вы можете начать доступ к Ониксии", ONYXIA_POPUP_CLICK = "Нажмите, чтобы открыть в журнале.",
             ONYXIA_HIDE = "Скрыть", ONYXIA_HIDE_TIP = "Правый клик — скрыть",
-            OPT_SHOW_ONYXIA = "Показывать доступ к Ониксии", OPT_SHOW_ONYXIA_TIP = "Значок Ониксии на главной странице журнала, рядом со значком спального мешка. Он появляется сам, как только можно начать цепочку (48 уровень у Альянса, 55 у Орды). Отметьте, чтобы видеть его раньше, снимите отметку, чтобы скрыть (правый клик по значку > «Скрыть» тоже работает)." },
+            OPT_HIDE_ONYXIA = "Скрыть доступ к Ониксии", OPT_HIDE_ONYXIA_TIP = "Скрывает значок Ониксии на главной странице журнала (рядом со значком спального мешка). Отметка стоит, пока вы не сможете начать цепочку (48 уровень у Альянса, 55 у Орды), затем снимается сама и значок появляется. Снимите отметку, чтобы видеть его раньше. Можно также щёлкнуть по значку правой кнопкой и выбрать «Скрыть»." },
         koKR = { ATTUNE_ONYXIA = "오닉시아 입장 퀘스트", ONYXIA_ICON_TIP = "오닉시아의 둥지에 입장하기 위한 연계 퀘스트입니다.",
             ONYXIA_POPUP = "이제 오닉시아 입장 퀘스트를 시작할 수 있습니다", ONYXIA_POPUP_CLICK = "클릭하면 도감에서 열립니다.",
             ONYXIA_HIDE = "숨기기", ONYXIA_HIDE_TIP = "우클릭하여 숨기기",
-            OPT_SHOW_ONYXIA = "오닉시아 입장 퀘스트 표시", OPT_SHOW_ONYXIA_TIP = "도감 첫 페이지의 침낭 아이콘 옆에 있는 오닉시아 아이콘입니다. 연계 퀘스트를 시작할 수 있게 되면(얼라이언스 48레벨, 호드 55레벨) 저절로 나타납니다. 체크하면 더 일찍 보이고, 체크를 해제하면 숨겨집니다(아이콘 우클릭 > 숨기기도 같습니다)." },
+            OPT_HIDE_ONYXIA = "오닉시아 입장 퀘스트 숨기기", OPT_HIDE_ONYXIA_TIP = "도감 첫 페이지의 오닉시아 아이콘을 숨깁니다(침낭 아이콘 옆). 연계 퀘스트를 시작할 수 있을 때까지(얼라이언스 48레벨, 호드 55레벨) 체크되어 있다가, 그 후 저절로 해제되고 아이콘이 나타납니다. 더 일찍 보려면 체크를 해제하세요. 아이콘을 우클릭하고 숨기기를 선택해도 됩니다." },
         zhCN = { ATTUNE_ONYXIA = "奥妮克希亚钥匙任务", ONYXIA_ICON_TIP = "进入奥妮克希亚的巢穴所需的系列任务。",
             ONYXIA_POPUP = "你现在可以开始奥妮克希亚钥匙任务了", ONYXIA_POPUP_CLICK = "点击在日志中打开。",
             ONYXIA_HIDE = "隐藏", ONYXIA_HIDE_TIP = "右键点击隐藏",
-            OPT_SHOW_ONYXIA = "显示奥妮克希亚钥匙任务", OPT_SHOW_ONYXIA_TIP = "日志首页睡袋图标旁的奥妮克希亚图标。当你可以开始系列任务时（联盟48级，部落55级）会自动出现。勾选可提前显示，取消勾选可隐藏（右键点击图标 > 隐藏也可以）。" },
+            OPT_HIDE_ONYXIA = "隐藏奥妮克希亚钥匙任务", OPT_HIDE_ONYXIA_TIP = "隐藏日志首页上的奥妮克希亚图标（位于睡袋图标旁）。在你可以开始系列任务之前（联盟48级，部落55级）会保持勾选，之后自动取消勾选并显示图标。取消勾选可提前显示。也可以右键点击图标并选择隐藏。" },
         zhTW = { ATTUNE_ONYXIA = "奧妮克希亞鑰匙任務", ONYXIA_ICON_TIP = "進入奧妮克希亞的巢穴所需的系列任務。",
             ONYXIA_POPUP = "你現在可以開始奧妮克希亞鑰匙任務了", ONYXIA_POPUP_CLICK = "點擊在日誌中開啟。",
             ONYXIA_HIDE = "隱藏", ONYXIA_HIDE_TIP = "右鍵點擊隱藏",
-            OPT_SHOW_ONYXIA = "顯示奧妮克希亞鑰匙任務", OPT_SHOW_ONYXIA_TIP = "日誌首頁睡袋圖示旁的奧妮克希亞圖示。當你可以開始系列任務時（聯盟48級，部落55級）會自動出現。勾選可提前顯示，取消勾選可隱藏（右鍵點擊圖示 > 隱藏也可以）。" },
+            OPT_HIDE_ONYXIA = "隱藏奧妮克希亞鑰匙任務", OPT_HIDE_ONYXIA_TIP = "隱藏日誌首頁上的奧妮克希亞圖示（位於睡袋圖示旁）。在你可以開始系列任務之前（聯盟48級，部落55級）會保持勾選，之後自動取消勾選並顯示圖示。取消勾選可提前顯示。也可以右鍵點擊圖示並選擇隱藏。" },
     }
     strings.esMX = strings.esES
     for locale, entries in pairs(strings) do
@@ -187,8 +187,10 @@ function FDJ.SetOnyxiaIconShown(on)
 end
 
 -- Right-click: a small menu with Hide (the same as the Sleeping Bag's).
--- Hide hides it and opens Options at Show Onyxia Attunement (flashing),
--- so the player sees where it comes back from.
+-- Hide hides it and opens Options at Hide Onyxia Attunement (flashing),
+-- so the player sees where it comes back from. (hideonyxia 2.0.15: the
+-- option was "Show Onyxia Attunement"; it is now a Hide option like the
+-- others, ticked by default until the chain's level.)
 local function ShowMenu(anchor)
     if not menu then
         menu = CreateFrame("Frame", "ForeverDungeonJournalOnyxiaMenu", UIParent, "BackdropTemplate")
@@ -212,7 +214,7 @@ local function ShowMenu(anchor)
         item:SetScript("OnClick", function()
             menu:Hide()
             FDJ.SetOnyxiaIconShown(false)
-            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_SHOW_ONYXIA") end
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_ONYXIA") end
         end)
         menu.hide = item
         -- Closes on its own once the mouse has been away for a moment.

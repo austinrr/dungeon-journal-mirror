@@ -947,3 +947,80 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 - Boss spots: spawns on map 289 in the CMaNGOS classic database (https://github.com/cmangos/classic-db, Full_DB/ClassicDB_1_12_1_z2815.sql.gz, creature table): Jandice Barov 10503, Rattlegore 11622, Marduk Blackpool 10433, Vectus 10432, Ras Frostwhisper 10508, Instructor Malicia 10505, Doctor Theolen Krastinov 11261, Lorekeeper Polkelt 10901, The Ravenian 10507, Lord Alexei Barov 10504, Lady Illucia Barov 10502. Kirtonos the Herald: the Brazier of the Herald (gameobject 175564) on the porch. Darkmaster Gandling: his summon spot in the CMaNGOS instance script (https://github.com/cmangos/mangos-classic, src/game/AI/ScriptDevAI/scripts/eastern_kingdoms/scholomance/scholomance.h, aGandlingSpawnLocs 180.771, -5.4286, 75.5702). Entrance: areatrigger_teleport 2567 (190.819, 126.329, 137.227).
 - Converted to map positions with each floor's UiMapAssignment region (the same conversion puts the Stratholme bosses within about 0.01 of the journal's existing pins); floor by height and region (the porch and the Barov vault only fit floors 2 and 4).
 - 2.0.14: pins measured on M's in-game screenshots of the journal's Scholomance floors 1 and 3 (12 Nov 2026): floor 3 calibrated on the three pins drawn there (fit within about 1 pixel), the skulls' centres read off the art; the entrance moved onto the map's whirlpool (same screen scale). Rattlegore's spawn converts onto the Great Ossuary on floor 3 (0.30, 0.62), next to its skull. Jandice Barov removed on M's request (wrong spot).
+
+Shade of Eranikus loot (2.0.7)
+- Wowhead Forever, Shade of Eranikus (drops, 48 kills): https://www.wowhead.com/forever/npc=5709/shade-of-eranikus
+- Wowhead Forever, Dragon's Call (dropped only by the Shade): https://www.wowhead.com/forever/item=10847/dragons-call
+- Wowhead Classic, Dragon's Call (same single source in Classic Era): https://www.wowhead.com/classic/item=10847/dragons-call
+- Wowhead Forever, Pattern: Radiant Gloves: https://www.wowhead.com/forever/item=254106
+- Wowhead Forever, Pattern: Skycaller's Mail Gauntlets: https://www.wowhead.com/forever/item=252919
+- Wowhead Forever, Plans: Officer's Gloves: https://www.wowhead.com/forever/item=251403
+
+
+Lordaeron Captain friendly to the Alliance (2.0.11)
+- Wowhead Forever, Lordaeron Captain (player comments): https://www.wowhead.com/forever/npc=255699
+- Icy Veins, Ruins of Lordaeron guide: https://www.icy-veins.com/wow-forever/ruins-of-lordaeron-guide
+- Overgear, Ruins of Lordaeron guide: https://overgear.com/guides/wow-forever/the-ruins-of-lordaeron/
+- Epiccarry, Ruins of Lordaeron quests: https://epiccarry.com/blogs/?p=44889
+
+Image of Archmage Modera's place (2.0.12)
+- Where she stands (NPC 269127, world 401.5, 569): Polestar forever-db spawn table (https://github.com/fitzforge/polestar, forever-db/data/spawn.jsonl); zone map bounds from its ui_map table.
+
+NPC portraits on the waypoint arrow (2.0.14)
+- NPC IDs by name (Data/ArrowNpcIds.lua): Polestar forever-db npc and spawn tables (https://github.com/fitzforge/polestar, forever-db/data/npc.jsonl and spawn.jsonl); where a name has several NPCs, the one standing nearest the journal's map spot.
+
+City of Dalaran trash drops (2.0.22)
+- Six rare (blue) bind-on-equip items added beside the four already listed; all ten (286987-286996) drop only from the city's own mobs (Fragmented Sentry, Kirin Tor Necromancer, Fallen Mage, Dark Caster, Saturated/Seeking Remnant, Mana Echo/Stalker, Arcane Echo/Elemental, Phantasm, Mindless Horror, Fallen Warrior, Skeletal Warder). The other blues those mobs drop are ordinary world drops (Sparkleshell Mantle, The Queen's Jewel, ...) and are left out.
+- Wowhead Forever item pages (tooltip and "Dropped by"): https://www.wowhead.com/forever/item=286990 , https://www.wowhead.com/forever/item=286991 , https://www.wowhead.com/forever/item=286992 , https://www.wowhead.com/forever/item=286993 , https://www.wowhead.com/forever/item=286994 , https://www.wowhead.com/forever/item=286996
+- Wowhead Forever NPC drop tables, e.g. Fragmented Sentry: https://www.wowhead.com/forever/npc=246664 ; Kirin Tor Necromancer: https://www.wowhead.com/forever/npc=269134
+- Icy Veins Forever database (same items, same mobs, drop chances): https://db.icy-veins.com/wow-forever/items/286990 , https://db.icy-veins.com/wow-forever/items/286991 , https://db.icy-veins.com/wow-forever/items/286992 , https://db.icy-veins.com/wow-forever/items/286993 , https://db.icy-veins.com/wow-forever/items/286994 , https://db.icy-veins.com/wow-forever/items/286996
+- 2.0.23: NPC IDs of the mobs drawn as portraits (Data/Bosses.lua, FDJ.TRASH_MOB_NPC_IDS) from the same Wowhead Forever drop tables and the Icy Veins Forever NPC pages, e.g. https://db.icy-veins.com/wow-forever/npcs/246664 ; Polestar forever-db npc.jsonl has the same names under these IDs. No public site lists their display IDs yet (Wowhead's NPC pages asked for a human check), so the game looks them up.
+
+Razorfen Kraul quest spots (2.0.28)
+- Yorus Barleybrew's spot in Lakeshire (NPC 6166): Polestar forever-db spawn table (https://github.com/fitzforge/polestar, forever-db/data/spawn.jsonl), zone positions from its ui_map table.
+- Checked against the same table: Mebok Mizzyrix (NPC 3446, Ratchet), Falfindel Waywarder (NPC 4048, Thalanaar), Treshala Fallowbrook (NPC 4521, Darnassus) stand where the journal's spots have them (within about 1 map point).
+
+Excavation Site: Wetlands trash drops (2.0.30)
+- Items, slots and example mobs from M's audit of 13 Nov 2026 ("Excavation Site: Wetlands, rare / epic trash loot audit"), which checked the Wowhead Forever item pages and the Icy Veins Forever NPC drop tables. Not re-checked here: neither site could be reached when this was added (Wowhead asks for a human check, Icy Veins refused the fetch).
+- Item pages: https://www.wowhead.com/forever/item=286982 , https://www.wowhead.com/forever/item=286983 , https://www.wowhead.com/forever/item=286984 , https://www.wowhead.com/forever/item=286985 , https://www.wowhead.com/forever/item=286986 , https://www.wowhead.com/forever/item=287068 ; https://db.icy-veins.com/wow-forever/items/286982 (and the same for the other IDs).
+- The mobs' NPC IDs (portraits): Polestar forever-db npc table (https://github.com/fitzforge/polestar, forever-db/data/npc.jsonl), IDs 260796-260810 beside the dungeon's bosses (260322-260326) and 274715 (Marsh Skulker). Highland Snapper has two entries (260810, 272519); the first is used.
+
+Razorfen Downs trash drops (2.0.35)
+- The eleven items, IDs and slots: M's audit of 13 Nov 2026 ("Razorfen Downs - Rare Trash Loot Audit": Classic RFD trash pool, Forever item pages exist, no live Forever drop confirmed yet).
+- Cross-checked: warcraft.wiki.gg, Razorfen Downs (trash mobs: Boneslasher, Corpseshroud, Death's Head Vestment, Freezing Shard, Manslayer, Quillshooter, Quillward Harness, Thoughtcast Boots): https://warcraft.wiki.gg/wiki/RFD ; its "Razorfen Downs items" category (adds Ebony Boneclub, Stormgale Fists): https://warcraft.wiki.gg/wiki/Category:Razorfen_Downs_items ; wowtbc.gg's Forever loot table (trash, all "not yet discovered"): https://wowtbc.gg/warcraftforever/loot-tables/dungeons/razorfen-downs/ . Briar Tredders is on the audit's list only.
+- Left out, as the audit says: Lady Falther'ess' Finger and Mantle of Lady Falther'ess (Scourge Invasion event NPC, not ordinary trash).
+
+Lonebrow's Journal's spot (2.0.36)
+- The first spot (object 19861, Henrig Lonebrow's Journal) and the item it gives (5791, which starts the quest): Polestar forever-db object, item, spawn and quest_start tables (https://github.com/fitzforge/polestar). Both spots checked as reachable on the Kalimdor walking maps (110 yards apart, the straight way between them clear).
+
+Shaper's Terrace quest givers (2.0.41)
+- From M's audit of 13 Nov 2026 ("Shaper's Terrace | Quest Audit": Questie-derived Forever quest data), checked against forg.gg's quest pages, which name the same giver for each:
+  Essence of Seeping Slimes (97049): Chemist Fuely, Undercity 47.5, 73.3 - https://forg.gg/en/forever/quest/97049
+  The Dark Crystal (95926): Master Apothecary Faranell, Undercity 48.8, 69.3 - https://forg.gg/en/forever/quest/95926
+  Panic at the Digsite (95924): Curator Thorius, Ironforge 71.5, 15.7 - https://forg.gg/en/forever/quest/95924
+  Mapping the Way Forward (95925): Curator Thorius, Ironforge 71.5, 15.7 - https://forg.gg/en/forever/quest/95925
+- The NPCs' places: Chemist Fuely (NPC 10136) https://wow4ever.quest/en/npcs/chemist-fuely and https://warcraftforever.games/npcs/10136 ; Master Apothecary Faranell (NPC 2055) https://wowforever.wclbox.com/en/renwu/1109 ; Curator Thorius (NPC 8256) https://www.wowhead.com/classic/npc=8256/curator-thorius . Note: older NPC pages (metaforge, wow4ever, gamemaps) list only the givers' Classic quests, not these new ones.
+- Not changed: no site names a turn-in NPC yet; Digestible Research (95790) has no known start (forg.gg's page could not be fetched); The Dark Crystal's XP stays 6,600 (ForeverChanges) although Wowhead Forever shows 17,650, until a reward-window screenshot settles it; Panic at the Digsite keeps the objective's 8 Ironhide Ravasaurs (the text and wowf.io say 9): https://wowf.io/en/dungeons/shapers-terrace/guide ; https://foreverchanges.pro/quest/95925/mapping-the-way-forward
+- 2.0.42, The Dark Crystal's XP: 17,650 in the game's own reward window (M's screenshot, 13 Nov 2026), matching Wowhead Forever; ForeverChanges' 6,600 replaced.
+
+Hydromancer Velratha, Zul'Farrak (2.0.42)
+- Wowhead Forever NPC 7795, Drops tab (412 kills): Zealot Plate 274651 (30.3%), Wall of Water 274652 (29.4%), Deep Ritual Girdle 274653 (29.1%, already listed); everything else there is quest items or rare world drops (under 5%): https://www.wowhead.com/forever/npc=7795/hydromancer-velratha
+- Item pages (tooltips, "Dropped by: Hydromancer Velratha" only): https://www.wowhead.com/forever/item=274651 , https://www.wowhead.com/forever/item=274652 , https://www.wowhead.com/forever/item=274653
+- Same stats on forg.gg: https://forg.gg/en/forever/item/274651 , https://forg.gg/en/forever/item/274652
+- 2.0.43, turn-ins: Curator Thorius for Panic at the Digsite, Mapping the Way Forward and Digestible Research (Wowhead Forever quest pages, "End: Curator Thorius", seen in M's screenshots, 13 Nov 2026): https://www.wowhead.com/forever/quest=95924 , https://www.wowhead.com/forever/quest=95925 , https://www.wowhead.com/forever/quest=95790 . The same pages agree with the addon's sharing flags (Panic sharable; the other two not).
+- 2.0.44, turn-ins: Chemist Fuely (Essence of Seeping Slimes) and Master Apothecary Faranell (The Dark Crystal), the quests' own givers: M in game, 13 Nov 2026 (the quest texts ask you to bring the items back to them).
+- 2.0.45, Digestible Research's start: the Partially Digested Journal, an object on the ground inside Shaper's Terrace in the Verdant Plains that gives the quest when clicked (a Twitch streamer's screenshot, ahmpy, and M, 13 Nov 2026). Wowhead Forever lists no starter for it yet: https://www.wowhead.com/forever/quest=95790
+
+Destroy Morphaz, all three rewards (2.0.47)
+- A player's reward window on WoW Forever (Discord, 13 Nov 2026): Glacial Spike, Arcane Crystal Pendant and Fire Ruby are all given, no choice.
+- 2.0.48: the same for every class's Sunken Temple quest (M, 13 Nov 2026, from players' reports on Discord).
+
+Sunken Temple map and boss pins (2.0.49)
+- The map: the game's own Temple of Atal'Hakkar map with its skulls, as sent by M (13 Nov 2026), in place of the 2.0.40 floors.
+- Pins on the skulls (boss rooms by direction, as in the guides): Jammal'an through the eastern passage off the Pit of Sacrifice (Warcraft Tavern, https://www.warcrafttavern.com/forever/guides/sunken-temple/ ); Atal'alarion spawns in the centre of the pit (same page); Morphaz and Hazzas fly just outside Shade of Eranikus's room, Weaver and Dreamscythe appear in the central room after Jammal'an (xpoff farming guide, https://xpoff.com/threads/farming-guide-temple-of-atalhakkar-sunken-temple.666 ); the six troll guardians on the ring's balconies (Wowpedia, https://wowpedia.fandom.com/wiki/Temple_of_Atal%27Hakkar_(Classic) ). The live 2.0.4 pins on the same map agree for Avatar, Jammal'an, Morphaz & Hazzas and Eranikus.
+
+Blueleaf Tubers reminder (2.0.50)
+- Where the items are: M in game (13 Nov 2026), beside Mebok Mizzyrix in Ratchet.
+- Item IDs (Wowhead Forever quest 1221): Crate with Holes 5880, Snufflenose Command Stick 6684, Snufflenose Owner's Manual 5897: https://www.wowhead.com/forever/quest=1221/blueleaf-tubers
+- Localized item names: Wowhead's language pages (https://www.wowhead.com/forever/de/item=5880 and the same for fr, es, pt, ru, ko, cn and the other two items); the Simplified Chinese names also in Wowhead's Chinese quest page (https://www.wowhead.com/cn/quest=1221). Italian: Wowhead has no Italian names for them (the quest page itself is in English: https://www.wowhead.com/it/quest=1221/blueleaf-tubers). Traditional Chinese: not read (Wowhead asked for a human check).
+

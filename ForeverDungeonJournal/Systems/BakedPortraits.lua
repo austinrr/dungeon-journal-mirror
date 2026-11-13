@@ -206,3 +206,109 @@ function FDJ.BakePortraits()
     Say(string.format("bake: photographing %d portraits (about 15 seconds). Don't press any keys.", #ids))
     Page()
 end
+
+-- bakemobs (2.0.32): /dj bakemobs photographs the trash mobs known by NPC ID
+-- only (FDJ.TRASH_MOB_NPC_IDS: City of Dalaran's, Excavation Site's), the
+-- way /dj bake photographed the bosses, so their portraits can be bundled
+-- here and show at once with no lookup. Their looks are found first (all
+-- together, up to 20 seconds), then one sheet with each portrait labelled
+-- by its display ID and a list "NPC ID  name = display ID" under them, on
+-- black and on white (two lossless screenshots in the Screenshots folder).
+-- Nothing else is changed; the sheet closes by itself.
+function FDJ.BakeMobPortraits()
+    if sheet and sheet:IsShown() then return end
+    if type(Screenshot) ~= "function" or not (C_Timer and C_Timer.After) then
+        Say("bakemobs: this client cannot take screenshots from an addon.")
+        return
+    end
+    if InCombatLockdown and InCombatLockdown() then
+        Say("bakemobs: not in combat.")
+        return
+    end
+    local mobs = {}
+    for name, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do mobs[#mobs + 1] = { name = name, npc = npcID } end
+    table.sort(mobs, function(a, b) return a.npc < b.npc end)
+    if #mobs == 0 then Say("bakemobs: no mobs to photograph.") return end
+    local ids = {}
+    for _, m in ipairs(mobs) do ids[#ids + 1] = m.npc end
+    if FDJ.ResolveMobDisplays then FDJ.ResolveMobDisplays(ids) end
+    Say(string.format("bakemobs: finding the looks of %d mobs, then photographing them (about 30 seconds). Don't press any keys.", #mobs))
+    local waited = 0
+    local function Go()
+        local missing = 0
+        for _, m in ipairs(mobs) do
+            m.display = FDJ.MobDisplay and FDJ.MobDisplay(m.npc) or nil
+            if not m.display then missing = missing + 1 end
+        end
+        if missing > 0 and waited < 20 then
+            waited = waited + 1
+            C_Timer.After(1, Go)
+            return
+        end
+        local displays, lines = {}, {}
+        ForeverDungeonJournalDB.bakeMobs = {}
+        for _, m in ipairs(mobs) do
+            if m.display then displays[#displays + 1] = m.display end
+            lines[#lines + 1] = string.format("%d  %s = %s", m.npc, m.name, tostring(m.display or "NOT FOUND"))
+            ForeverDungeonJournalDB.bakeMobs[m.npc] = m.display or false
+        end
+        for _, line in ipairs(lines) do Say("bakemobs: " .. line) end
+        if #displays == 0 then Say("bakemobs: no look was found, nothing to photograph.") return end
+        local oldFormat = GetCVar and GetCVar("screenshotFormat")
+        pcall(SetCVar, "screenshotFormat", "tga")
+        if GameTooltip then GameTooltip:Hide() end
+        local s = Sheet()
+        Layout(1, displays)
+        if not s.list then
+            s.list = s:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
+            s.list:SetJustifyH("LEFT")
+            s.list:SetJustifyV("TOP")
+        end
+        s.list:ClearAllPoints()
+        s.list:SetPoint("TOPLEFT", s, "TOPLEFT", MARGIN, -(MARGIN + 2 * PITCH))
+        s.list:SetTextColor(1, 0, 0)
+        s.list:SetText(table.concat(lines, "\n"))
+        s.list:Show()
+        s.back:SetColorTexture(0, 0, 0, 1)
+        s:Show()
+        local shots = 0
+        local function Done()
+            s:Hide()
+            s.list:Hide()
+            if oldFormat then pcall(SetCVar, "screenshotFormat", oldFormat) end
+            Say(string.format("bakemobs: done, %d screenshots of %d portraits (Screenshots folder). Tell Claude.", shots, #displays))
+        end
+        C_Timer.After(LOAD_WAIT, function()
+            if pcall(Screenshot) then shots = shots + 1 end
+            C_Timer.After(SHOT_WAIT, function()
+                s.back:SetColorTexture(1, 1, 1, 1)
+                C_Timer.After(SHOT_WAIT, function()
+                    if pcall(Screenshot) then shots = shots + 1 end
+                    C_Timer.After(SHOT_WAIT, Done)
+                end)
+            end)
+        end)
+    end
+    Go()
+end
+-- Chained onto /dj at login: this file loads before Core/Journal.lua sets
+-- the command up.
+do
+    local hook = CreateFrame and CreateFrame("Frame")
+    if hook then
+        hook:RegisterEvent("PLAYER_LOGIN")
+        hook:SetScript("OnEvent", function(self)
+            self:UnregisterAllEvents()
+            local base = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
+            if not base then return end
+            SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)
+                local cmd = tostring(msg or ""):lower():gsub("^%s+", ""):gsub("%s+$", "")
+                if cmd == "bakemobs" then
+                    FDJ.BakeMobPortraits()
+                    return
+                end
+                return base(msg, ...)
+            end
+        end)
+    end
+end

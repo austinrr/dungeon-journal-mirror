@@ -85,8 +85,8 @@ FDJ.QUEST_START_MAPS = {
     [2950] = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", targetName = "Nogg" },
 
     -- Razorfen Kraul quest givers.
-    [1221] = { mapID = 1413, x = 0.620, y = 0.370, label = "Mebok Mizzyrix — Ratchet", targetName = "Mebok Mizzyrix" },
-    [1101] = { mapID = 1444, x = 0.890, y = 0.460, label = "Falfindel Waywarder — Thalanaar", targetName = "Falfindel Waywarder" },
+    [1221] = { mapID = 1413, x = 0.624, y = 0.376, label = "Mebok Mizzyrix — Ratchet", targetName = "Mebok Mizzyrix" },
+    [1101] = { mapID = 1444, x = 0.896, y = 0.466, label = "Falfindel Waywarder — Thalanaar", targetName = "Falfindel Waywarder" },
     [1102] = { mapID = 1456, x = 0.360, y = 0.590, label = "Auld Stonespire — Thunder Bluff", targetName = "Auld Stonespire" },
     [1109] = { mapID = 1458, x = 0.480, y = 0.690, label = "Master Apothecary Faranell — Apothecarium", targetName = "Master Apothecary Faranell" },
 

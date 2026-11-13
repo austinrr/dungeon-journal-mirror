@@ -1870,18 +1870,166 @@ end
 -- On a Trash Drops row, the mobs that drop the item are drawn as small
 -- portraits on the right; hovering one shows its name. Returns true when the
 -- portraits replace the source text (every named mob has a known portrait).
-function FDJ.SetRowMobs(row, sourceText)
-    row.fdjMobButtons = row.fdjMobButtons or {}
+-- The mobs a row's source names, when every one of them has a portrait
+-- (else none: the row keeps the names as text).
+function FDJ.RowMobNames(sourceText)
     local names = {}
     if type(sourceText) == "string" and FDJ.TRASH_MOB_DISPLAY_IDS and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
         for name in (sourceText .. " / "):gmatch("(.-) / ") do
             name = name:gsub("^%s+", ""):gsub("%s+$", "")
             if name ~= "" then
-                if not FDJ.TRASH_MOB_DISPLAY_IDS[name] then names = {} break end
+                if not FDJ.TRASH_MOB_DISPLAY_IDS[name]
+                    and not (FDJ.TRASH_MOB_NPC_IDS and FDJ.TRASH_MOB_NPC_IDS[name]) then return {} end
                 names[#names + 1] = name
             end
         end
     end
+    return names
+end
+
+-- moborder (2.0.25; 2.0.24 gave each mob a fixed column, which left gaps):
+-- rows stay packed to the right, but the mobs keep one order across the
+-- page: the mob on the most rows rightmost, then the next, and so on (ties:
+-- the one met first). (The 2.0.25 hover glow across rows went in 2.0.26.)
+function FDJ.PlanMobSlots(loot)
+    FDJ.mobSlots = nil
+    if type(loot) ~= "table" then return end
+    local count, first, order = {}, {}, {}
+    for index, item in ipairs(loot) do
+        for at, name in ipairs(FDJ.RowMobNames(type(item) == "table" and item[5] or nil)) do
+            if not count[name] then
+                count[name], first[name] = 0, index * 100 + at -- ties: met first, then as written
+                order[#order + 1] = name
+            end
+            count[name] = count[name] + 1
+        end
+    end
+    if #order == 0 then return end
+    table.sort(order, function(x, y)
+        if count[x] ~= count[y] then return count[x] > count[y] end
+        return first[x] < first[y]
+    end)
+    local rank = {}
+    for i, name in ipairs(order) do rank[name] = i end
+    FDJ.mobSlots = { rank = rank }
+end
+
+-- mobfast (2.0.31): the looks of trash mobs known by NPC ID only, found
+-- all at once instead of one after another behind the bosses: a hidden
+-- model of each NPC tells its display, which is saved with the journal's
+-- other portraits (ForeverDungeonJournalDB.displayIDs), so after the first
+-- time they are drawn at once. Started a few seconds after logging in and
+-- again when a page shows them; a portrait waiting for one is drawn the
+-- moment it is found.
+FDJ.mobLooks = FDJ.mobLooks or { pending = {}, waiting = {}, models = {} }
+function FDJ.MobDisplay(npcID)
+    local saved = type(ForeverDungeonJournalDB) == "table" and type(ForeverDungeonJournalDB.displayIDs) == "table"
+        and ForeverDungeonJournalDB.displayIDs[npcID]
+    return type(saved) == "number" and saved > 0 and saved or nil
+end
+function FDJ.DrawMobPortrait(texture, displayID)
+    local okPortrait, shown = false, false
+    if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, texture, displayID) end
+    if not (okPortrait and shown) and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
+        pcall(SetPortraitTextureFromCreatureDisplayID, texture, displayID)
+    end
+    texture:SetVertexColor(1, 1, 1, 1)
+end
+function FDJ.ResolveMobDisplays(npcIDs)
+    local looks = FDJ.mobLooks
+    if type(CreateFrame) ~= "function" then return end
+    local now = (GetTime and GetTime()) or 0
+    for _, npcID in ipairs(npcIDs or {}) do
+        if type(npcID) == "number" and not FDJ.MobDisplay(npcID) and not looks.pending[npcID] then
+            looks.pending[npcID] = { tries = 0, at = now - 10 }
+        end
+    end
+    if not next(looks.pending) then return end
+    if not looks.driver then
+        looks.driver = CreateFrame("Frame")
+        looks.driver:SetScript("OnUpdate", function(self)
+            if FDJ.portraitZoning then return end
+            local t = (GetTime and GetTime()) or 0
+            local busy = false
+            for npcID, job in pairs(looks.pending) do
+                busy = true
+                local model = looks.models[npcID]
+                if not model then
+                    local ok, made = pcall(CreateFrame, "PlayerModel", nil, UIParent)
+                    if ok and made then
+                        made:SetSize(1, 1)
+                        made:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+                        made:SetAlpha(0)
+                        looks.models[npcID] = made
+                        model = made
+                    end
+                end
+                if not model then
+                    looks.pending[npcID] = nil
+                elseif t - job.at >= 2.5 then
+                    -- Ask (again): an NPC this client has not met comes in a
+                    -- moment after the server answers.
+                    job.tries, job.at = job.tries + 1, t
+                    if job.tries > 12 then
+                        looks.pending[npcID] = nil
+                        model:Hide()
+                    else
+                        model:Show()
+                        if model.ClearModel then pcall(model.ClearModel, model) end
+                        if not pcall(model.SetCreature, model, npcID) then looks.pending[npcID] = nil end
+                    end
+                else
+                    local ok, display = pcall(model.GetDisplayInfo, model)
+                    if ok and type(display) == "number" and display > 0 then
+                        looks.pending[npcID] = nil
+                        if type(ForeverDungeonJournalDB) == "table" then
+                            ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
+                            ForeverDungeonJournalDB.displayIDs[npcID] = display
+                        end
+                        if model.ClearModel then pcall(model.ClearModel, model) end
+                        model:Hide()
+                        for button in pairs(looks.waiting) do
+                            if button.fdjMobNpc == npcID then
+                                looks.waiting[button] = nil
+                                FDJ.DrawMobPortrait(button.portrait, display)
+                            end
+                        end
+                    end
+                end
+            end
+            if not busy then self:Hide() end
+        end)
+    end
+    looks.driver:Show()
+end
+-- All of them, a few seconds after logging in (once a session).
+function FDJ.WarmMobDisplays()
+    if FDJ.mobLooks.warmed then return end
+    FDJ.mobLooks.warmed = true
+    local ids = {}
+    for _, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do ids[#ids + 1] = npcID end
+    FDJ.ResolveMobDisplays(ids)
+end
+do
+    local warm = CreateFrame and CreateFrame("Frame")
+    if warm then
+        warm:RegisterEvent("PLAYER_LOGIN")
+        warm:SetScript("OnEvent", function(self)
+            self:UnregisterAllEvents()
+            if C_Timer and C_Timer.After then C_Timer.After(4, FDJ.WarmMobDisplays) else FDJ.WarmMobDisplays() end
+        end)
+    end
+end
+
+function FDJ.SetRowMobs(row, sourceText)
+    row.fdjMobButtons = row.fdjMobButtons or {}
+    local names = FDJ.RowMobNames(sourceText)
+    local plan = FDJ.mobSlots
+    -- moborder: the page's order, its first mob rightmost.
+    if plan and plan.rank and #names > 1 then
+        table.sort(names, function(x, y) return (plan.rank[x] or 999) < (plan.rank[y] or 999) end)
+    end
+    row.fdjMobSpan = 0
     for i, name in ipairs(names) do
         local button = row.fdjMobButtons[i]
         if not button then
@@ -1899,22 +2047,49 @@ function FDJ.SetRowMobs(row, sourceText)
             row.fdjMobButtons[i] = button
         end
         button.fdjMobName = name
+        button.fdjMobNpc = nil
+        FDJ.mobLooks.waiting[button] = nil
         button:ClearAllPoints()
-        button:SetPoint("RIGHT", row, "RIGHT", -10 - (#names - i) * 38, 0)
+        -- moborder: packed to the right, in the page's order (no gaps); with
+        -- no page order, in the source's order as before.
+        local column = (plan and plan.rank) and (i - 1) or (#names - i)
+        button:SetPoint("RIGHT", row, "RIGHT", -10 - column * 38, 0)
+        if column + 1 > row.fdjMobSpan then row.fdjMobSpan = column + 1 end
         local mobDisplayID = FDJ.TRASH_MOB_DISPLAY_IDS[name]
-        -- Bundled picture, else the off-screen portrait pool like the bosses
-        -- (no black square while it loads; warmed after login).
-        local okPortrait, shown = false, false
-        if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, button.portrait, mobDisplayID) end
-        if not (okPortrait and shown) then
-            pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, mobDisplayID)
+        if mobDisplayID then
+            -- Bundled picture, else the off-screen portrait pool like the bosses
+            -- (no black square while it loads; warmed after login).
+            local okPortrait, shown = false, false
+            if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, button.portrait, mobDisplayID) end
+            if not (okPortrait and shown) then
+                pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, mobDisplayID)
+            end
+            button.portrait:SetVertexColor(1, 1, 1, 1)
+        else
+            -- trashnpc (2.0.22): known by NPC ID only. mobfast (2.0.31): its
+            -- look saved from an earlier lookup is drawn at once; else it is
+            -- looked up now (all of the page's together) and drawn the moment
+            -- it is found, a plain dark disc until then (no "?").
+            local npcID = FDJ.TRASH_MOB_NPC_IDS[name]
+            local display = FDJ.MobDisplay(npcID)
+            if display then
+                FDJ.DrawMobPortrait(button.portrait, display)
+            else
+                if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, button.portrait) end
+                button.portrait:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+                button.portrait:SetTexCoord(0, 1, 0, 1)
+                button.portrait:SetVertexColor(0.08, 0.07, 0.06, 0.85)
+                button.fdjMobNpc = npcID
+                FDJ.mobLooks.waiting[button] = true
+                FDJ.ResolveMobDisplays({ npcID })
+            end
         end
         button:Show()
     end
     for i = #names + 1, #row.fdjMobButtons do row.fdjMobButtons[i]:Hide() end
     -- Keep the item name clear of the portraits.
     if row.name and row.name.SetPoint then
-        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - #names * 38, 0)
+        row.name:SetPoint("RIGHT", row, "RIGHT", -10 - row.fdjMobSpan * 38, 0)
     end
     return #names > 0
 end

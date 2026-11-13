@@ -5,7 +5,6 @@ FDJ.Locales.esES = {
     ["RANDOM_ENCHANT"] = "<Encantamiento aleatorio>",
     ["ALSO_RECEIVE"] = "También recibirás:",
     ["MAP_JUMP_LEVEL"] = "Salta al nivel %d",
-    ["MAP_RFK_WALLJUMP"] = "Salta por la pared sobre la puerta para llegar a Roogug",
     ["MAP_RFK_VINE"] = "Salta sobre esta enredadera para llegar a Roogug",
     ["MAP_OBJ_BFD_CHEST"] = "Saquea el Manuscrito de Lorgalis del Cofre de hierro picado, bajo el agua en este recoveco del estanque.",
     ["MAP_OBJ_BFD_FATHOM"] = "Haz clic en la Piedra abisal bajo el agua, debajo de la pasarela, para obtener el Núcleo abisal. Al hacerlo aparece el Barón Aquanis.",

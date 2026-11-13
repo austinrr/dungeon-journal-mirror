@@ -5,7 +5,6 @@ FDJ.Locales.ptBR = {
     ["RANDOM_ENCHANT"] = "<Encantamento aleatório>",
     ["ALSO_RECEIVE"] = "Você também receberá:",
     ["MAP_JUMP_LEVEL"] = "Pule para o nível %d",
-    ["MAP_RFK_WALLJUMP"] = "Pule na parede por cima do portão para chegar a Roogug",
     ["MAP_RFK_VINE"] = "Pule nesta trepadeira para chegar a Roogug",
     ["MAP_OBJ_BFD_CHEST"] = "Pegue o Manuscrito de Lorgalis do Baú de Ferro Corroído, debaixo d’água nesta reentrância do lago.",
     ["MAP_OBJ_BFD_FATHOM"] = "Clique na Pedra Abissal debaixo d’água, sob a passarela, para obter o Núcleo Abissal. O Barão Aquanis aparece ao fazer isso.",

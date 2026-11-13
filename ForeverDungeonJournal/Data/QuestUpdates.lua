@@ -398,7 +398,7 @@ FDJ.QUEST_PREREQ_DETAILS[92434] = {
     providedItem = {279469, "Grimy Key", 1, "Provided for Blood in the Streets"},
     note = "Requires Magus Wordeen Voidglare's Dalaran quests. Stone Tokens and Bracers of Binding from Keeper Bel'varil are optional and are not required for attunement.",
     map = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", detail = "Inside the building in Tarren Mill" },
-    turninMap = { mapID = 1416, x = 0.092, y = 0.600, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", detail = "Outside Dalaran near Lordamere Lake" },
+    turninMap = { mapID = 1416, x = 0.077, y = 0.588, label = "Image of Archmage Modera — Lordamere Lake near Dalaran", detail = "Outside Dalaran near Lordamere Lake" },
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[92434] = 270
 FDJ.FOREVER_QUEST_XP_FALLBACK[96984] = 9400
@@ -1332,7 +1332,20 @@ do
         -- shapersquests (2.0.4): real IDs, XP and reputation from Wowhead
         -- Forever (quest tooltips) and ForeverChanges, cross-checked with the
         -- reported research (Shaper's Terrace Quest Research, 11 Nov 2026).
-        -- Givers are still not known.
+        -- shapersgivers (2.0.41): four givers from the Shaper's Terrace Quest
+        -- Audit (13 Nov 2026, Questie-derived Forever data) and forg.gg's
+        -- quest pages, the places matching the NPCs' own spawn pages:
+        -- Chemist Fuely and Master Apothecary Faranell (Undercity), Curator
+        -- Thorius (Ironforge). Turn-ins are not known yet; Digestible
+        -- Research's start is still not known.
+        -- 2.0.43: the Alliance three are handed in to Curator Thorius
+        -- (Wowhead Forever quest pages, M's screenshots, 13 Nov 2026).
+        -- 2.0.44: the Horde two are handed in to their givers (M, in game:
+        -- the quest texts ask you to bring the items back to them).
+        -- 2.0.45: Digestible Research starts from the Partially Digested
+        -- Journal, an object lying on the ground inside the dungeon (the
+        -- Verdant Plains); clicking it gives the quest, no item (a player's
+        -- screenshot and M, 13 Nov 2026).
         { dungeon = "Shaper's Terrace", quest = {
             id = 97049, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97202
             learnTitle = "Essence of Seeping Slimes",
@@ -1341,15 +1354,16 @@ do
             level = 60,
             requires = 55,
             faction = "Horde",
-            pickup = "Not known yet",
+            pickup = "Chemist Fuely, The Apothecarium, Undercity (47.5, 73.3)",
             objective = "Gather 8 Seeping Slime Essence in the Shaper's Terrace.",
-            turnin = "Not known yet",
+            turnin = "Chemist Fuely, The Apothecarium, Undercity (47.5, 73.3)",
+            turninMap = { mapID = 1458, x = 0.475, y = 0.733, label = "Chemist Fuely — Undercity", targetName = "Chemist Fuely" },
             liveXPFallback = 17650,
             rewardSummary = "90s  •  Undercity +100  •  Orgrimmar +50",
             rewardItems = { {279932, "Slime-Resistant Shroud", 3}, {279902, "Reinforced Muck Protectors", 3} },
             rewardChoice = true,
             requiredItem = { 276235, "Seeping Slime Essence", 1, 8, "From the slimes in the pools inside Shaper's Terrace" },
-            note = "Quest giver not known yet.",
+            startMap = { mapID = 1458, x = 0.475, y = 0.733, label = "Chemist Fuely — Undercity", targetName = "Chemist Fuely" },
         } },
         { dungeon = "Shaper's Terrace", quest = {
             id = 95926, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97203
@@ -1359,15 +1373,16 @@ do
             level = 60,
             requires = 55,
             faction = "Horde",
-            pickup = "Not known yet",
+            pickup = "Master Apothecary Faranell, The Apothecarium, Undercity (48.8, 69.3)",
             objective = "Gather a colorless Drained Crystal Fragment near the Achromatic Crystal in the Shaper's Terrace.",
-            turnin = "Not known yet",
-            liveXPFallback = 6600,
+            turnin = "Master Apothecary Faranell, The Apothecarium, Undercity (48.8, 69.3)",
+            turninMap = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
+            liveXPFallback = 17650,
             rewardSummary = "Undercity +100  •  Orgrimmar +50",
             rewardItems = { {279908, "Crystal-Infused Cleaver", 3}, {279910, "Beastslayer's Trident", 3}, {279912, "Faintly Glowing Orb", 3} },
             rewardChoice = true,
             requiredItem = { 271771, "Drained Crystal Fragment", 1, 1, "Near the Achromatic Crystal inside Shaper's Terrace" },
-            note = "Quest giver not known yet.",
+            startMap = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
         } },
         -- The Alliance's three (reported, 11 Nov 2026).
         { dungeon = "Shaper's Terrace", quest = {
@@ -1377,14 +1392,16 @@ do
             level = 60,
             requires = 55,
             faction = "Alliance",
-            pickup = "Not known yet",
+            pickup = "Curator Thorius, Hall of Explorers, Ironforge (71.5, 15.7)",
             objective = "Slay Venomridge, 6 Ravasaur Matriarchs and 8 Ironhide Ravasaurs in Shaper's Terrace.",
-            turnin = "Not known yet",
+            turnin = "Curator Thorius, Hall of Explorers, Ironforge (71.5, 15.7)",
+            turninMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
             liveXPFallback = 17650,
             rewardSummary = "90s  •  Ironforge +100  •  Stormwind +50",
             rewardItems = { {279903, "Diemetradon Scale Spaulders", 3}, {279905, "Ravasaur Hide Footpads", 3} },
             rewardChoice = true,
-            note = "Quest giver not known yet. The quest text asks for 9 Ironhide Ravasaurs, its objective counts 8.",
+            note = "The quest text asks for 9 Ironhide Ravasaurs, its objective counts 8.",
+            startMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
         } },
         { dungeon = "Shaper's Terrace", quest = {
             id = 95925, -- Wowhead Forever, ForeverChanges
@@ -1393,14 +1410,16 @@ do
             level = 60,
             requires = 55,
             faction = "Alliance",
-            pickup = "Not known yet",
+            pickup = "Curator Thorius, Hall of Explorers, Ironforge (71.5, 15.7)",
             objective = "Find Interesting Landmarks in Shaper's Terrace and fill out the explorer's map at each: the Pillar of Assimilation, the Achromatic Crystal, the Western Gates, the Regrowth Vestibule and the Unearthed Stone Watcher.",
-            turnin = "Not known yet",
+            turnin = "Curator Thorius, Hall of Explorers, Ironforge (71.5, 15.7)",
+            turninMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
             liveXPFallback = 17650,
             rewardSummary = "Ironforge +100  •  Stormwind +50",
             rewardItems = { {279908, "Crystal-Infused Cleaver", 3}, {279910, "Beastslayer's Trident", 3}, {279912, "Faintly Glowing Orb", 3} },
             rewardChoice = true,
-            note = "Quest giver not known yet. You map them with an Explorers' League Cartographer's Kit.",
+            note = "You map them with an Explorers' League Cartographer's Kit.",
+            startMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
         } },
         -- Digestible Research: real ID and reward item IDs from Wowhead
         -- Forever (quest 95790; was the stand-in -97204 until 2.0.3).
@@ -1411,14 +1430,15 @@ do
             level = 60,
             requires = 55,
             faction = "Alliance",
-            pickup = "Not known yet",
+            pickup = "The Partially Digested Journal lying on the ground inside Shaper's Terrace (the Verdant Plains): click it to get the quest",
             objective = "Collect 15 Partially Digested Journal Pages in Shaper's Terrace.",
-            turnin = "Not known yet",
+            turnin = "Curator Thorius, Hall of Explorers, Ironforge (71.5, 15.7)",
+            turninMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
             rewardSummary = "Ironforge +100  •  Stormwind +100",
             liveXPFallback = 17650,
             rewardItems = { {279931, "Lost Researcher's Hood", 3}, {279901, "Expeditionary Legplates", 3} },
             rewardChoice = true,
-            note = "Quest giver not known yet (its text suggests a torn journal may start it).",
+            note = "Starts from the Partially Digested Journal on the ground inside the dungeon.",
         } },
         { dungeon = "Razorfen Downs", quest = {
             id = 96773,
@@ -2714,6 +2734,8 @@ do
     local FUREN = "Furen Longbeard, Dwarven District, Stormwind (58.0, 16.8)"
     local FUREN_MAP = { mapID = 1453, x = 0.580, y = 0.168, label = "Furen Longbeard — Stormwind", targetName = "Furen Longbeard" }
     local YORUS = "Yorus Barleybrew, Lakeshire, Redridge Mountains"
+    -- Where he stands (the Lakeshire inn).
+    local YORUS_MAP = { mapID = 1433, x = 0.215, y = 0.447, label = "Yorus Barleybrew — Lakeshire", targetName = "Yorus Barleybrew" }
     local THUNGRIM = "Thun'grim Firegaze, hills east of the Crossroads, The Barrens (57, 30)"
     local THUNGRIM_MAP = { mapID = 1413, x = 0.570, y = 0.300, label = "Thun'grim Firegaze — east of the Crossroads", targetName = "Thun'grim Firegaze", detail = "On the hilltop east of the Crossroads, just south of Thorn Hill" }
     local RUGA = "Ruga Ragetotem, Camp Taurajo, The Barrens"
@@ -2771,12 +2793,14 @@ do
         objective = "Enter the Rethban Caverns, reach the first fork and return to Yorus Barleybrew in time. You must not die and release your spirit.",
         pickup = YORUS, turnin = YORUS,
         description = "Your warrior trainer (Wu Shen in Stormwind, or the trainers in Ironforge and Darnassus) sends you to Yorus Barleybrew in Lakeshire first. The run is timed.",
+        map = YORUS_MAP, turninMap = YORUS_MAP,
     }
     D[1702] = {
         level = 22, requires = 20,
         objective = "Bring the Cask of Scalder to Furen Longbeard.",
         pickup = YORUS, turnin = FUREN,
         description = "Furen rewards you with a shield, Furen's Favor.",
+        map = YORUS_MAP,
         turninMap = FUREN_MAP,
     }
     D[1701] = {
@@ -3415,7 +3439,7 @@ do
     -- 2.0.4: the other five (XP: ForeverChanges; sharing: ForeverChanges and
     -- the reported research).
     FDJ.FOREVER_QUEST_XP_FALLBACK[97049] = 17650
-    FDJ.FOREVER_QUEST_XP_FALLBACK[95926] = 6600
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95926] = 17650 -- 2.0.42: the game's own reward window (M, 13 Nov 2026); was 6,600 (ForeverChanges)
     FDJ.FOREVER_QUEST_XP_FALLBACK[95924] = 17650
     FDJ.FOREVER_QUEST_XP_FALLBACK[95925] = 17650
     FDJ.QUEST_SHAREABILITY_AUDIT[95928] = true  -- Crystalline Elements
@@ -3746,3 +3770,4 @@ do
     }
 end
 -- END onyxiaattunement
+

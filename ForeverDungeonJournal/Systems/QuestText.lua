@@ -921,7 +921,7 @@ do
         for _, quest in ipairs(dungeon.quests or {}) do
             if type(quest) == "table" and type(quest.id) == "number" and quest.name
                 and not quest.repeatable and not quest.hideFromMainList and Matches(quest, faction)
-                and not (quest.unavailable and not (FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(quest.id))) -- notavailable (2.0.4)
+                and not (FDJ.IsQuestUnavailable and FDJ.IsQuestUnavailable(quest)) -- notavailable (2.0.4), raceunavailable (2.0.9)
                 and not (FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(name, quest)) then -- RPG Mode: unlocked ones only
                 list[#list + 1] = quest
             end

@@ -5,7 +5,6 @@ FDJ.Locales.frFR = {
     ["RANDOM_ENCHANT"] = "<Enchantement aléatoire>",
     ["ALSO_RECEIVE"] = "Vous recevrez également :",
     ["MAP_JUMP_LEVEL"] = "Sautez au niveau %d",
-    ["MAP_RFK_WALLJUMP"] = "Sautez contre le mur pour passer la porte et atteindre Roogug",
     ["MAP_RFK_VINE"] = "Sautez sur cette liane pour atteindre Roogug",
     ["MAP_OBJ_BFD_CHEST"] = "Récupérez le Manuscrit de Lorgalis dans le Coffre en fer piqué, sous l’eau dans cette alcôve du bassin.",
     ["MAP_OBJ_BFD_FATHOM"] = "Cliquez sur la Pierre des profondeurs sous l’eau, sous la passerelle, pour obtenir le Noyau des profondeurs. Le baron Aquanis apparaît alors.",

@@ -236,6 +236,63 @@ local function FightGroup(dungeon, name)
     return nil
 end
 
+-- ringoflaw (2.0.8): which of a fight's bosses a unit is, from what Forever
+-- still tells about it inside a dungeon, where names and IDs are hidden: its
+-- level and creature type (data: fightSig on each boss). nil when it could be
+-- more than one (Grizzle and Eviscerator are both level 54 humanoids).
+local CREATURE_TYPE_IDS = { Beast = 1, Undead = 6, Humanoid = 7 }
+local CREATURE_TYPE_NAMES = {
+    Beast = { "Beast", "Wildtier", "Bête", "Bestia", "Fera", "Животное", "야수", "野兽", "野獸" },
+    Undead = { "Undead", "Untoter", "Mort-vivant", "No-muerto", "Non Morto", "Morto-vivo", "Нежить", "언데드", "亡灵", "不死族" },
+    Humanoid = { "Humanoid", "Humanoïde", "Humanoide", "Umanoide", "Гуманоид", "인간형", "人型生物" },
+}
+local function TypeIs(name, id, want)
+    if type(id) == "number" and CREATURE_TYPE_IDS[want] then return id == CREATURE_TYPE_IDS[want] end
+    if type(name) ~= "string" then return false end
+    for _, n in ipairs(CREATURE_TYPE_NAMES[want] or {}) do
+        if Lower(n) == Lower(name) then return true end
+    end
+    return false
+end
+local function FightMemberOfUnit(dungeon, group, unit)
+    local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
+    if not d or type(group) ~= "string" then return nil end
+    local okL, lvl = pcall(UnitLevel, unit)
+    lvl = okL and Plain(lvl) or nil
+    local okT, typeName, typeID = pcall(UnitCreatureType, unit)
+    typeName, typeID = okT and Plain(typeName) or nil, okT and Plain(typeID) or nil
+    if type(lvl) ~= "number" or (type(typeName) ~= "string" and type(typeID) ~= "number") then return nil end
+    local pick
+    for _, b in ipairs(d.bosses or {}) do
+        local sig = type(b) == "table" and b.fightGroup == group and b.fightSig
+        if type(sig) == "table" and sig.level == lvl and TypeIs(typeName, typeID, sig.type) then
+            if pick then return nil end
+            pick = b
+        end
+    end
+    return pick
+end
+-- A kill told under the fight's own name ("Ring of Law", the boss event):
+-- which of its bosses it was, from the dead target, else from the boss the
+-- fight was seen to bring.
+local function RefineFightKill(run, dungeon, k)
+    if not (k and k.b) then return end
+    local group, member = FightGroup(dungeon, k.b)
+    if not group or member then return end
+    local pick
+    local okD, dead = pcall(UnitIsDead, "target")
+    if okD and Plain(dead) then pick = FightMemberOfUnit(dungeon, group, "target") end
+    if not pick and run and run.groupPick and run.groupPick[group] then
+        for _, b in ipairs((FDJ.DB[dungeon] and FDJ.DB[dungeon].bosses) or {}) do
+            if type(b) == "table" and b.name == run.groupPick[group] and b.fightGroup == group then pick = b end
+        end
+    end
+    if pick then
+        k.b = pick.name
+        k.n = k.n or pick.npcID
+    end
+end
+
 local function IsFinal(dungeon, npc, name, boss)
     local c = Bosses(dungeon)
     if not c then return false end
@@ -1102,6 +1159,17 @@ local function AddKill(guid, name, how)
             end
             if k.n and k.m then LearnName(k.n, k.m) end
             if not k.b then ClassifyKill(run, k) if k.b then SetKillTimes(run, k) end end
+            -- ringoflaw (2.0.8): the boss event of a fight ("Ring of Law"), which
+            -- is no boss's own name, came after the group's kill (PARTY_KILL,
+            -- hidden): it names that kill. Only a new kill was named before, so
+            -- the Ring of Law never counted.
+            if how == "boss" and not k.b and name then
+                k.b, k.wb = name, nil
+                RefineFightKill(run, dungeon, k)
+                SetKillTimes(run, k)
+            elseif how == "boss" and k.b then
+                RefineFightKill(run, dungeon, k)
+            end
             -- ruuzlu: the boss event ends a fight with partners
             if how == "boss" and boss and type(boss.killWith) == "table" and (k.wb == boss.name or k.b == boss.name) then
                 local waiting = k.wb == boss.name
@@ -1143,6 +1211,7 @@ local function AddKill(guid, name, how)
     if how == "party" and not npc and not name then kill.a = 1 end
     ClassifyKill(run, kill)
     if how == "boss" and not kill.b and name then kill.b = name kill.wb = nil end
+    if how == "boss" then RefineFightKill(run, dungeon, kill) end -- ringoflaw (2.0.8)
     if how == "boss" and boss and type(boss.killWith) == "table" and kill.b == boss.name then
         EventEndsFight(run, kill, boss) -- ruuzlu
     end
@@ -1307,6 +1376,22 @@ local function OnUnit(unit)
     local test = FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon]
     local found = {}
     local boss = (npc or name) and BossFor(dungeon, npc, name)
+    -- ringoflaw (2.0.8): name and ID hidden (inside a Forever dungeon): a
+    -- unit the game flags as a boss whose level and type fit only one of a
+    -- fight's bosses is that boss. (The fight's waves before it are no boss.)
+    if not boss and not npc and not name and current and type(UnitIsBossMob) == "function" then
+        local okB, isBoss = pcall(UnitIsBossMob, unit)
+        if okB and Plain(isBoss) == true then
+            local seenGroup = {}
+            for _, b in ipairs((FDJ.DB[dungeon] and FDJ.DB[dungeon].bosses) or {}) do
+                if type(b) == "table" and type(b.fightGroup) == "string" and not seenGroup[b.fightGroup] then
+                    seenGroup[b.fightGroup] = true
+                    boss = FightMemberOfUnit(dungeon, b.fightGroup, unit)
+                    if boss then break end
+                end
+            end
+        end
+    end
     -- ringoflaw: the challenger the fight brought (targeted or seen): the
     -- tracker's Ring of Law entry shows that boss.
     if boss and type(boss.fightGroup) == "string" and current then

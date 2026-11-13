@@ -94,8 +94,22 @@ local HIDE_LABEL = {
     zhCN = "隐藏任务", zhTW = "隱藏任務",
 }
 
-function FDJ.MapQuestsHidden()
-    return ForeverDungeonJournalDB ~= nil and ForeverDungeonJournalDB.mapHideQuests == true
+-- autohidequests (2.0.52): on the map of a dungeon where the character has
+-- nothing left to do inside (FDJ.MapQuestsAllDoneInside: every quest with a
+-- mark on the map done there, 2.0.53), the box is ticked by itself. The
+-- saved choice is not changed; unticking it there shows that dungeon's
+-- quests again until the next reload.
+local shownAnyway = {}
+local function AllDone(name)
+    return name ~= nil and FDJ.MapQuestsAllDoneInside ~= nil and FDJ.MapQuestsAllDoneInside(name) == true
+end
+local function Selected()
+    return FDJ.GetSelectedDungeon and (FDJ.GetSelectedDungeon()) or nil
+end
+function FDJ.MapQuestsHidden(dungeonName)
+    if ForeverDungeonJournalDB ~= nil and ForeverDungeonJournalDB.mapHideQuests == true then return true end
+    local name = dungeonName or Selected()
+    return name ~= nil and not shownAnyway[name] and AllDone(name)
 end
 
 local function Redraw()
@@ -109,7 +123,15 @@ end
 
 function FDJ.SetMapQuestsHidden(on)
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
-    ForeverDungeonJournalDB.mapHideQuests = on and true or nil
+    local name = Selected()
+    if name and AllDone(name) then
+        -- autohidequests: only this dungeon's, the saved choice stays as it is
+        -- unless it was on (then unticking turns it off, as before).
+        shownAnyway[name] = (not on) and true or nil
+        if not on then ForeverDungeonJournalDB.mapHideQuests = nil end
+    else
+        ForeverDungeonJournalDB.mapHideQuests = on and true or nil
+    end
     Redraw()
 end
 

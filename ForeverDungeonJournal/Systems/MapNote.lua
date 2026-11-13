@@ -32,7 +32,7 @@ for name in ([[
     Maraudon2 Ragefire1 RazorfenDowns1 RazorfenKraul1 ScarletMonastery1
     ScarletMonastery2 ScarletMonastery3 ScarletMonastery4 ShadowfangKeep1
     ShadowfangKeep6 ShadowfangKeep7 Stratholme1 Stratholme2 TheDeadmines1
-    TheDeadmines2 TheStockade1 TheTempleOfAtalHakkar1 Uldaman1 Uldaman2
+    TheDeadmines2 TheStockade1 Uldaman1 Uldaman2
     WailingCaverns1
 ]]):gmatch("%S+") do COPIES[name] = true end
 

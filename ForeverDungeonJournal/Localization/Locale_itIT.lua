@@ -5,7 +5,6 @@ FDJ.Locales.itIT = {
     ["RANDOM_ENCHANT"] = "<Incantamento casuale>",
     ["ALSO_RECEIVE"] = "Riceverai anche:",
     ["MAP_JUMP_LEVEL"] = "Salta giù al livello %d",
-    ["MAP_RFK_WALLJUMP"] = "Salta sul muro oltre il cancello per raggiungere Roogug",
     ["MAP_RFK_VINE"] = "Salta su questa liana per raggiungere Roogug",
     ["MAP_OBJ_BFD_CHEST"] = "Raccogli il Manoscritto di Lorgalis dal Forziere di Ferro Butterato, sott’acqua in questa rientranza della vasca.",
     ["MAP_OBJ_BFD_FATHOM"] = "Clicca sulla Pietra degli Abissi sott’acqua, sotto la passerella, per ottenere il Nucleo degli Abissi. Così appare il Barone Aquanis.",

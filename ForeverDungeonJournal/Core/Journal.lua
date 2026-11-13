@@ -232,7 +232,11 @@ FDJ.DUNGEON_MAPS = {
     -- Boss positions: OMGmacros's numbered map on Discord ("Drowned City
     -- Boss locations", 12 Nov 2026), drawn on this same map art.
     ["The Drowned City"] = {
-        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityMap", texBottom = 683 / 1024 } },
+        -- Two distinct published maps; Atal'Byzal is the underground level.
+        floors = {
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityMap", texBottom = 683 / 1024, label = "The Drowned City" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityAtalByzalMap", texBottom = 683 / 1024, label = "Atal'Byzal" },
+        },
         entrance = { floor = 1, x = 0.846, y = 0.521, angle = 0 }, -- the swirl in Sunken Hollow
         bosses = {
             { name = "Zul'Alai",            floor = 1, x = 0.697, y = 0.572 },
@@ -245,6 +249,21 @@ FDJ.DUNGEON_MAPS = {
             { name = "Deathless Marrow",    floor = 1, x = 0.349, y = 0.536 },
             { name = "Min'loth the Serpent", floor = 1, x = 0.196, y = 0.539 },
         },
+    },
+    -- Blackmaw Hold: six levels from Santiago Reyes' Forever dungeon maps.
+    -- Floor names are visible on hover; do not guess boss positions from art.
+    ["Blackmaw Hold"] = {
+        floors = {
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldGroveMap",          texBottom = 683 / 1024, label = "Blackmaw Grove" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldFesteringGrottoMap", texBottom = 683 / 1024, label = "Festering Grotto" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldFallenGroveMap",    texBottom = 683 / 1024, label = "Depths of the Fallen Grove" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldEldersMap",         texBottom = 683 / 1024, label = "Depths of the Elders" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldBurrowMap",         texBottom = 683 / 1024, label = "Depths of the Burrow" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldForbiddenMagicMap", texBottom = 683 / 1024, label = "Depths of Forbidden Magic" },
+        },
+        -- Entrance swirl visible west of Blackmaw Grove on the original map.
+        entrance = { floor = 1, x = 0.183, y = 0.740, angle = 90 },
+        bosses = {}, -- Locations unverified; no fabricated boss markers.
     },
     -- Boss positions: falling/Ekiroth's numbered map on Discord ("Bastion
     -- Krol'dok", 12 Nov 2026), bosses 1-6 in the order they are fought.
@@ -304,9 +323,9 @@ FDJ.DUNGEON_MAPS = {
     ["Razorfen Kraul"] = {
         floors = { { uiMapID = 301, tiles = "Interface\\WorldMap\\RazorfenKraul\\RazorfenKraul1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s1", x0 = 0.2036, y0 = 0.2874, x1 = 0.2375, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s2", x0 = 0.5589, y0 = 0.2874, x1 = 0.5928, y1 = 0.3383 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s3", x0 = 0.8593, y0 = 0.3937, x1 = 0.8932, y1 = 0.4446 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s4", x0 = 0.7914, y0 = 0.4955, x1 = 0.8253, y1 = 0.5464 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\RazorfenKraul1_s5", x0 = 0.0649, y0 = 0.6602, x1 = 0.0988, y1 = 0.7111 } } } },
         entrance = { floor = 1, x = 0.714, y = 0.840, angle = 180 },
-        -- Ladder notes (no level change): how to get across to Roogug.
+        -- Ladder note (no level change): how to get across to Roogug. (The wall
+        -- jump over the gate was taken out in 2.0.51: it no longer works.)
         transitions = {
-            { floor = 1, x = 0.606, y = 0.725, note = true, labelKey = "MAP_RFK_WALLJUMP" },
             { floor = 1, x = 0.626, y = 0.562, note = true, labelKey = "MAP_RFK_VINE" },
         },
         bosses = {
@@ -730,15 +749,24 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Sunken Temple"] = {
-        floors = { { uiMapID = 220, tiles = "Interface\\WorldMap\\TheTempleOfAtalHakkar\\TheTempleOfAtalHakkar1_" } },
+        -- stmap (2.0.49): one map, the game's own Temple of Atal'Hakkar map
+        -- (M's copy, 13 Nov 2026), in place of the five floors of 2.0.40. The
+        -- skulls drawn on it: the four boss rooms and, round the ring, the
+        -- six troll guardians (Gasher, Hukku, Loro, Mijan, Zolo, Zul'Lor).
+        -- The pins sit on the skulls where there is one; the bosses with no
+        -- skull of their own where they appear in the original dungeon:
+        -- Atal'alarion in the middle of the pit, Dreamscythe and Weaver in
+        -- the central room (after Jammal'an), Ogom beside Jammal'an.
+        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\SunkenTempleMap", texBottom = 683 / 1024 } },
+        entrance = { floor = 1, x = 0.499, y = 0.130, angle = 0 }, -- the north passage into the ring
         bosses = {
-            { name = "Avatar of Hakkar",       x = 0.243, y = 0.459 },
-            { name = "Jammal'an the Prophet",  x = 0.760, y = 0.370 },
-            { name = "Ogom the Wretched",      x = 0.780, y = 0.385 },
-            -- One map link for each combined dragon encounter.
-            { name = "Dreamscythe & Weaver",   x = 0.430, y = 0.865 },
-            { name = "Morphaz & Hazzas",       x = 0.461, y = 0.845 },
-            { name = "Shade of Eranikus",      x = 0.686, y = 0.874 },
+            { name = "Atal'alarion",           x = 0.499, y = 0.455 },
+            { name = "Avatar of Hakkar",       x = 0.240, y = 0.453 },
+            { name = "Jammal'an the Prophet",  x = 0.760, y = 0.454 },
+            { name = "Ogom the Wretched",      x = 0.790, y = 0.395 },
+            { name = "Dreamscythe & Weaver",   x = 0.500, y = 0.383 },
+            { name = "Morphaz & Hazzas",       x = 0.498, y = 0.865 },
+            { name = "Shade of Eranikus",      x = 0.666, y = 0.873 },
         },
     },
 }
@@ -1734,16 +1762,52 @@ FDJ.PROFESSION_SPELLS = {
     BLACKSMITHING = 2018, MINING = 2575, LEATHERWORKING = 2108, TAILORING = 3908,
     ALCHEMY = 2259, ENGINEERING = 4036, ENCHANTING = 7411, SKINNING = 8613, HERBALISM = 2366,
 }
+-- profskill (2.0.41): the WoW Forever client has no skill list
+-- (GetNumSkillLines / GetSkillLineInfo are nil there, and so is
+-- GetSpellInfo), so every character was shown every profession quest. The
+-- professions are read with GetProfessions / GetProfessionInfo instead, by
+-- their skill line number, the same in every client language (Mining 186,
+-- Blacksmithing 164...), or by their name. The skill list stays the way
+-- for clients that have it.
+FDJ.PROFESSION_SKILL_LINES = {
+    BLACKSMITHING = 164, MINING = 186, LEATHERWORKING = 165, TAILORING = 197,
+    ALCHEMY = 171, ENGINEERING = 202, ENCHANTING = 333, SKINNING = 393, HERBALISM = 182,
+}
 function FDJ.PlayerHasProfession(token)
     token = tostring(token or ""):upper()
-    if type(GetNumSkillLines) ~= "function" or type(GetSkillLineInfo) ~= "function" then return true end
     local wanted = {}
     local spell = FDJ.PROFESSION_SPELLS[token]
-    if spell and type(GetSpellInfo) == "function" then
-        local ok, name = pcall(GetSpellInfo, spell)
-        if ok and type(name) == "string" then wanted[name:lower()] = true end
+    if spell then
+        local name
+        if type(GetSpellInfo) == "function" then
+            local ok, n = pcall(GetSpellInfo, spell)
+            if ok then name = n end
+        end
+        if type(name) ~= "string" and type(C_Spell) == "table" and type(C_Spell.GetSpellName) == "function" then
+            local ok, n = pcall(C_Spell.GetSpellName, spell)
+            if ok then name = n end
+        end
+        if type(name) == "string" and not (type(issecretvalue) == "function" and issecretvalue(name)) then
+            wanted[name:lower()] = true
+        end
     end
     wanted[token:lower()] = true
+    if type(GetProfessions) == "function" and type(GetProfessionInfo) == "function" then
+        local line = FDJ.PROFESSION_SKILL_LINES[token]
+        local okP, p1, p2, p3, p4, p5, p6 = pcall(GetProfessions)
+        if okP then
+            for _, index in pairs({ p1, p2, p3, p4, p5, p6 }) do
+                local ok, name, _, _, _, _, _, skillLine = pcall(GetProfessionInfo, index)
+                if ok then
+                    if line and tonumber(skillLine) == line then return true end
+                    if type(name) == "string" and not (type(issecretvalue) == "function" and issecretvalue(name))
+                        and wanted[name:lower()] then return true end
+                end
+            end
+            return false
+        end
+    end
+    if type(GetNumSkillLines) ~= "function" or type(GetSkillLineInfo) ~= "function" then return true end
     local okCount, count = pcall(GetNumSkillLines)
     if not okCount or type(count) ~= "number" or count == 0 then return true end -- not loaded yet
     for i = 1, count do
@@ -3120,6 +3184,13 @@ FDJ.PrewarmBossPortraits = function()
     -- The mobs drawn on Trash Drops rows.
     for _, displayID in pairs(FDJ.TRASH_MOB_DISPLAY_IDS or {}) do
         work[#work + 1] = { nil, nil, displayID }
+    end
+    -- trashnpc: the trash mobs known by NPC ID are looked up all together
+    -- (mobfast, 2.0.31; Systems/LootFilter.lua), not one by one here.
+    if FDJ.WarmMobDisplays then pcall(FDJ.WarmMobDisplays) end
+    for mobName, mobNpcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do -- trashnpc: a saved look warmed
+        local saved = FDJ.MobDisplay and FDJ.MobDisplay(mobNpcID)
+        if saved then work[#work + 1] = { nil, nil, saved } end
     end
     local index = 0
     local function Step()
@@ -5170,10 +5241,40 @@ do
         local t = FDJ.Locales and FDJ.Locales[locale]
         if t and t.QUEST_NOT_AVAILABLE_TIP == nil then t.QUEST_NOT_AVAILABLE_TIP = text end
     end
+    -- raceunavailable (2.0.9): %s is the race, as the game names it.
+    local notRace = {
+        enUS = "Unavailable to %s", deDE = "Für deine Rasse nicht verfügbar (%s)",
+        frFR = "Indisponible pour votre race (%s)", esES = "No disponible para tu raza (%s)",
+        esMX = "No disponible para tu raza (%s)", itIT = "Non disponibile per la tua razza (%s)",
+        ptBR = "Indisponível para a sua raça (%s)", ruRU = "Недоступно для вашей расы (%s)",
+        koKR = "%s 종족은 이용할 수 없음", zhCN = "%s无法接取", zhTW = "%s無法接取",
+    }
+    for locale, text in pairs(notRace) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.QUEST_RACE_UNAVAILABLE_TIP == nil then t.QUEST_RACE_UNAVAILABLE_TIP = text end
+    end
+end
+-- raceunavailable (2.0.9): unavailableRaces = { Scourge = true } on a quest:
+-- the character's race can't take it (Compendium of the Fallen, Undead).
+-- Keys are the game's race file names (UnitRace's second value).
+-- (No new file-level local: this file is at Lua's limit of 200.)
+FDJ.IsQuestRaceUnavailable = function(quest)
+    if type(quest) ~= "table" or type(quest.unavailableRaces) ~= "table" or not quest.id then return false end
+    if type(UnitRace) ~= "function" then return false end
+    local ok, _, race = pcall(UnitRace, "player")
+    return ok and type(race) == "string" and quest.unavailableRaces[race] == true
+end
+-- Not in the game for now, or not for this character's race: greyed out,
+-- not counted, kept off the quest tracker (unless already handed in).
+FDJ.IsQuestUnavailable = function(quest)
+    if type(quest) ~= "table" or not quest.id then return false end
+    if not (quest.unavailable or FDJ.IsQuestRaceUnavailable(quest)) then return false end
+    return not FDJ.QuestTurnedIn(quest.id)
 end
 FDJ.IsQuestLost = function(quest)
-    if type(quest) == "table" and quest.unavailable and quest.id then -- notavailable
-        return not FDJ.QuestTurnedIn(quest.id)
+    if type(quest) == "table" and (quest.unavailable or quest.unavailableRaces) and quest.id then -- notavailable
+        if FDJ.IsQuestUnavailable(quest) then return true end
+        if quest.unavailable then return false end
     end
     if type(quest) ~= "table" or type(quest.lostIf) ~= "table" or not quest.id then return false end
     if FDJ.QuestTurnedIn(quest.id) or (FDJ.IsQuestInLog and FDJ.IsQuestInLog(quest.id)) then return false end
@@ -5190,6 +5291,14 @@ FDJ.MarkLostQuestRows = function(buttons, quests)
         local lost = quest and FDJ.IsQuestLost(quest) or false
         button.fdjLost = lost or nil
         button.fdjLostTip = (lost and quest.unavailable) and "QUEST_NOT_AVAILABLE_TIP" or "QUEST_LOST_TIP" -- notavailable
+        -- raceunavailable (2.0.9): "Unavailable to Undead" (the race as the game names it)
+        button.fdjLostText = nil
+        if lost and not quest.unavailable and FDJ.IsQuestRaceUnavailable(quest) then
+            local ok, raceName = pcall(UnitRace, "player")
+            if ok and type(raceName) == "string" then
+                button.fdjLostText = string.format(FDJ.L("QUEST_RACE_UNAVAILABLE_TIP"), raceName)
+            end
+        end
         button:SetAlpha(lost and 0.45 or 1)
         if not button.fdjLostHooked then
             button.fdjLostHooked = true
@@ -5197,7 +5306,7 @@ FDJ.MarkLostQuestRows = function(buttons, quests)
                 if not self.fdjLost then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 -- (SetText: text, r, g, b, alpha, wrap)
-                GameTooltip:SetText(FDJ.L(self.fdjLostTip or "QUEST_LOST_TIP"), 1, 0.35, 0.3, 1, true)
+                GameTooltip:SetText(self.fdjLostText or FDJ.L(self.fdjLostTip or "QUEST_LOST_TIP"), 1, 0.35, 0.3, 1, true)
                 GameTooltip:Show()
             end)
             button:HookScript("OnLeave", function(self)
@@ -6523,7 +6632,8 @@ RefreshQuestDetail = function()
         if quest.rewardChoice and #rewardItems > 1 then
             frame.questRewardHeader:SetText("|cffffd36b" .. L("CHOOSE_ONE_REWARD") .. "|r")
         else
-            frame.questRewardHeader:SetText("|cffffd36b" .. L("REWARD") .. "|r")
+            -- 2.0.47: several items all given: "Rewards".
+            frame.questRewardHeader:SetText("|cffffd36b" .. L(#rewardItems > 1 and "REWARDS" or "REWARD") .. "|r")
         end
     else
         frame.questRewardHeader:SetText("|cffffd36b" .. L("REWARDS") .. "|r")
@@ -7074,7 +7184,7 @@ FDJ.SavedMapFloor = function(dungeonName, data)
     local floors = data and data.floors or {}
     local saved = ForeverDungeonJournalDB.mapFloors and ForeverDungeonJournalDB.mapFloors[dungeonName]
     if type(saved) == "number" and saved >= 1 and saved <= #floors then return saved end
-    return data and data.entrance and data.entrance.floor or 1
+    return data and (data.defaultFloor or (data.entrance and data.entrance.floor)) or 1
 end
 
 FDJ.RenderCustomDungeonMap = function(data, floorIndex)
@@ -7263,9 +7373,17 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                     FDJ.ResetDungeonMapView()
                     FDJ.RenderCustomDungeonMap(FDJ.DUNGEON_MAPS[selectedDungeon], self.floorIndex)
                 end)
+                btn:SetScript("OnEnter", function(self)
+                    if not self.floorLabel then return end
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.floorLabel, 1, 0.82, 0)
+                    GameTooltip:Show()
+                end)
+                btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
                 frame.dungeonMapFloorButtons[i] = btn
             end
             btn.floorIndex = i
+            btn.floorLabel = floors[i].label
             btn:SetText(L("MAP_FLOOR", i))
             local fs = btn:GetFontString()
             btn:SetSize(math.max(70, math.ceil((fs and fs:GetStringWidth() or 50) + 20)), 22)
@@ -8275,20 +8393,67 @@ FDJ.IsLootMaterial = function(item)
     return slot:find("reagent", 1, true) ~= nil or slot:find("trade good", 1, true) ~= nil
         or slot:find("material", 1, true) ~= nil
 end
-FDJ.SortLootRange = function(list, first, last)
+-- trashgroups (2.0.27): on a Trash Drops page (byMobs), within each rarity
+-- the items from one mob come first, then those from two, three...; items
+-- from the same mobs sit together (the mob on the most items first, as the
+-- portraits are ordered). Items with no mob named go after them.
+FDJ.SortLootRange = function(list, first, last, byMobs)
     if type(list) ~= "table" or not first or not last or last - first < 1 then return end
     local slice = {}
+    local mobCount, mobFirst = {}, {}
     for i = first, last do
         local item = list[i]
-        slice[#slice + 1] = {
+        local entry = {
             item = item, pos = i,
             material = FDJ.IsLootMaterial(item) and 1 or 0,
             quality = type(item) == "table" and tonumber(item[4]) or 3,
         }
+        if byMobs then
+            local source = type(item) == "table" and type(item[5]) == "string" and item[5] or ""
+            local lower = string.lower(source)
+            local mobs = {}
+            if not lower:find("zone drop", 1, true) and not lower:find(" trash", 1, true) and lower ~= "trash" then
+                for name in (source .. " / "):gmatch("(.-) / ") do
+                    name = name:gsub("^%s+", ""):gsub("%s+$", "")
+                    if name ~= "" then
+                        mobs[#mobs + 1] = name
+                        if not mobCount[name] then
+                            mobCount[name], mobFirst[name] = 0, i * 100 + #mobs
+                        end
+                        mobCount[name] = mobCount[name] + 1
+                    end
+                end
+            end
+            entry.mobs = mobs
+        end
+        slice[#slice + 1] = entry
+    end
+    if byMobs then
+        local order = {}
+        for name in pairs(mobCount) do order[#order + 1] = name end
+        table.sort(order, function(a, b)
+            if mobCount[a] ~= mobCount[b] then return mobCount[a] > mobCount[b] end
+            return mobFirst[a] < mobFirst[b]
+        end)
+        local rank = {}
+        for i, name in ipairs(order) do rank[name] = i end
+        for _, entry in ipairs(slice) do
+            local ranks = {}
+            for _, name in ipairs(entry.mobs) do ranks[#ranks + 1] = rank[name] end
+            table.sort(ranks)
+            entry.ranks = ranks
+            entry.many = #ranks > 0 and #ranks or 999 -- no mob named: last
+        end
     end
     table.sort(slice, function(a, b)
         if a.material ~= b.material then return a.material < b.material end
         if a.quality ~= b.quality then return a.quality > b.quality end
+        if byMobs then
+            if a.many ~= b.many then return a.many < b.many end
+            for k = 1, #a.ranks do
+                if a.ranks[k] ~= b.ranks[k] then return a.ranks[k] < b.ranks[k] end
+            end
+        end
         return a.pos < b.pos
     end)
     for i, entry in ipairs(slice) do list[first + i - 1] = entry.item end
@@ -8458,10 +8623,12 @@ RefreshLoot = function()
     -- (the list is a copy: the data keeps its order).
     if FDJ.SortLootRange then
         local split = FDJ.lootRecipeSplit
-        FDJ.SortLootRange(loot, 1, split or ownCount)
-        if split then FDJ.SortLootRange(loot, split + 1, ownCount) end
-        FDJ.SortLootRange(loot, ownCount + 1, sharedEnd)
-        FDJ.SortLootRange(loot, sharedEnd + 1, #loot)
+        -- trashgroups (2.0.27): Trash Drops grouped by the mobs that drop them.
+        local byMobs = (boss.trash and not boss.recipeTab) and true or nil
+        FDJ.SortLootRange(loot, 1, split or ownCount, byMobs)
+        if split then FDJ.SortLootRange(loot, split + 1, ownCount, byMobs) end
+        FDJ.SortLootRange(loot, ownCount + 1, sharedEnd, byMobs)
+        FDJ.SortLootRange(loot, sharedEnd + 1, #loot, byMobs)
     end
 
     -- Sections, top to bottom: gear, "Recipes & Patterns" (when split off),
@@ -8488,7 +8655,8 @@ RefreshLoot = function()
                     name = name:gsub("^%s+", ""):gsub("%s+$", "")
                     if name ~= "" then
                         any = true
-                        if not FDJ.TRASH_MOB_DISPLAY_IDS[name] then all = false end
+                        if not FDJ.TRASH_MOB_DISPLAY_IDS[name]
+                            and not (FDJ.TRASH_MOB_NPC_IDS and FDJ.TRASH_MOB_NPC_IDS[name]) then all = false end
                     end
                 end
                 if any and all then return true end
@@ -8504,6 +8672,8 @@ RefreshLoot = function()
     -- their one column needs scrolling (Krol'dok's trash): compact rows drop
     -- the portraits, the mobs stay in the item's tooltip ("Drops from").
     local mobPortraits = HasMobPortraits()
+    -- moborder (2.0.25): the page's mob order (2.0.24: a column per mob).
+    if FDJ.PlanMobSlots then FDJ.PlanMobSlots((boss.trash and mobPortraits) and loot or nil) end
     do
         local vp = frame.lootScroll:GetHeight() or 0
         local many = false
@@ -8640,6 +8810,8 @@ RefreshLoot = function()
                 for _, button in ipairs(row.fdjMobButtons or {}) do
                     if button:IsShown() then mobs = mobs + 1 end
                 end
+                -- The portraits' width (all of them, packed to the right).
+                if (row.fdjMobSpan or 0) > mobs then mobs = row.fdjMobSpan end
                 if mobs > 0 then inset = math.min(inset, -(14 + mobs * 38)) end
                 row.name:SetPoint("RIGHT", inset, 0)
                 row.slot:SetPoint("RIGHT", inset, 0)
@@ -12330,7 +12502,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.4"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.5"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
