@@ -22,7 +22,7 @@ function FDJ.ApplyBossFactionTag(button, boss, isRare)
         return
     end
     if not button.fdjFactionTag then
-        button.fdjFactionTag = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        button.fdjFactionTag = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
         button.fdjFactionIcon = button:CreateTexture(nil, "OVERLAY")
         button.fdjFactionIcon:SetSize(16, 16)
     end

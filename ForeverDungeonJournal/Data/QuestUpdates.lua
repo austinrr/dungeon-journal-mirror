@@ -1323,7 +1323,7 @@ do
             objective = "Enter Blackmaw Hold and recover 5 Blackmaw Pouches for Ekkal at the Ruins of Eldarath in Azshara.",
             turnin = "Ekkal, Ruins of Eldarath, Azshara (41.8, 38.8)",
             rewardSummary = "90s  •  Timbermaw Hold +150",
-            liveXPFallback = 1450,
+            liveXPFallback = 13200,
             requiredItem = { 273050, "Blackmaw Pouch", 1, 5, "From the Blackmaw furbolgs inside Blackmaw Hold" },
             note = "Afterwards Ekkal takes more pouches as a repeatable quest (Timbermaw Hold +100).",
             startMap = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
@@ -1402,12 +1402,10 @@ do
             rewardChoice = true,
             note = "Quest giver not known yet. You map them with an Explorers' League Cartographer's Kit.",
         } },
-        -- Digestible Research: only in the report (95790 there); neither
-        -- Wowhead nor ForeverChanges has it yet, so it has a stand-in ID
-        -- until the game names it, and its reward items have no IDs yet (0,
-        -- filled in by ItemIdLearner).
+        -- Digestible Research: real ID and reward item IDs from Wowhead
+        -- Forever (quest 95790; was the stand-in -97204 until 2.0.3).
         { dungeon = "Shaper's Terrace", quest = {
-            id = -97204,
+            id = 95790,
             learnTitle = "Digestible Research",
             name = "Digestible Research",
             level = 60,
@@ -1417,7 +1415,8 @@ do
             objective = "Collect 15 Partially Digested Journal Pages in Shaper's Terrace.",
             turnin = "Not known yet",
             rewardSummary = "Ironforge +100  •  Stormwind +100",
-            rewardItems = { {0, "Lost Researcher's Hood", 3}, {0, "Expeditionary Legplates", 3} },
+            liveXPFallback = 17650,
+            rewardItems = { {279931, "Lost Researcher's Hood", 3}, {279901, "Expeditionary Legplates", 3} },
             rewardChoice = true,
             note = "Quest giver not known yet (its text suggests a torn journal may start it).",
         } },
@@ -1922,6 +1921,7 @@ do
         { id = 96018, name = "Powering the Pylons" },
         { id = 93016, name = "A Brief History Lesson" },
         { id = 93394, name = "Meeting the Magister" },
+        { id = 93341, name = "Forlorn Gardens" },
         { id = 93594, name = "Word of the Woods" },
     }
     D[92914] = {
@@ -1956,18 +1956,28 @@ do
     D[93394] = {
         level = 43, requires = 35,
         objective = "Locate Magister Kirandis inside the temple of Shen'dralas.",
-        pickup = AT_MORDENT, turnin = "Magister Kirandis, inside the temple of Shen'dralas (47.2, 75.8)",
+        -- "in", not "inside": "inside" marks a turn-in as in the dungeon (In Dungeon icon).
+        pickup = AT_MORDENT, turnin = "Magister Kirandis, in the temple of Shen'dralas (47.2, 75.8)",
         map = MORDENT, turninMap = KIRANDIS,
         note = "This opens the Shen'dralas quests, Mithera's included.",
+    }
+    -- 2.0.3 (Discord report, h0p3; Wowhead Forever 93341/93594 comments):
+    -- Word of the Woods only opens once Mithera's Forlorn Gardens is handed in.
+    D[93341] = {
+        level = 43, requires = 35,
+        objective = "Investigate the Forlorn Gardens near Shen'dralas and then return to Mithera at the nearby temple.",
+        pickup = "Mithera, by the Forlorn Gardens, Shen'dralas (52.8, 76.0)",
+        turnin = "Mithera, by the Forlorn Gardens, Shen'dralas (52.8, 76.0)",
+        map = MITHERA, turninMap = MITHERA,
     }
     D[93594] = {
         level = 43, requires = 35,
         objective = "Find Woodwyrd in the Forlorn Gardens at Shen'dralas.",
         pickup = "Mithera, by the Forlorn Gardens, Shen'dralas (52.8, 76.0)",
         turnin = AT_WOODWYRD, map = MITHERA, turninMap = WOODWYRD,
-        note = "Horde players get it from Mithera after her Forlorn Gardens quest (Wowhead lists that one for the Horde only; how the Alliance gets Word of the Woods is not confirmed yet).",
+        note = "Mithera offers it once Forlorn Gardens is handed in.",
     }
-    XP[92914] = 3600; XP[96010] = 2450; XP[96018] = 3600; XP[93016] = 360; XP[93394] = 360; XP[93594] = 360
+    XP[92914] = 3600; XP[96010] = 2450; XP[96018] = 3600; XP[93016] = 360; XP[93394] = 360; XP[93341] = 1800; XP[93594] = 360
 
     local FOREVER_XP = {
         [7067] = 10650, [7068] = 6750, [7070] = 6750, [7029] = 10250, [7041] = 10250,
@@ -2018,6 +2028,7 @@ do
         { id = 96018, name = "Powering the Pylons" },
         { id = 93016, name = "A Brief History Lesson" },
         { id = 93394, name = "Meeting the Magister" },
+        { id = 93341, name = "Forlorn Gardens" },
         { id = 93594, name = "Word of the Woods" },
         { id = 93404, name = "Rot and Regret" },
         { id = 93601, name = "Passing the Blame" },
@@ -2446,25 +2457,27 @@ do
         for _, q in ipairs(bh.quests) do have[q.id] = true end
         local function Add(q) if not have[q.id] then table.insert(bh.quests, q) have[q.id] = true end end
         Add({
-            id = 92066, name = "The Twin Bears", faction = "Both", level = 55, requires = 50,
+            id = 92066, name = "The Twin Bears", faction = "Both", level = 55, requires = 47,
             pickup = "Lorekeeper Nok, Ursolan (probably; he takes the totems)",
             objective = "Find the Totem of Ursoc and the Totem of Ursol inside Blackmaw Hold. Then, return them to Lorekeeper Nok at Ursolan.",
             turnin = "Lorekeeper Nok, Ursolan",
             liveXPFallback = 11300,
             rewardSummary = "Timbermaw Hold +150",
             rewards = "11,300 XP • Timbermaw Hold +150",
-            rewardItems = {},
+            rewardChoice = true,
+            rewardItems = { {279891, "Guidance of Ursoc", 2}, {279892, "Wisdom of Ursol", 2} },
             note = "Needs Timbermaw Hold reputation Neutral or better. The required level isn't confirmed yet.",
         })
         Add({
-            id = 92065, name = "Blackmaw Reclamation", faction = "Both", level = 60, requires = 55,
+            id = 92065, name = "Blackmaw Reclamation", faction = "Both", level = 60, requires = 47,
             pickup = "Gatekeeper Rageroar, Ursolan (probably; he takes the head)",
             objective = "Bring Varrox Bleakhoof's Head to Gatekeeper Rageroar at Ursolan.",
             turnin = "Gatekeeper Rageroar, Ursolan",
-            liveXPFallback = 1450,
+            liveXPFallback = 13200,
             rewardSummary = "Timbermaw Hold +150",
-            rewards = "1,450 XP • Timbermaw Hold +150",
-            rewardItems = {},
+            rewards = "13,200 XP • Timbermaw Hold +150",
+            rewardChoice = true,
+            rewardItems = { {260216, "Ouroboros Ring", 3}, {260217, "Eagle's Head Signet", 3}, {260218, "Malefactor's End", 3}, {260219, "Engraved Band", 3} },
             note = "Varrox Bleakhoof, the last boss, has the head. Needs Timbermaw Hold reputation Neutral or better. The required level isn't confirmed yet.",
         })
         Add({
@@ -2479,20 +2492,20 @@ do
             note = "Repeatable, after the first Blackmaw Pouches.",
         })
         Add({
-            id = 92067, name = "Feeding Time!", faction = "Both", level = 55, requires = 50,
+            id = 92067, name = "Feeding Time!", faction = "Both", level = 55, requires = 45,
             repeatable = true,
             pickup = "Not known yet",
             objective = "Bring Fel-Tainted Flesh.",
             turnin = "Not known yet",
             rewardSummary = "Regurgitated Seed Pod",
             rewards = "Regurgitated Seed Pod",
-            rewardItems = {},
+            rewardItems = { {249900, "Regurgitated Seed Pod", 1} },
             note = "Repeatable. The quest text sends you after the Legashi satyrs. Who gives it isn't known yet; please report it on Discord.",
         })
         for _, q in ipairs(bh.quests) do
             if q.id == 92070 then q.liveXPFallback = 11300 end
         end
-        XP[92070] = 11300; XP[92065] = 1450; XP[92066] = 11300; XP[97327] = 1450
+        XP[92070] = 11300; XP[92065] = 13200; XP[92066] = 11300; XP[97327] = 13200
     end
 
     -- Sunken Temple: The Sunken Temple, before The Stone Circle. Two quests,
@@ -3397,7 +3410,8 @@ end
 do
     local MAYENA = { mapID = 1412, x = 0.348, y = 0.222, label = "Mayena Earthseeker — Mulgore", targetName = "Mayena Earthseeker" }
     FDJ.QUEST_START_MAPS[95928] = MAYENA
-    FDJ.FOREVER_QUEST_XP_FALLBACK[95928] = 17655
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95928] = 17650
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95790] = 17650 -- Digestible Research
     -- 2.0.4: the other five (XP: ForeverChanges; sharing: ForeverChanges and
     -- the reported research).
     FDJ.FOREVER_QUEST_XP_FALLBACK[97049] = 17650
@@ -3409,7 +3423,7 @@ do
     FDJ.QUEST_SHAREABILITY_AUDIT[95926] = true  -- The Dark Crystal
     FDJ.QUEST_SHAREABILITY_AUDIT[95924] = true  -- Panic at the Digsite
     FDJ.QUEST_SHAREABILITY_AUDIT[95925] = false -- Mapping the Way Forward
-    FDJ.QUEST_SHAREABILITY_AUDIT[-97204] = false -- Digestible Research (stand-in)
+    FDJ.QUEST_SHAREABILITY_AUDIT[95790] = false -- Digestible Research
 end
 -- END shapersquests
 
@@ -3666,3 +3680,69 @@ do
     if FDJ.QUEST_SHAREABILITY_AUDIT then FDJ.QUEST_SHAREABILITY_AUDIT[97196] = true end
 end
 -- END coldbringerhorde
+
+-- BEGIN onyxiaattunement
+-- 2.0.3: the Onyxia attunement as a quest chain page of its own, opened from
+-- the round Onyxia icon on the journal's home page, right of the Cozy
+-- Sleeping Bag's (Systems/OnyxiaAttunement.lua). Its quests are Upper
+-- Blackrock Spire's Drakefire Amulet (Alliance) and Blood of the Black
+-- Dragon Champion (Horde), with their chains (Data/QuestChains.lua); each
+-- character sees its own faction's. Every raider needs the Drakefire
+-- Amulet in their bags to enter Onyxia's Lair.
+-- Horde: Blood and Thunder (98325) is new in WoW Forever and comes before
+-- Warlord's Command (M's attunement guide, 12 Nov 2026; Wowhead Forever
+-- quest 98325). Chains and steps checked against Wowhead Forever's quest
+-- pages (12 Nov 2026).
+do
+    local PAGE = "Onyxia Attunement"
+    FDJ.ONYXIA_PAGE = PAGE
+    FDJ.ONYXIA_QUESTS = { Alliance = 6502, Horde = 6602 }
+    local C, D, XP = FDJ.QUEST_PREREQ_CHAINS, FDJ.QUEST_PREREQ_DETAILS, FDJ.FOREVER_QUEST_XP_FALLBACK
+    local GORETOOTH = { mapID = 1418, x = 0.058, y = 0.474, label = "Warlord Goretooth — Kargath, Badlands", targetName = "Warlord Goretooth" }
+    local AT_GORETOOTH = "Warlord Goretooth, Kargath, Badlands (5.8, 47.4)"
+
+    D[98325] = {
+        level = 60, requires = 55,
+        objective = "Speak to Warlord Goretooth to serve the Kargath Expeditionary Force.",
+        pickup = AT_GORETOOTH, turnin = AT_GORETOOTH,
+        map = GORETOOTH, turninMap = GORETOOTH,
+        note = "New in WoW Forever: it comes before Warlord's Command.",
+    }
+    XP[98325] = 660
+    if FDJ.PREREQ_REWARD_MONEY_FALLBACK then FDJ.PREREQ_REWARD_MONEY_FALLBACK[98325] = 900 end
+    -- bloodthunder (2.0.4): Warlord's Command's own page (Lower Blackrock
+    -- Spire) shows Blood and Thunder as its pre-quest.
+    if C[4903] == nil then C[4903] = { { id = 98325, name = "Blood and Thunder" } } end
+    -- First step of every Horde chain that starts with Warlord's Command.
+    for _, id in ipairs({ 4974, 6569, 6602 }) do
+        local chain = C[id]
+        if type(chain) == "table" and type(chain[1]) == "table" and chain[1].id == 4903 then
+            table.insert(chain, 1, { id = 98325, name = "Blood and Thunder" })
+        end
+    end
+
+    -- The page: copies of the two quests (their own note here; the UBRS
+    -- page keeps its entries as they are).
+    local quests = {}
+    local ubrs = FDJ.DB and FDJ.DB["Upper Blackrock Spire"]
+    for _, faction in ipairs({ "Alliance", "Horde" }) do
+        for _, q in ipairs((ubrs and ubrs.quests) or {}) do
+            if type(q) == "table" and q.id == FDJ.ONYXIA_QUESTS[faction] then
+                local copy = {}
+                for k, v in pairs(q) do copy[k] = v end
+                copy.note = "Every raider needs the Drakefire Amulet in their bags to enter Onyxia's Lair; it doesn't need to be worn. The last step is in Upper Blackrock Spire: General Drakkisath's blood."
+                quests[#quests + 1] = copy
+            end
+        end
+    end
+    FDJ.DB[PAGE] = {
+        questChainPage = true, -- Quests is its only tab
+        noArrow = true,        -- no waypoint arrow when tracked (the Sleeping Bag's chain only)
+        level = "48+",         -- the character's faction: Systems/OnyxiaAttunement.lua
+        location = "",
+        description = "",
+        bosses = {},
+        quests = quests,
+    }
+end
+-- END onyxiaattunement

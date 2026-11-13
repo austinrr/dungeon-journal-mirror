@@ -46,17 +46,17 @@ local function BuildWindow(frame)
     w:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
     w:EnableMouse(true)
 
-    w.title = w:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    w.title = w:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     w.title:SetPoint("TOP", 0, -16)
     w.title:SetTextColor(1.00, 0.82, 0.27)
 
-    w.body = w:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    w.body = w:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     w.body:SetPoint("TOPLEFT", 22, -48)
     w.body:SetPoint("TOPRIGHT", -22, -48)
     w.body:SetJustifyH("CENTER")
     w.body:SetSpacing(3)
 
-    w.discordLabel = w:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    w.discordLabel = w:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     w.discordLabel:SetPoint("TOP", w.body, "BOTTOM", 0, -14)
 
     -- An edit box so the link can be selected and copied (Ctrl+C).
@@ -73,6 +73,7 @@ local function BuildWindow(frame)
     end)
 
     w.close = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(w.close) -- ownfonts (2.0.8)
     w.close:SetSize(110, 24)
     w.close:SetPoint("BOTTOM", 0, 14)
     w.close:SetScript("OnClick", function() w:Hide() end)
@@ -103,7 +104,7 @@ function FDJ.CreateBugReportButton(frame, home, anchorButton)
     icon:SetTexture("Interface\\HelpFrame\\HelpIcon-Bug")
     icon:SetSize(26, 26)
     icon:SetPoint("LEFT", button, "LEFT", 1, 0)
-    local label = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local label = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.bugReportButtonText = label
     label:SetPoint("LEFT", icon, "RIGHT", 0, 0)
     label:SetTextColor(1.00, 0.82, 0.27)

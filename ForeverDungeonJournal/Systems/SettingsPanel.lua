@@ -105,6 +105,8 @@ local panel
 
 local OPTIONS = {
     { header = "OPT_UI" },
+    -- bindtop (2.0.11): the key bind first on General, so players see it at once.
+    { keybind = true, label = "OPT_BIND" },
     {
         label = "OPT_HIDE_ITEM_LINE",
         tip = "OPT_HIDE_ITEM_LINE_TIP",
@@ -136,6 +138,15 @@ local OPTIONS = {
         set = function(on) if FDJ.SetSleepingBagHidden then FDJ.SetSleepingBagHidden(on) end end,
     },
     {
+        -- The Onyxia Attunement icon (Systems/OnyxiaAttunement.lua): ticked by
+        -- itself once the character can start the chain; any level may tick it.
+        label = "OPT_SHOW_ONYXIA",
+        tip = "OPT_SHOW_ONYXIA_TIP",
+        get = function() return FDJ.IsOnyxiaIconShown and FDJ.IsOnyxiaIconShown() or false end,
+        set = function(on) if FDJ.SetOnyxiaIconShown then FDJ.SetOnyxiaIconShown(on) end end,
+        refreshHome = true,
+    },
+    {
         label = "OPT_HIDE_RUNLOG",
         tip = "OPT_HIDE_RUNLOG_TIP",
         get = function() return FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden() or false end,
@@ -150,7 +161,6 @@ local OPTIONS = {
             if FDJ.RefreshWorldMapOverlay and WorldMapFrame and WorldMapFrame:IsShown() then pcall(FDJ.RefreshWorldMapOverlay) end
         end,
     },
-    { keybind = true, label = "OPT_BIND" },
     { header = "OPT_DUNGEON_LIST" },
     {
         label = "OPT_RPG_MODE",
@@ -268,6 +278,24 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
+        -- Off: each character keeps its own unlocks. On: every character's
+        -- unlocks are shared by the whole account (Systems/RPGMode.lua).
+        label = "OPT_RPG_ACCOUNT",
+        tip = "OPT_RPG_ACCOUNT_TIP",
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("accountWide") or false end,
+        set = function(on) if FDJ.SetRPGOption then FDJ.SetRPGOption("accountWide", on) end end,
+        refreshHome = true,
+    },
+    {
+        -- showquests (2.0.16): every dungeon's quests shown in RPG Mode, the
+        -- cards with their quest count, no quest popups (Systems/RPGMode.lua).
+        label = "OPT_RPG_SHOW_QUESTS",
+        tip = "OPT_RPG_SHOW_QUESTS_TIP",
+        get = function() return FDJ.RPGOption and FDJ.RPGOption("showQuests") or false end,
+        set = function(on) if FDJ.SetRPGOption then FDJ.SetRPGOption("showQuests", on) end end,
+        refreshHome = true,
+    },
+    {
         label = "OPT_RPG_HIDE_QUEST",
         tip = "OPT_RPG_HIDE_QUEST_TIP",
         get = function() return FDJ.RPGOption and FDJ.RPGOption("hideQuestPopups") or false end,
@@ -292,6 +320,15 @@ local OPTIONS = {
         min = 0, max = 100, step = 5,
         get = function() return FDJ.RPGOption and FDJ.RPGOption("volume") or 85 end,
         set = function(v) if FDJ.SetRPGOption then FDJ.SetRPGOption("volume", v) end end,
+    },
+    {
+        -- Moving RPG Mode progress to another computer (Systems/ProgressTransfer.lua).
+        buttons = {
+            { label = "OPT_RPG_EXPORT", tip = "OPT_RPG_EXPORT_TIP",
+                click = function() if FDJ.ShowProgressExport then FDJ.ShowProgressExport() end end },
+            { label = "OPT_RPG_IMPORT", tip = "OPT_RPG_IMPORT_TIP",
+                click = function() if FDJ.ShowProgressImport then FDJ.ShowProgressImport() end end },
+        },
     },
 }
 
@@ -338,7 +375,7 @@ local function ClearJournalKeys()
 end
 
 local function CreateKeybindRow(parent, option, y)
-    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local label = parent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     label:SetPoint("TOPLEFT", 34, y - 4)
     label:SetText(L(option.label))
     panel.texts[#panel.texts + 1] = { label, option.label }
@@ -362,7 +399,7 @@ local function CreateKeybindRow(parent, option, y)
     hover:SetTexture("Interface\\Buttons\\WHITE8X8")
     hover:SetVertexColor(1, 1, 1, 0.07)
     button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    button.text = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    button.text = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     button.text:SetPoint("LEFT", 6, 0)
     button.text:SetPoint("RIGHT", -6, 0)
     button.text:SetJustifyH("CENTER")
@@ -474,8 +511,9 @@ end
 --   * on the Options tab, a category list on the left (dark header bar with
 --     white text, gold entries, the open one underlined in gold) and the
 --     page on the right: big white title, gold rule, gold labels with their
---     boxes in a column;
---   * red Close button bottom right.
+--     boxes in a column; a page with more rows than fit scrolls, with the
+--     game's thin scroll bar on its right (2.0.10);
+--   * no Close button at the bottom (2.0.9): the red X closes it.
 local PANEL_W, PANEL_H = 660, 430
 local SIDEBAR_W = 178
 local LABEL_X, BOX_X = 34, 300 -- inside a page: label left edge, box column
@@ -664,7 +702,7 @@ local function GoldBand(parent, layer, peak, split)
 end
 
 local function PageTitle(page, key)
-    local title = page:CreateFontString(nil, "OVERLAY", "GameFontHighlightHuge")
+    local title = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightHuge")
     title:SetPoint("TOPLEFT", 22, -18)
     title:SetTextColor(1, 1, 1)
     panel.texts[#panel.texts + 1] = { title, key }
@@ -688,7 +726,7 @@ local function RowHover(page, y, height)
 end
 
 local function CreateOptionRow(page, option, y)
-    local label = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local label = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     label:SetPoint("TOPLEFT", LABEL_X, y - 7)
     label:SetWidth(BOX_X - LABEL_X - 12)
     label:SetJustifyH("LEFT")
@@ -696,6 +734,7 @@ local function CreateOptionRow(page, option, y)
     panel.texts[#panel.texts + 1] = { label, option.label }
 
     local check = CreateFrame("CheckButton", nil, page, "UICheckButtonTemplate")
+    FDJ.OwnFonts(check) -- ownfonts (2.0.8)
     check:SetSize(30, 30)
     check:SetPoint("TOPLEFT", BOX_X, y)
     check.option = option
@@ -729,7 +768,7 @@ end
 -- A row with a slider (0-100%), e.g. Options > RPG Mode > Achievement
 -- Popup sound. Letting go of it plays a sample (the RPG fanfare).
 local function CreateSliderRow(page, option, y)
-    local label = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local label = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     label:SetPoint("TOPLEFT", LABEL_X, y - 7)
     label:SetJustifyH("LEFT")
     label:SetText(L(option.label))
@@ -750,7 +789,7 @@ local function CreateSliderRow(page, option, y)
     slider:SetValueStep(option.step or 5)
     if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
     slider.option = option
-    local value = page:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    local value = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     value:SetPoint("LEFT", slider, "RIGHT", 12, 0)
     slider.valueText = value
     slider:SetScript("OnValueChanged", function(self, v)
@@ -781,9 +820,34 @@ local function CreateSliderRow(page, option, y)
     panel.sliders[#panel.sliders + 1] = slider
 end
 
+-- A row of buttons, e.g. Options > RPG Mode > Export Progress / Import Progress.
+local function CreateButtonsRow(page, option, y)
+    local x = LABEL_X
+    for _, spec in ipairs(option.buttons) do
+        local button = CreateFrame("Button", nil, page, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
+        button:SetSize(spec.width or 150, 24)
+        button:SetPoint("TOPLEFT", page, "TOPLEFT", x, y - 6)
+        button:SetText(L(spec.label))
+        panel.texts[#panel.texts + 1] = { button, spec.label }
+        button:SetScript("OnClick", function()
+            if spec.click then pcall(spec.click) end
+        end)
+        button:SetScript("OnEnter", function(self)
+            if not GameTooltip or not spec.tip then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:AddLine(L(spec.label), 1, 0.82, 0.27)
+            GameTooltip:AddLine(L(spec.tip), 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+        x = x + (spec.width or 150) + 12
+    end
+end
+
 local function BuildDiscordPage(page)
     local y = PageTitle(page, "OPT_DISCORD")
-    local text = page:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    local text = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     text:SetPoint("TOPLEFT", LABEL_X, y - 10)
     text:SetPoint("RIGHT", page, "RIGHT", -34, 0)
     text:SetJustifyH("LEFT")
@@ -800,7 +864,7 @@ local function BuildDiscordPage(page)
     link:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
     link:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
 
-    local hint = page:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local hint = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     hint:SetPoint("TOPLEFT", link, "BOTTOMLEFT", -4, -8)
     hint:SetTextColor(0.75, 0.72, 0.66)
     panel.texts[#panel.texts + 1] = { hint, "OPT_DISCORD_COPY" }
@@ -825,6 +889,130 @@ local function BuildDiscordPage(page)
         hint:SetTextColor(0.75, 0.72, 0.66)
     end)
 end
+
+-- BEGIN scrollpages (2.0.10)
+-- An options page whose rows don't fit (General with the key bind, RPG Mode
+-- with the slider and the Export / Import buttons) scrolls: mouse wheel, or
+-- the scroll bar on the page's right. The bar is the game's own (Options >
+-- Game: thin track, arrows at both ends, bronze thumb, its sounds) and only
+-- shows when the page has more rows than fit. The page title and its gold
+-- rule stay put; only the rows move.
+local SCROLL_TOP = 58       -- just under the page title's gold rule (-52)
+local SCROLL_BOTTOM = 6     -- just above the box's bottom edge
+local SCROLL_BAR_SPACE = 24 -- right of the rows, for the bar
+local SCROLL_STEP = 35      -- one wheel notch: one row
+
+-- The game's scroll bar (MinimalScrollBar), wired to the scroll frame the
+-- way the game does it (ScrollUtil.InitScrollFrameWithScrollBar).
+local function GameScrollBar(page, scroll)
+    if not (ScrollUtil and ScrollUtil.InitScrollFrameWithScrollBar) then return nil end
+    local ok, bar = pcall(CreateFrame, "EventFrame", nil, page, "MinimalScrollBar")
+    if not (ok and bar) then return nil end
+    bar:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 8, -2)
+    bar:SetPoint("BOTTOMLEFT", scroll, "BOTTOMRIGHT", 8, 2)
+    if not pcall(ScrollUtil.InitScrollFrameWithScrollBar, scroll, bar) then
+        bar:Hide()
+        return nil
+    end
+    if scroll.SetPanExtent then scroll:SetPanExtent(SCROLL_STEP) end
+    return bar
+end
+
+-- Clients without it: a plain bar in the same colours (dark track, bronze
+-- thumb), same mouse wheel.
+local function PlainScrollBar(page, scroll)
+    local bar = CreateFrame("Slider", nil, page)
+    bar:SetOrientation("VERTICAL")
+    bar:SetWidth(8)
+    bar:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 8, -2)
+    bar:SetPoint("BOTTOMLEFT", scroll, "BOTTOMRIGHT", 8, 2)
+    local track = bar:CreateTexture(nil, "BACKGROUND")
+    track:SetAllPoints(bar)
+    track:SetTexture("Interface\\Buttons\\WHITE8X8")
+    track:SetVertexColor(0, 0, 0, 0.55)
+    bar:SetThumbTexture("Interface\\Buttons\\WHITE8X8")
+    local thumb = bar:GetThumbTexture()
+    if thumb then
+        thumb:SetSize(8, 34)
+        thumb:SetVertexColor(0.72, 0.45, 0.16, 1)
+    end
+    bar:SetMinMaxValues(0, 1)
+    bar:SetValue(0)
+    bar:SetScript("OnValueChanged", function(_, value)
+        if math.abs((scroll:GetVerticalScroll() or 0) - value) > 0.5 then scroll:SetVerticalScroll(value) end
+    end)
+    scroll:SetScript("OnScrollRangeChanged", function(self, _, range)
+        range = math.max(0, range or 0)
+        bar:SetMinMaxValues(0, range)
+        bar:SetValue(math.min(self:GetVerticalScroll() or 0, range))
+    end)
+    scroll:SetScript("OnVerticalScroll", function(_, offset)
+        if math.abs(bar:GetValue() - offset) > 0.5 then bar:SetValue(offset) end
+    end)
+    scroll:SetScript("OnMouseWheel", function(_, delta)
+        local _, max = bar:GetMinMaxValues()
+        bar:SetValue(math.max(0, math.min(max or 0, bar:GetValue() - delta * SCROLL_STEP)))
+    end)
+    return bar
+end
+
+-- The page's rows go on the frame this returns (page.content). y for the
+-- first row: the same spot on screen as before the pages scrolled.
+local function ScrollPage(page, titleY)
+    local scroll = CreateFrame("ScrollFrame", nil, page)
+    scroll:SetPoint("TOPLEFT", 0, -SCROLL_TOP)
+    scroll:SetPoint("BOTTOMRIGHT", -SCROLL_BAR_SPACE, SCROLL_BOTTOM)
+    scroll:EnableMouseWheel(true)
+    local content = CreateFrame("Frame", nil, scroll)
+    content:SetSize(PANEL_W - 28 - SIDEBAR_W - 1 - SCROLL_BAR_SPACE, 1)
+    scroll:SetScrollChild(content)
+    content.fdjScroll = scroll
+    page.scroll, page.content = scroll, content
+
+    local bar = GameScrollBar(page, scroll) or PlainScrollBar(page, scroll)
+    page.scrollBar = bar
+
+    -- The bar only when the rows don't all fit.
+    local function Refresh()
+        if scroll.UpdateScrollChildRect then scroll:UpdateScrollChildRect() end
+        local view = scroll:GetHeight() or 0
+        local fits = view <= 0 or (content:GetHeight() or 0) <= view + 0.5
+        if fits and (scroll:GetVerticalScroll() or 0) > 0 then scroll:SetVerticalScroll(0) end
+        bar:SetShown(not fits)
+    end
+    page.fdjRefreshScroll = Refresh
+    scroll:HookScript("OnScrollRangeChanged", Refresh)
+    scroll:HookScript("OnSizeChanged", function(self, w)
+        if w and w > 0 then content:SetWidth(w) end
+        Refresh()
+    end)
+    page:HookScript("OnShow", Refresh)
+    bar:Hide()
+    return content, titleY + SCROLL_TOP
+end
+
+-- Bring an option's row into view on its page (Options opened at a line).
+local function ScrollRowIntoView(row)
+    local content = row and row:GetParent()
+    local scroll = content and content.fdjScroll
+    if not scroll then return end
+    if scroll.UpdateScrollChildRect then scroll:UpdateScrollChildRect() end
+    local _, _, _, _, y = row:GetPoint(1)
+    local top = math.max(0, -(y or 0) - 8)
+    local bottom = top + 36
+    local view = scroll:GetHeight() or 0
+    local current = scroll:GetVerticalScroll() or 0
+    local target = current
+    if top < current then
+        target = top
+    elseif bottom > current + view then
+        target = bottom - view
+    end
+    local range = scroll:GetVerticalScrollRange() or 0
+    target = math.max(0, math.min(range, target))
+    if math.abs(target - current) > 0.5 then scroll:SetVerticalScroll(target) end
+end
+-- END scrollpages
 
 local function CreatePanel()
     panel = CreateFrame("Frame", "ForeverDungeonJournalSettings", UIParent, "BackdropTemplate")
@@ -914,7 +1102,7 @@ local function CreatePanel()
     local over = CreateFrame("Frame", nil, panel)
     over:SetAllPoints(panel)
     over:SetFrameLevel(panel:GetFrameLevel() + 3)
-    local title = over:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    local title = over:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     title:SetPoint("CENTER", panel, "TOP", 9, -12)
     local titleIcon = over:CreateTexture(nil, "OVERLAY")
     titleIcon:SetSize(15, 15)
@@ -922,7 +1110,7 @@ local function CreatePanel()
     titleIcon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
     titleIcon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     title:SetText("Dungeon Journal")
-    local version = over:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local version = over:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisableSmall")
     version:SetPoint("LEFT", panel, "TOPLEFT", 12, -12)
     version:SetText(Version())
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
@@ -957,12 +1145,13 @@ local function CreatePanel()
     Edge(header, 10)
     header:SetBackdropColor(0.20, 0.14, 0.09, 0.96)
     header:SetBackdropBorderColor(0.36, 0.27, 0.15, 1)
-    local headerText = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    local headerText = header:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
     headerText:SetPoint("LEFT", 12, 0)
     headerText:SetText("Dungeon Journal")
 
     local pages, entries = {}, {}
     local page, y
+    local rows, bottom -- scrollpages (2.0.10): the page's scrolling part, where its rows go; its last row's bottom
     for _, option in ipairs(OPTIONS) do
         if option.header then
             page = CreateFrame("Frame", nil, optionsView)
@@ -972,17 +1161,28 @@ local function CreatePanel()
             pages[#pages + 1] = page
             page.key = option.header
             y = PageTitle(page, option.header)
+            rows, y = ScrollPage(page, y)
+            bottom = nil
         elseif option.keybind then
-            local row = CreateKeybindRow(page, option, y - 4)
+            local row = CreateKeybindRow(rows, option, y - 4)
             panel.keybinds[#panel.keybinds + 1] = row
+            bottom = y - 26
             y = y - 36
         elseif option.slider then
-            CreateSliderRow(page, option, y)
+            CreateSliderRow(rows, option, y)
+            bottom = y - 48
             y = y - 54
+        elseif option.buttons then
+            CreateButtonsRow(rows, option, y)
+            bottom = y - 32
+            y = y - 40
         elseif not option.action then
-            CreateOptionRow(page, option, y)
+            CreateOptionRow(rows, option, y)
+            bottom = y - 32
             y = y - 35
         end
+        -- the scrolling part is as tall as the page's rows reach (+ a little air)
+        if rows and bottom then rows:SetHeight(math.max(1, -bottom + 4)) end
     end
 
     local function SelectPage(index)
@@ -1008,7 +1208,7 @@ local function CreatePanel()
         e.underline:SetPoint("BOTTOMRIGHT", 0, 0)
         e.underline:SetHeight(1)
         e.fade:Hide()
-        e.text = e:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        e.text = e:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         e.text:SetPoint("LEFT", 22, 0)
         panel.texts[#panel.texts + 1] = { e.text, p.key }
         e:SetScript("OnClick", function() SelectPage(i) end)
@@ -1073,7 +1273,7 @@ local function CreatePanel()
         else
             LinedFrame(tab, TAB_EDGE, "BORDER", true)
         end
-        tab.text = tab:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        tab.text = tab:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
         tab.text:SetPoint("CENTER", 0, 1)
         tab.key = key
         tab:SetScript("OnClick", function()
@@ -1094,15 +1294,12 @@ local function CreatePanel()
         end
     end
 
-    local done = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-    done:SetSize(110, 22)
-    done:SetPoint("BOTTOMRIGHT", -26, 14)
-    done:SetScript("OnClick", function() panel:Hide() end)
+    -- noclose (2.0.9): no Close button at the bottom; the X in the title bar
+    -- (and Esc) close the panel.
 
     panel:SetScript("OnShow", function(self)
         for _, entry in ipairs(self.texts) do entry[1]:SetText(L(entry[2])) end
         for _, tab in ipairs(self.tabs) do tab.text:SetText(L(tab.key)) end
-        done:SetText(L("OPT_CLOSE"))
         LayoutTabs()
         SelectTab(self.selectedTab or 1)
         SelectPage(self.selectedPage or 1)
@@ -1205,6 +1402,14 @@ function FDJ.OpenSettingsAt(label, quiet)
     if panel:IsShown() then panel:Hide() end
     panel:Show()
     if panel.Raise then panel:Raise() end
+    -- scrollpages (2.0.10): a row lower down the page scrolls into view
+    -- (once the panel has its size, the next moment).
+    local function Reveal()
+        for _, check in ipairs(panel.checks or {}) do
+            if check.option and check.option.label == label then ScrollRowIntoView(check) end
+        end
+    end
+    if C_Timer and C_Timer.After then C_Timer.After(0.05, Reveal) else Reveal() end
     if quiet then return end
     for _, check in ipairs(panel.checks or {}) do
         if check.option and check.option.label == label then PulseRow(check) end

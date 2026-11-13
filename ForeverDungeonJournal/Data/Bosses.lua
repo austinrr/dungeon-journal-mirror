@@ -54,6 +54,7 @@ FDJ.BOSS_LEVELS = {
         ["Nar'gurk"] = "44",
         ["Bossman Toof"] = "42",
         ["Overlord Mugg"] = "45",
+        ["Kroog"] = "41", -- in-game screenshot, 12 Nov 2026
     },
     ["Gnomeregan"] = {
         ["Grubbis"] = "32",
@@ -658,6 +659,7 @@ FDJ.STATIC_DISPLAY_IDS = {
     [258964] = 141215,  -- Nar'gurk
     [264773] = 14424,   -- Bossman Toof
     [258968] = 141218,  -- Overlord Mugg
+    [262716] = 17273,   -- Kroog (rare)
     -- Alcaz Prison
     [255391] = 7914,    -- Overseer Wrex
     [255997] = 4973,    -- Tidemistress Ca'zass

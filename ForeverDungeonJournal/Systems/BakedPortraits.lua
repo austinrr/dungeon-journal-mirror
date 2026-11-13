@@ -128,7 +128,7 @@ local function Layout(page, ids)
         if not id then break end
         local cell = s.cells[i]
         if not cell then
-            cell = { tex = s:CreateTexture(nil, "ARTWORK"), label = s:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall") }
+            cell = { tex = s:CreateTexture(nil, "ARTWORK"), label = s:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall") }
             cell.label:SetTextColor(0.5, 0.5, 0.5)
             s.cells[i] = cell
         end

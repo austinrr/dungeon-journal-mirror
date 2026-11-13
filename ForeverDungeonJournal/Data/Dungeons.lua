@@ -387,7 +387,7 @@ FDJ.DB = {
         rewardHeader = "Chain reward — follow-up",
         liveXPFallback = 1650,
         rewardChoice = true,
-        requires = 16,
+        requires = 15, -- Blizzard hotfix, 6 Nov 2026
         name = "Unending Torment",
         faction = "Horde",
         pickup = "Item start: Abominable Head, inside Ruins of Lordaeron",
@@ -709,7 +709,6 @@ DB["The Deadmines"] = {
         level = 22,
         startItem = {2874, "An Unsent Letter", 1, "Looted from Edwin VanCleef"},
         turnin = "Baros Alexston, City Hall, Cathedral Square, Stormwind",
-    }, {
     }, {
         classOnly = "PALADIN",
         warning = "This is a chain quest with a step in The Deadmines",
@@ -2181,6 +2180,7 @@ FDJ.DB["Gnomeregan"] = {
         id = 2926,
         name = "Gnogaine",
         faction = "Alliance",
+        requiredItems = { {9284, "Full Leaden Collection Phial", 1, "Use the Vial on an Irradiated Invader just outside the instance", map = { mapID = 1426, x = 0.243, y = 0.398, label = "Irradiated Invaders — outside Gnomeregan", detail = "Use the Vial on an Irradiated Invader just outside the instance" }} },
         pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh",
         level = 27,
         requires = 20,
@@ -2192,6 +2192,8 @@ FDJ.DB["Gnomeregan"] = {
         id = 2962,
         name = "The Only Cure is More Green Glow",
         faction = "Alliance",
+        -- Given by Ozzie when the quest is accepted (Wowhead Forever item 9364).
+        providedItem = {9364, "Heavy Leaden Collection Phial", 1, "Use on an alive Irradiated Slime or Corrosive Lurker"},
         pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh",
         level = 30,
         requires = 20,
@@ -2466,6 +2468,7 @@ FDJ.DB["Razorfen Kraul"] = {
         level = 34,
         requires = 29,
         turnin = "Falfindel Waywarder, Thalanaar, Feralas",
+        additionalRewardItems = {{274084, "Quilboar Blaster", 3}},
         liveXPFallback = 3350,
     }, {
         objective = "Bring Razorflank's Heart to Auld Stonespire in Thunder Bluff.",
@@ -3359,7 +3362,9 @@ FDJ.DB["Uldaman"] = {
         level = 40,
         requires = 35,
         rewardChoice = true,
-        rewardItems = {{9626, "Dwarven Charge", 2}, {9627, "Explorer's League Lodestar", 2}},
+        -- Guardian Staff: the third choice, new in Forever (Wowhead Forever,
+        -- quest 2240; Codemonkey, Discord "The Hidden Chamber", 11 Nov 2026).
+        rewardItems = {{9626, "Dwarven Charge", 2}, {9627, "Explorer's League Lodestar", 2}, {270078, "Guardian Staff", 2}},
         note = "Optional introductory quest:",
         noteQuestLink = { id = 2398, name = "The Lost Dwarves" },
         turnin = "Prospector Stormpike, Ironforge",
@@ -3690,6 +3695,10 @@ FDJ.DB["Uldaman"] = {
                 {9407, "Stoneweaver Leggings", "Legs, Cloth", 3},
                 {9409, "Ironaya's Bracers", "Wrist, Mail", 3},
                 {9408, "Ironshod Bludgeon", "Two-Hand, Staff", 3},
+                -- Wowhead Forever: Ironaya 20/210; confirmed by a player's tooltip
+                -- (German client). With the Axe of Lingering Dread (Obsidian
+                -- Sentinel) it makes the Pendulum of Doom.
+                {274484, "Axe of Inevitable Ruin", "Two-Hand, Axe", 3},
             },
         },
         {
@@ -3713,6 +3722,7 @@ FDJ.DB["Uldaman"] = {
             loot = {
                 {9410, "Cragfists", "Hands, Plate", 3},
                 {9411, "Rockshard Pauldrons", "Shoulder, Mail", 3},
+                {274431, "Sandstorm Staff", "Two-Hand, Staff", 3}, -- Wowhead Forever: Ancient Stone Keeper 61/179
             },
         },
         {
@@ -4694,6 +4704,20 @@ FDJ.DB["Krol'dok Stronghold"] = {
             },
         },
         {
+            -- 2.0.3: rare elite (Wowhead Forever: Kroog 262716, "Rare
+            -- Elite"; seen near Bossman Toof and Overlord Mugg).
+            name = "Kroog",
+            npcID = 262716,
+            rare = true,
+            aliases = {"Kroog"},
+            description = "Rare spawn.",
+            loot = {
+                -- Wowhead Forever: Kroog 8/11 and 3/11.
+                {279863, "Black Horn Necklace", "Neck", 3},
+                {279857, "Kroog's Backscratcher", "One-Hand, Dagger", 3},
+            },
+        },
+        {
             -- Final boss. The game's data calls him Overseer Mugg.
             name = "Overlord Mugg",
             npcID = 258968,
@@ -4956,7 +4980,7 @@ FDJ.DB["Blackmaw Hold"] = {
         -- identity and exact hand-in location have not yet been confirmed.
         id = 92070,
         name = "A Lost Memento",
-        level = 57, -- provisional; item requires level 47; quest level unverified
+        level = 55, -- Wowhead Forever (2.0.3); the necklace requires level 47
         requires = 47,
         faction = "Both",
         pickup = "Item start: Feathered Charm Necklace, looted in Blackmaw Hold",
@@ -4984,8 +5008,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 54",
                     "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 84|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 56|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Flameslash Crescent", "Two-Hand, Axe", 3, tip = {
+                -- Seen dropping (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280056, "Flameslash Crescent", "Two-Hand, Axe", 3, tip = {
                     "Binds when picked up",
                     {"Two-Hand", "Axe"},
                     {"145 - 219 Damage", "Speed 3.60"},
@@ -4997,8 +5021,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 54",
                     "Sell Price: 5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 74|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 57|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Impish Chain Hood", "Head, Mail", 3, tip = {
+                -- Seen in-game (Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280058, "Impish Chain Hood", "Head, Mail", 3, tip = {
                     "Binds when picked up",
                     {"Head", "Mail"},
                     "284 Armor",
@@ -5027,8 +5051,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 55",
                     "Sell Price: 6|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 10|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 14|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in-game (Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Lucky Shovelnose Tuft", "Trinket", 3, tip = {
+                -- Seen in-game (Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280060, "Lucky Shovelnose Tuft", "Trinket", 3, tip = {
                     "Binds when picked up",
                     "Unique-Equipped",
                     "Trinket",
@@ -5038,6 +5062,7 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 55",
                     "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 95|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 98|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
+                {280061, "Spike Crested Bracers", "Wrist, Plate", 3}, -- Wowhead Forever: Bonesnout the Unbroken 2/9
             },
         },
         {
@@ -5164,8 +5189,8 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247209,
             aliases = {"Elder Shaman Bloodmane", "Bloodmane"},
             loot = {
-                -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Veilpiercer Girdle", "Waist, Leather", 3, tip = {
+                -- Seen in-game (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280070, "Veilpiercer Girdle", "Waist, Leather", 3, tip = {
                     "Binds when picked up",
                     {"Waist", "Leather"},
                     "97 Armor",
@@ -5196,8 +5221,8 @@ FDJ.DB["Blackmaw Hold"] = {
             npcID = 247207,
             aliases = {"Blackmaw Behemoth"},
             loot = {
-                -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Behemoth Bones", "Trinket", 3, tip = {
+                -- Seen in-game (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280065, "Behemoth Bones", "Trinket", 3, tip = {
                     "Binds when picked up",
                     "Unique-Equipped",
                     "Trinket",
@@ -5206,8 +5231,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 56",
                     "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 9|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 62|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen dropping (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Trousers of the Ebon Giant", "Legs, Cloth", 3, tip = {
+                -- Seen dropping (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280066, "Trousers of the Ebon Giant", "Legs, Cloth", 3, tip = {
                     "Binds when picked up",
                     {"Legs", "Cloth"},
                     "76 Armor",
@@ -5246,8 +5271,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 56",
                     "Sell Price: 1|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 49|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 71|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Burnished Pridescales", "Chest, Plate", 3, tip = {
+                -- Seen in-game (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280073, "Burnished Pridescales", "Chest, Plate", 3, tip = {
                     "Binds when picked up",
                     {"Chest", "Plate"},
                     "637 Armor",
@@ -5280,8 +5305,8 @@ FDJ.DB["Blackmaw Hold"] = {
                     "Requires Level 57",
                     "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 0|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 5|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in-game (a player, Nov 2026); item ID not known yet (0, filled in by ItemIdLearner).
-                {0, "Bleak Eye Shoulderplates", "Shoulder, Plate", 3, tip = {
+                -- Seen in-game (a player, Nov 2026); item ID from Wowhead Forever (12 Nov 2026).
+                {280075, "Bleak Eye Shoulderplates", "Shoulder, Plate", 3, tip = {
                     "Binds when picked up",
                     {"Shoulder", "Plate"},
                     "485 Armor",
@@ -5397,7 +5422,7 @@ FDJ.DB["Shaper's Terrace"] = {
         pickup = "Mayena Earthseeker, Mulgore (34.8, 22.2)",
         objective = "Bring Mayena Earthseeker a Moist Crystal, a Charged Crystal, a Noxious Crystal and a Fiery Crystal from Shaper's Terrace.",
         turnin = "Mayena Earthseeker, Mulgore (34.8, 22.2)",
-        liveXPFallback = 17655,
+        liveXPFallback = 17650,
         rewardSummary = "Orgrimmar +50  •  Earthen Ring +100",
         rewardItems = {{279904, "Crystalline Pauldrons", 3}, {279906, "Potent Treads", 3}},
         rewardChoice = true,
@@ -8715,6 +8740,7 @@ FDJ.DB["Blackrock Depths"] = {
         rewardSummary = "",
         id = 7848,
         name = "Attunement to the Core",
+        unavailable = true, -- notavailable (2.0.4): not in WoW Forever for now
         faction = "Both",
         pickup = "Lothos Riftwaker, Blackrock Mountain",
         level = 60,

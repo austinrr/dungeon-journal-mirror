@@ -51,6 +51,121 @@ function FDJ.SetRPGOption(key, value)
     else
         o[key] = value and true or nil
     end
+    if key == "accountWide" then
+        if FDJ.RPGShareProgress then pcall(FDJ.RPGShareProgress) end
+        if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
+        if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+    end
+    -- showquests (2.0.16): every page's quests come and go at once.
+    if key == "showQuests" then
+        if FDJ.ResetSearchCache then pcall(FDJ.ResetSearchCache) end
+        if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
+        if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+        if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+    end
+end
+
+-- BEGIN showquests (2.0.16)
+-- Options > RPG Mode > Show dungeon quests (off by default, for the whole
+-- account). Many players found RPG Mode's quests too hard to find. On:
+-- every dungeon's quests show, as in Gamer Mode; a locked card keeps its
+-- sketch and gets the usual quest count, and clicking it opens the page on
+-- its quests (bosses, loot and the map still unlock as before); no quest
+-- achievement popups while it is on.
+do
+    local strings = {
+        enUS = { OPT_RPG_SHOW_QUESTS = "Show dungeon quests", OPT_RPG_SHOW_QUESTS_TIP = "Every dungeon's quests are shown in RPG Mode, and the dungeon cards show their quest count. Bosses, loot and maps still unlock as you play. No quest achievement popups while this is on." },
+        deDE = { OPT_RPG_SHOW_QUESTS = "Dungeon-Quests anzeigen", OPT_RPG_SHOW_QUESTS_TIP = "Im RPG-Modus werden alle Dungeon-Quests angezeigt, und die Dungeon-Karten zeigen ihre Questanzahl. Bosse, Beute und Karten werden weiterhin beim Spielen freigeschaltet. Solange das an ist, gibt es keine Quest-Erfolgs-Popups." },
+        frFR = { OPT_RPG_SHOW_QUESTS = "Afficher les quêtes de donjon", OPT_RPG_SHOW_QUESTS_TIP = "En mode RPG, toutes les quêtes de donjon sont affichées et les cartes de donjon indiquent leur nombre de quêtes. Les boss, le butin et les cartes se débloquent toujours en jouant. Pas de fenêtre de haut fait de quête tant que c'est activé." },
+        esES = { OPT_RPG_SHOW_QUESTS = "Mostrar misiones de mazmorra", OPT_RPG_SHOW_QUESTS_TIP = "En el modo RPG se muestran todas las misiones de mazmorra y las tarjetas de mazmorra indican su número de misiones. Los jefes, el botín y los mapas se siguen desbloqueando al jugar. Sin ventanas de logro de misión mientras esté activado." },
+        itIT = { OPT_RPG_SHOW_QUESTS = "Mostra missioni dei dungeon", OPT_RPG_SHOW_QUESTS_TIP = "In modalità RPG vengono mostrate tutte le missioni dei dungeon e le schede dei dungeon indicano il numero di missioni. Boss, bottino e mappe si sbloccano sempre giocando. Nessun riquadro di impresa delle missioni finché è attivo." },
+        ptBR = { OPT_RPG_SHOW_QUESTS = "Mostrar missões de masmorra", OPT_RPG_SHOW_QUESTS_TIP = "No modo RPG, todas as missões de masmorra aparecem e os cartões das masmorras mostram o número de missões. Chefes, saque e mapas continuam sendo desbloqueados ao jogar. Sem janelas de conquista de missão enquanto estiver ativado." },
+        ruRU = { OPT_RPG_SHOW_QUESTS = "Показывать задания подземелий", OPT_RPG_SHOW_QUESTS_TIP = "В режиме RPG показываются все задания подземелий, а на карточках подземелий видно число заданий. Боссы, добыча и карты по-прежнему открываются по ходу игры. Пока это включено, окна достижений за задания не появляются." },
+        koKR = { OPT_RPG_SHOW_QUESTS = "던전 퀘스트 보기", OPT_RPG_SHOW_QUESTS_TIP = "RPG 모드에서 모든 던전 퀘스트를 보여 주고, 던전 카드에 퀘스트 수를 표시합니다. 우두머리, 전리품, 지도는 계속 플레이하며 열립니다. 켜져 있는 동안 퀘스트 업적 팝업은 뜨지 않습니다." },
+        zhCN = { OPT_RPG_SHOW_QUESTS = "显示副本任务", OPT_RPG_SHOW_QUESTS_TIP = "RPG模式下显示所有副本任务，副本卡片显示任务数量。首领、战利品和地图仍随游戏进程解锁。开启时不弹出任务成就窗口。" },
+        zhTW = { OPT_RPG_SHOW_QUESTS = "顯示副本任務", OPT_RPG_SHOW_QUESTS_TIP = "RPG模式下顯示所有副本任務，副本卡片顯示任務數量。首領、戰利品和地圖仍隨遊戲進程解鎖。開啟時不彈出任務成就視窗。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+function FDJ.RPGShowQuests()
+    return FDJ.IsRPGMode and FDJ.IsRPGMode() and FDJ.RPGOption("showQuests") or false
+end
+-- END showquests
+
+-- ------------------------------------------------- account-wide unlocks
+-- Options > RPG Mode > Account-Wide Unlocks (off by default). Every
+-- character keeps its own unlocks (pages, bosses found, quests, maps) in its
+-- own saved data, as before, and each is also copied into one record for
+-- the whole account (ForeverDungeonJournalDB.rpgAccount): at login and as it
+-- happens. With the option on, the journal shows the account's record, so
+-- what one character unlocked is unlocked for all of them; turned off, each
+-- character is back to its own unlocks. Nothing is lost either way.
+-- A character counts for the account once it has logged in with this version.
+local SHARED_KEYS = { "rpgKills", "rpgBosses", "rpgQuests", "rpgMaps" }
+local function AccountProgress()
+    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    local acc = ForeverDungeonJournalDB.rpgAccount
+    if type(acc) ~= "table" then
+        acc = {}
+        ForeverDungeonJournalDB.rpgAccount = acc
+    end
+    for _, key in ipairs(SHARED_KEYS) do
+        if type(acc[key]) ~= "table" then acc[key] = {} end
+    end
+    return acc
+end
+FDJ.RPGAccountProgress = AccountProgress -- Systems/ProgressTransfer.lua
+local shareStamp
+-- This character's unlocks into the account's record (it only ever adds).
+local function ShareProgress()
+    shareStamp = GetTime and GetTime() or nil
+    local db, acc = CharDB(), AccountProgress()
+    for _, key in ipairs(SHARED_KEYS) do
+        local mine, all = db[key], acc[key]
+        if type(mine) == "table" then
+            for k, v in pairs(mine) do
+                if key == "rpgBosses" then
+                    if type(v) == "table" then
+                        if type(all[k]) ~= "table" then all[k] = {} end
+                        for id, seen in pairs(v) do
+                            if seen then all[k][id] = true end
+                        end
+                    end
+                elseif v then
+                    all[k] = true
+                end
+            end
+        end
+    end
+end
+FDJ.RPGShareProgress = ShareProgress
+local function AccountWide()
+    return FDJ.RPGOption("accountWide")
+end
+FDJ.RPGAccountWide = AccountWide
+-- What the journal shows: this character's unlocks, or the whole account's.
+local function View()
+    if not AccountWide() then return CharDB() end
+    local now = GetTime and GetTime() or nil
+    if now == nil or now ~= shareStamp then ShareProgress() end
+    return AccountProgress()
+end
+local function ViewTable(key)
+    local t = View()[key]
+    return type(t) == "table" and t or {}
+end
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("PLAYER_LOGIN")
+    f:SetScript("OnEvent", function() pcall(ShareProgress) end)
 end
 local function GetCV(name)
     if C_CVar and C_CVar.GetCVar then local ok, v = pcall(C_CVar.GetCVar, name) if ok then return v end end
@@ -106,52 +221,62 @@ do
             OPT_RPG_HIDE_QUEST = "Hide Quest Achievement Popups", OPT_RPG_HIDE_QUEST_TIP = "No popup when a dungeon quest unlocks in RPG Mode (the line in chat stays).",
             OPT_RPG_HIDE_BOSS = "Hide Boss Achievement Popups", OPT_RPG_HIDE_BOSS_TIP = "No popup when a final boss unlocks a journal page in RPG Mode (the line in chat stays).",
             OPT_RPG_MUTE = "Mute Achievements", OPT_RPG_MUTE_TIP = "The achievement popups make no sound.",
-            OPT_RPG_VOLUME = "Achievement Popup sound", OPT_RPG_VOLUME_TIP = "How loud the achievement fanfare plays (100% = as loud as the game's own)." },
+            OPT_RPG_VOLUME = "Achievement Popup sound", OPT_RPG_VOLUME_TIP = "How loud the achievement fanfare plays (100% = as loud as the game's own).",
+            OPT_RPG_ACCOUNT = "Account-Wide Unlocks", OPT_RPG_ACCOUNT_TIP = "On: what any of your characters unlocks in RPG Mode (pages, bosses, quests, maps) is unlocked for all of them. Off: each character unlocks its own. Switching loses nothing." },
         deDE = { OPT_RPG_ENABLE = "Aktivieren", OPT_RPG_PAGE = "RPG-Modus",
             OPT_RPG_HIDE_QUEST = "Quest-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_QUEST_TIP = "Kein Popup, wenn im RPG-Modus eine Dungeon-Quest freigeschaltet wird (die Chatzeile bleibt).",
             OPT_RPG_HIDE_BOSS = "Boss-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_BOSS_TIP = "Kein Popup, wenn im RPG-Modus ein Endboss eine Journalseite freischaltet (die Chatzeile bleibt).",
             OPT_RPG_MUTE = "Erfolge stummschalten", OPT_RPG_MUTE_TIP = "Die Erfolgs-Popups spielen keinen Ton.",
-            OPT_RPG_VOLUME = "Lautstärke der Erfolgs-Popups", OPT_RPG_VOLUME_TIP = "Wie laut die Erfolgsfanfare spielt (100% = so laut wie die des Spiels)." },
+            OPT_RPG_VOLUME = "Lautstärke der Erfolgs-Popups", OPT_RPG_VOLUME_TIP = "Wie laut die Erfolgsfanfare spielt (100% = so laut wie die des Spiels).",
+            OPT_RPG_ACCOUNT = "Accountweite Freischaltungen", OPT_RPG_ACCOUNT_TIP = "An: Was einer deiner Charaktere im RPG-Modus freischaltet (Seiten, Bosse, Quests, Karten), ist für alle freigeschaltet. Aus: Jeder Charakter schaltet seine eigenen frei. Beim Umschalten geht nichts verloren." },
         frFR = { OPT_RPG_ENABLE = "Activer", OPT_RPG_PAGE = "Mode RPG",
             OPT_RPG_HIDE_QUEST = "Masquer les hauts faits de quête", OPT_RPG_HIDE_QUEST_TIP = "Pas de fenêtre quand une quête de donjon se débloque en mode RPG (la ligne dans le chat reste).",
             OPT_RPG_HIDE_BOSS = "Masquer les hauts faits de boss", OPT_RPG_HIDE_BOSS_TIP = "Pas de fenêtre quand un boss final débloque une page du journal en mode RPG (la ligne dans le chat reste).",
             OPT_RPG_MUTE = "Couper le son des hauts faits", OPT_RPG_MUTE_TIP = "Les fenêtres de haut fait ne font aucun son.",
-            OPT_RPG_VOLUME = "Volume des hauts faits", OPT_RPG_VOLUME_TIP = "Le volume de la fanfare (100% = aussi fort que celle du jeu)." },
+            OPT_RPG_VOLUME = "Volume des hauts faits", OPT_RPG_VOLUME_TIP = "Le volume de la fanfare (100% = aussi fort que celle du jeu).",
+            OPT_RPG_ACCOUNT = "Déblocages pour tout le compte", OPT_RPG_ACCOUNT_TIP = "Activé : ce qu'un de vos personnages débloque en mode RPG (pages, boss, quêtes, cartes) est débloqué pour tous. Désactivé : chaque personnage débloque les siens. Rien n'est perdu en changeant." },
         esES = { OPT_RPG_ENABLE = "Activar", OPT_RPG_PAGE = "Modo RPG",
             OPT_RPG_HIDE_QUEST = "Ocultar logros de misiones", OPT_RPG_HIDE_QUEST_TIP = "Sin ventana cuando se desbloquea una misión de mazmorra en el modo RPG (la línea del chat se mantiene).",
             OPT_RPG_HIDE_BOSS = "Ocultar logros de jefes", OPT_RPG_HIDE_BOSS_TIP = "Sin ventana cuando un jefe final desbloquea una página del diario en el modo RPG (la línea del chat se mantiene).",
             OPT_RPG_MUTE = "Silenciar logros", OPT_RPG_MUTE_TIP = "Las ventanas de logro no suenan.",
-            OPT_RPG_VOLUME = "Volumen de los logros", OPT_RPG_VOLUME_TIP = "El volumen de la fanfarria (100% = tan alto como la del juego)." },
+            OPT_RPG_VOLUME = "Volumen de los logros", OPT_RPG_VOLUME_TIP = "El volumen de la fanfarria (100% = tan alto como la del juego).",
+            OPT_RPG_ACCOUNT = "Desbloqueos para toda la cuenta", OPT_RPG_ACCOUNT_TIP = "Activado: lo que desbloquee cualquiera de tus personajes en el modo RPG (páginas, jefes, misiones, mapas) queda desbloqueado para todos. Desactivado: cada personaje desbloquea lo suyo. No se pierde nada al cambiar." },
         itIT = { OPT_RPG_ENABLE = "Attiva", OPT_RPG_PAGE = "Modalità RPG",
             OPT_RPG_HIDE_QUEST = "Nascondi imprese delle missioni", OPT_RPG_HIDE_QUEST_TIP = "Nessun riquadro quando si sblocca una missione di dungeon in modalità RPG (la riga in chat resta).",
             OPT_RPG_HIDE_BOSS = "Nascondi imprese dei boss", OPT_RPG_HIDE_BOSS_TIP = "Nessun riquadro quando un boss finale sblocca una pagina del diario in modalità RPG (la riga in chat resta).",
             OPT_RPG_MUTE = "Silenzia imprese", OPT_RPG_MUTE_TIP = "I riquadri delle imprese non fanno suoni.",
-            OPT_RPG_VOLUME = "Volume delle imprese", OPT_RPG_VOLUME_TIP = "Quanto forte suona la fanfara (100% = forte come quella del gioco)." },
+            OPT_RPG_VOLUME = "Volume delle imprese", OPT_RPG_VOLUME_TIP = "Quanto forte suona la fanfara (100% = forte come quella del gioco).",
+            OPT_RPG_ACCOUNT = "Sblocchi per tutto l'account", OPT_RPG_ACCOUNT_TIP = "Attivo: ciò che un tuo personaggio sblocca in modalità RPG (pagine, boss, missioni, mappe) è sbloccato per tutti. Disattivo: ogni personaggio sblocca i propri. Cambiando non si perde nulla." },
         ptBR = { OPT_RPG_ENABLE = "Ativar", OPT_RPG_PAGE = "Modo RPG",
             OPT_RPG_HIDE_QUEST = "Ocultar conquistas de missões", OPT_RPG_HIDE_QUEST_TIP = "Sem janela quando uma missão de masmorra é desbloqueada no modo RPG (a linha no chat continua).",
             OPT_RPG_HIDE_BOSS = "Ocultar conquistas de chefes", OPT_RPG_HIDE_BOSS_TIP = "Sem janela quando um chefe final desbloqueia uma página do diário no modo RPG (a linha no chat continua).",
             OPT_RPG_MUTE = "Silenciar conquistas", OPT_RPG_MUTE_TIP = "As janelas de conquista não tocam som.",
-            OPT_RPG_VOLUME = "Volume das conquistas", OPT_RPG_VOLUME_TIP = "O volume da fanfarra (100% = tão alto quanto a do jogo)." },
+            OPT_RPG_VOLUME = "Volume das conquistas", OPT_RPG_VOLUME_TIP = "O volume da fanfarra (100% = tão alto quanto a do jogo).",
+            OPT_RPG_ACCOUNT = "Desbloqueios para toda a conta", OPT_RPG_ACCOUNT_TIP = "Ativado: o que qualquer personagem seu desbloquear no modo RPG (páginas, chefes, missões, mapas) fica desbloqueado para todos. Desativado: cada personagem desbloqueia os seus. Nada se perde ao trocar." },
         ruRU = { OPT_RPG_ENABLE = "Включить", OPT_RPG_PAGE = "Режим RPG",
             OPT_RPG_HIDE_QUEST = "Скрыть достижения заданий", OPT_RPG_HIDE_QUEST_TIP = "Без окна, когда в режиме RPG открывается задание подземелья (строка в чате остаётся).",
             OPT_RPG_HIDE_BOSS = "Скрыть достижения боссов", OPT_RPG_HIDE_BOSS_TIP = "Без окна, когда в режиме RPG последний босс открывает страницу журнала (строка в чате остаётся).",
             OPT_RPG_MUTE = "Без звука достижений", OPT_RPG_MUTE_TIP = "Окна достижений не издают звука.",
-            OPT_RPG_VOLUME = "Громкость достижений", OPT_RPG_VOLUME_TIP = "Громкость фанфар (100% = как у самой игры)." },
+            OPT_RPG_VOLUME = "Громкость достижений", OPT_RPG_VOLUME_TIP = "Громкость фанфар (100% = как у самой игры).",
+            OPT_RPG_ACCOUNT = "Открытия на всю учётную запись", OPT_RPG_ACCOUNT_TIP = "Вкл.: всё, что открыл любой ваш персонаж в режиме RPG (страницы, боссы, задания, карты), открыто для всех. Выкл.: каждый персонаж открывает своё. При переключении ничего не теряется." },
         koKR = { OPT_RPG_ENABLE = "사용", OPT_RPG_PAGE = "RPG 모드",
             OPT_RPG_HIDE_QUEST = "퀘스트 업적 팝업 숨기기", OPT_RPG_HIDE_QUEST_TIP = "RPG 모드에서 던전 퀘스트가 열려도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
             OPT_RPG_HIDE_BOSS = "우두머리 업적 팝업 숨기기", OPT_RPG_HIDE_BOSS_TIP = "RPG 모드에서 마지막 우두머리가 도감 페이지를 열어도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
             OPT_RPG_MUTE = "업적 소리 끄기", OPT_RPG_MUTE_TIP = "업적 팝업에서 소리가 나지 않습니다.",
-            OPT_RPG_VOLUME = "업적 팝업 소리", OPT_RPG_VOLUME_TIP = "업적 팡파르의 음량 (100% = 게임 기본과 같음)." },
+            OPT_RPG_VOLUME = "업적 팝업 소리", OPT_RPG_VOLUME_TIP = "업적 팡파르의 음량 (100% = 게임 기본과 같음).",
+            OPT_RPG_ACCOUNT = "계정 공유 잠금 해제", OPT_RPG_ACCOUNT_TIP = "켜기: 한 캐릭터가 RPG 모드에서 연 것(페이지, 우두머리, 퀘스트, 지도)은 모든 캐릭터에게 열립니다. 끄기: 캐릭터마다 따로 엽니다. 전환해도 잃는 것은 없습니다." },
         zhCN = { OPT_RPG_ENABLE = "启用", OPT_RPG_PAGE = "RPG模式",
             OPT_RPG_HIDE_QUEST = "隐藏任务成就弹窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任务解锁时不弹窗（聊天提示保留）。",
             OPT_RPG_HIDE_BOSS = "隐藏首领成就弹窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最终首领解锁日志页面时不弹窗（聊天提示保留）。",
             OPT_RPG_MUTE = "成就静音", OPT_RPG_MUTE_TIP = "成就弹窗不播放声音。",
-            OPT_RPG_VOLUME = "成就弹窗音量", OPT_RPG_VOLUME_TIP = "成就号角的音量（100% = 与游戏自带相同）。" },
+            OPT_RPG_VOLUME = "成就弹窗音量", OPT_RPG_VOLUME_TIP = "成就号角的音量（100% = 与游戏自带相同）。",
+            OPT_RPG_ACCOUNT = "账号通用解锁", OPT_RPG_ACCOUNT_TIP = "开启：你的任一角色在RPG模式中解锁的内容（页面、首领、任务、地图）对所有角色解锁。关闭：每个角色各自解锁。切换不会丢失任何进度。" },
         zhTW = { OPT_RPG_ENABLE = "啟用", OPT_RPG_PAGE = "RPG模式",
             OPT_RPG_HIDE_QUEST = "隱藏任務成就彈窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任務解鎖時不彈窗（聊天提示保留）。",
             OPT_RPG_HIDE_BOSS = "隱藏首領成就彈窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最終首領解鎖日誌頁面時不彈窗（聊天提示保留）。",
             OPT_RPG_MUTE = "成就靜音", OPT_RPG_MUTE_TIP = "成就彈窗不播放聲音。",
-            OPT_RPG_VOLUME = "成就彈窗音量", OPT_RPG_VOLUME_TIP = "成就號角的音量（100% = 與遊戲內建相同）。" },
+            OPT_RPG_VOLUME = "成就彈窗音量", OPT_RPG_VOLUME_TIP = "成就號角的音量（100% = 與遊戲內建相同）。",
+            OPT_RPG_ACCOUNT = "帳號通用解鎖", OPT_RPG_ACCOUNT_TIP = "開啟：你的任一角色在RPG模式中解鎖的內容（頁面、首領、任務、地圖）對所有角色解鎖。關閉：每個角色各自解鎖。切換不會遺失任何進度。" },
     }
     strings.esMX = strings.esES
     for locale, entries in pairs(strings) do
@@ -266,7 +391,7 @@ function FDJ.IsDungeonLocked(name)
     if not FDJ.IsRPGMode() then return false end
     if not InOrder(name) then return false end
     if FDJ.DB and FDJ.DB[name] and FDJ.DB[name].previewOnly then return false end -- "coming soon" cards
-    return not CharDB().rpgKills[name]
+    return not ViewTable("rpgKills")[name]
 end
 
 function FDJ.RPGLockedNotice(name)
@@ -278,8 +403,11 @@ local ShowUnlockToast -- defined further down, with the sketches
 local function Unlock(name)
     local db = CharDB()
     if db.rpgKills[name] then return end
+    -- Account-wide: already open from another character, so no popup.
+    local open = ViewTable("rpgKills")[name] and true or false
     db.rpgKills[name] = true
-    if FDJ.IsRPGMode() then
+    ShareProgress()
+    if FDJ.IsRPGMode() and not open then
         local shown = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(name) or name
         print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_UNLOCKED_MSG", shown) .. "|r")
         if ShowUnlockToast then pcall(ShowUnlockToast, name) end
@@ -319,7 +447,7 @@ local function Progress()
     local pages, pagesDone = 0, 0
     for name in pairs(finalNpcOf) do
         pages = pages + 1
-        if CharDB().rpgKills[name] then pagesDone = pagesDone + 1 end
+        if ViewTable("rpgKills")[name] then pagesDone = pagesDone + 1 end
     end
     local points = done * QUEST_POINTS + pagesDone * PAGE_POINTS
     local maxPoints = total * QUEST_POINTS + pages * PAGE_POINTS
@@ -342,6 +470,10 @@ local SKETCHES = {
     [2041] = true, [2043] = true, [7971] = true, [5988] = true, [6439] = true, [12292] = true,
     [7806] = true, [8807] = true, [8711] = true, [10115] = true, [14416] = true, [11256] = true,
     [11583] = true, [10691] = true, [10729] = true, [11070] = true,
+    -- 2.0.3: Min'loth the Serpent, Overlord Mugg, Blazeroar, Avatar of Hakkar
+    -- (drawn from Hakkar the Soulflayer's model, the same creature: the
+    -- Avatar's own render only shows it from above), Varrox Bleakhoof, Nanaya.
+    [142322] = true, [141218] = true, [6374] = true, [8053] = true, [130447] = true, [143832] = true,
 }
 local function SketchFor(name)
     Build()
@@ -375,12 +507,37 @@ end
 
 function FDJ.ApplyRPGCard(card, name)
     local locked = FDJ.IsDungeonLocked(name)
+    -- showquests (2.0.16): with Show dungeon quests the page opens, but its
+    -- card keeps the sketch, with the usual quest count on it.
+    local questsOnly = not locked and FDJ.RPGSketchLocked and FDJ.RPGSketchLocked(name) or false
+    if questsOnly then locked = true end
     -- "Coming soon" dungeons stay a blank page with the sketched question mark.
     local preview = FDJ.IsRPGMode() and FDJ.DB and FDJ.DB[name] and FDJ.DB[name].previewOnly and true or false
     if locked or preview then
         local page = JournalPage(card)
         page.sketch:SetTexture(preview and (MEDIA .. "Sketch_Unknown") or SketchFor(name))
         page:Show()
+        if questsOnly and not preview then
+            if not page.questCount then
+                page.questCount = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
+                page.questCount:SetPoint("TOPRIGHT", -10, -7)
+                page.questCount:SetJustifyH("RIGHT")
+                page.questCount:SetTextColor(0.97, 0.89, 0.54)
+                page.questCount:SetShadowColor(0, 0, 0, 1)
+                page.questCount:SetShadowOffset(1, -1)
+                page.questBack = page:CreateTexture(nil, "ARTWORK", nil, 1)
+                page.questBack:SetTexture("Interface\\Buttons\\WHITE8X8")
+                page.questBack:SetVertexColor(0, 0, 0, 0.55)
+                page.questBack:SetPoint("TOPLEFT", page.questCount, "TOPLEFT", -6, 3)
+                page.questBack:SetPoint("BOTTOMRIGHT", page.questCount, "BOTTOMRIGHT", 6, -3)
+            end
+            page.questCount:SetText(card.counts and card.counts:GetText() or "")
+            page.questCount:Show()
+            page.questBack:Show()
+        elseif page.questCount then
+            page.questCount:Hide()
+            page.questBack:Hide()
+        end
     elseif card.rpgPage then
         card.rpgPage:Hide()
     end
@@ -455,12 +612,12 @@ local function BuildPlainToast()
     frameEdge:SetBackdrop({ edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 12 })
     frameEdge:SetBackdropBorderColor(0.85, 0.68, 0.32, 1)
 
-    t.header = t:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    t.header = t:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     t.header:SetPoint("TOPLEFT", page, "TOPRIGHT", 16, -6)
     t.header:SetPoint("RIGHT", -18, 0)
     t.header:SetJustifyH("CENTER")
     t.header:SetTextColor(1, 0.82, 0)
-    t.name = t:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    t.name = t:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
     t.name:SetPoint("TOP", t.header, "BOTTOM", 0, -8)
     t.name:SetPoint("LEFT", t.header, "LEFT")
     t.name:SetPoint("RIGHT", t.header, "RIGHT")
@@ -469,7 +626,7 @@ local function BuildPlainToast()
         local font, _, flags = t.name:GetFont()
         if font then t.name:SetFont(font, 20, flags) end
     end
-    t.hint = t:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    t.hint = t:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisableSmall")
     t.hint:SetPoint("TOP", t.name, "BOTTOM", 0, -10)
     t.hint:SetPoint("LEFT", t.header, "LEFT")
     t.hint:SetPoint("RIGHT", t.header, "RIGHT")
@@ -561,13 +718,13 @@ local function BuildAchievementToast()
     Atlas(t.bg, "ui-achievement-guild-background")
     t.bg:SetPoint("CENTER")
 
-    t.guild = t:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+    t.guild = t:CreateFontString(nil, "BACKGROUND", "ForeverDJ_GameFontNormal")
     t.guild:SetPoint("TOPLEFT", 50, -13)
     t.guild:SetPoint("TOPRIGHT", -50, -13)
-    t.unlocked = t:CreateFontString(nil, "BACKGROUND", "GameFontBlackTiny")
+    t.unlocked = t:CreateFontString(nil, "BACKGROUND", "ForeverDJ_GameFontBlackTiny")
     t.unlocked:SetSize(200, 12)
     t.unlocked:SetPoint("TOP", 0, -38)
-    t.name = t:CreateFontString(nil, "BACKGROUND", "GameFontHighlight")
+    t.name = t:CreateFontString(nil, "BACKGROUND", "ForeverDJ_GameFontHighlight")
     t.name:SetSize(155, 36)
     t.name:SetPoint("TOP", t.unlocked, "BOTTOM")
     t.name:SetJustifyH("CENTER")
@@ -607,7 +764,7 @@ local function BuildAchievementToast()
     local shieldIcon = shield:CreateTexture(nil, "BACKGROUND")
     Atlas(shieldIcon, "ui-achievement-shield-1")
     shieldIcon:SetPoint("TOPRIGHT", 1, -6)
-    t.points = shield:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    t.points = shield:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     t.points:SetPoint("CENTER", 2, -2)
     t.points:SetVertexColor(0, 1, 0)
 
@@ -796,8 +953,8 @@ local function BuildSkillBar(home)
     holder:SetSize(300, 18)
     holder:SetPoint("CENTER", 0, -2)
     holder:SetFrameLevel(bar:GetFrameLevel() + 5)
-    bar.text = holder:CreateFontString(nil, "OVERLAY", "Number12FontOutline")
-    if not bar.text:GetFont() then bar.text:SetFontObject("GameFontHighlight") end
+    bar.text = holder:CreateFontString(nil, "OVERLAY", "ForeverDJ_Number12FontOutline")
+    if not bar.text:GetFont() then bar.text:SetFontObject("ForeverDJ_GameFontHighlight") end
     bar.text:SetPoint("CENTER")
 
     function bar:SetProgress(frac)
@@ -891,7 +1048,7 @@ local function BuildOldBar(home)
     textHolder:SetAllPoints()
     textHolder:SetFrameLevel(bar:GetFrameLevel() + 5)
     bar.text = textHolder:CreateFontString(nil, "OVERLAY", "TextStatusBarText")
-    if not bar.text:GetFont() then bar.text:SetFontObject("GameFontHighlight") end
+    if not bar.text:GetFont() then bar.text:SetFontObject("ForeverDJ_GameFontHighlight") end
     do
         local font, _, flags = bar.text:GetFont()
         if font then bar.text:SetFont(font, 13, flags) end
@@ -1069,14 +1226,15 @@ local function OptionCard(parent, icon, titleKey, descKey, mode)
     ic:SetPoint("TOP", 0, -18)
     ic:SetTexture(icon)
     ic:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-    c.title = c:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    c.title = c:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     c.title:SetPoint("TOP", ic, "BOTTOM", 0, -10)
-    c.desc = c:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    c.desc = c:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     c.desc:SetPoint("TOP", c.title, "BOTTOM", 0, -10)
     c.desc:SetWidth(222)
     c.desc:SetJustifyH("CENTER")
     c.titleKey, c.descKey = titleKey, descKey
     local pick = CreateFrame("Button", nil, c, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(pick) -- ownfonts (2.0.8)
     pick:SetSize(150, 24)
     pick:SetPoint("BOTTOM", 0, 14)
     c.pick = pick
@@ -1118,7 +1276,7 @@ function FDJ.ShowRPGConfirm(parent, onOk)
             insets = { left = 7, right = 7, top = 7, bottom = 7 },
         })
         confirm:SetBackdropColor(0.04, 0.035, 0.03, 0.98)
-        confirm.text = confirm:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        confirm.text = confirm:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
         confirm.text:SetPoint("TOP", 0, -26)
         confirm.text:SetWidth(352)
         confirm.text:SetJustifyH("CENTER")
@@ -1127,9 +1285,11 @@ function FDJ.ShowRPGConfirm(parent, onOk)
         if confirm.text.SetNonSpaceWrap then confirm.text:SetNonSpaceWrap(true) end
         if confirm.text.SetMaxLines then confirm.text:SetMaxLines(0) end
         confirm.ok = CreateFrame("Button", nil, confirm, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(confirm.ok) -- ownfonts (2.0.8)
         confirm.ok:SetSize(130, 24)
         confirm.ok:SetPoint("BOTTOMRIGHT", confirm, "BOTTOM", -6, 20)
         confirm.back = CreateFrame("Button", nil, confirm, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(confirm.back) -- ownfonts (2.0.8)
         confirm.back:SetSize(130, 24)
         confirm.back:SetPoint("BOTTOMLEFT", confirm, "BOTTOM", 6, 20)
         confirm.back:SetScript("OnClick", function() confirm:Hide() end)
@@ -1173,9 +1333,9 @@ function FDJ.ShowModeChooser(force)
         icon:SetPoint("TOPLEFT", 20, -18)
         icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
         icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        chooser.title = chooser:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        chooser.title = chooser:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
         chooser.title:SetPoint("LEFT", icon, "RIGHT", 8, 0)
-        chooser.sub = chooser:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        chooser.sub = chooser:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         chooser.sub:SetPoint("TOPLEFT", icon, "BOTTOMLEFT", 0, -8)
         chooser.sub:SetTextColor(0.75, 0.72, 0.66)
         chooser.gamer = OptionCard(chooser, "Interface\\Icons\\INV_Misc_Book_09", "MODE_GAMER", "MODE_GAMER_DESC", "gamer")
@@ -1322,7 +1482,7 @@ local function BuildIntro(frame)
     shade.note = note
 
     -- "RPG Mode" with the RPG journal icon (the one from the mode chooser).
-    note.title = note:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    note.title = note:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     note.title:SetPoint("TOP", 22, -26) -- half the icon + gap, so the pair is centred
     InkText(note.title, 0.30, 0.16, 0.04)
     local iconFrame = CreateFrame("Frame", nil, note, "BackdropTemplate")
@@ -1336,7 +1496,7 @@ local function BuildIntro(frame)
     icon:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\RPGJournalIcon")
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-    note.text = note:CreateFontString(nil, "OVERLAY", _G.GameFontHighlightMedium and "GameFontHighlightMedium" or "GameFontHighlight")
+    note.text = note:CreateFontString(nil, "OVERLAY", _G.ForeverDJ_GameFontHighlightMedium and "ForeverDJ_GameFontHighlightMedium" or "ForeverDJ_GameFontHighlight")
     note.text:SetPoint("TOP", note, "TOP", 0, -66)
     note.text:SetWidth(400)
     note.text:SetJustifyH("CENTER")
@@ -1345,11 +1505,13 @@ local function BuildIntro(frame)
 
     -- The way out on the left (as Gamer Mode is in the chooser), RPG on the right.
     note.options = CreateFrame("Button", nil, note, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(note.options) -- ownfonts (2.0.8)
     note.options:SetHeight(26)
     note.options:SetPoint("BOTTOMRIGHT", note, "BOTTOM", -6, 22)
     note.options:SetScript("OnClick", function() AnswerIntro(false) end)
     ModeTooltip(note.options, "MODE_GAMER", "MODE_GAMER_DESC")
     note.keep = CreateFrame("Button", nil, note, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(note.keep) -- ownfonts (2.0.8)
     note.keep:SetHeight(26)
     note.keep:SetPoint("BOTTOMLEFT", note, "BOTTOM", 6, 22)
     note.keep:SetScript("OnClick", function() AnswerIntro(true) end)
@@ -1396,7 +1558,7 @@ local function RPGModeButton(frame)
     b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
     b.icon = WhiteBook(b, 16)
     b.icon:SetPoint("LEFT", 10, 0)
-    b.text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    b.text = b:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     b.text:SetPoint("LEFT", b.icon, "RIGHT", 6, 0)
     b.text:SetTextColor(1.00, 0.82, 0.27)
     b:SetScript("OnClick", function()
@@ -1588,10 +1750,11 @@ do
                 if started then unlocked[q.id] = true end
             end
         end
+        ShareProgress()
     end
 
     local function Count(list, name)
-        local unlocked, n, total = QuestsUnlocked(), 0, 0
+        local unlocked, n, total = ViewTable("rpgQuests"), 0, 0
         for _, e in ipairs(list) do
             if e.dungeon == name then
                 total = total + 1
@@ -1741,6 +1904,8 @@ do
     local function Enqueue(entry)
         -- Options > RPG Mode > Hide Quest Achievement Popups
         if (entry.kind or "quest") == "quest" and FDJ.RPGOption("hideQuestPopups") then return end
+        -- showquests (2.0.16): Show dungeon quests: no quest popups either.
+        if (entry.kind or "quest") == "quest" and FDJ.RPGOption("showQuests") then return end
         local t = Toast()
         if not t:IsShown() then return Show(entry) end
         local current = t.questEntry
@@ -1785,13 +1950,16 @@ do
         if not seeded then Seed(id) end
         local list = Mine()
         local unlocked = QuestsUnlocked()
+        -- Account-wide: a quest another character already unlocked gets no popup.
+        local shown = ViewTable("rpgQuests")
         local now, fresh, order = {}, {}, {}
         for _, e in ipairs(list) do
             local q = e.quest
             if Leads(q, id) then
                 if not unlocked[q.id] then
+                    local open = shown[q.id] and true or false
                     unlocked[q.id] = true
-                    now[q.id] = true
+                    if not open then now[q.id] = true end
                 end
                 if now[q.id] then
                     if not fresh[e.dungeon] then
@@ -1802,6 +1970,7 @@ do
                 end
             end
         end
+        ShareProgress()
         if #order == 0 then return end
         if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
         if not FDJ.IsRPGMode() then return end
@@ -1971,12 +2140,12 @@ do
         if not FDJ.IsRPGMode() or not InOrder(name) then return true end
         local d = FDJ.DB and FDJ.DB[name]
         if not d or d.previewOnly or d.questChainPage then return true end
-        return CharDB().rpgKills[name] == true
+        return ViewTable("rpgKills")[name] == true
     end
 
     local function QuestOpen(name)
         local d = FDJ.DB and FDJ.DB[name]
-        local unlocked = CharDB().rpgQuests
+        local unlocked = ViewTable("rpgQuests")
         if not d or type(unlocked) ~= "table" then return false end
         for _, q in ipairs(d.quests or {}) do
             if type(q) == "table" and q.id and unlocked[q.id] then return true end
@@ -1989,7 +2158,7 @@ do
     end
 
     local function MapOpen(name)
-        return Store("rpgMaps")[name] == true
+        return ViewTable("rpgMaps")[name] == true
     end
 
     -- Trash seen dying so far and how much opens the map.
@@ -2003,9 +2172,18 @@ do
 
     -- A locked page opens (partly) once one of its quests is unlocked.
     local LockedUntilFinalBoss = FDJ.IsDungeonLocked
-    FDJ.IsDungeonLocked = function(name, ...)
+    -- The page's own lock (its card is a sketch): final boss not killed and
+    -- none of its quests found yet.
+    local function SketchLocked(name, ...)
         if not LockedUntilFinalBoss(name, ...) then return false end
         return not QuestOpen(name)
+    end
+    FDJ.RPGSketchLocked = SketchLocked
+    FDJ.IsDungeonLocked = function(name, ...)
+        if not SketchLocked(name, ...) then return false end
+        -- showquests (2.0.16): Show dungeon quests opens every page on its quests.
+        if FDJ.RPGOption("showQuests") then return false end
+        return true
     end
 
     -- --------------------------------------------------- what stays hidden
@@ -2037,7 +2215,7 @@ do
     end
 
     local function Seen(name, boss)
-        local list = Store("rpgBosses")[name]
+        local list = ViewTable("rpgBosses")[name]
         if type(list) ~= "table" then return false end
         if boss.npcID and list[boss.npcID] then return true end
         return type(boss.name) == "string" and list[boss.name:lower()] == true
@@ -2053,7 +2231,8 @@ do
 
     function FDJ.RPGQuestHidden(name, quest)
         if type(quest) ~= "table" or not name or FullyOpen(name) then return false end
-        local unlocked = CharDB().rpgQuests
+        if FDJ.RPGOption("showQuests") then return false end -- showquests (2.0.16)
+        local unlocked = ViewTable("rpgQuests")
         return not (type(unlocked) == "table" and quest.id and unlocked[quest.id])
     end
 
@@ -2246,22 +2425,29 @@ do
             local name, b = e[1], e[2]
             if type(all[name]) ~= "table" then all[name] = {} end
             local seen = all[name]
-            if not Seen(name, b) then
+            -- This character's own record; the message only for a boss new to
+            -- what the journal shows (account-wide: new to every character).
+            local mine = (b.npcID and seen[b.npcID]) or (type(b.name) == "string" and seen[b.name:lower()])
+            if not mine then
+                local known = Seen(name, b)
                 if b.npcID then seen[b.npcID] = true end
                 if type(b.name) == "string" then seen[b.name:lower()] = true end
                 any = true
                 local final = (b.npcID and finalByNpc and finalByNpc[b.npcID] == name) or nameFinal[name] == b -- kroldok
-                if FDJ.IsRPGMode() and not final and not CharDB().rpgKills[name] and QuestOpen(name) then
+                if FDJ.IsRPGMode() and not known and not final and not ViewTable("rpgKills")[name] and QuestOpen(name) then
                     print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_BOSS_REVEALED_MSG", BossLabel(b.name)) .. "|r")
                 end
                 if final then Unlock(name) end -- the final boss found: the whole page
             end
         end
-        if any then Changed() end
+        if any then
+            ShareProgress()
+            Changed()
+        end
     end
 
     local function Trash(guid)
-        if not here or MapOpen(here) or CharDB().rpgKills[here] then return end
+        if not here or Store("rpgMaps")[here] or CharDB().rpgKills[here] then return end -- this character's own
         local all = Store("rpgTrash")
         local rec = all[here]
         if type(rec) ~= "table" then
@@ -2274,9 +2460,11 @@ do
         rec.n = (rec.n or 0) + 1
         if rec.n < Need(here) then return end
         local name = here
+        local open = MapOpen(name) -- account-wide: another character opened it already
         Store("rpgMaps")[name] = true
         all[name] = nil
-        if FDJ.IsRPGMode() then
+        ShareProgress()
+        if FDJ.IsRPGMode() and not open then
             print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_MAP_UNLOCKED_MSG", DungeonName(name)) .. "|r")
             if FDJ.RPGToast then
                 FDJ.RPGToast({ kind = "map", dungeon = name, title = L("RPG_MAP_TOAST_TITLE"),
@@ -2595,19 +2783,24 @@ do
                                 seen = {}
                                 db.rpgBosses[name] = seen
                             end
+                            -- Written to this character's record; listed in chat only
+                            -- when new to what the journal shows (account-wide too).
                             if not seen[b.npcID] then
+                                local shown = ViewTable("rpgBosses")[name]
+                                local known = type(shown) == "table" and shown[b.npcID] and true or false
                                 seen[b.npcID] = true
                                 if type(b.name) == "string" then seen[b.name:lower()] = true end
-                                bosses[#bosses + 1] = { name, b }
+                                if not known then bosses[#bosses + 1] = { name, b } end
                                 any = true
                             end
                             if finalByNpc and finalByNpc[b.npcID] == name and not db.rpgKills[name] then
+                                local known = ViewTable("rpgKills")[name] and true or false
                                 if live then
                                     Unlock(name) -- the page's popup, as for a kill seen
                                 else
                                     db.rpgKills[name] = true
                                 end
-                                pages[#pages + 1] = name
+                                if not known then pages[#pages + 1] = name end
                                 any = true
                             end
                         end
@@ -2615,9 +2808,10 @@ do
                 end
             end
         end
+        if any then ShareProgress() end
         local revealed = {}
         for _, e in ipairs(bosses) do
-            if not db.rpgKills[e[1]] then revealed[#revealed + 1] = e[2] end
+            if not ViewTable("rpgKills")[e[1]] then revealed[#revealed + 1] = e[2] end
         end
         return pages, revealed, any
     end

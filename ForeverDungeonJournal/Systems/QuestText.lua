@@ -582,7 +582,7 @@ do
                 item:SetPoint("RIGHT", -5, 0)
                 item:SetHeight(20)
                 item:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-                item.text = item:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+                item.text = item:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
                 item.text:SetPoint("LEFT", 6, 0)
                 item:SetScript("OnClick", function()
                     menu:Hide()
@@ -921,6 +921,7 @@ do
         for _, quest in ipairs(dungeon.quests or {}) do
             if type(quest) == "table" and type(quest.id) == "number" and quest.name
                 and not quest.repeatable and not quest.hideFromMainList and Matches(quest, faction)
+                and not (quest.unavailable and not (FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(quest.id))) -- notavailable (2.0.4)
                 and not (FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(name, quest)) then -- RPG Mode: unlocked ones only
                 list[#list + 1] = quest
             end
@@ -1873,7 +1874,7 @@ do
         local line = CreateFrame("Button", nil, row)
         line:RegisterForClicks("LeftButtonUp")
         line:RegisterForDrag("LeftButton")
-        line.text = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        line.text = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         line.text:SetPoint("TOPLEFT", line, "TOPLEFT", STEP_TEXT_X, 0)
         line.text:SetJustifyH("LEFT")
         line.text:SetWordWrap(true)
@@ -1979,7 +1980,7 @@ do
             if not line.turnInMark then
                 line.turnInMark = FDJ.CreateTurnInButton(line, 16)
                 line.turnInMark:SetFrameLevel(line:GetFrameLevel() + 3)
-                line.measure = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                line.measure = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
                 line.measure:Hide()
             end
             line.measure:SetText(label)
@@ -2277,12 +2278,12 @@ do
             use:Hide()
         end
 
-        row.title = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        row.title = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         row.title:SetPoint("TOPLEFT", row, "TOPLEFT", TEXT_X, 0)
         row.title:SetJustifyH("LEFT")
         row.title:SetWordWrap(true)
 
-        row.sub = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        row.sub = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         row.sub:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -3)
         row.sub:SetJustifyH("LEFT")
         row.sub:SetWordWrap(true)
@@ -2295,7 +2296,7 @@ do
         row.step = step
         step:RegisterForClicks("LeftButtonUp")
         step:RegisterForDrag("LeftButton")
-        step.text = step:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        step.text = step:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         step.text:SetPoint("TOPLEFT", step, "TOPLEFT", 0, 0)
         step.text:SetJustifyH("LEFT")
         step.text:SetWordWrap(true)
@@ -2373,7 +2374,7 @@ do
             OpenInJournal(f.dungeon, nil)
         end)
 
-        over.count = over:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+        over.count = over:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisableSmall")
         over.count:SetPoint("LEFT", f, "TOPLEFT", 12, -12)
 
         local close = CreateFrame("Button", nil, over, "UIPanelCloseButton")
@@ -2410,7 +2411,7 @@ do
         over.icon:SetSize(15, 15)
         over.icon:SetTexture(BOOK)
         over.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
-        over.title = over:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        over.title = over:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
         over.title:SetPoint("LEFT", over.icon, "RIGHT", 4, 0)
         over.title:SetJustifyH("LEFT")
         over.title:SetWordWrap(false)
@@ -2644,7 +2645,7 @@ do
                     if not step.mark then
                         step.mark = FDJ.CreateTurnInButton(step, 16)
                         step.mark:SetFrameLevel(step:GetFrameLevel() + 3)
-                        step.measure = step:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                        step.measure = step:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
                         step.measure:Hide()
                     end
                     step.measure:SetText(info.stepLabel or info.stepName or "")
@@ -2713,7 +2714,8 @@ do
         end
         for _, name in ipairs(names) do
             local dungeon = FDJ.DB[name]
-            if dungeon and dungeon.questChainPage and not Locked(name) then
+            -- noArrow: a chain page without the waypoint arrow (Onyxia Attunement).
+            if dungeon and dungeon.questChainPage and not dungeon.noArrow and not Locked(name) then
                 now[name] = true
                 local spot, title, turnIn
                 for _, quest in ipairs(QuestsOf(name)) do
@@ -2928,13 +2930,14 @@ do
     function FDJ.CreateQuestTrackButton(journal, questLeft)
         if not journal or not questLeft or journal.questTrackButton then return end
         local b = CreateFrame("Button", nil, questLeft, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(b) -- ownfonts (2.0.8)
         journal.questTrackButton = b
         b:SetSize(80, 26)
         b:SetText(T("TRACK"))
         -- Same font in every state, like the Map / Bosses / Quests buttons.
-        if b.SetNormalFontObject then b:SetNormalFontObject("GameFontNormal") end
-        if b.SetHighlightFontObject then b:SetHighlightFontObject("GameFontNormal") end
-        if b.SetDisabledFontObject then b:SetDisabledFontObject("GameFontNormal") end
+        if b.SetNormalFontObject then b:SetNormalFontObject("ForeverDJ_GameFontNormal") end
+        if b.SetHighlightFontObject then b:SetHighlightFontObject("ForeverDJ_GameFontNormal") end
+        if b.SetDisabledFontObject then b:SetDisabledFontObject("ForeverDJ_GameFontNormal") end
         b.text = b:GetFontString()
         if b.text then b.text:SetTextColor(1.00, 0.82, 0.27) end
         b.check = b:CreateTexture(nil, "OVERLAY")

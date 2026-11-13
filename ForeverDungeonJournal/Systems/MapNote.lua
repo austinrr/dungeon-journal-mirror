@@ -54,7 +54,7 @@ function FDJ.CheckMapTiles(panel, tiles, count, floor, apiTextures, apiLayer, ar
         return
     end
     if not note then
-        note = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        note = panel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         note:SetPoint("BOTTOM", panel, "BOTTOM", 0, 22)
         note:SetWidth(560)
         note:SetJustifyH("CENTER")

@@ -303,7 +303,7 @@ local function CreateMapMarker(key)
         marker.pulseAnim = group
     end)
 
-    marker.glow = marker:CreateFontString(nil, "BACKGROUND", "GameFontNormalLarge")
+    marker.glow = marker:CreateFontString(nil, "BACKGROUND", "ForeverDJ_GameFontNormalLarge")
     marker.glow:SetPoint("CENTER", marker, "CENTER", 0, 0)
     marker.glow:SetText("X")
     marker.glow:SetTextColor(1.00, 0.82, 0.20, 0.32)
@@ -312,7 +312,7 @@ local function CreateMapMarker(key)
     marker.outline = {}
     local offsets = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} }
     for i = 1, #offsets do
-        local shadow = marker:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        local shadow = marker:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
         shadow:SetPoint("CENTER", marker, "CENTER", offsets[i][1], offsets[i][2])
         shadow:SetText("X")
         shadow:SetTextColor(0, 0, 0, 1)
@@ -320,7 +320,7 @@ local function CreateMapMarker(key)
         marker.outline[i] = shadow
     end
 
-    marker.x = marker:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    marker.x = marker:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     marker.x:SetPoint("CENTER", marker, "CENTER", 0, 0)
     marker.x:SetText("X")
     marker.x:SetTextColor(1.00, 0.88, 0.10, 1)
@@ -2046,8 +2046,25 @@ do
         local n = 0
         local inLog = FDJ.IsQuestInLog or function() return false end
         local turnedIn = FDJ.QuestTurnedIn or function() return false end
+        -- hidequests (2.0.15): Hide quests ticked: only the spot a quest's
+        -- Show on Map just opened the map on (its quest, else where it is).
+        local hideAll = FDJ.MapQuestsHidden and FDJ.MapQuestsHidden()
+        local focus = FDJ.dungeonMapFocus
+        if focus and ((GetTime and GetTime()) or 0) > (focus.untilT or 0) then focus = nil end
+        local function Wanted(pin)
+            if not hideAll then return true end
+            if not focus then return false end
+            if focus.x and focus.y and (focus.floor or 1) == (pin.floor or 1)
+                and math.abs(focus.x - pin.x) < 0.015 and math.abs(focus.y - pin.y) < 0.015 then return true end
+            for _, spot in ipairs(pin.spots or {}) do
+                for _, q in ipairs(spot.quests or {}) do
+                    if focus.questID and (q.id == focus.questID or q.main == focus.questID) then return true end
+                end
+            end
+            return false
+        end
         for _, pin in ipairs(list) do
-            if (pin.floor or 1) == floorIndex then
+            if (pin.floor or 1) == floorIndex and Wanted(pin) then
                 local spots, start, firstQuest = {}, false, nil
                 local logged, available, firstLogged = false, false, nil -- pinlog
                 for _, spot in ipairs(pin.spots or {}) do
@@ -3584,14 +3601,14 @@ do
         f.arrow:SetSize(52, 52)
         f.arrow:SetPoint("TOP", f, "TOP", 0, 0)
         if f.arrow:SetTexture(ART) == false then f.arrow:SetTexture(FALLBACK_ART) end
-        f.title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        f.title = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         f.title:SetPoint("TOP", f.arrow, "BOTTOM", 0, -1)
-        f.distance = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        f.distance = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.distance:SetPoint("TOP", f.title, "BOTTOM", 0, -2)
-        f.route = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        f.route = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.route:SetPoint("TOP", f.distance, "BOTTOM", 0, -2)
         -- way: "Hearth to Auberdine", in the hearthstone's blue.
-        f.hearth = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        f.hearth = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.hearth:SetPoint("TOP", f.route, "BOTTOM", 0, -2)
         f.hearth:SetTextColor(0.56, 0.82, 1.00)
         f:SetScript("OnDragStart", function(self)

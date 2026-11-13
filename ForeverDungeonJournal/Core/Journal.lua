@@ -229,21 +229,44 @@ FDJ.DUNGEON_MAPS = {
         },
     },
 
-    -- No boss positions known yet.
+    -- Boss positions: OMGmacros's numbered map on Discord ("Drowned City
+    -- Boss locations", 12 Nov 2026), drawn on this same map art.
     ["The Drowned City"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityMap", texBottom = 683 / 1024 } },
         entrance = { floor = 1, x = 0.846, y = 0.521, angle = 0 }, -- the swirl in Sunken Hollow
-        bosses = {},
+        bosses = {
+            { name = "Zul'Alai",            floor = 1, x = 0.697, y = 0.572 },
+            -- In the round flooded room east of Var'Taka (OMGmacros's update, same
+            -- thread): reached by swimming, from the pool to the south or from
+            -- the big basin; the 2nd boss for most groups.
+            { name = "Primeval Elemental",  floor = 1, x = 0.618, y = 0.672 },
+            { name = "Var'Taka",            floor = 1, x = 0.514, y = 0.689 },
+            { name = "Captain Dreadrise",   floor = 1, x = 0.546, y = 0.344 }, -- he paths around there
+            { name = "Deathless Marrow",    floor = 1, x = 0.349, y = 0.536 },
+            { name = "Min'loth the Serpent", floor = 1, x = 0.196, y = 0.539 },
+        },
     },
-    -- No boss positions known yet.
+    -- Boss positions: falling/Ekiroth's numbered map on Discord ("Bastion
+    -- Krol'dok", 12 Nov 2026), bosses 1-6 in the order they are fought.
     ["Krol'dok Stronghold"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\KroldokMap", texBottom = 683 / 1024 } },
         entrance = { floor = 1, x = 0.205, y = 0.807, angle = 180 }, -- the swirl where the trail comes in (south-west)
-        bosses = {},
+        bosses = {
+            { name = "Slavecrusher Grox",          floor = 1, x = 0.331, y = 0.703 },
+            { name = "Twilight Commander Zarmok",  floor = 1, x = 0.392, y = 0.734 },
+            { name = "War Handler Ashka",          floor = 1, x = 0.621, y = 0.527 },
+            { name = "Nar'gurk",                   floor = 1, x = 0.411, y = 0.579 },
+            { name = "Bossman Toof",               floor = 1, x = 0.617, y = 0.432 },
+            { name = "Overlord Mugg",              floor = 1, x = 0.688, y = 0.242 },
+        },
     },
     -- No boss positions known yet.
     ["Alcaz Prison"] = {
-        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\AlcazPrisonMap", texBottom = 683 / 1024 } },
+        -- Level 1: Main Unit (the entrance); Level 2: Maximum Security Unit.
+        floors = {
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\AlcazPrisonMap", texBottom = 683 / 1024 },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\AlcazPrisonMap2", texBottom = 683 / 1024 },
+        },
         entrance = { floor = 1, x = 0.353, y = 0.160, angle = 180 }, -- the swirl at the top of the stairs (label on the left, clear of "Main Unit")
         bosses = {},
     },
@@ -668,6 +691,42 @@ FDJ.DUNGEON_MAPS = {
             { name = "Maleki the Pallid",    x = 0.674, y = 0.227 },
             { name = "Ramstein the Gorger",  x = 0.456, y = 0.198 },
             { name = "Baron Rivendare",      x = 0.372, y = 0.199 },
+        },
+    },
+    -- scholomap (2.0.13): the game's own four-floor Scholomance map (uiMaps
+    -- 306-309, "ScholomanceOLD": the Reliquary, the Chamber of Summoning,
+    -- the Upper Study, the Headmaster's Study), drawn from the client like
+    -- the other old dungeons. Pins: each boss's spawn in the CMaNGOS classic
+    -- database, put on its floor with the client's UiMapAssignment regions
+    -- (the same conversion lands the Stratholme pins on theirs). Kirtonos at
+    -- the Brazier of the Herald on the porch where he is summoned; Gandling
+    -- where the instance script summons him in the Headmaster's Study.
+    -- 2.0.14 (M's screenshots of floors 1 and 3): the entrance on the map's
+    -- whirlpool; the Upper Study's bosses on the printed skulls of their
+    -- rooms (Polkelt: Hall of Secrets, Krastinov: Hall of the Damned,
+    -- Malicia: The Coven); Rattlegore on the Great Ossuary's skull, which is
+    -- on that floor; Jandice taken off (wrong spot) for now.
+    ["Scholomance"] = {
+        entrance = { floor = 1, x = 0.390, y = 0.652, angle = 0 },
+        floors = {
+            { uiMapID = 306, tiles = "Interface\\WorldMap\\ScholomanceOLD\\ScholomanceOLD1_" },
+            { uiMapID = 307, tiles = "Interface\\WorldMap\\ScholomanceOLD\\ScholomanceOLD2_" },
+            { uiMapID = 308, tiles = "Interface\\WorldMap\\ScholomanceOLD\\ScholomanceOLD3_" },
+            { uiMapID = 309, tiles = "Interface\\WorldMap\\ScholomanceOLD\\ScholomanceOLD4_" },
+        },
+        bosses = {
+            { name = "Kirtonos the Herald",      floor = 2, x = 0.495, y = 0.043 },
+            { name = "Marduk Blackpool",         floor = 2, x = 0.444, y = 0.639 },
+            { name = "Vectus",                   floor = 2, x = 0.482, y = 0.662 },
+            { name = "Rattlegore",               floor = 3, x = 0.313, y = 0.646 },
+            { name = "Instructor Malicia",       floor = 3, x = 0.721, y = 0.706 },
+            { name = "Doctor Theolen Krastinov", floor = 3, x = 0.889, y = 0.462 },
+            { name = "Lorekeeper Polkelt",       floor = 3, x = 0.720, y = 0.225 },
+            { name = "Ras Frostwhisper",         floor = 4, x = 0.406, y = 0.884 },
+            { name = "The Ravenian",             floor = 4, x = 0.675, y = 0.521 },
+            { name = "Lord Alexei Barov",        floor = 4, x = 0.844, y = 0.308 },
+            { name = "Lady Illucia Barov",       floor = 4, x = 0.670, y = 0.061 },
+            { name = "Darkmaster Gandling",      floor = 4, x = 0.682, y = 0.302 },
         },
     },
     ["Sunken Temple"] = {
@@ -1126,7 +1185,7 @@ FDJ.PlaceStepHaveItRow = function(show, questID, details, title, cursorY)
         row = CreateFrame("Frame", nil, frame.questDetailContent)
         frame.questStepHaveIt = row
         row:SetHeight(26)
-        row.haveIt = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        row.haveIt = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         row.haveIt:SetPoint("LEFT", row, "LEFT", 0, 0)
         do
             local font, size = row.haveIt:GetFont()
@@ -1134,6 +1193,7 @@ FDJ.PlaceStepHaveItRow = function(show, questID, details, title, cursorY)
         end
         row.haveIt:SetTextColor(1.00, 0.82, 0.10)
         local button = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
         row.button = button
         button:SetSize(130, 24)
         button:SetPoint("LEFT", row.haveIt, "RIGHT", 10, 0)
@@ -1275,6 +1335,7 @@ FDJ.PlaceObjectiveMapButton = function(quest, cursorY)
             b._fdjCanTarget = false
         end
         frame.questObjectiveMapButton = b
+        FDJ.OwnFonts(b) -- ownfonts (2.0.8)
         b:SetSize(104, 24)
         b:RegisterForClicks("LeftButtonUp")
         -- PostClick keeps the template's own click (the target macro).
@@ -1927,10 +1988,10 @@ FDJ.LayoutRepPills = function(reps, y, maxWidth)
             pill.badge:SetHeight(18)
             pill.badge:SetPoint("LEFT", 5, 0)
             pill.badge:SetColorTexture(0.16, 0.48, 0.14, 0.95)
-            pill.amount = pill:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            pill.amount = pill:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
             pill.amount:SetPoint("CENTER", pill.badge, "CENTER", 0, 0)
             pill.amount:SetTextColor(0.80, 1.00, 0.70)
-            pill.name = pill:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+            pill.name = pill:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
             pill.name:SetPoint("LEFT", pill.badge, "RIGHT", 7, 0)
             pill.name:SetTextColor(1.00, 0.92, 0.72)
         end
@@ -2386,6 +2447,26 @@ FDJ.PrereqChainOf = function(questID)
     if questID == nil or FDJ.IsGuideQuest(questID) then return nil end
     return QUEST_PREREQ_CHAINS[questID]
 end
+-- itemsteps: an item step (Data Rescue's punch cards) is done once its
+-- card is in the bags, or a later step's card is (the card was used for the
+-- next one), or the quest it is for is done.
+FDJ.ItemStepDone = function(chain, index, parentID)
+    if type(chain) ~= "table" or not chain[index] or not chain[index].itemStep then return false end
+    if parentID and (FDJ.QuestTurnedIn(parentID) or IsQuestFinished(parentID)) then return true end
+    local getCount = (C_Item and C_Item.GetItemCount) or GetItemCount
+    if not getCount then return false end
+    for i = index, #chain do
+        local step = chain[i]
+        local details = type(step) == "table" and step.itemStep and step.id and QUEST_PREREQ_DETAILS[step.id]
+        local item = type(details) == "table" and type(details.startItem) == "table" and details.startItem[1]
+        if type(item) == "number" then
+            local ok, has = pcall(function() local n = getCount(item) return type(n) == "number" and n > 0 end)
+            if ok and has then return true end
+        end
+    end
+    return false
+end
+
 -- The step to open: the one after the last step whose item is in the bags
 -- (a Yellow Punch Card in the bags opens step 3), else the first.
 FDJ.GuideTargetStep = function(chain)
@@ -2425,12 +2506,13 @@ FDJ.SetRowGuideButton = function(button, show)
     end
     if not guide then
         guide = CreateFrame("Button", nil, button, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(guide) -- ownfonts (2.0.8)
         button.guideToggle = guide
         guide:SetHeight(18)
         guide:SetFrameLevel(button:GetFrameLevel() + 6)
         guide:RegisterForClicks("LeftButtonUp")
-        guide:SetNormalFontObject("GameFontNormalSmall")
-        guide:SetHighlightFontObject("GameFontHighlightSmall")
+        guide:SetNormalFontObject("ForeverDJ_GameFontNormalSmall")
+        guide:SetHighlightFontObject("ForeverDJ_GameFontHighlightSmall")
         guide:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             GameTooltip:AddLine(L("HOW_TO_COMPLETE"), 1, 0.82, 0.25)
@@ -2474,6 +2556,7 @@ FDJ.PlaceGuideButton = function(quest, cursorY)
     end
     if not button then
         button = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
         frame.questGuideButton = button
         button:SetHeight(24)
         button:RegisterForClicks("LeftButtonUp")
@@ -3653,7 +3736,7 @@ local function MakeLootRow(parent)
     row.icon:SetPoint("LEFT", 10, 0)
     row.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    row.name = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     row.name:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 10, -4)
     row.name:SetPoint("RIGHT", -10, 0)
     row.name:SetJustifyH("LEFT")
@@ -3661,7 +3744,7 @@ local function MakeLootRow(parent)
     -- in the two-column layout).
     row.name:SetWordWrap(false)
 
-    row.slot = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    row.slot = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     row.slot:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -5)
     row.slot:SetPoint("RIGHT", -10, 0)
     row.slot:SetJustifyH("LEFT")
@@ -3670,7 +3753,7 @@ local function MakeLootRow(parent)
 
     -- Small right-hand label for shared boss loot, styled like the RARE tag
     -- on rare bosses. Sits left of the favourite star.
-    row.sharedText = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    row.sharedText = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     row.sharedText:SetPoint("RIGHT", row, "RIGHT", -28, 0)
     row.sharedText:SetJustifyH("RIGHT")
     row.sharedText:SetText("Shared Loot, low %")
@@ -3758,7 +3841,7 @@ local function MakeBossButton(parent)
     button.rareBorder:SetTexCoord(0, 1, 0, 1)
     button.rareBorder:Hide()
 
-    button.question = button:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    button.question = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     button.question:SetPoint("CENTER", button.portrait, "CENTER", 0, 0)
     button.question:SetText("?")
     button.question:SetTextColor(0.92, 0.72, 0.22)
@@ -3772,19 +3855,19 @@ local function MakeBossButton(parent)
     button.levelBadge:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\BossLevelBadge.tga")
     button.levelBadge:Hide()
 
-    button.levelText = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    button.levelText = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     button.levelText:SetPoint("CENTER", button.levelBadge, "CENTER", 0, 0)
     button.levelText:SetTextColor(1, 1, 1)
     button.levelText:SetShadowColor(0, 0, 0, 1)
     button.levelText:SetShadowOffset(1, -1)
     button.levelText:Hide()
 
-    button.name = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    button.name = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     button.name:SetPoint("LEFT", button.portrait, "RIGHT", 11, 1)
     button.name:SetPoint("RIGHT", -10, 0)
     button.name:SetJustifyH("LEFT")
 
-    button.rare = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    button.rare = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     button.rare:SetPoint("RIGHT", button, "RIGHT", -20, 1)
     button.rare:SetText(L("RARE"))
     button.rare:SetTextColor(1.00, 0.82, 0.00)
@@ -3824,6 +3907,9 @@ local function FactionLabel(faction)
     return ""
 end
 
+-- ownfonts (2.0.8): the names passed here are the journal's own copies of the
+-- game's quest fonts (Core/Fonts.lua), so an addon that restyles the game's
+-- QuestFont (ElvUI's "Replace Blizzard Fonts") no longer changes this text.
 local function ApplyQuestFont(fontString, preferred, fallback)
     if not fontString then return end
 
@@ -3844,7 +3930,7 @@ local function ApplyRewardSummaryFont(fontString)
     -- while larger quest-body text appears fine. Use the standard Blizzard UI
     -- font object here, which is the same family successfully used by the
     -- Russian journal headers/list labels and keeps Cyrillic intact.
-    local fontObject = _G.GameFontNormalSmall or _G.GameFontNormal
+    local fontObject = _G.ForeverDJ_GameFontNormalSmall or _G.ForeverDJ_GameFontNormal
     if fontObject and fontString.SetFontObject then
         fontString:SetFontObject(fontObject)
     end
@@ -3902,7 +3988,7 @@ local function MakeQuestButton(parent)
     end
     -- turninlabel: "Turn in" left of the ?, in the quest tracker's green.
     if button.turnIn then
-        button.turnInLabel = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        button.turnInLabel = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
         button.turnInLabel:SetPoint("RIGHT", button.turnIn, "LEFT", 3, 0)
         button.turnInLabel:SetJustifyH("RIGHT")
         button.turnInLabel:SetTextColor(0.30, 1.00, 0.36)
@@ -3928,7 +4014,7 @@ local function MakeQuestButton(parent)
     button.classIcon:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES")
     button.classIcon:Hide()
 
-    button.haveIt = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    button.haveIt = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     -- Status sits cleanly between the top border and the faction/class icons.
     -- Keep enough width for longer locales such as German, then shrink the
     -- font slightly only when the translated label still does not fit.
@@ -3949,7 +4035,7 @@ local function MakeQuestButton(parent)
         -- font file from GetFont() breaks Cyrillic on non-Russian clients.
         -- Scaling the FontString preserves Blizzard's glyph fallback while
         -- still letting longer labels such as German fit in the status area.
-        fs:SetFontObject("GameFontNormalSmall")
+        fs:SetFontObject("ForeverDJ_GameFontNormalSmall")
         fs:SetScale(1)
         fs:SetText(L("YOU_HAVE_IT"))
 
@@ -3963,14 +4049,14 @@ local function MakeQuestButton(parent)
     button:UpdateHaveItLabel()
 
     button.name = button:CreateFontString(nil, "OVERLAY")
-    ApplyQuestFont(button.name, "QuestFont", "GameFontNormal")
+    ApplyQuestFont(button.name, "ForeverDJ_QuestFont", "ForeverDJ_GameFontNormal")
     button.name:SetPoint("TOPLEFT", button, "TOPLEFT", 42, -9)
     button.name:SetWidth(182)
     button.name:SetWordWrap(true)
     button.name:SetJustifyH("LEFT")
 
     button.meta = button:CreateFontString(nil, "OVERLAY")
-    ApplyQuestFont(button.meta, "QuestFontNormalSmall", "GameFontHighlightSmall")
+    ApplyQuestFont(button.meta, "ForeverDJ_QuestFontNormalSmall", "ForeverDJ_GameFontHighlightSmall")
     button.meta:SetPoint("TOPLEFT", button.name, "BOTTOMLEFT", 0, -5)
     button.meta:SetWidth(182)
     button.meta:SetWordWrap(true)
@@ -4048,7 +4134,7 @@ local function MakeQuestRewardButton(parent)
     button.icon:SetPoint("LEFT", 7, 0)
     button.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    button.name = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    button.name = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     button.name:SetPoint("LEFT", button.icon, "RIGHT", 8, 0)
     button.name:SetPoint("RIGHT", -6, 0)
     button.name:SetJustifyH("LEFT")
@@ -4142,6 +4228,7 @@ end
 
 local function CreateModeButton(parent, label, x)
     local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(button) -- ownfonts (2.0.8)
     button:SetSize(96, 22)
     button:SetPoint("TOPRIGHT", x, -18)
     button:SetText(label)
@@ -4270,10 +4357,10 @@ local function UpdateDungeonHeaderTabs()
     -- UIPanelButtonTemplate normally swaps font objects on hover/disabled.
     -- Force the same object in every state so the labels never resize.
     for _, tab in ipairs({ frame.bossesTab, frame.questsTab, frame.mapTab }) do
-        if tab.SetNormalFontObject then tab:SetNormalFontObject("GameFontNormal") end
-        if tab.SetHighlightFontObject then tab:SetHighlightFontObject("GameFontNormal") end
-        if tab.SetDisabledFontObject then tab:SetDisabledFontObject("GameFontNormal") end
-        if tab.text then tab.text:SetFontObject("GameFontNormal") end
+        if tab.SetNormalFontObject then tab:SetNormalFontObject("ForeverDJ_GameFontNormal") end
+        if tab.SetHighlightFontObject then tab:SetHighlightFontObject("ForeverDJ_GameFontNormal") end
+        if tab.SetDisabledFontObject then tab:SetDisabledFontObject("ForeverDJ_GameFontNormal") end
+        if tab.text then tab.text:SetFontObject("ForeverDJ_GameFontNormal") end
     end
 
     -- Boss icon: oversized skull that slightly overflows the button, matching
@@ -4365,7 +4452,8 @@ local function UpdateFactionButtons()
     Style(frame.allianceQuestButton, selectedQuestFaction == "Alliance", "Alliance")
     Style(frame.hordeQuestButton, selectedQuestFaction == "Horde", "Horde")
     -- sleepingbag: a quest chain page shows the character's faction only.
-    local single = DB[selectedDungeon] and DB[selectedDungeon].questChainPage
+    -- bothFactions: such a page with the Alliance / Horde buttons all the same.
+    local single = DB[selectedDungeon] and DB[selectedDungeon].questChainPage and not DB[selectedDungeon].bothFactions
     frame.allianceQuestButton:SetShown(not single)
     frame.hordeQuestButton:SetShown(not single)
 end
@@ -4460,7 +4548,7 @@ RefreshQuestList = function()
         repeatLine.icon = repeatLine:CreateTexture(nil, "ARTWORK")
         repeatLine.icon:SetSize(16, 16)
         repeatLine.icon:SetPoint("LEFT", 4, 0)
-        repeatLine.text = repeatLine:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        repeatLine.text = repeatLine:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
         repeatLine.text:SetPoint("LEFT", repeatLine.icon, "RIGHT", 6, 0)
         repeatLine.text:SetJustifyH("LEFT")
         repeatLine:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
@@ -4557,7 +4645,14 @@ RefreshQuestList = function()
             -- right: stack the dungeon icon on top of the chain control.
             if not metaWrappedY and chain and button.chainToggle and button.dungeonStartIcon and button.dungeonStartIcon:IsShown() then
                 button.dungeonStartIcon:ClearAllPoints()
-                button.dungeonStartIcon:SetPoint("BOTTOM", FDJ.RowChainControl(button), "TOP", 0, -2)
+                if selectedDungeon == "Alcaz Prison" then
+                    -- alcazicons: its titles are long ("More Valuable Than
+                    -- Gold"): the icon goes beside the chain control, on the
+                    -- "Available from" line, not on top of it over the title.
+                    button.dungeonStartIcon:SetPoint("LEFT", FDJ.RowChainControl(button), "RIGHT", 2, 0)
+                else
+                    button.dungeonStartIcon:SetPoint("BOTTOM", FDJ.RowChainControl(button), "TOP", 0, -2)
+                end
             end
 
             if chain and chainExpanded and button.chainPanel then
@@ -4578,7 +4673,7 @@ RefreshQuestList = function()
                         row:SetPoint("RIGHT", button.chainPanel, "RIGHT", -6, 0)
                         row:RegisterForClicks("LeftButtonUp")
 
-                        row.text = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                        row.text = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
                         row.text:SetPoint("LEFT", 0, 0)
                         row.text:SetJustifyH("LEFT")
                         if row.text.SetWordWrap then row.text:SetWordWrap(false) end
@@ -4591,7 +4686,7 @@ RefreshQuestList = function()
                         row.statusIcon:Hide()
 
                         -- "YOU HAVE IT" when this step is in the quest log.
-                        row.haveIt = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+                        row.haveIt = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
                         row.haveIt:SetPoint("RIGHT", row, "RIGHT", -2, 0)
                         row.haveIt:SetJustifyH("RIGHT")
                         row.haveIt:SetTextColor(1.00, 0.82, 0.10)
@@ -4647,7 +4742,15 @@ RefreshQuestList = function()
                     end
 
                     local prefix = tostring(chainIndex) .. ". "
-                    if step.id and IsQuestFinished(step.id) then
+                    if step.itemStep and FDJ.ItemStepDone(chain, chainIndex, quest.id) then
+                        -- itemsteps: its card is in the bags (or a later one is)
+                        if row.statusIcon then
+                            row.statusIcon:SetTexture("Interface\\RaidFrame\\ReadyCheck-Ready")
+                            row.statusIcon:SetTexCoord(0, 1, 0, 1)
+                            row.statusIcon:Show()
+                        end
+                        row.text:SetTextColor(0.45, 0.95, 0.50)
+                    elseif step.id and IsQuestFinished(step.id) then
                         if row.statusIcon then
                             -- Still to hand in: the quest ? instead of the tick.
                             row.statusIcon:SetTexture(FDJ.QuestTurnedIn(step.id) and "Interface\\RaidFrame\\ReadyCheck-Ready"
@@ -4672,7 +4775,7 @@ RefreshQuestList = function()
                         row.text:SetWidth(0)
                         if step.id and not IsQuestFinished(step.id) and IsQuestInLog(step.id) then
                             -- Same label as the quest rows; shrink long translations a little.
-                            row.haveIt:SetFontObject("GameFontNormalSmall")
+                            row.haveIt:SetFontObject("ForeverDJ_GameFontNormalSmall")
                             row.haveIt:SetScale(1)
                             row.haveIt:SetText(L("YOU_HAVE_IT"))
                             local labelWidth = row.haveIt:GetStringWidth() or 0
@@ -5053,8 +5156,25 @@ do
         local t = FDJ.Locales and FDJ.Locales[locale]
         if t and t.QUEST_LOST_TIP == nil then t.QUEST_LOST_TIP = text end
     end
+    -- notavailable (2.0.4): a quest that is not in the game for now
+    -- (unavailable = true, Attunement to the Core) is shown the same way,
+    -- greyed out and not counted, with its own tooltip.
+    local notNow = {
+        enUS = "Not available as of now", deDE = "Derzeit nicht verfügbar",
+        frFR = "Indisponible pour le moment", esES = "No disponible por ahora",
+        esMX = "No disponible por ahora", itIT = "Non disponibile al momento",
+        ptBR = "Indisponível no momento", ruRU = "Сейчас недоступно",
+        koKR = "현재 이용할 수 없음", zhCN = "目前不可用", zhTW = "目前無法取得",
+    }
+    for locale, text in pairs(notNow) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.QUEST_NOT_AVAILABLE_TIP == nil then t.QUEST_NOT_AVAILABLE_TIP = text end
+    end
 end
 FDJ.IsQuestLost = function(quest)
+    if type(quest) == "table" and quest.unavailable and quest.id then -- notavailable
+        return not FDJ.QuestTurnedIn(quest.id)
+    end
     if type(quest) ~= "table" or type(quest.lostIf) ~= "table" or not quest.id then return false end
     if FDJ.QuestTurnedIn(quest.id) or (FDJ.IsQuestInLog and FDJ.IsQuestInLog(quest.id)) then return false end
     -- Only once the other quest is handed in: while it is just in the log it
@@ -5069,6 +5189,7 @@ FDJ.MarkLostQuestRows = function(buttons, quests)
         local quest = button:IsShown() and button.questIndex and quests[button.questIndex]
         local lost = quest and FDJ.IsQuestLost(quest) or false
         button.fdjLost = lost or nil
+        button.fdjLostTip = (lost and quest.unavailable) and "QUEST_NOT_AVAILABLE_TIP" or "QUEST_LOST_TIP" -- notavailable
         button:SetAlpha(lost and 0.45 or 1)
         if not button.fdjLostHooked then
             button.fdjLostHooked = true
@@ -5076,7 +5197,7 @@ FDJ.MarkLostQuestRows = function(buttons, quests)
                 if not self.fdjLost then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                 -- (SetText: text, r, g, b, alpha, wrap)
-                GameTooltip:SetText(FDJ.L("QUEST_LOST_TIP"), 1, 0.35, 0.3, 1, true)
+                GameTooltip:SetText(FDJ.L(self.fdjLostTip or "QUEST_LOST_TIP"), 1, 0.35, 0.3, 1, true)
                 GameTooltip:Show()
             end)
             button:HookScript("OnLeave", function(self)
@@ -5304,6 +5425,18 @@ local function RefreshPrerequisiteQuestDetail(step)
             frame.selectedQuestComplete:SetPoint("LEFT", title, "LEFT", textWidth + 6, 0)
         end
     end
+    -- stepheader (2.0.5): the header as tall as this step's title and line
+    -- need. It used to keep the height of the quest shown before, so after a
+    -- quest with a two-line title or a class / attunement tag (Blood of the
+    -- Black Dragon Champion) its steps had an empty band under the title.
+    frame.fdjStepHeaderHeight = math.max(58, 15 + (frame.selectedQuestName:GetStringHeight() or 0)
+        + 5 + math.max(24, frame.selectedQuestMeta:GetStringHeight() or 0) + 8)
+    frame.questHeaderSeparator:ClearAllPoints()
+    frame.questHeaderSeparator:SetPoint("TOPLEFT", 14, -frame.fdjStepHeaderHeight)
+    frame.questHeaderSeparator:SetPoint("TOPRIGHT", -14, -frame.fdjStepHeaderHeight)
+    frame.questDetailScroll:ClearAllPoints()
+    frame.questDetailScroll:SetPoint("TOPLEFT", 16, -(frame.fdjStepHeaderHeight + 14))
+    frame.questDetailScroll:SetPoint("BOTTOMRIGHT", -31, 16)
 
     local detailWidth = math.max(260, (frame.questDetailScroll:GetWidth() or 350) - 4)
     frame.questDetailContent:SetWidth(detailWidth)
@@ -5582,7 +5715,7 @@ local function RefreshPrerequisiteQuestDetail(step)
     local prereqWarning = QuestField(questID, "warning", details.warning)
     if prereqWarning and prereqWarning ~= "" then
         if not frame.questWarningText then
-            frame.questWarningText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            frame.questWarningText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
             frame.questWarningText:SetJustifyH("LEFT")
         end
         frame.questWarningText:ClearAllPoints()
@@ -5908,7 +6041,7 @@ RefreshQuestDetail = function()
     -- Optional red disclaimer shown first, right under the title area.
     if quest.warning and quest.warning ~= "" then
         if not frame.questWarningText then
-            frame.questWarningText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            frame.questWarningText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
             frame.questWarningText:SetJustifyH("LEFT")
         end
         frame.questWarningText:ClearAllPoints()
@@ -6124,7 +6257,7 @@ RefreshQuestDetail = function()
         -- leadinrequires: under Starts at, the lead-in named in a line of
         -- its own ("Requires: In Search of Thaelrid"), then its button.
         if not frame.questStartRequiresText then
-            frame.questStartRequiresText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            frame.questStartRequiresText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
             frame.questStartRequiresText:SetJustifyH("LEFT")
         end
         local requires = frame.questStartRequiresText
@@ -6164,7 +6297,7 @@ RefreshQuestDetail = function()
     end
     if hasChain then
         if not frame.questChainNotice then
-            frame.questChainNotice = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            frame.questChainNotice = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
             frame.questChainNotice:SetJustifyH("LEFT")
         end
         frame.questChainNotice:ClearAllPoints()
@@ -6470,7 +6603,7 @@ RefreshQuestDetail = function()
     end
     if quest.rewardChoice and #rewardItems > 1 and hasExtras then
         if not frame.questAlsoReceiveHeader then
-            frame.questAlsoReceiveHeader = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "GameFontBlack")
+            frame.questAlsoReceiveHeader = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontBlack")
             frame.questAlsoReceiveHeader:SetJustifyH("LEFT")
         end
         frame.questAlsoReceiveHeader:SetText(L("ALSO_RECEIVE"))
@@ -6666,12 +6799,12 @@ ShowRouteGuide = function()
             local row = frame.routeStepRows[i]
             if not row then
                 row = CreateFrame("Frame", nil, frame.routeStepContent)
-                row.title = row:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+                row.title = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
                 row.title:SetPoint("TOPLEFT", 0, 0)
                 row.title:SetJustifyH("LEFT")
                 row.title:SetTextColor(1.00, 0.82, 0.27)
 
-                row.body = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+                row.body = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
                 row.body:SetPoint("TOPLEFT", row.title, "BOTTOMLEFT", 0, -5)
                 row.body:SetJustifyH("LEFT")
                 row.body:SetJustifyV("TOP")
@@ -6679,6 +6812,7 @@ ShowRouteGuide = function()
                 row.body:SetTextColor(0.96, 0.90, 0.78)
 
                 row.mapButton = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+                FDJ.OwnFonts(row.mapButton) -- ownfonts (2.0.8)
                 row.mapButton:SetSize(112, 22)
                 row.mapButton:SetText(L("SHOW_ON_MAP"))
                 row.mapButton:SetScript("OnClick", function(self)
@@ -7124,6 +7258,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         if i <= #floors and #floors > 1 then
             if not btn then
                 btn = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+                FDJ.OwnFonts(btn) -- ownfonts (2.0.8)
                 btn:SetScript("OnClick", function(self)
                     FDJ.ResetDungeonMapView()
                     FDJ.RenderCustomDungeonMap(FDJ.DUNGEON_MAPS[selectedDungeon], self.floorIndex)
@@ -7144,6 +7279,11 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         end
     end
 
+    -- floorbuttons: on the world map, clear of other buttons in that corner
+    if FDJ.PlaceMapFloorButtons then
+        pcall(FDJ.PlaceMapFloorButtons)
+        if C_Timer and C_Timer.After then C_Timer.After(0.2, function() pcall(FDJ.PlaceMapFloorButtons) end) end
+    end
     if FDJ.UpdateMapBossSizer then pcall(FDJ.UpdateMapBossSizer, panel, holder, frame.dungeonMapFloorButtons) end
     local dungeon = DB[selectedDungeon]
     local size = math.floor(math.max(26, math.floor(baseH * 0.095)) * (FDJ.MapBossScale and FDJ.MapBossScale() or 1))
@@ -7278,7 +7418,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
         end
         -- Font objects only (never SetFont with a raw file): Blizzard's font
         -- families carry the Korean/Cyrillic glyph fallbacks.
-        e.label = e:CreateFontString(nil, "OVERLAY", _G.SystemFont_Shadow_Large_Outline and "SystemFont_Shadow_Large_Outline" or "GameFontNormalLarge")
+        e.label = e:CreateFontString(nil, "OVERLAY", _G.ForeverDJ_SystemFont_Shadow_Large_Outline and "ForeverDJ_SystemFont_Shadow_Large_Outline" or "ForeverDJ_GameFontNormalLarge")
         e.label:SetShadowColor(0, 0, 0, 1)
         e.label:SetShadowOffset(1, -1)
         frame.dungeonMapEntrances[i] = e
@@ -7331,7 +7471,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 t.arrow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\LevelLadder")
                 t.arrow:SetTexCoord(0, 1, 0, 1)
                 t.arrow:SetAllPoints()
-                t.label = t:CreateFontString(nil, "OVERLAY", _G.SystemFont_Outline and "SystemFont_Outline" or "GameFontNormal")
+                t.label = t:CreateFontString(nil, "OVERLAY", _G.ForeverDJ_SystemFont_Outline and "ForeverDJ_SystemFont_Outline" or "ForeverDJ_GameFontNormal")
                 t.label:SetShadowColor(0, 0, 0, 1)
                 t.label:SetShadowOffset(1, -1)
                 t.label:SetTextColor(0.35, 1.00, 0.35)
@@ -7369,8 +7509,10 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     -- Yellow "?" where a quest objective is picked up or clicked on the spot.
     frame.dungeonMapObjectives = frame.dungeonMapObjectives or {}
     local nObj = 0
+    -- hidequests (2.0.15): none of these with Hide quests ticked.
+    local hideQuests = FDJ.MapQuestsHidden and FDJ.MapQuestsHidden()
     for _, ob in ipairs(data.objectives or {}) do
-        if (ob.floor or 1) == floorIndex then
+        if (ob.floor or 1) == floorIndex and not hideQuests then
             nObj = nObj + 1
             local q = frame.dungeonMapObjectives[nObj]
             if not q then
@@ -7596,7 +7738,7 @@ local function MakeDungeonTab(parent, dungeonName, x)
         2
     )
 
-    button.text = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    button.text = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     button.text:SetPoint("CENTER")
     button.text:SetText(DungeonName(dungeonName))
 
@@ -7707,7 +7849,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button.highlight:SetPoint("BOTTOMRIGHT", -4, 4)
     button.highlight:SetColorTexture(1, 1, 1, 0.08)
 
-    button.title = button:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    button.title = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     button.title:SetPoint("TOPLEFT", 16, -14)
     button.title:SetWidth(220)
     button.title:SetJustifyH("LEFT")
@@ -7717,7 +7859,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button.title:SetShadowColor(0, 0, 0, 1)
     button.title:SetShadowOffset(1, -1)
 
-    button.meta = button:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    button.meta = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     button.meta:SetPoint("BOTTOMLEFT", 14, 10)
     button.meta:SetPoint("RIGHT", -16, 0)
     button.meta:SetJustifyH("LEFT")
@@ -7725,7 +7867,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button.meta:SetShadowColor(0, 0, 0, 1)
     button.meta:SetShadowOffset(1, -1)
 
-    button.counts = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    button.counts = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     button.counts:SetPoint("TOPRIGHT", -14, -11)
     button.counts:SetJustifyH("RIGHT")
     button.counts:SetTextColor(0.97, 0.89, 0.54)
@@ -7760,7 +7902,7 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button.hiddenShade:SetColorTexture(0.02, 0.05, 0.08, 0.58)
     button.hiddenShade:Hide()
 
-    button.hiddenText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    button.hiddenText = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     button.hiddenText:SetPoint("CENTER", 0, 0)
     button.hiddenText:SetTextColor(1.00, 1.00, 1.00)
     button.hiddenText:SetShadowColor(0, 0, 0, 1)
@@ -7951,7 +8093,7 @@ RefreshHomeDungeonCards = function()
         if card.previewIcon then card.previewIcon:Hide() end
         -- Announced dungeons: a centred "Coming Soon" instead of art and counts.
         if dungeon.previewOnly and not card.comingSoon then
-            card.comingSoon = card:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+            card.comingSoon = card:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
             card.comingSoon:SetPoint("CENTER", 0, -6)
             card.comingSoon:SetTextColor(1.00, 0.82, 0.20)
             card.comingSoon:SetShadowColor(0, 0, 0, 1)
@@ -8104,6 +8246,7 @@ FDJ.SetBossChainButton = function(boss)
     end
     if not b then
         b = CreateFrame("Button", nil, frame.selectedBossName:GetParent(), "UIPanelButtonTemplate")
+        FDJ.OwnFonts(b) -- ownfonts (2.0.8)
         b:SetSize(230, 24)
         b:SetScript("OnClick", function(self)
             local c = self.chain
@@ -8431,7 +8574,7 @@ RefreshLoot = function()
                 else
                     row.name:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 10, -4)
                 end
-                row.name:SetFontObject(compact and "GameFontNormalSmall" or "GameFontNormal")
+                row.name:SetFontObject(compact and "ForeverDJ_GameFontNormalSmall" or "ForeverDJ_GameFontNormal")
                 row.slot:SetShown(not compact)
             end
 
@@ -8540,7 +8683,7 @@ RefreshLoot = function()
             line.icon = line:CreateTexture(nil, "ARTWORK")
             line.icon:SetSize(16, 16)
             line.icon:SetPoint("LEFT", 4, 0)
-            line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            line.text = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
             line.text:SetPoint("LEFT", line.icon, "RIGHT", 6, 0)
             line.text:SetJustifyH("LEFT")
             line:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
@@ -8580,10 +8723,10 @@ RefreshLoot = function()
             line.icon = line:CreateTexture(nil, "ARTWORK")
             line.icon:SetSize(16, 16)
             line.icon:SetPoint("LEFT", 4, 0)
-            line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            line.text = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
             line.text:SetPoint("LEFT", line.icon, "RIGHT", 6, 0)
             line.text:SetJustifyH("LEFT")
-            line.note = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            line.note = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
             line.note:SetPoint("LEFT", line.text, "RIGHT", 8, 0)
             line.note:SetTextColor(0.68, 0.62, 0.52)
             line:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
@@ -8624,7 +8767,7 @@ RefreshLoot = function()
             line.icon = line:CreateTexture(nil, "ARTWORK")
             line.icon:SetSize(16, 16)
             line.icon:SetPoint("LEFT", 4, 0)
-            line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+            line.text = line:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
             line.text:SetPoint("LEFT", line.icon, "RIGHT", 6, 0)
             line.text:SetJustifyH("LEFT")
             line:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
@@ -8660,7 +8803,7 @@ RefreshLoot = function()
         SetBackdrop(b, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 9, 2)
         b:SetBackdropColor(0.12, 0.10, 0.08, 0.95)
         b:SetBackdropBorderColor(0.52, 0.33, 0.11, 1)
-        b.text = b:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        b.text = b:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
         b.text:SetPoint("CENTER")
         b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         b:SetScript("OnClick", function()
@@ -8926,7 +9069,8 @@ end
 -- The Cozy Sleeping Bag's quest page is not a dungeon: no arrows there.
 FDJ.UpdateDungeonArrows = function()
     if not frame then return end
-    local noArrows = FDJ.SLEEPING_BAG_PAGE ~= nil and selectedDungeon == FDJ.SLEEPING_BAG_PAGE
+    local noArrows = (FDJ.SLEEPING_BAG_PAGE ~= nil and selectedDungeon == FDJ.SLEEPING_BAG_PAGE)
+        or (FDJ.ONYXIA_PAGE ~= nil and selectedDungeon == FDJ.ONYXIA_PAGE) -- the Onyxia Attunement page neither
     for _, arrow in ipairs({ frame.prevDungeonButton, frame.nextDungeonButton }) do
         if arrow then
             arrow:SetShown(not noArrows)
@@ -9112,7 +9256,7 @@ local function CreateGlobalSearchUI()
     searchBox:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -14)
     searchBox:SetAutoFocus(false)
     searchBox:SetMaxLetters(80)
-    searchBox:SetFontObject("GameFontHighlightLarge")
+    searchBox:SetFontObject("ForeverDJ_GameFontHighlightLarge")
     searchBox:SetTextInsets(27, 22, 0, 0)
     searchBox:SetJustifyH("LEFT")
     SetBackdrop(searchBox, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 10, 3)
@@ -9125,7 +9269,7 @@ local function CreateGlobalSearchUI()
     searchIcon:SetTexture("Interface\\Common\\UI-Searchbox-Icon")
     searchIcon:SetVertexColor(0.72, 0.70, 0.66)
 
-    local searchPlaceholder = searchBox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    local searchPlaceholder = searchBox:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.searchPlaceholder = searchPlaceholder
     searchPlaceholder:SetPoint("LEFT", 28, 0)
     searchPlaceholder:SetTextColor(0.48, 0.47, 0.44)
@@ -9698,13 +9842,13 @@ local function CreateGlobalSearchUI()
         row.icon:SetPoint("LEFT", 7, 0)
         row.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-        row.name = row:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        row.name = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
         row.name:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 9, -3)
         row.name:SetPoint("RIGHT", row, "RIGHT", -9, 0)
         row.name:SetJustifyH("LEFT")
         row.name:SetTextColor(1.00, 0.82, 0.27)
 
-        row.source = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        row.source = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         row.source:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -2)
         row.source:SetPoint("RIGHT", row, "RIGHT", -9, 0)
         row.source:SetJustifyH("LEFT")
@@ -9970,7 +10114,7 @@ local function CreateMainFrame()
     bottomLine:SetColorTexture(0.68, 0.52, 0.20, 0.45)
     frame.topStripBottomLine = bottomLine
 
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local title = frame:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.mainTitle = title
     title:SetPoint("TOP", 0, -18)
     title:SetText(L("DUNGEON_JOURNAL"))
@@ -10017,7 +10161,7 @@ local function CreateMainFrame()
     languageCaret:SetSize(12, 12)
     languageCaret:SetPoint("RIGHT", languageSelector, "RIGHT", -7, -3)
 
-    local languageSelectorText = languageSelector:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    local languageSelectorText = languageSelector:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.languageSelectorText = languageSelectorText
     languageSelectorText:SetPoint("LEFT", 8, 0)
     languageSelectorText:SetPoint("RIGHT", -20, 0)
@@ -10041,7 +10185,7 @@ local function CreateMainFrame()
         option:SetPoint("TOPRIGHT", -6, -5 - ((i - 1) * 22))
         option:SetHeight(21)
         option:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-        local optionText = option:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        local optionText = option:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
         optionText:SetPoint("LEFT", 10, 0)
         optionText:SetText(info.label)
         optionText:SetTextColor(0.95, 0.83, 0.53)
@@ -10070,6 +10214,7 @@ local function CreateMainFrame()
     frame.closeButton = close
 
     frame.backButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.backButton) -- ownfonts (2.0.8)
     frame.backButton:SetSize(120, 24)
     frame.backButton:SetPoint("TOPLEFT", 54, -54)
     -- dungeonarrows: < and > either side of it, to the previous / next
@@ -10113,13 +10258,13 @@ local function CreateMainFrame()
     home:SetBackdropBorderColor(0.47, 0.34, 0.16, 1)
     frame.homeParchment = AddClassicParchment(home, 0.18, 1.00, 0.95, 0.84)
 
-    local homeTitle = home:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    local homeTitle = home:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     frame.homeTitle = homeTitle
     homeTitle:SetPoint("TOPLEFT", 18, -16)
     homeTitle:SetText(L("BROWSE_DUNGEONS"))
     homeTitle:SetTextColor(1.00, 0.78, 0.20)
 
-    local homeSubtitle = home:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    local homeSubtitle = home:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.homeSubtitle = homeSubtitle
     homeSubtitle:SetPoint("TOPLEFT", homeTitle, "BOTTOMLEFT", 1, -5)
     homeSubtitle:SetText(L("HOME_SUBTITLE"))
@@ -10134,7 +10279,7 @@ local function CreateMainFrame()
     hideDungeonsButton:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
     hideDungeonsButton:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
 
-    local hideDungeonsButtonText = hideDungeonsButton:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    local hideDungeonsButtonText = hideDungeonsButton:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.hideDungeonsButtonText = hideDungeonsButtonText
     hideDungeonsButtonText:SetPoint("CENTER", 0, 0)
     hideDungeonsButtonText:SetTextColor(1.00, 0.82, 0.27)
@@ -10276,7 +10421,7 @@ local function CreateMainFrame()
     if FDJ.CreateLootFilterButton then FDJ.CreateLootFilterButton(frame, home, hideDungeonsButton) end
     if FDJ.CreateBugReportButton then FDJ.CreateBugReportButton(frame, frame, frame.languageSelectorButton) end
 
-    local homeEmptyText = home:CreateFontString(nil, "OVERLAY", "GameFontHighlightLarge")
+    local homeEmptyText = home:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
     frame.homeEmptyText = homeEmptyText
     homeEmptyText:SetPoint("CENTER", home, "CENTER", 0, -15)
     homeEmptyText:SetWidth(560)
@@ -10361,7 +10506,7 @@ local function CreateMainFrame()
     header:SetBackdropBorderColor(0.52, 0.33, 0.11, 1)
     frame.headerParchment = AddClassicParchment(header, 0.16, 1.00, 0.94, 0.82)
 
-    frame.dungeonTitle = header:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    frame.dungeonTitle = header:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     frame.dungeonTitle:SetPoint("TOPLEFT", 15, -10)
     frame.dungeonTitle:SetTextColor(1, 0.82, 0.27)
 
@@ -10397,6 +10542,7 @@ local function CreateMainFrame()
     if FDJ.CreateLFGButton then FDJ.CreateLFGButton(frame, header, frame.dungeonLocationButton) end
 
     frame.dungeonRouteButton = CreateFrame("Button", nil, header, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.dungeonRouteButton) -- ownfonts (2.0.8)
     frame.dungeonRouteButton:SetSize(96, 30)
     frame.dungeonRouteButton:SetPoint("LEFT", frame.lfgButton or frame.dungeonLocationButton, "RIGHT", 3, 0)
     frame.dungeonRouteButton:SetText(L("ROUTE"))
@@ -10413,13 +10559,13 @@ local function CreateMainFrame()
     frame.dungeonRouteButton:SetScript("OnClick", ShowRouteGuide)
     frame.dungeonRouteButton:Hide()
 
-    frame.dungeonMeta = header:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    frame.dungeonMeta = header:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.dungeonMeta:SetPoint("TOPLEFT", frame.dungeonTitle, "BOTTOMLEFT", 0, -4)
     frame.dungeonMeta:SetTextColor(0.88, 0.80, 0.66)
 
     -- Stockade loot data is still being verified. Keep this notice in the
     -- dungeon header so it clearly applies to both the Bosses and Quests tabs.
-    frame.stockadeItemsTBD = header:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    frame.stockadeItemsTBD = header:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.stockadeItemsTBD:SetText("Items Data TBD")
     frame.stockadeItemsTBD:SetTextColor(1.00, 0.10, 0.10)
     frame.stockadeItemsTBD:SetShadowColor(0, 0, 0, 1)
@@ -10427,7 +10573,7 @@ local function CreateMainFrame()
     frame.stockadeItemsTBD:Hide()
     -- "Full Quests TBD": on the Quests tab of a new dungeon whose quests are
     -- still being found (FDJ.UpdateQuestsTBD).
-    frame.questsTBD = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    frame.questsTBD = header:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     frame.questsTBD:SetText("Full Quests TBD")
     frame.questsTBD:SetTextColor(1.00, 0.10, 0.10)
     frame.questsTBD:SetShadowColor(0, 0, 0, 1)
@@ -10442,7 +10588,7 @@ local function CreateMainFrame()
     -- Keep the Stockade "Items Data TBD" note left of the Map button so it
     -- never overlaps the header buttons.
     frame.stockadeItemsTBD:SetPoint("RIGHT", frame.bossesTab, "LEFT", -12, 0)
-    frame.stockadeItemsTBD:SetFontObject("GameFontNormal")
+    frame.stockadeItemsTBD:SetFontObject("ForeverDJ_GameFontNormal")
     frame.stockadeItemsTBD:SetTextColor(1.00, 0.10, 0.10)
     -- On a chain page of a dungeon (parentDungeon), Bosses and Map open that
     -- dungeon: the Mallet of Zul'Farrak -> Zul'Farrak, at Gahz'rilla.
@@ -10493,7 +10639,7 @@ local function CreateMainFrame()
     left:SetBackdropBorderColor(0.39, 0.24, 0.08, 1)
     frame.leftParchment = AddClassicParchment(left, 0.13, 1.00, 0.94, 0.82)
 
-    local encounters = left:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local encounters = left:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.bossListTitle = encounters
     encounters:SetPoint("TOPLEFT", 12, -10)
     encounters:SetText(L("BOSSES"))
@@ -10545,7 +10691,7 @@ local function CreateMainFrame()
     frame.selectedBossQuestion = right:CreateFontString(
         nil,
         "OVERLAY",
-        "GameFontNormalHuge"
+        "ForeverDJ_GameFontNormalHuge"
     )
     frame.selectedBossQuestion:SetPoint(
         "CENTER",
@@ -10564,7 +10710,7 @@ local function CreateMainFrame()
     frame.selectedBossLevelBadge:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\BossLevelBadge.tga")
     frame.selectedBossLevelBadge:Hide()
 
-    frame.selectedBossLevelText = right:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.selectedBossLevelText = right:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.selectedBossLevelText:SetPoint("CENTER", frame.selectedBossLevelBadge, "CENTER", 0, 0)
     frame.selectedBossLevelText:SetTextColor(1, 1, 1)
     frame.selectedBossLevelText:SetShadowColor(0, 0, 0, 1)
@@ -10572,7 +10718,7 @@ local function CreateMainFrame()
     frame.selectedBossLevelText:Hide()
 
 
-    frame.selectedBossName = right:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    frame.selectedBossName = right:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.selectedBossName:SetPoint(
         "LEFT",
         frame.selectedBossPortrait,
@@ -10584,7 +10730,7 @@ local function CreateMainFrame()
     frame.selectedBossName:SetJustifyH("LEFT")
     frame.selectedBossName:SetTextColor(0.29, 0.13, 0.035)
 
-    frame.selectedBossType = right:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    frame.selectedBossType = right:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     frame.selectedBossType:SetPoint(
         "TOPLEFT",
         frame.selectedBossName,
@@ -10597,7 +10743,7 @@ local function CreateMainFrame()
     frame.selectedBossDescription = right:CreateFontString(
         nil,
         "OVERLAY",
-        "GameFontHighlightSmall"
+        "ForeverDJ_GameFontHighlightSmall"
     )
     frame.selectedBossDescription:SetPoint(
         "TOPLEFT",
@@ -10614,14 +10760,14 @@ local function CreateMainFrame()
     frame.selectedBossDescription:SetTextColor(0.22, 0.13, 0.06)
     frame.selectedBossDescription:Hide()
 
-    frame.lootTitle = right:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    frame.lootTitle = right:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     frame.lootTitle:SetPoint("TOPLEFT", 14, -102)
     frame.lootTitle:SetTextColor(0.27, 0.13, 0.04)
     frame.lootTitle:Hide()
 
     -- Repeat the Stockade warning directly above the boss loot list so players
     -- do not mistake the currently incomplete beta item data for final loot.
-    frame.stockadeLootTBD = right:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    frame.stockadeLootTBD = right:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.stockadeLootTBD:SetPoint("TOP", right, "TOP", 0, -91)
     frame.stockadeLootTBD:SetText("Items Data TBD")
     frame.stockadeLootTBD:SetTextColor(1.00, 0.10, 0.10)
@@ -10667,7 +10813,7 @@ local function CreateMainFrame()
     )
     frame.questLeftParchment = AddClassicParchment(questLeft, 0.13, 1.00, 0.94, 0.82)
 
-    frame.questListTitle = questLeft:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    frame.questListTitle = questLeft:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     frame.questListTitle:SetPoint("TOPLEFT", 12, -10)
     frame.questListTitle:SetText(L("QUESTS"))
 
@@ -10793,7 +10939,7 @@ local function CreateMainFrame()
     frame.selectedQuestName:SetPoint("TOPLEFT", 16, -15)
     frame.selectedQuestName:SetPoint("RIGHT", -48, 0)
     frame.selectedQuestName:SetJustifyH("LEFT")
-    ApplyQuestFont(frame.selectedQuestName, "QuestTitleFont", "QuestFont")
+    ApplyQuestFont(frame.selectedQuestName, "ForeverDJ_QuestTitleFont", "ForeverDJ_QuestFont")
     frame.selectedQuestName:SetTextColor(1.00, 0.78, 0.16)
     frame.selectedQuestName:SetShadowColor(0, 0, 0, 0.82)
     frame.selectedQuestName:SetShadowOffset(1, -1)
@@ -10814,7 +10960,7 @@ local function CreateMainFrame()
     frame.questShareButton:SetSize(76, 24)
     SetBackdrop(frame.questShareButton, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 12, 4)
     frame.questShareButton:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    frame.questShareButton.text = frame.questShareButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.questShareButton.text = frame.questShareButton:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     frame.questShareButton.text:SetPoint("CENTER", 0, 0)
     frame.questShareButton.text:SetText(L("SHARE"))
     frame.questShareButton:SetScript("OnClick", function(self)
@@ -10855,7 +11001,7 @@ local function CreateMainFrame()
     end)
     frame.questShareButton:Hide()
 
-    frame.selectedQuestClass = questInset:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.selectedQuestClass = questInset:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     frame.selectedQuestClass:SetPoint("TOPRIGHT", -16, -18)
     frame.selectedQuestClass:SetWidth(118)
     frame.selectedQuestClass:SetJustifyH("RIGHT")
@@ -10873,7 +11019,7 @@ local function CreateMainFrame()
     frame.selectedQuestMeta:SetPoint("TOPLEFT", frame.selectedQuestName, "BOTTOMLEFT", 0, -5)
     frame.selectedQuestMeta:SetPoint("RIGHT", -16, 0)
     frame.selectedQuestMeta:SetJustifyH("LEFT")
-    ApplyQuestFont(frame.selectedQuestMeta, "QuestFontNormalSmall", "GameFontHighlightSmall")
+    ApplyQuestFont(frame.selectedQuestMeta, "ForeverDJ_QuestFontNormalSmall", "ForeverDJ_GameFontHighlightSmall")
 
     -- Class quests also get the class icon on the metadata row, immediately
     -- after the Alliance/Horde faction icon(s). The existing class marker in
@@ -10935,7 +11081,7 @@ local function CreateMainFrame()
     frame.questDetailText:SetJustifyH("LEFT")
     frame.questDetailText:SetJustifyV("TOP")
     frame.questDetailText:SetWordWrap(true)
-    ApplyQuestFont(frame.questDetailText, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.questDetailText, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
 
     local function MakeQuestSectionHeader(label)
         local fs = frame.questDetailContent:CreateFontString(nil, "OVERLAY")
@@ -10946,7 +11092,7 @@ local function CreateMainFrame()
         -- such as Цель / Начинается у / Сдать into square boxes. The normal
         -- black shadow keeps the header readable on parchment without breaking
         -- Russian (and remains safe when switching languages at runtime).
-        ApplyQuestFont(fs, "QuestFont", "GameFontNormal")
+        ApplyQuestFont(fs, "ForeverDJ_QuestFont", "ForeverDJ_GameFontNormal")
         fs:SetText(label)
         fs:SetTextColor(1, 1, 1)
         fs:SetShadowColor(0, 0, 0, 1)
@@ -10970,7 +11116,7 @@ local function CreateMainFrame()
     frame.questDescText:SetJustifyH("LEFT")
     frame.questDescText:SetJustifyV("TOP")
     frame.questDescText:SetWordWrap(true)
-    ApplyQuestFont(frame.questDescText, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.questDescText, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
     frame.questDescText:Hide()
 
     frame.questStartsText = frame.questDetailContent:CreateFontString(nil, "OVERLAY")
@@ -10978,7 +11124,7 @@ local function CreateMainFrame()
     frame.questStartsText:SetJustifyH("LEFT")
     frame.questStartsText:SetJustifyV("TOP")
     frame.questStartsText:SetWordWrap(true)
-    ApplyQuestFont(frame.questStartsText, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.questStartsText, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
 
     -- Item-start quests show the actual quest-start item instead of a map
     -- button. Hovering it gives the item tooltip plus the recorded drop source.
@@ -10989,7 +11135,7 @@ local function CreateMainFrame()
     frame.questStartItemButton.icon:SetSize(28, 28)
     frame.questStartItemButton.icon:SetPoint("LEFT", 6, 0)
     frame.questStartItemButton.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    frame.questStartItemButton.name = frame.questStartItemButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.questStartItemButton.name = frame.questStartItemButton:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     frame.questStartItemButton.name:SetPoint("LEFT", frame.questStartItemButton.icon, "RIGHT", 8, 0)
     frame.questStartItemButton.name:SetPoint("RIGHT", -6, 0)
     frame.questStartItemButton.name:SetJustifyH("LEFT")
@@ -11066,7 +11212,7 @@ local function CreateMainFrame()
     frame.questNotesText:SetJustifyH("LEFT")
     frame.questNotesText:SetJustifyV("TOP")
     frame.questNotesText:SetWordWrap(true)
-    ApplyQuestFont(frame.questNotesText, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.questNotesText, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
 
     frame.questNoteItemButton = CreateFrame("Button", nil, frame.questDetailContent, "BackdropTemplate")
     frame.questNoteItemButton:SetSize(210, 34)
@@ -11075,7 +11221,7 @@ local function CreateMainFrame()
     frame.questNoteItemButton.icon:SetSize(26, 26)
     frame.questNoteItemButton.icon:SetPoint("LEFT", 5, 0)
     frame.questNoteItemButton.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    frame.questNoteItemButton.name = frame.questNoteItemButton:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.questNoteItemButton.name = frame.questNoteItemButton:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     frame.questNoteItemButton.name:SetPoint("LEFT", frame.questNoteItemButton.icon, "RIGHT", 7, 0)
     frame.questNoteItemButton.name:SetPoint("RIGHT", -6, 0)
     frame.questNoteItemButton.name:SetJustifyH("LEFT")
@@ -11113,7 +11259,7 @@ local function CreateMainFrame()
     frame.noQuestMessage:SetJustifyH("LEFT")
     frame.noQuestMessage:SetJustifyV("TOP")
     frame.noQuestMessage:SetWordWrap(true)
-    ApplyQuestFont(frame.noQuestMessage, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.noQuestMessage, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
     frame.noQuestMessage:SetTextColor(0.10, 0.065, 0.025)
     frame.noQuestMessage:Hide()
 
@@ -11127,6 +11273,7 @@ local function CreateMainFrame()
             frame.questMapButton._fdjCanTarget = false
         end
     end
+    FDJ.OwnFonts(frame.questMapButton) -- ownfonts (2.0.8)
     frame.questMapButton:SetSize(104, 24)
     frame.questMapButton:SetText(L("SHOW_ON_MAP"))
     frame.questMapButton.icon = frame.questMapButton:CreateTexture(nil, "OVERLAY")
@@ -11187,6 +11334,7 @@ local function CreateMainFrame()
             button._fdjCanTarget = false
         end
         frame.questTurninMapButton = button
+        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
         button:SetSize(120, 24)
         button.fdjLabelKey = "SHOW_TURN_IN"
         button:SetText(L("SHOW_TURN_IN"))
@@ -11208,6 +11356,7 @@ local function CreateMainFrame()
     end
 
     frame.questChainButton = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.questChainButton) -- ownfonts (2.0.8)
     frame.questChainButton:SetSize(132, 24)
     frame.questChainButton:SetText(L("SHOW_QUEST_CHAIN"))
     frame.questChainButton.icon = frame.questChainButton:CreateTexture(nil, "OVERLAY")
@@ -11274,6 +11423,7 @@ local function CreateMainFrame()
     UpdateQuestActionButtonSizes()
 
     frame.questStartLinkButton = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.questStartLinkButton) -- ownfonts (2.0.8)
     frame.questStartLinkButton:SetSize(232, 24)
     frame.questStartLinkButton:SetScript("OnClick", function(self)
         if self.questID then SelectQuestByID(self.questID) end
@@ -11281,6 +11431,7 @@ local function CreateMainFrame()
     frame.questStartLinkButton:Hide()
 
     frame.questLeadsToButton = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.questLeadsToButton) -- ownfonts (2.0.8)
     frame.questLeadsToButton:SetSize(270, 24)
     frame.questLeadsToButton:SetScript("OnClick", function(self)
         if self.questID then SelectQuestByID(self.questID) end
@@ -11330,13 +11481,13 @@ local function CreateMainFrame()
     frame.questTurninText:SetJustifyH("LEFT")
     frame.questTurninText:SetJustifyV("TOP")
     frame.questTurninText:SetWordWrap(true)
-    ApplyQuestFont(frame.questTurninText, "QuestFont", "GameFontHighlight")
+    ApplyQuestFont(frame.questTurninText, "ForeverDJ_QuestFont", "ForeverDJ_GameFontHighlight")
 
     frame.questRewardHeader = frame.questDetailContent:CreateFontString(
         nil,
         "OVERLAY"
     )
-    ApplyQuestFont(frame.questRewardHeader, "QuestTitleFont", "GameFontNormal")
+    ApplyQuestFont(frame.questRewardHeader, "ForeverDJ_QuestTitleFont", "ForeverDJ_GameFontNormal")
     frame.questRewardHeader:SetTextColor(0.82, 0.52, 0.10)
     frame.questRewardHeader:SetShadowColor(0, 0, 0, 0.85)
     frame.questRewardHeader:SetShadowOffset(1, -1)
@@ -11358,11 +11509,11 @@ local function CreateMainFrame()
     frame.questXPReward.badge:SetSize(22, 20)
     frame.questXPReward.badge:SetPoint("LEFT", 6, 0)
     frame.questXPReward.badge:SetColorTexture(0.45, 0.20, 0.80, 0.95)
-    frame.questXPReward.badgeLabel = frame.questXPReward:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    frame.questXPReward.badgeLabel = frame.questXPReward:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     frame.questXPReward.badgeLabel:SetPoint("CENTER", frame.questXPReward.badge, "CENTER", 0, 0)
     frame.questXPReward.badgeLabel:SetText("XP")
     frame.questXPReward.badgeLabel:SetTextColor(1.00, 0.93, 0.50)
-    frame.questXPReward.text = frame.questXPReward:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.questXPReward.text = frame.questXPReward:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.questXPReward.text:SetPoint("LEFT", frame.questXPReward.badge, "RIGHT", 8, 0)
     frame.questXPReward.text:SetPoint("RIGHT", -8, 0)
     frame.questXPReward.text:SetJustifyH("LEFT")
@@ -11381,7 +11532,7 @@ local function CreateMainFrame()
     )
     frame.questMoneyReward:SetBackdropColor(0.10, 0.07, 0.025, 0.94)
     frame.questMoneyReward:SetBackdropBorderColor(0.45, 0.30, 0.11, 1)
-    frame.questMoneyReward.text = frame.questMoneyReward:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.questMoneyReward.text = frame.questMoneyReward:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.questMoneyReward.text:SetPoint("LEFT", 6, 0)
     frame.questMoneyReward.text:SetPoint("RIGHT", -4, 0)
     frame.questMoneyReward.text:SetJustifyH("LEFT")
@@ -11407,7 +11558,7 @@ local function CreateMainFrame()
     frame.dungeonMapPanel:SetBackdropBorderColor(0.52, 0.34, 0.13, 1)
     if frame.dungeonMapPanel.SetClipsChildren then frame.dungeonMapPanel:SetClipsChildren(true) end
 
-    frame.dungeonMapTitle = frame.dungeonMapPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    frame.dungeonMapTitle = frame.dungeonMapPanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     frame.dungeonMapTitle:SetPoint("TOPLEFT", 20, -18)
     frame.dungeonMapTitle:SetTextColor(1.00, 0.82, 0.27)
     frame.dungeonMapTitle:Hide()
@@ -11441,21 +11592,23 @@ local function CreateMainFrame()
     frame.routeFactionIcon:SetPoint("TOPLEFT", 20, -18)
     frame.routeFactionIcon:SetTexture(ALLIANCE_ICON)
 
-    frame.routeTitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
+    frame.routeTitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalHuge")
     frame.routeTitle:SetPoint("TOPLEFT", frame.routeFactionIcon, "TOPRIGHT", 10, -1)
     frame.routeTitle:SetPoint("RIGHT", -24, 0)
     frame.routeTitle:SetJustifyH("LEFT")
     frame.routeTitle:SetTextColor(1.00, 0.82, 0.27)
 
-    frame.routeSubtitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    frame.routeSubtitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.routeSubtitle:SetPoint("TOPLEFT", frame.routeTitle, "BOTTOMLEFT", 0, -3)
     frame.routeSubtitle:SetTextColor(0.82, 0.82, 0.82)
 
     frame.routeBackButton = CreateFrame("Button", nil, frame.routePanel, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.routeBackButton) -- ownfonts (2.0.8)
     frame.routeBackButton:SetSize(1, 1)
     frame.routeBackButton:Hide()
 
     frame.routeMapButton = CreateFrame("Button", nil, frame.routePanel, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(frame.routeMapButton) -- ownfonts (2.0.8)
     frame.routeMapButton:SetSize(142, 24)
     frame.routeMapButton:SetPoint("TOPRIGHT", -118, -20)
     frame.routeMapButton:SetText(L("SHOW_ON_MAP"))
@@ -11475,7 +11628,7 @@ local function CreateMainFrame()
     divider:SetHeight(1)
     divider:SetColorTexture(0.62, 0.43, 0.17, 0.65)
 
-    frame.routeSteps = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    frame.routeSteps = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     frame.routeSteps:Hide()
 
     frame.routeStepScroll = CreateFrame("ScrollFrame", nil, frame.routePanel, "UIPanelScrollFrameTemplate")
@@ -11492,11 +11645,11 @@ local function CreateMainFrame()
     end)
     frame.routeStepRows = {}
 
-    frame.routeShortcutTitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    frame.routeShortcutTitle = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     frame.routeShortcutTitle:SetPoint("TOPLEFT", 24, -285)
     frame.routeShortcutTitle:SetTextColor(0.45, 0.72, 1.00)
     frame.routeShortcutTitle:Hide()
-    frame.routeShortcut = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    frame.routeShortcut = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.routeShortcut:SetPoint("TOPLEFT", frame.routeShortcutTitle, "BOTTOMLEFT", 0, -5)
     frame.routeShortcut:SetPoint("RIGHT", -24, 0)
     frame.routeShortcut:SetJustifyH("LEFT")
@@ -11504,7 +11657,7 @@ local function CreateMainFrame()
     frame.routeShortcut:SetTextColor(0.88, 0.90, 0.95)
     frame.routeShortcut:Hide()
 
-    frame.routeWarning = frame.routePanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    frame.routeWarning = frame.routePanel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     frame.routeWarning:SetPoint("BOTTOMLEFT", 24, 18)
     frame.routeWarning:SetPoint("RIGHT", -24, 0)
     frame.routeWarning:SetJustifyH("LEFT")
@@ -12098,6 +12251,7 @@ FDJ.events:RegisterEvent("QUEST_ACCEPTED")
 FDJ.events:RegisterEvent("QUEST_REMOVED")
 FDJ.events:RegisterEvent("QUEST_DATA_LOAD_RESULT")
 FDJ.events:RegisterEvent("PLAYER_LEVEL_UP")
+pcall(FDJ.events.RegisterEvent, FDJ.events, "BAG_UPDATE_DELAYED") -- itemsteps: punch card ticks
 FDJ.events:RegisterEvent("GET_ITEM_INFO_RECEIVED")
 
 -- Coalesce event bursts and refresh on the next frame, outside API callbacks.
@@ -12176,7 +12330,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.3"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.4"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
@@ -12240,6 +12394,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         or event == "QUEST_ACCEPTED"
         or event == "QUEST_REMOVED"
         or event == "PLAYER_LEVEL_UP"
+        or event == "BAG_UPDATE_DELAYED"
     then
         FDJ.ScheduleQuestRefresh()
         return

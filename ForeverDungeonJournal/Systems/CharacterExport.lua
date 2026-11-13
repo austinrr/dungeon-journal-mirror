@@ -117,18 +117,18 @@ local function BuildDialog()
         f:SetBackdropBorderColor(0.34, 0.34, 0.34, 1)
     end
 
-    local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local title = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     title:SetPoint("TOP", 0, -14)
     title:SetText(ExportText("EXPORT_TITLE"))
 
-    f.hint = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    f.hint = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     f.hint:SetPoint("TOP", title, "BOTTOM", 0, -6)
 
     -- A read-only looking box the player can select all of and copy.
     local box = CreateFrame("EditBox", nil, f)
     box:SetMultiLine(true)
     box:SetMaxLetters(0)
-    box:SetFontObject("GameFontHighlightSmall")
+    box:SetFontObject("ForeverDJ_GameFontHighlightSmall")
     box:SetPoint("TOPLEFT", 18, -62)
     box:SetPoint("BOTTOMRIGHT", -18, 46)
     box:SetAutoFocus(false)
@@ -158,11 +158,12 @@ local function BuildDialog()
         bg:SetBackdropBorderColor(0.28, 0.28, 0.28, 1)
     end
 
-    local foot = f:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local foot = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisableSmall")
     foot:SetPoint("BOTTOMLEFT", 18, 20)
     foot:SetText(ExportText("EXPORT_COPY"))
 
     local close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+    FDJ.OwnFonts(close) -- ownfonts (2.0.8)
     close:SetSize(80, 22)
     close:SetPoint("BOTTOMRIGHT", -16, 14)
     close:SetText(CLOSE or "Close")

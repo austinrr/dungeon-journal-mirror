@@ -2,7 +2,7 @@
 ## Title: DungeonJournal
 ## Notes: Boss, loot and quest journal for WoW Classic dungeons.
 ## Author: Exehn
-## Version: 2.0.3
+## Version: 2.0.4
 ## IconTexture: Interface\Icons\INV_Misc_Book_09
 ## AddonCompartmentFunc: ForeverDungeonJournal_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: ForeverDungeonJournal_OnAddonCompartmentEnter
@@ -12,6 +12,7 @@
 
 
 Core\Bootstrap.lua
+Core\Fonts.lua
 Localization\Localization.lua
 Localization\Locale_frFR.lua
 Localization\Locale_esES.lua
@@ -74,6 +75,7 @@ Systems\DoneTickTooltip.lua
 Systems\HomeBottomBand.lua
 Systems\LFGButton.lua
 Systems\QuestText.lua
+Systems\OnyxiaAttunement.lua
 Systems\MapBossSize.lua
 Systems\WorldMapOverlay.lua
 Systems\Resize.lua
@@ -81,3 +83,4 @@ Systems\OptionsPanel.lua
 Libs\LibDeflate\LibDeflate.lua
 Systems\CharacterSnapshot.lua
 Systems\CharacterExport.lua
+Systems\ProgressTransfer.lua

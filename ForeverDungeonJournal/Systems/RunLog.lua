@@ -1243,12 +1243,11 @@ local function OnXPChat(text)
     if not args then return end
     local name, amount = args[1], Number(args[2])
     if type(name) ~= "string" or not amount or amount <= 0 then return end
-    -- "(+225 exp Rested bonus)", "(+40 group bonus)", "(-10 raid penalty)":
-    -- part of what the mob gave.
-    for sign, n in text:gmatch("%(([%+%-])([%d,%.]+)") do
-        n = Number(n)
-        if n then amount = amount + (sign == "-" and -n or n) end
-    end
+    -- xpbonus (2.0.3): "(+225 exp Rested bonus)", "(+31 group bonus)",
+    -- "(-10 raid penalty)" only say how much of the amount was bonus or
+    -- penalty: the game's number is already what the XP bar gained. Adding
+    -- them again counted a 4-player group's kills about 23% too high
+    -- (reported on Discord by McBurney: 164 shown, 133 gained).
     local now = Clock()
     if now - chatCreditClock > 3 then chatCredit = 0 end
     chatCredit = chatCredit + amount
@@ -1881,6 +1880,8 @@ local function OnInstanceReset(text)
     local name = args and Lower(args[1])
     if not name then return end
     FDJ.RunLogEndReset(NamedTest(name))
+    -- resetblank: a tracker waiting at 0 for that dungeon closes too
+    if FDJ.EndBlankRun then FDJ.EndBlankRun(NamedTest(name)) end
 end
 
 -- ------------------------------------------------------------ events

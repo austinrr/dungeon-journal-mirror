@@ -265,7 +265,7 @@ local function EnsureFallbackMenu()
     button:SetPoint("TOPLEFT", 4, -4)
     button:SetPoint("BOTTOMRIGHT", -4, 4)
     button:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    button.text = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    button.text = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     button.text:SetPoint("LEFT", 9, 0)
     button.text:SetPoint("RIGHT", -8, 0)
     button.text:SetJustifyH("LEFT")
@@ -440,12 +440,12 @@ local function CreateFavouriteRow(parent)
     row.icon:SetPoint("LEFT", 8, 0)
     row.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
 
-    row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    row.name = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     row.name:SetPoint("TOPLEFT", row.icon, "TOPRIGHT", 8, -4)
     row.name:SetPoint("RIGHT", -8, 0)
     row.name:SetJustifyH("LEFT")
 
-    row.slot = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    row.slot = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     row.slot:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -4)
     row.slot:SetPoint("RIGHT", -8, 0)
     row.slot:SetJustifyH("LEFT")
@@ -505,7 +505,7 @@ local function CreateDungeonDivider(parent)
     divider.lineLeft:SetHeight(1)
     divider.lineLeft:SetPoint("LEFT", 2, 0)
 
-    divider.title = divider:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    divider.title = divider:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     divider.title:SetPoint("CENTER", divider, "CENTER", 0, 0)
     divider.title:SetTextColor(1.00, 0.82, 0.27)
     divider.title:SetJustifyH("CENTER")
@@ -585,10 +585,11 @@ local function CreateWindow(frame)
 
     local title = win.TitleText or (win.TitleContainer and win.TitleContainer.TitleText)
     if not title then
-        title = win:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        title = win:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
         title:SetPoint("TOP", 0, -6)
     end
     win.fdjTitle = title
+    FDJ.OwnFonts(title) -- ownfonts (2.0.8): the window template's title text
 
     local portrait = win.portrait or (win.PortraitContainer and win.PortraitContainer.portrait)
     if portrait then
@@ -648,7 +649,7 @@ local function CreateWindow(frame)
     content:SetSize(275, 1)
     scroll:SetScrollChild(content)
 
-    win.fdjEmpty = win:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+    win.fdjEmpty = win:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisable")
     win.fdjEmpty:SetPoint("CENTER", inset, "CENTER", 0, 0)
     win.fdjEmpty:SetWidth(250)
     win.fdjEmpty:SetJustifyH("CENTER")
@@ -840,7 +841,7 @@ if baseCreateLootFilterButton then
         button.star:SetSize(16, 16)
         button.star:SetPoint("LEFT", 10, 0)
         SetStar(button.star)
-        button.text = button:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        button.text = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
         button.text:SetPoint("LEFT", button.star, "RIGHT", 6, 0)
         button.text:SetTextColor(1.00, 0.82, 0.27)
         button:SetScript("OnClick", function()

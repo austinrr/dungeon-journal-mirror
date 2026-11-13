@@ -17,8 +17,13 @@ local function Staging()
     if not staging then
         staging = CreateFrame("Frame", nil, UIParent)
         staging:SetSize(64, 64)
-        -- Well outside the right edge of the screen.
-        staging:SetPoint("TOPLEFT", UIParent, "TOPRIGHT", 400, 0)
+        -- Well outside the right edge of the screen. ultrawide (2.0.11): far
+        -- past it, not 400. On an ultra-wide monitor the game's UI can be
+        -- kept to the middle of the screen (UIParent narrower than the
+        -- screen), and 400 past UIParent's edge was still on screen there:
+        -- a boss portrait sat in the top right corner and could not be
+        -- clicked away (valeriu, Discord #general, 11 Nov 2026).
+        staging:SetPoint("TOPLEFT", UIParent, "TOPRIGHT", 10000, 0)
         staging:Show()
     end
     return staging

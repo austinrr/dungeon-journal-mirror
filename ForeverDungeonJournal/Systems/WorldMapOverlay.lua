@@ -143,6 +143,7 @@ local function UpdateWingButtons(dungeonName, anchor)
         local button = wingButtons[i]
         if show and not button then
             button = CreateFrame("Button", nil, WorldMapFrame, "UIPanelButtonTemplate")
+            FDJ.OwnFonts(button) -- ownfonts (2.0.8)
             button:SetSize(130, 22)
             button:SetFrameStrata("HIGH")
             button:SetScript("OnClick", function(self)
@@ -183,6 +184,8 @@ end
 
 local function IsOurs(f)
     if f == toggle or f == backdrop then return true end
+    local journal = Journal()
+    for _, b in ipairs((journal and journal.dungeonMapFloorButtons) or {}) do if f == b then return true end end
     for _, b in ipairs(wingButtons) do if f == b then return true end end
     return false
 end
@@ -228,10 +231,67 @@ PlaceToggle = function()
     end
 end
 
+-- floorbuttons (2.0.3): on the world map the dungeon map's Level 1 / Level 2
+-- buttons stay in the top-left corner, but slide right past any small
+-- button already there (Blizzard's map pin and tracking buttons, other map
+-- addons), the same way the toggle above slides left. The journal's own map
+-- keeps them where they always were.
+local function FloorBlocker(buttons)
+    local parents = { WorldMapFrame, WorldMapFrame.ScrollContainer, WorldMapFrame.BorderFrame }
+    local best, bestRight
+    for _, btn in ipairs(buttons) do
+        local bl, bb, br, bt = ScreenRect(btn)
+        if bl then
+            for _, parent in ipairs(parents) do
+                if parent and parent.GetChildren then
+                    for _, child in ipairs({ parent:GetChildren() }) do
+                        if not IsOurs(child) and child.IsVisible and child:IsVisible() then
+                            local l, b, r, top = ScreenRect(child)
+                            if l and (r - l) <= 220 and (top - b) <= 80
+                                and l < br and r > bl and b < bt and top > bb then
+                                if not bestRight or r > bestRight then best, bestRight = child, r end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return best, bestRight
+end
+
+function FDJ.PlaceMapFloorButtons()
+    local journal = Journal()
+    local panel = journal and journal.dungeonMapPanel
+    local all = journal and journal.dungeonMapFloorButtons
+    if not (attached and panel and all and WorldMapFrame) then return end
+    local buttons = {}
+    for _, btn in ipairs(all) do if btn:IsShown() then buttons[#buttons + 1] = btn end end
+    if #buttons == 0 then return end
+    local x = 10
+    local function Put()
+        for i, btn in ipairs(buttons) do
+            btn:ClearAllPoints()
+            btn:SetPoint("TOPLEFT", panel, "TOPLEFT", x, -10 - (i - 1) * 24)
+        end
+    end
+    Put()
+    for _ = 1, 6 do
+        local _, right = FloorBlocker(buttons)
+        if not right then break end
+        local bl = ScreenRect(buttons[1])
+        if not bl then break end
+        local scale = buttons[1]:GetEffectiveScale() or 1
+        x = x + (right - bl) / scale + 4
+        Put()
+    end
+end
+
 local function UpdateToggle(dungeonName)
     if not WorldMapFrame then return end
     if not toggle then
         toggle = CreateFrame("Button", "ForeverDungeonJournalWorldMapToggle", WorldMapFrame, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(toggle) -- ownfonts (2.0.8)
         toggle:SetSize(130, 22)
         toggle:SetPoint("TOPRIGHT", WorldMapFrame.ScrollContainer or WorldMapFrame, "TOPRIGHT", -8, -8)
         toggle:SetFrameStrata("HIGH")

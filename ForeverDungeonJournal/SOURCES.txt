@@ -863,3 +863,87 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 - Sandarr Dunereaver 10080: Sandarr's Shoulders 274660 (mail shoulders, 9/18), Bloodsand Belt 274659 (plate belt, 8/18): https://www.wowhead.com/forever/npc=10080/sandarr-dunereaver
 - Octofinger Gauntlets 280086 (blue plate hands, binds when picked up, level 52): Tunnelweb Matriarch 250034 (2/2): https://www.wowhead.com/forever/item=280086/octofinger-gauntlets
 - Other sites: a web search for each item name (12 Nov 2026) found no other site listing these items yet.
+
+2026-11-12 Krol'dok Stronghold, Kroog (2.0.3):
+- Kroog 262716, Rare Elite; Wowhead Forever's map puts him at 57.5, 62 on the Eastern Kingdoms map, among Krol'dok's bosses (Bossman Toof 58, 62.3; Overlord Mugg 58.4, 60.9; Slavecrusher Grox 56.3, 64): https://www.wowhead.com/forever/npc=262716/kroog
+- Drops: Black Horn Necklace 279863 (neck, level 38, 8/11), Kroog's Backscratcher 279857 (dagger, level 38, 3/11). Portrait: display 17273 (Wowhead's 3D viewer).
+- Other sites: a web search found no other page about Kroog yet.
+
+2026-11-12 Uldaman, Ironaya (2.0.3):
+- Axe of Inevitable Ruin 274484 (blue two-hand axe, level 37; use: with the Axe of Lingering Dread makes the Pendulum of Doom): Wowhead Forever "Dropped by" Ironaya 7228 (20/210), plus a player's tooltip screenshot (German client, item ID 274484): https://www.wowhead.com/forever/item=274484/axe-of-inevitable-ruin
+
+2026-11-12 Gnomeregan, Gnogaine 2926 (2.0.3):
+- Full Leaden Collection Phial 9284 (and Empty Leaden Collection Phial 9283): Wowhead Forever quest page: https://www.wowhead.com/forever/quest=2926/gnogaine
+- Where to fill it ("Use the Vial on an Irradiated Invader just outside the instance"): M's text; map pin at the Gnomeregan entrance (Dun Morogh 24.3, 39.8).
+
+2026-11-12 Uldaman, Ancient Stone Keeper (2.0.3):
+- Sandstorm Staff 274431 (blue staff, level 41): Wowhead Forever "Dropped by" Ancient Stone Keeper 7206 (61/179): https://www.wowhead.com/forever/item=274431/sandstorm-staff
+
+2026-11-12 The Drowned City map, boss positions (2.0.3):
+- Discord, report-new-loot-quests thread "Drowned City Boss locations" (OMGmacros, 12 Nov 2026): numbered map 1 Zul'Alai, 2 Primeval Elemental, 3 Var'Taka, 4 Captain Dreadrise (paths there), 5 Deathless Marrow, 6 Min'loth the Serpent. His map is the same art as ours (matched pixel for pixel), so the marks were placed 1:1. The red circle in the middle is an elite shark's path (level 45, not added).
+
+2026-11-12 Gnomeregan, The Only Cure is More Green Glow 2962 (2.0.3):
+- Heavy Leaden Collection Phial 9364, High Potency Radioactive Fallout 9365: Wowhead Forever quest page: https://www.wowhead.com/forever/quest=2962/the-only-cure-is-more-green-glow
+- "Use on an alive Irradiated Slime or Corrosive Lurker": M (in game, 12 Nov 2026).
+
+2026-11-12 Krol'dok Stronghold map, boss positions (2.0.3):
+- Discord, report-new-loot-quests thread "Bastion Krol'dok" (falling/Ekiroth, 12 Nov 2026, French client): route drawn on our own Krol'dok map with the bosses numbered 1-6 in order (Slavecrusher Grox, Twilight Commander Zarmok, War Handler Ashka, Nar'gurk, Bossman Toof, Overlord Mugg; the first three checked against his screenshots' target names). Matched to our map art (same map, scaled), numbers placed at the drawn digits. His two "Q" marks: quest givers (the right one is Tunk, quest "Moulage Krol'dok" in French) - not added.
+- Update (same thread, 12 Nov 2026, 12:11-12:17): the Primeval Elemental is in a round flooded room east of Var'Taka, reached by swimming (from the pool to the south, or from the big basin); his corrected map puts it at 0.618, 0.672 on ours (Var'Taka's mark lands on the same spot as before, so the two maps line up).
+
+2026-11-12 Blackmaw Hold item IDs (2.0.3), Wowhead Forever NPC drop tables:
+- Spike Crested Bracers 280061 (plate wrist, blue): Bonesnout the Unbroken 247198 (2/9): https://www.wowhead.com/forever/npc=247198
+- IDs for items we listed by name only: Flameslash Crescent 280056 and Impish Chain Hood 280058 (Impaan the Imprisoner 247206), Lucky Shovelnose Tuft 280060 (Bonesnout 247198), Behemoth Bones 280065 and Trousers of the Ebon Giant 280066 (Blackmaw Behemoth 247207), Veilpiercer Girdle 280070 (Elder Shaman Bloodmane 247209), Burnished Pridescales 280073 (Unbound Spirit 247231), Bleak Eye Shoulderplates 280075 (Varrox Bleakhoof 247234).
+
+2026-11-12 Confirmed quest fixes (2.0.3), from M's fix list "DungeonJournal 2.0.3 - Confirmed Quest Fixes":
+- Digestible Research 95790: https://www.wowhead.com/forever/quest=95790/digestible-research
+- Crystalline Elements 95928: https://www.wowhead.com/forever/quest=95928/crystalline-elements
+- Blackmaw Reclamation 92065: https://www.wowhead.com/forever/quest=92065/blackmaw-reclamation
+- Blackmaw Pouches 97327: https://www.wowhead.com/forever/quest=97327/blackmaw-pouches
+- The Twin Bears 92066: https://www.wowhead.com/forever/quest=92066/the-twin-bears
+- Feeding Time! 92067: https://www.wowhead.com/forever/quest=92067/feeding-time
+- A Lost Memento 92070: https://www.wowhead.com/forever/quest=92070/a-lost-memento
+- Unending Torment 97288 (level 15): https://worldofwarcraft.blizzard.com/en-us/news/24315281/wow-forever-hotfixes-november-6-2026
+- Reward item names and qualities checked on Wowhead Forever's item tooltips (260216-260219, 279891, 279892, 249900, 279931, 279901).
+
+2026-11-12 Maraudon, Rot and Regret chain: Forlorn Gardens (2.0.3)
+- Discord, bug report thread "Maraudon Dungeon prequest 1 missing fast fix" (h0p3, 12 Nov 2026): Word of the Woods only opens after Mithera's "Lost Gardens" (Forlorn Gardens), 7 pre-quests in all.
+- Forlorn Gardens 93341 (level 43, requires 35, Mithera to Mithera, objective, 1,800 XP): https://www.wowhead.com/forever/quest=93341/forlorn-gardens ; Mithera's quest list: https://www.wowhead.com/forever/npc=254578/mithera
+- Order (pylon chain, then Forlorn Gardens, then Word of the Woods): Wowhead Forever comments on https://www.wowhead.com/forever/quest=93594/word-of-the-woods (10 Nov 2026) and on Forlorn Gardens (11 Nov 2026). Wowhead tags Forlorn Gardens Horde; Word of the Woods and Mithera's other quests are for both factions, so no faction tag was set.
+
+2026-11-12 RPG Mode locked-card sketches (2.0.3)
+- Drawn from Wowhead's model renders (WoW Forever model viewer), the same way as the earlier sketches: https://wow.zamimg.com/modelviewer/classicplus/webthumbs/npc/<displayID % 256>/<displayID>.png
+- Display IDs from Wowhead Forever NPC pages: Min'loth the Serpent 142322, Overlord Mugg 141218, Blazeroar 6374 (https://www.wowhead.com/forever/npc=255702), Varrox Bleakhoof 130447, Nanaya 143832, Avatar of Hakkar 8053 (https://www.wowhead.com/forever/npc=8443).
+- Avatar of Hakkar: its own render only shows it from above, so the sketch is drawn from Hakkar the Soulflayer's render (display 15295), the same creature.
+
+2026-11-12 Razorfen Kraul, The Crone of the Kraul (2.0.3)
+- Discord, report-new-loot-quests thread "Reward for [The Crone of the Kraul] is not updated" (Lazylion2, 12 Nov 2026).
+- Rewards (choose one of Berylline Pads, Stonefist Girdle, Marbled Buckler; also receive the Quilboar Blaster 274084): https://www.wowhead.com/forever/quest=1101/the-crone-of-the-kraul ; item: https://www.wowhead.com/forever/item=274084/quilboar-blaster
+
+2026-11-12 Onyxia Attunement page (2.0.3)
+- M's research document "Onyxia Attunement, Alliance + Horde, WoW Forever, 12 Nov 2026" (quest order, Blood and Thunder before Warlord's Command, raid needs the Drakefire Amulet in the bags).
+- Every quest checked on its Wowhead Forever page (level, required level, giver and turn-in with coordinates, objective, rewards, XP): Alliance 4182, 4183, 4184, 4185, 4186, 4223, 4224, 4241, 4242, 4264, 4282, 4322, 6402, 6403, 6501, 6502; Horde 98325, 4903, 4941, 4974, 6566, 6567, 6568, 6569, 6570, 6582, 6583, 6584, 6585, 6601, 6602 (https://www.wowhead.com/forever/quest=<id>).
+- Blood and Thunder 98325: Horde, level 60, requires 55, Warlord Goretooth (Badlands 5.8, 47.4) to Goretooth, 660 XP, 9 silver: https://www.wowhead.com/forever/quest=98325
+- Warlord Goretooth at 5.8, 47.4 (Wowhead Forever quests 4903/4941/98325, and the guide); the old pin (3.0, 47.6) is Shadowmage Vivian Lagrave's spot, kept for her.
+- Wowhead's coordinates were used over the guide's where they differ (Magistrate Solomon 30.0, 44.2; Highlord Bolvar 78.0, 18.0); the addon's existing step pins already matched Wowhead.
+- Icon: the addon's own Media/OnyxiaAttuneIcon (the attunement tag).
+
+2026-11-12 The journal's own fonts (2.0.8)
+- Report: ard, Discord #help (quest text unreadable with ElvUI; fine with ElvUI disabled; ElvUI General > Fonts, "Replace Blizzard Fonts" ticked).
+- What ElvUI changes: ElvUI's font code, ElvUI/Game/Shared/General/Fonts.lua (E:UpdateBlizzardFonts; QuestFont, QuestTitleFont and QuestFontNormalSmall are in its FontMap, and it rewrites GameFontNormal's base fonts): https://github.com/tukui-org/ElvUI
+- The game's own font values copied into Core/Fonts.lua (files, sizes, outlines, shadows, colours, per alphabet): Blizzard_Fonts_Shared (Mainline/Fonts.xml, Shared/Fonts.xml, Shared/FontStyles.xml, Shared/GameFontStyles.xml), branch "forever": https://github.com/Gethe/wow-ui-source/tree/forever/Interface/AddOns/Blizzard_Fonts_Shared
+- CreateFontFamily (one font per alphabet): https://warcraft.wiki.gg/wiki/API:CreateFontFamily and Blizzard_APIDocumentationGenerated/FontDocumentation.lua in the same repository.
+
+2026-11-12 Uldaman, The Hidden Chamber (2.0.11)
+- Report: Codemonkey, Discord bug-reports "The Hidden Chamber" (11 Nov 2026): the journal showed 2 of the quest's 3 reward choices.
+- Guardian Staff 270078 (green, new in Forever, Alliance, Two-Hand Staff, item level 42, 60-90 damage, +11 Agility, +11 Stamina, added in 1.60.1) as the third "choose one" reward with Dwarven Charge 9626 and Explorer's League Lodestar 9627; 6,850 XP, Ironforge +150: https://www.wowhead.com/forever/quest=2240/the-hidden-chamber and https://www.wowhead.com/forever/item=270078/guardian-staff
+- Checked, Classic data only (no Guardian Staff): https://foreverchanges.pro/dungeons/uldaman (Dwarven Charge and Explorer's League Lodestar, "may change in Forever"); https://wowf.io/en/dungeons/uldaman/quests (no quests confirmed yet); https://wowsrc.com/loot/uldaman/ (quest not listed). wowforevertalents.com and metaforge.app could not be read.
+
+2026-11-12 Boss portrait on ultra-wide screens (2.0.11)
+- Report: valeriu, Discord #general (11 Nov 2026), screenshot: a round boss portrait in the top right corner of a super-wide monitor, not clickable. Cause: Systems/PortraitPool.lua parked its loading portraits 400 past UIParent's right edge, which is still on screen when the UI is kept to the middle of the screen.
+
+2026-11-12 Scholomance map (2.0.13)
+- The link given (wowforeverclasses.com/maps/dungeons/inside/) is a 404 page; the site has no maps section. Nothing was taken from it.
+- Map art: the game client's own old Scholomance map, uiMaps 306-309 "ScholomanceOLD" (UiMap and UiMapAssignment DB2 exports in Questie's repository, https://github.com/Questie/Questie , "ExternalScripts(DONOTINCLUDEINRELEASE)/DBC - WoW.tools/uimap_wotlk.csv" and "uimapassignment_wotlk.csv"; the same IDs in uimap_tbc.csv and UiMap.5.5.0.60700.csv).
+- Boss spots: spawns on map 289 in the CMaNGOS classic database (https://github.com/cmangos/classic-db, Full_DB/ClassicDB_1_12_1_z2815.sql.gz, creature table): Jandice Barov 10503, Rattlegore 11622, Marduk Blackpool 10433, Vectus 10432, Ras Frostwhisper 10508, Instructor Malicia 10505, Doctor Theolen Krastinov 11261, Lorekeeper Polkelt 10901, The Ravenian 10507, Lord Alexei Barov 10504, Lady Illucia Barov 10502. Kirtonos the Herald: the Brazier of the Herald (gameobject 175564) on the porch. Darkmaster Gandling: his summon spot in the CMaNGOS instance script (https://github.com/cmangos/mangos-classic, src/game/AI/ScriptDevAI/scripts/eastern_kingdoms/scholomance/scholomance.h, aGandlingSpawnLocs 180.771, -5.4286, 75.5702). Entrance: areatrigger_teleport 2567 (190.819, 126.329, 137.227).
+- Converted to map positions with each floor's UiMapAssignment region (the same conversion puts the Stratholme bosses within about 0.01 of the journal's existing pins); floor by height and region (the porch and the Barov vault only fit floors 2 and 4).
+- 2.0.14: pins measured on M's in-game screenshots of the journal's Scholomance floors 1 and 3 (12 Nov 2026): floor 3 calibrated on the three pins drawn there (fit within about 1 pixel), the skulls' centres read off the art; the entrance moved onto the map's whirlpool (same screen scale). Rattlegore's spawn converts onto the Great Ossuary on floor 3 (0.30, 0.62), next to its skull. Jandice Barov removed on M's request (wrong spot).

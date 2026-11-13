@@ -20,7 +20,7 @@ end
 local panel = CreateFrame("Frame", "ForeverDungeonJournalOptionsPanel")
 panel.name = "Dungeon Journal"
 
-local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalHuge")
+local title = panel:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontNormalHuge")
 title:SetPoint("CENTER", panel, "CENTER", 22, 120)
 do
     local font, _, flags = title:GetFont()
@@ -35,17 +35,18 @@ icon:SetPoint("RIGHT", title, "LEFT", -14, 0)
 icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
 icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
 
-local version = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightLarge")
+local version = panel:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontHighlightLarge")
 version:SetPoint("TOP", title, "BOTTOM", -22, -26)
 
-local access = panel:CreateFontString(nil, "ARTWORK", "GameFontHighlightHuge")
+local access = panel:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontHighlightHuge")
 access:SetPoint("TOP", version, "BOTTOM", 0, -14)
 
 local open = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+FDJ.OwnFonts(open) -- ownfonts (2.0.8)
 open:SetSize(300, 44)
 open:SetPoint("TOP", access, "BOTTOM", 0, -30)
-open:SetNormalFontObject("GameFontNormalHuge")
-open:SetHighlightFontObject("GameFontHighlightHuge")
+open:SetNormalFontObject("ForeverDJ_GameFontNormalHuge")
+open:SetHighlightFontObject("ForeverDJ_GameFontHighlightHuge")
 open:SetScript("OnClick", function()
     if FDJ and FDJ.ToggleSettingsPanel then
         local p = _G.ForeverDungeonJournalSettings

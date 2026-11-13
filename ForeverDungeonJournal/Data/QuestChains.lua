@@ -1388,7 +1388,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Speak with Eitrigg in Orgrimmar. When you have discussed matters with Eitrigg, seek council from Thrall. You recall having seen Eitrigg in Thrall's chamber.",
         pickup = "Warlord Goretooth, Badlands",
         turnin = "Thrall, Orgrimmar",
-        map = { mapID = 1418, x = 0.030, y = 0.476, label = "Warlord Goretooth — Badlands", targetName = "Warlord Goretooth" },
+        map = { mapID = 1418, x = 0.058, y = 0.474, label = "Warlord Goretooth — Badlands", targetName = "Warlord Goretooth" },
     },
     [4974] = {
         level = 60, requires = 55,
@@ -1935,7 +1935,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
     },
 
     -- Gnomeregan prerequisite steps.
-    [2926] = { level = 27, requires = 20, objective = "Use the Empty Leaden Collection Phial on a living Irradiated Invader or Irradiated Pillager, then return the full phial to Ozzie Togglevolt.", pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh", turnin = "Ozzie Togglevolt, Kharanos, Dun Morogh", description = "Required before The Only Cure is More Green Glow.", map = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", detail = "Start Gnogaine here" } },
+    [2926] = { level = 27, requires = 20, objective = "Use the Empty Leaden Collection Phial on a living Irradiated Invader or Irradiated Pillager, then return the full phial to Ozzie Togglevolt.", pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh", turnin = "Ozzie Togglevolt, Kharanos, Dun Morogh", description = "Required before The Only Cure is More Green Glow.", map = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", detail = "Start Gnogaine here" }, requiredItems = { {9284, "Full Leaden Collection Phial", 1, "Use the Vial on an Irradiated Invader just outside the instance", map = { mapID = 1426, x = 0.243, y = 0.398, label = "Irradiated Invaders — outside Gnomeregan", detail = "Use the Vial on an Irradiated Invader just outside the instance" }} } },
     [2841] = { level = 35, requires = 25, objective = "Accept Rig Wars from Nogg. You do not need to complete it before continuing to Chief Engineer Scooty.", pickup = "Nogg, Valley of Honor, Orgrimmar", turnin = "Nogg, Orgrimmar", description = "Rig Wars must be in progress to unlock the transporter chain in Forever.", note = "Accept Rig Wars first; completion is not required for Chief Engineer Scooty.", warning = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear.", map = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", detail = "Accept Rig Wars here" } },
     [2842] = { level = 35, requires = 20, objective = "Speak with Scooty in Booty Bay.", pickup = "Sovik, Valley of Honor, Orgrimmar", turnin = "Scooty, Booty Bay, Stranglethorn Vale", description = "Required before Gnomer-gooooone!", map = { mapID = 1454, x = 0.756, y = 0.252, label = "Sovik — Valley of Honor, Orgrimmar", detail = "Start Chief Engineer Scooty here" } },
 

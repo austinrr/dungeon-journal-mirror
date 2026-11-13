@@ -1,4 +1,138 @@
-DungeonJournal 2.0.3
+DungeonJournal 2.0.4
+
+CHANGES IN 2.0.4
+- Onyxia Attunement: a round Onyxia icon on the home page, right of the
+  Sleeping Bag's (or of the Raids medallion when that one is hidden). It
+  opens your faction's attunement chain at the step you're on: Alliance,
+  Dragonkin Menace to Drakefire Amulet (16 quests); Horde, Blood and
+  Thunder to Blood of the Black Dragon Champion (15 quests). Every raider
+  needs the Drakefire Amulet in their bags for Onyxia's Lair. Track works
+  as on any page (no waypoint arrow).
+  - The icon shows once the character can start its chain (level 48
+    Alliance, 55 Horde). Dinging that level pops the icon up in the middle
+    of the screen ("You can now start Onyxia Attunement"), above the game's
+    level-up banner, for 10 seconds; once per account, never at login, so
+    characters already past that level don't get it. Clicking it opens the
+    journal, where the Onyxia icon glows for a few seconds; right-click
+    closes it.
+  - Options > Show Onyxia Attunement (under Hide Sleeping Bag quest): ticks
+    itself once you can start the chain; any character can tick it sooner,
+    or untick it to hide the icon (right-click the icon > Hide does the
+    same). Unticking it before the character can start the chain just goes
+    back to the default.
+- Horde: Blood and Thunder (new in WoW Forever, Warlord Goretooth) is now
+  the first step before Warlord's Command, in the chains of For The Horde!,
+  Oculus Illusions and Blood of the Black Dragon Champion, and Warlord's
+  Command's own page in Lower Blackrock Spire shows it as its pre-quest.
+  Warlord Goretooth's map pin in Kargath moved to where he stands (5.8,
+  47.4); it was on Shadowmage Vivian Lagrave's spot.
+- RPG Mode:
+  - Options > RPG Mode > Account-Wide Unlocks (off by default): on, what any
+    of your characters unlocked in RPG Mode (journal pages, bosses found,
+    quests, dungeon maps) is unlocked for all of them; off, each character
+    has its own unlocks, as before. Every character still keeps its own
+    record, so switching it on or off loses nothing. A character's unlocks
+    join the account's once it has logged in with this version. No popup
+    for something another character already unlocked. Which mode (RPG or
+    Gamer) stays a choice per character.
+  - Options > RPG Mode > Export Progress / Import Progress, for switching
+    computers (addon data is only saved on the computer you play on).
+    Export Progress shows a code; on the other computer, log in with the
+    same character, open Import Progress, paste it and press Import. The
+    code carries the character's RPG Mode unlocks (pages, bosses, quests,
+    maps and trash counted toward a map), the account-wide unlocks, RPG
+    Mode itself and the Account-Wide Unlocks option. Importing only ever
+    adds, so an old code can't take anything away. It works only on the
+    character it was made on, and a code that was cut off or changed is
+    refused.
+  - Options > RPG Mode > Show dungeon quests (off by default, whole
+    account): every dungeon's quests show in RPG Mode. Locked cards keep
+    their sketch and get the usual quest count; clicking one opens the page
+    on its quests. Bosses, loot and maps still unlock as you play. No quest
+    achievement popups while it is on.
+  - The RPG Mode note now also says "You can still choose to show quests in
+    the Options panel."
+  - The locked cards of The Drowned City, Krol'dok Stronghold, Alcaz
+    Prison, Sunken Temple, Blackmaw Hold and Shaper's Terrace show a pencil
+    sketch of their final boss (Min'loth the Serpent, Overlord Mugg,
+    Blazeroar, Avatar of Hakkar, Varrox Bleakhoof, Nanaya) instead of the
+    question mark. Every dungeon has its sketch now.
+- Dungeon maps:
+  - Scholomance has its map: the game's own four floors, with the entrance
+    on the whirlpool and boss pins on their rooms.
+  - Alcaz Prison: Level 2 (Maximum Security Unit) added; the Level 1 /
+    Level 2 buttons switch between them.
+  - Krol'dok Stronghold: positions of its six bosses (reported on Discord
+    by falling/Ekiroth).
+  - The Drowned City: boss positions for Zul'Alai, Primeval Elemental,
+    Var'Taka, Captain Dreadrise, Deathless Marrow and Min'loth the Serpent
+    (reported on Discord by OMGmacros).
+  - A "Hide quests" box above Boss icons (bottom left). Ticked, the quests'
+    ! and ? are taken off the map, on every dungeon and for all characters.
+    A quest's Show on Map still shows that quest's spots.
+- Journal text with ElvUI (or any addon that restyles the game's fonts): the
+  journal now uses its own copies of the game's fonts, so the quest text on
+  the parchment stays as designed. ElvUI's "Replace Blizzard Fonts" used to
+  change the journal's quest font too and, with an outline, made the black
+  quest text unreadable. Everything else in the game keeps the ElvUI fonts.
+- Ultra-wide monitors: no more boss portrait stuck in the top right corner
+  of the screen.
+- Options window: pages with more lines than fit scroll (mouse wheel, or the
+  game's thin scroll bar), so no line runs past the box's bottom edge. Open
+  Journal Bind is the first line of General. No Close button at the bottom
+  any more; the X in the top corner (or Esc) closes it.
+- Dungeon Tracker, Mobs XP: no longer counts the group / rested bonus twice.
+  The game's XP line already includes it, so kills in a group showed about
+  20-30% too much (reported on Discord by McBurney).
+- Dungeon Tracker reset button: the game's "has been reset" line still
+  closes the run after it.
+- World map: the dungeon map's Level 1 / Level 2 buttons stay in the
+  top-left corner but step aside when Blizzard's map pin button or another
+  addon's button is already there (reported on Discord by Bromidious).
+- Character Logs with no runs yet: the "No runs yet" text sits in the right
+  side, no longer over the divider line.
+- Quest chain steps: no more empty band between a step's title and its
+  Objective.
+- Quest fixes:
+  - Blackrock Depths, Attunement to the Core: not in WoW Forever for now. It
+    is greyed out in the list ("Not available as of now" on hover) and no
+    longer counts towards the dungeon's quests or the quest tracker.
+  - Shaper's Terrace: Digestible Research has its real quest ID (95790), its
+    reward item IDs and 17,650 XP; Crystalline Elements gives 17,650 XP.
+  - Blackmaw Hold: Blackmaw Reclamation (from level 47, 13,200 XP, choice of
+    four rings), Blackmaw Pouches (13,200 XP), The Twin Bears (from level
+    47, choice of two cloaks), Feeding Time! (from level 45, Regurgitated
+    Seed Pod), A Lost Memento (quest level 55).
+  - Ruins of Lordaeron: Unending Torment from level 15 (Blizzard hotfix).
+  - The Deadmines: an empty entry removed from the quest list.
+  - Uldaman, The Hidden Chamber (Alliance): the third reward choice,
+    Guardian Staff (new in Forever), is listed with Dwarven Charge and
+    Explorer's League Lodestar.
+  - Razorfen Kraul, The Crone of the Kraul (Alliance): the Quilboar Blaster
+    added, the reward you get on top of the one you choose (reported on
+    Discord by Lazylion2).
+  - Maraudon, Rot and Regret: Mithera's Forlorn Gardens added to its chain,
+    between Meeting the Magister and Word of the Woods, so the chain has all
+    seven quests; Razorfen Downs' Agamaggan's Blood chain too (reported on
+    Discord by h0p3). Meeting the Magister no longer shows the In Dungeon
+    icon (Shen'dralas is in Desolace, not in the dungeon).
+  - Gnomeregan, The Only Cure is More Green Glow: shows the Heavy Leaden
+    Collection Phial (use it on an alive Irradiated Slime or Corrosive
+    Lurker). Gnogaine: the Full Leaden Collection Phial says where to fill
+    it (an Irradiated Invader just outside the instance), with a map pin.
+    Data Rescue guide: a punch card step gets its green tick as soon as its
+    card is in your bags (or a later card is, or the quest is done).
+  - Alcaz Prison quest list: the In Dungeon icon sits beside the chain icon,
+    no longer over the quest's title.
+- Loot:
+  - Blackmaw Hold: Spike Crested Bracers added to Bonesnout the Unbroken;
+    eight items that had no item ID now have theirs (so they link and show
+    the game's own tooltip).
+  - Krol'dok Stronghold: Kroog, a rare, with his loot (Black Horn Necklace,
+    Kroog's Backscratcher).
+  - Uldaman: Sandstorm Staff added to the Ancient Stone Keeper; Axe of
+    Inevitable Ruin added to Ironaya (with the Obsidian Sentinel's Axe of
+    Lingering Dread it makes the Pendulum of Doom).
 
 CHANGES IN 2.0.3
 - Dungeon Tracker on solo runs and grey mobs: the tracker now starts with

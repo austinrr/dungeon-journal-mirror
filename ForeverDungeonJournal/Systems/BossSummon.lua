@@ -119,7 +119,7 @@ local button
 -- The quest list's look: QuestFont, the font of a quest's name in the list
 -- (and of its "Available from Level" line), in the dungeon theme's colours.
 local function QuestListStyle(fs, color)
-    local font = _G.QuestFont or _G.GameFontNormal
+    local font = _G.ForeverDJ_QuestFont or _G.ForeverDJ_GameFontNormal
     if font and fs.SetFontObject then fs:SetFontObject(font) end
     if type(color) == "table" and color[1] then
         fs:SetTextColor(color[1], color[2], color[3], color[4] or 1)
