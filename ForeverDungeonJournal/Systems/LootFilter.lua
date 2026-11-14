@@ -582,11 +582,75 @@ FDJ.UNIQUE_RECIPES = FDJ.UNIQUE_RECIPES or {
     [252893] = true, -- Pattern: Timbermaw Tunic (Blackmaw Hold)
     [251453] = true, -- Plans: Breastplate of Salvation (Blackmaw Hold)
     [274049] = true, -- Schematic: 9-60 Battery Pack (Gnomeregan, 2.0.35)
+    [251451] = true, -- Plans: Stalwart Helm (Lower Blackrock Spire, Bloodaxe Veteran; 2.0.7)
+    [252940] = true, -- Pattern: Pristine Scorpid Leggings (Scholomance, Spectral Researcher; 2.0.7)
 }
 function FDJ.IsUniqueRecipe(itemID)
     itemID = tonumber(itemID)
     if not itemID then return false end
     return itemID < 250000 or FDJ.UNIQUE_RECIPES[itemID] == true
+end
+
+-- crowdedrecipes (2.0.7): a Recipes & Patterns page holding many of the
+-- Forever recipe sets that drop all over (10 or more: the gloves, boots,
+-- cords, helms...) draws no portraits: the same faces on every row, up to
+-- 180 of them on one page, and each drawn live. Like Dire Maul: North, it
+-- goes to two columns when long, with the bosses on the row and in its
+-- tooltip ("Drops from"). Epic recipes keep their bosses' portraits.
+-- Pages of a dungeon's own recipes (Blackrock Depths...) are unchanged.
+FDJ.CROWDED_RECIPE_PAGE = 10
+function FDJ.IsCrowdedRecipePage(boss)
+    if type(boss) ~= "table" or not boss.recipeTab or type(boss.loot) ~= "table" then return false end
+    if boss.fdjCrowded == nil then
+        local shared = 0
+        for _, item in ipairs(boss.loot) do
+            if type(item) == "table" and not FDJ.IsUniqueRecipe(item[1]) then shared = shared + 1 end
+        end
+        boss.fdjCrowded = shared >= FDJ.CROWDED_RECIPE_PAGE
+    end
+    return boss.fdjCrowded
+end
+function FDJ.RecipeRowKeepsPortrait(item)
+    return type(item) == "table" and (tonumber(item[4]) or 0) >= 4
+end
+
+-- recipeprof (2.0.7): the professions a Recipes & Patterns page holds, for
+-- the row of profession icons on its "N items" line (the game's own
+-- profession icons; a click shows that profession's recipes only). Only
+-- the professions the page has recipes of, and only when it has two or more.
+FDJ.RECIPE_PROF_ORDER = { "Alchemy", "Blacksmithing", "Enchanting", "Engineering", "Leatherworking", "Tailoring", "Cooking", "First Aid", "Fishing", "Mining", "Herbalism", "Skinning" }
+FDJ.RECIPE_PROF_ICONS = {
+    ["Alchemy"] = "Interface\\Icons\\Trade_Alchemy",
+    ["Blacksmithing"] = "Interface\\Icons\\Trade_BlackSmithing",
+    ["Enchanting"] = "Interface\\Icons\\Trade_Engraving",
+    ["Engineering"] = "Interface\\Icons\\Trade_Engineering",
+    ["Leatherworking"] = "Interface\\Icons\\Trade_LeatherWorking",
+    ["Tailoring"] = "Interface\\Icons\\Trade_Tailoring",
+    ["Cooking"] = "Interface\\Icons\\INV_Misc_Food_15",
+    ["First Aid"] = "Interface\\Icons\\Spell_Holy_SealOfSacrifice",
+    ["Fishing"] = "Interface\\Icons\\Trade_Fishing",
+    ["Mining"] = "Interface\\Icons\\Trade_Mining",
+    ["Herbalism"] = "Interface\\Icons\\Trade_Herbalism",
+    ["Skinning"] = "Interface\\Icons\\INV_Misc_Pelt_Wolf_01",
+}
+function FDJ.RecipeProfession(item)
+    local kind = type(item) == "table" and item[3]
+    return type(kind) == "string" and kind:match("^Recipe,%s*(.+)$") or nil
+end
+function FDJ.RecipeTabProfessions(tab)
+    if type(tab) ~= "table" or not tab.recipeTab or type(tab.loot) ~= "table" then return nil end
+    if not tab.fdjProfs then
+        local has, list = {}, {}
+        for _, item in ipairs(tab.loot) do
+            local prof = FDJ.RecipeProfession(item)
+            if prof and FDJ.RECIPE_PROF_ICONS[prof] then has[prof] = true end
+        end
+        for _, prof in ipairs(FDJ.RECIPE_PROF_ORDER) do
+            if has[prof] then list[#list + 1] = prof end
+        end
+        tab.fdjProfs = { has = has, list = list }
+    end
+    return tab.fdjProfs
 end
 
 FDJ.RECIPE_TAB_NAME = "Recipes & Patterns"
@@ -2054,6 +2118,26 @@ FDJ.mobLooks = FDJ.mobLooks or { pending = {}, waiting = {}, models = {} }
 -- loadpause (2.0.7): a few looked up at a time, not all of them at once, and
 -- none during a loading screen (FDJ.LookupsPaused, Core/Journal.lua).
 local LOOKS_AT_ONCE = 4
+-- mobmiss (2.0.7): mobs whose look the game didn't give after every try
+-- are remembered (ForeverDungeonJournalDB.displayMiss, NPC ID -> when), so
+-- the lookups after logging in skip them for a week instead of trying them
+-- again at every login (hidden models for minutes after each login and
+-- zoning). Opening a page that shows one still tries it, and a mob found
+-- later is taken off the list.
+local MISS_DAYS = 7
+local function MissStore()
+    if type(ForeverDungeonJournalDB) ~= "table" then return nil end
+    if type(ForeverDungeonJournalDB.displayMiss) ~= "table" then ForeverDungeonJournalDB.displayMiss = {} end
+    return ForeverDungeonJournalDB.displayMiss
+end
+local function NowSeconds()
+    return (GetServerTime and GetServerTime()) or (time and time()) or 0
+end
+function FDJ.MobRecentlyMissed(npcID)
+    local store = MissStore()
+    local at = store and tonumber(store[npcID])
+    return at ~= nil and NowSeconds() - at < MISS_DAYS * 86400
+end
 function FDJ.MobDisplay(npcID)
     local saved = type(ForeverDungeonJournalDB) == "table" and type(ForeverDungeonJournalDB.displayIDs) == "table"
         and ForeverDungeonJournalDB.displayIDs[npcID]
@@ -2082,6 +2166,15 @@ function FDJ.ResolveMobDisplays(npcIDs)
         looks.driver:SetScript("OnUpdate", function(self)
             if FDJ.portraitZoning then return end
             if FDJ.LookupsPaused and FDJ.LookupsPaused() then return end -- loadpause (2.0.7)
+            -- journalopen (2.0.7): only while the journal window is open (the
+            -- page that asked is on screen); closed, the hidden models are put
+            -- away and the mobs not found yet are asked again when it opens.
+            local journal = _G.ForeverDungeonJournalFrame
+            if not (journal and journal.IsShown and journal:IsShown()) then
+                if not looks.closedPause then looks.closedPause = true if FDJ.PauseMobLooks then FDJ.PauseMobLooks() end end
+                return
+            end
+            looks.closedPause = nil
             local t = (GetTime and GetTime()) or 0
             local busy, asking = false, 0
             for _, job in pairs(looks.pending) do
@@ -2114,6 +2207,8 @@ function FDJ.ResolveMobDisplays(npcIDs)
                         if job.tries > 12 then
                             looks.pending[npcID] = nil
                             model:Hide()
+                            local store = MissStore() -- mobmiss (2.0.7)
+                            if store then store[npcID] = NowSeconds() end
                         else
                             model:Show()
                             if model.ClearModel then pcall(model.ClearModel, model) end
@@ -2127,6 +2222,8 @@ function FDJ.ResolveMobDisplays(npcIDs)
                                 ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
                                 ForeverDungeonJournalDB.displayIDs[npcID] = display
                             end
+                            local store = MissStore() -- mobmiss (2.0.7): found after all
+                            if store then store[npcID] = nil end
                             if model.ClearModel then pcall(model.ClearModel, model) end
                             model:Hide()
                             for button in pairs(looks.waiting) do
@@ -2160,19 +2257,17 @@ function FDJ.WarmMobDisplays()
     if FDJ.mobLooks.warmed then return end
     FDJ.mobLooks.warmed = true
     local ids = {}
-    for _, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do ids[#ids + 1] = npcID end
+    for _, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do
+        -- mobmiss (2.0.7): not the ones the game didn't give in the last week
+        if not FDJ.MobRecentlyMissed(npcID) then ids[#ids + 1] = npcID end
+    end
     FDJ.ResolveMobDisplays(ids)
 end
-do
-    local warm = CreateFrame and CreateFrame("Frame")
-    if warm then
-        warm:RegisterEvent("PLAYER_LOGIN")
-        warm:SetScript("OnEvent", function(self)
-            self:UnregisterAllEvents()
-            if C_Timer and C_Timer.After then C_Timer.After(4, FDJ.WarmMobDisplays) else FDJ.WarmMobDisplays() end
-        end)
-    end
-end
+-- noinstance (2.0.7): no longer started by itself after logging in. With the
+-- 38 mobs 2.0.6 added (most never met by most characters) it kept hidden
+-- models busy for minutes after each login, and a loading screen in or out
+-- of a dungeon could then flicker for ever. A mob is now looked up when a
+-- page shows it (FDJ.SetRowMobs), outside dungeons only.
 
 function FDJ.SetRowMobs(row, sourceText)
     row.fdjMobButtons = row.fdjMobButtons or {}

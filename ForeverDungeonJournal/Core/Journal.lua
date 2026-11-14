@@ -3055,6 +3055,14 @@ end
 FDJ.LOOKUP_RESUME_DELAY = 5
 FDJ.LookupsPaused = function()
     if FDJ.portraitZoning then return true end
+    -- noinstance (2.0.7): never inside a dungeon. 2.0.6 players got a loading
+    -- screen flickering for ever going in or out of Wailing Caverns (Discord,
+    -- 14 Nov 2026) while these hidden model lookups were running; they wait
+    -- until you are back outside.
+    if type(IsInInstance) == "function" then
+        local ok, inside = pcall(IsInInstance)
+        if ok and inside then return true end
+    end
     local now = GetTime and GetTime() or 0
     return now < (FDJ.lookupsResumeAt or 0)
 end
@@ -3261,7 +3269,8 @@ FDJ.PrewarmBossPortraits = function()
     end
     -- trashnpc: the trash mobs known by NPC ID are looked up all together
     -- (mobfast, 2.0.31; Systems/LootFilter.lua), not one by one here.
-    if FDJ.WarmMobDisplays then pcall(FDJ.WarmMobDisplays) end
+    -- noinstance (2.0.7): the trash mobs known by NPC ID are no longer all
+    -- looked up here; each is looked up when a page shows it.
     for mobName, mobNpcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do -- trashnpc: a saved look warmed
         local saved = FDJ.MobDisplay and FDJ.MobDisplay(mobNpcID)
         if saved then work[#work + 1] = { nil, nil, saved } end
@@ -9014,6 +9023,10 @@ RefreshBossList = function()
             local isChild = type(dungeon.bosses[i]) == "table" and dungeon.bosses[i].childOf ~= nil
             -- altarbosses (2.0.25): a folded group's children take no room.
             local folded = isChild and not FDJ.BossGroupOpen(selectedDungeon, dungeon.bosses[i].childOf)
+            -- lbrsrecipes (2.0.7): an entry that only feeds the Recipes & Patterns
+            -- page (Lower Blackrock Spire's trash recipes) takes no row: its
+            -- own page would be empty, the recipes are listed there.
+            if type(dungeon.bosses[i]) == "table" and dungeon.bosses[i].listHidden then folded = true end
             local rowHeight = isChild and FDJ.BOSS_CHILD_HEIGHT or 55
             button:ClearAllPoints()
             button:SetPoint("TOPLEFT", frame.bossContent, "TOPLEFT", isChild and FDJ.BOSS_CHILD_INDENT or 0, -listY)
@@ -9344,6 +9357,25 @@ RefreshLoot = function()
         boss = FDJ.FilterBossLootForPage(boss)
         FDJ.UpdateLootFilterNote(frame)
     end
+    -- recipeprof (2.0.7): a Recipes & Patterns page with a profession icon
+    -- clicked shows that profession's recipes only. The choice is dropped
+    -- on another dungeon's page.
+    for _, b in ipairs(frame.recipeProfButtons or {}) do b:Hide() end
+    if frame.recipeProfBox then frame.recipeProfBox:Hide() end
+    local recipeTabRaw = (type(boss) == "table" and boss.recipeTab) and boss or nil
+    local recipeProfs = recipeTabRaw and FDJ.RecipeTabProfessions and FDJ.RecipeTabProfessions(recipeTabRaw) or nil
+    if recipeProfs and #recipeProfs.list < 2 then recipeProfs = nil end
+    if recipeProfs then
+        if FDJ.recipeProfDungeon ~= selectedDungeon then FDJ.recipeProf, FDJ.recipeProfDungeon = nil, selectedDungeon end
+        if FDJ.recipeProf and not recipeProfs.has[FDJ.recipeProf] then FDJ.recipeProf = nil end
+        if FDJ.recipeProf then
+            local keep = {}
+            for _, item in ipairs(boss.loot) do
+                if FDJ.RecipeProfession(item) == FDJ.recipeProf then keep[#keep + 1] = item end
+            end
+            boss = setmetatable({ loot = keep }, { __index = boss })
+        end
+    end
 
     local isStockade = FDJ.ShowsItemsTBD(selectedDungeon)
     -- "Full Items Data TBD" stays under the dungeon title; the boss loot page
@@ -9428,6 +9460,10 @@ RefreshLoot = function()
     local loot = {}
     for _, item in ipairs(boss.loot) do loot[#loot + 1] = item end
     local ownCount = #loot
+    -- recipeprof (2.0.7): with a profession icon clicked, the page is laid out
+    -- for all its recipes (columns, portraits, Compact view, scroll bar, the
+    -- icons' place): only the rows of the other professions go, nothing moves.
+    local layoutLoot = (recipeProfs and FDJ.recipeProf and recipeTabRaw and recipeTabRaw.loot) or nil
     local sharedList = FDJ.GetBossSharedLoot and FDJ.GetBossSharedLoot(selectedDungeon, boss) or nil
     local sharedCount = sharedList and #sharedList or 0
     if sharedCount > 0 and FDJ.lootSharedExpanded then
@@ -9468,9 +9504,14 @@ RefreshLoot = function()
     -- columns (items read left, right, next line) so far less scrolling is
     -- needed. Pages whose rows carry trash-mob portraits stay one column,
     -- because the portraits need the full row width.
+    -- crowdedrecipes (2.0.7): a crowded Recipes & Patterns page (Systems/
+    -- LootFilter.lua) is laid out like a page without portraits (two columns
+    -- when long); only its epic recipes get their bosses' faces.
+    local crowdedRecipes = FDJ.IsCrowdedRecipePage and FDJ.IsCrowdedRecipePage(recipeTabRaw or boss) or false
     local function HasMobPortraits()
+        if crowdedRecipes then return false end
         if not boss.trash or not FDJ.TRASH_MOB_DISPLAY_IDS then return false end
-        for _, item in ipairs(loot) do
+        for _, item in ipairs(layoutLoot or loot) do
             local source = item[5]
             if type(source) == "string" and source ~= "" then
                 local all, any = true, false
@@ -9500,7 +9541,10 @@ RefreshLoot = function()
     do
         local vp = frame.lootScroll:GetHeight() or 0
         local many = false
-        if vp > 0 and #loot > 1 then
+        if layoutLoot then
+            local n = #layoutLoot
+            many = vp > 0 and n > 1 and (mobPortraits and n or math.ceil(n / 2)) * ROW_STEP > vp + 4
+        elseif vp > 0 and #loot > 1 then
             local h = (#sections - 1) * LINE_STEP
             for _, sec in ipairs(sections) do
                 local n = math.max(0, sec.last - sec.first + 1)
@@ -9512,9 +9556,10 @@ RefreshLoot = function()
         FDJ.lootCompact = many and FDJ.IsLootCompactPage() or false
         if FDJ.lootCompact then ROW_STEP = 31 end
     end
-    local singleHeight = #loot * ROW_STEP + (#sections - 1) * LINE_STEP
+    local layoutCount = layoutLoot and #layoutLoot or #loot
+    local singleHeight = layoutCount * ROW_STEP + (#sections - 1) * LINE_STEP
     local viewport = frame.lootScroll:GetHeight() or 0
-    local twoColumns = viewport > 0 and singleHeight > viewport + 4 and #loot > 1
+    local twoColumns = viewport > 0 and singleHeight > viewport + 4 and layoutCount > 1
         and not (mobPortraits and not FDJ.lootCompact)
     local availableWidth = math.max(SINGLE_WIDTH, math.floor(frame.lootScroll:GetWidth() or SINGLE_WIDTH))
     local rowWidth = twoColumns and math.floor((availableWidth - COL_GAP) / 2) or SINGLE_WIDTH
@@ -9629,7 +9674,11 @@ RefreshLoot = function()
             end
             -- Named trash mobs are shown as hoverable portraits instead of text
             -- (not in the compact view: no room; the tooltip still names them).
-            if FDJ.SetRowMobs and FDJ.SetRowMobs(row, (showTrashSource and not FDJ.lootCompact) and trashSource or nil) then
+            local rowFaces = showTrashSource and not FDJ.lootCompact
+            if rowFaces and crowdedRecipes and not (FDJ.RecipeRowKeepsPortrait and FDJ.RecipeRowKeepsPortrait(item)) then
+                rowFaces = false -- crowdedrecipes (2.0.7): the sources stay as text
+            end
+            if FDJ.SetRowMobs and FDJ.SetRowMobs(row, rowFaces and trashSource or nil) then
                 row.slot:SetText(ItemSlot(item[3]))
             end
 
@@ -9837,7 +9886,7 @@ RefreshLoot = function()
         frame.lootCompactButton:ClearAllPoints()
         frame.lootCompactButton:SetPoint("TOPRIGHT", frame.lootTitle:GetParent(), "TOPRIGHT", -30, lootTBD and -120 or -98)
     end
-    if needsScroll or FDJ.lootManyItems then
+    if needsScroll or FDJ.lootManyItems or recipeProfs then -- recipeprof: the line carries the icons
         frame.lootTitle:SetText(tostring(#boss.loot) .. " " .. L("ITEMS"))
         frame.lootTitle:ClearAllPoints()
         frame.lootTitle:SetPoint("TOPLEFT", 14, lootTBD and -124 or -102)
@@ -9851,7 +9900,101 @@ RefreshLoot = function()
         frame.lootTitle:SetPoint("TOPLEFT", 14, -102)
         frame.lootTitle:Hide()
     end
-    UpdateScrollBarVisibility(frame.lootScroll, contentHeight)
+    -- recipeprof (2.0.7): the profession icons, small, in the middle of the
+    -- line between "N items" and the Compact view button. A soft golden
+    -- glow like the journal's other round buttons; the one clicked gets the
+    -- brighter glow with the gold ring, like the Forever-only emblem.
+    if recipeProfs then
+        local parent = frame.lootTitle:GetParent()
+        frame.recipeProfButtons = frame.recipeProfButtons or {}
+        local SIZE, GAP, PAD = 18, 8, 6
+        local count = #recipeProfs.list
+        local total = count * SIZE + (count - 1) * GAP
+        -- the place is worked out for the full count ("9 items"), so the
+        -- icons stay put while one is clicked ("1 items")
+        local shownText = frame.lootTitle:GetText()
+        frame.lootTitle:SetText(tostring(#recipeTabRaw.loot) .. " " .. L("ITEMS"))
+        local left = 14 + (frame.lootTitle:GetStringWidth() or 60)
+        frame.lootTitle:SetText(shownText)
+        local right = (parent:GetWidth() or 480) - 30
+        if frame.lootCompactButton and frame.lootCompactButton:IsShown() then right = right - 104 end
+        local startX = math.floor((left + right) / 2 - total / 2 + 0.5)
+        if startX < left + 8 + PAD then startX = left + 8 + PAD end
+        local top = lootTBD and -121 or -99
+        -- a small rounded dark box behind the icons
+        local box = frame.recipeProfBox
+        if not box then
+            box = CreateFrame("Frame", nil, parent, "BackdropTemplate")
+            frame.recipeProfBox = box
+            SetBackdrop(box, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 9, 2)
+            box:SetBackdropColor(0.035, 0.03, 0.025, 0.92)
+            box:SetBackdropBorderColor(0.30, 0.23, 0.14, 1)
+            box:SetFrameLevel((parent:GetFrameLevel() or 1) + 4)
+        end
+        box:ClearAllPoints()
+        box:SetPoint("TOPLEFT", parent, "TOPLEFT", startX - PAD, top + 5)
+        box:SetSize(total + PAD * 2, SIZE + 10)
+        box:Show()
+        for i, prof in ipairs(recipeProfs.list) do
+            local b = frame.recipeProfButtons[i]
+            if not b then
+                b = CreateFrame("Button", nil, parent)
+                frame.recipeProfButtons[i] = b
+                b:SetSize(SIZE, SIZE)
+                b:SetFrameLevel((parent:GetFrameLevel() or 1) + 5)
+                b.halo = b:CreateTexture(nil, "BACKGROUND", nil, -1)
+                b.halo:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
+                b.halo:SetBlendMode("ADD")
+                b.halo:SetVertexColor(1, 0.82, 0.35)
+                b.halo:SetPoint("CENTER")
+                b.glow = b:CreateTexture(nil, "BACKGROUND")
+                b.glow:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
+                b.glow:SetBlendMode("ADD")
+                b.glow:SetVertexColor(1, 0.82, 0.3, 0.95)
+                b.glow:SetPoint("CENTER")
+                b.icon = b:CreateTexture(nil, "ARTWORK")
+                b.icon:SetAllPoints()
+                b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+                b.hl = b:CreateTexture(nil, "HIGHLIGHT")
+                b.hl:SetAllPoints()
+                b.hl:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+                b.hl:SetBlendMode("ADD")
+                b.hl:SetAlpha(0.35)
+                b:SetScript("OnClick", function(self)
+                    FDJ.recipeProf = (FDJ.recipeProf ~= self.fdjProf) and self.fdjProf or nil
+                    FDJ.recipeProfDungeon = selectedDungeon
+                    PlayJournalOptionSound()
+                    if frame.lootScroll.SetVerticalScroll then frame.lootScroll:SetVerticalScroll(0) end
+                    RefreshLoot()
+                end)
+                b:SetScript("OnEnter", function(self)
+                    if not GameTooltip then return end
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(ItemSlot(self.fdjProf) or self.fdjProf, 1, 0.82, 0)
+                    GameTooltip:Show()
+                end)
+                b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+            end
+            b.fdjProf = prof
+            b.icon:SetTexture(FDJ.RECIPE_PROF_ICONS[prof])
+            b.hl:SetTexture(FDJ.RECIPE_PROF_ICONS[prof])
+            local on = FDJ.recipeProf == prof
+            local halo = math.floor(SIZE * (on and 1.85 or 1.6) + 0.5) -- kept mostly inside the box
+            b.halo:SetSize(halo, halo)
+            b.halo:SetAlpha(on and 1 or 0.75)
+            b.glow:SetSize(math.floor(SIZE * 1.92 + 0.5), math.floor(SIZE * 1.92 + 0.5))
+            b.glow:SetShown(on)
+            b:ClearAllPoints()
+            b:SetPoint("TOPLEFT", parent, "TOPLEFT", startX + (i - 1) * (SIZE + GAP), top)
+            b:Show()
+        end
+    end
+    -- recipeprof: a filtered page keeps the full page's scroll bar
+    local barHeight = contentHeight
+    if layoutLoot then
+        barHeight = math.max(contentHeight, (twoColumns and math.ceil(layoutCount / 2) or layoutCount) * ROW_STEP)
+    end
+    UpdateScrollBarVisibility(frame.lootScroll, barHeight)
 
     -- Item names/slot text can arrive asynchronously after GET_ITEM_INFO_RECEIVED.
     -- Re-evaluate fonts after the row text is populated so CJK strings never
@@ -13349,7 +13492,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.6"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.7"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

@@ -765,6 +765,21 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Murk Worm"] = 7549, -- npc 5226
     -- (Atal'ai Witch Doctor: by NPC ID below, 2.0.29; Wowhead's display 56741
     -- drew nothing in the game.)
+    -- brdrecipes / lbrsrecipes (2.0.7): the mobs that drop Blackrock Depths' and
+    -- Lower Blackrock Spire's trash recipes (display IDs: octowow.st Classic
+    -- database, https://octowow.st/db/?npc=<id>)
+    ["Weapon Technician"] = 8894, -- npc 8920
+    ["Doomforge Craftsman"] = 8803, -- npc 8897
+    ["Doomforge Arcanasmith"] = 8812, -- npc 8900
+    ["Ribbly's Crony"] = 9233, -- npc 10043
+    ["Hammered Patron"] = 8681, -- npc 9554
+    ["Bloodaxe Veteran"] = 9633, -- npc 9583
+    ["Firebrand Pyromancer"] = 9656, -- npc 9264
+    ["Firebrand Legionnaire"] = 9660, -- npc 9260
+    ["Spirestone Warlord"] = 11582, -- npc 9216
+    ["Spirestone Mystic"] = 11579, -- npc 9198
+    -- ubrsrecipes (2.0.7): Upper Blackrock Spire
+    ["Blackhand Elite"] = 9734, -- npc 10317
 }
 
 -- trashnpc (2.0.22): trash mobs whose look is not known yet, by NPC ID

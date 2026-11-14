@@ -2416,13 +2416,19 @@ do
                 requires = 49,
                 pickup = "Alaana Stormwalker, Skywatcher Plateau, Mulgore (33.4, 22.5)",
                 startMap = { mapID = 1412, x = 0.334, y = 0.225, label = "Alaana Stormwalker — Skywatcher Plateau", targetName = "Alaana Stormwalker", detail = "Where the skycutter lands, northwest of Thunder Bluff" },
-                objective = "Recover a Fragment of the Firelands from Blackrock Depths for Alaana Stormwalker in Mulgore.",
+                objective = "Recover a Fragment of the Firelands from Magmus in Blackrock Depths for Alaana Stormwalker in Mulgore.",
                 turnin = "Alaana Stormwalker, Skywatcher Plateau, Mulgore (33.4, 22.5)",
                 liveXPFallback = 14800,
                 rewardSummary = "85s  •  Cenarion Circle +300",
                 rewards = "14,800 XP • 85s • Cenarion Circle +300",
                 rewardItems = {},
-                note = "Get the fragment from the Firelands elementals inside Blackrock Depths. Which one drops it isn't confirmed yet; please report it on Discord. Seen picked up at level 49.",
+                -- fragmentmagmus (2.0.7): Wowhead Forever item 277129, "Dropped by:
+                -- Magmus" (Vakos on Discord, M, 14 Nov 2026). Wowhead's 20.48% is left out:
+                -- for a quest item it should be every kill while on the quest (M).
+                requiredItems = {
+                    {277129, "Fragment of the Firelands", 1, "Drops from Magmus in Blackrock Depths"},
+                },
+                note = "The Fragment of the Firelands drops from Magmus, the guardian at the door to the Imperial Seat in Blackrock Depths. Seen picked up at level 49.",
             })
         end
         if not have[9015] then

@@ -2912,6 +2912,14 @@ do
             return
         end
         b.dungeon = name
+        -- buttonsrow (2.0.7): right of Route when Route shows, else first.
+        b:ClearAllPoints()
+        local route = journal.questRouteButton
+        if route and route:IsShown() then
+            b:SetPoint("LEFT", route, "RIGHT", 4, 0)
+        else
+            b:SetPoint("TOPLEFT", journal.questLeftPanel or b:GetParent(), "TOPLEFT", 10, -30)
+        end
         local on = IsTracked(name)
         b:SetText(T(on and "TRACKING" or "TRACK"))
         b.text = b:GetFontString() or b.text
@@ -2997,7 +3005,9 @@ do
         local b = CreateFrame("Button", nil, questLeft, "UIPanelButtonTemplate")
         FDJ.OwnFonts(b) -- ownfonts (2.0.8)
         journal.questTrackButton = b
-        b:SetSize(80, 26)
+        -- buttonsrow (2.0.7): Route and Track sit in a row under the "Quests"
+        -- title (Route first), not beside it: with Route they ran over it.
+        b:SetSize(80, 22)
         b:SetText(T("TRACK"))
         -- Same font in every state, like the Map / Bosses / Quests buttons.
         if b.SetNormalFontObject then b:SetNormalFontObject("ForeverDJ_GameFontNormal") end
@@ -3009,11 +3019,7 @@ do
         b.check:SetSize(14, 14)
         b.check:SetTexture(ICON_DONE)
         b.check:Hide()
-        if journal.allianceQuestButton then
-            b:SetPoint("RIGHT", journal.allianceQuestButton, "LEFT", -6, 0)
-        else
-            b:SetPoint("TOPRIGHT", questLeft, "TOPRIGHT", -122, -13)
-        end
+        b:SetPoint("TOPLEFT", questLeft, "TOPLEFT", 10, -30)
         b:SetScript("OnClick", function(self)
             if self.dungeon then FDJ.ToggleQuestTracking(self.dungeon) end
         end)

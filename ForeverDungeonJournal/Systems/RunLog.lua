@@ -172,8 +172,10 @@ local function Bosses(dungeon)
     for _, b in ipairs((d and d.bosses) or {}) do
         -- altarbosses (2.0.24): a journal group ("Altar Bosses") and its
         -- children are not run bosses; their kills stay trash, as before.
+        -- felsteedoff (2.0.7): runLogHidden (the Shadowfang Keep horses):
+        -- no run boss either; their kills are trash.
         if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
-            and not b.childOf and not b.children then
+            and not b.childOf and not b.children and not b.runLogHidden then
             if b.npcID then c.byNpc[b.npcID] = b end
             local names = { b.name }
             if FDJ.LocalizeBossName then
@@ -195,7 +197,7 @@ local function Bosses(dungeon)
     -- from the encounter event and, coming first, took Rend's kills).
     for _, b in ipairs((d and d.bosses) or {}) do
         if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
-            and not b.childOf and not b.children and b.npcID then
+            and not b.childOf and not b.children and not b.runLogHidden and b.npcID then
             local acc = Account()
             local learned = {}
             if type(acc.runLogNames[b.npcID]) == "string" then learned[#learned + 1] = acc.runLogNames[b.npcID] end
@@ -1665,10 +1667,114 @@ local function RollOf(id, name)
     return t and type(name) == "string" and t[name:lower()] or nil
 end
 
+-- lootkill (2.0.7): a boss's own loot is proof it died. Inside a dungeon
+-- Forever hides which mob died; a boss with no "fight over" event, or a
+-- character it gives no XP, killed it unseen (the Ring of Law stayed a
+-- skull while the group rolled on Ok'thor's Ban'thok Sash). An item that
+-- only one boss of the dungeon drops (not its trash, not the shared loot,
+-- no recipe: those come from many) counts that boss as killed, the moment
+-- it is rolled on, looted or seen in a loot window.
+local lootOwners = {}   -- dungeon -> itemID -> boss entry, or false (several)
+local function LootOwner(dungeon, itemID)
+    local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
+    if not d or not itemID then return nil end
+    local index = lootOwners[dungeon]
+    if not index then
+        index = {}
+        local banned = {}
+        for _, b in ipairs(d.bosses or {}) do
+            if type(b) == "table" then
+                if b.trash and not b.recipeTab then
+                    for _, list in ipairs({ b.loot or {}, b.probableLoot or {} }) do
+                        for _, item in ipairs(list) do
+                            if type(item) == "table" and tonumber(item[1]) then banned[tonumber(item[1])] = true end
+                        end
+                    end
+                elseif not b.trash and not b.recipeTab and type(b.name) == "string" then
+                    for _, item in ipairs((FDJ.GetBossSharedLoot and FDJ.GetBossSharedLoot(dungeon, b)) or {}) do
+                        if type(item) == "table" and tonumber(item[1]) then banned[tonumber(item[1])] = true end
+                    end
+                    for _, list in ipairs({ b.loot or {}, b.probableLoot or {} }) do
+                        for _, item in ipairs(list) do
+                            local id = type(item) == "table" and tonumber(item[1])
+                            local kind = type(item) == "table" and item[3]
+                            if id and id > 0 then
+                                if type(kind) == "string" and kind:find("^Recipe") then
+                                    banned[id] = true
+                                elseif index[id] == nil then
+                                    index[id] = b
+                                elseif index[id] ~= b then
+                                    index[id] = false
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        for id in pairs(banned) do index[id] = false end
+        lootOwners[dungeon] = index
+    end
+    local b = index[itemID]
+    -- Journal groups and their trolls, and bosses that are none of a run's
+    -- (runLogHidden), are left as they are.
+    if not b or b.childOf or b.children or b.runLogHidden then return nil end
+    return b
+end
+
+local function KillFromLoot(link)
+    local run = current
+    local id = ItemIDOf(link)
+    if not inside or not run or run.closed or not id then return nil end
+    local dungeon = run.dungeon or insideDungeon
+    local boss = LootOwner(dungeon, id)
+    if not boss then return nil end
+    RunSets(run)
+    -- this visit (a boss killed before a reset doesn't count, as in
+    -- FDJ.RunLogKilledThisVisit)
+    local last = type(run.exits) == "table" and run.exits[#run.exits] or nil
+    local since = (last and last.t) or 0
+    local group = type(boss.fightGroup) == "string" and boss.fightGroup or nil
+    for _, k in ipairs(run.kills) do
+        if (k.t or 0) >= since then
+            if k.b == boss.name then return nil end -- already counted
+            -- ringoflaw: the fight's kill (or a guess at its challenger) is
+            -- this challenger's
+            if group and k.b and (k.b == group or FightGroup(dungeon, k.b) == group) then
+                k.b, k.n = boss.name, boss.npcID or k.n
+                Changed()
+                return k
+            end
+        end
+    end
+    -- Its death was counted unnamed a moment ago: that kill is the boss's.
+    local now = Now()
+    local kill
+    for i = #run.kills, 1, -1 do
+        local k = run.kills[i]
+        if now - (k.t or 0) > 180 then break end
+        if not k.b and not k.m and not k.wb and not k.p then kill = k break end
+    end
+    if kill then
+        kill.b, kill.n = boss.name, kill.n or boss.npcID
+    else
+        kill = { t = now, b = boss.name, n = boss.npcID }
+        table.insert(run.kills, kill)
+    end
+    kill.lt = 1
+    kill.r = boss.rare and 1 or nil
+    if not kill.r and IsFinal(dungeon, kill.n, boss.name, boss) then kill.f = 1 end
+    SetKillTimes(run, kill)
+    Changed()
+    return kill
+end
+FDJ.RunLogKillFromLoot = function(link) return KillFromLoot(link) end
+
 local function AddBossLoot(link, sourceNpc, winner, fromRoll)
     local run = current
     local id = ItemIDOf(link)
     if not run or not id then return end
+    if not sourceNpc then KillFromLoot(link) end -- lootkill (2.0.7)
     -- Already listed under a boss (the roll came first): add who won it.
     for i = #run.kills, 1, -1 do
         for _, e in ipairs(run.kills[i].loot or {}) do
@@ -1729,7 +1835,9 @@ local function OnLootWindow()
         if type(link) == "string" and GetLootSourceInfo then
             local okS, guid = pcall(GetLootSourceInfo, slot)
             local npc = ParseGUID(okS and guid or nil)
-            if npc then AddBossLoot(link, npc) end
+            if npc then AddBossLoot(link, npc) else KillFromLoot(link) end -- lootkill (2.0.7)
+        elseif type(link) == "string" then
+            KillFromLoot(link)
         end
     end
 end

@@ -649,7 +649,11 @@ local function BossList(run)
     for _, b in ipairs((d and d.bosses) or {}) do
         -- altarbosses (2.0.24): a journal group and its children are not
         -- listed among a run's bosses (their kills are trash, as before).
-        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
+        if type(b) == "table" and type(b.name) == "string" and b.runLogHidden then
+            -- felsteedoff (2.0.7): not one of a run's bosses (the Shadowfang
+            -- Keep horses); an older run's kill of it isn't listed either.
+            shown[b.name] = true
+        elseif type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
             and not b.childOf and not b.children then
             shown[b.name] = true
             if type(b.fightGroup) == "string" then

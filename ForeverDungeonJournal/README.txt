@@ -1,4 +1,154 @@
-DungeonJournal 2.0.6
+DungeonJournal 2.0.7
+
+CHANGES IN 2.0.7 (the release after 2.0.6)
+- Blackrock Depths, Fragment of the Firelands (Horde): the fragment drops
+  from Magmus. The quest says so, lists the fragment
+  as the item it needs, and Magmus' loot lists it; the old "which one
+  drops it isn't confirmed yet" note is gone (reported on Discord by
+  Vakos).
+- Recipes & Patterns pages: small profession icons (the game's own:
+  Alchemy, Blacksmithing, Enchanting, Engineering, Leatherworking,
+  Tailoring, Cooking) in the middle of the "N items" line, between the
+  count and the Compact view button. Only the professions the page has
+  recipes of (no Tailoring icon in a dungeon with no Tailoring recipe),
+  and only when it has two or more. They glow softly like the journal's
+  other round buttons; a click shows that profession's recipes only and
+  lights the icon up like the Forever-only emblem, a second click shows
+  all again. Hovering names the profession. The choice is dropped on
+  another dungeon's page. The icons sit in a small rounded dark box, and
+  a click only hides the other professions' recipes: the page keeps its
+  layout (columns, Compact view button, scroll bar, the icons' place).
+- Fixed: going into or out of a dungeon (reported for Wailing Caverns) could
+  leave the loading screen flickering for ever, so the game had to be ended.
+  2.0.6 added 38 trash mobs whose portraits the journal looked up in the
+  background with hidden models after every login, for minutes (most of
+  them never found). Now: nothing is looked up by itself after logging in,
+  a mob's portrait is looked up when a page shows it, never while you are
+  inside a dungeon (it waits until you are out), only while the journal
+  window is open, and a mob the game doesn't give is remembered and not
+  tried again for a week. (Reported on Discord as crashes on loading
+  screens: boats, the Deeprun Tram, entering cities.)
+- Quest list: the Track button sits under the "Quests" title instead of
+  beside it.
+- Open the Maw: the Deathstalker Agent's pickup spot is where he stands
+  (51.4, 59.2), the same as his turn-in; it pointed at the dungeon's door.
+- Dungeon Tracker: a boss also counts as killed when its own loot shows up:
+  an item only that boss drops (not the dungeon's trash, not shared loot,
+  no recipe) being rolled on, looted or seen in a loot window. Inside a
+  dungeon the game hides which mob died, so a boss with no "fight over"
+  event, killed by a character it gives no XP, wasn't crossed off: the Ring
+  of Law stayed a skull while the group rolled on Ok'thor's Ban'thok Sash.
+  It is crossed off now, with the challenger's own portrait.
+- Dungeon Tracker, Shadowfang Keep: the Fel Steed / Shadow Charger (the
+  stable horses, no boss fight) are off the tracker and the run pages; their
+  kills count as trash. A run used to need them dead, so it stayed "In
+  progress" when they were skipped, or killed without the journal seeing it
+  (inside a dungeon the game names a dying mob only in the XP line, and they
+  give no XP to a higher character). Runs stuck that way are put right at
+  login. They stay in the journal with their loot.
+- Scarlet Monastery: Cathedral: every boss lists the recipes recorded
+  dropping from it (the Boots plans, Leather Shoes, Mail Boots and Cord
+  patterns): High Inquisitor Fairbanks 19, Scarlet Commander Mograine 20,
+  High Inquisitor Whitemane 18.
+- Scarlet Monastery: Armory: Herod lists the 20 recipes recorded dropping
+  from him (5 Boots plans, 5 Leather Shoes and 4 Mail Boots patterns, 6
+  Cord patterns, the same set as Arcanist Doan). The Drowned City: no recipe
+  is recorded from its bosses yet, so nothing was added there.
+- Scarlet Monastery: Graveyard and Library: every boss lists the recipes
+  it has been recorded dropping on WoW Forever (Recipes & Patterns tab).
+  Graveyard: the 5 Chain Helm plans, 6 Leather Helm patterns and 6 Filigreed
+  Circlet patterns on Interrogator Vishas and Bloodmage Thalnos (all 17),
+  Azshir the Sleepless (15), Ironspine (15) and Fallen Champion (9).
+  Library: Houndmaster Loksey the same 17 plus Blueprint: Trapper's
+  Workbench (in his loot); Arcanist Doan 5 Boots plans, 5 Leather Shoes
+  and 4 Mail Boots patterns, 6 Cord patterns. Nothing already listed was
+  taken out (Pattern: Defender's Leather Kilt stays on Thalnos).
+- Uldaman: 12 recipes recorded dropping from its bosses are listed:
+  The Lost Dwarves (from Eric "The Swift") Plans: Warder's Boots and
+  Pattern: Stalker's Mail Boots; Galgann Firehammer Plans: Justicar's
+  Boots; Archaedas 9 gloves recipes (Skulker's, Mender's and Skycaller's
+  Leather Gauntlets, Skycaller's Mail Gauntlets, Fiery, Gilded and Radiant
+  Gloves, Plans: Sentinel's and Warder's Gloves). Warder's Boots stays on
+  Obsidian Sentinel too. Krol'dok Stronghold: nothing new (Blueprint:
+  Expert Campfire was already on Slavecrusher Grox).
+- Maraudon: every boss lists the gloves recipes recorded dropping from it
+  (37 in all): Noxxion 4, Razorlash 5, Meshlok the Harvester 1, Celebras
+  the Cursed 4, Landslide 8, Tinkerer Gizlock 6, Rotgrip 4, Princess
+  Theradras 5.
+- Zul'Farrak: the same for Antu'sul 7, Witch Doctor Zum'rah 9,
+  Shadowpriest Sezz'ziz 7, Gahz'rilla 7, Zerillis 1 (Plans: Warder's
+  Boots), Dustwraith 1 (Plans: Sentinel's Boots) and Chief Ukorz Sandscalp
+  10, and Theka the Martyr 4, Nekrum Gutchewer 3, Sergeant Bly 3 (with
+  his Stalker's Mail Boots) and Ruuzlu 9.
+- Razorfen Downs: every boss lists the recipes recorded dropping from it
+  (the Boots plans, Leather Shoes, Mail Boots and Cord patterns, as in
+  Scarlet Monastery): Tuten'kash 16, Plaguemaw the Rotting 17, Mordresh
+  Fire Eye 18, Glutton 17, Ragglesnout 6 (and his Sentinel's Boots),
+  Amnennar the Coldbringer 15.
+- Recipes & Patterns pages with many of the Forever recipe sets that drop
+  all over (the gloves, boots, cords and helms; 10 or more, e.g. The
+  Deadmines, Blackfathom Deeps, The Stockade, Gnomeregan, Razorfen Kraul
+  and Downs, Scarlet Monastery, Uldaman, Zul'Farrak, Maraudon) show no
+  portraits any more: up to 180 of the same faces on a page, all drawn
+  by the game at once (Gnomeregan could freeze). Like Dire Maul: North,
+  they go to two columns when long, with the bosses after the recipe's
+  profession and in its tooltip ("Drops from"). Epic recipes keep their
+  bosses' portraits. Pages of a dungeon's own recipes (Blackrock Depths,
+  Blackrock Spire, Stratholme, Scholomance...) are unchanged.
+- Sunken Temple: Jammal'an the Prophet lists the 5 recipes recorded
+  dropping from him (Pattern: Black Gloves, Skycaller's Mail Gauntlets,
+  Stalker's Mail Gauntlets, Warden's Leather Gauntlets, Plans: Warder's
+  Gloves) and Blueprint: Fishing Hut. Alcaz Prison: no recipe drops known.
+- Blackrock Depths: Lord Roccor (Formula: Smoking Heart of the Mountain),
+  Pyromancer Loregrain (Formula: Enchant Weapon - Fiery Weapon), Golem
+  Lord Argelmach (Blueprint: Master Forge) and Plugger Spazzring
+  (Schematic: Goblin Jumper Cables XL); Trash Drops: Plans: Dark Iron
+  Sunderer, Dark Iron Mail and Dark Iron Shoulders (the Blacksmithing
+  Plans), Schematic: Dark Iron Bomb, Dark Iron Rifle, Gnomish Alarm-O-Bot,
+  Master Engineer's Goggles and World Enlarger, each with the mob that
+  drops it.
+- Lower Blackrock Spire: Quartermaster Zigris also drops Blueprint: Iron
+  Oven; and five trash recipes with their mobs (Plans: Stalwart Helm,
+  Pattern: Robe of the Archmage, Volcanic Shoulders, Formula: Enchant
+  Weapon - Superior Striking, Enchant Gloves - Greater Strength) are on its
+  Recipes & Patterns page. (Their Trash Drops entry has no row of its own:
+  it would be an empty page.) Plans: Stalwart Helm is listed with the
+  dungeon's own recipes at the top (under Robe of the Archmage), not with
+  the Forever recipe sets that drop all over.
+- Blackrock Depths and Lower Blackrock Spire: the mobs that drop these
+  trash recipes have their portraits on the Recipes & Patterns page
+  (Weapon Technician, Doomforge Craftsman and Arcanasmith, Ribbly's Crony,
+  Hammered Patron, Bloodaxe Veteran, Firebrand Pyromancer and Legionnaire,
+  Spirestone Warlord and Mystic).
+- Upper Blackrock Spire: Pyroguard Emberseer (Formula: Molten Heart of the
+  Mountain), Solakar Flamewreath (Schematic: Hyper-Radiant Flame
+  Reflector), Goraluk Anvilcrack (Pattern: Invulnerable Mail, Elemental
+  Leatherworking), Gyth (Recipe: Flask of Chromatic Resistance), General
+  Drakkisath (Recipe: Flask of the Titans), and Blackhand Elite's Formula:
+  Enchant 2H Weapon - Superior Impact on the Recipes & Patterns page.
+- Lower Blackrock Spire: Mother Smolderweb drops Formula: Dormant Heart of
+  the Mountain.
+- Dire Maul: East: Hydrospawn lists Pattern: Truefaith Gloves.
+- Dire Maul: West: Magister Kalendris drops Pattern: Big Bag of
+  Enchantment.
+- Dire Maul: North: the 11 patterns from Knot Thimblejack's Cache (the
+  crate Knot leaves after Free Knot!) are on the Recipes & Patterns page:
+  Belt of the Archmage, Felcloth, Inferno and Mooncloth Gloves, Cloak of
+  Warding (Tailoring); Girdle of Insight, Mongoose Boots, Swift Flight
+  Bracers, Chromatic Cloak, Hide of the Wild, Shifting Cloak
+  (Leatherworking). The cache has no row of its own in the list.
+- Stratholme: Living: Cannon Master Willey drops Plans: Heartseeker
+  (Weaponsmith), Balnazzar Pattern: Truefaith Vestments and Recipe: Flask
+  of Distilled Wisdom; Plans: Serenity (Master Hammersmith) is in the
+  Blacksmithing Plans on the Scarlet side, under Trash Drops.
+- Stratholme: Undead: Maleki the Pallid drops Plans: Hammer of the Titans
+  (Master Hammersmith); Plans: Corruption (Master Swordsmith) is in the
+  Blacksmithing Plans on the Service Gate side, under Trash Drops.
+- Scholomance: Ras Frostwhisper drops Recipe: Flask of Supreme Power and
+  Blueprint: Alchemy Laboratory;
+  Darkmaster Gandling Pattern: Robe of the Void and Recipe: Major Mana
+  Potion; Spectral Researchers Pattern: Pristine Scorpid Leggings (new in
+  Forever), listed with Scholomance's own recipes at the top.
 
 CHANGES IN 2.0.6 (the release after 2.0.5; the builds below, 2.0.6 to
 2.0.54, were its test builds)
