@@ -114,6 +114,14 @@ local OPTIONS = {
         set = function(on) Store().itemSourceStrip = not on end,
     },
     {
+        -- autocompare (2.0.6): the journal's item tooltips compare with the
+        -- equipped item without Shift (off by default: Shift as before).
+        label = "OPT_AUTO_COMPARE",
+        tip = "OPT_AUTO_COMPARE_TIP",
+        get = function() return Store().autoCompare == true end,
+        set = function(on) Store().autoCompare = on and true or nil end,
+    },
+    {
         label = "OPT_HIDE_MINIMAP",
         tip = "OPT_HIDE_MINIMAP_TIP",
         get = function() return Store().minimapHidden == true end,

@@ -60,7 +60,8 @@ local function BuildIndex()
             for bossIndex, boss in ipairs(dungeon.bosses or {}) do
                 -- The "Recipes & Patterns" row only repeats items that are
                 -- already listed under the boss or trash that drops them.
-                if type(boss) == "table" and not boss.recipeTab then
+                -- altarbosses (2.0.24): children's loot is told under their group.
+                if type(boss) == "table" and not boss.recipeTab and not boss.childOf then
                     local items = {}
                     for _, item in ipairs(boss.loot or {}) do items[#items + 1] = item end
                     local shared = FDJ.GetBossSharedLoot and FDJ.GetBossSharedLoot(dungeonName, boss)
@@ -132,7 +133,8 @@ local function SourceText(source)
             local ok, localized = pcall(FDJ.LocalizeQuestField, source.questID, "name", name)
             if ok and type(localized) == "string" and localized ~= "" then name = localized end
         end
-        return QUEST_ICON .. name, dungeon
+        -- repeaticon (2.0.44): the blue ? for a repeatable quest
+        return ((FDJ.QuestIconMarkup and source.questID) and FDJ.QuestIconMarkup(source.questID, 14) or QUEST_ICON) .. name, dungeon
     end
 
     -- Shared boss loot drops from many bosses; naming one would mislead.

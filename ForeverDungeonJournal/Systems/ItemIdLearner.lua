@@ -195,10 +195,22 @@ local function ScanInventory()
     end
 end
 
+-- loadpause (2.0.7): no questions to the server during a loading screen or
+-- the first seconds after it (FDJ.LookupsPaused, Core/Journal.lua): the
+-- scan waits and goes on where it was.
+local function Paused(fn)
+    if FDJ.LookupsPaused and FDJ.LookupsPaused() and C_Timer and C_Timer.After then
+        C_Timer.After(1, fn)
+        return true
+    end
+    return false
+end
+
 -- Server query of the candidate IDs, a few at a time so nothing stutters.
 local scanIndex, scanning = 1, false
 local function ScanStep()
     if not missing or missingCount == 0 or not candidates then scanning = false return end
+    if Paused(ScanStep) then return end
     local requestLoad = C_Item and C_Item.RequestLoadItemDataByID
     local doExist = C_Item and C_Item.DoesItemExistByID
     local stop = math.min(scanIndex + 39, #candidates)
@@ -225,10 +237,12 @@ local function ScanStep()
         -- One more pass a bit later for answers that came in after the request.
         scanning = false
         if C_Timer and C_Timer.After then
-            C_Timer.After(5, function()
+            local function LastPass()
                 if not missing or missingCount == 0 then return end
+                if Paused(LastPass) then return end
                 for _, id in ipairs(candidates) do CheckID(id) end
-            end)
+            end
+            C_Timer.After(5, LastPass)
         end
     end
 end
@@ -240,6 +254,7 @@ local function StartScan()
 end
 
 function FDJ.LearnMissingItemIDsNow()
+    if Paused(FDJ.LearnMissingItemIDsNow) then return end
     pcall(TryCache)
     pcall(ScanInventory)
     for _, id in ipairs(candidates or {}) do pcall(CheckID, id) end

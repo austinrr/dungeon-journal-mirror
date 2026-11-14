@@ -725,7 +725,8 @@ local function RefreshWindow(win)
                 if ok and type(localized) == "string" and localized ~= "" then questName = localized end
             end
             -- Quest marker right in front of the quest name.
-            row.slot:SetText("|TInterface\\GossipFrame\\AvailableQuestIcon:14:14:0:0|t " .. questName)
+            -- repeaticon (2.0.44): the blue ? for a repeatable quest
+            row.slot:SetText((FDJ.QuestIconMarkup and FDJ.QuestIconMarkup(fav.questID, 14) or "|TInterface\\GossipFrame\\AvailableQuestIcon:14:14:0:0|t ") .. questName)
         else
             row.slot:SetText(FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(fav.slot) or (fav.slot or ""))
         end

@@ -1,4 +1,5 @@
--- Hovering the green tick on a home dungeon card shows "All quests completed".
+-- Hovering the green tick on a home dungeon card shows "All quests completed"
+-- (or, on a dungeon with no quest for the character, "Last boss killed").
 -- The tick is a texture on the card button, so instead of putting a mouse
 -- frame over it (which would steal the card's hover and click), the card
 -- checks while hovered whether the mouse is over the tick.
@@ -13,8 +14,18 @@ local TEXT = {
     zhCN = "所有任务已完成", zhTW = "所有任務已完成",
 }
 
-local function Text()
+-- bossdone (2.0.8): the tick of a dungeon with no quest for the character.
+local BOSS_TEXT = {
+    enUS = "Last boss killed", deDE = "Letzter Boss besiegt",
+    frFR = "Dernier boss vaincu", esES = "Último jefe derrotado", esMX = "Último jefe derrotado",
+    itIT = "Ultimo boss sconfitto", ptBR = "Último chefe derrotado",
+    ruRU = "Последний босс побеждён", koKR = "마지막 우두머리 처치",
+    zhCN = "最终首领已击败", zhTW = "最終首領已擊敗",
+}
+
+local function Text(card)
     local lang = FDJ.GetLanguage and FDJ.GetLanguage() or "enUS"
+    if card and card.fdjTickBoss then return BOSS_TEXT[lang] or BOSS_TEXT.enUS end
     return TEXT[lang] or TEXT.enUS
 end
 
@@ -33,7 +44,7 @@ local function Update(card)
         if GameTooltip:IsShown() and GameTooltip:GetOwner() == card then return end
         card.fdjTickTipShown = true
         GameTooltip:SetOwner(card, "ANCHOR_TOP")
-        GameTooltip:SetText(Text(), 0.2, 1, 0.2)
+        GameTooltip:SetText(Text(card), 0.2, 1, 0.2)
         GameTooltip:Show()
     elseif not over and card.fdjTickTipShown then
         card.fdjTickTipShown = nil

@@ -17,12 +17,20 @@ local BACKDROP = {
     insets = { left = 4, right = 4, top = 4, bottom = 4 },
 }
 
-local function Relocalize(frame)
+-- The Report button's label and width. reportsteady (2.0.47): only when it is
+-- made, when the journal shows (its font ready) and when the language
+-- changes; not on a click, where the width moved a few pixels (and the
+-- options cogwheel, left of it, with it).
+local function RelocalizeButton(frame)
+    if not frame or not frame.bugReportButtonText then return end
+    frame.bugReportButtonText:SetText(L("BUG_REPORT_SHORT"))
+    local width = math.max(60, math.ceil((frame.bugReportButtonText:GetStringWidth() or 40) + 36))
+    if frame.bugReportButton:GetWidth() ~= width then frame.bugReportButton:SetWidth(width) end
+end
+
+-- The report window's texts (when it opens, and on a language change).
+local function RelocalizeWindow(frame)
     if not frame then return end
-    if frame.bugReportButtonText then
-        frame.bugReportButtonText:SetText(L("BUG_REPORT_SHORT"))
-        frame.bugReportButton:SetWidth(math.max(60, (frame.bugReportButtonText:GetStringWidth() or 40) + 36))
-    end
     local w = frame.bugReportWindow
     if w then
         w.title:SetText(L("BUG_REPORT"))
@@ -32,6 +40,11 @@ local function Relocalize(frame)
         w.close:SetText(L("LF_OK"))
         w:SetHeight(math.max(190, (w.body:GetStringHeight() or 40) + 150))
     end
+end
+
+local function Relocalize(frame)
+    RelocalizeButton(frame)
+    RelocalizeWindow(frame)
 end
 
 local function BuildWindow(frame)
@@ -84,7 +97,7 @@ end
 function FDJ.ToggleBugReportWindow(frame)
     local w = frame.bugReportWindow or BuildWindow(frame)
     if w:IsShown() then w:Hide() return end
-    Relocalize(frame)
+    RelocalizeWindow(frame) -- reportsteady (2.0.47): the button stays as it is
     w:Show()
 end
 
@@ -130,6 +143,58 @@ function FDJ.CreateBugReportButton(frame, home, anchorButton)
         FDJ.ToggleBugReportWindow(frame)
     end)
     Relocalize(frame)
+    -- reportsteady (2.0.47): measured again whenever the journal comes on
+    -- screen (its font loaded): the button's own OnShow (the journal's
+    -- OnShow is set later and would replace a hook there).
+    button:SetScript("OnShow", function() RelocalizeButton(frame) end)
+end
+
+-- optionscog (2.0.46): Blizzard's options cogwheel (the one on the Looking
+-- For Group panel: atlas OptionsIcon-Brown, 16x16, 80% until hovered,
+-- nudged while pressed) left of Report. "Options" on mouse-over; a click
+-- opens the journal's options (as right-clicking the minimap button does).
+function FDJ.CreateOptionsCogButton(frame, home, anchorButton)
+    if not anchorButton or frame.optionsCogButton then return end
+    local button = CreateFrame("Button", nil, home)
+    frame.optionsCogButton = button
+    button:SetSize(16, 16)
+    button:SetPoint("RIGHT", anchorButton, "LEFT", -8, 0)
+    button:RegisterForClicks("LeftButtonUp")
+    local icon = button:CreateTexture(nil, "ARTWORK")
+    button.Icon = icon
+    icon:SetAllPoints()
+    local ok = icon.SetAtlas and pcall(icon.SetAtlas, icon, "OptionsIcon-Brown", false)
+    if not ok or not icon:GetTexture() and not (icon.GetAtlas and icon:GetAtlas()) then
+        icon:SetTexture("Interface\\Buttons\\UI-OptionsButton") -- older clients' cogwheel
+    end
+    icon:SetAlpha(0.8)
+    button:SetScript("OnEnter", function(self)
+        icon:SetAlpha(1)
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+        GameTooltip:SetText(L("OPT_TAB_OPTIONS"), 1, 0.82, 0.27)
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", function()
+        icon:SetAlpha(0.8)
+        GameTooltip:Hide()
+    end)
+    button:SetScript("OnMouseDown", function()
+        icon:ClearAllPoints()
+        icon:SetPoint("TOPLEFT", button, "TOPLEFT", 1, -1)
+        icon:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
+    end)
+    button:SetScript("OnMouseUp", function()
+        icon:ClearAllPoints()
+        icon:SetAllPoints()
+    end)
+    button:SetScript("OnClick", function()
+        if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) end
+        if FDJ.ToggleSettingsPanel then
+            FDJ.ToggleSettingsPanel()
+        elseif SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL then
+            SlashCmdList.FOREVERDUNGEONJOURNAL("options")
+        end
+    end)
 end
 
 -- Follow the journal language whenever the loot filter button is relocalised.

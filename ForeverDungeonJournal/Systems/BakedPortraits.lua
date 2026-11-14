@@ -27,6 +27,11 @@ FDJ.BAKED_PORTRAITS = {
     [11429]=true, [11492]=true, [11537]=true, [11538]=true, [11545]=true, [11561]=true, [11564]=true, [11565]=true, [11574]=true, [11576]=true, [11578]=true, [11583]=true,
     [11611]=true, [11809]=true, [11835]=true, [12073]=true, [12162]=true, [12292]=true, [12293]=true, [12334]=true, [12350]=true, [12389]=true, [12818]=true, [12822]=true,
     [13589]=true, [14173]=true, [14308]=true, [14378]=true, [14383]=true, [14384]=true, [14403]=true, [14416]=true, [14556]=true,
+    -- grubbisbaked (2.0.6): Grubbis' Forever model (Gnomeregan). Drawn live
+    -- it is heavy: on the Recipes & Patterns tab, where he is on 17 rows, it
+    -- froze the game (black screen, graphics card error). Cut out of M's
+    -- in-game shot of his portrait.
+    [144378]=true,
 }
 local BAKED = FDJ.BAKED_PORTRAITS
 

@@ -276,7 +276,10 @@ FDJ.RUNLOG_ENCOUNTERS = {
     [279] = { "Upper Blackrock Spire", "The Beast" },
     [280] = { "Upper Blackrock Spire", "General Drakkisath" },
     [3062] = { "Upper Blackrock Spire", "Pyroguard Emberseer" },
-    [3063] = { "Upper Blackrock Spire", "Gyth" },
+    -- rendgyth (2.0.34): Forever's Gyth / Rend encounter ends when Rend dies
+    -- (Gyth dies first, Rend dismounts): the event counts Rend, and Gyth too
+    -- if his own death wasn't counted already (was: Gyth only).
+    [3063] = { "Upper Blackrock Spire", "Warchief Rend Blackhand", also = { "Gyth" } },
     [3068] = { "Upper Blackrock Spire", "The Beast" },
     [3069] = { "Upper Blackrock Spire", "General Drakkisath" },
     [3070] = { "Upper Blackrock Spire", "Lord Valthalak" },

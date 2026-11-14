@@ -1284,6 +1284,7 @@ end
 -- required and provided items). Whole-string translations.
 local ITEM_SOURCES = {}
 ITEM_SOURCES.deDE = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Erbeutet von Satyrn und Wichteln in der Schwarzschlundfeste", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Fallen gelassen von: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Fallen gelassen von: Dark Iron Spies in Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Fallen gelassen von: Goblin Woodcarver, Die Todesminen",
@@ -1308,6 +1309,7 @@ ITEM_SOURCES.deDE = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Belohnung der Quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Dunkelküste. Den verlangten Corrupted Kor Gem lassen Blackfathom Tide Priestesses und Oracles am Eingang der Tiefschwarzen Grotten sowie Blackfathom Sea Witches im Inneren fallen.",
 }
 ITEM_SOURCES.frFR = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Ramassé sur les satyres et les diablotins du Repaire des Noiregueules", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Butin de : Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Butin de : Dark Iron Spies à Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Butin de : Goblin Woodcarver, Les Mortemines",
@@ -1332,6 +1334,7 @@ ITEM_SOURCES.frFR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Récompense de la quête Seeking the Kor Gem : Thundris Windweaver, Auberdine, Sombrivage. La Corrupted Kor Gem demandée tombe sur les Blackfathom Tide Priestesses et Oracles à l'entrée des Profondeurs de Brassenoire et sur les Blackfathom Sea Witches à l'intérieur.",
 }
 ITEM_SOURCES.esES = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Se despoja de sátiros y diablillos en el Bastión Faucenegra", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Lo suelta: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Lo suelta: Dark Iron Spies en Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Las Minas de la Muerte",
@@ -1356,6 +1359,7 @@ ITEM_SOURCES.esES = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa de la misión Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Oscura. La Corrupted Kor Gem que pide la sueltan las Blackfathom Tide Priestesses y Oracles en la entrada de las Cavernas de Brazanegra y las Blackfathom Sea Witches en el interior.",
 }
 ITEM_SOURCES.itIT = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saccheggiato da satiri e folletti a Blackmaw Hold", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Bottino di: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Bottino di: Dark Iron Spies a Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Bottino di: Goblin Woodcarver, Miniere della Morte",
@@ -1380,6 +1384,7 @@ ITEM_SOURCES.itIT = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Ricompensa della missione Seeking the Kor Gem: Thundris Windweaver, Auberdine, Rivafosca. La Corrupted Kor Gem richiesta è bottino di Blackfathom Tide Priestess e Oracle all'ingresso degli Abissi di Fondocupo e di Blackfathom Sea Witch all'interno.",
 }
 ITEM_SOURCES.ptBR = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saqueado de sátiros e diabretes na Gruta Bocanera", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Saqueado de: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Saqueado de: Dark Iron Spies em Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Saqueado de: Goblin Woodcarver, Minas Mortas",
@@ -1404,6 +1409,7 @@ ITEM_SOURCES.ptBR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa da missão Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Negra. A Corrupted Kor Gem pedida cai de Blackfathom Tide Priestesses e Oracles na entrada das Profundezas Negras e de Blackfathom Sea Witches lá dentro.",
 }
 ITEM_SOURCES.ruRU = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Добывается с сатиров и бесов в Крепости Черночревов", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "Добывается с: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Добывается с: Dark Iron Spies в Дун Мороге",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Добывается с: Goblin Woodcarver, Мертвые копи",
@@ -1428,6 +1434,7 @@ ITEM_SOURCES.ruRU = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Награда за задание Seeking the Kor Gem: Thundris Windweaver, Аубердин, Темные берега. Нужный Corrupted Kor Gem падает с Blackfathom Tide Priestess и Oracle у входа в Непроглядную Пучину и с Blackfathom Sea Witch внутри.",
 }
 ITEM_SOURCES.koKR = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "검은아귀 요새의 사티로스와 임프에게서 획득", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "드롭: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "드롭: 던 모로의 Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "드롭: Goblin Woodcarver, 죽음의 폐광",
@@ -1452,6 +1459,7 @@ ITEM_SOURCES.koKR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "퀘스트 Seeking the Kor Gem 보상: Thundris Windweaver, 아우버다인, 어둠의 해안. 필요한 Corrupted Kor Gem은 검은심연 나락 입구의 Blackfathom Tide Priestess와 Oracle, 내부의 Blackfathom Sea Witch가 드롭합니다.",
 }
 ITEM_SOURCES.zhCN = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "从黑喉要塞的萨特和小鬼身上拾取", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫罗的Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡矿井",
@@ -1476,6 +1484,7 @@ ITEM_SOURCES.zhCN = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任务Seeking the Kor Gem的奖励：Thundris Windweaver，奥伯丁，黑海岸。所需的Corrupted Kor Gem由黑暗深渊入口处的Blackfathom Tide Priestess和Oracle以及副本内的Blackfathom Sea Witch掉落。",
 }
 ITEM_SOURCES.zhTW = {
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "從黑喉要塞的薩特和小鬼身上拾取", -- 2.0.38
     ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫洛的Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡礦坑",
@@ -7180,3 +7189,362 @@ for lang, warning in pairs({
     end
 end
 
+-- altarbosses (2.0.24): the Sunken Temple's group entry for its six troll
+-- guardians. The trolls keep their English names.
+do
+    local ALTAR = {
+        deDE = "Altarbosse", frFR = "Boss de l'autel", esES = "Jefes del altar", esMX = "Jefes del altar",
+        itIT = "Boss dell'altare", ptBR = "Chefes do altar", ruRU = "Боссы алтаря",
+        koKR = "제단 우두머리", zhCN = "祭坛首领", zhTW = "祭壇首領",
+    }
+    for lang, text in pairs(ALTAR) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.bosses = content.bosses or {}
+            if content.bosses["Altar Bosses"] == nil then content.bosses["Altar Bosses"] = text end
+        end
+    end
+end
+
+-- rfdstep (2.0.32): the two Maraudon disclaimers of Razorfen Downs'
+-- Agamaggan's Blood chain, in every language (dungeon names as the journal
+-- shows them). 93404: the chain's Rot and Regret step; 93604: the quest.
+do
+    local WARN = {
+        deDE = { "Ja, dieser Schritt ist in MARAUDON. Er wird benötigt, um diese Quest für den Hügel der Klingenhauer freizuschalten.",
+                 "WARNUNG: Diese Questreihe hat einen Schritt in Maraudon" },
+        frFR = { "Oui, cette étape se fait à MARAUDON. Elle est nécessaire pour débloquer cette quête des Souilles de Tranchebauge.",
+                 "ATTENTION : cette suite de quêtes a une étape à Maraudon" },
+        esES = { "Sí, este paso es en MARAUDON. Es necesario para desbloquear esta misión de Zahúrda Rajacieno.",
+                 "ADVERTENCIA: esta cadena de misiones tiene un paso en Maraudon" },
+        esMX = { "Sí, este paso es en MARAUDON. Es necesario para desbloquear esta misión de Zahúrda Rajacieno.",
+                 "ADVERTENCIA: esta cadena de misiones tiene un paso en Maraudon" },
+        itIT = { "Sì, questa tappa è a MARAUDON. Serve per sbloccare questa missione di Razorfen Downs.",
+                 "ATTENZIONE: questa catena ha una tappa a Maraudon" },
+        ptBR = { "Sim, esta etapa é em MARAUDON. Ela é necessária para liberar esta missão do Urzal dos Mortos.",
+                 "AVISO: esta sequência de missões tem uma etapa em Maraudon" },
+        ruRU = { "Да, этот этап проходит в МАРОДОНЕ. Он нужен, чтобы открыть это задание в Курганах Иглошкурых.",
+                 "ВНИМАНИЕ: в этой цепочке есть этап в Мародоне" },
+        koKR = { "네, 이 단계는 마라우돈에서 진행합니다. 이 가시덩굴 구릉 퀘스트를 열려면 필요합니다.",
+                 "경고: 이 연계 퀘스트에는 마라우돈 단계가 있습니다" },
+        zhCN = { "没错，这一步在玛拉顿。完成它才能解锁这个剃刀高地任务。",
+                 "警告：此任务链有一步在玛拉顿" },
+        zhTW = { "沒錯，這一步在瑪拉頓。完成它才能解鎖這個剃刀高地任務。",
+                 "警告：此任務鏈有一步在瑪拉頓" },
+    }
+    for lang, text in pairs(WARN) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.quests = content.quests or {}
+            content.quests[93404] = content.quests[93404] or {}
+            content.quests[93604] = content.quests[93604] or {}
+            if content.quests[93404].warning == nil then content.quests[93404].warning = text[1] end
+            if content.quests[93604].warning == nil then content.quests[93604].warning = text[2] end
+        end
+    end
+end
+
+-- blackmawaudit (2.0.36, 2.0.37, 2.0.39, 2.0.41): the Blackmaw Hold quest texts changed or
+-- added (givers, hand-ins, notes, the Blackmaw Reclamation chain), in every
+-- language. NPC, quest and item names stay English; places as the clients
+-- name them where known.
+do
+    local T = {
+        TIMEAR_P = {
+            deDE = "Archmage Timear, Dalaran (15.4, 74.0)",
+            frFR = "Archmage Timear, Dalaran (15.4, 74.0)",
+            esES = "Archmage Timear, Dalaran (15.4, 74.0)",
+            esMX = "Archmage Timear, Dalaran (15.4, 74.0)",
+            itIT = "Archmage Timear, Dalaran (15.4, 74.0)",
+            ptBR = "Archmage Timear, Dalaran (15.4, 74.0)",
+            ruRU = "Archmage Timear, Даларан (15.4, 74.0)",
+            koKR = "Archmage Timear, 달라란 (15.4, 74.0)",
+            zhCN = "Archmage Timear，达拉然 (15.4, 74.0)",
+            zhTW = "Archmage Timear，達拉然 (15.4, 74.0)",
+        },
+        MULN = {
+            deDE = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            frFR = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            esES = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            esMX = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            itIT = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            ptBR = "Muln Earthfury, Mulgore (33.4, 22.5)",
+            ruRU = "Muln Earthfury, Мулгор (33.4, 22.5)",
+            koKR = "Muln Earthfury, 멀고어 (33.4, 22.5)",
+            zhCN = "Muln Earthfury，莫高雷 (33.4, 22.5)",
+            zhTW = "Muln Earthfury，莫高雷 (33.4, 22.5)",
+        },
+        TRUESONG = {
+            deDE = "Commander Truesong, Azshara (11.8, 78.3)",
+            frFR = "Commander Truesong, Azshara (11.8, 78.3)",
+            esES = "Commander Truesong, Azshara (11.8, 78.3)",
+            esMX = "Commander Truesong, Azshara (11.8, 78.3)",
+            itIT = "Commander Truesong, Azshara (11.8, 78.3)",
+            ptBR = "Commander Truesong, Azshara (11.8, 78.3)",
+            ruRU = "Commander Truesong, Азшара (11.8, 78.3)",
+            koKR = "Commander Truesong, 아즈샤라 (11.8, 78.3)",
+            zhCN = "Commander Truesong，艾萨拉 (11.8, 78.3)",
+            zhTW = "Commander Truesong，艾薩拉 (11.8, 78.3)",
+        },
+        OGTINC = {
+            deDE = "Ogtinc, Azshara (42.4, 42.7)",
+            frFR = "Ogtinc, Azshara (42.4, 42.7)",
+            esES = "Ogtinc, Azshara (42.4, 42.7)",
+            esMX = "Ogtinc, Azshara (42.4, 42.7)",
+            itIT = "Ogtinc, Azshara (42.4, 42.7)",
+            ptBR = "Ogtinc, Azshara (42.4, 42.7)",
+            ruRU = "Ogtinc, Азшара (42.4, 42.7)",
+            koKR = "Ogtinc, 아즈샤라 (42.4, 42.7)",
+            zhCN = "Ogtinc，艾萨拉 (42.4, 42.7)",
+            zhTW = "Ogtinc，艾薩拉 (42.4, 42.7)",
+        },
+        RAGEROAR = {
+            deDE = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            frFR = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            esES = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            esMX = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            itIT = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            ptBR = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            ruRU = "Gatekeeper Rageroar, Ursolan, Азшара (42.4, 20.2)",
+            koKR = "Gatekeeper Rageroar, Ursolan, 아즈샤라 (42.4, 20.2)",
+            zhCN = "Gatekeeper Rageroar，Ursolan，艾萨拉 (42.4, 20.2)",
+            zhTW = "Gatekeeper Rageroar，Ursolan，艾薩拉 (42.4, 20.2)",
+        },
+        NOK = {
+            deDE = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            frFR = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            esES = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            esMX = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            itIT = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            ptBR = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            ruRU = "Lorekeeper Nok, Ursolan, Азшара (41.4, 20.0)",
+            koKR = "Lorekeeper Nok, Ursolan, 아즈샤라 (41.4, 20.0)",
+            zhCN = "Lorekeeper Nok，Ursolan，艾萨拉 (41.4, 20.0)",
+            zhTW = "Lorekeeper Nok，Ursolan，艾薩拉 (41.4, 20.0)",
+        },
+        UNELE = {
+            deDE = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            frFR = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            esES = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            esMX = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            itIT = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            ptBR = "Unele, Ursolan, Azshara (43.4, 17.4)",
+            ruRU = "Unele, Ursolan, Азшара (43.4, 17.4)",
+            koKR = "Unele, Ursolan, 아즈샤라 (43.4, 17.4)",
+            zhCN = "Unele，Ursolan，艾萨拉 (43.4, 17.4)",
+            zhTW = "Unele，Ursolan，艾薩拉 (43.4, 17.4)",
+        },
+        EKKAL = {
+            deDE = "Ekkal, Ruinen von Eldarath, Azshara (42.0, 38.9)",
+            frFR = "Ekkal, Ruines d'Eldarath, Azshara (42.0, 38.9)",
+            esES = "Ekkal, Ruinas de Eldarath, Azshara (42.0, 38.9)",
+            esMX = "Ekkal, Ruinas de Eldarath, Azshara (42.0, 38.9)",
+            itIT = "Ekkal, Rovine di Eldarath, Azshara (42.0, 38.9)",
+            ptBR = "Ekkal, Ruínas de Eldarath, Azshara (42.0, 38.9)",
+            ruRU = "Ekkal, Руины Эльдарата, Азшара (42.0, 38.9)",
+            koKR = "Ekkal, 엘다라스 폐허, 아즈샤라 (42.0, 38.9)",
+            zhCN = "Ekkal，埃达拉斯废墟，艾萨拉 (42.0, 38.9)",
+            zhTW = "Ekkal，埃達拉斯廢墟，艾薩拉 (42.0, 38.9)",
+        },
+        KORSA = {
+            deDE = "Korsa, vor Legashi Stronghold, Azshara (63.0, 23.3)",
+            frFR = "Korsa, devant Legashi Stronghold, Azshara (63.0, 23.3)",
+            esES = "Korsa, a las afueras de Legashi Stronghold, Azshara (63.0, 23.3)",
+            esMX = "Korsa, a las afueras de Legashi Stronghold, Azshara (63.0, 23.3)",
+            itIT = "Korsa, fuori da Legashi Stronghold, Azshara (63.0, 23.3)",
+            ptBR = "Korsa, do lado de fora de Legashi Stronghold, Azshara (63.0, 23.3)",
+            ruRU = "Korsa, у Legashi Stronghold, Азшара (63.0, 23.3)",
+            koKR = "Korsa, Legashi Stronghold 밖, 아즈샤라 (63.0, 23.3)",
+            zhCN = "Korsa，Legashi Stronghold外，艾萨拉 (63.0, 23.3)",
+            zhTW = "Korsa，Legashi Stronghold外，艾薩拉 (63.0, 23.3)",
+        },
+        GRAAL_P = {
+            deDE = "Graal, in einem Käfig in Legashi Stronghold, Azshara (65.9, 14.4)",
+            frFR = "Graal, en cage dans Legashi Stronghold, Azshara (65.9, 14.4)",
+            esES = "Graal, enjaulado en Legashi Stronghold, Azshara (65.9, 14.4)",
+            esMX = "Graal, enjaulado en Legashi Stronghold, Azshara (65.9, 14.4)",
+            itIT = "Graal, in gabbia a Legashi Stronghold, Azshara (65.9, 14.4)",
+            ptBR = "Graal, preso numa jaula em Legashi Stronghold, Azshara (65.9, 14.4)",
+            ruRU = "Graal, в клетке в Legashi Stronghold, Азшара (65.9, 14.4)",
+            koKR = "Graal, Legashi Stronghold의 우리, 아즈샤라 (65.9, 14.4)",
+            zhCN = "Graal，被关在Legashi Stronghold的笼子里，艾萨拉 (65.9, 14.4)",
+            zhTW = "Graal，被關在Legashi Stronghold的籠子裡，艾薩拉 (65.9, 14.4)",
+        },
+        GORN = {
+            deDE = "Gorn One Eye, Holzschlundfeste",
+            frFR = "Gorn One Eye, Repaire des Grumegueules",
+            esES = "Gorn One Eye, Bastión Fauces de Madera",
+            esMX = "Gorn One Eye, Bastión Fauces de Madera",
+            itIT = "Gorn One Eye, Timbermaw Hold",
+            ptBR = "Gorn One Eye, Timbermaw Hold",
+            ruRU = "Gorn One Eye, Крепость Древобрюхов",
+            koKR = "Gorn One Eye, 나무구렁 요새",
+            zhCN = "Gorn One Eye，木喉要塞",
+            zhTW = "Gorn One Eye，木喉要塞",
+        },
+        RECLAIM_N = {
+            deDE = "Varrox Bleakhoof, der letzte Boss, hat den Kopf. Folgt auf die Questreihe 'Blackmaw Counter-Offensive'. Laut Spielern braucht man dafür den Ruf 'Freundlich' bei der Holzschlundfeste.",
+            frFR = "Varrox Bleakhoof, le dernier boss, a la tête. Vient après la suite de quêtes « Blackmaw Counter-Offensive ». D'après les joueurs, il faut être Amical avec le Repaire des Grumegueules.",
+            esES = "Varrox Bleakhoof, el último jefe, tiene la cabeza. Va después de la cadena 'Blackmaw Counter-Offensive'. Según los jugadores, necesita reputación Amistoso con el Bastión Fauces de Madera.",
+            esMX = "Varrox Bleakhoof, el último jefe, tiene la cabeza. Va después de la cadena 'Blackmaw Counter-Offensive'. Según los jugadores, necesita reputación Amistoso con el Bastión Fauces de Madera.",
+            itIT = "Varrox Bleakhoof, l'ultimo boss, ha la testa. Viene dopo la catena 'Blackmaw Counter-Offensive'. Secondo i giocatori serve la reputazione Amichevole con Timbermaw Hold.",
+            ptBR = "Varrox Bleakhoof, o último chefe, tem a cabeça. Vem depois da sequência 'Blackmaw Counter-Offensive'. Segundo os jogadores, precisa de reputação Amistoso com Timbermaw Hold.",
+            ruRU = "Голова у Varrox Bleakhoof, последнего босса. Идет после цепочки «Blackmaw Counter-Offensive». По словам игроков, нужна репутация «Дружелюбие» с Крепостью Древобрюхов.",
+            koKR = "마지막 보스 Varrox Bleakhoof가 머리를 가지고 있습니다. 'Blackmaw Counter-Offensive' 연계 퀘스트 다음에 받을 수 있습니다. 플레이어 제보에 따르면 나무구렁 요새 평판이 우호 이상이어야 합니다.",
+            zhCN = "最后一个首领Varrox Bleakhoof身上有头颅。此任务在“Blackmaw Counter-Offensive”任务链之后。据玩家反馈，需要木喉要塞声望达到友善。",
+            zhTW = "最後一個首領Varrox Bleakhoof身上有頭顱。此任務在「Blackmaw Counter-Offensive」任務鏈之後。據玩家回報，需要木喉要塞聲望達到友好。",
+        },
+        FEARDRED_O = {
+            deDE = "Tötet Master Feardred und bringt sein Amulett zu Korsa.",
+            frFR = "Tuez Master Feardred et apportez son amulette à Korsa.",
+            esES = "Mata a Master Feardred y llévale su amuleto a Korsa.",
+            esMX = "Mata a Master Feardred y llévale su amuleto a Korsa.",
+            itIT = "Uccidi Master Feardred e porta il suo amuleto a Korsa.",
+            ptBR = "Mate Master Feardred e leve o amuleto dele para Korsa.",
+            ruRU = "Убейте Master Feardred и принесите его амулет Korsa.",
+            koKR = "Master Feardred를 처치하고 그의 목걸이를 Korsa에게 가져가세요.",
+            zhCN = "杀死Master Feardred，把他的护身符交给Korsa。",
+            zhTW = "殺死Master Feardred，把他的護身符交給Korsa。",
+        },
+        THIN_O = {
+            deDE = "Tötet 6 Legashi Hellraisers, 4 Legashi Soulstealers und 2 Legashi Blackguards für Korsa vor Legashi Stronghold.",
+            frFR = "Tuez 6 Legashi Hellraisers, 4 Legashi Soulstealers et 2 Legashi Blackguards pour Korsa, devant Legashi Stronghold.",
+            esES = "Mata a 6 Legashi Hellraisers, 4 Legashi Soulstealers y 2 Legashi Blackguards para Korsa, a las afueras de Legashi Stronghold.",
+            esMX = "Mata a 6 Legashi Hellraisers, 4 Legashi Soulstealers y 2 Legashi Blackguards para Korsa, a las afueras de Legashi Stronghold.",
+            itIT = "Uccidi 6 Legashi Hellraisers, 4 Legashi Soulstealers e 2 Legashi Blackguards per Korsa, fuori da Legashi Stronghold.",
+            ptBR = "Mate 6 Legashi Hellraisers, 4 Legashi Soulstealers e 2 Legashi Blackguards para Korsa, do lado de fora de Legashi Stronghold.",
+            ruRU = "Убейте 6 Legashi Hellraisers, 4 Legashi Soulstealers и 2 Legashi Blackguards для Korsa у Legashi Stronghold.",
+            koKR = "Legashi Stronghold 밖의 Korsa를 위해 Legashi Hellraiser 6마리, Legashi Soulstealer 4마리, Legashi Blackguard 2마리를 처치하세요.",
+            zhCN = "为Legashi Stronghold外的Korsa杀死6个Legashi Hellraiser、4个Legashi Soulstealer和2个Legashi Blackguard。",
+            zhTW = "為Legashi Stronghold外的Korsa殺死6個Legashi Hellraiser、4個Legashi Soulstealer和2個Legashi Blackguard。",
+        },
+        SATYR_O = {
+            deDE = "Helft Graal, aus Legashi Stronghold auszubrechen, und benachrichtigt dann Korsa vor Legashi Stronghold.",
+            frFR = "Aidez Graal à s'évader de Legashi Stronghold, puis prévenez Korsa devant Legashi Stronghold.",
+            esES = "Ayuda a Graal a escapar de Legashi Stronghold y después avisa a Korsa a las afueras de Legashi Stronghold.",
+            esMX = "Ayuda a Graal a escapar de Legashi Stronghold y después avisa a Korsa a las afueras de Legashi Stronghold.",
+            itIT = "Aiuta Graal a evadere da Legashi Stronghold, poi avvisa Korsa fuori da Legashi Stronghold.",
+            ptBR = "Ajude Graal a fugir de Legashi Stronghold e depois avise Korsa do lado de fora de Legashi Stronghold.",
+            ruRU = "Помогите Graal вырваться из Legashi Stronghold, затем сообщите об этом Korsa у Legashi Stronghold.",
+            koKR = "Graal이 Legashi Stronghold에서 탈출하도록 도운 뒤, Legashi Stronghold 밖의 Korsa에게 알리세요.",
+            zhCN = "帮助Graal逃出Legashi Stronghold，然后通知Legashi Stronghold外的Korsa。",
+            zhTW = "幫助Graal逃出Legashi Stronghold，然後通知Legashi Stronghold外的Korsa。",
+        },
+        RETURN_O = {
+            deDE = "Kehrt zu Gatekeeper Rageroar in Ursolan zurück.",
+            frFR = "Retournez voir Gatekeeper Rageroar à Ursolan.",
+            esES = "Vuelve con Gatekeeper Rageroar en Ursolan.",
+            esMX = "Vuelve con Gatekeeper Rageroar en Ursolan.",
+            itIT = "Torna da Gatekeeper Rageroar a Ursolan.",
+            ptBR = "Volte a Gatekeeper Rageroar em Ursolan.",
+            ruRU = "Вернитесь к Gatekeeper Rageroar в Ursolan.",
+            koKR = "Ursolan의 Gatekeeper Rageroar에게 돌아가세요.",
+            zhCN = "回到Ursolan的Gatekeeper Rageroar那里。",
+            zhTW = "回到Ursolan的Gatekeeper Rageroar那裡。",
+        },
+        REINF_O = {
+            deDE = "Sprecht mit Gorn One Eye in der Holzschlundfeste und bittet ihn um Verstärkung.",
+            frFR = "Parlez à Gorn One Eye au Repaire des Grumegueules et demandez-lui des renforts.",
+            esES = "Habla con Gorn One Eye en el Bastión Fauces de Madera y pídele refuerzos.",
+            esMX = "Habla con Gorn One Eye en el Bastión Fauces de Madera y pídele refuerzos.",
+            itIT = "Parla con Gorn One Eye a Timbermaw Hold e chiedigli dei rinforzi.",
+            ptBR = "Fale com Gorn One Eye em Timbermaw Hold e peça reforços a ele.",
+            ruRU = "Поговорите с Gorn One Eye в Крепости Древобрюхов и попросите у него подкрепление.",
+            koKR = "나무구렁 요새의 Gorn One Eye와 대화하여 지원군을 요청하세요.",
+            zhCN = "与木喉要塞的Gorn One Eye交谈，请他派出援军。",
+            zhTW = "與木喉要塞的Gorn One Eye交談，請他派出援軍。",
+        },
+        BLOOD_O = {
+            deDE = "Tötet Chieftain Bloodmaw und bringt seinen Streitkolben zu Gorn One Eye in der Holzschlundfeste.",
+            frFR = "Tuez Chieftain Bloodmaw et apportez sa masse à Gorn One Eye au Repaire des Grumegueules.",
+            esES = "Mata a Chieftain Bloodmaw y llévale su maza a Gorn One Eye en el Bastión Fauces de Madera.",
+            esMX = "Mata a Chieftain Bloodmaw y llévale su maza a Gorn One Eye en el Bastión Fauces de Madera.",
+            itIT = "Uccidi Chieftain Bloodmaw e porta la sua mazza a Gorn One Eye a Timbermaw Hold.",
+            ptBR = "Mate Chieftain Bloodmaw e leve a maça dele para Gorn One Eye em Timbermaw Hold.",
+            ruRU = "Убейте Chieftain Bloodmaw и принесите его булаву Gorn One Eye в Крепость Древобрюхов.",
+            koKR = "Chieftain Bloodmaw를 처치하고 그의 철퇴를 나무구렁 요새의 Gorn One Eye에게 가져가세요.",
+            zhCN = "杀死Chieftain Bloodmaw，把他的锤子交给木喉要塞的Gorn One Eye。",
+            zhTW = "殺死Chieftain Bloodmaw，把他的錘子交給木喉要塞的Gorn One Eye。",
+        },
+        BLOOD_N = {
+            deDE = "Chieftain Bloodmaw ist im Teufelswald, südlich der Holzschlundfeste.",
+            frFR = "Chieftain Bloodmaw se trouve à Gangrebois, au sud du Repaire des Grumegueules.",
+            esES = "Chieftain Bloodmaw está en Frondavil, al sur del Bastión Fauces de Madera.",
+            esMX = "Chieftain Bloodmaw está en Frondavil, al sur del Bastión Fauces de Madera.",
+            itIT = "Chieftain Bloodmaw si trova a Felwood, a sud di Timbermaw Hold.",
+            ptBR = "Chieftain Bloodmaw fica na Selva Maleva, ao sul de Timbermaw Hold.",
+            ruRU = "Chieftain Bloodmaw находится в Оскверненном лесу, к югу от Крепости Древобрюхов.",
+            koKR = "Chieftain Bloodmaw는 나무구렁 요새 남쪽, 악령의 숲에 있습니다.",
+            zhCN = "Chieftain Bloodmaw在费伍德森林，木喉要塞以南。",
+            zhTW = "Chieftain Bloodmaw在費伍德森林，木喉要塞以南。",
+        },
+        COUNTER_O = {
+            deDE = "Pflanzt das Timbermaw War Banner bei Legashi Stronghold in Azshara auf. Tötet Prince Halanox und meldet Euren Sieg Gatekeeper Rageroar in Ursolan.",
+            frFR = "Plantez le Timbermaw War Banner à Legashi Stronghold en Azshara. Tuez Prince Halanox, puis annoncez votre victoire à Gatekeeper Rageroar à Ursolan.",
+            esES = "Planta el Timbermaw War Banner en Legashi Stronghold, en Azshara. Mata a Prince Halanox e informa de tu victoria a Gatekeeper Rageroar en Ursolan.",
+            esMX = "Planta el Timbermaw War Banner en Legashi Stronghold, en Azshara. Mata a Prince Halanox e informa de tu victoria a Gatekeeper Rageroar en Ursolan.",
+            itIT = "Pianta il Timbermaw War Banner a Legashi Stronghold, in Azshara. Uccidi Prince Halanox e riferisci la vittoria a Gatekeeper Rageroar a Ursolan.",
+            ptBR = "Finque o Timbermaw War Banner em Legashi Stronghold, em Azshara. Mate Prince Halanox e informe sua vitória a Gatekeeper Rageroar em Ursolan.",
+            ruRU = "Установите Timbermaw War Banner у Legashi Stronghold в Азшаре. Убейте Prince Halanox и доложите о победе Gatekeeper Rageroar в Ursolan.",
+            koKR = "아즈샤라의 Legashi Stronghold에 Timbermaw War Banner를 꽂으세요. Prince Halanox를 처치하고 Ursolan의 Gatekeeper Rageroar에게 승리를 보고하세요.",
+            zhCN = "在艾萨拉的Legashi Stronghold插上Timbermaw War Banner。杀死Prince Halanox，然后向Ursolan的Gatekeeper Rageroar报告胜利。",
+            zhTW = "在艾薩拉的Legashi Stronghold插上Timbermaw War Banner。殺死Prince Halanox，然後向Ursolan的Gatekeeper Rageroar報告勝利。",
+        },
+        COUNTER_N = {
+            deDE = "Elitequest: Nehmt für Prince Halanox eine Gruppe mit.",
+            frFR = "Quête élite : venez en groupe pour Prince Halanox.",
+            esES = "Misión de élite: lleva un grupo para Prince Halanox.",
+            esMX = "Misión de élite: lleva un grupo para Prince Halanox.",
+            itIT = "Missione élite: porta un gruppo per Prince Halanox.",
+            ptBR = "Missão de elite: leve um grupo para Prince Halanox.",
+            ruRU = "Элитное задание: на Prince Halanox идите группой.",
+            koKR = "정예 퀘스트: Prince Halanox는 파티로 상대하세요.",
+            zhCN = "精英任务：请组队对付Prince Halanox。",
+            zhTW = "精英任務：請組隊對付Prince Halanox。",
+        },
+        FEED_N = {
+            deDE = "Wiederholbar. Laut Abschlusstext verfüttert Ihr das Fleisch an einen hungrigen Peitscher, der eine Samenkapsel ausspuckt. Wo er steht, ist noch nicht bekannt; bitte meldet es auf Discord.",
+            frFR = "Répétable. D'après son texte de fin, vous donnez la chair à un fouetteur affamé, qui recrache une gousse. On ne sait pas encore où il se trouve ; merci de le signaler sur Discord.",
+            esES = "Repetible. Según su texto final, le das la carne a un azotador hambriento, que escupe una vaina de semillas. Aún no se sabe dónde está; avisa en Discord.",
+            esMX = "Repetible. Según su texto final, le das la carne a un azotador hambriento, que escupe una vaina de semillas. Aún no se sabe dónde está; avisa en Discord.",
+            itIT = "Ripetibile. Secondo il testo di completamento dai la carne a un frustatore affamato, che sputa un baccello di semi. Dove si trovi non si sa ancora; segnalalo su Discord.",
+            ptBR = "Repetível. Pelo texto de conclusão, você dá a carne a um chicoteador faminto, que cospe uma vagem de sementes. Ainda não se sabe onde ele fica; avise no Discord.",
+            ruRU = "Повторяемое. По тексту завершения вы скармливаете плоть голодному хлестуну, и он выплевывает семенной стручок. Где он находится, пока неизвестно; сообщите, пожалуйста, в Discord.",
+            koKR = "반복 퀘스트입니다. 완료 문구에 따르면 굶주린 채찍덩굴에게 살점을 먹이면 씨앗 꼬투리를 뱉어냅니다. 위치는 아직 알려지지 않았으니 Discord에 제보해 주세요.",
+            zhCN = "可重复。按完成文本，你把肉喂给一只饥饿的鞭笞者，它会吐出一个种子荚。它的位置尚不清楚，请在Discord上报告。",
+            zhTW = "可重複。依完成文字，你把肉餵給一隻飢餓的鞭笞者，牠會吐出一個種子莢。牠的位置尚不清楚，請在Discord上回報。",
+        },
+    }
+    local USE = {
+        [97173] = { pickup = "TIMEAR_P", turnin = "TIMEAR_P" },
+        [97198] = { pickup = "MULN", turnin = "MULN" },
+        [92345] = { pickup = "TRUESONG" },
+        [92069] = { pickup = "OGTINC", turnin = "OGTINC" },
+        [97327] = { pickup = "EKKAL", turnin = "EKKAL" },
+        [96246] = { pickup = "EKKAL", turnin = "EKKAL" },
+        [92065] = { pickup = "RAGEROAR", turnin = "RAGEROAR", note = "RECLAIM_N" },
+        [86777] = { objective = "FEARDRED_O", pickup = "KORSA", turnin = "KORSA" },
+        [86792] = { objective = "THIN_O", pickup = "KORSA", turnin = "KORSA" },
+        [86796] = { objective = "SATYR_O", pickup = "GRAAL_P", turnin = "KORSA" },
+        [86797] = { objective = "RETURN_O", pickup = "KORSA", turnin = "RAGEROAR" },
+        [86798] = { objective = "REINF_O", pickup = "RAGEROAR", turnin = "GORN" },
+        [87346] = { objective = "BLOOD_O", pickup = "GORN", turnin = "GORN", note = "BLOOD_N" },
+        [86814] = { objective = "COUNTER_O", pickup = "GORN", turnin = "RAGEROAR", note = "COUNTER_N" },
+        [92070] = { turnin = "UNELE" },
+        [92066] = { pickup = "NOK", turnin = "NOK" },
+        [92067] = { note = "FEED_N" },
+    }
+    for _, lang in ipairs({ "deDE", "frFR", "esES", "esMX", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }) do
+        local content = FDJ.ContentLocales[lang]
+        if content then
+            content.quests = content.quests or {}
+            for questID, fields in pairs(USE) do
+                local entry = content.quests[questID] or {}
+                content.quests[questID] = entry
+                for field, key in pairs(fields) do
+                    if entry[field] == nil then entry[field] = T[key][lang] end
+                end
+            end
+        end
+    end
+end

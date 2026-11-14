@@ -2218,6 +2218,17 @@ do
         local list = ViewTable("rpgBosses")[name]
         if type(list) ~= "table" then return false end
         if boss.npcID and list[boss.npcID] then return true end
+        -- altarbosses (2.0.24): a group entry ("Altar Bosses") is open once
+        -- any one of its children has been seen.
+        if type(boss.children) == "table" then
+            for _, id in ipairs(boss.children) do
+                if list[id] then return true end
+            end
+            local d = FDJ.DB and FDJ.DB[name]
+            for _, b in ipairs((d and d.bosses) or {}) do
+                if type(b) == "table" and b.childOf == boss.name and type(b.name) == "string" and list[b.name:lower()] == true then return true end
+            end
+        end
         return type(boss.name) == "string" and list[boss.name:lower()] == true
     end
 

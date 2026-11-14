@@ -877,11 +877,32 @@ do
         return list
     end
 
+    -- trackpull (2.0.50) took Track (these windows) off the dungeons; that
+    -- was a misunderstanding. trackback (2.0.6): Track is on every dungeon's
+    -- quest list again, as in 2.0.5. What stays out of the release is only
+    -- the dungeon route, the arrow guide (vault "route"); the waypoint arrow
+    -- still follows only the chain pages (FollowChains).
+    local function Trackable(name)
+        local d = name and FDJ.DB and FDJ.DB[name]
+        if not d then return false end
+        return true
+    end
+
     local function IsTracked(name)
+        if not Trackable(name) then return false end
         for _, tracked in ipairs(TrackedList()) do
             if tracked == name then return true end
         end
         return false
+    end
+
+    -- The tracked ones that can be shown (trackpull, 2.0.50).
+    local function ShownTracked()
+        local list = {}
+        for _, name in ipairs(TrackedList()) do
+            if Trackable(name) then list[#list + 1] = name end
+        end
+        return list
     end
 
     -- Windows folded down to their title bar, by dungeon.
@@ -1410,6 +1431,8 @@ do
                 for i, s in ipairs(FDJ.QUEST_PREREQ_CHAINS[quest.id] or {}) do
                     if s == step then stepIndex = i break end
                 end
+                -- choicestep (2.0.37): a choice of quests is one number.
+                if stepIndex and FDJ.ChainStepNumber then stepIndex = FDJ.ChainStepNumber(FDJ.QUEST_PREREQ_CHAINS[quest.id], stepIndex) end
                 info.stepLabel = stepIndex and (stepIndex .. ". " .. info.stepName) or info.stepName
                 -- No chain glyph of its own: the quest's chain icon says it.
                 local parts = { Hex(GOLD) .. info.stepLabel .. "|r" }
@@ -1434,11 +1457,41 @@ do
     -- the player is on (! where to pick it up, ? in the log), the ones after.
     local function ChainSteps(info)
         local out, current = {}, false
-        for index, step in ipairs(info.chain or {}) do
+        local chain = info.chain or {}
+        local index = 1
+        while index <= #chain do
+            local step = chain[index]
+            -- pickone (2.0.42): a choice of quests (choicestep, 2.0.37) is
+            -- "1. Pick one of the following quests:" with its quests under
+            -- it ("- Master Feardred"); once one of them is in the log, that
+            -- one alone; once one is handed in, the line alone (ticked).
+            local last, combined = index, nil
+            if type(step) == "table" and step.choice ~= nil and FDJ.ChainChoiceEnd then
+                last = FDJ.ChainChoiceEnd(chain, index)
+                if last > index then
+                    local pick
+                    for k = index, last do
+                        local s = chain[k]
+                        if type(s) == "table" and type(s.id) == "number" and InLog(s.id) and not TurnedIn(s.id) then pick = s break end
+                    end
+                    if pick then
+                        step = pick
+                    else
+                        local names = {}
+                        for k = index, last do
+                            local s = chain[k]
+                            if type(s) == "table" then names[#names + 1] = Field(s.id, "name", s.name or "") end
+                        end
+                        combined = names
+                    end
+                end
+            end
             if type(step) == "table" then
                 local id = step.id
                 local details = (id and FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[id]) or {}
-                local entry = { step = step, index = index, details = details, name = Field(id, "name", step.name or "") }
+                local entry = { step = step, index = index, details = details, name = combined and T("CHAIN_PICK_ONE") or Field(id, "name", step.name or ""), combined = combined ~= nil }
+                if combined then entry.arrowName = combined[1] end -- the arrow: the quest's own name
+                entry.label = ((FDJ.ChainStepNumber and FDJ.ChainStepNumber(chain, index)) or index) .. ". "
                 if step.itemStep or type(id) ~= "number" then
                     entry.state = "item"
                 elseif TurnedIn(id) then
@@ -1459,8 +1512,14 @@ do
                 else
                     entry.state = "later"
                 end
+                -- the choice's quests under its line, while it is to do
+                if combined and entry.state ~= "done" then
+                    entry.parts = {}
+                    for _, name in ipairs(combined) do entry.parts[#entry.parts + 1] = "   " .. Hex(entry.state == "next" and TODO or GREY) .. "- " .. name .. "|r" end
+                end
                 out[#out + 1] = entry
             end
+            index = last + 1
         end
         return out
     end
@@ -1860,7 +1919,8 @@ do
         elseif entry.state == "log" then
             GameTooltip:AddLine(T("TRACK_IN_LOG"), 1.00, 0.82, 0.10)
         end
-        local goal = Field(id, "objective", details.objective)
+        -- choiceline (2.0.40): a choice's line has no one objective
+        local goal = (not entry.combined) and Field(id, "objective", details.objective) or nil
         if type(goal) == "string" and goal ~= "" and entry.state ~= "done" then GameTooltip:AddLine(goal, 1, 1, 1, true) end
         local turnin = Field(id, "turnin", details.turnin)
         if type(turnin) == "string" and turnin ~= "" and entry.state ~= "done" then
@@ -1900,7 +1960,7 @@ do
             local show = FDJ.MapMarkers and FDJ.MapMarkers.ShowRecordedLocationOnMap
             if not spot or not show then return end
             spot = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(spot)) or spot
-            FDJ.pendingMarkerQuestTitle = entry.name
+            FDJ.pendingMarkerQuestTitle = (entry.arrowName or entry.name)
             FDJ.pendingMarkerTurnIn = turnIn
             FDJ.pendingMarkerQuestID = entry.step and entry.step.id -- autoclear
             show(spot, spot.label)
@@ -1968,7 +2028,7 @@ do
         mark:SetShown(icon ~= nil)
         local color = (state == "done" and DONE) or ((state == "ready" or state == "log") and GOLD)
             or (state == "next" and TODO) or GREY
-        local label = entry.index .. ". " .. (entry.name or "")
+        local label = (entry.label or (entry.index .. ". ")) .. (entry.name or "")
         local parts = { Hex(color) .. label .. "|r" }
         for _, text in ipairs(entry.parts or {}) do parts[#parts + 1] = text end
         local textW = math.max(40, width - STEP_TEXT_X)
@@ -2340,7 +2400,11 @@ do
         f.fdjTracker = true
         f.slot = index
         f:SetSize(WIDTH, COLLAPSED_H)
-        f:SetFrameStrata("LOW")
+        -- trackerover (2.0.51): above the game's own quest list (it drew its
+        -- lines over the window where the two met), still under the journal
+        -- (DIALOG). Was LOW.
+        f:SetFrameStrata("MEDIUM")
+        f:SetFrameLevel(20)
         f:SetClampedToScreen(true)
         f:SetMovable(true)
         f:EnableMouse(true)
@@ -2708,7 +2772,7 @@ do
         local level = PlayerLevel()
         local now = {}
         local names = {}
-        for _, name in ipairs(TrackedList()) do names[#names + 1] = name end
+        for _, name in ipairs(ShownTracked()) do names[#names + 1] = name end
         for name, on in pairs(ArrowChains()) do
             if on and FDJ.DB and FDJ.DB[name] and not IsTracked(name) then names[#names + 1] = name end
         end
@@ -2726,10 +2790,10 @@ do
                         local pending = false
                         for _, entry in ipairs(ChainSteps(info)) do
                             if entry.state == "next" then
-                                pending, spot, title = true, entry.start, entry.name
+                                pending, spot, title = true, entry.start, (entry.arrowName or entry.name)
                                 break
                             elseif entry.state == "log" or entry.state == "ready" then
-                                pending, spot, title, turnIn = true, entry.turnin, entry.name, true
+                                pending, spot, title, turnIn = true, entry.turnin, (entry.arrowName or entry.name), true
                                 break
                             end
                         end
@@ -2762,7 +2826,7 @@ do
 
     Refresh = function()
         local shown = {}
-        for _, name in ipairs(TrackedList()) do
+        for _, name in ipairs(ShownTracked()) do
             if not Locked(name) and #QuestsOf(name) > 0 then shown[#shown + 1] = name end
         end
         -- Each dungeon keeps its own window, and so its place, while other
@@ -2841,7 +2905,7 @@ do
         local journal = _G.ForeverDungeonJournalFrame
         local b = journal and journal.questTrackButton
         if not b then return end
-        if not name or #QuestsOf(name) == 0 then
+        if not name or #QuestsOf(name) == 0 or not Trackable(name) then -- trackpull (2.0.50)
             b.dungeon = nil
             b:Hide()
             Schedule()
@@ -2890,6 +2954,7 @@ do
     -- Track / stop tracking one dungeon; a newly tracked one opens last.
     function FDJ.ToggleQuestTracking(name)
         if not name or not (FDJ.DB and FDJ.DB[name]) then return end
+        if not Trackable(name) then return end -- trackpull (2.0.50)
         local list = TrackedList()
         local on = not IsTracked(name)
         if on then
@@ -2916,7 +2981,7 @@ do
         end
         Refresh()
         -- The first window, never moved yet: right beside the journal.
-        local index = on and #list == 1 and WindowSlots()[name]
+        local index = on and #ShownTracked() == 1 and WindowSlots()[name]
         if index and windows[index] and type(Slot(index).left) ~= "number" then
             PopOutBeside(windows[index], _G.ForeverDungeonJournalFrame)
         end

@@ -170,7 +170,10 @@ local function Bosses(dungeon)
     c = { byNpc = {}, byName = {}, finalNpc = nil, finalNames = {} }
     local d = FDJ.DB and FDJ.DB[dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
-        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string" then
+        -- altarbosses (2.0.24): a journal group ("Altar Bosses") and its
+        -- children are not run bosses; their kills stay trash, as before.
+        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
+            and not b.childOf and not b.children then
             if b.npcID then c.byNpc[b.npcID] = b end
             local names = { b.name }
             if FDJ.LocalizeBossName then
@@ -178,15 +181,26 @@ local function Bosses(dungeon)
                 if ok and type(loc) == "string" then names[#names + 1] = loc end
             end
             for _, alias in ipairs(b.aliases or {}) do names[#names + 1] = alias end
-            -- bossnames: its name in the client's language, learned in the
-            -- game (units seen, the Encounter Journal). Kills told by name
-            -- only (the boss kill event, "dies" lines) match it too.
-            if b.npcID then
-                local acc = Account()
-                if type(acc.runLogNames[b.npcID]) == "string" then names[#names + 1] = acc.runLogNames[b.npcID] end
-                for alias in pairs(acc.runLogBossAliases[b.npcID] or {}) do names[#names + 1] = alias end
-            end
             for _, n in ipairs(names) do
+                local lower = Lower(n)
+                if lower and not c.byName[lower] then c.byName[lower] = b end
+            end
+        end
+    end
+    -- bossnames: its name in the client's language, learned in the game
+    -- (units seen, the Encounter Journal). Kills told by name only (the
+    -- boss kill event, "dies" lines) match it too. rendgyth (2.0.34): taken
+    -- after every boss's own names, so a learned name can never take
+    -- another boss's own name (Gyth had learned "Warchief Rend Blackhand"
+    -- from the encounter event and, coming first, took Rend's kills).
+    for _, b in ipairs((d and d.bosses) or {}) do
+        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
+            and not b.childOf and not b.children and b.npcID then
+            local acc = Account()
+            local learned = {}
+            if type(acc.runLogNames[b.npcID]) == "string" then learned[#learned + 1] = acc.runLogNames[b.npcID] end
+            for alias in pairs(acc.runLogBossAliases[b.npcID] or {}) do learned[#learned + 1] = alias end
+            for _, n in ipairs(learned) do
                 local lower = Lower(n)
                 if lower and not c.byName[lower] then c.byName[lower] = b end
             end
@@ -849,7 +863,24 @@ function FDJ.RunLogEncounterName(id, name)
         insideDungeon = dungeon
         if current and not current.dungeon then current.dungeon = dungeon end
     end
-    if type(name) == "string" and name ~= "" and Lower(name) ~= Lower(bossName) then
+    -- rendgyth (2.0.34): not when the game's name is another boss's own
+    -- name here (the event's name and the journal's boss can differ).
+    local othersName = false
+    if type(name) == "string" and name ~= "" then
+        for _, b in ipairs(d.bosses or {}) do
+            if type(b) == "table" and type(b.name) == "string" and b.name ~= bossName then
+                if Lower(b.name) == Lower(name) then othersName = true break end
+                for _, alias in ipairs(b.aliases or {}) do
+                    if Lower(alias) == Lower(name) then othersName = true end
+                end
+                if FDJ.LocalizeBossName then
+                    local ok, loc = pcall(FDJ.LocalizeBossName, b.name)
+                    if ok and type(loc) == "string" and Lower(loc) == Lower(name) then othersName = true end
+                end
+            end
+        end
+    end
+    if not othersName and type(name) == "string" and name ~= "" and Lower(name) ~= Lower(bossName) then
         for _, b in ipairs(d.bosses or {}) do
             if type(b) == "table" and b.name == bossName then
                 if b.npcID and AddBossAlias(b.npcID, name) and FixBossKillsAll then FixBossKillsAll() end
@@ -858,6 +889,23 @@ function FDJ.RunLogEncounterName(id, name)
         end
     end
     return bossName
+end
+
+-- rendgyth (2.0.34): bosses an encounter's end counts besides its own
+-- (data: also = { ... }), each only if not already killed since you last
+-- came into the dungeon.
+function FDJ.RunLogEncounterAlso(id)
+    local hit = tonumber(id) and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[tonumber(id)]
+    return type(hit) == "table" and type(hit.also) == "table" and hit.also or nil
+end
+function FDJ.RunLogKilledThisVisit(run, bossName)
+    if not run or type(bossName) ~= "string" then return false end
+    local last = type(run.exits) == "table" and run.exits[#run.exits] or nil
+    local since = (last and last.t) or 0
+    for _, k in ipairs(run.kills or {}) do
+        if k.b == bossName and (k.t or 0) >= since then return true end
+    end
+    return false
 end
 
 -- resetsplit (2.0.3): a boss that died before you last left the dungeon dies
@@ -2115,10 +2163,15 @@ events:SetScript("OnEvent", function(_, event, ...)
             e.last = Now()
             db.bossEvents[tonumber(id)] = e
         end
+        local encounterID = id
         if FDJ.RunLogEncounterName then name = FDJ.RunLogEncounterName(id, name) end
         if (success == 1 or success == true) and type(name) == "string" then
             FDJ.RunLogSignals.boss = FDJ.RunLogSignals.boss + 1
             AddKill(nil, name, "boss")
+            -- rendgyth (2.0.34): the encounter's other bosses (Gyth with Rend)
+            for _, extra in ipairs((FDJ.RunLogEncounterAlso and FDJ.RunLogEncounterAlso(encounterID)) or {}) do
+                if not FDJ.RunLogKilledThisVisit(current, extra) then AddKill(nil, extra, "boss") end
+            end
         end
     elseif event == "CHAT_MSG_COMBAT_XP_GAIN" then
         FDJ.RunLogSignals.xp = FDJ.RunLogSignals.xp + 1

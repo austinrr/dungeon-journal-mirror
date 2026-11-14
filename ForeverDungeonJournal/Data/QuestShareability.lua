@@ -240,7 +240,6 @@ FDJ.QUEST_SHAREABILITY_AUDIT = {
     [4286] = true,   -- The Good Stuff
     [7848] = false,  -- Attunement to the Core
     [7604] = false,  -- A Binding Contract
-    [4295] = true,   -- Rocknot's Ale
     [4322] = false,  -- Jail Break!
     [3982] = false,  -- What Is Going On?
     [4121] = false,  -- Precarious Predicament

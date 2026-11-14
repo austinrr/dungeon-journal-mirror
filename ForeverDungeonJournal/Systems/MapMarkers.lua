@@ -2067,11 +2067,13 @@ do
             if (pin.floor or 1) == floorIndex and Wanted(pin) then
                 local spots, start, firstQuest = {}, false, nil
                 local logged, available, firstLogged = false, false, nil -- pinlog
+                local allRepeat = true -- repeaticon (2.0.44)
                 for _, spot in ipairs(pin.spots or {}) do
                     local shown = {}
                     for _, q in ipairs(spot.quests or {}) do
                         if q.id ~= skip and Shown(q, faction) then
                             shown[#shown + 1] = q
+                            if not (FDJ.IsRepeatableQuest and FDJ.IsRepeatableQuest(q.id)) then allRepeat = false end
                             firstQuest = firstQuest or q
                             local have = inLog(q.id) and true or false
                             for _, act in ipairs(q.acts or {}) do
@@ -2108,7 +2110,12 @@ do
                     if b:GetParent() ~= holder then b:SetParent(holder) end
                     b.fdjSpots, b.fdjFirst, b.fdjStart = spots, firstQuest, bang
                     b.fdjFloor, b.fdjX, b.fdjY = pin.floor or 1, pin.x, pin.y -- mapfocus
-                    b.icon:SetTexture(bang and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
+                    -- repeaticon (2.0.44): only repeatable quests there: the blue ?
+                    if FDJ.SetQuestIconTexture then
+                        FDJ.SetQuestIconTexture(b.icon, allRepeat, bang and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
+                    else
+                        b.icon:SetTexture(bang and "Interface\\GossipFrame\\AvailableQuestIcon" or "Interface\\GossipFrame\\ActiveQuestIcon")
+                    end
                     if b.icon.SetDesaturated then b.icon:SetDesaturated(idle) end
                     b.icon:SetAlpha(idle and 0.75 or 1)
                     local size = math.max(22, math.floor((baseH or 0) * 0.07))
@@ -2275,25 +2282,25 @@ do
                 ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
         }
         local more = {
-            enUS = { ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
+            enUS = { ARROW_GET_TO = "Get to %s", ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
                 ARROW_PORTAL = "Take the portal to %s", ARROW_HEARTH = "Hearth to %s" },
-            deDE = { ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte.",
+            deDE = { ARROW_GET_TO = "Begib dich nach %s", ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte.",
                 ARROW_PORTAL = "Nimm das Portal nach %s", ARROW_HEARTH = "Ruhestein nach %s" },
-            frFR = { ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte.",
+            frFR = { ARROW_GET_TO = "Rendez-vous à %s", ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte.",
                 ARROW_PORTAL = "Prenez le portail vers %s", ARROW_HEARTH = "Pierre de foyer vers %s" },
-            esES = { ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa.",
+            esES = { ARROW_GET_TO = "Ve a %s", ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa.",
                 ARROW_PORTAL = "Toma el portal a %s", ARROW_HEARTH = "Piedra de hogar a %s" },
-            itIT = { ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa.",
+            itIT = { ARROW_GET_TO = "Raggiungi %s", ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa.",
                 ARROW_PORTAL = "Prendi il portale per %s", ARROW_HEARTH = "Pietra del ritorno: %s" },
-            ptBR = { ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa.",
+            ptBR = { ARROW_GET_TO = "Vá para %s", ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa.",
                 ARROW_PORTAL = "Pegue o portal para %s", ARROW_HEARTH = "Pedra de regresso para %s" },
-            ruRU = { ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте.",
+            ruRU = { ARROW_GET_TO = "Доберитесь: %s", ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте.",
                 ARROW_PORTAL = "Портал: %s", ARROW_HEARTH = "Камень возвращения: %s" },
-            koKR = { ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다.",
+            koKR = { ARROW_GET_TO = "%s(으)로 가세요", ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다.",
                 ARROW_PORTAL = "%s행 차원문을 타세요", ARROW_HEARTH = "귀환석: %s" },
-            zhCN = { ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。",
+            zhCN = { ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。",
                 ARROW_PORTAL = "使用传送门前往%s", ARROW_HEARTH = "炉石回到%s" },
-            zhTW = { ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。",
+            zhTW = { ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。",
                 ARROW_PORTAL = "使用傳送門前往%s", ARROW_HEARTH = "爐石回到%s" },
         }
         for locale, entries in pairs(more) do
@@ -3455,6 +3462,98 @@ do
         return found or nil
     end
 
+    -- getto (2.0.22): "Get to Dalaran" under the yards, while the spot is in a
+    -- city or a named town and the player is not there yet. A spot out in
+    -- the open says nothing: its zone alone would be too broad. The place:
+    -- the city whose map the spot is on; else a town named in the spot's own
+    -- label ("Magus Olvek — Dalaran") or detail; else the flight point
+    -- right by it (the game's own name). Gone once inside: the city's map,
+    -- the place's name as the game calls where one stands, or close by.
+    Way.GET_TO_CITY = { [1453] = true, [1454] = true, [1455] = true, [1456] = true, [1457] = true, [1458] = true }
+    Way.GET_TO_PLACES = {
+        "Dalaran", "Southshore", "Tarren Mill", "Hammerfall", "Refuge Pointe", "Kargath", "Ratchet",
+        "The Crossroads", "Camp Taurajo", "Sen'jin Village", "Razor Hill", "Bloodhoof Village", "Brill",
+        "The Sepulcher", "Pyrewood Village", "Kharanos", "Thelsamar", "Goldshire", "Darkshire", "Lakeshire",
+        "Booty Bay", "Grom'gol Base Camp", "Rebel Camp", "Sentinel Hill", "Moonbrook", "Menethil Harbor",
+        "Dun Modr", "Freewind Post", "Sun Rock Retreat", "Thalanaar", "Theramore", "Brackenwall Village",
+        "Valormok", "Farholde Keep", "Rog'mar", "Bandarion Keep", "Chillwind Camp", "Light's Hope Chapel",
+        "Aerie Peak", "Revantusk Village", "Nethergarde Keep", "Stonard", "Morgan's Vigil", "Flame Crest",
+        "Thorium Point", "Gadgetzan", "Everlook", "Marshal's Refuge", "Nijel's Point", "Shadowprey Village",
+        "Ghost Walker Post", "Camp Mojache", "Feathermoon Stronghold", "Astranaar", "Splintertree Post",
+        "Auberdine", "Stonetalon Peak", "Talonbranch Glade", "Bloodvenom Post", "Nighthaven", "Cenarion Hold",
+        "Dolanaar", "Stonewatch", "Raven Hill", "Westbrook Garrison", "Steamwheedle Port", "Mudsprocket",
+    }
+    Way.GET_TO_NODE = 200 -- yards: a flight point this close to the spot names its place
+    Way.GET_TO_IN = 150   -- yards: this close to the spot counts as there
+    Way.GET_TO_OUT = 220  -- yards: and this far, as gone again
+    function Way.GetTo(entry)
+        local spot = entry and entry.spot
+        if type(spot) ~= "table" then return "" end
+        if entry.getTo == nil then
+            local found = false
+            local city = tonumber(spot.mapID)
+            if city and Way.GET_TO_CITY[city] then
+                local name = ZoneName(city)
+                if name ~= "" then found = { name = name, city = city } end
+            else
+                local best
+                local label = type(spot.label) == "string" and spot.label:match("\226\128\148%s*(.+)$") or nil
+                for _, text in ipairs({ label or "", type(spot.detail) == "string" and spot.detail or "" }) do
+                    local lower = string.lower(text)
+                    for _, place in ipairs(Way.GET_TO_PLACES) do
+                        if (not best or #place > #best) and string.find(lower, string.lower(place), 1, true) then best = place end
+                    end
+                    if best then break end
+                end
+                if best then
+                    found = { name = FreeText(best) or best, english = best }
+                else
+                    local w = SpotWorld(spot)
+                    local near
+                    if w then
+                        for _, node in ipairs(Way.AllNodes()) do
+                            if node[3] == w[3] and type(node.name) == "string" and node.name ~= "" then
+                                local d = Yards(node[1], node[2], w[1], w[2])
+                                if d <= Way.GET_TO_NODE and (not near or d < near) then near, found = d, { name = node.name } end
+                            end
+                        end
+                    end
+                end
+            end
+            entry.getTo = found
+        end
+        local place = entry.getTo
+        if not place then return "" end
+        if place.city then
+            local okMap, mapID = false, nil
+            if C_Map and type(C_Map.GetBestMapForUnit) == "function" then okMap, mapID = pcall(C_Map.GetBestMapForUnit, "player") end
+            if okMap and Number(mapID) == place.city then return "" end
+        else
+            for _, fn in ipairs({ GetSubZoneText, GetMinimapZoneText, GetRealZoneText, GetZoneText }) do
+                if type(fn) == "function" then
+                    local okT, text = pcall(fn)
+                    if okT and type(text) == "string" and text ~= "" and not (type(issecretvalue) == "function" and issecretvalue(text)) then
+                        local lower = string.lower(text)
+                        if string.find(lower, string.lower(place.name), 1, true)
+                            or (place.english and string.find(lower, string.lower(place.english), 1, true)) then
+                            return ""
+                        end
+                    end
+                end
+            end
+            local w = SpotWorld(spot)
+            local px, py, here = PlayerWorld()
+            if w and px and here == w[3] then
+                local d = Yards(px, py, w[1], w[2])
+                if d <= Way.GET_TO_IN then entry.getToThere = true elseif d >= Way.GET_TO_OUT then entry.getToThere = nil end
+            else
+                entry.getToThere = nil
+            end
+            if entry.getToThere then return "" end
+        end
+        return FDJ.L("ARROW_GET_TO", place.name)
+    end
+
     -- The plan's next thing to do, in words ("" when it is just walking).
     local function Doing(plan)
         if not plan then return "" end
@@ -3611,10 +3710,26 @@ do
             do
                 local npcID = FDJ.ARROW_NPC_IDS and FDJ.ARROW_NPC_IDS[NPC(entry.spot) or ""]
                 FDJ.arrowDisplayIDs = FDJ.arrowDisplayIDs or {}
-                if npcID and FDJ.arrowDisplayIDs[npcID] == nil and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
+                -- loadpause (2.0.7): not during a loading screen or the first
+                -- seconds after it (FDJ.PauseArrowLookup puts the model away).
+                -- portraitretry (2.0.18): a look another page already learned
+                -- (saved) is used at once; a lookup that gave up is tried again
+                -- half a minute later instead of never.
+                if npcID and FDJ.arrowDisplayIDs[npcID] == nil and type(ForeverDungeonJournalDB) == "table"
+                    and type(ForeverDungeonJournalDB.displayIDs) == "table"
+                    and tonumber(ForeverDungeonJournalDB.displayIDs[npcID]) then
+                    FDJ.arrowDisplayIDs[npcID] = tonumber(ForeverDungeonJournalDB.displayIDs[npcID])
+                    f.fdjNpcUnit, f.fdjNpcAt = nil, nil
+                end
+                if npcID and FDJ.arrowDisplayIDs[npcID] == false and FDJ.arrowDisplayRetry
+                    and ((GetTime and GetTime()) or 0) >= (FDJ.arrowDisplayRetry[npcID] or math.huge) then
+                    FDJ.arrowDisplayIDs[npcID], FDJ.arrowDisplayRetry[npcID] = nil, nil
+                end
+                if npcID and FDJ.arrowDisplayIDs[npcID] == nil and type(SetPortraitTextureFromCreatureDisplayID) == "function"
+                    and not (FDJ.LookupsPaused and FDJ.LookupsPaused()) then
                     local now = (GetTime and GetTime()) or 0
                     if f.fdjResolving ~= npcID then
-                        f.fdjResolving, f.fdjResolveAt = npcID, now
+                        f.fdjResolving, f.fdjResolveAt, f.fdjResolveTries = npcID, now, 1
                         if not f.model then
                             local okM, model = pcall(CreateFrame, "PlayerModel", nil, UIParent)
                             if okM and model then
@@ -3622,6 +3737,7 @@ do
                                 model:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
                                 model:SetAlpha(0)
                                 f.model = model
+                                FDJ.arrowLookupFrame = f
                             end
                         end
                         if f.model then
@@ -3636,11 +3752,32 @@ do
                         if okD and type(display) == "number" and display > 0 then
                             FDJ.arrowDisplayIDs[npcID] = display
                             f.fdjResolving, f.fdjNpcUnit, f.fdjNpcAt = nil, nil, nil
+                            if type(ForeverDungeonJournalDB) == "table" then -- portraitretry: kept for next time
+                                ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
+                                ForeverDungeonJournalDB.displayIDs[npcID] = display
+                            end
+                            if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
                             f.model:Hide()
-                        elseif now - (f.fdjResolveAt or now) > 8 then
-                            FDJ.arrowDisplayIDs[npcID] = false -- the game does not know it: the mark instead
-                            f.fdjResolving = nil
-                            f.model:Hide()
+                        elseif now - (f.fdjResolveAt or now) >= 2.5 then
+                            -- portraitretry (2.0.18): ask again, as the trash mob
+                            -- portraits do: an NPC this client has not met comes
+                            -- in a moment after the server answers, and one ask
+                            -- was never answered. 12 asks, then the mark for
+                            -- half a minute and the asking starts over.
+                            f.fdjResolveTries = (f.fdjResolveTries or 1) + 1
+                            f.fdjResolveAt = now
+                            local asked = false
+                            if f.fdjResolveTries <= 12 then
+                                if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
+                                asked = pcall(f.model.SetCreature, f.model, npcID)
+                            end
+                            if not asked then
+                                FDJ.arrowDisplayIDs[npcID] = false -- the mark meanwhile
+                                FDJ.arrowDisplayRetry = FDJ.arrowDisplayRetry or {}
+                                FDJ.arrowDisplayRetry[npcID] = now + 30
+                                f.fdjResolving = nil
+                                f.model:Hide()
+                            end
                         end
                     end
                 end
@@ -3710,11 +3847,15 @@ do
             f.distance:SetText(FDJ.L("ARROW_DISTANCE", math.floor(distance + 0.5)))
             local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE")) or doing
             if step == "" and hearth ~= "" then step, hearth = "|cff8fd0ff" .. hearth .. "|r", "" end
+            -- getto (2.0.22): the place to get to, on its own line under the
+            -- yards, the next step (if any) under it.
+            local getTo = Way.GetTo(entry)
+            if getTo ~= "" then step = (step ~= "" and (getTo .. "\n" .. step)) or getTo end
             f.route:SetText(step)
             f.hearth:SetText(hearth)
         else
             f.distance:SetText(entry.zone)
-            f.route:SetText("")
+            f.route:SetText(Way.GetTo(entry)) -- getto (2.0.22)
             f.hearth:SetText("")
         end
         if turn then
@@ -3916,7 +4057,12 @@ do
         -- in its tooltip.
         local quest = QuestName(pick.spot)
         local mark = ""
-        if pick.spot.turnIn then
+        -- repeaticon (2.0.44): the arrow to a repeatable quest: the blue ?
+        local repeatOnly = FDJ.IsRepeatableQuest ~= nil and pick.spot.fdjAutoQuest ~= nil
+            and FDJ.IsRepeatableQuest(pick.spot.fdjAutoQuest)
+        if repeatOnly and (pick.spot.turnIn or quest) then
+            mark = "|T" .. FDJ.REPEATABLE_QUEST_TEXTURE .. ":0|t "
+        elseif pick.spot.turnIn then
             mark = "|TInterface\\GossipFrame\\ActiveQuestIcon:0|t "
         elseif quest then
             mark = "|TInterface\\GossipFrame\\AvailableQuestIcon:0|t "
@@ -4004,3 +4150,13 @@ do
     end
 end
 -- END arrow
+
+-- loadpause (2.0.7): a loading screen starts: the arrow's hidden NPC model
+-- is put away; the lookup starts over a few seconds after arriving.
+function FDJ.PauseArrowLookup()
+    local f = FDJ.arrowLookupFrame
+    if not (f and f.model) then return end
+    if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
+    f.model:Hide()
+    f.fdjResolving = nil
+end

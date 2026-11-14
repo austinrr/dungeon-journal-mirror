@@ -561,10 +561,12 @@ local function ItemCard(parent)
         GameTooltip:Show()
         self.fdjShift = nil
         -- No automatic "Equipped" comparison here (even with the game's
-        -- Always Compare Items on): it shows only while Shift is held.
+        -- Always Compare Items on): it shows only while Shift is held, or
+        -- always with Options > Auto Item Comparison (autocompare, 2.0.6).
         self:SetScript("OnUpdate", function(card)
             if GameTooltip:GetOwner() ~= card then return end
-            local shift = IsShiftKeyDown and IsShiftKeyDown() or false
+            local shift = (IsShiftKeyDown and IsShiftKeyDown())
+                or (ForeverDungeonJournalDB and ForeverDungeonJournalDB.autoCompare == true) or false
             if shift then
                 if not card.fdjShift and GameTooltip_ShowCompareItem then
                     pcall(GameTooltip_ShowCompareItem, GameTooltip)
@@ -645,7 +647,10 @@ local function BossList(run)
     local list, shown, rares, groups = {}, {}, {}, {}
     local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
-        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string" then
+        -- altarbosses (2.0.24): a journal group and its children are not
+        -- listed among a run's bosses (their kills are trash, as before).
+        if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
+            and not b.childOf and not b.children then
             shown[b.name] = true
             if type(b.fightGroup) == "string" then
                 -- ringoflaw (2.0.4): one entry for the fight; it shows the boss
@@ -2120,7 +2125,7 @@ function FDJ.RunLogTest(args)
     local dungeon = TestDungeon(word)
     local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
     if not d then
-        local lines, line = { tag .. "/dj testlog <abbreviation> [done]   |   /dj testlog off" }, ""
+        local lines, line = { tag .. "/dj testlog <abbreviation> [number | done]   |   /dj testlog off" }, ""
         for _, e in ipairs(FDJ.TESTLOG_DUNGEONS) do
             if FDJ.DB and FDJ.DB[e[2]] then
                 local part = "|cffffd100" .. e[1] .. "|r " .. DungeonLabel({ dungeon = e[2] })
@@ -2132,9 +2137,12 @@ function FDJ.RunLogTest(args)
         return lines
     end
     local done = rest == "done" or rest == "complete" or rest == "completed"
+    local count = tonumber(rest) -- altartracker (2.0.49): /dj testlog st 3: that many down
     local bosses = {}
     for _, b in ipairs(d.bosses or {}) do
-        if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab and not b.rare then
+        -- altartracker (2.0.49): a group (Altar Bosses) is no kill of its own
+        if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab and not b.rare
+            and not b.children then
             bosses[#bosses + 1] = b
         end
     end
@@ -2144,7 +2152,8 @@ function FDJ.RunLogTest(args)
     for id, name in pairs(FDJ.INSTANCE_ID_TO_DUNGEON or {}) do
         if name == dungeon then map = id break end
     end
-    local upto = done and #bosses or math.max(1, math.ceil(#bosses / 2))
+    local upto = done and #bosses or (count and math.max(0, math.min(#bosses, math.floor(count))))
+        or math.max(1, math.ceil(#bosses / 2))
     local start = now - (upto * 160 + 30)
     local run = {
         id = FDJ.testRunID, test = true, dungeon = dungeon, map = map, created = start,
@@ -2161,6 +2170,8 @@ function FDJ.RunLogTest(args)
         t = t + 70
         local b = bosses[i]
         local kill = { t = t, m = b.name, b = b.name, n = tonumber(b.npcID), x = 160, loot = {} }
+        -- altartracker (2.0.49): a group's boss (Gasher...) dies as trash does
+        if b.childOf then kill.b, kill.x = nil, 120 end
         local item = type(b.loot) == "table" and b.loot[1]
         if type(item) == "table" and item[1] then
             kill.loot[1] = { id = tonumber(item[1]),
@@ -2483,6 +2494,89 @@ local function TrackerBossAllowed(b, faction)
     return not b.factionOnly or not faction or b.factionOnly == faction
 end
 
+-- altartracker (2.0.49): a journal group (the Sunken Temple's "Altar
+-- Bosses") is one portrait on the tracker. Its bosses (the six troll
+-- guardians) are no bosses of the run (they die as trash does), so each is
+-- found among the run's kills by its NPC ID or its name.
+local function GroupChildren(d, group)
+    local list = {}
+    for _, id in ipairs(group.children or {}) do
+        for _, b in ipairs((d and d.bosses) or {}) do
+            if type(b) == "table" and b.childOf == group.name and tonumber(b.npcID) == tonumber(id) then
+                list[#list + 1] = b
+                break
+            end
+        end
+    end
+    return list
+end
+
+local function KillOfChild(run, child)
+    local names = {}
+    local function add(n) if type(n) == "string" and n ~= "" then names[n:lower()] = true end end
+    add(child.name)
+    for _, a in ipairs(child.aliases or {}) do add(a) end
+    if FDJ.LocalizeBossName then
+        local ok, n = pcall(FDJ.LocalizeBossName, child.name)
+        if ok then add(n) end
+    end
+    if child.npcID and FDJ.RunLog and FDJ.RunLog.NpcName then
+        local ok, n = pcall(FDJ.RunLog.NpcName, child.npcID)
+        if ok then add(n) end
+    end
+    local id = tonumber(child.npcID)
+    for _, k in ipairs(run.kills or {}) do
+        if type(k) == "table" and ((id and tonumber(k.n) == id) or (type(k.m) == "string" and names[k.m:lower()])) then
+            return k
+        end
+    end
+end
+
+-- The group's entry: its bosses (each with its kill), how many are dead,
+-- and a kill of its own once all of them are (the last one's time, all
+-- their loot), so its portrait is crossed out like a boss's.
+function FDJ.TrackerGroupEntry(run, d, group)
+    local e = { boss = group, group = true, children = {}, dead = 0 }
+    local last, loot = nil, {}
+    for _, c in ipairs(GroupChildren(d, group)) do
+        local k = KillOfChild(run, c)
+        e.children[#e.children + 1] = { boss = c, kill = k }
+        if k then
+            e.dead = e.dead + 1
+            if not last or (tonumber(k.t) or 0) > (tonumber(last.t) or 0) then last = k end
+            for _, item in ipairs(k.loot or {}) do loot[#loot + 1] = item end
+        end
+    end
+    if #e.children > 0 and e.dead == #e.children then
+        e.kill = { t = last.t, loot = loot, group = true }
+    end
+    return e
+end
+
+do
+    -- the group portrait's tooltip: how many are dead, and the click
+    local strings = {
+        enUS = { "%d of %d killed", "Left-click to show or hide the list" },
+        deDE = { "%d von %d getötet", "Linksklick, um die Liste ein- oder auszublenden" },
+        frFR = { "%d sur %d tués", "Clic gauche pour afficher ou masquer la liste" },
+        esES = { "%d de %d muertos", "Clic izquierdo para mostrar u ocultar la lista" },
+        itIT = { "%d su %d uccisi", "Clic sinistro per mostrare o nascondere la lista" },
+        ptBR = { "%d de %d abatidos", "Clique com o botão esquerdo para mostrar ou ocultar a lista" },
+        ruRU = { "Убито: %d из %d", "Левый клик — показать или скрыть список" },
+        koKR = { "%d/%d 처치", "좌클릭하여 목록 보이기/숨기기" },
+        zhCN = { "已击杀 %d/%d", "左键点击显示或隐藏列表" },
+        zhTW = { "已擊殺 %d/%d", "左鍵點擊顯示或隱藏列表" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.TRACKER_GROUP_KILLED == nil then t.TRACKER_GROUP_KILLED = pair[1] end
+            if t.TRACKER_GROUP_CLICK == nil then t.TRACKER_GROUP_CLICK = pair[2] end
+        end
+    end
+end
+
 -- The tracker's two rows: the bosses (journal order, killed or not) and the
 -- dungeon's rares (all of them: not seen yet, found alive, or killed).
 local function TrackerLists(run)
@@ -2504,6 +2598,31 @@ local function TrackerLists(run)
         if not e.boss.rare and not test and not excludedNames[e.boss.name]
             and TrackerBossAllowed(e.boss, faction) then
             bosses[#bosses + 1] = e
+        end
+    end
+    -- altartracker (2.0.49): a group's portrait, where the journal lists it
+    if not test and d then
+        local at = {}
+        for i, b in ipairs(d.bosses or {}) do
+            if type(b) == "table" and type(b.name) == "string" and at[b.name] == nil then at[b.name] = i end
+        end
+        local function Index(e)
+            if e.members and e.members[1] then return at[e.members[1].name] end
+            return e.boss and at[e.boss.name]
+        end
+        for gi, b in ipairs(d.bosses or {}) do
+            if type(b) == "table" and type(b.children) == "table" and type(b.name) == "string"
+                and TrackerBossAllowed(b, faction) then
+                local entry = FDJ.TrackerGroupEntry(run, d, b)
+                if #entry.children > 0 then
+                    local pos = #bosses + 1
+                    for i, e in ipairs(bosses) do
+                        local ei = Index(e)
+                        if ei and ei > gi then pos = i break end
+                    end
+                    table.insert(bosses, pos, entry)
+                end
+            end
         end
     end
     local killed = {}
@@ -2730,12 +2849,131 @@ function FDJ.TrackerLootToggle(f)
     row:Show()
 end
 
+-- altartracker (2.0.49): a group's portrait has a small + on its edge. It
+-- (or a left-click on the portrait) opens a row of the group's bosses, each
+-- crossed out once killed; with all of them dead the group's own portrait
+-- is crossed out too. Open or closed is kept (per character) until clicked
+-- again. altarbottom (2.0.50): the + on the portrait's bottom edge (was the
+-- top), the row inside the tracker under all the bosses (was a box over
+-- the portrait).
+local CHILD_SIZE, CHILD_GAP = 32, 5
+
+local function GroupOpen(name)
+    local db = TrackerDB()
+    return type(db.groupOpen) == "table" and db.groupOpen[name] == true
+end
+
+function FDJ.TrackerGroupPlus(f)
+    if not (f and f.group) then
+        if f and f.plus then f.plus:Hide() end
+        return
+    end
+    local p = f.plus
+    if not p then
+        p = CreateFrame("Button", nil, f)
+        p:SetSize(14, 14) -- altarbottom (2.0.50): 14, so it fits the gap to the row below
+        -- altarbottom (2.0.50): on the bottom edge; 2.0.51: a little higher,
+        -- clear of the portrait under it
+        p:SetPoint("CENTER", f, "BOTTOM", 0, 5)
+        p:SetHighlightTexture("Interface\\Buttons\\UI-PlusButton-Hilight", "ADD")
+        p:SetScript("OnClick", function() FDJ.TrackerGroupToggle(f) end)
+        p:SetScript("OnEnter", function()
+            local h = f:GetScript("OnEnter")
+            if h then h(f) end
+        end)
+        p:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        f.plus = p
+    end
+    p:SetFrameLevel(f:GetFrameLevel() + 6)
+    local art = GroupOpen(f.group.boss.name) and "Interface\\Buttons\\UI-MinusButton-" or "Interface\\Buttons\\UI-PlusButton-"
+    if p.fdjArt ~= art then
+        p.fdjArt = art
+        p:SetNormalTexture(art .. "Up")
+        p:SetPushedTexture(art .. "Down")
+    end
+    p:Show()
+end
+
+function FDJ.TrackerGroupToggle(f)
+    if not (f and f.group and f.group.boss) then return end
+    local db = TrackerDB()
+    if type(db.groupOpen) ~= "table" then db.groupOpen = {} end
+    local name = f.group.boss.name
+    db.groupOpen[name] = (not db.groupOpen[name]) or nil
+    if PlaySound and SOUNDKIT then
+        pcall(PlaySound, db.groupOpen[name] and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON or SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF)
+    end
+    FDJ.UpdateRunTracker()
+end
+
+function FDJ.TrackerGroupTooltip(f)
+    local g = f and f.group
+    if not (g and g.children) then return end
+    local all = #g.children > 0 and (g.dead or 0) == #g.children
+    GameTooltip:AddLine(L("TRACKER_GROUP_KILLED", g.dead or 0, #g.children),
+        all and 0.25 or 0.75, all and 1.0 or 0.72, all and 0.35 or 0.66)
+    GameTooltip:AddLine(L("TRACKER_GROUP_CLICK"), 1, 0.82, 0)
+    GameTooltip:Show()
+    if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
+end
+
+-- y: where the bosses end on the tracker; returns where the row ends.
+function FDJ.TrackerGroupRow(t, run, frames, y)
+    local f
+    for _, x in ipairs(frames or {}) do
+        if x.group and x:IsShown() and GroupOpen(x.group.boss.name) then f = x break end
+    end
+    local row = t.groupRow
+    if not f then
+        if row then row:Hide() end
+        return y
+    end
+    if not row then
+        row = CreateFrame("Frame", nil, t, "BackdropTemplate")
+        row:SetBackdrop(BACKDROP)
+        row:SetBackdropColor(0.07, 0.065, 0.06, 0.96)
+        row:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
+        row:EnableMouse(true)
+        row.portraits = {}
+        t.groupRow = row
+    end
+    row:SetFrameLevel(t:GetFrameLevel() + 5)
+    local list = f.group.children
+    local start = RunStart(run) or run.created
+    for i, c in ipairs(list) do
+        local p = row.portraits[i]
+        if not p then
+            p = Portrait(row, CHILD_SIZE)
+            p:EnableMouse(true)
+            p:SetScript("OnEnter", function(self) BossTooltip(self, self.boss, self.kill, self.runStart, false) end)
+            p:SetScript("OnLeave", function() GameTooltip:Hide() end)
+            row.portraits[i] = p
+        end
+        p:ClearAllPoints()
+        p:SetPoint("TOPLEFT", row, "TOPLEFT", 5 + (i - 1) * (CHILD_SIZE + CHILD_GAP), -5)
+        SetPortrait(p, run.dungeon, c.boss, c.kill ~= nil)
+        p.kill, p.runStart = c.kill, start
+        p:Show()
+    end
+    for i = #list + 1, #row.portraits do row.portraits[i]:Hide() end
+    local w = 10 + #list * CHILD_SIZE + math.max(0, #list - 1) * CHILD_GAP
+    local h = 10 + CHILD_SIZE
+    row:SetSize(w, h)
+    -- altarbottom (2.0.50): under the last row of bosses, centred
+    local width = t:GetWidth() or 236
+    row:ClearAllPoints()
+    row:SetPoint("TOPLEFT", t, "TOPLEFT", math.max(4, math.floor((width - w) / 2)), -((tonumber(y) or 0) + 2))
+    row:Show()
+    return (tonumber(y) or 0) + 2 + h + GAP
+end
+
 local function PortraitButton(parent)
     local f = Portrait(parent, SIZE)
     f:EnableMouse(true)
     f:SetScript("OnEnter", function(self)
         BossTooltip(self, self.boss, self.kill, self.runStart, not self.isRare)
         if self.isRare then FDJ.TrackerRareLootHint(self.boss) end
+        if self.group and FDJ.TrackerGroupTooltip then FDJ.TrackerGroupTooltip(self) end
     end)
     f:SetScript("OnLeave", function() GameTooltip:Hide() end)
     f:SetScript("OnMouseUp", function(self, button)
@@ -2746,6 +2984,8 @@ local function PortraitButton(parent)
         end
         -- a drag that ends here is not a click
         if tracker and (tracker.fdjMoving or (tracker.fdjDragStop and GetTime() - tracker.fdjDragStop < 0.2)) then return end
+        -- altartracker (2.0.49): a group's portrait opens or closes its row
+        if self.group and FDJ.TrackerGroupToggle then FDJ.TrackerGroupToggle(self) return end
         if self.boss and FDJ.RunLogAckRare then FDJ.RunLogAckRare(self.boss.name) end
     end)
     -- Glow for a rare found alive: the portrait itself lights up gold
@@ -2883,7 +3123,7 @@ local function LayoutBossButtons(frames)
     local n = 0
     for _, f in ipairs(frames or {}) do
         local cx, cy = f:GetCenter()
-        if shown and cx and f:IsShown() and not f.kill and f.boss then
+        if shown and cx and f:IsShown() and not f.kill and f.boss and not f.group then
             n = n + 1
             local b = BossButton(n)
             b.portrait = f
@@ -3016,6 +3256,10 @@ function FDJ.UpdateRunTracker()
             SetPortrait(f, run.dungeon, e.boss, e.kill ~= nil)
             f.ring:Hide()
             f.kill, f.runStart = e.kill, start
+            -- altartracker (2.0.49): a group's portrait, with its +
+            f.group = e.group and e or nil
+            f.fdjX = left + col * (SIZE + GAP)
+            if FDJ.TrackerGroupPlus then FDJ.TrackerGroupPlus(f) end
             f.isRare = isRare and true or nil
             f.notFound = isRare and not e.seen and not e.kill
             local glowing = isRare and e.seen and not e.kill and not e.ack
@@ -3040,6 +3284,8 @@ function FDJ.UpdateRunTracker()
         return frames
     end
     local bossFrames = Place(bosses, false)
+    -- altarbottom (2.0.50): an open group's row, under the bosses
+    if FDJ.TrackerGroupRow then y = FDJ.TrackerGroupRow(t, run, bossFrames, y) or y end
     local lootRow = t.lootRow
     if lootRow and lootRow:IsShown() and not (lootRow.portrait and lootRow.portrait:IsShown()
         and lootRow.portrait.boss == lootRow.boss) then

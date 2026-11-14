@@ -1319,15 +1319,15 @@ do
             level = 60,
             requires = 55,
             faction = "Both",
-            pickup = "Ekkal, Ruins of Eldarath, Azshara (41.8, 38.8)",
+            pickup = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)", -- blackmawaudit (2.0.36)
             objective = "Enter Blackmaw Hold and recover 5 Blackmaw Pouches for Ekkal at the Ruins of Eldarath in Azshara.",
-            turnin = "Ekkal, Ruins of Eldarath, Azshara (41.8, 38.8)",
+            turnin = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)",
             rewardSummary = "90s  •  Timbermaw Hold +150",
             liveXPFallback = 13200,
             requiredItem = { 273050, "Blackmaw Pouch", 1, 5, "From the Blackmaw furbolgs inside Blackmaw Hold" },
             note = "Afterwards Ekkal takes more pouches as a repeatable quest (Timbermaw Hold +100).",
-            startMap = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
-            turninMap = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
+            startMap = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
+            turninMap = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
         } },
         -- shapersquests (2.0.4): real IDs, XP and reputation from Wowhead
         -- Forever (quest tooltips) and ForeverChanges, cross-checked with the
@@ -2059,6 +2059,10 @@ do
         pickup = AT_WOODWYRD, turnin = AT_WOODWYRD, map = WOODWYRD, turninMap = WOODWYRD,
         requiredItems = { {258296, "Vial of Earth Song Water", 1, "From the small geyser in the pools Rotgrip swims around in, Maraudon"} },
         note = "A Maraudon dungeon quest (see Maraudon). Use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself.",
+        -- rfdstep (2.0.30): only on this chain's step page (Agamaggan's Blood,
+        -- Razorfen Downs); Maraudon's own Rot and Regret page has no such line.
+        warning = "Yes, this step is in MARAUDON. It's needed to unlock this Razorfen quest.",
+        warningTop = true, -- 2.0.31: above the Objective
     }
     D[93601] = {
         level = 45, requires = 35,
@@ -2097,6 +2101,8 @@ do
         }
         for _, q in ipairs(db.quests) do
             if FOREVER_XP[q.id] then q.liveXPFallback = FOREVER_XP[q.id] end
+            -- rfdstep (2.0.31): the chain's Rot and Regret step is done in Maraudon.
+            if q.id == 93604 and not q.warning then q.warning = "WARNING: This chain has a step in Maraudon" end
             if q.id == 3341 or q.id == 3636 then
                 q.rewardItems = { {10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3}, {10823, "Vanquisher's Sword", 3} }
                 q.rewardSummary = (q.id == 3341) and "Undercity +150" or "Stormwind +150"
@@ -2235,7 +2241,7 @@ do
         objective = "Take your reward voucher to Dinita Stonemantle in the Vault of Ironforge.",
         turnin = "Dinita Stonemantle, The Vault, Ironforge (33.8, 60.2)",
         startMap = MAGELLAS, turninMap = DINITA,
-        providedItem = { 0, "Reward Voucher", 1, "Given by High Explorer Magellas when you accept the quest" },
+        providedItem = { 8070, "Reward Voucher", 1, "Given by High Explorer Magellas when you accept the quest" },
         liveXPFallback = 420,
         rewardSummary = "",
         rewardChoice = true,
@@ -2469,8 +2475,8 @@ end
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local bh = FDJ.DB and FDJ.DB["Blackmaw Hold"]
-    local EKKAL = "Ekkal, Ruins of Eldarath, Azshara (41.8, 38.8)"
-    local EKKAL_MAP = { mapID = 1447, x = 0.418, y = 0.388, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" }
+    local EKKAL = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)" -- blackmawaudit (2.0.36)
+    local EKKAL_MAP = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" }
     if bh then
         bh.quests = bh.quests or {}
         local have = {}
@@ -2478,27 +2484,31 @@ do
         local function Add(q) if not have[q.id] then table.insert(bh.quests, q) have[q.id] = true end end
         Add({
             id = 92066, name = "The Twin Bears", faction = "Both", level = 55, requires = 47,
-            pickup = "Lorekeeper Nok, Ursolan (probably; he takes the totems)",
+            pickup = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)", -- confirmed by M; spot: Wowhead Forever (2.0.39)
             objective = "Find the Totem of Ursoc and the Totem of Ursol inside Blackmaw Hold. Then, return them to Lorekeeper Nok at Ursolan.",
-            turnin = "Lorekeeper Nok, Ursolan",
+            turnin = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
+            startMap = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" },
+            turninMap = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" },
             liveXPFallback = 11300,
             rewardSummary = "Timbermaw Hold +150",
             rewards = "11,300 XP • Timbermaw Hold +150",
             rewardChoice = true,
             rewardItems = { {279891, "Guidance of Ursoc", 2}, {279892, "Wisdom of Ursol", 2} },
-            note = "Needs Timbermaw Hold reputation Neutral or better. The required level isn't confirmed yet.",
+            note = "Needs Timbermaw Hold reputation Neutral or better.",
         })
         Add({
             id = 92065, name = "Blackmaw Reclamation", faction = "Both", level = 60, requires = 47,
-            pickup = "Gatekeeper Rageroar, Ursolan (probably; he takes the head)",
+            pickup = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)", -- blackmawaudit (2.0.36)
             objective = "Bring Varrox Bleakhoof's Head to Gatekeeper Rageroar at Ursolan.",
-            turnin = "Gatekeeper Rageroar, Ursolan",
+            turnin = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
+            startMap = { mapID = 1447, x = 0.424, y = 0.202, label = "Gatekeeper Rageroar — Ursolan, Azshara", targetName = "Gatekeeper Rageroar" },
+            turninMap = { mapID = 1447, x = 0.424, y = 0.202, label = "Gatekeeper Rageroar — Ursolan, Azshara", targetName = "Gatekeeper Rageroar" },
             liveXPFallback = 13200,
             rewardSummary = "Timbermaw Hold +150",
             rewards = "13,200 XP • Timbermaw Hold +150",
             rewardChoice = true,
             rewardItems = { {260216, "Ouroboros Ring", 3}, {260217, "Eagle's Head Signet", 3}, {260218, "Malefactor's End", 3}, {260219, "Engraved Band", 3} },
-            note = "Varrox Bleakhoof, the last boss, has the head. Needs Timbermaw Hold reputation Neutral or better. The required level isn't confirmed yet.",
+            note = "Varrox Bleakhoof, the last boss, has the head. Comes after the Blackmaw Counter-Offensive chain. Players report it needs Timbermaw Hold reputation Friendly.",
         })
         Add({
             id = 96246, name = "Blackmaw Pouches", faction = "Both", level = 60, requires = 55,
@@ -2520,7 +2530,7 @@ do
             rewardSummary = "Regurgitated Seed Pod",
             rewards = "Regurgitated Seed Pod",
             rewardItems = { {249900, "Regurgitated Seed Pod", 1} },
-            note = "Repeatable. The quest text sends you after the Legashi satyrs. Who gives it isn't known yet; please report it on Discord.",
+            note = "Repeatable. By its completion text you feed the flesh to a hungry lasher, which spits out a seed pod. Where it is isn't known yet; please report it on Discord.", -- blackmawaudit (2.0.36)
         })
         for _, q in ipairs(bh.quests) do
             if q.id == 92070 then q.liveXPFallback = 11300 end
@@ -3393,7 +3403,8 @@ do
     local NARA = { mapID = 1456, x = 0.756, y = 0.310, label = "Nara Wildmane — Elder Rise, Thunder Bluff", targetName = "Nara Wildmane" }
     local MATHRENGYL = { mapID = 1457, x = 0.354, y = 0.084, label = "Mathrengyl Bearwalker — Cenarion Enclave, Darnassus", targetName = "Mathrengyl Bearwalker" }
     local JEDIGA = { mapID = 1447, x = 0.225, y = 0.514, label = "Jediga — Valormok, Azshara", targetName = "Jediga" }
-    local OGTINC = { mapID = 1447, x = 0.424, y = 0.426, label = "Ogtinc — Azshara", targetName = "Ogtinc" }
+    local OGTINC = { mapID = 1447, x = 0.424, y = 0.427, label = "Ogtinc — Azshara", targetName = "Ogtinc" } -- 42.7 (blackmawaudit, 2.0.36)
+    local TRUESONG = { mapID = 1447, x = 0.118, y = 0.783, label = "Commander Truesong — Azshara", targetName = "Commander Truesong" }
     FDJ.QUEST_START_MAPS[92343] = NARA
     FDJ.QUEST_START_MAPS[92344] = MATHRENGYL
     FDJ.QUEST_START_MAPS[92069] = OGTINC
@@ -3409,9 +3420,9 @@ do
     FDJ.QUEST_PREREQ_DETAILS[92345] = {
         level = 55, requires = 45,
         objective = "Speak with Mathrengyl Bearwalker in the Cenarion Enclave in Darnassus.",
-        pickup = "Southern Azshara (giver not known yet)",
+        pickup = "Commander Truesong, Azshara (11.8, 78.3)", -- blackmawaudit (2.0.36)
         turnin = "Mathrengyl Bearwalker, Cenarion Enclave, Darnassus",
-        turninMap = MATHRENGYL,
+        map = TRUESONG, turninMap = MATHRENGYL,
     }
     FDJ.FOREVER_QUEST_XP_FALLBACK[92345] = 560
     FDJ.FOREVER_QUEST_XP_FALLBACK[92346] = 560
@@ -3427,6 +3438,115 @@ do
     end
 end
 -- END blackmawquests
+
+-- BEGIN blackmawaudit
+-- Blackmaw Hold Quest Update Audit (14 Nov 2026), checked against Icy Veins
+-- Forever (quests and NPC spawns) and Questie-derived data (pd.zroot.it):
+-- the two Blackmaw Magic givers, and the chain before Blackmaw Reclamation.
+-- Gatekeeper Rageroar's spot (42.4, 20.2) is from players (the audit); no
+-- database has his spawn yet. Unele (A Lost Memento): her spawn is Icy
+-- Veins' (NPC 249855). M confirmed Unele and Archmage Timear as the
+-- hand-ins, and Muln Earthfury in Mulgore only (2.0.37).
+do
+    local TIMEAR = { mapID = 1416, x = 0.154, y = 0.740, label = "Archmage Timear — Dalaran", targetName = "Archmage Timear" }
+    local MULN = { mapID = 1412, x = 0.334, y = 0.225, label = "Muln Earthfury — Skywatcher Plateau, Mulgore", targetName = "Muln Earthfury" }
+    local RAGEROAR = { mapID = 1447, x = 0.424, y = 0.202, label = "Gatekeeper Rageroar — Ursolan, Azshara", targetName = "Gatekeeper Rageroar" }
+    local KORSA = { mapID = 1447, x = 0.630, y = 0.233, label = "Korsa — Legashi Stronghold, Azshara", targetName = "Korsa" }
+    local UNELE = { mapID = 1447, x = 0.434, y = 0.174, label = "Unele — Ursolan, Azshara", targetName = "Unele" }
+    local RAGEROAR_TEXT = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)"
+    local GORN = "Gorn One Eye, Timbermaw Hold"
+    -- Gorn One Eye in the Timbermaw Hold tunnel: Wowhead Forever's spawn of
+    -- NPC 11555, Felwood 65.2, 2.6 (2.0.43; the turn-in ? goes there).
+    local GORN_MAP = { mapID = 1448, x = 0.652, y = 0.026, label = "Gorn One Eye — Timbermaw Hold, Felwood", targetName = "Gorn One Eye" }
+    FDJ.QUEST_START_MAPS[97173] = TIMEAR
+    FDJ.QUEST_START_MAPS[97198] = MULN
+    FDJ.QUEST_START_MAPS[92065] = RAGEROAR
+    FDJ.QUEST_START_MAPS[92066] = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" } -- 2.0.39
+    for _, quest in ipairs((FDJ.DB["Blackmaw Hold"] and FDJ.DB["Blackmaw Hold"].quests) or {}) do
+        if quest.id == 97173 then quest.turninMap = TIMEAR end -- confirmed (2.0.37)
+        if quest.id == 97198 then quest.turninMap = MULN end
+        if quest.id == 92070 then quest.turninMap = UNELE end -- confirmed (2.0.37)
+    end
+    -- Blackmaw Reclamation comes after Blackmaw Counter-Offensive (Icy Veins
+    -- and Wowhead Forever's quest series). Step 1 is any ONE of Master
+    -- Feardred 86777, Thinning Their Forces 86792, Later, Satyr 86796 (the
+    -- databases: "one of"; M, 2.0.42): "1. Pick one of the following
+    -- quests:", the three below it (pickone).
+    FDJ.QUEST_PREREQ_CHAINS[92065] = {
+        { id = 86777, name = "Master Feardred", choice = 1 },
+        { id = 86792, name = "Thinning Their Forces", choice = 1 },
+        { id = 86796, name = "Later, Satyr", choice = 1 },
+        { id = 86797, name = "Return to Rageroar" },
+        { id = 86798, name = "Timbermaw Reinforcements" },
+        { id = 87346, name = "Chieftain Bloodmaw" },
+        { id = 86814, name = "Blackmaw Counter-Offensive" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86797] = {
+        level = 53, requires = 47,
+        objective = "Return to Gatekeeper Rageroar at Ursolan.",
+        pickup = "Korsa, outside Legashi Stronghold, Azshara (63.0, 23.3)",
+        turnin = RAGEROAR_TEXT,
+        map = KORSA, turninMap = RAGEROAR,
+    }
+    -- Step 1's quests (2.0.37). Korsa starts and ends Master Feardred (Wowhead
+    -- Forever); her spots and Graal's cage: Icy Veins' spawns of 236770, 237007.
+    local KORSA_TEXT = "Korsa, outside Legashi Stronghold, Azshara (63.0, 23.3)"
+    local GRAAL = { mapID = 1447, x = 0.659, y = 0.144, label = "Graal — Legashi Stronghold, Azshara", targetName = "Graal" }
+    FDJ.QUEST_PREREQ_DETAILS[86777] = {
+        level = 53, requires = 47,
+        objective = "Kill Master Feardred, and bring his amulet to Korsa.",
+        pickup = KORSA_TEXT, turnin = KORSA_TEXT,
+        map = KORSA, turninMap = KORSA,
+        requiredItems = { {235334, "Feardred's Amulet", 1, "From Master Feardred"} },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86792] = {
+        level = 54, requires = 47,
+        objective = "Kill 6 Legashi Hellraisers, 4 Legashi Soulstealers, and 2 Legashi Blackguards for Korsa outside Legashi Stronghold.",
+        pickup = KORSA_TEXT, turnin = KORSA_TEXT,
+        map = KORSA, turninMap = KORSA,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86796] = {
+        level = 54, requires = 47,
+        objective = "Help Graal break out of Legashi Stronghold, then inform Korsa outside Legashi Stronghold.",
+        pickup = "Graal, caged in Legashi Stronghold, Azshara (65.9, 14.4)",
+        turnin = KORSA_TEXT,
+        map = GRAAL, turninMap = KORSA,
+    }
+    -- Any one of the three does step 1 (Core/Journal.lua reads this table).
+    FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
+    FDJ.QUEST_DONE_BY[86777] = { 86792, 86796 }
+    FDJ.QUEST_DONE_BY[86792] = { 86777, 86796 }
+    FDJ.QUEST_DONE_BY[86796] = { 86777, 86792 }
+    FDJ.QUEST_PREREQ_DETAILS[86798] = {
+        level = 55, requires = 47,
+        objective = "Speak to Gorn One Eye in Timbermaw Hold and ask him to provide reinforcements.",
+        pickup = RAGEROAR_TEXT,
+        turnin = GORN,
+        map = RAGEROAR, turninMap = GORN_MAP,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[87346] = {
+        level = 55, requires = 47,
+        objective = "Kill Chieftain Bloodmaw and bring his mace to Gorn One Eye in Timbermaw Hold.",
+        pickup = GORN,
+        turnin = GORN,
+        map = GORN_MAP, turninMap = GORN_MAP,
+        requiredItems = { {236631, "Bloodmaw's Basher", 1, "From Chieftain Bloodmaw"} },
+        note = "Chieftain Bloodmaw is in Felwood, south of Timbermaw Hold.",
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86814] = {
+        level = 55, requires = 47,
+        objective = "Plant the Timbermaw War Banner at the Legashi Stronghold in Azshara. Kill Prince Halanox, report your victory to Gatekeeper Rageroar at Ursolan.",
+        pickup = GORN,
+        turnin = RAGEROAR_TEXT,
+        map = GORN_MAP, turninMap = RAGEROAR,
+        providedItem = {235518, "Timbermaw War Banner", 1, "Given by Gorn One Eye when you accept the quest"},
+        note = "Elite quest: bring a group for Prince Halanox.",
+    }
+    local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
+    XP[86797] = 525; XP[86798] = 550; XP[87346] = 5650; XP[86814] = 7050
+    XP[86777] = 5250; XP[86792] = 5450; XP[86796] = 5450
+end
+-- END blackmawaudit
 
 -- BEGIN shapersquests
 -- Shaper's Terrace: Crystalline Elements' giver, Mayena Earthseeker, in
