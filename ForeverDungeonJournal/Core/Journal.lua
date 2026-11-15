@@ -1887,6 +1887,28 @@ local function QuestMatchesFaction(quest, faction)
     return true
 end
 
+-- otherclass (2.0.8, Doudou on Discord / M 15 Nov 2026): a quest listed only
+-- because "Show all class quests" or "Show all profession quests" is on
+-- (another class's quest, or one for a profession the character doesn't
+-- have) is there to look at: it doesn't count. Not in the home page's quest
+-- count or its tick, the "all quests done" auto-hide, the quest tracker, the
+-- Route or the character export's done/total. The dungeon's quest list still
+-- shows it. (RPG Mode already counted only the character's own.)
+function FDJ.QuestCountsForCharacter(quest)
+    if type(quest) ~= "table" then return false end
+    if quest.classOnly and type(UnitClass) == "function" then
+        local ok, _, token = pcall(UnitClass, "player")
+        if ok and type(token) == "string" and not (type(issecretvalue) == "function" and issecretvalue(token))
+            and token ~= "" and tostring(quest.classOnly):upper() ~= token:upper() then
+            return false
+        end
+    end
+    if quest.profession and FDJ.PlayerHasProfession and not FDJ.PlayerHasProfession(quest.profession) then
+        return false
+    end
+    return true
+end
+
 local function IsSecret(v)
     return type(issecretvalue) == "function" and issecretvalue(v)
 end
@@ -2140,10 +2162,17 @@ end
 
 -- devlog: /dj fakelog <questID>: quests shown as if in the quest log.
 FDJ.DEV_FAKE_LOG = FDJ.DEV_FAKE_LOG or {}
+-- devchain (2.0.8): /dj devchain: quests shown as handed in (DONE) or as
+-- never taken (OPEN), for this session only; empty unless that command
+-- (a test command) is used.
+FDJ.DEV_CHAIN_DONE = FDJ.DEV_CHAIN_DONE or {}
+FDJ.DEV_CHAIN_OPEN = FDJ.DEV_CHAIN_OPEN or {}
 
 local function IsQuestFinished(questID)
     if not questID then return false end
     if FDJ.DEV_FAKE_LOG[questID] then return false end -- devlog
+    if FDJ.DEV_CHAIN_OPEN[questID] then return false end -- devchain
+    if FDJ.DEV_CHAIN_DONE[questID] then return true end
     -- malletchain: steps that are not quests, done when the item is held.
     local pseudo = FDJ.PSEUDO_QUEST_DONE and FDJ.PSEUDO_QUEST_DONE[questID]
     if pseudo then
@@ -2220,6 +2249,7 @@ end
 local function IsQuestInLog(questID)
     if not questID then return false end
     if FDJ.DEV_FAKE_LOG[questID] then return true end -- devlog
+    if FDJ.DEV_CHAIN_OPEN[questID] or FDJ.DEV_CHAIN_DONE[questID] then return false end -- devchain
 
     if C_QuestLog and type(C_QuestLog.GetLogIndexForQuestID) == "function" then
         local ok, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
@@ -2574,6 +2604,143 @@ FDJ.ItemStepDone = function(chain, index, parentID)
         end
     end
     return false
+end
+
+-- chainready (2.0.8, M 15 Nov 2026: "make the main quest glow once its
+-- available for pickup cause the chain has been completed"): a quest whose
+-- chain is all done and that this character can take now: not taken, not
+-- done, the level reached, its faction, class and profession. The steps
+-- that count are those before the quest itself (a chain that goes on past
+-- it, Destruction in Deadmines', stops there); a choice counts once (one of
+-- its quests done); an item step by its item; an accept-only step once it is
+-- taken.
+FDJ.ChainPrereqEnd = function(quest, chain)
+    local last = #chain
+    for i, step in ipairs(chain) do
+        if type(step) == "table" and step.id == quest.id then last = i - 1 break end
+    end
+    return last
+end
+FDJ.ChainStepsDone = function(quest, chain, i, stop)
+    for k = i, stop do
+        local step = chain[k]
+        if type(step) == "table" then
+            if step.itemStep then
+                if FDJ.ItemStepDone(chain, k, quest.id) or (step.id and FDJ.DEV_CHAIN_DONE[step.id]) then return true end
+            elseif step.id and FDJ.QuestTurnedIn(step.id) then
+                return true
+            elseif step.id and step.acceptOnly and IsQuestInLog(step.id) then
+                return true
+            end
+        end
+    end
+    return false
+end
+FDJ.QuestChainUnlocked = function(quest)
+    if type(quest) ~= "table" or not quest.id then return false end
+    local chain = FDJ.PrereqChainOf(quest.id)
+    if type(chain) ~= "table" or #chain == 0 then return false end
+    if IsQuestInLog(quest.id) or IsQuestFinished(quest.id) or FDJ.QuestTurnedIn(quest.id) then return false end
+    if FDJ.QuestCountsForCharacter and not FDJ.QuestCountsForCharacter(quest) then return false end
+    if quest.faction == "Alliance" or quest.faction == "Horde" then
+        local ok, mine = pcall(UnitFactionGroup, "player")
+        if ok and type(mine) == "string" and mine ~= "" and mine ~= quest.faction then return false end
+    end
+    local okLevel, level = pcall(UnitLevel, "player")
+    level = okLevel and tonumber(level) or nil
+    if level and tonumber(quest.requires) and level < tonumber(quest.requires) and not FDJ.devChain then return false end -- (devchain: any level)
+    local last = FDJ.ChainPrereqEnd(quest, chain)
+    if last < 1 then return false end
+    local i = 1
+    while i <= last do
+        local _, choiceLast = FDJ.ChainInChoice(chain, i)
+        local stop = math.min(choiceLast or i, last)
+        if not FDJ.ChainStepsDone(quest, chain, i, stop) then return false end
+        i = stop + 1
+    end
+    return true
+end
+
+-- questrowtrial (2.0.8): the dungeons trying the new quest rows
+-- (FDJ.QUESTROW_TRIAL, Data/QuestUpdates.lua), the character's faction, and
+-- whether a dungeon's quest list is locked to it (option "Show both
+-- factions' quests" off).
+FDJ.QuestRowTrial = function(dungeonName)
+    if dungeonName == nil then return false end
+    if FDJ.QUESTROW_ALL then return true end -- questrowall: every dungeon
+    return type(FDJ.QUESTROW_TRIAL) == "table" and FDJ.QUESTROW_TRIAL[dungeonName] == true
+end
+FDJ.PlayerFaction = function()
+    local ok, f = pcall(UnitFactionGroup, "player")
+    if ok and (f == "Alliance" or f == "Horde") then return f end
+    return nil
+end
+FDJ.FactionLocked = function(dungeonName)
+    return FDJ.QuestRowTrial(dungeonName) and ForeverDungeonJournalDB.showBothFactions ~= true and FDJ.PlayerFaction() ~= nil
+end
+-- a quest of the other faction, in a list locked to the character's
+FDJ.FactionHiddenFor = function(dungeonName, faction)
+    return FDJ.FactionLocked(dungeonName) and (faction == "Alliance" or faction == "Horde") and faction ~= FDJ.PlayerFaction()
+end
+-- The chain step to do next before a quest can be taken (nil: none left).
+FDJ.NextChainStep = function(quest)
+    local chain = type(quest) == "table" and FDJ.PrereqChainOf(quest.id)
+    if type(chain) ~= "table" then return nil end
+    local last, i = FDJ.ChainPrereqEnd(quest, chain), 1
+    while i <= last do
+        local _, choiceLast = FDJ.ChainInChoice(chain, i)
+        local stop = math.min(choiceLast or i, last)
+        if not FDJ.ChainStepsDone(quest, chain, i, stop) then return chain[i] end
+        i = stop + 1
+    end
+    return nil
+end
+-- pickonmap (2.0.8, M 15 Nov 2026: "it should say show pickup on map"):
+-- where the quest is picked up on the map (as the quest page's Show on
+-- Map), or nil when it has no spot there.
+FDJ.PickUpOnMapSpot = function(quest)
+    if type(quest) ~= "table" or not quest.id then return nil end
+    return quest.startMap or QUEST_START_MAPS[quest.id]
+end
+-- The round ! clicked: its quest chain not done yet, the chain step to do
+-- next (its page, the chain unfolded, as Show Quest Chain does: chainfirst,
+-- M 15 Nov 2026: players ran to the quest giver without knowing it needs a
+-- chain first); the chain done (or none): where the quest is picked up, on
+-- the map (pickonmap); with no spot on the map, its page (an item that
+-- starts it, a quest given inside the dungeon).
+FDJ.ShowHowToPickUp = function(quest, dungeonName)
+    if type(quest) ~= "table" or not quest.id then return end
+    local firstStep = FDJ.NextChainStep(quest) -- chainfirst (2.0.8)
+    if firstStep and firstStep.id and FDJ.OpenQuestChainStep then
+        FDJ.OpenQuestChainStep(dungeonName, quest.id, firstStep.id)
+        return
+    end
+    if FDJ.PickUpOnMapSpot(quest) and FDJ.MapMarkers then
+        FDJ.pendingMarkerQuestTitle = QuestField(quest.id, "name", quest.name)
+        FDJ.pendingMarkerTurnIn = nil
+        FDJ.pendingMarkerQuestID = quest.id
+        if quest.startMap and FDJ.MapMarkers.ShowRecordedLocationOnMap then
+            FDJ.MapMarkers.ShowRecordedLocationOnMap(quest.startMap, quest.startMap.label)
+            return
+        elseif FDJ.MapMarkers.ShowQuestStartOnMap then
+            FDJ.MapMarkers.ShowQuestStartOnMap(quest)
+            return
+        end
+    end
+    local step = FDJ.NextChainStep(quest)
+    if step and step.id and FDJ.OpenQuestChainStep then
+        FDJ.OpenQuestChainStep(dungeonName, quest.id, step.id)
+        return
+    end
+    local show = (FDJ.MapMarkers and FDJ.MapMarkers.ShowQuestStartOnMap) or ShowQuestStartOnMap
+    if QUEST_START_MAPS[quest.id] and show then
+        FDJ.pendingMarkerQuestTitle = QuestField(quest.id, "name", quest.name)
+        FDJ.pendingMarkerTurnIn = nil
+        FDJ.pendingMarkerQuestID = quest.id
+        show(quest)
+        return
+    end
+    if FDJ.OpenQuestPage then FDJ.OpenQuestPage(dungeonName, quest.id) end
 end
 
 -- The step to open: the one after the last step whose item is in the bags
@@ -3276,23 +3443,35 @@ FDJ.PrewarmBossPortraits = function()
         if saved then work[#work + 1] = { nil, nil, saved } end
     end
     local index = 0
+    -- loginlag (2.0.8, DeadLeaves on Discord, 15 Nov 2026: a few seconds of
+    -- lag after every login and /reload): the warm-up drew up to 6 portraits
+    -- every 0.05 s (some 250 renders in 5 s, each loading a creature model).
+    -- Now at most one new render a step, a step every 0.1 s, a step stopping
+    -- after 3 ms; the bundled pictures and ones drawn already still go
+    -- several at a time. No spare copies while warming (EnsureSpare).
     local function Step()
         if FDJ.portraitZoning or (type(InCombatLockdown) == "function" and InCombatLockdown()) then
             if C_Timer and C_Timer.After then C_Timer.After(1, Step) end
             return
         end
+        local clock = type(debugprofilestop) == "function" and debugprofilestop or nil
+        local started, rendersBefore = clock and clock() or nil, FDJ.portraitRenders or 0
+        FDJ.portraitNoSpare = true
         for _ = 1, 6 do
             index = index + 1
             local job = work[index]
             if not job then break end
             if job[3] then
-                TrySetDisplayPortrait(prewarmTexture, job[3])
+                pcall(TrySetDisplayPortrait, prewarmTexture, job[3])
             else
                 pcall(SetBossPortrait, prewarmTexture, job[1], job[2])
             end
+            if (FDJ.portraitRenders or 0) > rendersBefore then break end
+            if started and clock() - started > 3 then break end
         end
+        FDJ.portraitNoSpare = nil
         if portraitResolver and #portraitResolveQueue > 0 then portraitResolver:Show() end
-        if work[index + 1] and C_Timer and C_Timer.After then C_Timer.After(0.05, Step) end
+        if work[index + 1] and C_Timer and C_Timer.After then C_Timer.After(0.1, Step) end
     end
     Step()
 end
@@ -3384,6 +3563,13 @@ local function PositionPrimaryItemTooltip(owner)
     end
     itemTooltip:ClearAllPoints()
     local anchor = owner.icon or owner
+    -- setstrip (2.0.8): with the item's set row open, the tooltip goes
+    -- around the row (never over it)
+    local strip = FDJ.setStrip
+    if strip and FDJ.setStripOwner == owner and strip:IsShown() and FDJ.PlaceSetStripTooltip then
+        FDJ.PlaceSetStripTooltip()
+        return
+    end
     itemTooltip:SetPoint("BOTTOMLEFT", anchor, "TOPRIGHT", 4, 4)
 end
 
@@ -3798,14 +3984,22 @@ local function ShowItemTooltip(row)
         itemTooltip:AddLine(" ")
         itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
     end
+    -- droprare (2.0.8, M 15 Nov 2026): a loot entry's own note (dropNote, a
+    -- string key: "Extremely rare drop"), in its language
+    if type(row.item.dropNote) == "string" then
+        if not (row.fdjSourceText and row.fdjSourceText ~= "") then itemTooltip:AddLine(" ") end
+        itemTooltip:AddLine(L(row.item.dropNote), 1.00, 0.50, 0.25, true)
+    end
     if row.fdjMapLocation then
         itemTooltip:AddLine(L("ITEM_CLICK_MAP"), 0.35, 1.00, 0.35, true)
     elseif row.fdjBossJump and not row.mapLocation and FDJ.BossDropSource and FDJ.BossDropSource(row.item[1]) then
         itemTooltip:AddLine(L("ITEM_CLICK_BOSS"), 0.35, 1.00, 0.35, true)
     end
+    if FDJ.SetStripHint then pcall(FDJ.SetStripHint, itemTooltip, row) end -- setstrip (2.0.8)
     itemTooltip:Show()
     if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
     PositionPrimaryItemTooltip(row)
+    if FDJ.UpdateSetStrip then pcall(FDJ.UpdateSetStrip, row) end -- setstrip (2.0.8)
 
     -- Handles Shift already being held when the mouse enters the item.
     UpdateItemComparison(row)
@@ -3821,6 +4015,386 @@ end
 function FDJ.HideJournalItemTooltip()
     if itemTooltip then itemTooltip:Hide() end
     pcall(HideComparisonTooltips)
+end
+
+-- setstrip (2.0.8, M 15 Nov 2026): a piece of an item set (Dungeon Set 1 and
+-- 2, Forever's own sets...) shows the whole set when clicked: a row of the
+-- set's pieces (icons, in slot order, head to feet) right under its tooltip,
+-- the piece hovered framed in gold, the others in their quality's colour.
+-- A plain click opens it, another click (or moving off the item) closes it;
+-- the tooltip says which ("Click to show the whole set"). The row stays
+-- while the mouse moves onto it: each piece shows its own tooltip on hover, Shift-click links it, Ctrl-click tries it on; off the
+-- row and the item, it closes. Loot rows and quest
+-- rewards (Tier 0.5); Shift-click still links, Ctrl-click still tries on. The
+-- sets: FDJ.ITEM_SETS (Data/Dungeons.lua, BEGIN itemsets). The row sits just
+-- over the item; the tooltip (the item's, or a piece's) goes over the row when
+-- it fits there, else beside it (right, or left at the screen's edge): it is
+-- never covered by the row.
+do
+    local strings = {
+        enUS = { SET_CLICK_SHOW = "Click to show the whole set", SET_CLICK_HIDE = "Click to hide the set" },
+        deDE = { SET_CLICK_SHOW = "Klicken, um das ganze Set anzuzeigen", SET_CLICK_HIDE = "Klicken, um das Set auszublenden" },
+        frFR = { SET_CLICK_SHOW = "Cliquez pour afficher tout l'ensemble", SET_CLICK_HIDE = "Cliquez pour masquer l'ensemble" },
+        esES = { SET_CLICK_SHOW = "Haz clic para ver todo el conjunto", SET_CLICK_HIDE = "Haz clic para ocultar el conjunto" },
+        itIT = { SET_CLICK_SHOW = "Clicca per mostrare tutto il set", SET_CLICK_HIDE = "Clicca per nascondere il set" },
+        ptBR = { SET_CLICK_SHOW = "Clique para mostrar o conjunto inteiro", SET_CLICK_HIDE = "Clique para ocultar o conjunto" },
+        ruRU = { SET_CLICK_SHOW = "Щелкните, чтобы показать весь комплект", SET_CLICK_HIDE = "Щелкните, чтобы скрыть комплект" },
+        koKR = { SET_CLICK_SHOW = "클릭하여 세트 전체 보기", SET_CLICK_HIDE = "클릭하여 세트 숨기기" },
+        zhCN = { SET_CLICK_SHOW = "点击显示整套装备", SET_CLICK_HIDE = "点击隐藏套装" },
+        zhTW = { SET_CLICK_SHOW = "點擊顯示整套裝備", SET_CLICK_HIDE = "點擊隱藏套裝" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+
+    local setOf
+    function FDJ.ItemSetOf(itemID)
+        itemID = tonumber(itemID)
+        if not itemID then return nil end
+        if not setOf then
+            setOf = {}
+            for _, set in ipairs(FDJ.ITEM_SETS or {}) do
+                for _, id in ipairs(set) do setOf[id] = set end
+            end
+        end
+        return setOf[itemID]
+    end
+
+    -- the click is free (not a map spot or a jump to the boss that drops it)
+    local function Clickable(owner)
+        if not (owner and owner.fdjSetClick and type(owner.item) == "table") then return false end
+        if owner.fdjMapLocation then return false end
+        if owner.fdjBossJump and FDJ.BossDropSource and FDJ.BossDropSource(owner.item[1]) then return false end
+        return FDJ.ItemSetOf(owner.item[1]) ~= nil
+    end
+
+    function FDJ.SetStripHint(tip, owner)
+        if not Clickable(owner) then return end
+        tip:AddLine(L(FDJ.setStripOwner == owner and "SET_CLICK_HIDE" or "SET_CLICK_SHOW"), 0.35, 1.00, 0.35, true)
+    end
+
+    local strip
+    local SIZE, EDGE, GAP, PAD = 30, 2, 4, 7
+    local function Build()
+        strip = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+        strip:SetFrameStrata("TOOLTIP")
+        strip:SetFrameLevel(50)
+        strip:EnableMouse(true)
+        strip.fdjSolidTooltip = true -- the pieces' tooltips get the journal's dark backing
+        SetBackdrop(strip, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 14, 3)
+        strip:SetBackdropColor(0.03, 0.03, 0.04, 1)
+        strip:SetBackdropBorderColor(0.80, 0.80, 0.80, 1)
+        strip.cells = {}
+        strip:Hide()
+        FDJ.setStrip = strip
+        -- setbridge (2.0.8, M 15 Nov 2026: going up from the item to the row
+        -- too fast, the mouse crossed the item above it, which took the
+        -- tooltip and closed the row): while the row is open, the space
+        -- between the item and the top of the row takes the mouse, so the
+        -- items under it can't. Resting there a while (not passing through)
+        -- closes the row as usual and gives them back.
+        strip.fdjShield = CreateFrame("Frame", nil, UIParent)
+        strip.fdjShield:SetFrameStrata("TOOLTIP")
+        strip.fdjShield:SetFrameLevel(49)
+        strip.fdjShield:EnableMouse(true)
+        strip.fdjShield:Hide()
+        strip:HookScript("OnHide", function(self) if self.fdjShield then self.fdjShield:Hide() end end)
+        if itemTooltip and itemTooltip.HookScript then
+            itemTooltip:HookScript("OnHide", function() if strip and not strip.fdjPinned then strip:Hide() if strip.fdjShield then strip.fdjShield:Hide() end end end)
+            -- a tooltip that grows after it was placed (lines other code and
+            -- addons add later, item data arriving: Beaststalker's Cap) is
+            -- placed again, so it never ends up pushed down over the row
+            itemTooltip:HookScript("OnSizeChanged", function(tip)
+                if strip and strip:IsShown() and not strip.fdjPlacing and FDJ.PlaceSetStripTooltip then
+                    -- (abovealways: not again for the size it was left at)
+                    local h, w = tip:GetHeight() or 0, tip:GetWidth() or 0
+                    if strip.fdjPlacedH and math.abs(h - strip.fdjPlacedH) < 0.5 and math.abs(w - (strip.fdjPlacedW or 0)) < 0.5 then return end
+                    pcall(FDJ.PlaceSetStripTooltip)
+                end
+            end)
+            -- abovealways: a tooltip made wider for the row is its own width
+            -- again for the next item, and once it is gone
+            local function Unwiden()
+                if strip and strip.fdjUnclamped then -- noclamp: kept on the screen again
+                    strip.fdjUnclamped = nil
+                    if itemTooltip.SetClampedToScreen then pcall(itemTooltip.SetClampedToScreen, itemTooltip, true) end
+                end
+                if strip and strip.fdjInsets then -- fulltop: the game's margin back
+                    local i = strip.fdjInsets
+                    strip.fdjInsets = nil
+                    if itemTooltip.SetClampRectInsets then pcall(itemTooltip.SetClampRectInsets, itemTooltip, i[1], i[2], i[3], i[4]) end
+                end
+                if strip and strip.fdjWidened then
+                    strip.fdjWidened, strip.fdjPlacedH, strip.fdjPlacedW = nil, nil, nil
+                    if itemTooltip.SetMinimumWidth then pcall(itemTooltip.SetMinimumWidth, itemTooltip, 0) end
+                end
+            end
+            itemTooltip:HookScript("OnHide", Unwiden)
+            pcall(itemTooltip.HookScript, itemTooltip, "OnTooltipCleared", Unwiden)
+        end
+        -- while the mouse is on the row of pieces (or back on the item), it
+        -- stays; a moment anywhere else and it closes
+        strip:SetScript("OnUpdate", function(self, elapsed)
+            if not self.fdjPinned then return end
+            local owner = FDJ.setStripOwner
+            local over = (self.IsMouseOver and self:IsMouseOver(4, -4, -4, 4))
+                or (owner and owner.IsMouseOver and owner:IsMouseOver())
+            if over and owner and (not owner.IsVisible or owner:IsVisible()) then
+                self.fdjAway, self.fdjBridged = 0, 0
+                return
+            end
+            -- setbridge: on the way between the item and the row (a second at most)
+            local shield = self.fdjShield
+            if shield and shield:IsShown() and shield:IsMouseOver() and owner and (not owner.IsVisible or owner:IsVisible()) then
+                self.fdjBridged = (self.fdjBridged or 0) + (elapsed or 0)
+                if self.fdjBridged < 1 then
+                    self.fdjAway = 0
+                    return
+                end
+            end
+            self.fdjAway = (self.fdjAway or 0) + (elapsed or 0)
+            if self.fdjAway > 0.25 then FDJ.CloseSetStrip(nil, true) end
+        end)
+    end
+    -- the tooltip over the row when it fits under the screen's top, else
+    -- beside it: to its right, or to its left when that runs off the screen
+    -- abovealways (2.0.8, M 15 Nov 2026: "i dont like how they keep moving
+    -- positions, try to force it to the top"): the tooltip always goes over
+    -- the row. One too tall for the room up to the screen's top is made
+    -- wider, a step at a time (its long lines, the set's bonuses, wrap less,
+    -- so it gets shorter), until it fits. Only when even the widest (as wide
+    -- as the screen allows, MAX_WIDE at most) is too tall (the journal
+    -- dragged up near the top) does it go beside the row, its own width.
+    local MAX_WIDE, WIDE_STEP = 640, 20
+    function FDJ.PlaceSetStripTooltip()
+        if not (strip and strip:IsShown() and itemTooltip) then return end
+        strip.fdjPlacing = true
+        itemTooltip:ClearAllPoints()
+        local us = UIParent and UIParent.GetEffectiveScale and UIParent:GetEffectiveScale() or 1
+        local ss = strip.GetEffectiveScale and strip:GetEffectiveScale() or 1
+        local ts = itemTooltip.GetEffectiveScale and itemTooltip:GetEffectiveScale() or 1
+        local screenH = ((UIParent and UIParent.GetTop and UIParent:GetTop()) or 0) * us
+        local screenW = ((UIParent and UIParent.GetRight and UIParent:GetRight()) or 0) * us
+        local top = (strip:GetTop() or 0) * ss
+        local right = (strip:GetRight() or 0) * ss
+        local left = (strip.GetLeft and strip:GetLeft() or 0) * ss
+        -- topmargin (2.0.8, M 15 Nov 2026: Beaststalker's Cap and Belt still
+        -- pushed down onto the row): the game keeps tooltips a little under
+        -- the screen's top (its clamp insets; about 28 on his screen), so
+        -- that much room is left free: the tooltip's own top inset, 32 at
+        -- least. And where the game put it is looked at too: a bottom edge
+        -- under the row's top is no fit.
+        -- fulltop (2.0.8, M 15 Nov 2026: "can we make it a bit taller? the
+        -- wide fits but it looks ugly"): over the row the tooltip may go
+        -- right up to the screen's top: the game's margin (its clamp insets)
+        -- is taken off while the row is open and put back after, so the
+        -- Cap and the Belt fit at their own width. Made wider only when
+        -- even that is not room enough.
+        local margin = 32
+        if itemTooltip.GetClampRectInsets and itemTooltip.SetClampRectInsets then
+            if not strip.fdjInsets then
+                local ok, l, r, t, b = pcall(itemTooltip.GetClampRectInsets, itemTooltip)
+                if ok then strip.fdjInsets = { l or 0, r or 0, t or 0, b or 0 } end
+            end
+            if strip.fdjInsets and pcall(itemTooltip.SetClampRectInsets, itemTooltip, 0, 0, 0, 0) then margin = 3 end
+        end
+        -- noclamp (2.0.8, M 15 Nov 2026: still pushed down from 28 under
+        -- the top with the insets off): over the row the game's keeping it
+        -- on the screen is switched off altogether, so it sits exactly where
+        -- it is put; the journal itself sees that it stays under the top.
+        if itemTooltip.SetClampedToScreen and pcall(itemTooltip.SetClampedToScreen, itemTooltip, false) then
+            strip.fdjUnclamped = true
+            margin = 3
+        elseif itemTooltip.GetClampRectInsets then
+            local ok, _, _, t = pcall(itemTooltip.GetClampRectInsets, itemTooltip)
+            if ok and type(t) == "number" then margin = math.max(margin, math.abs(t) + 4) end
+        end
+        local function Fits()
+            local tipH = (itemTooltip:GetHeight() or 0) * ts
+            if screenH <= 0 or tipH <= 0 then return true end
+            if top + tipH + margin * ts > screenH then return false end
+            local bottom = itemTooltip.GetBottom and itemTooltip:GetBottom()
+            return not (type(bottom) == "number" and bottom * ts < top - 1)
+        end
+        itemTooltip:SetPoint("BOTTOMLEFT", strip, "TOPLEFT", 0, 2)
+        local fits = Fits()
+        if not fits and itemTooltip.SetMinimumWidth and ts > 0 then
+            local widest = MAX_WIDE
+            if screenW > 0 then widest = math.min(widest, math.floor((screenW - left) / ts - 4)) end
+            local w = math.floor(itemTooltip:GetWidth() or 0)
+            if w < widest then strip.fdjWidened = true end
+            while not fits and w < widest do
+                w = math.min(widest, w + WIDE_STEP)
+                pcall(itemTooltip.SetMinimumWidth, itemTooltip, w)
+                itemTooltip:Show() -- (laid out again at that width)
+                fits = Fits()
+            end
+            if not fits and strip.fdjWidened then
+                strip.fdjWidened = nil
+                pcall(itemTooltip.SetMinimumWidth, itemTooltip, 0)
+                itemTooltip:Show()
+            end
+        end
+        if fits then
+            strip.fdjTipSide = "above"
+        else
+            if strip.fdjUnclamped then -- beside the row: kept on the screen again
+                strip.fdjUnclamped = nil
+                pcall(itemTooltip.SetClampedToScreen, itemTooltip, true)
+            end
+            itemTooltip:ClearAllPoints()
+            local tipW = (itemTooltip:GetWidth() or 0) * ts
+            if screenW <= 0 or right + tipW + 6 * ts <= screenW then
+                itemTooltip:SetPoint("BOTTOMLEFT", strip, "BOTTOMRIGHT", 4, 0)
+                strip.fdjTipSide = "right"
+            else
+                itemTooltip:SetPoint("BOTTOMRIGHT", strip, "BOTTOMLEFT", -4, 0)
+                strip.fdjTipSide = "left"
+            end
+        end
+        strip.fdjPlacedH, strip.fdjPlacedW = itemTooltip:GetHeight() or 0, itemTooltip:GetWidth() or 0
+        strip.fdjPlacing = nil
+    end
+
+    local function PieceTooltip(cell)
+        local owner = FDJ.setStripOwner
+        if not (owner and cell.id and itemTooltip) then return end
+        strip.fdjAway = 0
+        HideComparisonTooltips()
+        itemTooltip:SetOwner(cell, "ANCHOR_NONE")
+        if itemTooltip.ClearLines then itemTooltip:ClearLines() end
+        local _, link = ItemInfo(cell.id)
+        itemTooltip:SetHyperlink(link or ("item:" .. cell.id))
+        -- (where it drops: the journal's own line on every item tooltip)
+        itemTooltip:Show()
+        if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
+        FDJ.PlaceSetStripTooltip()
+    end
+    local function Cell(i)
+        local c = strip.cells[i]
+        if not c then
+            c = CreateFrame("Button", nil, strip)
+            c:RegisterForClicks("LeftButtonUp")
+            c.edge = c:CreateTexture(nil, "BORDER")
+            c.edge:SetAllPoints(c)
+            c.icon = c:CreateTexture(nil, "ARTWORK")
+            c.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+            c.icon:SetPoint("TOPLEFT", c, "TOPLEFT", EDGE, -EDGE)
+            c.icon:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -EDGE, EDGE)
+            if c.SetHighlightTexture then c:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD") end
+            c:SetScript("OnEnter", PieceTooltip)
+            c:SetScript("OnClick", function(self)
+                if not self.id then return end
+                local _, link = ItemInfo(self.id)
+                if not link then return end
+                if IsModifiedClick and IsModifiedClick("CHATLINK") and ChatEdit_InsertLink then
+                    ChatEdit_InsertLink(link)
+                elseif IsModifiedClick and IsModifiedClick("DRESSUP") and DressUpItemLink then
+                    DressUpItemLink(link)
+                end
+            end)
+            strip.cells[i] = c
+        end
+        return c
+    end
+
+    function FDJ.UpdateSetStrip(owner)
+        -- setforget (2.0.8, M 15 Nov 2026): another item hovered: the set is
+        -- forgotten, so going back to the piece doesn't bring the row back
+        -- (a new click does)
+        if FDJ.setStripOwner and FDJ.setStripOwner ~= owner then FDJ.setStripOwner = nil end
+        local set = FDJ.setStripOwner == owner and Clickable(owner) and FDJ.ItemSetOf(owner.item[1]) or nil
+        if not set or not (itemTooltip and itemTooltip:IsShown()) then
+            if strip then strip:Hide() if strip.fdjShield then strip.fdjShield:Hide() end end -- (setbridge)
+            return
+        end
+        if not strip then Build() end
+        local current = tonumber(owner.item[1])
+        local fallback = tonumber(owner.item[4]) or 3
+        local cellW = SIZE + EDGE * 2
+        for i, id in ipairs(set) do
+            local c = Cell(i)
+            if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then pcall(C_Item.RequestLoadItemDataByID, id) end
+            local x = PAD + 2 + (i - 1) * (cellW + GAP)
+            c:ClearAllPoints()
+            c:SetSize(cellW, cellW)
+            c:SetPoint("TOPLEFT", strip, "TOPLEFT", x, -(PAD + 2))
+            c.icon:SetTexture(ItemIcon(id))
+            local _, link, quality = ItemInfo(id)
+            local r, g, b = GetAuthoritativeItemQuality(id, link, quality, fallback)
+            if id == current then
+                c.edge:SetColorTexture(1.00, 0.82, 0.00, 1)
+            else
+                c.edge:SetColorTexture(r or 0.6, g or 0.6, b or 0.6, 0.95)
+            end
+            c.edge:Show()
+            c.icon:Show()
+            c:Show()
+            c.id = id
+        end
+        for i = #set + 1, #strip.cells do
+            strip.cells[i]:Hide()
+            strip.cells[i].id = nil
+        end
+        local n = #set
+        local w = (PAD + 2) * 2 + n * cellW + (n - 1) * GAP
+        local h = (PAD + 2) * 2 + cellW
+        strip:SetSize(w, h)
+        strip.fdjPinned, strip.fdjAway = nil, 0
+        local tipScale = itemTooltip.GetEffectiveScale and itemTooltip:GetEffectiveScale() or 1
+        local uiScale = UIParent and UIParent.GetEffectiveScale and UIParent:GetEffectiveScale() or 1
+        if tipScale > 0 and uiScale > 0 then strip:SetScale(tipScale / uiScale) end
+        -- the row sits just over the item (not on it); the tooltip around it
+        strip:ClearAllPoints()
+        strip:SetPoint("BOTTOMLEFT", owner.icon or owner, "TOPRIGHT", 4, 8)
+        strip:Show()
+        -- setbridge: from the item's top edge to the top of the row, from the
+        -- item's left edge to the row's right end
+        strip.fdjBridged = 0
+        if strip.fdjShield then
+            strip.fdjShield:ClearAllPoints()
+            strip.fdjShield:SetPoint("BOTTOMLEFT", owner, "TOPLEFT", 0, 0)
+            strip.fdjShield:SetPoint("TOPRIGHT", strip, "TOPRIGHT", 0, 0)
+            strip.fdjShield:Show()
+        end
+        FDJ.PlaceSetStripTooltip()
+    end
+
+    function FDJ.ToggleSetStrip(owner)
+        if not Clickable(owner) then return false end
+        FDJ.setStripOwner = (FDJ.setStripOwner ~= owner) and owner or nil
+        pcall(ShowItemTooltip, owner) -- the hint changes; the row follows
+        if not FDJ.setStripOwner and strip then strip:Hide() if strip.fdjShield then strip.fdjShield:Hide() end end -- (setbridge)
+        return true
+    end
+
+    -- the mouse left the item while its set's row is open: the row stays
+    -- (the mouse may be going onto it)
+    function FDJ.SetStripKeep(owner)
+        if not (strip and strip:IsShown() and owner and FDJ.setStripOwner == owner) then return false end
+        strip.fdjPinned, strip.fdjAway = true, 0
+        return true
+    end
+
+    function FDJ.CloseSetStrip(owner, hideTooltip)
+        if owner == nil or FDJ.setStripOwner == owner then FDJ.setStripOwner = nil end
+        if strip then
+            local pinned = strip.fdjPinned
+            strip.fdjPinned = nil
+            strip:Hide()
+            if strip.fdjShield then strip.fdjShield:Hide() end -- setbridge
+            if hideTooltip and pinned and itemTooltip and itemTooltip:IsShown() then
+                itemTooltip:Hide()
+                HideComparisonTooltips()
+            end
+        end
+    end
 end
 
 -- ============================================================
@@ -3930,9 +4504,14 @@ local function MakeLootRow(parent)
         self.fdjHoverColor = nil
         self:SetBackdropColor(unpack(theme.lootRow))
         self.fdjComparing = nil
-        if itemTooltip then itemTooltip:Hide() end
+        -- setstrip: an open set row stays while the mouse goes onto it
+        if not (FDJ.SetStripKeep and FDJ.SetStripKeep(self)) then
+            if FDJ.CloseSetStrip then FDJ.CloseSetStrip(self) end
+            if itemTooltip then itemTooltip:Hide() end
+        end
         HideComparisonTooltips()
     end)
+    row.fdjSetClick = true -- setstrip (2.0.8): a set piece shows its set when clicked
 
     -- Poll the modifier while hovered so comparison appears/disappears
     -- immediately when Shift is pressed/released, without moving the mouse.
@@ -3946,6 +4525,12 @@ local function MakeLootRow(parent)
 
         if button == "RightButton" and FDJ.ShowItemFavouriteMenu then
             FDJ.ShowItemFavouriteMenu(self, self.item, self.fdjDungeonName, self.fdjBossName)
+            return
+        end
+
+        -- setstrip (2.0.8): a plain click on a set piece shows / hides its set
+        if button == "LeftButton" and not (IsModifiedClick and (IsModifiedClick("CHATLINK") or IsModifiedClick("DRESSUP")))
+            and FDJ.ToggleSetStrip and FDJ.ToggleSetStrip(self) then
             return
         end
 
@@ -3971,6 +4556,117 @@ local function MakeLootRow(parent)
     end)
 
     return row
+end
+
+-- lootchildren (2.0.8, M 15 Nov 2026): an item that is combined with another
+-- into a third (makes = { id, name, type, quality, from = { {id, name,
+-- boss}, ... } } on the loot entry: Jang'thraze the Protector and
+-- Sang'thraze the Deflector make Sul'thraze the Lasher) has the item it makes
+-- on a smaller row of its own right under it, joined by a line, always open.
+-- It works like any loot row (tooltip, Shift-click link, Ctrl-click try on,
+-- right-click favourite); its type line says what to combine it with, its
+-- tooltip both halves and their bosses. The Loot Filter blacks it out like
+-- other rows (with its half, or when the filter rules the item itself out).
+do
+    local strings = {
+        enUS = { LOOT_COMBINE_WITH = "Combine with %s", LOOT_MADE_FROM = "Made by combining %s and %s." },
+        deDE = { LOOT_COMBINE_WITH = "Kombinieren mit %s", LOOT_MADE_FROM = "Entsteht durch Kombinieren von %s und %s." },
+        frFR = { LOOT_COMBINE_WITH = "À combiner avec %s", LOOT_MADE_FROM = "Obtenu en combinant %s et %s." },
+        esES = { LOOT_COMBINE_WITH = "Combinar con %s", LOOT_MADE_FROM = "Se obtiene al combinar %s y %s." },
+        itIT = { LOOT_COMBINE_WITH = "Da combinare con %s", LOOT_MADE_FROM = "Si ottiene combinando %s e %s." },
+        ptBR = { LOOT_COMBINE_WITH = "Combine com %s", LOOT_MADE_FROM = "Obtido ao combinar %s e %s." },
+        ruRU = { LOOT_COMBINE_WITH = "Объединить с: %s", LOOT_MADE_FROM = "Создаётся объединением: %s и %s." },
+        koKR = { LOOT_COMBINE_WITH = "%s 아이템과 결합", LOOT_MADE_FROM = "%s 아이템과 %s 아이템을 결합하여 만듭니다." },
+        zhCN = { LOOT_COMBINE_WITH = "与%s合成", LOOT_MADE_FROM = "由%s和%s合成。" },
+        zhTW = { LOOT_COMBINE_WITH = "與%s合成", LOOT_MADE_FROM = "由%s和%s合成。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
+function FDJ.ShowLootChild(child, item, boss, x, y, width, theme, parentDimmed)
+    local made = type(item) == "table" and item.makes
+    if type(made) ~= "table" or not child then return end
+    local compact = FDJ.lootCompact
+    local indent = FDJ.BOSS_CHILD_INDENT or 22
+    local parentHeight = compact and 28 or 52
+    local height = (compact and 26 or 44) - 3
+    child:ClearAllPoints()
+    child:SetWidth(math.max(60, (width or 388) - indent))
+    child:SetHeight(height)
+    child:SetPoint("TOPLEFT", child:GetParent(), "TOPLEFT", (x or 0) + indent, -((y or 0) + parentHeight + 3))
+
+    -- the line from the half above to this row
+    if not child.fdjElbow then
+        child.fdjElbow = { child:CreateTexture(nil, "BACKGROUND"), child:CreateTexture(nil, "BACKGROUND") }
+    end
+    local down, across = child.fdjElbow[1], child.fdjElbow[2]
+    local c = (theme and theme.border) or { 0.46, 0.30, 0.12, 1 }
+    down:SetColorTexture(c[1], c[2], c[3], 0.9)
+    across:SetColorTexture(c[1], c[2], c[3], 0.9)
+    down:ClearAllPoints()
+    down:SetPoint("TOPLEFT", child, "TOPLEFT", -12, 3)
+    down:SetSize(2, 3 + math.floor(height / 2) + 1)
+    across:ClearAllPoints()
+    across:SetPoint("LEFT", child, "LEFT", -12, 0)
+    across:SetSize(12, 2)
+    down:Show()
+    across:Show()
+
+    child.icon:SetSize(compact and 20 or 30, compact and 20 or 30)
+    child.icon:ClearAllPoints()
+    child.icon:SetPoint("LEFT", compact and 5 or 8, 0)
+    child.name:ClearAllPoints()
+    if compact then
+        child.name:SetPoint("LEFT", child.icon, "RIGHT", 7, 0)
+    else
+        child.name:SetPoint("TOPLEFT", child.icon, "TOPRIGHT", 8, -1)
+    end
+    child.name:SetPoint("RIGHT", -10, 0)
+    child.name:SetFontObject(compact and "ForeverDJ_GameFontNormalSmall" or "ForeverDJ_GameFontNormal")
+    child.slot:ClearAllPoints()
+    child.slot:SetPoint("TOPLEFT", child.name, "BOTTOMLEFT", 0, -3)
+    child.slot:SetPoint("RIGHT", -10, 0)
+    child.slot:SetShown(not compact)
+    if child.sharedText then child.sharedText:Hide() end
+
+    child.item = made
+    child.fdjDungeonName = selectedDungeon
+    child.fdjBossName = boss and boss.name
+    child.icon:SetTexture(ItemIcon(made[1]))
+    if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(child, made[1]) end
+    if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
+        pcall(C_Item.RequestLoadItemDataByID, made[1])
+    end
+    local name, link, quality = ItemInfo(made[1])
+    child.name:SetText(name or made[2])
+    child.name:SetTextColor(GetAuthoritativeItemQuality(made[1], link, quality, made[4]))
+
+    local other, parts = nil, {}
+    for _, half in ipairs(type(made.from) == "table" and made.from or {}) do
+        local halfName = ItemInfo(half[1]) or half[2] or ""
+        if tonumber(half[1]) ~= tonumber(item[1]) then other = halfName end
+        parts[#parts + 1] = half[3] and (halfName .. " (" .. BossName(half[3]) .. ")") or halfName
+    end
+    child.slot:SetText(ItemSlot(made[3]) .. (other and ("  |  " .. L("LOOT_COMBINE_WITH", other)) or ""))
+    child.fdjSourceText = (#parts >= 2) and L("LOOT_MADE_FROM", parts[1], parts[2]) or nil
+
+    if theme then
+        child:SetBackdropColor(unpack(theme.lootRow))
+        child:SetBackdropBorderColor(unpack(theme.border))
+        child.slot:SetTextColor(unpack(theme.muted))
+    end
+    local dimmed = parentDimmed or (FDJ.LootFilterRulesOut and FDJ.LootFilterRulesOut(made)) or false
+    child:SetAlpha(dimmed and 0.28 or 1)
+    if child.icon.SetDesaturated then child.icon:SetDesaturated(dimmed and true or false) end
+    child:Show()
 end
 
 -- altarbosses (2.0.24): child rows in the boss list (bosses with childOf).
@@ -4103,6 +4799,231 @@ local function ApplyRewardSummaryFont(fontString)
     local fontObject = _G.ForeverDJ_GameFontNormalSmall or _G.ForeverDJ_GameFontNormal
     if fontObject and fontString.SetFontObject then
         fontString:SetFontObject(fontObject)
+    end
+end
+
+-- chainready (2.0.8): the soft golden glow round a quest's row once its
+-- chain is done and it can be taken (FDJ.QuestChainUnlocked): a golden
+-- edge, gently breathing.
+-- chainaura (2.0.8, M 15 Nov 2026: "not a marker... this aura, like clouds
+-- going round the borders, the completion glow that gives you dopamine"):
+-- the game's own spell-alert glow (the golden proc glow of an action
+-- button: its soft outer glow and the swirling "ants" round the edge), cut
+-- in nine so it fits a wide row (below). The ants run through their 22 frames
+-- (Blizzard's IconAlertAnts sheet: 48 x 48 frames, 5 to a row on 256 x
+-- 256). It fades in. Where the game has no such art, the golden edge
+-- above, gently breathing, as before.
+FDJ.AURA = { -- (FDJ fields: this chunk has no locals to spare)
+    art = "Interface\\SpellActivationOverlay\\IconAlert",
+    ants = "Interface\\SpellActivationOverlay\\IconAlertAnts",
+    glow = { 0.00781250, 0.50781250, 0.27734375, 0.52734375 }, -- its outer glow
+    step = 0.04, -- seconds a frame of the ants (auratone: calmer than the game's)
+    -- auratone (2.0.8, M 15 Nov 2026: "a little bit too much... tone it
+    -- down a little"): the outer glow and the ants a little fainter
+    glowAlpha = 0.45, antsAlpha = 0.6,
+    -- corners this big and the glow this far out round the row: the
+    -- swirl's ring lies 0.14 of a frame in from its edge, so a quarter
+    -- frame (corner) of 32 pixels puts it 9 out, on the row's edge
+    corner = 32, pad = 9,
+    -- auraray (2.0.8, M 15 Nov 2026: "the little squares moving round the
+    -- edges look artificial... more linear, like a sun ray, cloudy, natural"):
+    -- no more ants. The cloudy outer glow breathes slowly (glowLow to
+    -- glowHigh, breath seconds), and a soft slanted beam of light
+    -- (Media/ChainSheen.tga) glides across the row, sweep seconds, then rests.
+    sheen = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ChainSheen",
+    sheenW = 84, sheenAlpha = 0.5, sweep = 1.5, rest = 2.2,
+    glowLow = 0.30, glowHigh = 0.55, breath = 2.6,
+    -- sunonce (2.0.8, M 15 Nov 2026: "make the sun ray appear only once on
+    -- page load... or its annoying on the eyes"): the beam crosses each
+    -- quest's row once per visit to the quest page (journal opened, dungeon
+    -- changed, Quests tab), sheenDelay seconds after the glow appears; then
+    -- only the breathing glow. (rest: no longer used.)
+    sheenDelay = 0.25,
+}
+-- sunonce: the quests whose beam has played on this visit to the quest page
+FDJ.chainSheenSeen = {}
+FDJ.chainSheenEpoch = 0
+FDJ.ResetChainSheen = function()
+    FDJ.chainSheenSeen = {}
+    FDJ.chainSheenEpoch = (FDJ.chainSheenEpoch or 0) + 1
+end
+-- arm a glow's beam: once per quest per visit
+FDJ.ChainSheenArm = function(g)
+    g.sheenEpoch = FDJ.chainSheenEpoch
+    local key, seen = g.sheenKey, FDJ.chainSheenSeen
+    if key ~= nil and seen[key] then
+        g.sheenClock = nil
+        if g.sheen then g.sheen:SetAlpha(0) end
+        return
+    end
+    if key ~= nil then seen[key] = true end
+    g.sheenClock = -(FDJ.AURA.sheenDelay or 0)
+end
+-- Cut in nine (four corners, four sides, the middle), so the swirl keeps
+-- its size round a row of any height (a quest with its chain open is a
+-- tall one): the corners are the frame's quarters at FDJ.AURA.corner
+-- pixels, the sides its middle stretched. Order: TL T TR L C R BL B BR.
+FDJ.ChainAuraLayout = function(g)
+    local w, h = g:GetWidth() or 0, g:GetHeight() or 0
+    if w <= 0 or h <= 0 then return end
+    local c = math.min(FDJ.AURA.corner, h / 2, w / 2)
+    for _, set in ipairs({ g.glow, g.ants }) do -- (g.ants: none since auraray)
+        local TL, T, TR, Lf, C, R, BL, B, BR = unpack(set)
+        for _, t in ipairs(set) do t:ClearAllPoints() end
+        TL:SetPoint("TOPLEFT") TL:SetSize(c, c)
+        TR:SetPoint("TOPRIGHT") TR:SetSize(c, c)
+        BL:SetPoint("BOTTOMLEFT") BL:SetSize(c, c)
+        BR:SetPoint("BOTTOMRIGHT") BR:SetSize(c, c)
+        T:SetPoint("TOPLEFT", TL, "TOPRIGHT") T:SetPoint("BOTTOMRIGHT", TR, "BOTTOMLEFT")
+        B:SetPoint("TOPLEFT", BL, "TOPRIGHT") B:SetPoint("BOTTOMRIGHT", BR, "BOTTOMLEFT")
+        Lf:SetPoint("TOPLEFT", TL, "BOTTOMLEFT") Lf:SetPoint("BOTTOMRIGHT", BL, "TOPRIGHT")
+        R:SetPoint("TOPLEFT", TR, "BOTTOMLEFT") R:SetPoint("BOTTOMRIGHT", BR, "TOPRIGHT")
+        C:SetPoint("TOPLEFT", TL, "BOTTOMRIGHT") C:SetPoint("BOTTOMRIGHT", BR, "TOPLEFT")
+        T:SetShown(w - 2 * c > 0.5) B:SetShown(w - 2 * c > 0.5)
+        Lf:SetShown(h - 2 * c > 0.5) R:SetShown(h - 2 * c > 0.5)
+        C:SetShown(set == g.glow and w - 2 * c > 0.5 and h - 2 * c > 0.5)
+    end
+end
+-- one frame (l, r, t, b) cut in nine
+FDJ.ChainAuraCoords = function(set, l, r, t, b)
+    local mx, my = (l + r) / 2, (t + b) / 2
+    local ex, ey = (r - l) * 0.04, (b - t) * 0.04
+    set[1]:SetTexCoord(l, mx, t, my)
+    set[2]:SetTexCoord(mx - ex, mx + ex, t, my)
+    set[3]:SetTexCoord(mx, r, t, my)
+    set[4]:SetTexCoord(l, mx, my - ey, my + ey)
+    set[5]:SetTexCoord(mx - ex, mx + ex, my - ey, my + ey)
+    set[6]:SetTexCoord(mx, r, my - ey, my + ey)
+    set[7]:SetTexCoord(l, mx, my, b)
+    set[8]:SetTexCoord(mx - ex, mx + ex, my, b)
+    set[9]:SetTexCoord(mx, r, my, b)
+end
+FDJ.ChainAuraFrame = function(g, n)
+    local col, row = (n - 1) % 5, math.floor((n - 1) / 5)
+    local cw = 48 / 256
+    FDJ.ChainAuraCoords(g.ants, col * cw, (col + 1) * cw, row * cw, (row + 1) * cw)
+end
+-- auraray: each frame, the glow's breath and the beam's place on the row
+FDJ.ChainAuraTick = function(g, elapsed)
+    local A = FDJ.AURA
+    g.clock = (g.clock or 0) + (elapsed or 0)
+    local t = g.clock
+    local breath = A.glowLow + (A.glowHigh - A.glowLow) * (0.5 + 0.5 * math.sin(t * 2 * math.pi / A.breath))
+    for k = 1, 9 do g.glow[k]:SetAlpha(breath) end
+    local sheen = g.sheen
+    if not sheen then return end
+    -- sunonce: the quest page was opened again since this beam was armed
+    if g.sheenEpoch ~= FDJ.chainSheenEpoch then FDJ.ChainSheenArm(g) end
+    local sc = g.sheenClock
+    if not sc then return end -- (played already: only the glow now)
+    sc = sc + (elapsed or 0)
+    g.sheenClock = sc
+    local row = g:GetParent()
+    local w, h = row and row:GetWidth() or 0, row and row:GetHeight() or 0
+    local p = sc / A.sweep
+    if p > 1 then g.sheenClock = nil end -- (once: done)
+    if p < 0 or p > 1 or w <= A.sheenW then
+        sheen:SetAlpha(0)
+        return
+    end
+    sheen:ClearAllPoints()
+    sheen:SetSize(A.sheenW, math.max(8, h - 4))
+    sheen:SetPoint("LEFT", row, "LEFT", p * (w - A.sheenW), 0)
+    sheen:SetAlpha(A.sheenAlpha * math.sin(p * math.pi))
+end
+FDJ.SetChainReadyGlow = function(button, on, key)
+    local g = button and button.fdjReadyGlow
+    -- chainglowoff (2.0.8, M 15 Nov 2026): the option "Remove quest glow on
+    -- chain Pick it up" (Quests page) turns it off; "Pick it up" stays
+    if on and ForeverDungeonJournalDB and ForeverDungeonJournalDB.hideChainGlow then on = false end
+    if not on then
+        if g then
+            if g.pulse then g.pulse:Stop() end
+            if g.fadeIn then g.fadeIn:Stop() end
+            g:Hide()
+        end
+        return
+    end
+    if not g then
+        g = CreateFrame("Frame", nil, button, "BackdropTemplate")
+        g:SetFrameLevel(button:GetFrameLevel() + 6)
+        g:EnableMouse(false)
+        g.glow = {}
+        local art = true
+        for k = 1, 9 do
+            local t = g:CreateTexture(nil, "ARTWORK")
+            if t:SetTexture(FDJ.AURA.art) == false then art = false end
+            t:SetBlendMode("ADD")
+            t:SetAlpha(FDJ.AURA.glowAlpha)
+            g.glow[k] = t
+        end
+        -- auraray: the beam (none until the game is restarted once: a new file)
+        g.sheen = g:CreateTexture(nil, "OVERLAY")
+        if g.sheen:SetTexture(FDJ.AURA.sheen) == false then
+            g.sheen:Hide()
+            g.sheen = nil
+        else
+            g.sheen:SetBlendMode("ADD")
+            g.sheen:SetVertexColor(1.00, 0.86, 0.55)
+            g.sheen:SetAlpha(0)
+        end
+        g.art = art
+        if art then
+            local pad = FDJ.AURA.pad
+            g:SetPoint("TOPLEFT", button, "TOPLEFT", -pad, pad)
+            g:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", pad, -pad)
+            FDJ.ChainAuraCoords(g.glow, FDJ.AURA.glow[1], FDJ.AURA.glow[2], FDJ.AURA.glow[3], FDJ.AURA.glow[4])
+            g.clock = 0
+            g:SetScript("OnSizeChanged", FDJ.ChainAuraLayout)
+            g:SetScript("OnUpdate", FDJ.ChainAuraTick)
+            if g.CreateAnimationGroup then
+                local fadeIn = g:CreateAnimationGroup()
+                local a = fadeIn:CreateAnimation("Alpha")
+                a:SetFromAlpha(0)
+                a:SetToAlpha(1)
+                a:SetDuration(0.35)
+                g.fadeIn = fadeIn
+            end
+        else
+            -- (the golden edge, gently breathing)
+            for k = 1, 9 do g.glow[k]:Hide() end
+            if g.sheen then g.sheen:Hide() g.sheen = nil end -- (auraray)
+            g:SetPoint("TOPLEFT", -2, 2)
+            g:SetPoint("BOTTOMRIGHT", 2, -2)
+            if g.SetBackdrop then SetBackdrop(g, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 12, 2) end
+            if g.SetBackdropColor then
+                g:SetBackdropColor(1.00, 0.78, 0.08, 0.10)
+                g:SetBackdropBorderColor(1.00, 0.82, 0.12, 0.95)
+            end
+            if g.CreateAnimationGroup then
+                local pulse = g:CreateAnimationGroup()
+                pulse:SetLooping("BOUNCE")
+                local fade = pulse:CreateAnimation("Alpha")
+                fade:SetFromAlpha(1)
+                fade:SetToAlpha(0.40)
+                fade:SetDuration(1.2)
+                if fade.SetSmoothing then fade:SetSmoothing("IN_OUT") end
+                pulse:SetScript("OnStop", function() g:SetAlpha(1) end)
+                g.pulse = pulse
+            end
+        end
+        g:Hide()
+        button.fdjReadyGlow = g
+    end
+    local was = g:IsShown()
+    if not was then g.clock = 0 end -- (auraray: the beam starts from the left)
+    -- sunonce: the beam plays once per quest per visit to the quest page
+    -- (a row taken over by another quest, a glow shown again, a new visit)
+    if g.sheen and (not was or key ~= g.sheenKey or g.sheenEpoch ~= FDJ.chainSheenEpoch) then
+        g.sheenKey = key
+        FDJ.ChainSheenArm(g)
+    end
+    g:Show()
+    if g.art then
+        FDJ.ChainAuraLayout(g)
+        if not was and g.fadeIn then g.fadeIn:Stop() g.fadeIn:Play() end
+    elseif g.pulse and not g.pulse:IsPlaying() then
+        g.pulse:Play()
     end
 end
 
@@ -4331,9 +5252,14 @@ local function MakeQuestRewardButton(parent)
         self.fdjHoverColor = nil
         self:SetBackdropColor(unpack(theme.lootRow))
         self.fdjComparing = nil
-        if itemTooltip then itemTooltip:Hide() end
+        -- setstrip: an open set row stays while the mouse goes onto it
+        if not (FDJ.SetStripKeep and FDJ.SetStripKeep(self)) then
+            if FDJ.CloseSetStrip then FDJ.CloseSetStrip(self) end
+            if itemTooltip then itemTooltip:Hide() end
+        end
         HideComparisonTooltips()
     end)
+    button.fdjSetClick = true -- setstrip (2.0.8): a set piece shows its set when clicked
 
     button:SetScript("OnUpdate", function(self)
         KeepHoverColor(self)
@@ -4380,6 +5306,11 @@ local function MakeQuestRewardButton(parent)
             and FDJ.JumpToBossDrop and FDJ.JumpToBossDrop(self.item[1]) then
             if itemTooltip then itemTooltip:Hide() end
             HideComparisonTooltips()
+            return
+        end
+        -- setstrip (2.0.8): a plain click on a set piece shows / hides its set
+        if not (IsModifiedClick and (IsModifiedClick("CHATLINK") or IsModifiedClick("DRESSUP")))
+            and FDJ.ToggleSetStrip and FDJ.ToggleSetStrip(self) then
             return
         end
         local _, link = ItemInfo(self.item[1])
@@ -4634,10 +5565,23 @@ local function UpdateFactionButtons()
     local single = DB[selectedDungeon] and DB[selectedDungeon].questChainPage and not DB[selectedDungeon].bothFactions
     frame.allianceQuestButton:SetShown(not single)
     frame.hordeQuestButton:SetShown(not single)
+    -- questrowtrial: locked to the character's faction: its crest alone,
+    -- where the right one sits, lit
+    local locked = (not single) and FDJ.FactionLocked(selectedDungeon) and FDJ.PlayerFaction()
+    frame.allianceQuestButton:ClearAllPoints()
+    frame.allianceQuestButton:SetPoint("TOPRIGHT", (locked == "Alliance") and -10 or -66, -7)
+    frame.allianceQuestButton.fdjLocked = locked == "Alliance"
+    frame.hordeQuestButton.fdjLocked = locked == "Horde"
+    if locked then
+        frame.allianceQuestButton:SetShown(locked == "Alliance")
+        frame.hordeQuestButton:SetShown(locked == "Horde")
+    end
 end
+FDJ.UpdateQuestFactionButtons = UpdateFactionButtons
 
 local function BuildVisibleQuestIndexes()
     wipe(visibleQuestIndexes)
+    if FDJ.FactionLocked(selectedDungeon) then selectedQuestFaction = FDJ.PlayerFaction() end -- questrowtrial
 
     local dungeon = DB[selectedDungeon]
     local quests = dungeon.quests or {}
@@ -4773,6 +5717,30 @@ RefreshQuestList = function()
                 button.name:SetWidth(button.fdjTextRoom)
                 button.meta:SetWidth(button.fdjTextRoom)
             end
+            -- questrowtrial (2.0.8): its quest chain done and the quest not
+            -- taken yet: "Pick it up" left of the round ! (placed with the
+            -- icons below), the name kept clear of it.
+            if FDJ.QuestRowTrial(selectedDungeon) and not rpgHidden and FDJ.QuestChainUnlocked(quest) then
+                if not button.pickUpLabel then
+                    button.pickUpLabel = button:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
+                    button.pickUpLabel:SetJustifyH("RIGHT")
+                    button.pickUpLabel:SetTextColor(1.00, 0.82, 0.10)
+                end
+                button.pickUpLabel:SetText(L("PICK_IT_UP"))
+                button.pickUpLabel:Show()
+                local _, _, _, _, classToken = GetQuestClassRestriction(quest)
+                button.fdjTextRoom = math.max(120, math.min(182, 203 - (button.pickUpLabel:GetStringWidth() or 0) - (classToken and 22 or 0)))
+                button.name:SetWidth(button.fdjTextRoom)
+                -- metaroom (2.0.8, M 15 Nov 2026: "why are the quests moving
+                -- the chain and in dungeon icon to the bottom left once the
+                -- pick up option appears?"): "Pick it up" sits on the title's
+                -- line (pickclear), so only the title makes room for it. The
+                -- "Available from Level X" line keeps its full width: no
+                -- wrapping, its icons stay right after it.
+                button.meta:SetWidth(182)
+            elseif button.pickUpLabel then
+                button.pickUpLabel:Hide()
+            end
             button.name:SetText(rpgHidden and "???" or QuestField(quest.id, "name", quest.name))
             button.meta:SetText(rpgHidden and "" or L("AVAILABLE_FROM_LEVEL", quest.requires))
             local titleHeight = math.max(14, button.name:GetStringHeight() or 14)
@@ -4823,7 +5791,9 @@ RefreshQuestList = function()
             -- right: stack the dungeon icon on top of the chain control.
             if not metaWrappedY and chain and button.chainToggle and button.dungeonStartIcon and button.dungeonStartIcon:IsShown() then
                 button.dungeonStartIcon:ClearAllPoints()
-                if selectedDungeon == "Alcaz Prison" then
+                -- pickclear (2.0.8): with "Pick it up" on the title's line
+                -- the icon goes beside the chain control too, under the text.
+                if selectedDungeon == "Alcaz Prison" or (button.pickUpLabel and button.pickUpLabel:IsShown()) then
                     -- alcazicons: its titles are long ("More Valuable Than
                     -- Gold"): the icon goes beside the chain control, on the
                     -- "Available from" line, not on top of it over the title.
@@ -5115,6 +6085,41 @@ RefreshQuestList = function()
                 button.hordeIcon:Hide()
                 if button.classIcon then button.classIcon:Hide() end -- turninclean
             end
+            -- questrowtrial (2.0.8): no faction crests (the list is the
+            -- character's faction, its crest at the top); a quest not taken
+            -- yet has the round ! in their place, as big as the turn-in ?:
+            -- a click shows how to pick it up. The class icon goes left of it.
+            if FDJ.QuestRowTrial(selectedDungeon) then
+                button.allianceIcon:Hide()
+                button.hordeIcon:Hide()
+                local showPick = (not rpgHidden) and (not complete) and (not inLog) and not FDJ.QuestTurnedIn(quest.id)
+                if showPick and not button.pickUp and FDJ.CreatePickUpButton then
+                    button.pickUp = FDJ.CreatePickUpButton(button, 44)
+                    button.pickUp:SetPoint("CENTER", button, "TOPRIGHT", -26, -24)
+                    button.pickUp:SetFrameLevel(button:GetFrameLevel() + 7)
+                end
+                if button.pickUp then
+                    FDJ.SetPickUpButton(button.pickUp, showPick and quest or nil, QuestField(quest.id, "name", quest.name), selectedDungeon)
+                end
+                local pick = showPick and button.pickUp
+                if pick and button.classIcon and button.classIcon:IsShown() then
+                    button.classIcon:ClearAllPoints()
+                    button.classIcon:SetPoint("RIGHT", pick, "LEFT", 0, 0)
+                end
+                if button.pickUpLabel and button.pickUpLabel:IsShown() then
+                    button.pickUpLabel:ClearAllPoints()
+                    local by = (pick and button.classIcon and button.classIcon:IsShown()) and button.classIcon or pick
+                    if by then
+                        -- pickclear (2.0.8): on the title's first line, above
+                        -- the chain and In Dungeon icons of the line below.
+                        button.pickUpLabel:SetPoint("RIGHT", by, "LEFT", by == pick and 3 or -3, 8)
+                    else
+                        button.pickUpLabel:Hide()
+                    end
+                end
+            elseif button.pickUp then
+                FDJ.SetPickUpButton(button.pickUp, nil)
+            end
 
             if selectedQuest == questIndex then
                 button:SetBackdropColor(unpack(theme.rowSelected))
@@ -5128,6 +6133,7 @@ RefreshQuestList = function()
 
             button.meta:SetTextColor(unpack(theme.muted))
             button.completeGlow:SetShown(complete and not ready)
+            FDJ.SetChainReadyGlow(button, (not rpgHidden) and (not complete) and (not inLog) and FDJ.QuestChainUnlocked(quest), quest.id) -- chainready (sunonce: keyed by quest)
             button.check:SetShown(complete and not (ready and button.turnIn))
             if button.turnIn then
                 FDJ.SetTurnInButton(button.turnIn, ready and quest or nil, QuestField(quest.id, "name", quest.name))
@@ -5539,6 +6545,8 @@ end
 FDJ.QuestTurnedIn = function(questID)
     if not questID then return false end
     if FDJ.DEV_FAKE_LOG[questID] then return false end -- devlog
+    if FDJ.DEV_CHAIN_OPEN[questID] then return false end -- devchain
+    if FDJ.DEV_CHAIN_DONE[questID] then return true end
     local pseudo = FDJ.PSEUDO_QUEST_DONE and FDJ.PSEUDO_QUEST_DONE[questID] -- malletchain
     if pseudo then
         local ok, done = pcall(pseudo)
@@ -6613,6 +7621,7 @@ local function RefreshPrerequisiteQuestDetail(step)
 end
 
 RefreshQuestDetail = function()
+    if FDJ.FactionLocked(selectedDungeon) then selectedQuestFaction = FDJ.PlayerFaction() end -- questrowtrial
     for _, button in ipairs(questRewardButtons) do HideSearchItemHighlight(button) end
     for _, button in ipairs(questNoteRewardButtons) do HideSearchItemHighlight(button) end
     if frame and frame.questNoteItemButton then HideSearchItemHighlight(frame.questNoteItemButton) end
@@ -7475,6 +8484,7 @@ end
 
 SetQuestFaction = function(faction)
     if faction ~= "Alliance" and faction ~= "Horde" then return end
+    if FDJ.FactionHiddenFor(selectedDungeon, faction) then UpdateFactionButtons() return end -- questrowtrial
 
     selectedQuestFaction = faction
     selectedPrereqStep = nil
@@ -7483,6 +8493,16 @@ SetQuestFaction = function(faction)
     ForeverDungeonJournalDB.questFaction = faction
     frame.questListScroll:SetVerticalScroll(0)
 
+    BuildVisibleQuestIndexes()
+    RefreshQuestList()
+    RefreshQuestDetail()
+end
+
+-- questrowtrial (2.0.8): the option "Show both factions' quests" changed:
+-- the open quest list and its crests again.
+FDJ.RefreshQuestFactionLock = function()
+    if not (frame and selectedDungeon and DB[selectedDungeon]) then return end
+    UpdateFactionButtons()
     BuildVisibleQuestIndexes()
     RefreshQuestList()
     RefreshQuestDetail()
@@ -8490,6 +9510,8 @@ end
 
 SetMode = function(mode)
     if mode ~= "bosses" and mode ~= "quests" then return end
+    -- sunonce (2.0.8): opening the quest page plays the glow's beam again
+    if mode == "quests" and FDJ.ResetChainSheen then FDJ.ResetChainSheen() end
     HideRouteGuide()
     if HideDungeonMap then HideDungeonMap() end
 
@@ -8803,6 +9825,12 @@ local function MakeHomeDungeonCard(parent, dungeonName)
             RefreshHomeDungeonCards()
             return
         end
+        -- rpgdone (2.0.8): a locked page opens a small box (the locked text
+        -- and "I already did this dungeon"), Systems/RPGMode.lua.
+        if FDJ.ShowRPGDoneBox and FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(activeDungeonName) then
+            FDJ.ShowRPGDoneBox(activeDungeonName)
+            return
+        end
         SelectDungeon(activeDungeonName)
     end)
 
@@ -8889,6 +9917,7 @@ RefreshHomeDungeonCards = function()
         local factionQuestCount, finishedCount = 0, 0
         for _, quest in ipairs(dungeon.quests or {}) do
             if QuestMatchesFaction(quest, playerFaction) and not quest.hideFromMainList and not quest.repeatable
+                and FDJ.QuestCountsForCharacter(quest) -- otherclass (2.0.8): another class's: not counted
                 and not FDJ.IsQuestLost(quest) then -- lostquest
                 factionQuestCount = factionQuestCount + 1
                 -- questdone: handed in only (ready to turn in is not done yet).
@@ -9077,7 +10106,7 @@ RefreshBossList = function()
 
             local isRare = boss.rare == true
             button.fdjRareLabel = boss.rareLabel
-            button.rare:SetText(button.fdjRareLabel or L("RARE"))
+            button.rare:SetText((button.fdjRareLabel and FDJ.RareLabelText and FDJ.RareLabelText(button.fdjRareLabel)) or button.fdjRareLabel or L("RARE")) -- darkreaver (2.0.8)
             button.rare:SetShown(isRare)
             -- v1.0.29: rares use a dedicated silver-dragon portrait overlay.
             -- Bosses with a fully bundled custom portrait (currently Lordaeron Captain)
@@ -9216,6 +10245,60 @@ FDJ.SetBossChainButton = function(boss)
     b:Show()
 end
 
+-- bossquest (2.0.8, M 15 Nov 2026): on the boss page of a boss with
+-- questLink = { id, name } (Ezra Grimm: The Great Fras Siabi), the quest's
+-- name right of the boss's name, after a !; a click opens the quest's page.
+-- It takes the room left on that line and is cut short to fit.
+FDJ.SetBossQuestLink = function(boss)
+    local link = type(boss) == "table" and not boss.fdjDungeon and type(boss.questLink) == "table" and boss.questLink or nil
+    local b = frame and frame.bossQuestLink
+    if not link then
+        if b then b:Hide() end
+        return
+    end
+    if not b then
+        b = CreateFrame("Button", nil, frame.selectedBossName:GetParent())
+        b:SetHeight(22)
+        b:SetFrameLevel((frame.selectedBossName:GetParent():GetFrameLevel() or 1) + 5)
+        b.icon = b:CreateTexture(nil, "ARTWORK")
+        b.icon:SetSize(20, 20)
+        b.icon:SetPoint("LEFT", b, "LEFT", 0, 0)
+        b.icon:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+        b.text = b:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+        b.text:SetPoint("LEFT", b.icon, "RIGHT", 2, 0)
+        b.text:SetJustifyH("LEFT")
+        if b.text.SetWordWrap then b.text:SetWordWrap(false) end
+        b.text:SetTextColor(1.00, 0.82, 0.00)
+        b:SetScript("OnClick", function(self)
+            local l = self.link
+            if l and FDJ.OpenQuestPage then FDJ.OpenQuestPage(l.dungeon or selectedDungeon, l.id) end
+        end)
+        b:SetScript("OnEnter", function(self)
+            self.text:SetTextColor(1, 1, 1)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(self.text:GetText() or "", 1.00, 0.82, 0.00)
+            GameTooltip:AddLine(L("BOSS_QUEST_TIP"), 0.35, 1.00, 0.35)
+            GameTooltip:Show()
+        end)
+        b:SetScript("OnLeave", function(self)
+            self.text:SetTextColor(1.00, 0.82, 0.00)
+            GameTooltip:Hide()
+        end)
+        frame.bossQuestLink = b
+    end
+    b.link = link
+    b.text:SetText(QuestField(link.id, "name", link.name or ""))
+    local name = frame.selectedBossName
+    local nameW = math.ceil(name:GetStringWidth() or 0)
+    local room = math.floor((name:GetWidth() or 300) - nameW - 14 - 22)
+    local want = math.ceil(b.text:GetStringWidth() or 0)
+    b.text:SetWidth(math.max(40, math.min(want + 2, room)))
+    b:SetWidth(22 + b.text:GetWidth())
+    b:ClearAllPoints()
+    b:SetPoint("LEFT", name, "LEFT", nameW + 14, 0)
+    b:Show()
+end
+
 -- lootorder: a boss page lists, in each section, the rarer items first
 -- (epic, rare, uncommon, common...) and materials (crafting reagents, trade
 -- goods) last; items of one group keep the data's order.
@@ -9351,6 +10434,7 @@ end
 
 RefreshLoot = function()
     for _, row in ipairs(lootRows) do HideSearchItemHighlight(row) end
+    for _, row in ipairs(frame.lootChildRows or {}) do HideSearchItemHighlight(row) end -- lootchildren
     local dungeon = DB[selectedDungeon]
     local boss = dungeon.bosses[selectedBoss]
     if FDJ.FilterBossLoot then
@@ -9419,6 +10503,7 @@ RefreshLoot = function()
 
     if FDJ.UpdateBossSummon then pcall(FDJ.UpdateBossSummon, frame, boss, THEMES[selectedDungeon] or THEMES["Hall of Thanes"]) end
     if FDJ.SetBossChainButton then pcall(FDJ.SetBossChainButton, DB[selectedDungeon] and DB[selectedDungeon].bosses[selectedBoss]) end
+    if FDJ.SetBossQuestLink then pcall(FDJ.SetBossQuestLink, DB[selectedDungeon] and DB[selectedDungeon].bosses[selectedBoss]) end -- bossquest (2.0.8)
 
     local hasPortrait = SetBossPortrait(
         frame.selectedBossPortrait,
@@ -9449,6 +10534,8 @@ RefreshLoot = function()
         frame.selectedBossDescription:SetText("|cffb01010" .. L(boss.lootNote) .. "|r")
         frame.selectedBossDescription:Show()
     end
+    -- rpgdone (2.0.8): under a hidden boss, "I already did this dungeon".
+    if FDJ.RPGDoneButton then pcall(FDJ.RPGDoneButton, frame, boss.fdjRPGHint and selectedDungeon or nil) end
     frame.lootTitle:SetText("")
     frame.lootTitle:Hide()
     frame.lootScroll:ClearAllPoints()
@@ -9550,6 +10637,9 @@ RefreshLoot = function()
                 local n = math.max(0, sec.last - sec.first + 1)
                 h = h + (mobPortraits and n or math.ceil(n / 2)) * ROW_STEP
             end
+            for _, it in ipairs(loot) do -- lootchildren: their rows too
+                if type(it) == "table" and type(it.makes) == "table" then h = h + 44 end
+            end
             many = h > vp + 4
         end
         FDJ.lootManyItems = many
@@ -9557,7 +10647,16 @@ RefreshLoot = function()
         if FDJ.lootCompact then ROW_STEP = 31 end
     end
     local layoutCount = layoutLoot and #layoutLoot or #loot
+    -- lootchildren (2.0.8): an item that makes another (Jang'thraze and
+    -- Sang'thraze make Sul'thraze the Lasher: item.makes) has that item on a
+    -- row of its own under it, always shown; the grid makes room for it.
+    local CHILD_STEP = FDJ.lootCompact and 26 or 44
+    local function ChildExtra(index)
+        local it = loot[index]
+        return (type(it) == "table" and type(it.makes) == "table") and CHILD_STEP or 0
+    end
     local singleHeight = layoutCount * ROW_STEP + (#sections - 1) * LINE_STEP
+    for index = 1, #loot do singleHeight = singleHeight + ChildExtra(index) end
     local viewport = frame.lootScroll:GetHeight() or 0
     local twoColumns = viewport > 0 and singleHeight > viewport + 4 and layoutCount > 1
         and not (mobPortraits and not FDJ.lootCompact)
@@ -9574,17 +10673,45 @@ RefreshLoot = function()
             cursorY = cursorY + LINE_STEP
         end
         local count = math.max(0, section.last - section.first + 1)
-        for k = 0, count - 1 do
-            if twoColumns then
-                rowPos[section.first + k] = { (k % 2) * (rowWidth + COL_GAP), cursorY + math.floor(k / 2) * ROW_STEP }
-            else
-                rowPos[section.first + k] = { 0, cursorY + k * ROW_STEP }
+        -- (a pair of rows is as tall as the taller of the two, child rows
+        -- included: lootchildren)
+        if twoColumns then
+            local k = 0
+            while k <= count - 1 do
+                local left, right = section.first + k, section.first + k + 1
+                rowPos[left] = { 0, cursorY }
+                local h = ROW_STEP + ChildExtra(left)
+                local used = 1
+                if k + 1 <= count - 1 then
+                    rowPos[right] = { rowWidth + COL_GAP, cursorY }
+                    h = math.max(h, ROW_STEP + ChildExtra(right))
+                    used = 2
+                    -- gapfill (2.0.8, M 15 Nov 2026: "move spellshock leggings
+                    -- under lifeblood amulet"): when only one of the pair has
+                    -- an item row under it (lootchildren), the next item takes
+                    -- the empty space under the other one.
+                    local nextIndex = section.first + k + 2
+                    if k + 2 <= count - 1 and not mobPortraits and ChildExtra(nextIndex) == 0
+                        and (ChildExtra(left) == 0) ~= (ChildExtra(right) == 0) then
+                        rowPos[nextIndex] = { ChildExtra(left) == 0 and 0 or (rowWidth + COL_GAP), cursorY + ROW_STEP }
+                        h = math.max(h, ROW_STEP * 2)
+                        used = 3
+                    end
+                end
+                cursorY = cursorY + h
+                k = k + used
+            end
+        else
+            for k = 0, count - 1 do
+                rowPos[section.first + k] = { 0, cursorY }
+                cursorY = cursorY + ROW_STEP + ChildExtra(section.first + k)
             end
         end
-        cursorY = cursorY + (twoColumns and math.ceil(count / 2) or count) * ROW_STEP
     end
     local layoutHeight = cursorY
 
+    frame.lootChildRows = frame.lootChildRows or {}
+    local childUsed = 0
     for i = 1, math.max(#lootRows, #loot) do
         local row = lootRows[i]
 
@@ -9719,6 +10846,16 @@ RefreshLoot = function()
             row:SetAlpha(dimmed and 0.28 or 1)
             if row.icon.SetDesaturated then row.icon:SetDesaturated(dimmed and true or false) end
             row:Show()
+            -- lootchildren (2.0.8): the item it makes, on its own row under it
+            if type(item.makes) == "table" and FDJ.ShowLootChild then
+                childUsed = childUsed + 1
+                local child = frame.lootChildRows[childUsed]
+                if not child then
+                    child = MakeLootRow(frame.lootContent)
+                    frame.lootChildRows[childUsed] = child
+                end
+                pcall(FDJ.ShowLootChild, child, item, boss, rowX, rowY, rowWidth, theme, dimmed)
+            end
         elseif row then
             row.item = nil
             row.fdjDungeonName = nil
@@ -9728,6 +10865,14 @@ RefreshLoot = function()
             row:Hide()
             if FDJ.SetRowMobs then FDJ.SetRowMobs(row, nil) end
         end
+    end
+
+    -- lootchildren: child rows not used on this page
+    for k = childUsed + 1, #(frame.lootChildRows or {}) do
+        local child = frame.lootChildRows[k]
+        child.item, child.fdjSourceText = nil, nil
+        if child.fdjFavouriteStar then child.fdjFavouriteStar:Hide() end
+        child:Hide()
     end
 
     -- Recipe section divider ("Recipes & Patterns (N)"): sits after the gear
@@ -10175,7 +11320,7 @@ ApplyLocalization = function()
         end
     end
     for _, button in ipairs(bossButtons) do
-        if button and button.rare then button.rare:SetText(button.fdjRareLabel or L("RARE")) end
+        if button and button.rare then button.rare:SetText((button.fdjRareLabel and FDJ.RareLabelText and FDJ.RareLabelText(button.fdjRareLabel)) or button.fdjRareLabel or L("RARE")) end
     end
 end
 
@@ -10226,6 +11371,7 @@ FDJ.UpdateDungeonArrows = function()
     if not frame then return end
     local noArrows = (FDJ.SLEEPING_BAG_PAGE ~= nil and selectedDungeon == FDJ.SLEEPING_BAG_PAGE)
         or (FDJ.ONYXIA_PAGE ~= nil and selectedDungeon == FDJ.ONYXIA_PAGE) -- the Onyxia Attunement page neither
+        or (FDJ.TIER05_PAGE ~= nil and selectedDungeon == FDJ.TIER05_PAGE) -- nor the Tier 0.5 page (2.0.8)
     for _, arrow in ipairs({ frame.prevDungeonButton, frame.nextDungeonButton }) do
         if arrow then
             arrow:SetShown(not noArrows)
@@ -10380,7 +11526,7 @@ SelectDungeon = function(name)
             fallbackFaction = fallbackFaction or q.faction
         end
     end
-    if not hasCurrentFaction and fallbackFaction then
+    if not hasCurrentFaction and fallbackFaction and not FDJ.FactionLocked(name) then -- questrowtrial: not to the other faction
         selectedQuestFaction = fallbackFaction
         ForeverDungeonJournalDB.questFaction = selectedQuestFaction
     end
@@ -10703,6 +11849,29 @@ local function CreateGlobalSearchUI()
                     texCoord = DUNGEON_HOME_TEXCOORD[dungeonName],
                 }, query, -30, localizedDungeon, dungeonName, aliasText)
 
+                -- bosssearch (2.0.8, M 15 Nov 2026): the bosses too (two letters
+                -- or more, like items), not the Trash Drops / Recipes pages, not
+                -- a boss RPG Mode still hides; ahead of items with the same match
+                for bossIndex, boss in ipairs((#query >= 2) and dungeon.bosses or {}) do
+                    if type(boss.name) == "string" and not (boss.trash or boss.recipeTab or boss.childOf or boss.lootChest)
+                        and not (FDJ.RPGBossHidden and FDJ.RPGBossHidden(dungeonName, boss)) then
+                        local shownName = BossName(boss.name)
+                        local aliases = type(boss.aliases) == "table" and boss.aliases or {}
+                        local bossScore = SearchMatchScore(query, shownName, boss.name, aliases[1], aliases[2], aliases[3])
+                        if bossScore then
+                            results[#results + 1] = {
+                                score = bossScore - 10,
+                                kind = "boss",
+                                dungeonName = dungeonName,
+                                bossIndex = bossIndex,
+                                boss = boss,
+                                displayName = shownName,
+                                subText = localizedDungeon,
+                            }
+                        end
+                    end
+                end
+
                 for bossIndex, boss in ipairs((#query >= 2) and dungeon.bosses or {}) do
                     -- Search follows the Loot Filter: hidden items are not offered
                     -- (blueprints are always shown on boss pages, so always offered).
@@ -10726,8 +11895,8 @@ local function CreateGlobalSearchUI()
                                     dungeonName = dungeonName,
                                     itemID = recipeID,
                                     displayName = itemName,
-                                    subText = FDJ.GetRecipeSearchRequirement(recipeID, item[3]),
-                                    icon = ItemIcon(recipeID),
+                                    recipeSlot = item[3], -- (subText when shown)
+                                    iconID = recipeID, -- (icon when shown)
                                     score = matchScore,
                                 }
                             end
@@ -10746,7 +11915,27 @@ local function CreateGlobalSearchUI()
                                 -- not an icon path. Always resolve the search icon from
                                 -- the actual item ID so trash drops never try to use
                                 -- strings such as "Defias Strip Miner" as textures.
-                                icon = ItemIcon(item[1]),
+                                iconID = item[1], -- (icon when shown)
+                            }
+                        end
+                        -- lootchildren (2.0.8): the item a half makes is found
+                        -- too (Sul'thraze: on Antu'sul's and the Chief's pages),
+                        -- unless the Loot Filter rules it out (like any item)
+                        local made = (not boss.recipeTab) and type(item) == "table" and type(item.makes) == "table" and item.makes or nil
+                        local madeName = made and SearchItemDisplayName(made)
+                        local madeScore = made and SearchMatchScore(query, madeName, made[2])
+                        if madeScore and not (FDJ.LootFilterRulesOut and FDJ.LootFilterRulesOut(made)) then
+                            results[#results + 1] = {
+                                score = madeScore,
+                                kind = "item",
+                                mode = "bosses",
+                                dungeonName = dungeonName,
+                                bossIndex = bossIndex,
+                                itemID = made[1],
+                                item = made,
+                                displayName = madeName,
+                                subText = localizedDungeon .. "  -  " .. BossName(boss.name),
+                                iconID = made[1],
                             }
                         end
                     end
@@ -10781,7 +11970,7 @@ local function CreateGlobalSearchUI()
                             itemID = item[1],
                             displayName = itemName,
                             subText = localizedDungeon .. "  -  " .. questName,
-                            icon = ItemIcon(item[1]),
+                            iconID = item[1],
                         } end
                     end
                 end
@@ -10802,6 +11991,8 @@ local function CreateGlobalSearchUI()
             local key
             if result.kind == "dungeon" then
                 key = "d|" .. tostring(result.dungeonName)
+            elseif result.kind == "boss" then
+                key = "b|" .. tostring(result.dungeonName) .. "|" .. tostring(result.bossIndex)
             elseif result.kind == "quest" then
                 key = "q|" .. tostring(result.dungeonName) .. "|" .. tostring(result.questIndex or "")
             elseif result.mode == "recipe" then
@@ -10815,7 +12006,7 @@ local function CreateGlobalSearchUI()
                     tostring(sourceIndex or ""),
                 }, "|")
             end
-            if not seen[key] then
+            if not seen[key] and not (result.mode == "quests" and FDJ.FactionHiddenFor(result.dungeonName, result.questFaction)) then -- questrowtrial
                 seen[key] = true
                 unique[#unique + 1] = result
                 if #unique >= MAX_SEARCH_RESULTS then break end
@@ -10828,6 +12019,11 @@ local function CreateGlobalSearchUI()
         if not result or not result.itemID then return nil end
         if result.mode == "bosses" then
             for _, row in ipairs(lootRows) do
+                if row:IsShown() and row.item and tonumber(row.item[1]) == tonumber(result.itemID) then
+                    return row, frame.lootScroll, frame.lootContent
+                end
+            end
+            for _, row in ipairs(frame.lootChildRows or {}) do -- lootchildren
                 if row:IsShown() and row.item and tonumber(row.item[1]) == tonumber(result.itemID) then
                     return row, frame.lootScroll, frame.lootContent
                 end
@@ -10961,7 +12157,10 @@ local function CreateGlobalSearchUI()
             return
         end
         SelectDungeon(result.dungeonName)
-        if result.kind == "item" and result.mode == "bosses" then
+        if result.kind == "boss" then -- bosssearch (2.0.8)
+            SetMode("bosses")
+            if result.bossIndex then SelectBoss(result.bossIndex) end
+        elseif result.kind == "item" and result.mode == "bosses" then
             SetMode("bosses")
             if result.bossIndex then SelectBoss(result.bossIndex) end
             FocusSearchItem(result)
@@ -11046,8 +12245,13 @@ local function CreateGlobalSearchUI()
         return row
     end
 
+    local lastSearchQuery
     local function RefreshSearchResults(queryText, preserveOffset)
-        currentSearchResults = BuildSearchResults(queryText or "")
+        -- bosssearch: scrolling the list (same text) doesn't search again
+        if not (preserveOffset and lastSearchQuery == (queryText or "")) then
+            currentSearchResults = BuildSearchResults(queryText or "")
+            lastSearchQuery = queryText or ""
+        end
         local hasQuery = SearchText(queryText or ""):match("%S") ~= nil
         local browsingDungeons = not hasQuery and searchBox:HasFocus()
         searchClear:SetShown(hasQuery)
@@ -11113,8 +12317,28 @@ local function CreateGlobalSearchUI()
             row.source:SetPoint("TOPLEFT", row.name, "BOTTOMLEFT", 0, -2)
             row.source:SetPoint("RIGHT", row, "RIGHT", hasFactionIcon and -30 or -9, 0)
 
+            -- bosssearch: icons and a recipe's skill only for the rows shown
+            if not result.icon and result.iconID then result.icon = ItemIcon(result.iconID) end
+            if result.mode == "recipe" and result.subText == nil then
+                result.subText = FDJ.GetRecipeSearchRequirement(result.itemID, result.recipeSlot) or ""
+            end
+            if row.fdjPortrait then
+                row.fdjPortrait = nil
+                if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, row.icon) end
+            end
             row.icon:SetTexture(result.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
-            if result.kind == "dungeon" then
+            if result.kind == "boss" then
+                -- the boss's portrait when the journal has its look, else a skull
+                row.icon:SetSize(28, 28)
+                row.icon:SetTexCoord(0, 1, 0, 1)
+                local look = result.boss and (result.boss.displayID or FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[tonumber(result.boss.npcID) or 0])
+                if look and FDJ.AcquirePortrait and select(2, pcall(FDJ.AcquirePortrait, row.icon, look)) == true then
+                    row.fdjPortrait = true
+                else
+                    row.icon:SetTexture("Interface\\Icons\\INV_Misc_Bone_HumanSkull_01")
+                    row.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+                end
+            elseif result.kind == "dungeon" then
                 row.icon:SetSize(44, 28)
                 local tc = result.texCoord
                 if tc then
@@ -12001,6 +13225,7 @@ local function CreateMainFrame()
         b:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
             GameTooltip:SetText(L("FACTION_QUESTS", faction))
+            if self.fdjLocked then GameTooltip:AddLine(L("FACTION_LOCKED_TIP"), 1, 1, 1, true) end -- questrowtrial
             GameTooltip:Show()
         end)
         b:SetScript("OnLeave", function()
@@ -12866,6 +14091,8 @@ local function CreateMainFrame()
         end
     end)
     frame:SetScript("OnHide", function()
+        -- sunonce (2.0.8): the next time the journal opens, the beam plays again
+        if FDJ.ResetChainSheen then FDJ.ResetChainSheen() end
         -- The Favourites window is parented to UIParent so it can stay open
         -- while navigating inside the journal. When the journal itself closes,
         -- explicitly close the popup as well (including during combat).
@@ -13492,7 +14719,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.7"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.8"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end

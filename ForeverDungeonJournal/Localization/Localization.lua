@@ -780,6 +780,7 @@ end
 -- instead of requiring a translation entry for every possible amount.
 local REPUTATION_NAMES = {
     deDE = {
+        ["Alliance"] = "Allianz", -- repfix (2.0.8)
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Gnomeregangnome",
@@ -794,6 +795,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Unterstadt",
     },
     frFR = {
+        ["Alliance"] = "Alliance", -- repfix (2.0.8)
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilés de Gnomeregan",
@@ -808,6 +810,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Fossoyeuse",
     },
     esES = {
+        ["Alliance"] = "Alianza", -- repfix (2.0.8)
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exiliados de Gnomeregan",
@@ -822,6 +825,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Entrañas",
     },
     itIT = {
+        ["Alliance"] = "Alleanza", -- repfix (2.0.8)
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Esuli di Gnomeregan",
@@ -836,6 +840,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Sepulcra",
     },
     ptBR = {
+        ["Alliance"] = "Aliança", -- repfix (2.0.8)
         ["Gadgetzan"] = "Geringontzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilados de Gnomeregan",
@@ -850,6 +855,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Cidade Baixa",
     },
     ruRU = {
+        ["Alliance"] = "Альянс", -- repfix (2.0.8)
         ["Gadgetzan"] = "Прибамбасск",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Изгнанники Гномрегана",
@@ -864,6 +870,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Подгород",
     },
     koKR = {
+        ["Alliance"] = "얼라이언스", -- repfix (2.0.8)
         ["Gadgetzan"] = "가젯잔",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "놈리건 추방자",
@@ -878,6 +885,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "언더시티",
     },
     zhCN = {
+        ["Alliance"] = "联盟", -- repfix (2.0.8)
         ["Gadgetzan"] = "加基森",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "诺莫瑞根流亡者",
@@ -892,6 +900,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "幽暗城",
     },
     zhTW = {
+        ["Alliance"] = "聯盟", -- repfix (2.0.8)
         ["Gadgetzan"] = "加基森",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "諾姆瑞根流亡者",

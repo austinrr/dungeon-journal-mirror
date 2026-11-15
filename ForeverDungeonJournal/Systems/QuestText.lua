@@ -942,6 +942,7 @@ do
         for _, quest in ipairs(dungeon.quests or {}) do
             if type(quest) == "table" and type(quest.id) == "number" and quest.name
                 and not quest.repeatable and not quest.hideFromMainList and Matches(quest, faction)
+                and (not FDJ.QuestCountsForCharacter or FDJ.QuestCountsForCharacter(quest)) -- otherclass (2.0.8)
                 and not (FDJ.IsQuestUnavailable and FDJ.IsQuestUnavailable(quest)) -- notavailable (2.0.4), raceunavailable (2.0.9)
                 and not (FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(name, quest)) then -- RPG Mode: unlocked ones only
                 list[#list + 1] = quest
@@ -3138,6 +3139,76 @@ do
         b:SetScript(b._fdjCanTarget and "PostClick" or "OnClick", b.fdjClick)
         b:Hide()
         return b
+    end
+
+    -- questrowtrial (2.0.8, M 15 Nov 2026): the quest list's round ! for a
+    -- quest not taken yet (dungeons in FDJ.QUESTROW_TRIAL): the turn-in
+    -- button with a ! (Media/PickUpMark.tga) in place of the ?; until the
+    -- game is restarted (a new file loads only then) the gossip ! on its
+    -- ring. A click shows how to pick the quest up (FDJ.ShowHowToPickUp:
+    -- where it is picked up, on the map; with no spot on the map, the chain
+    -- step to do next, else its page).
+    function FDJ.CreatePickUpButton(parent, size)
+        local b = FDJ.CreateTurnInButton(parent, size)
+        local art = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\PickUpMark"
+        if b.sharp then
+            if b.sharp:SetTexture(art, nil, nil, "TRILINEAR") == false then
+                b.sharp:SetTexture(ICON_TODO)
+                b.sharp:SetSize(size * 0.62, size * 0.62)
+                if b.button and b.button.ring then b.button.ring:Show() end
+                b.fdjSmallMark = true
+            end
+        elseif b.button and b.button.icon then
+            local t = b.button.icon
+            if t:SetTexture(art, nil, nil, "TRILINEAR") == false then t:SetTexture(ICON_TODO) end
+        elseif b.icon then
+            b.icon:SetTexture(ICON_TODO)
+        end
+        b:SetScript("OnEnter", function(self)
+            if not self.quest then return end
+            if self.button then self.button.lit:Show() end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            -- pickonmap (2.0.8): "Show pickup on map", the place under it
+            -- (and its chain, when not done yet).
+            local onMap = FDJ.PickUpOnMapSpot and FDJ.PickUpOnMapSpot(self.quest)
+            local step = FDJ.NextChainStep and FDJ.NextChainStep(self.quest)
+            -- chainfirst (2.0.8): its chain not done yet: the click shows the chain
+            GameTooltip:SetText(T(step and "SHOW_QUEST_CHAIN" or (onMap and "PICKUP_ON_MAP" or "PICKUP_HOW")), 1, 0.82, 0)
+            if onMap then
+                local where = Field(self.quest.id, "pickup", self.quest.pickup)
+                if type(where) == "string" and where ~= "" then GameTooltip:AddLine(where, 1, 1, 1, true) end
+                if step then
+                    GameTooltip:AddLine(T("PICKUP_CHAIN_FIRST", Field(step.id, "name", step.name) or "?"), 1, 1, 1, true)
+                end
+            elseif step then
+                GameTooltip:AddLine(T("PICKUP_CHAIN_FIRST", Field(step.id, "name", step.name) or "?"), 1, 1, 1, true)
+            else
+                local where = Field(self.quest.id, "pickup", self.quest.pickup)
+                if type(where) == "string" and where ~= "" then GameTooltip:AddLine(where, 1, 1, 1, true) end
+            end
+            GameTooltip:Show()
+        end)
+        b.fdjClick = function(self)
+            if self.quest and FDJ.ShowHowToPickUp then FDJ.ShowHowToPickUp(self.quest, self.dungeon) end
+        end
+        b:SetScript(b._fdjCanTarget and "PostClick" or "OnClick", b.fdjClick)
+        return b
+    end
+    -- quest: the quest not taken yet, or nil to hide the button.
+    function FDJ.SetPickUpButton(b, quest, title, dungeon)
+        if not b then return end
+        b.quest, b.title, b.dungeon = quest or nil, title, dungeon
+        if not quest then
+            b:Hide()
+            return
+        end
+        b:EnableMouse(true)
+        if b.button then
+            PressMark(b, false)
+            b.button.lit:Hide()
+        end
+        if b.fdjSmallMark and b.sharp then b.sharp:SetSize(b:GetWidth() * 0.62, b:GetHeight() * 0.62) end
+        b:Show()
     end
 
     -- The chain steps' round ? (journal chain list, tracker step line): 24,

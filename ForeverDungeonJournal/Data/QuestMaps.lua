@@ -3,7 +3,7 @@ FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
 FDJ.QUEST_START_MAPS = {
     -- Excavation Site: Wetlands prerequisite quest giver.
-    [95663] = { mapID = 1417, x = 0.740, y = 0.360, label = "Zaruk — Hammerfall", targetName = "Zaruk", detail = "Start Dragonmaw Rumors here" },
+    [95663] = { mapID = 1417, x = 0.7454, y = 0.3563, label = "Zaruk — Hammerfall", targetName = "Zaruk", detail = "Start Dragonmaw Rumors here" },
 
     -- Hall of Thanes quest givers.
     [96394] = { mapID = 1455, x = 0.333, y = 0.481, label = "Afadra Dunwall — top of Old Ironforge", targetName = "Afadra Dunwall", detail = "Top of Old Ironforge, outside the dungeon" },

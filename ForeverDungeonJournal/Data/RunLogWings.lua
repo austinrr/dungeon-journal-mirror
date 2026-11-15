@@ -123,6 +123,23 @@ FDJ.RunLogWingGroups = {
     [329] = { "Stratholme: Living", "Stratholme: Undead" },
 }
 
+-- smwing (2.0.8, M 15 Nov 2026: in the Cathedral the tracker said Graveyard
+-- until a Scarlet Wizard died; the Myrmidons killed first can't be in the
+-- Graveyard): the wings each shared Scarlet mob lives in, the likeliest
+-- first. Such a kill rules the other wings out (Systems/RunLog.lua): when
+-- the tracker's wing is one of those, it moves to the likeliest left, and
+-- still follows the first kill of a mob only one wing has. Cathedral first
+-- for the Myrmidons and Defenders (its courtyard, the Chapel Gardens, is
+-- full of them), Library first for the Chaplains and Monks.
+FDJ.RunLogSharedWings = {
+    [189] = {
+        [4295] = { "Scarlet Monastery: Cathedral", "Scarlet Monastery: Armory" }, -- Scarlet Myrmidon
+        [4298] = { "Scarlet Monastery: Cathedral", "Scarlet Monastery: Armory" }, -- Scarlet Defender
+        [4299] = { "Scarlet Monastery: Library", "Scarlet Monastery: Cathedral" }, -- Scarlet Chaplain
+        [4540] = { "Scarlet Monastery: Library", "Scarlet Monastery: Cathedral" }, -- Scarlet Monk
+    },
+}
+
 -- Real trash, but shared by multiple wings: eligible kills, no wing vote.
 FDJ.RunLogSharedTrash = {
     -- Entrance/Scarshield kills count, but never prove the group's route.

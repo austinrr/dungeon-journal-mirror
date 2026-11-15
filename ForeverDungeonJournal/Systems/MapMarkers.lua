@@ -2356,11 +2356,17 @@ do
         local hit = worldCache[key]
         if hit == nil then
             local wx, wy, continent = World(spot.mapID, tonumber(spot.x) or 0, tonumber(spot.y) or 0)
+            -- spotlearn (2.0.8): where the NPC really stands, once talked to
+            if wx and FDJ.SpotFix then
+                local ok, fx, fy = pcall(FDJ.SpotFix, spot, wx, wy, continent)
+                if ok and fx and fy then wx, wy = fx, fy end
+            end
             hit = wx and { wx, wy, continent, map = tonumber(spot.mapID) } or false
             worldCache[key] = hit
         end
         return hit or nil
     end
+    FDJ.ResetSpotWorlds = function() for k in pairs(worldCache) do worldCache[k] = nil end end -- spotlearn
 
     local function PlayerWorld()
         if type(UnitPosition) == "function" then
@@ -2409,6 +2415,16 @@ do
     local function Yards(ax, ay, bx, by)
         local dx, dy = ax - bx, ay - by
         return math.sqrt(dx * dx + dy * dy)
+    end
+    -- killzone (2.0.8): yards from the player to a spot (nil: not known, or
+    -- another continent). An FDJ field: this scope has no locals to spare.
+    FDJ.YardsToSpot = function(spot)
+        if type(spot) ~= "table" or not spot.mapID then return nil end
+        local at = SpotWorld(spot)
+        local px, py, continent = PlayerWorld()
+        if not (at and px and py) then return nil end
+        if at[3] and continent and at[3] ~= continent then return nil end
+        return Yards(px, py, at[1], at[2])
     end
     local function Faction()
         if type(UnitFactionGroup) ~= "function" then return nil end
@@ -2552,22 +2568,44 @@ do
         end
         return db.flightPoints
     end
+    -- fpfix (2.0.8, M 15 Nov 2026: "Fly to Chillwind Camp" though he has
+    -- never been there): the flight map is the last word for every place it
+    -- lists: one it shows as not found is taken off the list again, so a
+    -- wrong entry is put right at the next flight master. Read only while
+    -- a flight map is open (FDJ.taxiMapOpen). What it listed last:
+    -- FDJ.lastTaxiTypes (for /dj flights).
+    -- fpdistant (2.0.8, M 15 Nov 2026, /dj flights at Southshore's gryphon
+    -- master): the Forever client calls the ones never found DISTANT, not
+    -- NONE (Chillwind Camp, Aerie Peak, Light's Hope: none of them on his
+    -- flight map, and Chillwind Camp and Aerie Peak fly straight to
+    -- Southshore), so only CURRENT and REACHABLE count as found; anything
+    -- else it lists is taken off.
     local function RecordFlightMap()
         if type(NumTaxiNodes) ~= "function" or type(TaxiNodeName) ~= "function" then return end
+        if not FDJ.taxiMapOpen then return end
         local ok, count = pcall(NumTaxiNodes)
         local found, any = FoundFlights(), false
         if type(TaxiNodeGetType) ~= "function" then return end -- no way to tell which are found
+        FDJ.lastTaxiTypes = {}
         for i = 1, (ok and Number(count)) or 0 do
             local okType, kind = pcall(TaxiNodeGetType, i)
             local okName, name = pcall(TaxiNodeName, i)
-            if type(issecretvalue) == "function" and issecretvalue(name) then name = nil end
-            if okType and (kind == "CURRENT" or kind == "REACHABLE") and okName and type(name) == "string" and name ~= "" then
-                if not found[string.lower(name)] then any = true flightsLearned = flightsLearned + 1 end
-                found[string.lower(name)] = true
+            if type(issecretvalue) == "function" and (issecretvalue(name) or issecretvalue(kind)) then name = nil end
+            if okName and type(name) == "string" and name ~= "" and okType and type(kind) == "string" then
+                local key = string.lower(name)
+                FDJ.lastTaxiTypes[#FDJ.lastTaxiTypes + 1] = { name, kind }
+                if kind == "CURRENT" or kind == "REACHABLE" then
+                    if not found[key] then any = true flightsLearned = flightsLearned + 1 end
+                    found[key] = true
+                elseif found[key] then
+                    found[key] = nil -- fpfix, fpdistant: the flight map says it isn't found (NONE, DISTANT)
+                    any = true
+                end
             end
         end
         if any then flights = nil end
     end
+    FDJ.FoundFlightNames = FoundFlights -- fpfix: /dj flights (an FDJ field: no locals to spare here)
     local function Found(node)
         local name = type(node.name) == "string" and string.lower(node.name) or nil
         return name ~= nil and FoundFlights()[name] == true
@@ -2590,7 +2628,7 @@ do
                         if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
                         local wx, wy, c = World(mapID, Number(nx), Number(ny))
                         if wx and c then
-                            local entry = { wx, wy, name = PlaceName(node.name), c = c, maps = zoned and { [mapID] = true } or nil,
+                            local entry = { wx, wy, name = PlaceName(node.name), node = node.name, c = c, maps = zoned and { [mapID] = true } or nil, -- routeauto: node = the flight map's own name
                                 region = Way.Region(c, zoned and mapID or nil, wx, wy) } -- way: Rut'theran's is on its own
                             seen[id] = entry
                             flights[c] = flights[c] or {}
@@ -2632,6 +2670,8 @@ do
             pcall(watch.RegisterEvent, watch, event)
         end
         watch:SetScript("OnEvent", function(_, event)
+            if event == "TAXIMAP_OPENED" then FDJ.taxiMapOpen = true end -- fpfix
+            if event == "TAXIMAP_CLOSED" then FDJ.taxiMapOpen = nil end
             if event == "TAXIMAP_OPENED" or event == "TAXI_NODE_STATUS_CHANGED" then pcall(RecordFlightMap) end
             flights = nil
         end)
@@ -2933,8 +2973,11 @@ do
     local function Flight(c, px, py, qx, qy, keep, fromMap, toMap, fromR, toR)
         local across = fromR ~= nil and toR ~= nil and fromR ~= toR
         local walk = across and math.huge or Yards(px, py, qx, qy)
+        -- fpdistant: kept only while both ends are still found (a flight
+        -- map can take one off the list).
         if keep and keep[1].c == c and (not fromR or (keep[1].region or keep[1].c) == fromR)
-            and (not toR or (keep[2].region or keep[2].c) == toR) then
+            and (not toR or (keep[2].region or keep[2].c) == toR)
+            and Found({ name = keep[1].node }) and Found({ name = keep[2].node }) then
             local a, b = keep[1], keep[2]
             local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
             if cost < walk then return a, b end
@@ -3555,9 +3598,12 @@ do
     end
 
     -- The plan's next thing to do, in words ("" when it is just walking).
+    -- flyicon (2.0.8, M): "Fly to ..." starts with the cursor the game shows
+    -- over a flight master (Interface\Cursor\Taxi). No new local here: this
+    -- file is at Lua's limit of 200 locals in one scope.
     local function Doing(plan)
         if not plan then return "" end
-        if plan.fly then return FDJ.L("ARROW_FLY", plan.fly.name or "") end
+        if plan.fly then return "|TInterface\\Cursor\\Taxi:0|t " .. FDJ.L("ARROW_FLY", plan.fly.name or "") end
         local ride = plan.ride
         if not ride then return plan.via and FreeText(plan.via.label) or "" end -- arrowvia: the point on the way
         -- way: the place it lands at ("Rut'theran Village", "Auberdine").
@@ -3662,7 +3708,8 @@ do
         -- and comes back if they walk off before the step moves on.
         local near = distance ~= nil and final and not below and (distance <= ARRIVED or (f.fdjNear and distance <= ARRIVED + 4)) or false
         f.fdjNear = near
-        local hide = inside or near
+        -- questrp (2.0.8): while the NPC's scene runs, the arrow stays at him
+        local hide = inside or (near and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))))
         if hide ~= f.fdjHidden then
             f.fdjHidden = hide
             f:SetAlpha(hide and 0 or 1)
@@ -3836,6 +3883,9 @@ do
         end
         if hide then return end
         local doing = Doing(plan)
+        -- routeauto (2.0.8): the flight the arrow says to take, for
+        -- Systems/RouteAuto.lua (no new local: this scope is at Lua's limit).
+        FDJ.arrowFly, FDJ.arrowFlyAt = plan and plan.fly or nil, (GetTime and GetTime()) or 0
         -- way: the hearthstone, when it is the quicker way: a line of its
         -- own under the next step (or in its place when there is none).
         local hearth = plan and plan.hearth and FDJ.L("ARROW_HEARTH", plan.hearth) or ""
@@ -3845,7 +3895,11 @@ do
             f.hearth:SetText("")
         elseif distance then
             f.distance:SetText(FDJ.L("ARROW_DISTANCE", math.floor(distance + 0.5)))
-            local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE")) or doing
+            -- upstairs (2.0.8): an NPC up the stairs (FDJ.NPC_UPSTAIRS), once
+            -- its portrait shows: "Go upstairs" (no new local: at Lua's limit)
+            local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE"))
+                or (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))) -- questrp (2.0.8)
+                or (f.fdjNpcOn and FDJ.NPC_UPSTAIRS and FDJ.NPC_UPSTAIRS[NPC(entry.spot) or ""] and FDJ.L("ARROW_GO_UP")) or doing
             if step == "" and hearth ~= "" then step, hearth = "|cff8fd0ff" .. hearth .. "|r", "" end
             -- getto (2.0.22): the place to get to, on its own line under the
             -- yards, the next step (if any) under it.
@@ -4160,3 +4214,56 @@ function FDJ.PauseArrowLookup()
     f.model:Hide()
     f.fdjResolving = nil
 end
+
+-- questrp (2.0.8, M 15 Nov 2026): a hand-in that starts a scene before the
+-- next quest (FDJ.QUEST_RP, Data/QuestUpdates.lua): from the hand-in until the
+-- NPC's last scene line, FDJ.ArrowRPWait(name) gives the arrow's line for
+-- that NPC ("Wait for the RP", with the seconds left once the scene has been
+-- timed once: ForeverDungeonJournalDB.rpTimes, account-wide). The NPC is
+-- known by the NPC ID in the chat line's sender (any client language), or by
+-- its name. Given up after 60 seconds (or 15 past the time it took before).
+do
+    local wait
+    local frame = CreateFrame("Frame")
+    for _, event in ipairs({ "QUEST_TURNED_IN", "CHAT_MSG_MONSTER_EMOTE", "CHAT_MSG_MONSTER_SAY", "CHAT_MSG_MONSTER_YELL", "CHAT_MSG_MONSTER_WHISPER" }) do
+        pcall(frame.RegisterEvent, frame, event)
+    end
+    local function Now() return (GetTime and GetTime()) or 0 end
+    local function Times()
+        if type(ForeverDungeonJournalDB) ~= "table" then return {} end
+        if type(ForeverDungeonJournalDB.rpTimes) ~= "table" then ForeverDungeonJournalDB.rpTimes = {} end
+        return ForeverDungeonJournalDB.rpTimes
+    end
+    frame:SetScript("OnEvent", function(_, event, ...)
+        if event == "QUEST_TURNED_IN" then
+            local id = tonumber((...))
+            local rp = id and FDJ.QUEST_RP and FDJ.QUEST_RP[id]
+            if type(rp) == "table" then
+                wait = { quest = id, npc = tonumber(rp.npc), name = rp.name, lines = tonumber(rp.lines) or 1, seen = 0, at = Now() }
+            end
+            return
+        end
+        if not wait then return end
+        local sender, guid = select(2, ...), select(12, ...)
+        if type(issecretvalue) == "function" and (issecretvalue(sender) or issecretvalue(guid)) then return end
+        local npcID = type(guid) == "string" and tonumber(guid:match("^Creature%-%d+%-%d+%-%d+%-%d+%-(%d+)")) or nil
+        if (npcID and npcID == wait.npc) or (not npcID and sender == wait.name) then
+            wait.seen = wait.seen + 1
+            if wait.seen >= wait.lines then
+                Times()[wait.quest] = math.floor(Now() - wait.at + 0.5)
+                wait = nil
+            end
+        end
+    end)
+    function FDJ.ArrowRPWait(name)
+        if not wait or name ~= wait.name then return nil end
+        local took = tonumber(Times()[wait.quest])
+        local gone = Now() - wait.at
+        if gone > ((took and took + 15) or 60) then wait = nil return nil end
+        if took and took > 0 then
+            return FDJ.L("ARROW_RP_WAIT_TIME", math.max(0, math.ceil(took - gone)))
+        end
+        return FDJ.L("ARROW_RP_WAIT")
+    end
+end
+

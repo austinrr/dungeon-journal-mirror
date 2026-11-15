@@ -131,23 +131,35 @@ end
 
 -- Scarlet Monastery: buttons to say which wing this is. Shown whenever the
 -- player is inside, so a wrong guess can always be corrected with one click.
+-- smmaps (2.0.8, M 15 Nov 2026: "they cover the bosses... the buttons on the
+-- left side... not over other buttons"): down the map's left side (under
+-- its Level buttons, when it has them), each as wide as its name, and
+-- moved down past anything already there: other addons' and Blizzard's map
+-- buttons, the map's boss pins, its Hide quests / Boss icons boxes. The
+-- World Map button stays top right. A click shows that wing's map
+-- (FDJ.PickScarletMapWing).
 local wingButtons = {}
-local function UpdateWingButtons(dungeonName, anchor)
+local PlaceWingButtons
+local function UpdateWingButtons(dungeonName)
     local inScarlet = false
     if FDJ.InScarletMonastery then
         local ok, value = pcall(FDJ.InScarletMonastery)
         inScarlet = ok and value or false
     end
-    local show = inScarlet and dungeonName and Enabled() and not wantWorld and anchor
+    local journal = Journal()
+    local panel = journal and journal.dungeonMapPanel
+    local show = inScarlet and dungeonName and Enabled() and not wantWorld and attached and panel
+    local shown = {}
     for i, wing in ipairs(FDJ.SCARLET_WINGS or {}) do
         local button = wingButtons[i]
         if show and not button then
             button = CreateFrame("Button", nil, WorldMapFrame, "UIPanelButtonTemplate")
             FDJ.OwnFonts(button) -- ownfonts (2.0.8)
-            button:SetSize(130, 22)
+            button:SetSize(110, 22)
             button:SetFrameStrata("HIGH")
             button:SetScript("OnClick", function(self)
-                if FDJ.SetScarletWing then FDJ.SetScarletWing(self.fdjWing) end
+                if FDJ.PickScarletMapWing then FDJ.PickScarletMapWing(self.fdjWing)
+                elseif FDJ.SetScarletWing then FDJ.SetScarletWing(self.fdjWing) end
             end)
             wingButtons[i] = button
         end
@@ -159,15 +171,21 @@ local function UpdateWingButtons(dungeonName, anchor)
                     or label:match("%s%-%s+(.+)$") or label:match("%s\226\128\147%s+(.+)$") or label) or wing
                 button.fdjWing = wing
                 button:SetText(label)
-                button:ClearAllPoints()
-                button:SetPoint("TOPRIGHT", anchor, "BOTTOMRIGHT", 0, -4 - (i - 1) * 24)
-                button:SetFrameLevel(anchor:GetFrameLevel())
+                local fs = button.GetFontString and button:GetFontString()
+                button:SetSize(math.max(90, math.ceil(((fs and fs:GetStringWidth()) or 70) + 24)), 22)
+                button:SetFrameLevel(panel:GetFrameLevel() + 40)
                 if button.SetEnabled then button:SetEnabled(wing ~= dungeonName) end
                 button:Show()
+                shown[#shown + 1] = button
             else
                 button:Hide()
             end
         end
+    end
+    if #shown > 0 and PlaceWingButtons then
+        PlaceWingButtons(shown, panel)
+        -- (other addons put their map buttons a moment after the map opens)
+        if C_Timer and C_Timer.After then C_Timer.After(0.2, function() pcall(PlaceWingButtons, shown, panel) end) end
     end
 end
 
@@ -287,6 +305,75 @@ function FDJ.PlaceMapFloorButtons()
     end
 end
 
+-- smmaps: the wing buttons down the left side, moved down past whatever
+-- is already there (see UpdateWingButtons).
+local function WingBlockers(buttons, panel)
+    local list = {}
+    for _, parent in ipairs({ WorldMapFrame, WorldMapFrame.ScrollContainer, WorldMapFrame.BorderFrame }) do
+        if parent and parent.GetChildren then
+            for _, child in ipairs({ parent:GetChildren() }) do list[#list + 1] = child end
+        end
+    end
+    local journal = Journal()
+    for _, m in ipairs((journal and journal.dungeonMapBossMarkers) or {}) do list[#list + 1] = m end
+    for _, b in ipairs((journal and journal.dungeonMapFloorButtons) or {}) do list[#list + 1] = b end
+    if panel then
+        list[#list + 1] = panel.fdjBossSizer
+        list[#list + 1] = panel.fdjQuestToggle
+    end
+    local lowest, lowestBottom
+    for _, btn in ipairs(buttons) do
+        local bl, bb, br, bt = ScreenRect(btn)
+        if bl then
+            for _, child in ipairs(list) do
+                local mine = false
+                for _, w in ipairs(wingButtons) do if child == w then mine = true end end
+                if child and not mine and child ~= toggle and child ~= backdrop and child.IsVisible and child:IsVisible() then
+                    local l, b, r, top = ScreenRect(child)
+                    if l and (r - l) <= 220 and (top - b) <= 120
+                        and l < br and r > bl and b < bt and top > bb then
+                        if not lowestBottom or b < lowestBottom then lowest, lowestBottom = child, b end
+                    end
+                end
+            end
+        end
+    end
+    return lowest, lowestBottom
+end
+
+PlaceWingButtons = function(buttons, panel)
+    if not (panel and buttons[1]) then return end
+    local x, y = 10, -10
+    -- under the map's own Level buttons
+    local journal = Journal()
+    local floors = 0
+    for _, b in ipairs((journal and journal.dungeonMapFloorButtons) or {}) do
+        if b:IsShown() then floors = floors + 1 end
+    end
+    if floors > 0 then y = -10 - floors * 24 - 8 end
+    local function Put()
+        for i, b in ipairs(buttons) do
+            b:ClearAllPoints()
+            b:SetPoint("TOPLEFT", panel, "TOPLEFT", x, y - (i - 1) * 24)
+        end
+    end
+    Put()
+    local panelBottom = select(2, ScreenRect(panel))
+    for _ = 1, 10 do
+        local blocker, bottom = WingBlockers(buttons, panel)
+        if not blocker then break end
+        local _, _, _, top = ScreenRect(buttons[1])
+        if not top then break end
+        local scale = buttons[1]:GetEffectiveScale() or 1
+        local nextY = y - ((top - bottom) / scale) - 4
+        -- (not off the bottom of the map)
+        local _, lastBottom = ScreenRect(buttons[#buttons])
+        if panelBottom and lastBottom and lastBottom - (top - bottom) - 4 * scale < panelBottom then break end
+        y = nextY
+        Put()
+    end
+end
+
 local function UpdateToggle(dungeonName)
     if not WorldMapFrame then return end
     if not toggle then
@@ -312,12 +399,17 @@ local function UpdateToggle(dungeonName)
     else
         toggle:Hide()
     end
-    pcall(UpdateWingButtons, dungeonName, toggle)
+    pcall(UpdateWingButtons, dungeonName)
 end
 
 function FDJ.RefreshWorldMapOverlay()
     if not WorldMapFrame or not WorldMapFrame:IsShown() then Detach() return end
     local dungeonName = FDJ.CurrentDungeon and FDJ.CurrentDungeon()
+    -- smmaps (2.0.8): a Scarlet wing picked on the map to look at
+    do
+        local view = FDJ.ScarletMapView and FDJ.ScarletMapView()
+        if view and FDJ.DUNGEON_MAPS and FDJ.DUNGEON_MAPS[view] then dungeonName = view end
+    end
     -- rpgpartial: RPG Mode keeps the dungeon map locked until 20% of the trash.
     if not dungeonName or not (FDJ.DUNGEON_MAPS and FDJ.DUNGEON_MAPS[dungeonName]) or not Enabled()
         or (FDJ.IsDungeonMapLocked and FDJ.IsDungeonMapLocked(dungeonName)) then

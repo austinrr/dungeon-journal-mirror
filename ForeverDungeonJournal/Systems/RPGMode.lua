@@ -40,6 +40,9 @@ function FDJ.RPGOption(key)
         local v = tonumber(o.volume)
         return v and math.max(0, math.min(100, v)) or RPG_DEFAULT_VOLUME
     end
+    -- rpglegacy (2.0.8, M): Account-Wide Unlocks is on unless switched off
+    -- (saved as false from now on; before, off was simply not saved).
+    if key == "accountWide" and o.accountWide == nil then return true end
     return o[key] == true
 end
 function FDJ.SetRPGOption(key, value)
@@ -48,10 +51,13 @@ function FDJ.SetRPGOption(key, value)
     local o = ForeverDungeonJournalDB.rpgOptions
     if key == "volume" then
         o.volume = math.floor((tonumber(value) or RPG_DEFAULT_VOLUME) + 0.5)
+    elseif key == "accountWide" then
+        o.accountWide = value and true or false -- rpglegacy: on by default, so off is kept
     else
         o[key] = value and true or nil
     end
     if key == "accountWide" then
+        if FDJ.RPGLegacyRefresh then pcall(FDJ.RPGLegacyRefresh) end -- rpglegacy: read (or stop reading) the Legacy Challenges
         if FDJ.RPGShareProgress then pcall(FDJ.RPGShareProgress) end
         if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
         if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
@@ -101,7 +107,8 @@ end
 -- END showquests
 
 -- ------------------------------------------------- account-wide unlocks
--- Options > RPG Mode > Account-Wide Unlocks (off by default). Every
+-- Options > RPG Mode > Account-Wide Unlocks (off by default; on by default
+-- since 2.0.8, when it also reads the account's Legacy Challenges). Every
 -- character keeps its own unlocks (pages, bosses found, quests, maps) in its
 -- own saved data, as before, and each is also copied into one record for
 -- the whole account (ForeverDungeonJournalDB.rpgAccount): at login and as it
@@ -160,7 +167,20 @@ local function View()
 end
 local function ViewTable(key)
     local t = View()[key]
-    return type(t) == "table" and t or {}
+    t = type(t) == "table" and t or {}
+    -- rpglegacy (2.0.8): with Account-Wide Unlocks on, the pages the
+    -- account's Legacy Challenges show as done are open too (a copy: the
+    -- saved records stay as they are, so switching off loses nothing).
+    if key == "rpgKills" and AccountWide() and FDJ.RPGLegacyPages then
+        local legacy = FDJ.RPGLegacyPages()
+        if type(legacy) == "table" and next(legacy) then
+            local merged = {}
+            for k, v in pairs(t) do merged[k] = v end
+            for k, v in pairs(legacy) do if v then merged[k] = true end end
+            return merged
+        end
+    end
+    return t
 end
 do
     local f = CreateFrame("Frame")
@@ -222,61 +242,61 @@ do
             OPT_RPG_HIDE_BOSS = "Hide Boss Achievement Popups", OPT_RPG_HIDE_BOSS_TIP = "No popup when a final boss unlocks a journal page in RPG Mode (the line in chat stays).",
             OPT_RPG_MUTE = "Mute Achievements", OPT_RPG_MUTE_TIP = "The achievement popups make no sound.",
             OPT_RPG_VOLUME = "Achievement Popup sound", OPT_RPG_VOLUME_TIP = "How loud the achievement fanfare plays (100% = as loud as the game's own).",
-            OPT_RPG_ACCOUNT = "Account-Wide Unlocks", OPT_RPG_ACCOUNT_TIP = "On: what any of your characters unlocks in RPG Mode (pages, bosses, quests, maps) is unlocked for all of them. Off: each character unlocks its own. Switching loses nothing." },
+            OPT_RPG_ACCOUNT = "Account-Wide Unlocks", OPT_RPG_ACCOUNT_TIP = "On: what any of your characters unlocks in RPG Mode (pages, bosses, quests, maps) is unlocked for all of them. Off: each character unlocks its own. Switching loses nothing. Dungeons your account's Legacy Challenges show as done open too (not Ragefire Chasm, Hall of Thanes or The Stockade: Legacy can't tell them apart or doesn't list them)." },
         deDE = { OPT_RPG_ENABLE = "Aktivieren", OPT_RPG_PAGE = "RPG-Modus",
             OPT_RPG_HIDE_QUEST = "Quest-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_QUEST_TIP = "Kein Popup, wenn im RPG-Modus eine Dungeon-Quest freigeschaltet wird (die Chatzeile bleibt).",
             OPT_RPG_HIDE_BOSS = "Boss-Erfolgs-Popups ausblenden", OPT_RPG_HIDE_BOSS_TIP = "Kein Popup, wenn im RPG-Modus ein Endboss eine Journalseite freischaltet (die Chatzeile bleibt).",
             OPT_RPG_MUTE = "Erfolge stummschalten", OPT_RPG_MUTE_TIP = "Die Erfolgs-Popups spielen keinen Ton.",
             OPT_RPG_VOLUME = "Lautstärke der Erfolgs-Popups", OPT_RPG_VOLUME_TIP = "Wie laut die Erfolgsfanfare spielt (100% = so laut wie die des Spiels).",
-            OPT_RPG_ACCOUNT = "Accountweite Freischaltungen", OPT_RPG_ACCOUNT_TIP = "An: Was einer deiner Charaktere im RPG-Modus freischaltet (Seiten, Bosse, Quests, Karten), ist für alle freigeschaltet. Aus: Jeder Charakter schaltet seine eigenen frei. Beim Umschalten geht nichts verloren." },
+            OPT_RPG_ACCOUNT = "Accountweite Freischaltungen", OPT_RPG_ACCOUNT_TIP = "An: Was einer deiner Charaktere im RPG-Modus freischaltet (Seiten, Bosse, Quests, Karten), ist für alle freigeschaltet. Aus: Jeder Charakter schaltet seine eigenen frei. Beim Umschalten geht nichts verloren. Dungeons, die die Legacy-Herausforderungen deines Accounts als abgeschlossen zeigen, werden ebenfalls freigeschaltet (nicht Der Flammenschlund, Die Halle der Thanen oder Das Verlies: Legacy unterscheidet sie nicht oder führt sie nicht)." },
         frFR = { OPT_RPG_ENABLE = "Activer", OPT_RPG_PAGE = "Mode RPG",
             OPT_RPG_HIDE_QUEST = "Masquer les hauts faits de quête", OPT_RPG_HIDE_QUEST_TIP = "Pas de fenêtre quand une quête de donjon se débloque en mode RPG (la ligne dans le chat reste).",
             OPT_RPG_HIDE_BOSS = "Masquer les hauts faits de boss", OPT_RPG_HIDE_BOSS_TIP = "Pas de fenêtre quand un boss final débloque une page du journal en mode RPG (la ligne dans le chat reste).",
             OPT_RPG_MUTE = "Couper le son des hauts faits", OPT_RPG_MUTE_TIP = "Les fenêtres de haut fait ne font aucun son.",
             OPT_RPG_VOLUME = "Volume des hauts faits", OPT_RPG_VOLUME_TIP = "Le volume de la fanfare (100% = aussi fort que celle du jeu).",
-            OPT_RPG_ACCOUNT = "Déblocages pour tout le compte", OPT_RPG_ACCOUNT_TIP = "Activé : ce qu'un de vos personnages débloque en mode RPG (pages, boss, quêtes, cartes) est débloqué pour tous. Désactivé : chaque personnage débloque les siens. Rien n'est perdu en changeant." },
+            OPT_RPG_ACCOUNT = "Déblocages pour tout le compte", OPT_RPG_ACCOUNT_TIP = "Activé : ce qu'un de vos personnages débloque en mode RPG (pages, boss, quêtes, cartes) est débloqué pour tous. Désactivé : chaque personnage débloque les siens. Rien n'est perdu en changeant. Les donjons que les défis Legacy de votre compte indiquent comme terminés se débloquent aussi (pas le Gouffre de Ragefeu, La salle des Thanes ni La Prison : Legacy ne les distingue pas ou ne les liste pas)." },
         esES = { OPT_RPG_ENABLE = "Activar", OPT_RPG_PAGE = "Modo RPG",
             OPT_RPG_HIDE_QUEST = "Ocultar logros de misiones", OPT_RPG_HIDE_QUEST_TIP = "Sin ventana cuando se desbloquea una misión de mazmorra en el modo RPG (la línea del chat se mantiene).",
             OPT_RPG_HIDE_BOSS = "Ocultar logros de jefes", OPT_RPG_HIDE_BOSS_TIP = "Sin ventana cuando un jefe final desbloquea una página del diario en el modo RPG (la línea del chat se mantiene).",
             OPT_RPG_MUTE = "Silenciar logros", OPT_RPG_MUTE_TIP = "Las ventanas de logro no suenan.",
             OPT_RPG_VOLUME = "Volumen de los logros", OPT_RPG_VOLUME_TIP = "El volumen de la fanfarria (100% = tan alto como la del juego).",
-            OPT_RPG_ACCOUNT = "Desbloqueos para toda la cuenta", OPT_RPG_ACCOUNT_TIP = "Activado: lo que desbloquee cualquiera de tus personajes en el modo RPG (páginas, jefes, misiones, mapas) queda desbloqueado para todos. Desactivado: cada personaje desbloquea lo suyo. No se pierde nada al cambiar." },
+            OPT_RPG_ACCOUNT = "Desbloqueos para toda la cuenta", OPT_RPG_ACCOUNT_TIP = "Activado: lo que desbloquee cualquiera de tus personajes en el modo RPG (páginas, jefes, misiones, mapas) queda desbloqueado para todos. Desactivado: cada personaje desbloquea lo suyo. No se pierde nada al cambiar. Las mazmorras que los desafíos Legacy de tu cuenta muestran como completadas también se desbloquean (no Sima Ígnea, El Salón de los Feudales ni Las Mazmorras: Legacy no las distingue o no las incluye)." },
         itIT = { OPT_RPG_ENABLE = "Attiva", OPT_RPG_PAGE = "Modalità RPG",
             OPT_RPG_HIDE_QUEST = "Nascondi imprese delle missioni", OPT_RPG_HIDE_QUEST_TIP = "Nessun riquadro quando si sblocca una missione di dungeon in modalità RPG (la riga in chat resta).",
             OPT_RPG_HIDE_BOSS = "Nascondi imprese dei boss", OPT_RPG_HIDE_BOSS_TIP = "Nessun riquadro quando un boss finale sblocca una pagina del diario in modalità RPG (la riga in chat resta).",
             OPT_RPG_MUTE = "Silenzia imprese", OPT_RPG_MUTE_TIP = "I riquadri delle imprese non fanno suoni.",
             OPT_RPG_VOLUME = "Volume delle imprese", OPT_RPG_VOLUME_TIP = "Quanto forte suona la fanfara (100% = forte come quella del gioco).",
-            OPT_RPG_ACCOUNT = "Sblocchi per tutto l'account", OPT_RPG_ACCOUNT_TIP = "Attivo: ciò che un tuo personaggio sblocca in modalità RPG (pagine, boss, missioni, mappe) è sbloccato per tutti. Disattivo: ogni personaggio sblocca i propri. Cambiando non si perde nulla." },
+            OPT_RPG_ACCOUNT = "Sblocchi per tutto l'account", OPT_RPG_ACCOUNT_TIP = "Attivo: ciò che un tuo personaggio sblocca in modalità RPG (pagine, boss, missioni, mappe) è sbloccato per tutti. Disattivo: ogni personaggio sblocca i propri. Cambiando non si perde nulla. Si sbloccano anche i dungeon che le sfide Legacy del tuo account segnano come completati (non il Baratro di Fiamma Furente, Hall of Thanes né Le Segrete: Legacy non li distingue o non li elenca)." },
         ptBR = { OPT_RPG_ENABLE = "Ativar", OPT_RPG_PAGE = "Modo RPG",
             OPT_RPG_HIDE_QUEST = "Ocultar conquistas de missões", OPT_RPG_HIDE_QUEST_TIP = "Sem janela quando uma missão de masmorra é desbloqueada no modo RPG (a linha no chat continua).",
             OPT_RPG_HIDE_BOSS = "Ocultar conquistas de chefes", OPT_RPG_HIDE_BOSS_TIP = "Sem janela quando um chefe final desbloqueia uma página do diário no modo RPG (a linha no chat continua).",
             OPT_RPG_MUTE = "Silenciar conquistas", OPT_RPG_MUTE_TIP = "As janelas de conquista não tocam som.",
             OPT_RPG_VOLUME = "Volume das conquistas", OPT_RPG_VOLUME_TIP = "O volume da fanfarra (100% = tão alto quanto a do jogo).",
-            OPT_RPG_ACCOUNT = "Desbloqueios para toda a conta", OPT_RPG_ACCOUNT_TIP = "Ativado: o que qualquer personagem seu desbloquear no modo RPG (páginas, chefes, missões, mapas) fica desbloqueado para todos. Desativado: cada personagem desbloqueia os seus. Nada se perde ao trocar." },
+            OPT_RPG_ACCOUNT = "Desbloqueios para toda a conta", OPT_RPG_ACCOUNT_TIP = "Ativado: o que qualquer personagem seu desbloquear no modo RPG (páginas, chefes, missões, mapas) fica desbloqueado para todos. Desativado: cada personagem desbloqueia os seus. Nada se perde ao trocar. As masmorras que os desafios Legacy da sua conta mostram como concluídas também são desbloqueadas (não as Cavernas Ígneas, o Salão dos Thanes nem O Cárcere: o Legacy não as diferencia ou não as lista)." },
         ruRU = { OPT_RPG_ENABLE = "Включить", OPT_RPG_PAGE = "Режим RPG",
             OPT_RPG_HIDE_QUEST = "Скрыть достижения заданий", OPT_RPG_HIDE_QUEST_TIP = "Без окна, когда в режиме RPG открывается задание подземелья (строка в чате остаётся).",
             OPT_RPG_HIDE_BOSS = "Скрыть достижения боссов", OPT_RPG_HIDE_BOSS_TIP = "Без окна, когда в режиме RPG последний босс открывает страницу журнала (строка в чате остаётся).",
             OPT_RPG_MUTE = "Без звука достижений", OPT_RPG_MUTE_TIP = "Окна достижений не издают звука.",
             OPT_RPG_VOLUME = "Громкость достижений", OPT_RPG_VOLUME_TIP = "Громкость фанфар (100% = как у самой игры).",
-            OPT_RPG_ACCOUNT = "Открытия на всю учётную запись", OPT_RPG_ACCOUNT_TIP = "Вкл.: всё, что открыл любой ваш персонаж в режиме RPG (страницы, боссы, задания, карты), открыто для всех. Выкл.: каждый персонаж открывает своё. При переключении ничего не теряется." },
+            OPT_RPG_ACCOUNT = "Открытия на всю учётную запись", OPT_RPG_ACCOUNT_TIP = "Вкл.: всё, что открыл любой ваш персонаж в режиме RPG (страницы, боссы, задания, карты), открыто для всех. Выкл.: каждый персонаж открывает своё. При переключении ничего не теряется. Подземелья, которые испытания Legacy вашей учётной записи отмечают как пройденные, тоже открываются (кроме Огненной Пропасти, Чертогов танов и Тюрьмы: Legacy их не различает или не учитывает)." },
         koKR = { OPT_RPG_ENABLE = "사용", OPT_RPG_PAGE = "RPG 모드",
             OPT_RPG_HIDE_QUEST = "퀘스트 업적 팝업 숨기기", OPT_RPG_HIDE_QUEST_TIP = "RPG 모드에서 던전 퀘스트가 열려도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
             OPT_RPG_HIDE_BOSS = "우두머리 업적 팝업 숨기기", OPT_RPG_HIDE_BOSS_TIP = "RPG 모드에서 마지막 우두머리가 도감 페이지를 열어도 팝업을 띄우지 않습니다 (채팅 메시지는 유지).",
             OPT_RPG_MUTE = "업적 소리 끄기", OPT_RPG_MUTE_TIP = "업적 팝업에서 소리가 나지 않습니다.",
             OPT_RPG_VOLUME = "업적 팝업 소리", OPT_RPG_VOLUME_TIP = "업적 팡파르의 음량 (100% = 게임 기본과 같음).",
-            OPT_RPG_ACCOUNT = "계정 공유 잠금 해제", OPT_RPG_ACCOUNT_TIP = "켜기: 한 캐릭터가 RPG 모드에서 연 것(페이지, 우두머리, 퀘스트, 지도)은 모든 캐릭터에게 열립니다. 끄기: 캐릭터마다 따로 엽니다. 전환해도 잃는 것은 없습니다." },
+            OPT_RPG_ACCOUNT = "계정 공유 잠금 해제", OPT_RPG_ACCOUNT_TIP = "켜기: 한 캐릭터가 RPG 모드에서 연 것(페이지, 우두머리, 퀘스트, 지도)은 모든 캐릭터에게 열립니다. 끄기: 캐릭터마다 따로 엽니다. 전환해도 잃는 것은 없습니다. 계정의 Legacy 도전 과제에 완료로 표시된 던전도 열립니다 (성난불길 협곡, 영주의 전당, 스톰윈드 지하감옥 제외: Legacy가 구분하지 못하거나 목록에 없습니다)." },
         zhCN = { OPT_RPG_ENABLE = "启用", OPT_RPG_PAGE = "RPG模式",
             OPT_RPG_HIDE_QUEST = "隐藏任务成就弹窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任务解锁时不弹窗（聊天提示保留）。",
             OPT_RPG_HIDE_BOSS = "隐藏首领成就弹窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最终首领解锁日志页面时不弹窗（聊天提示保留）。",
             OPT_RPG_MUTE = "成就静音", OPT_RPG_MUTE_TIP = "成就弹窗不播放声音。",
             OPT_RPG_VOLUME = "成就弹窗音量", OPT_RPG_VOLUME_TIP = "成就号角的音量（100% = 与游戏自带相同）。",
-            OPT_RPG_ACCOUNT = "账号通用解锁", OPT_RPG_ACCOUNT_TIP = "开启：你的任一角色在RPG模式中解锁的内容（页面、首领、任务、地图）对所有角色解锁。关闭：每个角色各自解锁。切换不会丢失任何进度。" },
+            OPT_RPG_ACCOUNT = "账号通用解锁", OPT_RPG_ACCOUNT_TIP = "开启：你的任一角色在RPG模式中解锁的内容（页面、首领、任务、地图）对所有角色解锁。关闭：每个角色各自解锁。切换不会丢失任何进度。你账号的Legacy挑战中显示已完成的地下城也会解锁（怒焰裂谷、领主大厅和监狱除外：Legacy无法区分或未列出）。" },
         zhTW = { OPT_RPG_ENABLE = "啟用", OPT_RPG_PAGE = "RPG模式",
             OPT_RPG_HIDE_QUEST = "隱藏任務成就彈窗", OPT_RPG_HIDE_QUEST_TIP = "RPG模式下副本任務解鎖時不彈窗（聊天提示保留）。",
             OPT_RPG_HIDE_BOSS = "隱藏首領成就彈窗", OPT_RPG_HIDE_BOSS_TIP = "RPG模式下最終首領解鎖日誌頁面時不彈窗（聊天提示保留）。",
             OPT_RPG_MUTE = "成就靜音", OPT_RPG_MUTE_TIP = "成就彈窗不播放聲音。",
             OPT_RPG_VOLUME = "成就彈窗音量", OPT_RPG_VOLUME_TIP = "成就號角的音量（100% = 與遊戲內建相同）。",
-            OPT_RPG_ACCOUNT = "帳號通用解鎖", OPT_RPG_ACCOUNT_TIP = "開啟：你的任一角色在RPG模式中解鎖的內容（頁面、首領、任務、地圖）對所有角色解鎖。關閉：每個角色各自解鎖。切換不會遺失任何進度。" },
+            OPT_RPG_ACCOUNT = "帳號通用解鎖", OPT_RPG_ACCOUNT_TIP = "開啟：你的任一角色在RPG模式中解鎖的內容（頁面、首領、任務、地圖）對所有角色解鎖。關閉：每個角色各自解鎖。切換不會遺失任何進度。你帳號的Legacy挑戰中顯示已完成的地城也會解鎖（怒焰裂谷、族長之廳和監獄除外：Legacy無法區分或未列出）。" },
     }
     strings.esMX = strings.esES
     for locale, entries in pairs(strings) do
@@ -378,6 +398,7 @@ end
 
 function FDJ.SetJournalMode(mode)
     CharDB().journalMode = (mode == "rpg") and "rpg" or "gamer"
+    if FDJ.RPGLegacyRefresh then pcall(FDJ.RPGLegacyRefresh) end -- rpglegacy
     if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
     if FDJ.UpdateMinimapIcon then pcall(FDJ.UpdateMinimapIcon) end
 end
@@ -2231,6 +2252,7 @@ do
         end
         return type(boss.name) == "string" and list[boss.name:lower()] == true
     end
+    FDJ.RPGBossSeen = Seen -- rpgtorn: the torn page counts bosses the same way
 
     function FDJ.RPGBossHidden(name, boss)
         if type(boss) ~= "table" or not FDJ.IsRPGMode() then return false end
@@ -2550,6 +2572,90 @@ do
         if hit then Reveal(hit) end
     end
 
+    -- runlogkills (2.0.7): a boss the Dungeon Tracker counts killed counts
+    -- here too (revealed; the final boss unlocks the page). The tracker knows
+    -- a boss by its encounter ID, the same number in every client language;
+    -- RPG Mode only went by names and GUIDs, which Forever hides inside
+    -- dungeons. Herod died in the Scarlet Monastery Armory on a Russian
+    -- client, the tracker counted him and the run completed, but the page
+    -- stayed locked (Matanaliz, Discord, 15 Nov 2026).
+    -- quiet: no chat line for a boss (the runs already saved, at login).
+    local function RunLogBoss(dungeon, bossName, npcID, quiet)
+        if type(dungeon) ~= "string" or not InOrder(dungeon) then return false end
+        local d = FDJ.DB and FDJ.DB[dungeon]
+        if not d or d.previewOnly then return false end
+        Build()
+        npcID = tonumber(npcID)
+        local lower = type(bossName) == "string" and bossName ~= "" and bossName:lower() or nil
+        local found
+        for _, b in ipairs(d.bosses or {}) do
+            if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string" then
+                if (lower and b.name:lower() == lower) or (npcID and b.npcID == npcID) then found = b break end
+            end
+        end
+        if not found and lower then -- the client's name for it (translation, alias)
+            Index()
+            for _, e in ipairs(byName[lower] or {}) do
+                if e[1] == dungeon then found = e[2] break end
+            end
+        end
+        if not found then return false end
+        local changed = false
+        if quiet then
+            local all = Store("rpgBosses")
+            if type(all[dungeon]) ~= "table" then all[dungeon] = {} end
+            local seen = all[dungeon]
+            if found.npcID and not seen[found.npcID] then seen[found.npcID] = true changed = true end
+            if not seen[found.name:lower()] then seen[found.name:lower()] = true changed = true end
+        else
+            Reveal({ { dungeon, found } })
+        end
+        local final = (found.npcID and finalByNpc and finalByNpc[found.npcID] == dungeon) or nameFinal[dungeon] == found
+        if final and not CharDB().rpgKills[dungeon] then
+            Unlock(dungeon)
+            changed = true
+        end
+        return changed
+    end
+    function FDJ.RPGRunLogBoss(dungeon, bossName, npcID)
+        return RunLogBoss(dungeon, bossName, npcID, false)
+    end
+
+    -- runlogkills (2.0.7): the boss event's encounter ID, without the tracker.
+    local function EncounterID(id)
+        id = tonumber(Plain(id))
+        local hit = id and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[id]
+        if type(hit) ~= "table" then return end
+        RunLogBoss(hit[1], hit[2], nil, false)
+        for _, extra in ipairs(type(hit.also) == "table" and hit.also or {}) do
+            RunLogBoss(hit[1], extra, nil, false) -- Gyth with Rend
+        end
+    end
+
+    -- runlogkills (2.0.7): the bosses in this character's saved runs (Character
+    -- Logs), once per session at login: pages missed before this version open.
+    local recoveredRuns = false
+    function FDJ.RPGRecoverRunLogKills()
+        if recoveredRuns then return end
+        recoveredRuns = true
+        local log = CharDB().runLog
+        if type(log) ~= "table" or type(log.runs) ~= "table" then return end
+        local any = false
+        for _, run in ipairs(log.runs) do
+            if type(run) == "table" and not run.test and type(run.dungeon) == "string" and type(run.kills) == "table" then
+                for _, k in ipairs(run.kills) do
+                    if type(k) == "table" and type(k.b) == "string" then
+                        if RunLogBoss(run.dungeon, k.b, k.n, true) then any = true end
+                    end
+                end
+            end
+        end
+        if any then
+            ShareProgress()
+            Changed()
+        end
+    end
+
     local watch = CreateFrame("Frame")
     for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS",
         "UNIT_HEALTH", "NAME_PLATE_UNIT_REMOVED", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "LOOT_OPENED",
@@ -2570,11 +2676,15 @@ do
         elseif event == "LOOT_OPENED" then
             if here then pcall(Looted) end
         elseif event == "ENCOUNTER_END" then
-            if e == 1 or e == true then pcall(Encounter, b) end
+            if e == 1 or e == true then pcall(Encounter, b) pcall(EncounterID, a) end -- runlogkills (2.0.7)
         elseif event == "BOSS_KILL" then
             pcall(Encounter, b)
+            pcall(EncounterID, a) -- runlogkills (2.0.7)
         else
-            if event == "PLAYER_ENTERING_WORLD" then pcall(FDJ.RPGRecoverFinalKills) end
+            if event == "PLAYER_ENTERING_WORLD" then
+                pcall(FDJ.RPGRecoverFinalKills)
+                pcall(FDJ.RPGRecoverRunLogKills) -- runlogkills (2.0.7)
+            end
             pcall(Where)
         end
     end)
@@ -2905,3 +3015,778 @@ do
     end
 end
 -- END rpgproof
+
+-- BEGIN rpgdone
+-- ------------------------------------- RPG Mode: "I already did this dungeon"
+-- rpgdone (2.0.8): for players who installed the journal late. A kill from
+-- before then is only known when a handed-in quest proves it (rpgproof) or
+-- the Character Logs saw it; the game keeps no other record. Those are
+-- checked first, every time: a page they prove opens for real (its popup)
+-- and the box never shows. Clicking a
+-- locked page opens a small box (the usual locked text) with "I already did
+-- this dungeon"; that shows the dungeon's name and asks to confirm, then the
+-- whole page opens as when its final boss dies (chat line, no popup). A page
+-- half opened by its quests has the same button under a hidden boss ("???").
+-- Kept per character (rpgKills, plus rpgManual: the pages marked by hand),
+-- shared as every unlock is with Account-Wide Unlocks on. Asked by Akaria
+-- (Discord, 15 Nov 2026: Horde Deadmines has no quest to prove it).
+do
+    local strings = {
+        enUS = { RPG_DONE_BUTTON = "I already did this dungeon before installing", RPG_DONE_TIP = "Already did it before installing the journal? Click the page.",
+            RPG_DONE_CONFIRM = "This page is %s.\n\nMark it as done? The whole page opens, as if you had killed its final boss. Only for dungeons you did before installing the journal.",
+            RPG_DONE_OK = "Mark as done", RPG_DONE_BACK = "Back", RPG_DONE_CLOSE = "Close" },
+        deDE = { RPG_DONE_BUTTON = "Diesen Dungeon schon vor der Installation gemacht", RPG_DONE_TIP = "Schon vor dem Journal erledigt? Klick auf die Seite.",
+            RPG_DONE_CONFIRM = "Diese Seite ist %s.\n\nAls erledigt markieren? Die ganze Seite wird freigeschaltet, als hättest du den Endboss besiegt. Nur für Dungeons, die du vor dem Journal gemacht hast.",
+            RPG_DONE_OK = "Als erledigt markieren", RPG_DONE_BACK = "Zurück", RPG_DONE_CLOSE = "Schließen" },
+        frFR = { RPG_DONE_BUTTON = "J'ai déjà fait ce donjon avant l'installation", RPG_DONE_TIP = "Déjà fait avant d'installer le journal ? Cliquez sur la page.",
+            RPG_DONE_CONFIRM = "Cette page est %s.\n\nLa marquer comme faite ? Toute la page se débloque, comme si vous aviez tué son boss final. Uniquement pour les donjons faits avant d'installer le journal.",
+            RPG_DONE_OK = "Marquer comme fait", RPG_DONE_BACK = "Retour", RPG_DONE_CLOSE = "Fermer" },
+        esES = { RPG_DONE_BUTTON = "Ya hice esta mazmorra antes de la instalación", RPG_DONE_TIP = "¿Ya la hiciste antes de instalar el diario? Haz clic en la página.",
+            RPG_DONE_CONFIRM = "Esta página es %s.\n\n¿Marcarla como hecha? Se desbloquea toda la página, como si hubieras matado a su jefe final. Solo para mazmorras que hiciste antes de instalar el diario.",
+            RPG_DONE_OK = "Marcar como hecha", RPG_DONE_BACK = "Volver", RPG_DONE_CLOSE = "Cerrar" },
+        itIT = { RPG_DONE_BUTTON = "Ho già fatto questa spedizione prima dell'installazione", RPG_DONE_TIP = "Già fatta prima di installare il diario? Clicca sulla pagina.",
+            RPG_DONE_CONFIRM = "Questa pagina è %s.\n\nSegnarla come fatta? Si sblocca tutta la pagina, come se avessi ucciso il boss finale. Solo per le spedizioni fatte prima di installare il diario.",
+            RPG_DONE_OK = "Segna come fatta", RPG_DONE_BACK = "Indietro", RPG_DONE_CLOSE = "Chiudi" },
+        ptBR = { RPG_DONE_BUTTON = "Já fiz esta masmorra antes da instalação", RPG_DONE_TIP = "Já fez antes de instalar o diário? Clique na página.",
+            RPG_DONE_CONFIRM = "Esta página é %s.\n\nMarcar como feita? A página inteira é desbloqueada, como se você tivesse matado o chefe final. Só para masmorras que você fez antes de instalar o diário.",
+            RPG_DONE_OK = "Marcar como feita", RPG_DONE_BACK = "Voltar", RPG_DONE_CLOSE = "Fechar" },
+        ruRU = { RPG_DONE_BUTTON = "Я прошёл это подземелье до установки", RPG_DONE_TIP = "Уже прошли до установки журнала? Нажмите на страницу.",
+            RPG_DONE_CONFIRM = "Это страница: %s.\n\nОтметить как пройденное? Откроется вся страница, как после убийства финального босса. Только для подземелий, пройденных до установки журнала.",
+            RPG_DONE_OK = "Отметить", RPG_DONE_BACK = "Назад", RPG_DONE_CLOSE = "Закрыть" },
+        koKR = { RPG_DONE_BUTTON = "설치 전에 이미 이 던전을 마쳤습니다", RPG_DONE_TIP = "일지를 설치하기 전에 이미 마쳤나요? 페이지를 클릭하세요.",
+            RPG_DONE_CONFIRM = "이 페이지는 %s입니다.\n\n완료로 표시할까요? 최종 우두머리를 처치한 것처럼 페이지 전체가 열립니다. 일지를 설치하기 전에 마친 던전에만 사용하세요.",
+            RPG_DONE_OK = "완료로 표시", RPG_DONE_BACK = "뒤로", RPG_DONE_CLOSE = "닫기" },
+        zhCN = { RPG_DONE_BUTTON = "安装前我已完成过这个地下城", RPG_DONE_TIP = "安装日志前就已完成？点击此页面。",
+            RPG_DONE_CONFIRM = "这一页是%s。\n\n标记为已完成？整页将会解锁，如同击杀了最终首领。仅用于安装日志之前完成的地下城。",
+            RPG_DONE_OK = "标记为已完成", RPG_DONE_BACK = "返回", RPG_DONE_CLOSE = "关闭" },
+        zhTW = { RPG_DONE_BUTTON = "安裝前我已完成過這個地城", RPG_DONE_TIP = "安裝日誌前就已完成？點擊此頁面。",
+            RPG_DONE_CONFIRM = "這一頁是%s。\n\n標記為已完成？整頁將會解鎖，如同擊殺了最終首領。僅用於安裝日誌之前完成的地城。",
+            RPG_DONE_OK = "標記為已完成", RPG_DONE_BACK = "返回", RPG_DONE_CLOSE = "關閉" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+
+    local function DungeonName(name)
+        return FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(name) or name
+    end
+
+    -- The page marked done by hand: opened as by its final boss.
+    function FDJ.RPGMarkDone(name)
+        if type(name) ~= "string" or not InOrder(name) then return false end
+        local d = FDJ.DB and FDJ.DB[name]
+        if not d or d.previewOnly then return false end
+        local db = CharDB()
+        if db.rpgKills[name] then return false end
+        if FDJ.RPGCheckQuestProof then pcall(FDJ.RPGCheckQuestProof) end -- quests first
+        if db.rpgKills[name] then return false end
+        if type(db.rpgManual) ~= "table" then db.rpgManual = {} end
+        db.rpgManual[name] = true
+        local open = ViewTable("rpgKills")[name] and true or false
+        db.rpgKills[name] = true
+        ShareProgress()
+        if not open then
+            print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_UNLOCKED_MSG", DungeonName(name)) .. "|r")
+        end
+        if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
+        if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+        return true
+    end
+
+    -- The box: step 1 the locked text (a locked card), step 2 the dungeon's
+    -- name and the confirm. From a half-open page it starts at step 2.
+    local box
+    local function Build()
+        box = CreateFrame("Frame", "ForeverDungeonJournalRPGDone", UIParent, "BackdropTemplate")
+        box:SetSize(400, 170)
+        box:SetFrameStrata("FULLSCREEN_DIALOG")
+        box:SetToplevel(true)
+        box:EnableMouse(true)
+        box:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Gold-Border",
+            edgeSize = 26,
+            insets = { left = 7, right = 7, top = 7, bottom = 7 },
+        })
+        box:SetBackdropColor(0.04, 0.035, 0.03, 0.98)
+        box.title = box:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
+        box.title:SetPoint("TOP", 0, -22)
+        box.title:SetWidth(352)
+        box.text = box:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
+        box.text:SetPoint("TOP", box.title, "BOTTOM", 0, -8)
+        box.text:SetWidth(352)
+        box.text:SetJustifyH("CENTER")
+        box.text:SetJustifyV("TOP")
+        if box.text.SetWordWrap then box.text:SetWordWrap(true) end
+        if box.text.SetNonSpaceWrap then box.text:SetNonSpaceWrap(true) end
+        if box.text.SetMaxLines then box.text:SetMaxLines(0) end
+        box.ok = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
+        if FDJ.OwnFonts then FDJ.OwnFonts(box.ok) end
+        box.ok:SetHeight(24)
+        box.back = CreateFrame("Button", nil, box, "UIPanelButtonTemplate")
+        if FDJ.OwnFonts then FDJ.OwnFonts(box.back) end
+        box.back:SetHeight(24)
+        if UISpecialFrames then tinsert(UISpecialFrames, "ForeverDungeonJournalRPGDone") end -- Escape closes it
+    end
+
+    local function FitButton(b, text)
+        b:SetText(text)
+        local fs = b:GetFontString()
+        b:SetWidth(math.max(130, math.min(560, math.ceil((fs and fs:GetStringWidth() or 0) + 36))))
+    end
+
+    -- The two buttons as one centred row, inside the border: the box is as
+    -- wide as the row needs (a long "I already did..." in any language).
+    local GAP, SIDE = 12, 34
+    local function Layout(title, text)
+        local okW, backW = box.ok:GetWidth() or 130, box.back:GetWidth() or 130
+        local single = not box.ok:IsShown() -- rpglegacy: Close alone
+        local row = single and backW or (okW + GAP + backW)
+        local width = math.max(400, math.ceil(row + 2 * SIDE))
+        box:SetWidth(width)
+        box.ok:ClearAllPoints()
+        box.ok:SetPoint("BOTTOMLEFT", box, "BOTTOM", -row / 2, 18)
+        box.back:ClearAllPoints()
+        if single then
+            box.back:SetPoint("BOTTOM", box, "BOTTOM", 0, 18)
+        else
+            box.back:SetPoint("LEFT", box.ok, "RIGHT", GAP, 0)
+        end
+        box.title:SetWidth(width - 2 * SIDE)
+        box.text:SetWidth(width - 2 * SIDE)
+        box.title:SetText(title or "")
+        box.text:SetText(text or "")
+        -- Tight: 22 top, title, 8, text, 16, the buttons (24), 18 bottom.
+        box.text:SetHeight(0)
+        local textHeight = math.max(box.text:GetStringHeight() or 0, 12)
+        box.text:SetHeight(textHeight)
+        local titleHeight = math.max(box.title:GetStringHeight() or 0, 16)
+        box:SetHeight(math.ceil(22 + titleHeight + 8 + textHeight + 16 + 24 + 18))
+    end
+
+    local Confirm
+    local function Locked(name)
+        local text = L("RPG_LOCKED_TIP2")
+        local _, total = 0, 0
+        if FDJ.RPGQuestsUnlocked then _, total = FDJ.RPGQuestsUnlocked(name) end
+        if (total or 0) > 0 then text = text .. "\n" .. L("RPG_LOCKED_TIP_QUEST") end
+        -- rpglegacy: a dungeon the account's Legacy Challenges list opens by
+        -- itself once done there, so no "I already did" for it (only Ragefire
+        -- Chasm, Hall of Thanes and The Stockade keep it, or every dungeon
+        -- with Account-Wide Unlocks off).
+        local legacy = FDJ.RPGLegacyCovers and FDJ.RPGLegacyCovers(name)
+        if legacy then text = text .. "\n\n" .. L("RPG_LEGACY_WAIT") end
+        box.ok:SetShown(not legacy)
+        FitButton(box.ok, L("RPG_DONE_BUTTON"))
+        FitButton(box.back, L("RPG_DONE_CLOSE"))
+        box.ok:SetScript("OnClick", function() Confirm(name, true) end)
+        box.back:SetScript("OnClick", function() box:Hide() end)
+        Layout(L("RPG_LOCKED_TIP_TITLE"), text)
+    end
+    Confirm = function(name, fromLocked)
+        box.ok:Show()
+        FitButton(box.ok, L("RPG_DONE_OK"))
+        FitButton(box.back, L("RPG_DONE_BACK"))
+        box.ok:SetScript("OnClick", function()
+            box:Hide()
+            if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then
+                pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+            end
+            FDJ.RPGMarkDone(name)
+        end)
+        box.back:SetScript("OnClick", function()
+            if fromLocked then Locked(name) else box:Hide() end
+        end)
+        Layout(L("RPG_LOCKED_TIP_TITLE"), L("RPG_DONE_CONFIRM", "|cffffd100" .. DungeonName(name) .. "|r"))
+    end
+
+    -- fromPage: the half-open page's button (the name is on screen already).
+    -- Quests first: a handed-in quest that proves the final boss (the
+    -- Unsent Letter: VanCleef) opens the page for real, before any box.
+    local function Proven(name)
+        if FDJ.RPGCheckQuestProof then pcall(FDJ.RPGCheckQuestProof) end
+        if FDJ.RPGRecoverRunLogKills then pcall(FDJ.RPGRecoverRunLogKills) end
+        return CharDB().rpgKills[name] == true
+    end
+
+    function FDJ.ShowRPGDoneBox(name, fromPage)
+        if type(name) ~= "string" or not InOrder(name) then return end
+        if CharDB().rpgKills[name] or Proven(name) then
+            if box then box:Hide() end
+            return
+        end
+        if not box then Build() end
+        if fromPage then Confirm(name, false) else Locked(name) end
+        local journal = _G.ForeverDungeonJournalFrame
+        box:ClearAllPoints()
+        box:SetPoint("CENTER", (journal and journal:IsShown()) and journal or UIParent, "CENTER", 0, 0)
+        if journal and journal.GetFrameLevel then box:SetFrameLevel(journal:GetFrameLevel() + 30) end
+        box:Show()
+    end
+
+    -- The locked card's tooltip says it can be clicked.
+    local LockedTooltipBefore = FDJ.RPGLockedTooltip
+    FDJ.RPGLockedTooltip = function(owner, name, ...)
+        LockedTooltipBefore(owner, name, ...)
+        if FDJ.RPGLegacyCovers and FDJ.RPGLegacyCovers(name) then -- rpglegacy
+            GameTooltip:AddLine(L("RPG_LEGACY_WAIT"), 0.62, 0.60, 0.55, true)
+        else
+            GameTooltip:AddLine(L("RPG_DONE_TIP"), 0.62, 0.60, 0.55, true)
+        end
+        GameTooltip:Show()
+    end
+
+    -- The button under a hidden boss ("???") of a half-open page.
+    -- Core/Journal.lua calls it on every boss page (nil: hidden).
+    function FDJ.RPGDoneButton(journal, name)
+        local b = journal and journal.fdjRPGDoneButton
+        if not name or CharDB().rpgKills[name] or not (journal and journal.selectedBossDescription)
+            or (FDJ.RPGLegacyCovers and FDJ.RPGLegacyCovers(name)) then -- rpglegacy
+            if b then b:Hide() end
+            return
+        end
+        local desc = journal.selectedBossDescription
+        local panel = desc:GetParent()
+        if not b then
+            b = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+            if FDJ.OwnFonts then FDJ.OwnFonts(b) end
+            b:SetHeight(22)
+            journal.fdjRPGDoneButton = b
+        end
+        FitButton(b, L("RPG_DONE_BUTTON"))
+        -- Under the hint; a long label (German, Italian) moves left so it
+        -- stays inside the panel's right edge.
+        local shift = 0
+        local okD, dl = pcall(desc.GetLeft, desc)
+        local okL, pl = pcall(panel.GetLeft, panel)
+        local okR, pr = pcall(panel.GetRight, panel)
+        if okD and okL and okR and type(dl) == "number" and type(pl) == "number" and type(pr) == "number" then
+            local room = pr - dl - 14
+            local w = b:GetWidth() or 0
+            if w > room then shift = math.max(pl + 14 - dl, room - w) end
+        end
+        b:ClearAllPoints()
+        b:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", shift, -10)
+        b:SetScript("OnClick", function() FDJ.ShowRPGDoneBox(name, true) end)
+        b:Show()
+    end
+end
+-- END rpgdone
+
+-- BEGIN rpgtorn
+-- ----------------------------- RPG Mode: the locked page torn open by bosses
+-- rpgtorn (2.0.8, a test on Ragefire Chasm only, M 15 Nov 2026): a locked
+-- page's parchment tears away diagonally as the dungeon's bosses die, and
+-- the dungeon's picture shows through, as much of the card as bosses are
+-- killed (1 of 4: a quarter, 2 of 4: half...). The final boss opens the
+-- whole page as before. The tear: Media\RPG\TornMask (the picture left of a
+-- ragged diagonal line) and TornEdge (the paper's pale torn fibres and its
+-- shadow on the picture), one pair slid across the card. /dj torn shows the
+-- steps: /dj torn 0-4 previews the card (any mode), /dj torn off goes back.
+-- tornall (2.0.8, M 15 Nov 2026): every dungeon now, not Ragefire Chasm
+-- alone. Each card tears by its own count (3 of 4 bosses: three quarters,
+-- 3 of 8: under half); a group of bosses ("Altar Bosses") counts once, as
+-- soon as one of them is seen, as on the boss list. /dj torn <n> previews
+-- every card, /dj torn <dungeon> <n> one of them (the run log's
+-- abbreviations, e.g. wc, or the name), /dj torn off goes back.
+do
+    local TEX_W, SLANT_TEX = 1024, 91 -- the textures' width, and how far the tear leans (texels)
+    local previews = {}  -- one dungeon's preview: bosses dead
+    local previewAll     -- /dj torn <n>: every dungeon
+
+    -- The bosses that count: not trash, recipes, rares or folded rows.
+    local function Bosses(name)
+        local list = {}
+        local d = FDJ.DB and FDJ.DB[name]
+        for _, b in ipairs((d and d.bosses) or {}) do
+            if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab
+                and not b.rare and not b.listHidden and not b.childOf then
+                list[#list + 1] = b
+            end
+        end
+        return list
+    end
+    local function Killed(name, list)
+        local seen = ViewTable("rpgBosses")[name]
+        if type(seen) ~= "table" then return 0 end
+        local n = 0
+        for _, b in ipairs(list) do
+            local dead
+            if FDJ.RPGBossSeen then
+                dead = FDJ.RPGBossSeen(name, b) -- tornall: groups too
+            else
+                dead = (b.npcID and seen[b.npcID]) or seen[b.name:lower()]
+            end
+            if dead then n = n + 1 end
+        end
+        return n
+    end
+    FDJ.RPGTornProgress = function(name)
+        local list = Bosses(name)
+        return Killed(name, list), #list
+    end
+
+    -- Where the tear's middle goes so that f of the card shows (the tear
+    -- leans: s yards right at the top, s left at the bottom).
+    local function Solve(w, h, s, f)
+        local lo, hi = -s, w + s
+        for _ = 1, 40 do
+            local c = (lo + hi) / 2
+            local total = 0
+            for i = 1, 32 do
+                local y = (i - 0.5) / 32
+                total = total + math.max(0, math.min(w, c + s * (1 - 2 * y)))
+            end
+            if total / 32 / w < f then lo = c else hi = c end
+        end
+        return (lo + hi) / 2
+    end
+
+    local function Parts(page)
+        if page.torn then return page.torn end
+        if not page.CreateMaskTexture then return nil end
+        local t = {}
+        page.sketch:SetDrawLayer("ARTWORK", -2)
+        t.art = page:CreateTexture(nil, "ARTWORK", nil, -1)
+        t.art:SetAllPoints(page)
+        t.mask = page:CreateMaskTexture()
+        t.mask:SetTexture(MEDIA .. "TornMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+        t.art:AddMaskTexture(t.mask)
+        t.edge = page:CreateTexture(nil, "ARTWORK", nil, 0)
+        t.edge:SetTexture(MEDIA .. "TornEdge")
+        t.edge:SetAllPoints(page)
+        page.torn = t
+        page:HookScript("OnSizeChanged", function(self)
+            if self.torn and self.torn.f then pcall(self.fdjTornLayout, self) end
+        end)
+        return t
+    end
+
+    local function Layout(page)
+        local t = page.torn
+        local f = t and t.f or 0
+        local w, h = page:GetWidth() or 0, page:GetHeight() or 0
+        if not t or f <= 0 or w < 10 or h < 10 then
+            if t then t.art:Hide() t.edge:Hide() end
+            return
+        end
+        local s = SLANT_TEX / TEX_W * 2 * w
+        local off = Solve(w, h, s, math.min(f, 1)) - w
+        t.mask:ClearAllPoints()
+        t.mask:SetPoint("TOPLEFT", page, "TOPLEFT", off, 0)
+        t.mask:SetSize(2 * w, h)
+        t.edge:SetTexCoord(-off / (2 * w), (w - off) / (2 * w), 0, 1)
+        t.art:Show()
+        t.edge:Show()
+    end
+
+    local function Show(card, page, f)
+        local t = Parts(page)
+        if not t then return end
+        page.fdjTornLayout = Layout
+        if f > 0 and card.art then
+            local okT, tex = pcall(card.art.GetTexture, card.art)
+            if okT and tex then t.art:SetTexture(tex) end
+            local ok, ulx, uly, _, lly, urx = pcall(card.art.GetTexCoord, card.art)
+            if ok and ulx then t.art:SetTexCoord(ulx, urx, uly, lly) end
+        end
+        t.f = f
+        Layout(page)
+    end
+
+    local ApplyBefore = FDJ.ApplyRPGCard
+    FDJ.ApplyRPGCard = function(card, name, ...)
+        ApplyBefore(card, name, ...)
+        local page = card.rpgPage
+        -- "Coming soon" pages stay blank, previews too (tornall).
+        if FDJ.DB and FDJ.DB[name] and FDJ.DB[name].previewOnly then
+            if page and page.torn then page.torn.f = 0 Layout(page) end
+            return
+        end
+        local list = Bosses(name)
+        local total = #list
+        local k = previews[name]
+        if k == nil then k = previewAll end
+        if k ~= nil and total > 0 then
+            k = math.max(0, math.min(total, k))
+            local open = k >= total
+            if open then
+                if page then page:Hide() end
+            else
+                page = JournalPage(card)
+                page.sketch:SetTexture(SketchFor(name))
+                page:Show()
+                if page.questCount then page.questCount:Hide() page.questBack:Hide() end
+            end
+            for _, key in ipairs(COVER_PARTS) do
+                local part = card[key]
+                if part and part.SetAlpha then part:SetAlpha(open and 1 or 0) end
+            end
+            if open then return end
+        else
+            if not (page and page:IsShown()) then -- open, or not RPG Mode
+                if page and page.torn then page.torn.f = 0 Layout(page) end
+                return
+            end
+            k = Killed(name, list)
+        end
+        Show(card, page, total > 0 and k / total or 0)
+    end
+
+    -- /dj torn                    every dungeon's count, and the commands
+    -- /dj torn <n>                every card as if n bosses were dead
+    -- /dj torn <dungeon> [<n>]    one dungeon: its count, or a preview
+    -- /dj torn off                previews off
+    -- (English, like the other test commands.)
+    local function Key(text) return (tostring(text or ""):lower():gsub("[^%w]", "")) end
+    local function Short(name)
+        for _, e in ipairs(FDJ.TESTLOG_DUNGEONS or {}) do
+            if e[2] == name then return e[1] end
+        end
+    end
+    local function Dungeons()
+        local out = {}
+        for _, name in ipairs(FDJ.ORDER or {}) do
+            local d = FDJ.DB and FDJ.DB[name]
+            if d and not d.previewOnly and not d.questChainPage and #Bosses(name) > 0 then out[#out + 1] = name end
+        end
+        return out
+    end
+    -- An abbreviation (wc, smlib), the name, or a unique part of it.
+    local function Find(word)
+        local key = Key(word)
+        if key == "" then return nil end
+        local partial = {}
+        for _, name in ipairs(Dungeons()) do
+            local shown = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(name) or name
+            if key == Short(name) or key == Key(name) or key == Key(shown) then return name end
+            if Key(name):find(key, 1, true) or Key(shown):find(key, 1, true) then partial[#partial + 1] = name end
+        end
+        if #partial == 1 then return partial[1] end
+        return nil, partial
+    end
+    local function Share(k, total)
+        return total > 0 and math.floor(k / total * 100 + 0.5) or 0
+    end
+    local function Refresh()
+        local journal = _G.ForeverDungeonJournalFrame
+        if FDJ.ToggleJournal and not (journal and journal:IsShown()) then pcall(FDJ.ToggleJournal) end
+        journal = _G.ForeverDungeonJournalFrame
+        if journal and journal.currentView ~= "home" and journal.backButton then
+            local back = journal.backButton:GetScript("OnClick")
+            if back then pcall(back, journal.backButton) end
+        end
+        if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+    end
+end
+-- END rpgtorn
+
+-- BEGIN rpglegacy
+-- ------------------------------- RPG Mode: pages opened by Legacy Challenges
+-- rpglegacy (2.0.8, M 15 Nov 2026): WoW Forever's Legacy Challenges (its
+-- achievements, account-wide) tick every dungeon the account has completed
+-- in Novice, Experienced and Master Spelunker. With Account-Wide Unlocks on
+-- (the default from now on), RPG Mode reads them and opens those pages, as
+-- if their final boss had died; switched off, it stops reading them and
+-- each character is back to its own unlocks (nothing saved is changed).
+-- Not from Legacy: Ragefire Chasm and Hall of Thanes (one tick for both,
+-- "Ragefire Chasm or Hall of Thanes") and The Stockade (not in the lists):
+-- they keep the quests, the kills and "I already did this dungeon". Every
+-- other page Legacy lists loses that button while this is on: it opens by
+-- itself once Legacy shows it done.
+-- The challenges are found by their lists, not their names, so any client
+-- language works: an achievement whose ticks are mostly (and at least
+-- three) journal pages (the page's name, exactly, in any of the journal's languages; a
+-- tick that matches no page is left alone). Read after login (out of combat,
+-- a few seconds after the loading screen), when a challenge moves on, and
+-- when the option or RPG Mode is switched on. The last reading is kept
+-- (ForeverDungeonJournalDB.rpgLegacy), so the pages are open at once at the
+-- next login. /dj legacy shows what was read.
+do
+    local strings = {
+        enUS = { RPG_LEGACY_OPENED = "Opened by your account's Legacy Challenges: %s.",
+            RPG_LEGACY_WAIT = "This page opens by itself once your account's Legacy Challenges show this dungeon as done." },
+        deDE = { RPG_LEGACY_OPENED = "Durch die Legacy-Herausforderungen deines Accounts freigeschaltet: %s.",
+            RPG_LEGACY_WAIT = "Diese Seite wird von selbst freigeschaltet, sobald die Legacy-Herausforderungen deines Accounts diesen Dungeon als abgeschlossen zeigen." },
+        frFR = { RPG_LEGACY_OPENED = "Débloqué par les défis Legacy de votre compte : %s.",
+            RPG_LEGACY_WAIT = "Cette page se débloque d'elle-même dès que les défis Legacy de votre compte indiquent ce donjon comme terminé." },
+        esES = { RPG_LEGACY_OPENED = "Desbloqueado por los desafíos Legacy de tu cuenta: %s.",
+            RPG_LEGACY_WAIT = "Esta página se desbloquea sola en cuanto los desafíos Legacy de tu cuenta muestren esta mazmorra como completada." },
+        itIT = { RPG_LEGACY_OPENED = "Sbloccato dalle sfide Legacy del tuo account: %s.",
+            RPG_LEGACY_WAIT = "Questa pagina si sblocca da sola appena le sfide Legacy del tuo account segnano questo dungeon come completato." },
+        ptBR = { RPG_LEGACY_OPENED = "Desbloqueado pelos desafios Legacy da sua conta: %s.",
+            RPG_LEGACY_WAIT = "Esta página se desbloqueia sozinha assim que os desafios Legacy da sua conta mostrarem esta masmorra como concluída." },
+        ruRU = { RPG_LEGACY_OPENED = "Открыто испытаниями Legacy вашей учётной записи: %s.",
+            RPG_LEGACY_WAIT = "Эта страница откроется сама, как только испытания Legacy вашей учётной записи отметят это подземелье как пройденное." },
+        koKR = { RPG_LEGACY_OPENED = "계정의 Legacy 도전 과제로 열림: %s.",
+            RPG_LEGACY_WAIT = "계정의 Legacy 도전 과제에 이 던전이 완료로 표시되면 이 페이지가 자동으로 열립니다." },
+        zhCN = { RPG_LEGACY_OPENED = "由你账号的Legacy挑战解锁：%s。",
+            RPG_LEGACY_WAIT = "当你账号的Legacy挑战显示此地下城已完成时，此页面会自动解锁。" },
+        zhTW = { RPG_LEGACY_OPENED = "由你帳號的Legacy挑戰解鎖：%s。",
+            RPG_LEGACY_WAIT = "當你帳號的Legacy挑戰顯示此地城已完成時，此頁面會自動解鎖。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+
+    local NEVER = { ["Ragefire Chasm"] = true, ["Hall of Thanes"] = true, ["The Stockade"] = true }
+    -- Other wordings of a page's name (the Legacy list's, the wiki's).
+    local ALIASES = {
+        ["Stratholme Live"] = "Stratholme: Living", ["Stratholme Living"] = "Stratholme: Living",
+        ["Stratholme Main Gate"] = "Stratholme: Living",
+        ["Stratholme Dead"] = "Stratholme: Undead", ["Stratholme Service Gate"] = "Stratholme: Undead",
+        ["The Temple of Atal'Hakkar"] = "Sunken Temple", ["Temple of Atal'Hakkar"] = "Sunken Temple",
+        ["The Shaper's Terrace"] = "Shaper's Terrace",
+    }
+
+    -- Lower case, no colour codes, no leading article ("The Deadmines",
+    -- "Die Höhlen des Wehklagens" = "Höhlen des Wehklagens"), no spaces or
+    -- ASCII punctuation (letters of other alphabets stay).
+    local ARTICLES = { the = true, der = true, die = true, das = true, le = true, la = true, les = true,
+        el = true, los = true, las = true, il = true, lo = true, gli = true, i = true, o = true, os = true,
+        a = true, as = true }
+    local function Norm(text)
+        if type(text) ~= "string" then return "" end
+        text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):lower()
+        local first, rest = text:match("^%s*(%S+)%s+(.+)$")
+        if first and ARTICLES[first] then text = rest end
+        text = text:gsub("^%s*l'", "")
+        return (text:gsub("[%s%p]", ""))
+    end
+
+    local function Pages()
+        local out = {}
+        for _, name in ipairs(FDJ.ORDER or {}) do
+            local d = FDJ.DB and FDJ.DB[name]
+            if d and not d.previewOnly and not d.questChainPage then out[#out + 1] = name end
+        end
+        return out
+    end
+
+    -- name key -> page (false: two pages share it). Only names: a tick's
+    -- other number (its "asset") can be an area of the map, which may be the
+    -- same number as some boss, so it is never used to pick a page.
+    local byKey
+    local function Index()
+        if byKey then return end
+        byKey = {}
+        local function Put(key, name)
+            if key == nil or key == "" then return end
+            if byKey[key] == nil then byKey[key] = name elseif byKey[key] ~= name then byKey[key] = false end
+        end
+        for _, name in ipairs(Pages()) do
+            Put(Norm(name), name)
+            for _, loc in pairs(FDJ.ContentLocales or {}) do
+                local e = type(loc) == "table" and type(loc.dungeons) == "table" and loc.dungeons[name]
+                if type(e) == "table" and type(e.name) == "string" then Put(Norm(e.name), name) end
+            end
+        end
+        for alias, name in pairs(ALIASES) do
+            if FDJ.DB and FDJ.DB[name] then Put(Norm(alias), name) end
+        end
+    end
+
+    -- The page one Legacy tick stands for (its name, exactly), or nil and why.
+    local function Match(text)
+        Index()
+        local key = Norm(text)
+        local hit = byKey[key]
+        if hit then return hit end
+        if hit == false then return nil, "two pages" end
+        -- "Ragefire Chasm or Hall of Thanes": a tick that names two pages.
+        local names, count = {}, 0
+        if key ~= "" then
+            for k, name in pairs(byKey) do
+                if name and #k >= 4 and key:find(k, 1, true) and not names[name] then
+                    names[name] = true
+                    count = count + 1
+                end
+            end
+        end
+        if count > 1 then return nil, "two pages" end
+        return nil, "not a page"
+    end
+
+    local function Store()
+        ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+        local s = ForeverDungeonJournalDB.rpgLegacy
+        if type(s) ~= "table" then
+            s = {}
+            ForeverDungeonJournalDB.rpgLegacy = s
+        end
+        if type(s.done) ~= "table" then s.done = {} end
+        if type(s.covered) ~= "table" then s.covered = {} end
+        return s
+    end
+
+    -- The challenges that list pages (found once per session).
+    local found, lastRead
+    local function Criteria(id)
+        local out = {}
+        local ok, count = pcall(GetAchievementNumCriteria, id)
+        if not ok or type(count) ~= "number" then return out end
+        for j = 1, count do
+            local okC, text, ctype, done, _, _, _, _, asset = pcall(GetAchievementCriteriaInfo, id, j)
+            if okC then out[#out + 1] = { text = text, type = ctype, done = done, asset = asset } end
+        end
+        return out
+    end
+    local missedAt
+    local function Find()
+        if found then return found end
+        local now = GetTime and GetTime() or 0
+        if missedAt and now - missedAt < 30 then return nil end -- not again right away
+        local list = {}
+        local okL, cats = pcall(GetCategoryList)
+        if not okL or type(cats) ~= "table" then return nil end
+        for _, cat in ipairs(cats) do
+            local okN, n = pcall(GetCategoryNumAchievements, cat, true)
+            for i = 1, (okN and tonumber(n) or 0) do
+                local okA, id, title = pcall(GetAchievementInfo, cat, i)
+                if okA and id then
+                    -- A dungeon list: three or more pages, and most of its
+                    -- ticks (an exploration challenge also names places like
+                    -- Wailing Caverns or Zul'Farrak among many others).
+                    local pages, ticks = 0, 0
+                    for _, c in ipairs(Criteria(id)) do
+                        ticks = ticks + 1
+                        if Match(c.text) then pages = pages + 1 end
+                    end
+                    if pages >= 3 and pages >= ticks * 0.6 then list[#list + 1] = { id = id, title = title } end
+                end
+            end
+        end
+        if #list > 0 then found = list else missedAt = now end
+        return found
+    end
+
+    -- Reads the challenges: the pages they list, and the ones done.
+    local function Read()
+        if type(GetCategoryList) ~= "function" or type(GetAchievementInfo) ~= "function"
+            or type(GetAchievementNumCriteria) ~= "function" or type(GetAchievementCriteriaInfo) ~= "function" then
+            return nil
+        end
+        local list = Find()
+        if not list then return nil end
+        local covered, done, rows = {}, {}, {}
+        for _, a in ipairs(list) do
+            local ok, _, title, _, whole = pcall(GetAchievementInfo, a.id)
+            rows[#rows + 1] = { title = (ok and title) or a.title, id = a.id, whole = ok and whole or false }
+            for _, c in ipairs(Criteria(a.id)) do
+                local name, why = Match(c.text)
+                local isDone = c.done == true or (ok and whole == true)
+                if name and NEVER[name] then why, name = "kept manual", nil end
+                if not name and why == "two pages" then why = "names two pages, kept manual" end
+                rows[#rows + 1] = { text = c.text, page = name, done = isDone, why = why }
+                if name then
+                    covered[name] = true
+                    if isDone then done[name] = true end
+                end
+            end
+        end
+        if not next(covered) then return nil end
+        return covered, done, rows
+    end
+    FDJ.RPGLegacyRead = Read -- /dj legacy
+
+    local function Active()
+        return FDJ.IsRPGMode and FDJ.IsRPGMode() and AccountWide() or false
+    end
+
+    -- The pages the last reading showed done (ViewTable adds them).
+    function FDJ.RPGLegacyPages()
+        local s = ForeverDungeonJournalDB and ForeverDungeonJournalDB.rpgLegacy
+        if type(s) ~= "table" or type(s.done) ~= "table" then return nil end
+        for name in pairs(NEVER) do s.done[name] = nil end
+        return s.done
+    end
+    -- Is this page one Legacy opens by itself (so no "I already did")?
+    function FDJ.RPGLegacyCovers(name)
+        if not Active() or NEVER[name] then return false end
+        local s = ForeverDungeonJournalDB and ForeverDungeonJournalDB.rpgLegacy
+        return type(s) == "table" and type(s.covered) == "table" and s.covered[name] == true or false
+    end
+
+    local pendingCombat, scheduled, tries = false, false, 0
+    local function Refresh()
+        if not Active() then return end
+        if InCombatLockdown and InCombatLockdown() then pendingCombat = true return end
+        local covered, done = Read()
+        if not covered then return false end
+        lastRead = GetTime and GetTime() or 0
+        local s = Store()
+        local wasOpen = {}
+        local view = ViewTable("rpgKills")
+        for name in pairs(done) do wasOpen[name] = view[name] and true or false end
+        local changed = false
+        for name in pairs(done) do if not s.done[name] then changed = true end end
+        for name in pairs(s.done) do if not done[name] then changed = true end end
+        s.covered, s.done = covered, done
+        local opened = {}
+        for _, name in ipairs(Pages()) do
+            if done[name] and not wasOpen[name] then
+                opened[#opened + 1] = FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(name) or name
+            end
+        end
+        if #opened > 0 then
+            print("|cffd8a83cDungeon Journal:|r |cff40ff40" .. L("RPG_LEGACY_OPENED", table.concat(opened, ", ")) .. "|r")
+        end
+        if changed or #opened > 0 then
+            if FDJ.RPGShareProgress then pcall(FDJ.RPGShareProgress) end
+            if FDJ.RPGStateChanged then pcall(FDJ.RPGStateChanged) end
+            if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+        end
+        return true
+    end
+    local function Schedule(delay)
+        if scheduled then return end
+        scheduled = true
+        local function run()
+            scheduled = false
+            local ok, done = pcall(Refresh)
+            -- The game may not have the challenges yet right after login.
+            if ok and done == false and tries < 6 then
+                tries = tries + 1
+                Schedule(10)
+            end
+        end
+        if C_Timer and C_Timer.After then C_Timer.After(delay, run) else run() end
+    end
+    function FDJ.RPGLegacyRefresh()
+        if not Active() then return end
+        tries = 0
+        Schedule(0.5)
+    end
+
+    local watch = CreateFrame("Frame")
+    for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "PLAYER_REGEN_ENABLED", "CRITERIA_UPDATE",
+        "CRITERIA_EARNED", "ACHIEVEMENT_EARNED", "RECEIVED_ACHIEVEMENT_LIST" }) do
+        pcall(watch.RegisterEvent, watch, event)
+    end
+    watch:SetScript("OnEvent", function(_, event)
+        if not Active() then return end
+        if event == "PLAYER_ENTERING_WORLD" then
+            tries = 0
+            Schedule(5) -- after the loading screen
+        elseif event == "PLAYER_REGEN_ENABLED" then
+            if pendingCombat then pendingCombat = false Schedule(2) end
+        else
+            -- A challenge moved on: read again soon (many ticks come at once).
+            Schedule(3)
+        end
+    end)
+
+end
+-- END rpglegacy

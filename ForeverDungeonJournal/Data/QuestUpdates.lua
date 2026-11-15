@@ -1297,6 +1297,201 @@ FDJ.NPC_FLOORS = {
 }
 -- END npcfloors
 
+-- BEGIN droprare
+-- droprare (2.0.8, M 15 Nov 2026): the tooltip line of a loot entry with
+-- dropNote = "EXTREMELY_RARE_DROP" (Zul'Farrak: Spellshock Leggings 1/440,
+-- Bloodletter Scalpel 1/611).
+do
+    local texts = {
+        enUS = "Extremely rare drop", deDE = "Extrem seltene Beute", frFR = "Butin extrêmement rare",
+        esES = "Botín extremadamente raro", esMX = "Botín extremadamente raro", itIT = "Bottino estremamente raro",
+        ptBR = "Saque extremamente raro", ruRU = "Чрезвычайно редкая добыча", koKR = "극히 드문 전리품",
+        zhCN = "极其稀有的掉落", zhTW = "極其稀有的掉落",
+    }
+    for locale, text in pairs(texts) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.EXTREMELY_RARE_DROP == nil then t.EXTREMELY_RARE_DROP = text end
+    end
+end
+-- chainglowoff (2.0.8): the Quests page option that removes the glow
+-- (glowstep, M 15 Nov 2026: its name says "chain step")
+do
+    local texts = {
+        enUS = { "Remove quest glow on chain step \"Pick it up\"", "A quest whose chain you have finished, and that you can take now, glows gold in the quest list. Tick this to remove the glow (\"Pick it up\" stays)." },
+        deDE = { "Questleuchten bei „Annehmen“ (Questreihen-Schritt) entfernen", "Eine Quest, deren Questreihe du abgeschlossen hast und die du jetzt annehmen kannst, leuchtet in der Questliste golden. Anhaken, um das Leuchten zu entfernen („Annehmen“ bleibt)." },
+        frFR = { "Retirer la lueur des quêtes « À prendre » (étape de suite)", "Une quête dont vous avez fini la suite, et que vous pouvez prendre, brille en doré dans la liste des quêtes. Cochez pour retirer la lueur (« À prendre » reste)." },
+        esES = { "Quitar el brillo de misiones «Recoger» (paso de cadena)", "Una misión cuya cadena has terminado y que ya puedes recoger brilla en dorado en la lista de misiones. Márcalo para quitar el brillo («Recoger» se queda)." },
+        itIT = { "Rimuovi il bagliore delle missioni «Da prendere» (passo della catena)", "Una missione di cui hai finito la catena, e che ora puoi prendere, brilla d'oro nell'elenco delle missioni. Spunta per togliere il bagliore («Da prendere» resta)." },
+        ptBR = { "Remover o brilho das missões \"Pegar\" (etapa de cadeia)", "Uma missão cuja cadeia você terminou, e que já pode pegar, brilha dourada na lista de missões. Marque para remover o brilho (\"Pegar\" continua)." },
+        ruRU = { "Убрать свечение заданий «Взять» (шаг цепочки)", "Задание, цепочку которого вы прошли и которое уже можно взять, светится золотом в списке заданий. Отметьте, чтобы убрать свечение («Взять» останется)." },
+        koKR = { "연계 퀘스트 단계 \"수락 가능\" 빛 효과 끄기", "연계 퀘스트를 마쳐 지금 받을 수 있는 퀘스트는 퀘스트 목록에서 금빛으로 빛납니다. 체크하면 빛 효과가 사라집니다(\"수락 가능\"은 남습니다)." },
+        zhCN = { "移除任务链步骤“可以接取”的任务光效", "已完成任务链、现在可以接取的任务会在任务列表中发出金光。勾选后移除光效（“可以接取”仍会显示）。" },
+        zhTW = { "移除任務鏈步驟「可以接取」的任務光效", "已完成任務鏈、現在可以接取的任務會在任務列表中發出金光。勾選後移除光效（「可以接取」仍會顯示）。" },
+    }
+    texts.esMX = texts.esES
+    for locale, pair in pairs(texts) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.OPT_HIDE_CHAIN_GLOW == nil then t.OPT_HIDE_CHAIN_GLOW = pair[1] end
+            if t.OPT_HIDE_CHAIN_GLOW_TIP == nil then t.OPT_HIDE_CHAIN_GLOW_TIP = pair[2] end
+        end
+    end
+end
+-- bossquest (2.0.8): the tooltip of the quest beside a boss's name
+do
+    local tips = {
+        enUS = "Click to open the quest", deDE = "Klicken, um die Quest zu öffnen", frFR = "Cliquez pour ouvrir la quête",
+        esES = "Haz clic para abrir la misión", esMX = "Haz clic para abrir la misión", itIT = "Clicca per aprire la missione",
+        ptBR = "Clique para abrir a missão", ruRU = "Нажмите, чтобы открыть задание", koKR = "클릭하여 퀘스트 열기",
+        zhCN = "点击打开任务", zhTW = "點擊打開任務",
+    }
+    for locale, text in pairs(tips) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.BOSS_QUEST_TIP == nil then t.BOSS_QUEST_TIP = text end
+    end
+end
+-- END droprare
+
+-- BEGIN rarelabels
+-- darkreaver (2.0.8, M 15 Nov 2026): a boss's own label in place of "Rare"
+-- (rareLabel), in the player's language when it is listed here.
+do
+    local LABELS = {
+        ["Paladin Mount Quest Boss"] = {
+            deDE = "Paladin-Reittierquest-Boss", frFR = "Boss quête monture paladin",
+            esES = "Jefe misión montura paladín", esMX = "Jefe misión montura paladín",
+            itIT = "Boss destriero paladino", ptBR = "Chefe montaria de paladino",
+            ruRU = "Босс квеста коня паладина", koKR = "성기사 탈것 퀘스트 보스",
+            zhCN = "圣骑士坐骑任务首领", zhTW = "聖騎士坐騎任務首領",
+        },
+    }
+    function FDJ.RareLabelText(label)
+        if type(label) ~= "string" then return nil end
+        local byLang = LABELS[label]
+        local lang = FDJ.GetLanguage and FDJ.GetLanguage() or nil
+        return (byLang and lang and byLang[lang]) or label
+    end
+end
+-- END rarelabels
+
+-- BEGIN questrowtrial
+-- questrowtrial (2.0.8, M 15 Nov 2026, tried on The Deadmines and Scarlet Monastery: Library first): the
+-- quest list of these dungeons shows the character's own faction only
+-- (unless "Show both factions' quests" is on in the options; the crest at
+-- the top is the character's, locked), and its rows have no faction crests:
+-- in their place a round ! (as big as the turn-in ?) that shows how to pick
+-- the quest up, with "Pick it up" beside it once its quest chain is done.
+FDJ.QUESTROW_TRIAL = {
+    ["The Deadmines"] = true,
+    ["Scarlet Monastery: Library"] = true, -- (M, 15 Nov 2026: "now do the same for scarlet lib quests")
+}
+-- questrowall (2.0.8, M 15 Nov 2026: "roll this update for every single
+-- dungeon"): every dungeon's quest list now (the list above is what was
+-- tried first).
+FDJ.QUESTROW_ALL = true
+do
+    local strings = {
+        enUS = { "Pick it up", "How to pick it up", "Its quest chain first: %s", "Show both factions' quests",
+            "Lets you switch a dungeon's quest list to the other faction's quests (the crests at the top of the list). Off: you only see your own faction's quests.",
+            "Your faction's quests. To see the other faction's too: Options, \"Show both factions' quests\".", "Show pickup on map" },
+        deDE = { "Annehmen", "So nimmst du sie an", "Erst die Questreihe: %s", "Quests beider Fraktionen anzeigen",
+            "Lässt dich die Questliste eines Dungeons auf die Quests der anderen Fraktion umschalten (die Wappen oben in der Liste). Aus: Du siehst nur die Quests deiner Fraktion.",
+            "Die Quests deiner Fraktion. Um auch die der anderen zu sehen: Optionen, \"Quests beider Fraktionen anzeigen\".", "Annahmeort auf der Karte zeigen" },
+        frFR = { "À prendre", "Comment la prendre", "D'abord sa suite de quêtes : %s", "Afficher les quêtes des deux factions",
+            "Permet d'afficher dans la liste des quêtes d'un donjon celles de l'autre faction (les blasons en haut de la liste). Désactivé : vous ne voyez que les quêtes de votre faction.",
+            "Les quêtes de votre faction. Pour voir aussi celles de l'autre : Options, « Afficher les quêtes des deux factions ».", "Afficher sur la carte où la prendre" },
+        esES = { "Recoger", "Cómo conseguirla", "Primero su cadena de misiones: %s", "Mostrar misiones de ambas facciones",
+            "Te deja cambiar la lista de misiones de una mazmorra a las de la otra facción (los blasones de arriba de la lista). Desactivado: solo ves las misiones de tu facción.",
+            "Las misiones de tu facción. Para ver también las de la otra: Opciones, «Mostrar misiones de ambas facciones».", "Mostrar en el mapa dónde conseguirla" },
+        itIT = { "Da prendere", "Come prenderla", "Prima la sua catena di missioni: %s", "Mostra le missioni di entrambe le fazioni",
+            "Ti permette di passare l'elenco delle missioni di un'istanza a quelle dell'altra fazione (gli stemmi in cima all'elenco). Disattivato: vedi solo le missioni della tua fazione.",
+            "Le missioni della tua fazione. Per vedere anche quelle dell'altra: Opzioni, «Mostra le missioni di entrambe le fazioni».", "Mostra sulla mappa dove prenderla" },
+        ptBR = { "Pegar", "Como pegá-la", "Primeiro a cadeia de missões: %s", "Mostrar missões das duas facções",
+            "Permite trocar a lista de missões de uma masmorra para as da outra facção (os brasões no topo da lista). Desligado: você só vê as missões da sua facção.",
+            "As missões da sua facção. Para ver também as da outra: Opções, \"Mostrar missões das duas facções\".", "Mostrar no mapa onde pegá-la" },
+        ruRU = { "Взять", "Как взять задание", "Сначала цепочка заданий: %s", "Показывать задания обеих фракций",
+            "Позволяет переключать список заданий подземелья на задания другой фракции (гербы вверху списка). Выкл.: видны только задания вашей фракции.",
+            "Задания вашей фракции. Чтобы видеть и задания другой: Настройки, «Показывать задания обеих фракций».", "Показать на карте, где взять" },
+        koKR = { "수락 가능", "퀘스트 받는 방법", "먼저 연계 퀘스트: %s", "양 진영 퀘스트 보기",
+            "던전 퀘스트 목록을 다른 진영의 퀘스트로 바꿀 수 있습니다(목록 위의 문장). 끄기: 자신의 진영 퀘스트만 보입니다.",
+            "자신의 진영 퀘스트입니다. 다른 진영 퀘스트도 보려면: 설정, \"양 진영 퀘스트 보기\".", "받는 곳을 지도에 표시" },
+        zhCN = { "可以接取", "如何接取", "先完成任务链：%s", "显示两个阵营的任务",
+            "可以将副本的任务列表切换为另一阵营的任务（列表顶部的徽记）。关闭：只显示你所在阵营的任务。",
+            "你所在阵营的任务。要同时查看另一阵营的任务：选项，“显示两个阵营的任务”。", "在地图上显示接取地点" },
+        zhTW = { "可以接取", "如何接取", "先完成任務鏈：%s", "顯示兩個陣營的任務",
+            "可以將副本的任務列表切換為另一陣營的任務（列表頂部的徽記）。關閉：只顯示你所在陣營的任務。",
+            "你所在陣營的任務。要同時查看另一陣營的任務：選項，「顯示兩個陣營的任務」。", "在地圖上顯示接取地點" },
+    }
+    strings.esMX = strings.esES
+    local keys = { "PICK_IT_UP", "PICKUP_HOW", "PICKUP_CHAIN_FIRST", "OPT_BOTH_FACTIONS", "OPT_BOTH_FACTIONS_TIP", "FACTION_LOCKED_TIP", "PICKUP_ON_MAP" }
+    for locale, texts in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for i, key in ipairs(keys) do
+                if t[key] == nil then t[key] = texts[i] end
+            end
+        end
+    end
+end
+-- END questrowtrial
+
+-- BEGIN npcupstairs
+-- upstairs (2.0.8, M 15 Nov 2026): quest NPCs up a flight of stairs inside a
+-- building (Raleigh the Devout: upstairs in the Southshore inn). Once the
+-- arrow shows the NPC's portrait (the NPC is in reach), it says "Go
+-- upstairs" under the yards.
+FDJ.NPC_UPSTAIRS = {
+    ["Raleigh the Devout"] = true,
+}
+do
+    local strings = {
+        enUS = "Go upstairs", deDE = "Geh nach oben", frFR = "Montez à l'étage", esES = "Sube al piso de arriba",
+        itIT = "Sali al piano di sopra", ptBR = "Suba as escadas", ruRU = "Поднимитесь наверх",
+        koKR = "위층으로 올라가세요", zhCN = "上楼", zhTW = "上樓",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ARROW_GO_UP == nil then t.ARROW_GO_UP = text end
+    end
+end
+-- END npcupstairs
+
+-- BEGIN questrp
+-- questrp (2.0.8, M 15 Nov 2026): a quest whose hand-in starts a little scene
+-- before the NPC offers the next quest (Down the Scarlet Path: Raleigh the
+-- Devout breaks the seal on Anton's letter, reads it, speaks, throws it on
+-- the table; then In the Name of the Light). The arrow stays on the NPC and
+-- says "Wait for the RP" until the scene's last line (lines = how many the
+-- NPC says or emotes); the time it took is kept, so the next time it counts
+-- down. The lines: AzerothCore creature_text, NPC 3980 (SOURCES.txt).
+FDJ.QUEST_RP = {
+    [1052] = { npc = 3980, name = "Raleigh the Devout", lines = 3 },
+}
+do
+    local strings = {
+        enUS = { "Wait for the RP", "Wait for the RP (%ds)" },
+        deDE = { "Warte auf die Szene", "Warte auf die Szene (%d s)" },
+        frFR = { "Attendez la fin de la scène", "Attendez la fin de la scène (%d s)" },
+        esES = { "Espera a que termine la escena", "Espera a que termine la escena (%d s)" },
+        itIT = { "Aspetta la fine della scena", "Aspetta la fine della scena (%d s)" },
+        ptBR = { "Aguarde o fim da cena", "Aguarde o fim da cena (%d s)" },
+        ruRU = { "Дождитесь конца сценки", "Дождитесь конца сценки (%d с)" },
+        koKR = { "장면이 끝날 때까지 기다리세요", "장면이 끝날 때까지 기다리세요 (%d초)" },
+        zhCN = { "等待剧情结束", "等待剧情结束（%d秒）" },
+        zhTW = { "等待劇情結束", "等待劇情結束（%d秒）" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.ARROW_RP_WAIT == nil then t.ARROW_RP_WAIT = pair[1] end
+            if t.ARROW_RP_WAIT_TIME == nil then t.ARROW_RP_WAIT_TIME = pair[2] end
+        end
+    end
+end
+-- END questrp
+
 -- BEGIN dalaranquests
 -- Kirin Tor quests from Archmage Lan'dalock in Dalaran (Alterac Mountains),
 -- seen in the game on 2026-11-06. Alliance for now: Dalaran is where the
@@ -3329,13 +3524,36 @@ do
     }
 
     -- Horde
+    -- muggchain (2.0.8, M 15 Nov 2026: his "Eye of Mugg: Horde chain audit",
+    -- a player's report that the list jumped from Encroaching Twilight to
+    -- Clugfist's Decree): the whole way to Clugfist's Decree is listed now.
+    -- Krom'rosh's two first quests, then Tran'gul's two Twilight quests,
+    -- Clubtoe's quests in the Sunnyglade cave (two quests are called The
+    -- Purple Ones: 95417, then 95601), back to Tran'gul, on to Clugfist and
+    -- his two quests. Quests done side by side follow each other in the list
+    -- (every step is needed). Rise Up! stays (a player's report on Wowhead's
+    -- 94968 lists it; the quest databases don't), with the quest that leads
+    -- to it, Rumblings of Discontent, before it.
     local horde = {
+        { id = 93786, name = "A Message in Blood" },
+        { id = 93787, name = "Food for the Taking" },
         { id = 94483, name = "Show Them How It's Done" },
         { id = 94672, name = "Encroaching Twilight" },
+        { id = 94680, name = "Twilight Missives" },
+        { id = 94727, name = "Digging for Answers" },
+        { id = 95417, name = "The Purple Ones" },
+        { id = 95601, name = "The Purple Ones" },
+        { id = 95602, name = "Sickening Lights" },
+        { id = 95427, name = "Twilight No More!" },
+        { id = 95418, name = "Spread the Word" },
+        { id = 95420, name = "Land of Giants" },
+        { id = 95424, name = "Might Makes Right" },
+        { id = 95425, name = "Unworthy Champion" },
         { id = 95428, name = "Clugfist's Decree" },
         { id = 94744, name = "The Wayward Warrior" },
         { id = 94748, name = "Break Their Chains" },
         { id = 94745, name = "Carving a Path" },
+        { id = 95431, name = "Rumblings of Discontent" },
         { id = 95432, name = "Rise Up!" },
         { id = 94768, name = "Bring Me His Head" },
     }
@@ -3394,6 +3612,105 @@ do
     local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
     XP[94877] = 3150; XP[94886] = 380; XP[94888] = 3750; XP[94889] = 3750; XP[94891] = 4050
     XP[94672] = 3300; XP[95428] = 330
+
+    -- muggchain (2.0.8): the steps added to the Horde chain, and what was
+    -- not known about the old ones. Givers, hand-ins, levels and XP: Icy
+    -- Veins Forever and forever-xp.com (they agree); where they stand:
+    -- forever-xp.com.
+    local CLUBTOE = { mapID = M, x = 0.500, y = 0.470, label = "Clubtoe — Sunnyglade cave, Riverglades", targetName = "Clubtoe" }
+    local BRUTE = { mapID = M, x = 0.492, y = 0.467, label = "Twilight Brute — Sunnyglade cave, Riverglades", targetName = "Twilight Brute" }
+    local AT_TRANGUL = "Tran'gul, Rog'mar, Riverglades (59.5, 44.0)"
+    local AT_CLUBTOE = "Clubtoe, in the cave under Sunnyglade, Riverglades (50.0, 47.0; the cave's entrance is near 50, 46)"
+    local AT_BRUTE = "Twilight Brute, in the cave under Sunnyglade, Riverglades (49.2, 46.7)"
+    local AT_CLUGFIST = "Clugfist, Bolder'ok, Riverglades (64.4, 14.8)"
+    local AT_CRAGROG = "Crag'rog, Riverglades (27.4, 37.0)"
+    D[93786] = {
+        level = 36, requires = 35,
+        objective = "Slay 12 Meadowsbrook Farmhands, then return to Krom'rosh with news of your success.",
+        pickup = AT_KROM, turnin = AT_KROM, map = KROM, turninMap = KROM,
+        note = "Done alongside Food for the Taking.",
+    }
+    D[93787] = {
+        level = 36, requires = 36,
+        objective = "Steal 6 Feed Satchels from the Alliance farm in Meadowsbrook then return to Krom'rosh.",
+        pickup = AT_KROM, turnin = AT_KROM, map = KROM, turninMap = KROM,
+        note = "Done alongside A Message in Blood. Krom'rosh offers Show Them How It's Done once this is handed in.",
+    }
+    D[94483].level, D[94483].requires = 39, 36
+    D[94483].pickup, D[94483].turnin = AT_KROM, AT_KROM
+    D[94483].map, D[94483].turninMap = KROM, KROM
+    D[94672].note = "Done alongside Twilight Missives; Tran'gul gives Digging for Answers once both are handed in."
+    D[94680] = {
+        level = 41, requires = 36,
+        objective = "Retrieve 3 Twilight Missives from Twilight Shadowmancers in Sunnyglade for Tran'gul in Rog'mar.",
+        pickup = AT_TRANGUL, turnin = AT_TRANGUL, map = TRANGUL, turninMap = TRANGUL,
+        note = "Done alongside Encroaching Twilight; Tran'gul gives Digging for Answers once both are handed in.",
+    }
+    D[94727] = {
+        level = 40, requires = 36,
+        objective = "Convince a Twilight's Hammer miner in Sunnyglade to divulge their secrets.",
+        pickup = AT_TRANGUL, turnin = AT_CLUBTOE, map = TRANGUL, turninMap = CLUBTOE,
+    }
+    D[95417] = {
+        level = 40, requires = 36,
+        objective = "Find missing ogres in the caves beneath Sunnyglade for Clubtoe.",
+        pickup = AT_CLUBTOE, turnin = AT_BRUTE, map = CLUBTOE, turninMap = BRUTE,
+        note = "The first of two quests called The Purple Ones. Clubtoe gives Sickening Lights at the same time.",
+    }
+    D[95601] = {
+        level = 40, requires = 36,
+        objective = "Kill 5 Empowered Brutes and 10 Twilight Ritualists then return to Clubtoe in Sunnyglade.",
+        pickup = AT_BRUTE, turnin = AT_CLUBTOE, map = BRUTE, turninMap = CLUBTOE,
+        note = "The second of two quests called The Purple Ones. Done alongside Sickening Lights; both are needed for Twilight No More!.",
+    }
+    D[95602] = {
+        level = 40, requires = 36,
+        objective = "Destroy 5 Twilight Ritual Circles found throughout the caves underneath Sunnyglade.",
+        pickup = AT_CLUBTOE, turnin = AT_CLUBTOE, map = CLUBTOE, turninMap = CLUBTOE,
+        note = "Done alongside The Purple Ones; both are needed for Twilight No More!.",
+    }
+    D[95427] = {
+        level = 41, requires = 36,
+        objective = "Kill Chogg'Zac in the Sunnyglade cave and collect their heads for Clubtoe.",
+        pickup = AT_CLUBTOE, turnin = AT_CLUBTOE, map = CLUBTOE, turninMap = CLUBTOE,
+        requiredItems = { {265750, "Chogg's Head", 1, "From Chogg'Zac in the Sunnyglade cave"}, {265751, "Zac's Head", 1, "From Chogg'Zac in the Sunnyglade cave"} },
+        note = "Chogg'Zac is an elite.",
+    }
+    D[95418] = {
+        level = 40, requires = 36,
+        objective = "Deliver the head of Chogg to Tran'gul in Rog'mar.",
+        pickup = AT_CLUBTOE, turnin = AT_TRANGUL, map = CLUBTOE, turninMap = TRANGUL,
+    }
+    D[95420] = {
+        level = 40, requires = 36,
+        objective = "Deliver Chogg's head to the ogre city to the north.",
+        pickup = AT_TRANGUL, turnin = AT_CLUGFIST, map = TRANGUL, turninMap = CLUGFIST,
+    }
+    D[95424] = {
+        level = 41, requires = 36,
+        objective = "Kill 7 Twilight Maulers and 7 Twilight Firecallers for Clugfist in Bolder'ok.",
+        pickup = AT_CLUGFIST, turnin = AT_CLUGFIST, map = CLUGFIST, turninMap = CLUGFIST,
+        note = "Done alongside Unworthy Champion; both are needed for Clugfist's Decree.",
+    }
+    D[95425] = {
+        level = 42, requires = 36,
+        objective = "Collect Skullthumper from Klunk for Clugfist in Bolder'ok.",
+        pickup = AT_CLUGFIST, turnin = AT_CLUGFIST, map = CLUGFIST, turninMap = CLUGFIST,
+        note = "Done alongside Might Makes Right; both are needed for Clugfist's Decree. Skullthumper is reported to drop near 75, 27.",
+    }
+    D[94748].note = "Done alongside Carving a Path; both are needed for Bring Me His Head."
+    D[94745].note = "Done alongside Break Their Chains; both are needed for Bring Me His Head."
+    D[95431] = {
+        level = 41, requires = 38,
+        objective = "Look for the Bolder'ok ogre in the nearby cave.",
+        pickup = AT_DAGROSH, turnin = AT_CRAGROG, map = DAGROSH, turninMap = CRAGROG,
+        note = "Leads to Rise Up!. Not confirmed as needed for Bring Me His Head: a player reports it, the quest databases don't list it.",
+    }
+    D[95432].note = "Comes after Rumblings of Discontent. Not confirmed as needed for Bring Me His Head: a player reports it, the quest databases don't list it."
+    D[95278].providedItem = {268705, "Blood and Battle", 1, "Given by Da'grosh when you accept the quest"}
+    XP[93786] = 2800; XP[93787] = 2800; XP[94680] = 2450; XP[94727] = 320
+    XP[95417] = 320; XP[95601] = 3150; XP[95602] = 3150; XP[95427] = 3300
+    XP[95418] = 320; XP[95420] = 320; XP[95424] = 3300; XP[95425] = 3450; XP[95431] = 330
 end
 -- END kroldokchains2
 -- END kroldokquests
@@ -3896,4 +4213,5 @@ do
     }
 end
 -- END onyxiaattunement
+
 

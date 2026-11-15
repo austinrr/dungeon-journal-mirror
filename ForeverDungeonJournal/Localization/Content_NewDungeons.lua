@@ -1621,14 +1621,28 @@ local UNHOLY = {
     zhCN = { "把大使玛尔金的头颅交给幽暗城的瓦里玛萨斯。", "此任务在剃刀高地外部区域完成。" },
     zhTW = { "把大使瑪爾金的頭顱交給幽暗城的瓦里瑪薩斯。", "此任務在剃刀高地外部區域完成。" },
 }
+-- unholywarn (2.0.8): Razorfen Downs' disclaimer for it, "This quest is done
+-- OUTSIDE Razorfen Downs, do it before entering the dungeon."
+local UNHOLY_WARN = {
+    deDE = "Diese Quest wird AUSSERHALB der Hügel der Klingenhauer erledigt. Erledige sie, bevor du den Dungeon betrittst.",
+    frFR = "Cette quête se fait À L’EXTÉRIEUR de Souilles de Tranchebauge : faites-la avant d’entrer dans le donjon.",
+    esES = "Esta misión se hace FUERA de Zahúrda Rajacieno: hazla antes de entrar en la mazmorra.",
+    itIT = "Questa missione si fa FUORI da Razorfen Downs: falla prima di entrare nella spedizione.",
+    ptBR = "Esta missão é feita FORA de Urzal dos Mortos: faça-a antes de entrar na masmorra.",
+    ruRU = "Это задание выполняется СНАРУЖИ Курганов Иглошкурых: выполните его до входа в подземелье.",
+    koKR = "이 퀘스트는 가시덩굴 구릉 바깥에서 진행합니다. 던전에 들어가기 전에 완료하세요.",
+    zhCN = "此任务在剃刀高地外部完成，请在进入地下城之前完成。",
+    zhTW = "此任務在剃刀高地外部完成，請在進入地城之前完成。",
+}
 for lang, data in pairs(UNHOLY) do
     local content = FDJ.ContentLocales[lang]
     if content then
         content.quests = content.quests or {}
         content.places = content.places or {}
         local part1 = content.quests[6522]
-        content.quests[6521] = { name = part1 and part1.name, objective = data[1] }
+        content.quests[6521] = { name = part1 and part1.name, objective = data[1], warning = UNHOLY_WARN[lang] }
         content.places["This quest is completed in the area OUTSIDE Razorfen Downs."] = data[2]
+        content.places["This quest is done OUTSIDE Razorfen Downs, do it before entering the dungeon."] = UNHOLY_WARN[lang]
     end
 end
 

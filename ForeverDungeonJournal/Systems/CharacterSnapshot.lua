@@ -119,7 +119,8 @@ function FDJ.BuildCharacterSnapshot()
                     if lost then out.lost[#out.lost+1]=q.id end
                     if inLog then out.inLog[#out.inLog+1]=q.id end
                 end
-                if (not FDJ.QuestMatchesFaction or FDJ.QuestMatchesFaction(q,faction)) and not q.hideFromMainList and not q.repeatable then
+                if (not FDJ.QuestMatchesFaction or FDJ.QuestMatchesFaction(q,faction)) and not q.hideFromMainList and not q.repeatable
+                    and (not FDJ.QuestCountsForCharacter or FDJ.QuestCountsForCharacter(q)) then -- otherclass (2.0.8)
                     row.quests[#row.quests+1]={id=q.id,name=q.name or '?',done=not not done,lost=not not lost,inLog=not not inLog,
                         locked=out.rpg and FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(name,q) or false}
                     if not lost then row.total=row.total+1; if done then row.done=row.done+1 end end

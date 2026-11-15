@@ -62,9 +62,11 @@ local function AllQuestsDone(dungeon)
     for _, quest in ipairs(dungeon.quests or {}) do
         local forFaction = quest.faction == nil or quest.faction == "Both"
             or quest.faction == "Neutral" or quest.faction == faction
-        local forClass = not quest.classOnly or Store().showAllClassQuests
+        -- otherclass (2.0.8): another class's quest (or a profession the
+        -- character doesn't have) never counts, "Show all ..." on or not
+        local forClass = not quest.classOnly
             or (class and tostring(quest.classOnly):upper() == class)
-        local forProfession = not quest.profession or Store().showAllProfessionQuests
+        local forProfession = not quest.profession
             or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(quest.profession)
         if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id
             and not (FDJ.IsQuestLost and FDJ.IsQuestLost(quest)) then -- a lost quest doesn't count
@@ -212,6 +214,9 @@ local OPTIONS = {
         set = function(on) Store().hideDoneTick = on or nil end,
         refreshHome = true,
     },
+    -- questspage (2.0.8, M 15 Nov 2026): the quest options on a page of
+    -- their own, after the Dungeon list (moved from it, unchanged).
+    { header = "QUESTS" },
     {
         label = "OPT_SHOW_ALL_CLASS",
         tip = "OPT_SHOW_ALL_CLASS_TIP",
@@ -231,6 +236,29 @@ local OPTIONS = {
             if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
         end,
         refreshHome = true,
+    },
+    {
+        -- questrowtrial (2.0.8): off: a dungeon's quest list shows the
+        -- character's faction only, its crest locked at the top (every
+        -- dungeon: FDJ.QUESTROW_ALL).
+        label = "OPT_BOTH_FACTIONS",
+        tip = "OPT_BOTH_FACTIONS_TIP",
+        get = function() return Store().showBothFactions == true end,
+        set = function(on)
+            Store().showBothFactions = on or nil
+            if FDJ.RefreshQuestFactionLock then pcall(FDJ.RefreshQuestFactionLock) end
+        end,
+    },
+    {
+        -- chainglowoff (2.0.8, M 15 Nov 2026): no golden glow on a quest
+        -- whose chain is done ("Pick it up" stays). Off by default.
+        label = "OPT_HIDE_CHAIN_GLOW",
+        tip = "OPT_HIDE_CHAIN_GLOW_TIP",
+        get = function() return Store().hideChainGlow == true end,
+        set = function(on)
+            Store().hideChainGlow = on or nil
+            if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+        end,
     },
     -- The on-screen dungeon tracker (Systems/RunLogUI.lua).
     { header = "OPT_TRACKER" },

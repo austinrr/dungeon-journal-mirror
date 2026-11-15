@@ -61,6 +61,8 @@ end
 local function CreatePooled(displayID, list)
     local tex = Staging():CreateTexture(nil, "ARTWORK")
     Park(tex)
+    -- loginlag (2.0.8): counted, so the login warm-up can pace itself
+    FDJ.portraitRenders = (FDJ.portraitRenders or 0) + 1
     local ok = pcall(SetPortraitTextureFromCreatureDisplayID, tex, displayID)
     local shown = ok and tex:GetTexture() or nil
     if shown == nil or shown == 0 or shown == "" then
@@ -78,6 +80,9 @@ end
 -- so the next place that needs it gets it at once instead of waiting for a
 -- fresh copy to load.
 local function EnsureSpare(displayID, list)
+    -- loginlag (2.0.8): the login warm-up renders each portrait once, no spare
+    -- (a page that shows it later makes its spare then)
+    if FDJ.portraitNoSpare then return end
     for _, candidate in ipairs(list) do
         if not candidate.fdjHost then return end
     end

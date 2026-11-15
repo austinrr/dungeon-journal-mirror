@@ -21,7 +21,14 @@ FDJ.SCARLET_WING_SUBZONES = {
     ["chapel gardens"] = CATHEDRAL, ["crusader's chapel"] = CATHEDRAL,
 }
 
-local DOOR_RADIUS = 0.006 -- map-coordinate distance treated as "the same door"
+-- smwing (2.0.8, M 15 Nov 2026: walked into the Cathedral, the journal said
+-- Graveyard): the four portals stand side by side in the Grand Vestibule,
+-- left to right Graveyard, Cathedral, Armory, Library (Warcraft Tavern),
+-- about 0.007 of the Tirisfal map apart (the Graveyard and Library doors
+-- below are 0.021 apart). A door is "the same door" within a third of that,
+-- so the Cathedral's no longer counts as the Graveyard's (it did: 0.006 and
+-- 0.009 reached the next portal).
+local DOOR_RADIUS = 0.0025 -- map-coordinate distance treated as "the same door"
 
 -- Built-in door positions on the Tirisfal Glades map (1420), used until the
 -- player's own picks have taught the addon better. Both were measured
@@ -30,7 +37,7 @@ local KNOWN_DOORS = {
     { map = 1420, x = 0.8535, y = 0.3239, wing = LIBRARY },
     { map = 1420, x = 0.8480, y = 0.3037, wing = GRAVEYARD },
 }
-local KNOWN_DOOR_RADIUS = 0.009 -- half the gap between those two doors
+local KNOWN_DOOR_RADIUS = 0.0025 -- (smwing: was 0.009, half the gap between those two doors, so it took in the Cathedral's and Armory's)
 
 local function NearestKnownDoor(entry)
     if type(entry) ~= "table" then return nil end
@@ -218,8 +225,10 @@ function FDJ.ResolveScarletWing()
     local door = NearestDoor(visit.entry)
     if door and door.wing then return door.wing, "entrance used", true end
 
+    -- smwing: the built-in door positions are a guess for the map, not
+    -- proof: the tracker waits for the room name or a kill
     door = NearestKnownDoor(visit.entry)
-    if door then return door.wing, "known entrance", true end
+    if door then return door.wing, "known entrance", false end
 
     local db = Store()
     return db.scarletLastPick or GRAVEYARD, "last choice", false
@@ -236,6 +245,65 @@ function FDJ.SetScarletWing(wing)
     LearnDoor(visit.entry, wing)
     if FDJ.RefreshWorldMapOverlay then pcall(FDJ.RefreshWorldMapOverlay) end
     return true
+end
+
+-- smmaps (2.0.8, M 15 Nov 2026: "use the same detector that we use for the
+-- tracker... once the tracker knows we are in armory or library, it opens
+-- the map for that dungeon"): the tracker found the wing (a kill of a mob or
+-- boss only that wing has): this visit is that wing, as if picked, and the
+-- big map shows it. Only when the tracker's wing changes (a wing picked on
+-- the map to look at stays until the next one).
+-- guess (smwing, 2.0.8): only the likeliest of the wings a shared mob
+-- leaves (a Scarlet Myrmidon: Cathedral or Armory): shown, but not taught
+-- to the door.
+function FDJ.TrackerScarletWing(wing, guess)
+    local known = false
+    for _, w in ipairs(FDJ.SCARLET_WINGS) do if w == wing then known = true end end
+    if not known or not FDJ.InScarletMonastery() then return false end
+    local visit = Visit()
+    if visit.trackerWing == wing then
+        -- the likeliest wing, now proved by a mob only it has: teach the door
+        if visit.trackerGuess and not guess then
+            visit.trackerGuess = nil
+            LearnDoor(visit.entry, wing)
+        end
+        return false
+    end
+    visit.trackerWing, visit.trackerGuess = wing, guess and true or nil
+    visit.view = nil
+    if visit.wing ~= wing then
+        visit.wing = wing
+        if not guess then LearnDoor(visit.entry, wing) end
+    end
+    if FDJ.RefreshWorldMapOverlay then pcall(FDJ.RefreshWorldMapOverlay) end
+    return true
+end
+
+-- smmaps: the wing buttons on the big map. They always switch the map to
+-- that wing (before, the room name the game gives won, and the buttons did
+-- nothing: M couldn't switch to Graveyard or Library from the Armory). When
+-- the game can't tell the wings apart, the click also says which wing this
+-- is, as it always did; when it can, it only shows the other wing's map.
+function FDJ.PickScarletMapWing(wing)
+    local known = false
+    for _, w in ipairs(FDJ.SCARLET_WINGS) do if w == wing then known = true end end
+    if not known then return false end
+    local _, how = FDJ.ResolveScarletWing()
+    local fromGame = how == "map id" or how == "map name" or how == "room name"
+    local visit = Visit()
+    if fromGame then
+        visit.view = wing
+        if FDJ.RefreshWorldMapOverlay then pcall(FDJ.RefreshWorldMapOverlay) end
+        return true
+    end
+    visit.view = nil
+    return FDJ.SetScarletWing(wing)
+end
+-- The wing the big map shows when it isn't where the player is (picked
+-- with a wing button), else nil.
+function FDJ.ScarletMapView()
+    if not FDJ.InScarletMonastery() then return nil end
+    return Visit().view
 end
 
 function FDJ.ScarletWingFromWord(word)

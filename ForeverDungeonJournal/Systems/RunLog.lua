@@ -635,6 +635,9 @@ SetKillTimes = function(run, kill)
     if not run.firstKill then run.firstKill = kill.t end
     if not kill.b and not kill.wb and not kill.p and not run.firstTrash then run.firstTrash = kill.t end
     if kill.b and not kill.r then run.lastBoss = kill.t end
+    -- runlogkills (2.0.7): RPG Mode counts the same boss (Systems/RPGMode.lua):
+    -- the tracker knows it by its encounter ID where RPG Mode saw no name.
+    if kill.b and not run.test and FDJ.RPGRunLogBoss then pcall(FDJ.RPGRunLogBoss, run.dungeon, kill.b, kill.n) end
     if kill.b and not run.completed and AllBossesDown(run, kill) then
         run.completed = true
         run.finalKill = kill.t
@@ -976,6 +979,44 @@ local function WingFor(npc, name)
     return found
 end
 
+-- smwing (2.0.8): a mob two wings share (FDJ.RunLogSharedWings: a Scarlet
+-- Myrmidon is in the Armory or the Cathedral) rules the other wings out for
+-- this visit. When the wing the tracker says is ruled out, it returns the
+-- one to say now (the only one left, else the likeliest), and whether it
+-- is the only one. Never once a mob only one wing has has told the wing.
+local function SharedWing(npc, name)
+    local list = FDJ.RunLogSharedWings and FDJ.RunLogSharedWings[insideMap]
+    if not list then return nil end
+    local wings = npc and list[npc]
+    if not wings and Lower(name) then
+        for id, w in pairs(list) do
+            local english = FDJ.RunLogSharedTrash and FDJ.RunLogSharedTrash[insideMap] and FDJ.RunLogSharedTrash[insideMap][id]
+            if Lower(name) == Lower(english) or Lower(name) == Lower(NameOfNpc(id)) then wings = w break end
+        end
+    end
+    if not wings then return nil end
+    -- (kept with this visit's other evidence: unitEvidence is new each visit)
+    local left = unitEvidence.wingsLeft
+    if not left then
+        left = {}
+        for _, w in ipairs((FDJ.RunLogWingGroups or {})[insideMap] or {}) do left[w] = true end
+        unitEvidence.wingsLeft = left
+    end
+    local here = {}
+    for _, w in ipairs(wings) do here[w] = true end
+    for w in pairs(left) do if not here[w] then left[w] = nil end end
+    if current and current.wingConfirmed then return nil end
+    local now = (current and current.dungeon) or insideDungeon
+    if now and left[now] then return nil end
+    local count, pick = 0, nil
+    for w in pairs(left) do count = count + 1 end
+    for _, w in ipairs(wings) do
+        if left[w] then pick = w break end
+    end
+    if not pick then return nil end
+    return pick, count == 1
+end
+
 local function ApplyWing(wing, confirmed)
     if not wing then return end
     -- A positive kill in another wing begins its own log, even when both
@@ -992,6 +1033,8 @@ local function ApplyWing(wing, confirmed)
         recent = {}
     end
     insideDungeon = wing
+    -- smmaps (2.0.8): a Scarlet wing told by a kill: the big map shows it
+    if confirmed and FDJ.TrackerScarletWing then pcall(FDJ.TrackerScarletWing, wing) end
     if current then
         if current.dungeon ~= wing then
             current.dungeon = wing
@@ -1148,6 +1191,14 @@ local function AddKill(guid, name, how)
     local wing = WingFor(npc, name)
     if how == "corpse" and wing and current.dungeon ~= wing then return nil end
     ApplyWing(wing, true)
+    if not wing and how ~= "corpse" then
+        -- smwing (2.0.8): a shared mob that rules the tracker's wing out
+        local shared, only = SharedWing(npc, name)
+        if shared then
+            ApplyWing(shared, false)
+            if FDJ.TrackerScarletWing then pcall(FDJ.TrackerScarletWing, shared, not only) end
+        end
+    end
     if not EnsureRun() then return nil end
     if zone then CheckZone(zone, map) end
     local run = current

@@ -253,7 +253,11 @@ local TWO_HAND = {
     Sword = { WARRIOR = 1, PALADIN = 1, HUNTER = 1 },
     Mace = { WARRIOR = 1, PALADIN = 1, SHAMAN = 1, DRUID = 1 },
     Staff = { WARRIOR = 1, HUNTER = 1, PRIEST = 1, SHAMAN = 1, MAGE = 1, WARLOCK = 1, DRUID = 1 },
-    Polearm = { WARRIOR = 1, PALADIN = 1, HUNTER = 1 },
+    -- druidpolearm (2.0.8): WoW Forever lets Druids train Polearms (their
+    -- skill window lists it); without them here, "Only show loot my class can
+    -- use" greyed out every polearm for a Druid (Felbough Arm; reported on
+    -- Discord by swisp).
+    Polearm = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, DRUID = 1 },
 }
 local RANGED = {
     Bow = { WARRIOR = 1, HUNTER = 1, ROGUE = 1 },
@@ -350,6 +354,17 @@ end
 
 local scanTip
 local textCache = {}
+-- equipdim (2.0.8): a tooltip read before the server has sent the item says
+-- only "Retrieving item information", but other addons still add their own
+-- lines to it (Vendor price, Item Level, "New in Forever"...), so it passed
+-- the two-line check below and was kept for the whole session: the item
+-- stayed greyed out even after its stats came in (Slitherwrap Girdle, +9
+-- Agility; reported on Discord by swisp). Such a read is never kept now, and
+-- whatever was read about an item is read again once its data arrives.
+local function PendingLine(text)
+    if text == RETRIEVING_ITEM_INFO or text == RETRIEVING_DATA then return true end
+    return string.lower(text):find("retrieving item information", 1, true) ~= nil
+end
 local function TooltipText(itemID, cacheOnly)
     if textCache[itemID] then return textCache[itemID] end
     if cacheOnly then return nil end
@@ -371,6 +386,7 @@ local function TooltipText(itemID, cacheOnly)
         local line = _G["ForeverDungeonJournalScanTooltipTextLeft" .. i]
         local text = line and line.GetText and line:GetText()
         if type(text) == "string" and text ~= "" then
+            if PendingLine(text) then return nil end -- equipdim: not loaded yet
             -- Stop at the item-set block ("Rotmender's Raiment (0/5)"): set
             -- bonuses are not stats of this item.
             if text:find("%(%d+/%d+%)%s*$") then break end
@@ -469,6 +485,31 @@ local STAT_FROM_GAME = {
     MP5 = function(s) return StatSum(s, "MANA_REGEN", "POWER_REGEN0") > 0 end,
     HP5 = function(s) return StatSum(s, "HEALTH_REGEN") > 0 end,
 }
+-- equipdim (2.0.8): the five primary stats are also checked against the
+-- game's own item stats, on every client (English too), so an item whose
+-- tooltip came back without its stat lines is not greyed out for that alone.
+local function GameStat(key) return function(s) return (s[key] or 0) > 0 end end
+local PRIMARY_FROM_GAME = {
+    STR = GameStat("ITEM_MOD_STRENGTH_SHORT"),
+    AGI = GameStat("ITEM_MOD_AGILITY_SHORT"),
+    STA = GameStat("ITEM_MOD_STAMINA_SHORT"),
+    INT = GameStat("ITEM_MOD_INTELLECT_SHORT"),
+    SPI = GameStat("ITEM_MOD_SPIRIT_SHORT"),
+}
+-- equipdim: drop what was read about an item before its data came in.
+local arrivalWatcher = CreateFrame and CreateFrame("Frame")
+if arrivalWatcher then
+    for _, event in ipairs({ "GET_ITEM_INFO_RECEIVED", "ITEM_DATA_LOAD_RESULT" }) do
+        pcall(arrivalWatcher.RegisterEvent, arrivalWatcher, event)
+    end
+    arrivalWatcher:SetScript("OnEvent", function(_, _, itemID)
+        itemID = tonumber(itemID)
+        if itemID then
+            textCache[itemID] = nil
+            statCache[itemID] = nil
+        end
+    end)
+end
 
 -- kroldok: an item whose ID is not known yet is matched on the stats the
 -- game showed for it (its tip lines in the data).
@@ -502,13 +543,20 @@ local function HasAnyStat(item, wanted, matchAll)
     local schools = Settings().schools
     schoolsWanted = (schools and next(schools)) and schools or nil
     -- statsapi: the game's own stats, on a client in another language.
-    local gameStats = (id and id > 0 and not EnglishClient()) and ClientStats(id) or nil
+    -- equipdim: the primary stats on every client (read only when needed).
+    local english = EnglishClient()
+    local gameStats, askedGame
     local found = false
     for _, stat in ipairs(STATS) do
         if wanted[stat.key] then
             local has = StatInText(stat, text)
-            if not has and gameStats and STAT_FROM_GAME[stat.key] then
-                has = STAT_FROM_GAME[stat.key](gameStats)
+            local fromGame = PRIMARY_FROM_GAME[stat.key] or (not english and STAT_FROM_GAME[stat.key]) or nil
+            if not has and fromGame and id and id > 0 then
+                if not askedGame then
+                    askedGame = true
+                    gameStats = ClientStats(id)
+                end
+                if gameStats then has = fromGame(gameStats) end
             end
             if has then
                 if not matchAll then return true end
@@ -835,6 +883,17 @@ function FDJ.FilterBossLootForPage(boss)
     end
     if #shown == #boss.loot and not FDJ.lootRecipeSplit then return boss end
     return setmetatable({ loot = shown }, { __index = boss })
+end
+
+-- lootchildren (2.0.8): would the filter rule this item out? (an item shown
+-- under the half that makes it: Sul'thraze the Lasher). Leaves the page's
+-- hidden count as it was.
+function FDJ.LootFilterRulesOut(item)
+    if type(item) ~= "table" or IsRecipe(item) then return false end
+    local hidden = FDJ.lootFilterHidden
+    local ok, out = pcall(FDJ.FilterBossLoot, { loot = { item } })
+    FDJ.lootFilterHidden = hidden
+    return (ok and type(out) == "table" and type(out.loot) == "table" and #out.loot == 0) and true or false
 end
 
 function FDJ.UpdateLootFilterNote(frame)

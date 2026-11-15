@@ -184,6 +184,19 @@ FDJ.QUEST_PREREQ_CHAINS = {
 
     -- Dungeons added in 1.6.5.
 
+    -- brotherinneed (2.0.8): Scarlet Monastery: Cathedral, Alliance Paladins.
+    [79946] = {
+        { id = 78088, name = "A Strange Artifact" },
+        { id = 78089, name = "Advice From Stormwind" },
+        { id = 78090, name = "A Second Opinion" },
+        { id = 78091, name = "Earning Your Salt" },
+        { id = 78092, name = "It Must Be Destroyed" },
+        { id = 78093, name = "Return to Delgren" },
+        { id = 96438, name = "Battle at the Mannoroc Coven" },
+        { id = 79939, name = "The Broken Hammer" },
+        { id = 79940, name = "A Lost Brother" },
+        { id = 79945, name = "Orders from the Grand Crusader" },
+    },
     [1053] = {
         { id = 261, name = "Down the Scarlet Path" },
         { id = 1052, name = "Down the Scarlet Path" },
@@ -601,6 +614,43 @@ FDJ.QUEST_PREREQ_DETAILS = {
         },
     },
 
+    -- brotherinneed (2.0.8): M's audit, 15 Nov 2026. Places as players give them.
+    [78088] = { objective = "Loot the Strange Orb on top of the Tower of Althalaxx in Darkshore and bring it to Delgren the Purifier in Ashenvale.",
+        pickup = "Strange Orb, top of the Tower of Althalaxx, Darkshore", turnin = "Delgren the Purifier, Maestra's Post, Ashenvale",
+        startObject = {"Strange Orb", "Interface\\Icons\\INV_Misc_Orb_05", "On top of the Tower of Althalaxx, Darkshore (about 56.2, 26.4)"},
+        map = { mapID = 1439, x = 0.562, y = 0.264, label = "Strange Orb — Tower of Althalaxx, Darkshore", detail = "On top of the tower" },
+        turninMap = { mapID = 1440, x = 0.262, y = 0.387, label = "Delgren the Purifier — Ashenvale", targetName = "Delgren the Purifier" } },
+    [78089] = { objective = "Speak with Katherine the Pure in the Cathedral of Light in Stormwind.",
+        pickup = "Delgren the Purifier, Ashenvale", turnin = "Katherine the Pure, Cathedral of Light, Stormwind",
+        map = { mapID = 1440, x = 0.262, y = 0.387, label = "Delgren the Purifier — Ashenvale", targetName = "Delgren the Purifier" },
+        turninMap = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
+    [78090] = { objective = "Speak with Ursula Deline in the Mage Quarter of Stormwind.",
+        pickup = "Katherine the Pure, Cathedral of Light, Stormwind", turnin = "Ursula Deline, Mage Quarter, Stormwind",
+        map = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
+    [78091] = { objective = "Collect 14 Summoner's Salt from the Blackrock orcs in Redridge Mountains and return to Ursula Deline.",
+        pickup = "Ursula Deline, Mage Quarter, Stormwind", turnin = "Ursula Deline, Mage Quarter, Stormwind" },
+    [78092] = { objective = "Collect 12 Motes of Mannoroth from the demons in Demon Fall Canyon, Ashenvale, then use the Spear of Mannoroth there to destroy the orb.",
+        pickup = "Ursula Deline, Mage Quarter, Stormwind", turnin = "Spear of Mannoroth, Demon Fall Canyon, Ashenvale",
+        objectiveMap = { mapID = 1440, x = 0.890, y = 0.770, label = "Spear of Mannoroth — Demon Fall Canyon, Ashenvale" } },
+    [78093] = { objective = "Bring the Orb Fragments to Delgren the Purifier in Ashenvale. Reward: Cloak of the Divine Storm.",
+        pickup = "Shattered Orb, Demon Fall Canyon, Ashenvale", turnin = "Delgren the Purifier, Ashenvale",
+        map = { mapID = 1440, x = 0.890, y = 0.770, label = "Shattered Orb — Demon Fall Canyon, Ashenvale" },
+        turninMap = { mapID = 1440, x = 0.262, y = 0.387, label = "Delgren the Purifier — Ashenvale", targetName = "Delgren the Purifier" } },
+    [96438] = { requires = 35, objective = "Investigate the Broken Warhammer at the Mannoroc Coven in Desolace.",
+        pickup = "Katherine the Pure, Cathedral of Light, Stormwind", turnin = "Broken Warhammer, Mannoroc Coven, Desolace",
+        map = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" },
+        turninMap = { mapID = 1443, x = 0.527, y = 0.848, label = "Broken Warhammer — Mannoroc Coven, Desolace" } },
+    [79939] = { requires = 35, objective = "Find the Torn Letter (a player reports it from a Burning Blade Summoner) and return to Katherine the Pure.",
+        pickup = "Broken Warhammer, Mannoroc Coven, Desolace", turnin = "Katherine the Pure, Cathedral of Light, Stormwind",
+        map = { mapID = 1443, x = 0.527, y = 0.848, label = "Broken Warhammer — Mannoroc Coven, Desolace" },
+        turninMap = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
+    [79940] = { requires = 35, objective = "Listen to Katherine the Pure about the hammer and Aeonas.",
+        pickup = "Katherine the Pure, Cathedral of Light, Stormwind", turnin = "Katherine the Pure, Cathedral of Light, Stormwind",
+        map = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
+    [79945] = { requires = 35, objective = "Players report: speak to the fishing trainer by the docks of Menethil Harbor, take the small boat south of the docks to Aeonas's hut on the coast, inspect the fallen Scarlet Crusader, defeat the level 40 elite assassin and loot the orders. Use them and return to Katherine the Pure.",
+        pickup = "Orders, looted from the assassin at Aeonas's hut, Wetlands coast", turnin = "Katherine the Pure, Cathedral of Light, Stormwind",
+        turninMap = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
+
     -- Pre-quests for the dungeons added in 1.6.5.
 
     [261] = {
@@ -609,6 +659,8 @@ FDJ.QUEST_PREREQ_DETAILS = {
         pickup = "Brother Anton, Desolace",
         turnin = "Brother Anton, Desolace",
         map = { mapID = 1443, x = 0.664, y = 0.078, label = "Brother Anton — Desolace", targetName = "Brother Anton" },
+        -- stepgoal (2.0.8): where it is done, until it is done
+        objectiveMap = { mapID = 1443, x = 0.640, y = 0.820, label = "Undead Ravagers — Valley of Bones, Desolace", detail = "Through the arch with the red banners, south of the centaur village with the ponds" },
     },
     [1052] = {
         level = 40, requires = 34,
@@ -1905,7 +1957,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         map = { mapID = 1437, x = 0.080, y = 0.550, label = "James Halloran — Menethil Harbor", detail = "Start Young Crocolisk Skins here" },
     },
 
-    [95663] = { level = 31, requires = 24, objective = "Travel to the Wetlands and meet the Deathstalker Agent in the hills above the Dragonmaw camp.", pickup = "Zaruk, Hammerfall, Arathi Highlands", turnin = "Deathstalker Agent, hills above the Dragonmaw camp, Wetlands", description = "Required before Open the Maw.", map = { mapID = 1417, x = 0.740, y = 0.360, label = "Zaruk — Hammerfall", detail = "Start Dragonmaw Rumors here" } },
+    [95663] = { level = 31, requires = 24, objective = "Travel to the Wetlands and meet the Deathstalker Agent in the hills above the Dragonmaw camp.", pickup = "Zaruk, Hammerfall, Arathi Highlands", turnin = "Deathstalker Agent, hills above the Dragonmaw camp, Wetlands", description = "Required before Open the Maw.", map = { mapID = 1417, x = 0.7454, y = 0.3563, label = "Zaruk — Hammerfall", detail = "Start Dragonmaw Rumors here" } },
     [95647] = { level = 31, requires = 24, objective = "Find Ardin Grassman in the Excavation Sites. Learn what happened to Ardin Grassman.", pickup = "Caitlin Grassman, Menethil Harbor, Wetlands", turnin = "Ardin Grassman, inside Excavation Site: Wetlands", description = "Required before Heartwoven.", map = { mapID = 1437, x = 0.119, y = 0.588, label = "Caitlin Grassman — Menethil Harbor", detail = "Start Lost in the Thicket Things here" } },
 
 

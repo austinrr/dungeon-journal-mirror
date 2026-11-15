@@ -149,6 +149,8 @@ FDJ.BOSS_LEVELS = {
         ["Lord Alexei Barov"] = "60",
         ["Lady Illucia Barov"] = "60",
         ["Darkmaster Gandling"] = "61",
+        ["Death Knight Darkreaver"] = "62", -- darkreaver (2.0.8): Wowhead Forever, elite
+        ["Kormok"] = "60", -- kormok (2.0.8): Wowhead Forever, elite
     },
     ["Maraudon"] = {
         ["Noxxion"] = "48",
@@ -193,6 +195,7 @@ FDJ.BOSS_LEVELS = {
         ["Timmy the Cruel"] = "58",
         ["Malor the Zealous"] = "60",
         ["Postmaster Malown"] = "60",
+        ["Ezra Grimm"] = "61", -- ezragrimm (2.0.8): Wowhead Forever
         ["Cannon Master Willey"] = "60",
         ["Archivist Galford"] = "60",
         ["Balnazzar"] = "62",
@@ -618,6 +621,9 @@ FDJ.STATIC_DISPLAY_IDS = {
     [10504] = 11072,  -- Lord Alexei Barov
     [10502] = 11835,  -- Lady Illucia Barov
     [1853] = 11070,  -- Darkmaster Gandling
+    [14516] = 14591,  -- Death Knight Darkreaver (darkreaver 2.0.8: Wowhead Forever NPC page)
+    [16118] = 16020,  -- Kormok (kormok 2.0.8: Wowhead Forever NPC page)
+    [11058] = 10475,  -- Ezra Grimm (ezragrimm 2.0.8: Wowhead Forever NPC page)
 
     -- Maraudon
     [13282] = 11172,  -- Noxxion
@@ -780,6 +786,20 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Spirestone Mystic"] = 11579, -- npc 9198
     -- ubrsrecipes (2.0.7): Upper Blackrock Spire
     ["Blackhand Elite"] = 9734, -- npc 10317
+    -- lootaudit (2.0.8, M 15 Nov 2026): the new loot rows' mobs, their
+    -- displays from Wowhead Forever's NPC pages
+    ["Goblin Shipbuilder"] = 7112, -- npc 3947
+    ["Razorfen Spearhide"] = 6078, -- npc 4438
+    ["Wildspawn Rogue"] = 2021, -- npc 11452
+    ["Wildspawn Betrayer"] = 10032, -- npc 11454
+    ["Scarlet Soldier"] = 2522, -- npc 4286
+    ["Scarlet Gallant"] = 2463, -- npc 4287
+    ["Scarlet Beastmaster"] = 2497, -- npc 4288
+    ["Scarlet Guardsman"] = 2511, -- npc 4290
+    ["Scarlet Protector"] = 2476, -- npc 4292
+    ["Scarlet Chaplain"] = 2501, -- npc 4299
+    ["Scarlet Monk"] = 2603, -- npc 4540
+    ["Arcanist Doan"] = 5266, -- npc 6487
 }
 
 -- trashnpc (2.0.22): trash mobs whose look is not known yet, by NPC ID
@@ -852,4 +872,8 @@ FDJ.TRASH_MOB_NPC_IDS = {
     ["Thicket Lurker"] = 260800,
     ["Young Riptooth"] = 260799,
     ["Highland Snapper"] = 260810,
+    -- lootaudit2 (2.0.8): their looks found in the game by NPC ID (Wowhead
+    -- Forever was asking for a human check, so no display IDs this time)
+    ["Krol'dok Brute"] = 258687,
+    ["Scarlet Diviner"] = 4291,
 }
