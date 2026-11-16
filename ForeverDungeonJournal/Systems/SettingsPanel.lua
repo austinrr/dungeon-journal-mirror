@@ -77,9 +77,30 @@ local function AllQuestsDone(dungeon)
     return count > 0
 end
 
-function FDJ.IsDungeonAutoHidden(dungeonName)
+-- "29-38" -> 29, 38; "55+" -> 55, nil
+local function DungeonLevelRange(dungeon)
+    local text = dungeon and dungeon.level
+    if type(text) ~= "string" then return nil end
+    local low, top
+    for number in text:gmatch("%d+") do
+        if not low then low = tonumber(number) else top = tonumber(number) end
+    end
+    return low, top
+end
+
+-- devlevel (dev, not in the release; M 16 Nov 2026): /dj level 1-60 shows
+-- the dungeon list as a character of that level sees it.
+local function ListLevel()
+    return FDJ.devLevel or PlayerLevel()
+end
+
+FDJ.DungeonLevelRange = DungeonLevelRange
+FDJ.ListLevel = ListLevel
+
+-- ignoreLevelRange (levelempty, 2.0.9): as if "Show only my level range" were off
+function FDJ.IsDungeonAutoHidden(dungeonName, ignoreLevelRange)
     local db = Store()
-    if not db.autoHideOutleveled and not db.autoHideQuestsDone then return false end
+    if not db.autoHideOutleveled and not db.autoHideQuestsDone and not db.onlyMyLevelRange then return false end
     local dungeon = FDJ.DB and FDJ.DB[dungeonName]
     if not dungeon then return false end
 
@@ -90,8 +111,17 @@ function FDJ.IsDungeonAutoHidden(dungeonName)
     end
 
     if db.autoHideOutleveled then
-        local level, top = PlayerLevel(), MaxDungeonLevel(dungeon)
+        local level, top = ListLevel(), MaxDungeonLevel(dungeon)
         if level and top and level > top then return true end
+    end
+    -- levelrange (2.0.9, M 16 Nov 2026: "players can choose to show only
+    -- dungeons in their range level"): only those whose level range (the
+    -- Looking For Group panel's) has the character's level in it. Off by
+    -- default. A dungeon with no range given always shows.
+    if db.onlyMyLevelRange and not ignoreLevelRange then
+        local level = ListLevel()
+        local low, top = DungeonLevelRange(dungeon)
+        if level and low and (level < low or (top and level > top)) then return true end
     end
     if db.autoHideQuestsDone then
         local ok, done = pcall(AllQuestsDone, dungeon)
@@ -191,6 +221,14 @@ local OPTIONS = {
         tip = "OPT_FOREVER_ONLY_TIP",
         get = function() return FDJ.IsForeverOnly and FDJ.IsForeverOnly() or false end,
         set = function(on) if FDJ.SetForeverOnly then FDJ.SetForeverOnly(on) end end,
+        refreshHome = true,
+    },
+    {
+        -- levelrange (2.0.9): the game's "Show All Level Ranges" turned round
+        label = "OPT_MY_LEVEL_RANGE",
+        tip = "OPT_MY_LEVEL_RANGE_TIP",
+        get = function() return Store().onlyMyLevelRange == true end,
+        set = function(on) Store().onlyMyLevelRange = on or nil end,
         refreshHome = true,
     },
     {

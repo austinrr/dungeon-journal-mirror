@@ -55,7 +55,10 @@ local entrances = {
         markerType = "dungeon",
     },
     ["Scarlet Monastery: Library"] = {
-        mapID = 1420, x = 0.826, y = 0.338,
+        -- smlibrary (2.0.16): the Library's own door inside the Monastery
+        -- (measured in the game: Systems/ScarletWing.lua), where its route's
+        -- walked way ends.
+        mapID = 1420, x = 0.8535, y = 0.3239,
         label = "Scarlet Monastery Entrance",
         detail = "Inside the Scarlet Monastery; the Library has its own portal door",
         markerType = "dungeon",

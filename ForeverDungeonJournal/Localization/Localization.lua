@@ -17,6 +17,9 @@ FDJ.Locales.enUS = {
     MAP_OBJ_EXPLORE = "Explore this place",
     NOTICE_LV30_DATA = "New loot and quests for dungeons up to lv 30 are still being discovered. I will update as new data comes out. gl hf",
     NOTICE_RESIZE = "Commands changed from |cffff3030/fj|r to |cff33ff33/dj|r.",
+    MAP_SHARK_EXIT = "Shark exit",
+    MAP_SAFE_EXIT = "Safe exit",
+    MAP_SWIM_HERE = "Swim underwater here for level %d",
     MAP_SWIM_LEVEL = "Swim underwater for level %d",
     MAP_ENTRANCE = "Entrance",
     LOOT_COMPACT = "Compact view",
@@ -88,6 +91,7 @@ FDJ.Locales.enUS = {
     CHAIN_PICK_ONE = "You just need 1 of the following quests:",
     LOOT_NOTE_TWO_ITEMS = "Can drop 2 items",
     LOOT_NOTE_HELNURATH = "Summoned by the Warlock epic mount quest",
+    LOOT_NOTE_BURNING_FELGUARD = "Scarshield Warlocks can summon it through their portals",
     UNIQUE_TRASH = "Unique dungeon trash drops",
     DROPS_FROM = "Drops from: %s",
     CLICK_DUNGEON = "Click to open dungeon details",
@@ -121,6 +125,14 @@ FDJ.Locales.enUS = {
     OPT_PRESS_KEY = "Press a key...",
     OPT_KEY_TAKEN = "%s is already bound. Choose an unused key.",
     OPT_NO_COMBAT = "Keybinds cannot be changed during combat.",
+    LEVEL_TOO_LOW_DUNGEONS = "You are too low level for dungeons.\nThe first ones start at level %d.",
+    NO_DUNGEONS_MY_LEVEL = "No dungeons for your level.",
+    SHOW_ALL_DUNGEONS_ANYWAY = "Show all dungeons anyway",
+    SUMMON_QUEST_NOTE = "%s has to be summoned: use the %s at the gong by his pool.",
+    HOW_TO_SUMMON = "How to summon %s",
+    MAP_WREX_KEYRING = "Open with Wrex's Keyring for level %d",
+    OPT_MY_LEVEL_RANGE = "Show only my level range",
+    OPT_MY_LEVEL_RANGE_TIP = "Shows only the dungeons whose level range includes your level (the ranges of the Looking For Group panel).",
     OPT_HIDE_OUTLEVELED = "Auto-hide outleveled dungeons",
     OPT_HIDE_OUTLEVELED_TIP = "Hides a dungeon from the list once your level is above its level range.",
     OPT_HIDE_QUESTS_DONE = "Auto-hide dungeons with all quests done",
@@ -333,6 +345,9 @@ FDJ.Locales.deDE = {
     MAP_OBJ_EXPLORE = "Diesen Ort erkunden",
     NOTICE_LV30_DATA = "Neue Beute und Quests für Dungeons bis Stufe 30 werden noch entdeckt. Ich aktualisiere, sobald neue Daten erscheinen. gl hf",
     NOTICE_RESIZE = "Die Befehle wurden von |cffff3030/fj|r zu |cff33ff33/dj|r geändert.",
+    MAP_SHARK_EXIT = "Hai-Ausgang",
+    MAP_SAFE_EXIT = "Sicherer Ausgang",
+    MAP_SWIM_HERE = "Hier unter Wasser tauchen für Ebene %d",
     MAP_SWIM_LEVEL = "Unter Wasser tauchen für Ebene %d",
     MAP_ENTRANCE = "Eingang",
     LOOT_COMPACT = "Kompaktansicht",
@@ -401,6 +416,7 @@ FDJ.Locales.deDE = {
     CHAIN_PICK_ONE = "Du brauchst nur 1 der folgenden Quests:",
     LOOT_NOTE_TWO_ITEMS = "Kann 2 Gegenstände droppen",
     LOOT_NOTE_HELNURATH = "Beschworen durch die epische Reittier-Quest der Hexenmeister",
+    LOOT_NOTE_BURNING_FELGUARD = "Scarschild-Hexenmeister können ihn durch ihre Portale beschwören",
     UNIQUE_TRASH = "Einzigartige Beute von Trashmobs",
     DROPS_FROM = "Beute von: %s",
     CLICK_DUNGEON = "Klicken, um Dungeon-Details zu öffnen",
@@ -434,6 +450,14 @@ FDJ.Locales.deDE = {
     OPT_PRESS_KEY = "Taste drücken...",
     OPT_KEY_TAKEN = "%s ist bereits belegt. Wähle eine freie Taste.",
     OPT_NO_COMBAT = "Tastenbelegungen können im Kampf nicht geändert werden.",
+    LEVEL_TOO_LOW_DUNGEONS = "Deine Stufe ist zu niedrig für Dungeons.\nDie ersten beginnen ab Stufe %d.",
+    NO_DUNGEONS_MY_LEVEL = "Keine Dungeons für deine Stufe.",
+    SHOW_ALL_DUNGEONS_ANYWAY = "Trotzdem alle Dungeons zeigen",
+    SUMMON_QUEST_NOTE = "%s muss beschworen werden: Benutze %s am Gong bei seinem Becken.",
+    HOW_TO_SUMMON = "So beschwörst du %s",
+    MAP_WREX_KEYRING = "Mit Wrex' Schlüsselring öffnen für Ebene %d",
+    OPT_MY_LEVEL_RANGE = "Nur meinen Stufenbereich zeigen",
+    OPT_MY_LEVEL_RANGE_TIP = "Zeigt nur die Dungeons, deren Stufenbereich deine Stufe enthält (die Bereiche der Gruppensuche).",
     OPT_HIDE_OUTLEVELED = "Zu niedrige Dungeons automatisch ausblenden",
     OPT_HIDE_OUTLEVELED_TIP = "Blendet einen Dungeon aus der Liste aus, sobald deine Stufe über seinem Stufenbereich liegt.",
     OPT_HIDE_QUESTS_DONE = "Dungeons mit allen Quests erledigt ausblenden",
@@ -971,6 +995,28 @@ function FDJ.LocalizeBossName(name)
     local content = ContentTable()
     local value = content and content.bosses and content.bosses[name]
     return value or FDJ.LocalizeFreeText(name)
+end
+
+-- sourcetipl10n (2.0.9, M 16 Nov 2026: the trash portrait tooltip "like
+-- all trees, all satyrs ... doesn't get translated to other languages"):
+-- the family a trash item's portraits stand for (sourceTip, Data/Dungeons.lua).
+-- Eldreth spirits and Verek: the game's own names (Wowhead tooltips of npc
+-- 11472 and 9042, per language); zhTW written from zhCN.
+local SOURCE_TIPS = {
+    deDE = { ["All trees"] = "Alle Bäume", ["All satyrs"] = "Alle Satyrn", ["All Eldreth spirits"] = "Alle Geister der Eldreth", ["Verek"] = "Verek" },
+    frFR = { ["All trees"] = "Tous les arbres", ["All satyrs"] = "Tous les satyres", ["All Eldreth spirits"] = "Tous les esprits Eldreth", ["Verek"] = "Verek" },
+    esES = { ["All trees"] = "Todos los árboles", ["All satyrs"] = "Todos los sátiros", ["All Eldreth spirits"] = "Todos los espíritus Eldreth", ["Verek"] = "Verek" },
+    itIT = { ["All trees"] = "Tutti gli alberi", ["All satyrs"] = "Tutti i satiri", ["All Eldreth spirits"] = "Tutti gli spiriti Eldreth", ["Verek"] = "Verek" },
+    ptBR = { ["All trees"] = "Todas as árvores", ["All satyrs"] = "Todos os sátiros", ["All Eldreth spirits"] = "Todos os espíritos eldretianos", ["Verek"] = "Verek" },
+    ruRU = { ["All trees"] = "Все деревья", ["All satyrs"] = "Все сатиры", ["All Eldreth spirits"] = "Все элдретарские духи", ["Verek"] = "Верек" },
+    koKR = { ["All trees"] = "모든 나무정령", ["All satyrs"] = "모든 사티로스", ["All Eldreth spirits"] = "모든 엘드레스 영혼", ["Verek"] = "베레크" },
+    zhCN = { ["All trees"] = "所有树人", ["All satyrs"] = "所有萨特", ["All Eldreth spirits"] = "所有艾德雷斯鬼巫", ["Verek"] = "维雷克" },
+    zhTW = { ["All trees"] = "所有樹人", ["All satyrs"] = "所有薩特", ["All Eldreth spirits"] = "所有艾德雷斯鬼巫", ["Verek"] = "維雷克" },
+}
+function FDJ.LocalizeSourceTip(text)
+    if type(text) ~= "string" or text == "" then return text end
+    local own = SOURCE_TIPS[FDJ.GetLanguage()]
+    return (own and own[text]) or FDJ.LocalizeFreeText(text)
 end
 
 function FDJ.LocalizeItemSlot(slotText)

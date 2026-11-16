@@ -2198,6 +2198,14 @@ function FDJ.MobRecentlyMissed(npcID)
     return at ~= nil and NowSeconds() - at < MISS_DAYS * 86400
 end
 function FDJ.MobDisplay(npcID)
+    -- staleface (2.0.9): the looks saved before the fix may be another mob's:
+    -- forgotten once, found again as the pages ask for them.
+    if type(ForeverDungeonJournalDB) == "table" and not ForeverDungeonJournalDB.displayIDsFixed then
+        if type(ForeverDungeonJournalDB.displayIDs) == "table" then
+            for k in pairs(ForeverDungeonJournalDB.displayIDs) do ForeverDungeonJournalDB.displayIDs[k] = nil end -- in place: Core/Journal.lua holds the same table
+        end
+        ForeverDungeonJournalDB.displayIDsFixed = 1
+    end
     local saved = type(ForeverDungeonJournalDB) == "table" and type(ForeverDungeonJournalDB.displayIDs) == "table"
         and ForeverDungeonJournalDB.displayIDs[npcID]
     return type(saved) == "number" and saved > 0 and saved or nil
@@ -2205,8 +2213,21 @@ end
 function FDJ.DrawMobPortrait(texture, displayID)
     local okPortrait, shown = false, false
     if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, texture, displayID) end
-    if not (okPortrait and shown) and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
-        pcall(SetPortraitTextureFromCreatureDisplayID, texture, displayID)
+    if not (okPortrait and shown) then
+        if FDJ.AcquirePortrait then
+            -- rtvcap (2.0.9): the portrait pool had no room (every portrait
+            -- it may draw is on screen), or the game has none for this look.
+            -- It is no longer drawn straight on the row (one more render
+            -- target, outside the cap, black while it loads): a plain dark
+            -- disc, as for a mob not found yet; the pool puts the portrait
+            -- over it once there is room (softhost).
+            texture:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+            texture:SetTexCoord(0, 1, 0, 1)
+            texture:SetVertexColor(0.08, 0.07, 0.06, 0.85)
+            return
+        elseif type(SetPortraitTextureFromCreatureDisplayID) == "function" then
+            pcall(SetPortraitTextureFromCreatureDisplayID, texture, displayID)
+        end
     end
     texture:SetVertexColor(1, 1, 1, 1)
 end
@@ -2247,6 +2268,24 @@ function FDJ.ResolveMobDisplays(npcIDs)
                 else
                     if job.tries == 0 then asking = asking + 1 end
                     local model = looks.models[npcID]
+                    -- rtvcap (2.0.9): a hidden model whose look-up is over is
+                    -- reused, not one more made for each mob.
+                    if not model then
+                        for otherID, other in pairs(looks.models) do
+                            if not looks.pending[otherID] then
+                                looks.models[otherID] = nil
+                                model = other
+                                break
+                            end
+                        end
+                        if model then looks.models[npcID] = model end
+                        -- staleface (2.0.9, M 16 Nov 2026: the Phase Lasher, a
+                        -- flower, drawn as a tree; trees as satyrs): a reused
+                        -- model tells the mob it showed last until the new one
+                        -- is in, so that look is not taken at once (only if it
+                        -- still says so after a few asks: two mobs may share one).
+                        if model then model.fdjStale = model.fdjLastDisplay end
+                    end
                     if not model then
                         local ok, made = pcall(CreateFrame, "PlayerModel", nil, UIParent)
                         if ok and made then
@@ -2275,7 +2314,9 @@ function FDJ.ResolveMobDisplays(npcIDs)
                         end
                     else
                         local ok, display = pcall(model.GetDisplayInfo, model)
-                        if ok and type(display) == "number" and display > 0 then
+                        if ok and type(display) == "number" and display > 0
+                            and not (display == model.fdjStale and job.tries < 4) then
+                            model.fdjLastDisplay, model.fdjStale = display, nil
                             looks.pending[npcID] = nil
                             if type(ForeverDungeonJournalDB) == "table" then
                                 ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
@@ -2316,9 +2357,12 @@ function FDJ.WarmMobDisplays()
     if FDJ.mobLooks.warmed then return end
     FDJ.mobLooks.warmed = true
     local ids = {}
-    for _, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do
-        -- mobmiss (2.0.7): not the ones the game didn't give in the last week
-        if not FDJ.MobRecentlyMissed(npcID) then ids[#ids + 1] = npcID end
+    for name, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do
+        -- mobmiss (2.0.7): not the ones the game didn't give in the last week.
+        -- bakelooks (2.0.9): nor the ones whose look is known now.
+        if not (FDJ.TRASH_MOB_DISPLAY_IDS and FDJ.TRASH_MOB_DISPLAY_IDS[name]) and not FDJ.MobRecentlyMissed(npcID) then
+            ids[#ids + 1] = npcID
+        end
     end
     FDJ.ResolveMobDisplays(ids)
 end
@@ -2347,7 +2391,10 @@ function FDJ.SetRowMobs(row, sourceText)
             button:SetScript("OnEnter", function(self)
                 if not GameTooltip or not self.fdjMobName then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText((FDJ.LocalizeBossName and FDJ.LocalizeBossName(self.fdjMobName)) or self.fdjMobName, 1, 0.82, 0.27)
+                -- sourcetip (2.0.9, M 16 Nov 2026): on a family's row ("All
+                -- satyrs", "All trees") the portrait stands for the whole family
+                local family = self:GetParent() and self:GetParent().fdjMobTip
+                GameTooltip:SetText(family or (FDJ.LocalizeBossName and FDJ.LocalizeBossName(self.fdjMobName)) or self.fdjMobName, 1, 0.82, 0.27)
                 GameTooltip:Show()
             end)
             button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
@@ -2365,13 +2412,10 @@ function FDJ.SetRowMobs(row, sourceText)
         local mobDisplayID = FDJ.TRASH_MOB_DISPLAY_IDS[name]
         if mobDisplayID then
             -- Bundled picture, else the off-screen portrait pool like the bosses
-            -- (no black square while it loads; warmed after login).
-            local okPortrait, shown = false, false
-            if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, button.portrait, mobDisplayID) end
-            if not (okPortrait and shown) then
-                pcall(SetPortraitTextureFromCreatureDisplayID, button.portrait, mobDisplayID)
-            end
-            button.portrait:SetVertexColor(1, 1, 1, 1)
+            -- (no black square while it loads). rtvcap (2.0.9): through
+            -- DrawMobPortrait, which no longer draws straight on the row
+            -- when the pool has no room.
+            FDJ.DrawMobPortrait(button.portrait, mobDisplayID)
         else
             -- trashnpc (2.0.22): known by NPC ID only. mobfast (2.0.31): its
             -- look saved from an earlier lookup is drawn at once; else it is

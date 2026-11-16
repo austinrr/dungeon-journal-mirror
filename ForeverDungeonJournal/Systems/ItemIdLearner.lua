@@ -127,7 +127,19 @@ local function Learn(id, name)
     Apply(key, id, false)
 end
 
-local function NameOfID(id)
+-- questquiet (2.0.9): asking the game for an item's name asks the server
+-- when the client does not know the item yet. quiet: only items the client
+-- already knows (C_Item.IsItemDataCachedByID); where the game cannot tell,
+-- nothing is asked.
+local function NameOfID(id, quiet)
+    if quiet then
+        local known = false
+        if C_Item and type(C_Item.IsItemDataCachedByID) == "function" then
+            local ok, res = pcall(C_Item.IsItemDataCachedByID, id)
+            known = ok and Plain(res) == true
+        end
+        if not known then return nil end
+    end
     if C_Item and C_Item.GetItemNameByID then
         local ok, name = pcall(C_Item.GetItemNameByID, id)
         name = ok and Plain(name)
@@ -142,10 +154,10 @@ local function NameOfID(id)
 end
 
 -- Compare one item ID's name against the missing list (once it is loaded).
-local function CheckID(id)
+local function CheckID(id, quiet)
     id = tonumber(Plain(id))
     if not id or id <= 0 or checked[id] then return end
-    local name = NameOfID(id)
+    local name = NameOfID(id, quiet)
     if name then
         checked[id] = true
         Learn(id, name)
@@ -198,8 +210,27 @@ end
 -- loadpause (2.0.7): no questions to the server during a loading screen or
 -- the first seconds after it (FDJ.LookupsPaused, Core/Journal.lua): the
 -- scan waits and goes on where it was.
+-- questquiet (2.0.9, Lyxodius on Discord): nor while a quest, gossip or
+-- vendor window is open, or within 5 seconds of one: a quest's reward items
+-- are asked of the server then, and must not wait behind the scan (a hand-in
+-- window that showed one reward of several).
+local talkedAt
+local function Talking()
+    for _, name in ipairs({ "QuestFrame", "GossipFrame", "MerchantFrame" }) do
+        local f = _G[name]
+        if type(f) == "table" and type(f.IsShown) == "function" then
+            local ok, on = pcall(f.IsShown, f)
+            if ok and on then
+                talkedAt = (GetTime and GetTime()) or 0
+                return true
+            end
+        end
+    end
+    return talkedAt ~= nil and ((GetTime and GetTime()) or 0) - talkedAt < 5
+end
+FDJ.ItemScanQuiet = Talking
 local function Paused(fn)
-    if FDJ.LookupsPaused and FDJ.LookupsPaused() and C_Timer and C_Timer.After then
+    if ((FDJ.LookupsPaused and FDJ.LookupsPaused()) or Talking()) and C_Timer and C_Timer.After then
         C_Timer.After(1, fn)
         return true
     end
@@ -213,11 +244,15 @@ local function ScanStep()
     if Paused(ScanStep) then return end
     local requestLoad = C_Item and C_Item.RequestLoadItemDataByID
     local doExist = C_Item and C_Item.DoesItemExistByID
-    local stop = math.min(scanIndex + 39, #candidates)
-    for i = scanIndex, stop do
-        local id = candidates[i]
+    -- questquiet (2.0.9): 5 questions to the server every half second (was
+    -- 40 every quarter: 160 a second, for 20 seconds and more after every
+    -- login and /reload). IDs the client already knows cost no question.
+    local stop, asked = scanIndex - 1, 0
+    while stop < #candidates and asked < 5 and stop - scanIndex < 199 do
+        stop = stop + 1
+        local id = candidates[stop]
         if not checked[id] then
-            CheckID(id)
+            CheckID(id, true)
             if not checked[id] then
                 local exists = true
                 if doExist then
@@ -225,6 +260,7 @@ local function ScanStep()
                     if ok and res == false then exists = false checked[id] = true end
                 end
                 if exists then
+                    asked = asked + 1
                     if requestLoad then pcall(requestLoad, id) else NameOfID(id) end
                 end
             end
@@ -232,7 +268,7 @@ local function ScanStep()
     end
     scanIndex = stop + 1
     if scanIndex <= #candidates and C_Timer and C_Timer.After then
-        C_Timer.After(0.25, ScanStep)
+        C_Timer.After(asked > 0 and 0.5 or 0.05, ScanStep)
     else
         -- One more pass a bit later for answers that came in after the request.
         scanning = false
@@ -240,7 +276,7 @@ local function ScanStep()
             local function LastPass()
                 if not missing or missingCount == 0 then return end
                 if Paused(LastPass) then return end
-                for _, id in ipairs(candidates) do CheckID(id) end
+                for _, id in ipairs(candidates) do CheckID(id, true) end
             end
             C_Timer.After(5, LastPass)
         end
@@ -257,7 +293,7 @@ function FDJ.LearnMissingItemIDsNow()
     if Paused(FDJ.LearnMissingItemIDsNow) then return end
     pcall(TryCache)
     pcall(ScanInventory)
-    for _, id in ipairs(candidates or {}) do pcall(CheckID, id) end
+    for _, id in ipairs(candidates or {}) do pcall(CheckID, id, true) end -- questquiet: was a question to the server for every one, all at once
     StartScan()
 end
 

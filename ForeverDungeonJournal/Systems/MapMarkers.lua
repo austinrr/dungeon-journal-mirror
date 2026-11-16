@@ -2260,47 +2260,47 @@ do
 
     do
         local strings = {
-            enUS = { ARROW_DISTANCE = "%d yds", ARROW_TIP_MOVE = "Drag to move.", ARROW_TIP_HIDE = "Right-click to hide the arrow.",
+            enUS = { ARROW_NEXT_SPAWN = "Not found? Next spot (%d/%d)", ARROW_USE_ITEM = "Use %s in your bags to start the quest", ARROW_DISTANCE = "%d yds", ARROW_TIP_MOVE = "Drag to move.", ARROW_TIP_HIDE = "Right-click to hide the arrow.",
                 ARROW_BOAT = "Take the boat to %s", ARROW_ZEPPELIN = "Take the zeppelin to %s", ARROW_FLY = "Fly to %s" },
-            deDE = { ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Ziehen zum Verschieben.", ARROW_TIP_HIDE = "Rechtsklick blendet den Pfeil aus.",
+            deDE = { ARROW_NEXT_SPAWN = "Nicht gefunden? Nächster Ort (%d/%d)", ARROW_USE_ITEM = "Benutze %s in deinen Taschen, um die Quest anzunehmen", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Ziehen zum Verschieben.", ARROW_TIP_HIDE = "Rechtsklick blendet den Pfeil aus.",
                 ARROW_BOAT = "Nimm das Schiff nach %s", ARROW_ZEPPELIN = "Nimm den Zeppelin nach %s", ARROW_FLY = "Flieg nach %s" },
-            frFR = { ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Faites glisser pour déplacer.", ARROW_TIP_HIDE = "Clic droit pour masquer la flèche.",
+            frFR = { ARROW_NEXT_SPAWN = "Introuvable ? Endroit suivant (%d/%d)", ARROW_USE_ITEM = "Utilisez %s dans vos sacs pour commencer la quête", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Faites glisser pour déplacer.", ARROW_TIP_HIDE = "Clic droit pour masquer la flèche.",
                 ARROW_BOAT = "Prenez le bateau pour %s", ARROW_ZEPPELIN = "Prenez le zeppelin pour %s", ARROW_FLY = "Volez vers %s" },
-            esES = { ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arrastra para mover.", ARROW_TIP_HIDE = "Clic derecho para ocultar la flecha.",
+            esES = { ARROW_NEXT_SPAWN = "¿No está? Siguiente lugar (%d/%d)", ARROW_USE_ITEM = "Usa %s de tus bolsas para empezar la misión", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arrastra para mover.", ARROW_TIP_HIDE = "Clic derecho para ocultar la flecha.",
                 ARROW_BOAT = "Toma el barco a %s", ARROW_ZEPPELIN = "Toma el zepelín a %s", ARROW_FLY = "Vuela a %s" },
-            itIT = { ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Trascina per spostare.", ARROW_TIP_HIDE = "Clic destro per nascondere la freccia.",
+            itIT = { ARROW_NEXT_SPAWN = "Non trovato? Prossimo punto (%d/%d)", ARROW_USE_ITEM = "Usa %s nelle borse per iniziare la missione", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Trascina per spostare.", ARROW_TIP_HIDE = "Clic destro per nascondere la freccia.",
                 ARROW_BOAT = "Prendi la nave per %s", ARROW_ZEPPELIN = "Prendi lo zeppelin per %s", ARROW_FLY = "Vola a %s" },
-            ptBR = { ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arraste para mover.", ARROW_TIP_HIDE = "Clique com o botão direito para ocultar a seta.",
+            ptBR = { ARROW_NEXT_SPAWN = "Não achou? Próximo local (%d/%d)", ARROW_USE_ITEM = "Use %s nas bolsas para começar a missão", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arraste para mover.", ARROW_TIP_HIDE = "Clique com o botão direito para ocultar a seta.",
                 ARROW_BOAT = "Pegue o barco para %s", ARROW_ZEPPELIN = "Pegue o zepelim para %s", ARROW_FLY = "Voe para %s" },
-            ruRU = { ARROW_DISTANCE = "%d м", ARROW_TIP_MOVE = "Перетащите, чтобы переместить.", ARROW_TIP_HIDE = "Щелкните правой кнопкой, чтобы скрыть стрелку.",
+            ruRU = { ARROW_NEXT_SPAWN = "Не нашли? Следующее место (%d/%d)", ARROW_USE_ITEM = "Используйте %s из сумки, чтобы взять задание", ARROW_DISTANCE = "%d м", ARROW_TIP_MOVE = "Перетащите, чтобы переместить.", ARROW_TIP_HIDE = "Щелкните правой кнопкой, чтобы скрыть стрелку.",
                 ARROW_BOAT = "Корабль: %s", ARROW_ZEPPELIN = "Дирижабль: %s", ARROW_FLY = "Полёт: %s" },
-            koKR = { ARROW_DISTANCE = "%d미터", ARROW_TIP_MOVE = "드래그하여 이동합니다.", ARROW_TIP_HIDE = "오른쪽 클릭으로 화살표를 숨깁니다.",
+            koKR = { ARROW_NEXT_SPAWN = "없나요? 다음 장소 (%d/%d)", ARROW_USE_ITEM = "가방의 %s|1을;를; 사용해 퀘스트를 시작하세요", ARROW_DISTANCE = "%d미터", ARROW_TIP_MOVE = "드래그하여 이동합니다.", ARROW_TIP_HIDE = "오른쪽 클릭으로 화살표를 숨깁니다.",
                 ARROW_BOAT = "%s행 배를 타세요", ARROW_ZEPPELIN = "%s행 비행선을 타세요", ARROW_FLY = "%s(으)로 비행하세요" },
-            zhCN = { ARROW_DISTANCE = "%d码", ARROW_TIP_MOVE = "拖动以移动。", ARROW_TIP_HIDE = "右键点击隐藏箭头。",
+            zhCN = { ARROW_NEXT_SPAWN = "没找到？下一个地点 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以开始任务", ARROW_DISTANCE = "%d码", ARROW_TIP_MOVE = "拖动以移动。", ARROW_TIP_HIDE = "右键点击隐藏箭头。",
                 ARROW_BOAT = "乘船前往%s", ARROW_ZEPPELIN = "乘坐飞艇前往%s", ARROW_FLY = "飞往%s" },
-            zhTW = { ARROW_DISTANCE = "%d碼", ARROW_TIP_MOVE = "拖曳以移動。", ARROW_TIP_HIDE = "右鍵點擊隱藏箭頭。",
+            zhTW = { ARROW_NEXT_SPAWN = "沒找到？下一個地點 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以開始任務", ARROW_DISTANCE = "%d碼", ARROW_TIP_MOVE = "拖曳以移動。", ARROW_TIP_HIDE = "右鍵點擊隱藏箭頭。",
                 ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
         }
         local more = {
-            enUS = { ARROW_GET_TO = "Get to %s", ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
+            enUS = { ARROW_TALK_TO = "Talk to %s", ARROW_DIVE_DOWN = "Dive straight down", ARROW_PICK_UP_BOTTOM = "Pick it up at the bottom", ARROW_SWIM_UNDER = "Swim underwater", ARROW_PICK_UP = "Pick it up", ARROW_GET_TO = "Get to %s", ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
                 ARROW_PORTAL = "Take the portal to %s", ARROW_HEARTH = "Hearth to %s", ARROW_ELEVATOR = "Take the elevator up" },
-            deDE = { ARROW_GET_TO = "Begib dich nach %s", ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte.",
+            deDE = { ARROW_TALK_TO = "Sprich mit %s", ARROW_DIVE_DOWN = "Tauche gerade nach unten", ARROW_PICK_UP_BOTTOM = "Heb es am Grund auf", ARROW_SWIM_UNDER = "Tauche unter Wasser", ARROW_PICK_UP = "Heb es auf", ARROW_GET_TO = "Begib dich nach %s", ARROW_FLYING = "Flug nach %s", ARROW_BELOW = "Unter der Erde: such den Weg nach unten", ARROW_ABOVE = "Weiter oben: such den Weg nach oben", ARROW_TIP_MAP = "Klicken zeigt es auf der Karte.",
                 ARROW_PORTAL = "Nimm das Portal nach %s", ARROW_HEARTH = "Ruhestein nach %s", ARROW_ELEVATOR = "Nimm den Aufzug nach oben" },
-            frFR = { ARROW_GET_TO = "Rendez-vous à %s", ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte.",
+            frFR = { ARROW_TALK_TO = "Parlez à %s", ARROW_DIVE_DOWN = "Plongez tout droit", ARROW_PICK_UP_BOTTOM = "Ramassez-le au fond", ARROW_SWIM_UNDER = "Nagez sous l'eau", ARROW_PICK_UP = "Ramassez-le", ARROW_GET_TO = "Rendez-vous à %s", ARROW_FLYING = "Vol vers %s", ARROW_BELOW = "Sous terre : trouvez le chemin pour descendre", ARROW_ABOVE = "En hauteur : trouvez le chemin pour monter", ARROW_TIP_MAP = "Cliquez pour l'afficher sur la carte.",
                 ARROW_PORTAL = "Prenez le portail vers %s", ARROW_HEARTH = "Pierre de foyer vers %s", ARROW_ELEVATOR = "Prenez l'ascenseur pour monter" },
-            esES = { ARROW_GET_TO = "Ve a %s", ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa.",
+            esES = { ARROW_TALK_TO = "Habla con %s", ARROW_DIVE_DOWN = "Bucea hacia abajo", ARROW_PICK_UP_BOTTOM = "Recógelo en el fondo", ARROW_SWIM_UNDER = "Bucea bajo el agua", ARROW_PICK_UP = "Recógelo", ARROW_GET_TO = "Ve a %s", ARROW_FLYING = "Volando a %s", ARROW_BELOW = "Bajo tierra: busca el camino para bajar", ARROW_ABOVE = "Arriba: busca el camino para subir", ARROW_TIP_MAP = "Haz clic para verlo en el mapa.",
                 ARROW_PORTAL = "Toma el portal a %s", ARROW_HEARTH = "Piedra de hogar a %s", ARROW_ELEVATOR = "Toma el ascensor para subir" },
-            itIT = { ARROW_GET_TO = "Raggiungi %s", ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa.",
+            itIT = { ARROW_TALK_TO = "Parla con %s", ARROW_DIVE_DOWN = "Immergiti dritto verso il fondo", ARROW_PICK_UP_BOTTOM = "Raccoglilo sul fondo", ARROW_SWIM_UNDER = "Nuota sott'acqua", ARROW_PICK_UP = "Raccoglilo", ARROW_GET_TO = "Raggiungi %s", ARROW_FLYING = "In volo verso %s", ARROW_BELOW = "Sottoterra: trova la via per scendere", ARROW_ABOVE = "Più in alto: trova la via per salire", ARROW_TIP_MAP = "Clicca per vederlo sulla mappa.",
                 ARROW_PORTAL = "Prendi il portale per %s", ARROW_HEARTH = "Pietra del ritorno: %s", ARROW_ELEVATOR = "Prendi l'ascensore per salire" },
-            ptBR = { ARROW_GET_TO = "Vá para %s", ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa.",
+            ptBR = { ARROW_TALK_TO = "Fale com %s", ARROW_DIVE_DOWN = "Mergulhe direto para baixo", ARROW_PICK_UP_BOTTOM = "Pegue-o no fundo", ARROW_SWIM_UNDER = "Nade debaixo d'água", ARROW_PICK_UP = "Pegue-o", ARROW_GET_TO = "Vá para %s", ARROW_FLYING = "Voando para %s", ARROW_BELOW = "No subsolo: encontre o caminho para descer", ARROW_ABOVE = "Mais acima: encontre o caminho para subir", ARROW_TIP_MAP = "Clique para ver no mapa.",
                 ARROW_PORTAL = "Pegue o portal para %s", ARROW_HEARTH = "Pedra de regresso para %s", ARROW_ELEVATOR = "Pegue o elevador para subir" },
-            ruRU = { ARROW_GET_TO = "Доберитесь: %s", ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте.",
+            ruRU = { ARROW_TALK_TO = "Поговорите: %s", ARROW_DIVE_DOWN = "Ныряйте прямо вниз", ARROW_PICK_UP_BOTTOM = "Подберите на дне", ARROW_SWIM_UNDER = "Ныряйте под воду", ARROW_PICK_UP = "Подберите", ARROW_GET_TO = "Доберитесь: %s", ARROW_FLYING = "Полёт: %s", ARROW_BELOW = "Под землёй: найдите спуск", ARROW_ABOVE = "Выше: найдите подъём", ARROW_TIP_MAP = "Щелкните, чтобы показать на карте.",
                 ARROW_PORTAL = "Портал: %s", ARROW_HEARTH = "Камень возвращения: %s", ARROW_ELEVATOR = "Поднимитесь на лифте" },
-            koKR = { ARROW_GET_TO = "%s(으)로 가세요", ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다.",
+            koKR = { ARROW_TALK_TO = "%s|1과;와; 대화하세요", ARROW_DIVE_DOWN = "똑바로 아래로 잠수하세요", ARROW_PICK_UP_BOTTOM = "바닥에서 주우세요", ARROW_SWIM_UNDER = "물속으로 잠수하세요", ARROW_PICK_UP = "주우세요", ARROW_GET_TO = "%s(으)로 가세요", ARROW_FLYING = "%s(으)로 비행 중", ARROW_BELOW = "지하: 내려가는 길을 찾으세요", ARROW_ABOVE = "위층: 올라가는 길을 찾으세요", ARROW_TIP_MAP = "클릭하면 지도에 표시합니다.",
                 ARROW_PORTAL = "%s행 차원문을 타세요", ARROW_HEARTH = "귀환석: %s", ARROW_ELEVATOR = "승강기를 타고 올라가세요" },
-            zhCN = { ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。",
+            zhCN = { ARROW_TALK_TO = "与%s交谈", ARROW_DIVE_DOWN = "径直下潜", ARROW_PICK_UP_BOTTOM = "在水底拾取", ARROW_SWIM_UNDER = "潜入水下", ARROW_PICK_UP = "拾取它", ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飞往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "点击在地图上显示。",
                 ARROW_PORTAL = "使用传送门前往%s", ARROW_HEARTH = "炉石回到%s", ARROW_ELEVATOR = "乘升降梯上去" },
-            zhTW = { ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。",
+            zhTW = { ARROW_TALK_TO = "與%s交談", ARROW_DIVE_DOWN = "徑直下潛", ARROW_PICK_UP_BOTTOM = "在水底拾取", ARROW_SWIM_UNDER = "潛入水下", ARROW_PICK_UP = "拾取它", ARROW_GET_TO = "前往%s", ARROW_FLYING = "正在飛往%s", ARROW_BELOW = "在地下：找路下去", ARROW_ABOVE = "在上方：找路上去", ARROW_TIP_MAP = "點擊在地圖上顯示。",
                 ARROW_PORTAL = "使用傳送門前往%s", ARROW_HEARTH = "爐石回到%s", ARROW_ELEVATOR = "搭升降梯上去" },
         }
         for locale, entries in pairs(more) do
@@ -2453,7 +2453,10 @@ do
         -- set there lands, with the English names of the place.
         INNS = {
             { 1457, 0.672, 0.156, "Craftsmen's Terrace", "Darnassus" },
-            { 1453, 0.526, 0.656, "Trade District", "Stormwind", "Stormwind City" },
+            -- hearthhere (2.0.9): the Gilded Rose on Forever's Stormwind map
+            -- (Innkeeper Allison, spawn of NPC 6740); 52.6, 65.6 was its place
+            -- on the old map.
+            { 1453, 0.604, 0.753, "Trade District", "Stormwind", "Stormwind City" },
             { 1455, 0.185, 0.515, "The Commons", "Ironforge" },
             { 1454, 0.541, 0.685, "Valley of Strength", "Orgrimmar" },
             { 1456, 0.457, 0.640, "Thunder Bluff" },
@@ -2910,6 +2913,57 @@ do
         if not mapID or not node.maps then return 0 end
         return node.maps[mapID] and 0 or FAR_ZONE
     end
+    -- zonewalk (2.0.9, M at Stormwind's gryphon master, 15 Nov 2026, the
+    -- arrow to the Rebel Camp: "why is it not telling me to fly to the
+    -- closest spot? It should tell me to fly to Duskwood and then run"):
+    -- a walk was measured in a straight line, so 2,573 yards from Stormwind
+    -- across Elwynn and Duskwood beat the flight to Darkshire and 1,300
+    -- yards on foot. Every zone border a walk crosses now counts FAR_ZONE
+    -- (borders are mostly mountains and rivers, with few ways through): the
+    -- zones along the straight line are asked of the game's map, at 13
+    -- points. nil when the game cannot tell (then as before).
+    -- (on Way: this scope is at Lua's limit of locals)
+    Way.borderCache, Way.borderCount = {}, 0
+    function Way.Borders(c, ax, ay, bx, by)
+        if not (C_Map and type(C_Map.GetMapInfoAtPosition) == "function" and type(C_Map.GetMapPosFromWorldPos) == "function") then return nil end
+        local continentMap = (c == 0 and 1415) or (c == 1 and 1414) or nil
+        if not continentMap or not ax or not bx then return nil end
+        local key = string.format("%d|%d|%d|%d|%d", c, math.floor(ax / 25), math.floor(ay / 25), math.floor(bx / 25), math.floor(by / 25))
+        local hit = Way.borderCache[key]
+        if hit ~= nil then return hit end
+        local last, count = nil, 0
+        for i = 0, 12 do
+            local wx, wy = ax + (bx - ax) * i / 12, ay + (by - ay) * i / 12
+            local vector = (type(CreateVector2D) == "function" and CreateVector2D(wx, wy)) or { x = wx, y = wy }
+            local okPos, _, pos = pcall(C_Map.GetMapPosFromWorldPos, c, vector, continentMap)
+            local mx, my
+            if okPos and type(pos) == "table" then
+                mx, my = pos.x, pos.y
+                if (mx == nil or my == nil) and pos.GetXY then mx, my = pos:GetXY() end
+            end
+            local okInfo, info
+            if Number(mx) and Number(my) then okInfo, info = pcall(C_Map.GetMapInfoAtPosition, continentMap, mx, my) end
+            local id = okInfo and type(info) == "table" and Number(info.mapID) or nil
+            if not id then count = nil break end
+            if last and id ~= last then count = count + 1 end
+            last = id
+        end
+        if not count then return nil end -- (not kept: the game may tell next time)
+        if Way.borderCount > 400 then Way.borderCache, Way.borderCount = {}, 0 end
+        Way.borderCache[key], Way.borderCount = count, Way.borderCount + 1
+        return count
+    end
+    -- A walk's yards with its zone borders; to or from a flight point: the
+    -- borders when the game tells them, else Far as before.
+    function Way.Walk(c, ax, ay, bx, by)
+        local borders = Way.Borders(c, ax, ay, bx, by)
+        return Yards(ax, ay, bx, by) + (borders or 0) * FAR_ZONE
+    end
+    function Way.WalkNode(c, x, y, node, mapID)
+        local borders = Way.Borders(c, x, y, node[1], node[2])
+        if borders then return Yards(x, y, node[1], node[2]) + borders * FAR_ZONE end
+        return Yards(x, y, node[1], node[2]) + Far(node, mapID)
+    end
 
     -- The three flight points nearest to (x, y).
     local function Nearest(nodes, x, y)
@@ -2948,7 +3002,7 @@ do
         for _, a in ipairs(Nearest(starts, px, py)) do
             for _, b in ipairs(Nearest(ends, qx, qy)) do
                 if a ~= b then
-                    local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
+                    local cost = Way.WalkNode(c, px, py, a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Way.WalkNode(c, qx, qy, b, toMap)
                     if not least or cost < least then best, bestTo, least = a, b, cost end
                 end
             end
@@ -2964,6 +3018,7 @@ do
         end
         local walk = Yards(px, py, qx, qy)
         if walk < FLY_MIN then return walk end
+        walk = Way.Walk(c, px, py, qx, qy) -- zonewalk
         local _, _, cost = FlyCost(c, px, py, qx, qy, fromMap, toMap, fromR, toR)
         return (cost and cost < walk) and cost or walk
     end
@@ -2972,14 +3027,14 @@ do
     -- way: between two regions (fromR, toR) the flight is the only way.
     local function Flight(c, px, py, qx, qy, keep, fromMap, toMap, fromR, toR)
         local across = fromR ~= nil and toR ~= nil and fromR ~= toR
-        local walk = across and math.huge or Yards(px, py, qx, qy)
+        local walk = across and math.huge or Way.Walk(c, px, py, qx, qy) -- zonewalk
         -- fpdistant: kept only while both ends are still found (a flight
         -- map can take one off the list).
         if keep and keep[1].c == c and (not fromR or (keep[1].region or keep[1].c) == fromR)
             and (not toR or (keep[2].region or keep[2].c) == toR)
             and Found({ name = keep[1].node }) and Found({ name = keep[2].node }) then
             local a, b = keep[1], keep[2]
-            local cost = Yards(px, py, a[1], a[2]) + Far(a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Yards(b[1], b[2], qx, qy) + Far(b, toMap)
+            local cost = Way.WalkNode(c, px, py, a, fromMap) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + Way.WalkNode(c, qx, qy, b, toMap)
             if cost < walk then return a, b end
         end
         if not across and walk < FLY_MIN then return nil end
@@ -3127,7 +3182,9 @@ do
         local name = Way.BindName()
         if not name then return nil end
         local saved = Way.CharDB().hearthSpot
-        if type(saved) == "table" and saved.name == name and saved.mapID and saved.x and saved.y then
+        -- hearthhere (2.0.9): a spot saved before could be where the
+        -- hearthstone was used from, not where it went (v 2: checked)
+        if type(saved) == "table" and saved.v == 2 and saved.name == name and saved.mapID and saved.x and saved.y then
             local point = Way.Point(saved.mapID, saved.x, saved.y)
             if point then return name, point end
         end
@@ -3162,6 +3219,21 @@ do
     -- plan.hearth = the place's name when the hearthstone is ready and
     -- going from there is the quicker way by HEARTH_SAVES at least (looked
     -- at every 2 seconds).
+    -- hearthhere (2.0.9, M in Stormwind, 15 Nov 2026: "why does it say
+    -- hearth to Stormwind when I'm already in Stormwind"): standing in the
+    -- place the hearthstone goes to (its zone or sub-zone by name), it is
+    -- never the way.
+    function Way.AtBind(name)
+        if type(name) ~= "string" then return false end
+        local lower = string.lower(name)
+        for _, get in ipairs({ GetZoneText, GetSubZoneText, GetRealZoneText }) do
+            if type(get) == "function" then
+                local ok, here = pcall(get)
+                if ok and type(here) == "string" and here ~= "" and string.lower(here) == lower then return true end
+            end
+        end
+        return false
+    end
     function Way.Hearth(entry, plan, p, t, cost)
         local now = (GetTime and GetTime()) or 0
         if entry.hearthAt and now - entry.hearthAt < 2 then
@@ -3173,6 +3245,7 @@ do
         local name, spot = Way.BindSpot()
         if not spot then return end
         if spot[3] == p[3] and Yards(p[1], p[2], spot[1], spot[2]) < Way.HEARTH_NEAR then return end
+        if Way.AtBind(name) then return end
         local _, from = Way.Search(spot, t)
         if from and Way.HEARTH_CAST + from + Way.HEARTH_SAVES <= cost then entry.hearth = name end
         plan.hearth = entry.hearth
@@ -3194,7 +3267,7 @@ do
             if (mx == nil or my == nil) and pos.GetXY then mx, my = pos:GetXY() end
             mx, my = Number(mx), Number(my)
             if not mx or not my then return end
-            Way.CharDB().hearthSpot = { name = name, mapID = mapID, x = mx, y = my }
+            Way.CharDB().hearthSpot = { name = name, mapID = mapID, x = mx, y = my, v = 2 }
         end
         local watch = CreateFrame("Frame")
         for _, event in ipairs({ "HEARTHSTONE_BOUND", "UNIT_SPELLCAST_SUCCEEDED", "PLAYER_ENTERING_WORLD" }) do
@@ -3207,9 +3280,20 @@ do
             elseif event == "UNIT_SPELLCAST_SUCCEEDED" then
                 if unit == "player" and spellID == Way.HEARTH_SPELL then
                     pending = now
+                    -- hearthhere (2.0.9): where it was used from. Two seconds
+                    -- on, the spot is only taken once the player has really
+                    -- been moved: during a loading screen the game still gives
+                    -- the old place (that was saved as the hearthstone's
+                    -- place), so then the end of the loading screen records it.
+                    local okP, fx, fy, _, fc = pcall(UnitPosition, "player")
+                    local startX, startY, startC = okP and Number(fx) or nil, okP and Number(fy) or nil, okP and fc or nil
                     if C_Timer and C_Timer.After then
                         C_Timer.After(2, function()
-                            if pending then
+                            if not pending then return end
+                            local okN, nx, ny, _, nc = pcall(UnitPosition, "player")
+                            nx, ny = okN and Number(nx) or nil, okN and Number(ny) or nil
+                            local moved = nx and ny and startX and startY and (nc ~= startC or Yards(nx, ny, startX, startY) > Way.HEARTH_NEAR)
+                            if moved then
                                 pending = nil
                                 Record()
                             end
@@ -3252,7 +3336,14 @@ do
             entry.ride = nil
         end
         local cost = hereR == goalR and Way.Leg(p, t) or nil
-        if hereR ~= goalR or not cost or cost > Way.RIDE_WORTH then
+        -- flyland (2.0.9, M 16 Nov 2026 in Hillsbrad, the arrow to The
+        -- Drowned City switching between "Take the boat to Auberdine" and
+        -- "Fly to Sentinel Hill": "I'm in the same continent as the
+        -- dungeon, and I have the flight path ... just fly"): on the
+        -- place's own continent (and land), when a flight gets there, no
+        -- boat, zeppelin or portal is looked for, even a quicker one.
+        local flyHere = cost and here == target[3] and Flight(here, px, py, gx, gy, nil, playerMap, goalMap, hereR, goalR) ~= nil
+        if hereR ~= goalR or not cost or (cost > Way.RIDE_WORTH and not flyHere) then
             ride, cost = Way.Search(p, t)
             if not cost then return nil end
         else
@@ -3353,10 +3444,538 @@ do
     -- from it to the route's next point. A climb point only within its
     -- reach (yards) or on its grid's raised ground; it is taken back on its
     -- grid's plain ground and after a jump (the spirit healer, a flight).
-    local function RouteNext(route, done, px, py, here, faction, jumped)
-        local worlds = {}
-        for i, via in ipairs(route) do
-            if type(via) == "table" and (not via.faction or via.faction == faction) then worlds[i] = SpotWorld(via) end
+    -- ucelevator (2.0.7): down in Undercity, a way that leads out of the city
+    -- goes up one of the elevators first (east and west of the Trade
+    -- Quarter's ring): the arrow points at the nearer one, not straight
+    -- through the rock at the zeppelin tower. Not when the way stays in the
+    -- city (a quest giver there, the bat handler). Up in the ruins (the
+    -- same map) it is the straight line as before: outdoors, in the
+    -- subzone named Ruins of Lordaeron, in the hall north of the tomb, or
+    -- for a minute after standing at an elevator (riding it up).
+    Way.UC = { map = 1458, center = { 0.6600, 0.4405 }, lifts = { { 0.6069, 0.4405 }, { 0.7136, 0.4405 } }, ruinsArea = 153 }
+    function Way.UndercityLift(entry, plan, px, py, here, target)
+        local UC = Way.UC
+        if PlayerMap() ~= UC.map then entry.ucTop, entry.ucRode = nil, nil return nil end
+        local c = SpotWorld({ mapID = UC.map, x = UC.center[1], y = UC.center[2] })
+        if not c or c[3] ~= here then return nil end
+        if not Indoors() then entry.ucTop = true return nil end
+        local now = (GetTime and GetTime()) or 0
+        local d, north = Yards(px, py, c[1], c[2]), px - c[1]
+        -- the subzone's name, where the game gives it
+        if C_Map and type(C_Map.GetAreaInfo) == "function" and type(GetSubZoneText) == "function" then
+            local okA, ruins = pcall(C_Map.GetAreaInfo, UC.ruinsArea)
+            local okS, sub = pcall(GetSubZoneText)
+            if okA and okS and type(ruins) == "string" and ruins ~= "" and type(sub) == "string"
+                and not (type(issecretvalue) == "function" and (issecretvalue(sub) or issecretvalue(ruins))) and sub == ruins then
+                entry.ucTop = true
+            end
+        end
+        if entry.ucTop then
+            if d > 70 and north < 70 then entry.ucTop = nil end -- far from the tomb, not towards the throne room: down in the city
+        elseif north >= 88 and north <= 104 and math.abs(py - c[2]) < 12 then
+            entry.ucTop = true
+        end
+        if entry.ucTop then return nil end
+        -- does the way stay in the city?
+        if plan.final and target and target.map == UC.map then return nil end
+        if plan.fly and plan.x and Yards(plan.x, plan.y, c[1], c[2]) <= 80 then return nil end
+        local best, bestD
+        for _, lift in ipairs(UC.lifts) do
+            local w = SpotWorld({ mapID = UC.map, x = lift[1], y = lift[2] })
+            if w then
+                local ld = Yards(px, py, w[1], w[2])
+                if not bestD or ld < bestD then best, bestD = w, ld end
+            end
+        end
+        if not best then return nil end
+        if bestD <= 14 then entry.ucRode = now return best end
+        if entry.ucRode and now - entry.ucRode < 60 then return nil end
+        return best
+    end
+    -- orgroads (2.0.8): inside Orgrimmar the arrow follows the roads. The
+    -- straight line to Borstan in the Drag from the Valley of Strength went
+    -- through the cliff (M, 15 Nov 2026). The city's roads from the patrol
+    -- paths drawn on M's Orgrimmar map (orange lines, walked ground: the Valley of Strength's
+    -- ring, the Drag, the north road, the west road, the Cleft of Shadow),
+    -- read off M's map screenshot; the Valleys of Honor, Wisdom and Spirits
+    -- and the two gates from the map's art (rougher). The arrow aims at the
+    -- next corner of the shortest way along them; the yards are the whole
+    -- way. A way that leaves the city (a zeppelin, a spot outside) goes to
+    -- the gate first. Only while the player is on the city's map.
+    Way.ROADS = {
+        [1454] = {
+            near = 220, -- yards: further than this from every road is not in the city
+            gates = { "G2", "P6" },
+            nodes = {
+                S1 = { 0.4945, 0.6012 }, S2 = { 0.5041, 0.6263 }, S3 = { 0.5089, 0.6371 }, S4 = { 0.5041, 0.6515 }, S5 = { 0.4873, 0.6587 },
+                S6 = { 0.4729, 0.6479 }, S7 = { 0.4681, 0.6407 }, R1 = { 0.4825, 0.5814 }, R2 = { 0.4681, 0.5796 }, R3 = { 0.4441, 0.5904 },
+                R4 = { 0.4297, 0.6120 }, R5 = { 0.4201, 0.6479 }, R6 = { 0.4225, 0.6731 }, R7 = { 0.4393, 0.7091 }, R8 = { 0.4537, 0.7523 },
+                R9 = { 0.4729, 0.7847 }, R10 = { 0.5041, 0.7955 }, R11 = { 0.5209, 0.7883 }, R12 = { 0.5281, 0.7667 }, R13 = { 0.5209, 0.7379 },
+                R14 = { 0.5089, 0.7055 }, V1 = { 0.5173, 0.6767 }, G1 = { 0.5185, 0.8171 }, G2 = { 0.5233, 0.8459 }, D1 = { 0.5137, 0.5796 },
+                D2 = { 0.5329, 0.5670 }, D3 = { 0.5568, 0.5760 }, D4 = { 0.5784, 0.5742 }, D5 = { 0.5976, 0.5580 }, D6 = { 0.6084, 0.5364 },
+                D7 = { 0.6096, 0.4932 }, D8 = { 0.6108, 0.4500 }, D9 = { 0.6144, 0.4032 }, H1 = { 0.6240, 0.4014 }, H2 = { 0.6750, 0.3450 },
+                H3 = { 0.7230, 0.3000 }, H4 = { 0.7780, 0.2250 }, N1 = { 0.5928, 0.3924 }, N2 = { 0.5760, 0.3780 }, N3 = { 0.5544, 0.3600 },
+                N4 = { 0.5329, 0.3528 }, N5 = { 0.4969, 0.3582 }, N6 = { 0.4585, 0.3618 }, N7 = { 0.4393, 0.3636 }, N8 = { 0.4309, 0.3816 },
+                N9 = { 0.4297, 0.4032 }, T1 = { 0.4000, 0.3650 }, T2 = { 0.3570, 0.3670 }, W1 = { 0.4129, 0.4320 }, W2 = { 0.4010, 0.4572 },
+                W3 = { 0.3938, 0.4932 }, W4 = { 0.3890, 0.5220 }, W5 = { 0.3830, 0.5472 }, W6 = { 0.3866, 0.5760 }, W7 = { 0.4010, 0.6228 },
+                W8 = { 0.4106, 0.6415 }, W9 = { 0.4177, 0.6695 }, W10 = { 0.4177, 0.6875 }, W11 = { 0.4010, 0.7127 }, W12 = { 0.3770, 0.7379 },
+                F1 = { 0.4441, 0.6415 }, C1 = { 0.5736, 0.3996 }, C2 = { 0.5640, 0.4086 }, C3 = { 0.5448, 0.4032 }, C4 = { 0.5329, 0.4050 },
+                C5 = { 0.5269, 0.4212 }, C6 = { 0.5245, 0.4464 }, C7 = { 0.5209, 0.4572 }, C8 = { 0.4969, 0.4824 }, C9 = { 0.4729, 0.5004 },
+                C10 = { 0.4489, 0.5184 }, C11 = { 0.4417, 0.5328 }, C12 = { 0.4465, 0.5472 }, C13 = { 0.4393, 0.5616 }, C14 = { 0.4201, 0.5724 },
+                C15 = { 0.4082, 0.5580 }, P1 = { 0.3190, 0.7190 }, P2 = { 0.2940, 0.6590 }, P3 = { 0.2790, 0.5910 }, P4 = { 0.2390, 0.5690 },
+                P5 = { 0.2000, 0.5910 }, P6 = { 0.1800, 0.6050 },
+                -- orgtower (2.0.9, M 16 Nov 2026 in the Valley of Strength at
+                -- 48.5, 66.0, the wind rider tower on his right and the arrow
+                -- sending him back round the city): the ramp up the tower
+                -- starts at S7, at the valley's west end (the walking map has
+                -- its floors climbing there, 35 to 61 yards up); Doras on top.
+                FM = { 0.4512, 0.6392 },
+            },
+            edges = {
+                { "S1", "S2" }, { "S2", "S3" }, { "S3", "S4" }, { "S4", "S5" }, { "S5", "S6" }, { "S6", "S7" }, { "S1", "R1" }, { "R1", "R2" },
+                { "R2", "R3" }, { "R3", "R4" }, { "R4", "R5" }, { "R5", "R6" }, { "R6", "R7" }, { "R7", "R8" }, { "R8", "R9" }, { "R9", "R10" },
+                { "R10", "R11" }, { "R11", "R12" }, { "R12", "R13" }, { "R13", "R14" }, { "R14", "V1" }, { "V1", "S3" }, { "R10", "G1" }, { "G1", "G2" },
+                { "R11", "G1" }, { "S1", "D1" }, { "D1", "D2" }, { "D2", "D3" }, { "D3", "D4" }, { "D4", "D5" }, { "D5", "D6" }, { "D6", "D7" },
+                { "D7", "D8" }, { "D8", "D9" }, { "D9", "H1" }, { "H1", "H2" }, { "H2", "H3" }, { "H3", "H4" }, { "D9", "N1" }, { "N1", "N2" },
+                { "N2", "N3" }, { "N3", "N4" }, { "N4", "N5" }, { "N5", "N6" }, { "N6", "N7" }, { "N7", "N8" }, { "N8", "N9" }, { "N7", "T1" },
+                { "T1", "T2" }, { "N9", "W1" }, { "W1", "W2" }, { "W2", "W3" }, { "W3", "W4" }, { "W4", "W5" }, { "W5", "W6" }, { "W6", "W7" },
+                { "W7", "W8" }, { "W8", "W9" }, { "W9", "W10" }, { "W10", "W11" }, { "W11", "W12" }, { "W8", "R5" }, { "R5", "F1" }, { "W9", "R6" },
+                { "N2", "C1" }, { "C1", "C2" }, { "C2", "C3" }, { "C3", "C4" }, { "C4", "C5" }, { "C5", "C6" }, { "C6", "C7" }, { "C7", "C8" },
+                { "C8", "C9" }, { "C9", "C10" }, { "C10", "C11" }, { "C11", "C12" }, { "C12", "C13" }, { "C13", "C14" }, { "C14", "C15" }, { "C15", "W4" },
+                { "W12", "P1" }, { "P1", "P2" }, { "P2", "P3" }, { "P3", "P4" }, { "P4", "P5" }, { "P5", "P6" },
+                { "S7", "FM" }, -- orgtower (2.0.9)
+            },
+        },
+        -- bbroads (2.0.9, M 16 Nov 2026 on Booty Bay's west dock, the arrow
+        -- to Scooty pointing at the cliff, 360 yards round: "I don't think it
+        -- understands Booty Bay's structure"): the town's docks, stairs and
+        -- piers, walked between its NPCs and the tunnel north on the
+        -- Forever client's walking map with its floors (Polestar_Nav_EK,
+        -- read as data), cut down to their corners. Rides (the boat) leave
+        -- from inside the town (docks): not through the tunnel.
+        [1434] = {
+            near = 60, docks = true,
+            gates = { "GT" },
+            nodes = {
+                B1 = { 0.2791, 0.7669 }, B2 = { 0.2782, 0.7684 }, B3 = { 0.2797, 0.7651 }, B4 = { 0.2782, 0.7669 }, B5 = { 0.3088, 0.6934 },
+                GT = { 0.3079, 0.6866 }, B7 = { 0.3091, 0.6983 }, B8 = { 0.3098, 0.6959 }, B9 = { 0.2646, 0.7365 }, B10 = { 0.2662, 0.7365 },
+                B11 = { 0.2660, 0.7354 }, B12 = { 0.2646, 0.7349 }, B13 = { 0.2631, 0.7365 }, B14 = { 0.2627, 0.7349 }, B15 = { 0.2746, 0.7757 },
+                B16 = { 0.2746, 0.7739 }, B17 = { 0.2696, 0.7683 }, B18 = { 0.2713, 0.7698 }, B19 = { 0.2678, 0.7656 }, B20 = { 0.2850, 0.7066 },
+                B21 = { 0.2834, 0.7052 }, B22 = { 0.2869, 0.7071 }, B23 = { 0.2785, 0.7655 }, B24 = { 0.2800, 0.7634 }, B25 = { 0.2782, 0.7666 },
+                B26 = { 0.3092, 0.7013 }, B27 = { 0.3079, 0.6974 }, B28 = { 0.2714, 0.7762 }, B29 = { 0.2713, 0.7777 }, B30 = { 0.2714, 0.7763 },
+                B31 = { 0.2726, 0.7757 }, B32 = { 0.2700, 0.7742 }, B33 = { 0.2728, 0.7739 }, B34 = { 0.2885, 0.7501 }, B35 = { 0.2885, 0.7481 },
+                B36 = { 0.2849, 0.7421 }, B37 = { 0.2896, 0.7502 }, B38 = { 0.2886, 0.7526 }, B39 = { 0.2833, 0.7402 }, B40 = { 0.2799, 0.7398 },
+                B41 = { 0.2798, 0.7742 }, B42 = { 0.2782, 0.7759 }, B43 = { 0.2817, 0.7734 }, B44 = { 0.2792, 0.7706 }, B45 = { 0.2785, 0.7708 },
+                B46 = { 0.2794, 0.7689 }, B47 = { 0.2824, 0.7657 }, B48 = { 0.2814, 0.7649 }, B49 = { 0.2816, 0.7632 }, B50 = { 0.2833, 0.7686 },
+                B51 = { 0.2797, 0.7659 }, B52 = { 0.2781, 0.7682 }, B53 = { 0.2987, 0.7224 }, B54 = { 0.2985, 0.7240 }, B55 = { 0.3040, 0.7224 },
+                B56 = { 0.2971, 0.7220 }, B57 = { 0.2896, 0.7545 }, B58 = { 0.3095, 0.7116 }, B59 = { 0.3092, 0.7167 }, B60 = { 0.3057, 0.7219 },
+                B61 = { 0.3085, 0.7091 }, B62 = { 0.3085, 0.7066 }, B63 = { 0.3094, 0.7062 }, B64 = { 0.2852, 0.7578 }, B65 = { 0.2870, 0.7556 },
+                B66 = { 0.2824, 0.7587 }, B67 = { 0.2821, 0.7434 }, B68 = { 0.2820, 0.7497 }, B69 = { 0.2681, 0.7356 }, B70 = { 0.2696, 0.7375 },
+                B71 = { 0.2682, 0.7374 }, B72 = { 0.2693, 0.7356 }, B73 = { 0.2954, 0.7216 }, B74 = { 0.2942, 0.7193 }, B75 = { 0.2942, 0.7228 },
+                B76 = { 0.2954, 0.7242 }, B77 = { 0.2876, 0.7542 }, B78 = { 0.2795, 0.7708 }, B79 = { 0.2798, 0.7711 }, B80 = { 0.2613, 0.7349 },
+                B81 = { 0.2693, 0.7738 }, B82 = { 0.2712, 0.7401 }, B83 = { 0.2710, 0.7381 }, B84 = { 0.2730, 0.7416 }, B85 = { 0.2729, 0.7405 },
+                B86 = { 0.2697, 0.7397 }, B87 = { 0.2764, 0.7687 }, B88 = { 0.2675, 0.7637 }, B89 = { 0.2660, 0.7652 }, B90 = { 0.2666, 0.7633 },
+                B91 = { 0.2726, 0.7385 }, B92 = { 0.2759, 0.7405 }, B93 = { 0.2804, 0.7032 }, B94 = { 0.2817, 0.7038 }, B95 = { 0.2868, 0.7679 },
+                B96 = { 0.2846, 0.7698 }, B97 = { 0.2972, 0.7242 }, B98 = { 0.3040, 0.7238 }, B99 = { 0.2739, 0.7405 }, B100 = { 0.2745, 0.7422 },
+                B101 = { 0.2831, 0.7757 }, B102 = { 0.2887, 0.7092 }, B103 = { 0.2769, 0.7689 }, B104 = { 0.2767, 0.7681 }, B105 = { 0.2710, 0.7700 },
+                B106 = { 0.2712, 0.7689 }, B107 = { 0.2697, 0.7713 }, B108 = { 0.2726, 0.7689 }, B109 = { 0.2762, 0.7704 }, B110 = { 0.2733, 0.7718 },
+                B111 = { 0.2729, 0.7703 }, B112 = { 0.2729, 0.7738 }, B113 = { 0.2745, 0.7705 }, B114 = { 0.2794, 0.7480 }, B115 = { 0.2780, 0.7460 },
+                B116 = { 0.2799, 0.7499 }, B117 = { 0.2785, 0.7477 }, B118 = { 0.2745, 0.7689 }, B119 = { 0.2733, 0.7689 }, B120 = { 0.2834, 0.7502 },
+                B121 = { 0.2811, 0.7504 }, B122 = { 0.2767, 0.7765 }, B123 = { 0.2772, 0.7779 }, B124 = { 0.2739, 0.7747 }, B125 = { 0.2715, 0.7762 },
+                B126 = { 0.2698, 0.7735 }, B127 = { 0.2687, 0.7708 }, B128 = { 0.2700, 0.7689 }, B129 = { 0.2770, 0.7418 }, B130 = { 0.2782, 0.7400 },
+                B131 = { 0.2780, 0.7421 }, B132 = { 0.2766, 0.7399 }, B133 = { 0.2764, 0.7739 }, B134 = { 0.2778, 0.7747 }, B135 = { 0.2811, 0.7728 },
+                B136 = { 0.2817, 0.7710 }, B137 = { 0.2743, 0.7745 }, B138 = { 0.2659, 0.7623 }, B139 = { 0.2667, 0.7610 }, B140 = { 0.2814, 0.7549 },
+                B141 = { 0.2791, 0.7502 }, B142 = { 0.2795, 0.7402 }, B143 = { 0.2817, 0.7584 }, B144 = { 0.2844, 0.7571 }, B145 = { 0.2837, 0.7528 },
+                B146 = { 0.2815, 0.7607 }, B147 = { 0.2834, 0.7704 }, B148 = { 0.2795, 0.7376 }, B149 = { 0.2844, 0.7685 }, B150 = { 0.2952, 0.7261 },
+                B151 = { 0.2922, 0.7302 }, B152 = { 0.2824, 0.7307 }, B153 = { 0.2968, 0.7258 }, B154 = { 0.2767, 0.7448 }, B155 = { 0.2847, 0.7512 },
+                B156 = { 0.2748, 0.7707 }, B157 = { 0.2752, 0.7689 }, B158 = { 0.2769, 0.7669 }, B159 = { 0.2886, 0.7071 }, B160 = { 0.3094, 0.7039 },
+                B161 = { 0.2772, 0.7669 }, B162 = { 0.2687, 0.7395 }, B163 = { 0.2778, 0.7728 }, B164 = { 0.2821, 0.7052 }, B165 = { 0.2778, 0.7708 },
+                B166 = { 0.3085, 0.7032 }, B167 = { 0.2800, 0.7781 }, B168 = { 0.2814, 0.7806 }, B169 = { 0.2648, 0.7326 },
+            },
+            edges = {
+                { "B1", "B2" }, { "B1", "B3" }, { "B1", "B4" }, { "B2", "B4" }, { "B2", "B44" }, { "B2", "B45" }, { "B2", "B46" }, { "B2", "B87" },
+                { "B3", "B23" }, { "B3", "B24" }, { "B4", "B158" }, { "B5", "GT" }, { "B5", "B7" }, { "B5", "B8" }, { "GT", "B27" }, { "B7", "B8" },
+                { "B7", "B26" }, { "B7", "B27" }, { "B9", "B10" }, { "B9", "B11" }, { "B9", "B12" }, { "B9", "B13" }, { "B10", "B11" }, { "B10", "B12" },
+                { "B10", "B69" }, { "B10", "B71" }, { "B11", "B12" }, { "B11", "B69" }, { "B11", "B71" }, { "B12", "B14" }, { "B12", "B169" }, { "B13", "B14" },
+                { "B14", "B80" }, { "B15", "B16" }, { "B16", "B110" }, { "B16", "B133" }, { "B16", "B137" }, { "B17", "B18" }, { "B17", "B19" }, { "B18", "B111" },
+                { "B19", "B88" }, { "B19", "B89" }, { "B19", "B90" }, { "B20", "B21" }, { "B20", "B22" }, { "B21", "B94" }, { "B21", "B164" }, { "B22", "B102" },
+                { "B22", "B159" }, { "B23", "B24" }, { "B23", "B25" }, { "B24", "B146" }, { "B25", "B51" }, { "B25", "B52" }, { "B25", "B104" }, { "B25", "B161" },
+                { "B26", "B160" }, { "B26", "B166" }, { "B28", "B29" }, { "B28", "B30" }, { "B28", "B31" }, { "B28", "B32" }, { "B28", "B33" }, { "B29", "B30" },
+                { "B30", "B31" }, { "B30", "B32" }, { "B31", "B33" }, { "B31", "B112" }, { "B32", "B81" }, { "B33", "B110" }, { "B33", "B112" }, { "B33", "B113" },
+                { "B34", "B35" }, { "B34", "B37" }, { "B34", "B38" }, { "B35", "B36" }, { "B36", "B39" }, { "B38", "B57" }, { "B38", "B65" }, { "B38", "B77" },
+                { "B39", "B40" }, { "B40", "B130" }, { "B40", "B142" }, { "B40", "B148" }, { "B41", "B42" }, { "B41", "B43" }, { "B42", "B122" }, { "B42", "B167" },
+                { "B43", "B101" }, { "B43", "B147" }, { "B44", "B45" }, { "B44", "B46" }, { "B45", "B163" }, { "B47", "B48" }, { "B47", "B49" }, { "B47", "B50" },
+                { "B48", "B49" }, { "B48", "B51" }, { "B49", "B51" }, { "B49", "B66" }, { "B50", "B96" }, { "B50", "B147" }, { "B51", "B52" }, { "B52", "B79" },
+                { "B52", "B103" }, { "B52", "B104" }, { "B53", "B54" }, { "B53", "B55" }, { "B53", "B56" }, { "B54", "B97" }, { "B54", "B98" }, { "B55", "B60" },
+                { "B55", "B98" }, { "B56", "B73" }, { "B56", "B76" }, { "B58", "B59" }, { "B58", "B61" }, { "B58", "B63" }, { "B59", "B60" }, { "B60", "B98" },
+                { "B61", "B62" }, { "B62", "B63" }, { "B63", "B160" }, { "B64", "B65" }, { "B64", "B66" }, { "B65", "B77" }, { "B67", "B68" }, { "B68", "B120" },
+                { "B68", "B121" }, { "B69", "B70" }, { "B69", "B71" }, { "B69", "B72" }, { "B70", "B71" }, { "B70", "B72" }, { "B70", "B83" }, { "B70", "B86" },
+                { "B71", "B86" }, { "B71", "B162" }, { "B73", "B74" }, { "B73", "B75" }, { "B73", "B76" }, { "B74", "B102" }, { "B75", "B76" }, { "B76", "B97" },
+                { "B76", "B150" }, { "B78", "B79" }, { "B79", "B136" }, { "B82", "B83" }, { "B82", "B84" }, { "B82", "B85" }, { "B82", "B86" }, { "B83", "B91" },
+                { "B84", "B85" }, { "B84", "B99" }, { "B84", "B100" }, { "B85", "B100" }, { "B86", "B162" }, { "B87", "B156" }, { "B87", "B157" }, { "B87", "B158" },
+                { "B88", "B89" }, { "B88", "B90" }, { "B89", "B90" }, { "B90", "B139" }, { "B91", "B92" }, { "B92", "B129" }, { "B92", "B132" }, { "B93", "B94" },
+                { "B94", "B164" }, { "B95", "B96" }, { "B96", "B147" }, { "B97", "B153" }, { "B99", "B100" }, { "B100", "B154" }, { "B102", "B159" }, { "B103", "B104" },
+                { "B103", "B109" }, { "B104", "B113" }, { "B104", "B118" }, { "B104", "B161" }, { "B105", "B106" }, { "B105", "B107" }, { "B105", "B108" }, { "B106", "B108" },
+                { "B106", "B128" }, { "B107", "B126" }, { "B107", "B127" }, { "B107", "B128" }, { "B109", "B113" }, { "B109", "B133" }, { "B109", "B165" }, { "B110", "B111" },
+                { "B110", "B112" }, { "B110", "B113" }, { "B111", "B113" }, { "B111", "B118" }, { "B111", "B119" }, { "B112", "B137" }, { "B113", "B118" }, { "B114", "B115" },
+                { "B114", "B116" }, { "B114", "B117" }, { "B115", "B117" }, { "B115", "B154" }, { "B116", "B117" }, { "B116", "B121" }, { "B116", "B140" }, { "B116", "B141" },
+                { "B118", "B119" }, { "B120", "B145" }, { "B120", "B155" }, { "B121", "B140" }, { "B122", "B123" }, { "B122", "B124" }, { "B124", "B125" }, { "B125", "B126" },
+                { "B129", "B130" }, { "B129", "B131" }, { "B129", "B132" }, { "B130", "B131" }, { "B130", "B132" }, { "B130", "B142" }, { "B130", "B148" }, { "B131", "B142" },
+                { "B133", "B134" }, { "B133", "B137" }, { "B134", "B135" }, { "B135", "B136" }, { "B136", "B149" }, { "B138", "B139" }, { "B140", "B143" }, { "B143", "B144" },
+                { "B143", "B146" }, { "B144", "B145" }, { "B145", "B155" }, { "B148", "B152" }, { "B150", "B151" }, { "B150", "B153" }, { "B151", "B152" }, { "B156", "B157" },
+                { "B160", "B166" }, { "B167", "B168" },
+            },
+        },
+        -- dalroads (2.0.9, M 16 Nov 2026 on Dalaran's great stairs, the arrow
+        -- to Abra Cadabra pointing left, at the wall: "I don't think he
+        -- understands that I'm on the stairs ... without understanding the
+        -- buildings"): the city's streets, stairs and bridges, walked
+        -- between its NPCs and the foot of the great stairs (the way out) on
+        -- the Forever client's walking map with its floors (Polestar_Nav_EK,
+        -- read as data), cut down to their corners.
+        [1416] = {
+            near = 45, targetNear = 160, -- (a place this near the streets is in the city: no way out by the stairs)
+            gates = { "DG" },
+            nodes = {
+                D1 = { 0.1958, 0.6846 }, D2 = { 0.2016, 0.6861 }, D3 = { 0.1985, 0.6894 }, D4 = { 0.1662, 0.6695 }, D5 = { 0.1617, 0.6714 },
+                D6 = { 0.1692, 0.6609 }, D7 = { 0.1728, 0.6694 }, D8 = { 0.1745, 0.6460 }, D9 = { 0.1793, 0.6426 }, D10 = { 0.1705, 0.6421 },
+                D11 = { 0.1744, 0.6367 }, D12 = { 0.1250, 0.5274 }, D13 = { 0.1253, 0.6457 }, D14 = { 0.1254, 0.6376 }, D15 = { 0.1318, 0.6420 },
+                D16 = { 0.1986, 0.7590 }, D17 = { 0.1972, 0.7459 }, D18 = { 0.1158, 0.5949 }, D19 = { 0.1377, 0.5936 }, D20 = { 0.1434, 0.6012 },
+                D21 = { 0.1451, 0.5920 }, D22 = { 0.1548, 0.6985 }, D23 = { 0.1474, 0.6972 }, D24 = { 0.1547, 0.7055 }, D25 = { 0.2010, 0.7908 },
+                D26 = { 0.1982, 0.7816 }, D27 = { 0.1362, 0.6680 }, D28 = { 0.1312, 0.6722 }, D29 = { 0.1435, 0.6688 }, D30 = { 0.1927, 0.6241 },
+                D31 = { 0.1906, 0.6882 }, D32 = { 0.1645, 0.6805 }, D33 = { 0.1704, 0.6799 }, D34 = { 0.1257, 0.5409 }, D35 = { 0.1319, 0.5472 },
+                D36 = { 0.1204, 0.5353 }, D37 = { 0.1269, 0.5543 }, D38 = { 0.1279, 0.6686 }, D39 = { 0.1901, 0.6749 }, D40 = { 0.1941, 0.6680 },
+                D41 = { 0.1889, 0.6657 }, D42 = { 0.1733, 0.7131 }, D43 = { 0.1657, 0.7072 }, D44 = { 0.1987, 0.7718 }, D45 = { 0.1499, 0.5596 },
+                D46 = { 0.1401, 0.5489 }, D47 = { 0.1542, 0.5667 }, D48 = { 0.1475, 0.6462 }, D49 = { 0.1511, 0.6564 }, D50 = { 0.1452, 0.6528 },
+                D51 = { 0.1515, 0.6396 }, D52 = { 0.1178, 0.5717 }, D53 = { 0.1222, 0.5813 }, D54 = { 0.1309, 0.5577 }, D55 = { 0.1364, 0.5535 },
+                D56 = { 0.1512, 0.6686 }, D57 = { 0.1810, 0.6575 }, D58 = { 0.1905, 0.6329 }, D59 = { 0.1392, 0.6968 }, D60 = { 0.1331, 0.6995 },
+                D61 = { 0.1329, 0.6904 }, D62 = { 0.1409, 0.5567 }, D63 = { 0.2047, 0.6908 }, D64 = { 0.2086, 0.6948 }, D65 = { 0.1859, 0.7041 },
+                D66 = { 0.1867, 0.7145 }, D67 = { 0.1865, 0.6978 }, D68 = { 0.1465, 0.6112 }, D69 = { 0.1407, 0.6113 }, D70 = { 0.1308, 0.6448 },
+                D71 = { 0.1282, 0.6591 }, D72 = { 0.1900, 0.6429 }, D73 = { 0.1957, 0.6439 }, D74 = { 0.1911, 0.6522 }, D75 = { 0.1463, 0.6373 },
+                D76 = { 0.1451, 0.5313 }, D77 = { 0.1368, 0.5345 }, D78 = { 0.1410, 0.6911 }, D79 = { 0.2094, 0.6368 }, D80 = { 0.2060, 0.6447 },
+                D81 = { 0.1095, 0.6267 }, D82 = { 0.1138, 0.6334 }, D83 = { 0.1449, 0.6815 }, D84 = { 0.1498, 0.5687 }, D85 = { 0.2037, 0.7834 },
+                D86 = { 0.1376, 0.6392 }, D87 = { 0.1510, 0.6312 }, D88 = { 0.1963, 0.7323 }, D89 = { 0.2011, 0.7447 }, D90 = { 0.1594, 0.5949 },
+                D91 = { 0.1521, 0.6058 }, D92 = { 0.1596, 0.7199 }, D93 = { 0.1578, 0.7350 }, D94 = { 0.1375, 0.5437 }, D95 = { 0.1858, 0.6824 },
+                D96 = { 0.1748, 0.6772 }, D97 = { 0.2093, 0.6549 }, D98 = { 0.2048, 0.6574 }, D99 = { 0.2044, 0.6535 }, D100 = { 0.2057, 0.8092 },
+                D101 = { 0.1815, 0.7107 }, D102 = { 0.1527, 0.5750 }, D103 = { 0.1488, 0.7062 }, D104 = { 0.1594, 0.7102 }, D105 = { 0.1922, 0.6595 },
+                D106 = { 0.1964, 0.6541 }, D107 = { 0.1431, 0.6581 }, D108 = { 0.1635, 0.5567 }, D109 = { 0.1602, 0.7400 }, D110 = { 0.1998, 0.6549 },
+                D111 = { 0.1340, 0.6838 }, D112 = { 0.1277, 0.6928 }, D113 = { 0.1229, 0.6833 }, D114 = { 0.1190, 0.6892 }, D115 = { 0.1569, 0.6363 },
+                D116 = { 0.1613, 0.6360 }, D117 = { 0.1272, 0.5815 }, D118 = { 0.1362, 0.5688 }, D119 = { 0.1449, 0.5652 }, D120 = { 0.1317, 0.5949 },
+                D121 = { 0.1275, 0.5649 }, D122 = { 0.1410, 0.6816 }, D123 = { 0.1472, 0.6895 }, D124 = { 0.1781, 0.6053 }, D125 = { 0.1116, 0.5815 },
+                D126 = { 0.1840, 0.6488 }, D127 = { 0.1224, 0.5655 }, D128 = { 0.1676, 0.7400 }, D129 = { 0.1644, 0.5748 }, D130 = { 0.2259, 0.7407 },
+                D131 = { 0.2290, 0.6438 }, D132 = { 0.2277, 0.6536 }, D133 = { 0.2227, 0.6440 }, D134 = { 0.2134, 0.6503 }, D135 = { 0.1644, 0.6462 },
+                D136 = { 0.1503, 0.7712 }, D137 = { 0.1615, 0.6529 }, D138 = { 0.1317, 0.7154 }, D139 = { 0.1359, 0.7039 }, D140 = { 0.1117, 0.6400 },
+                D141 = { 0.1056, 0.6388 }, D142 = { 0.1727, 0.6263 }, D143 = { 0.1976, 0.6322 }, D144 = { 0.1674, 0.6348 }, D145 = { 0.1320, 0.6333 },
+                D146 = { 0.1180, 0.6382 }, D147 = { 0.1838, 0.6648 }, D148 = { 0.2000, 0.6433 }, D149 = { 0.2037, 0.7520 }, D150 = { 0.1298, 0.6106 },
+                D151 = { 0.1568, 0.6917 }, D152 = { 0.2249, 0.6957 }, D153 = { 0.2180, 0.6529 }, D154 = { 0.1837, 0.6400 }, D155 = { 0.2079, 0.7086 },
+                D156 = { 0.1625, 0.7005 }, D157 = { 0.1362, 0.6060 }, D158 = { 0.2038, 0.7717 }, D159 = { 0.2037, 0.7624 }, D160 = { 0.1544, 0.6474 },
+                D161 = { 0.1034, 0.6864 }, D162 = { 0.1569, 0.5442 }, D163 = { 0.2318, 0.6789 }, D164 = { 0.2374, 0.6842 }, D165 = { 0.1866, 0.7263 },
+                D166 = { 0.1950, 0.7176 }, D167 = { 0.1230, 0.6640 }, DG = { 0.2167, 0.8271 }, D169 = { 0.1516, 0.5846 }, D170 = { 0.2030, 0.6363 },
+                D171 = { 0.1128, 0.5595 }, D172 = { 0.2031, 0.6708 }, D173 = { 0.2028, 0.6785 },
+            },
+            edges = {
+                { "D1", "D2" }, { "D1", "D3" }, { "D1", "D31" }, { "D1", "D39" }, { "D2", "D3" }, { "D2", "D63" }, { "D3", "D31" }, { "D3", "D63" },
+                { "D4", "D5" }, { "D4", "D6" }, { "D4", "D7" }, { "D4", "D32" }, { "D5", "D32" }, { "D5", "D56" }, { "D6", "D7" }, { "D6", "D8" },
+                { "D7", "D32" }, { "D7", "D33" }, { "D7", "D96" }, { "D8", "D9" }, { "D8", "D10" }, { "D8", "D11" }, { "D9", "D11" }, { "D9", "D126" },
+                { "D9", "D154" }, { "D10", "D11" }, { "D10", "D144" }, { "D11", "D142" }, { "D11", "D144" }, { "D12", "D36" }, { "D12", "D77" }, { "D13", "D14" },
+                { "D13", "D15" }, { "D14", "D15" }, { "D14", "D145" }, { "D14", "D146" }, { "D15", "D48" }, { "D16", "D17" }, { "D16", "D44" }, { "D16", "D89" },
+                { "D16", "D149" }, { "D16", "D159" }, { "D17", "D88" }, { "D17", "D89" }, { "D18", "D125" }, { "D18", "D150" }, { "D19", "D20" }, { "D19", "D21" },
+                { "D19", "D120" }, { "D20", "D21" }, { "D20", "D68" }, { "D21", "D169" }, { "D22", "D23" }, { "D22", "D24" }, { "D22", "D151" }, { "D22", "D156" },
+                { "D23", "D24" }, { "D23", "D59" }, { "D23", "D78" }, { "D23", "D103" }, { "D23", "D123" }, { "D24", "D103" }, { "D24", "D104" }, { "D24", "D156" },
+                { "D25", "D26" }, { "D25", "D85" }, { "D25", "D100" }, { "D26", "D44" }, { "D26", "D85" }, { "D27", "D28" }, { "D27", "D29" }, { "D27", "D71" },
+                { "D28", "D38" }, { "D29", "D49" }, { "D29", "D56" }, { "D29", "D83" }, { "D29", "D107" }, { "D29", "D122" }, { "D30", "D58" }, { "D30", "D124" },
+                { "D30", "D143" }, { "D31", "D39" }, { "D31", "D67" }, { "D31", "D95" }, { "D32", "D33" }, { "D32", "D156" }, { "D33", "D96" }, { "D34", "D35" },
+                { "D34", "D36" }, { "D34", "D37" }, { "D35", "D37" }, { "D35", "D55" }, { "D35", "D94" }, { "D36", "D171" }, { "D37", "D54" }, { "D37", "D127" },
+                { "D38", "D71" }, { "D38", "D167" }, { "D39", "D40" }, { "D39", "D41" }, { "D39", "D95" }, { "D40", "D41" }, { "D40", "D105" }, { "D40", "D172" },
+                { "D41", "D105" }, { "D41", "D147" }, { "D42", "D43" }, { "D42", "D101" }, { "D43", "D92" }, { "D43", "D104" }, { "D43", "D156" }, { "D44", "D85" },
+                { "D44", "D158" }, { "D45", "D46" }, { "D45", "D47" }, { "D45", "D84" }, { "D46", "D55" }, { "D46", "D62" }, { "D46", "D94" }, { "D47", "D84" },
+                { "D47", "D102" }, { "D48", "D49" }, { "D48", "D50" }, { "D48", "D51" }, { "D48", "D75" }, { "D48", "D160" }, { "D49", "D50" }, { "D49", "D56" },
+                { "D49", "D107" }, { "D49", "D160" }, { "D50", "D107" }, { "D51", "D75" }, { "D51", "D87" }, { "D51", "D115" }, { "D51", "D160" }, { "D52", "D53" },
+                { "D52", "D127" }, { "D53", "D117" }, { "D54", "D55" }, { "D54", "D121" }, { "D55", "D62" }, { "D55", "D94" }, { "D56", "D83" }, { "D57", "D126" },
+                { "D57", "D147" }, { "D58", "D72" }, { "D58", "D143" }, { "D59", "D60" }, { "D59", "D61" }, { "D59", "D78" }, { "D59", "D123" }, { "D59", "D139" },
+                { "D60", "D61" }, { "D60", "D112" }, { "D60", "D139" }, { "D61", "D111" }, { "D61", "D112" }, { "D62", "D119" }, { "D63", "D64" }, { "D64", "D152" },
+                { "D64", "D155" }, { "D65", "D66" }, { "D65", "D67" }, { "D65", "D101" }, { "D66", "D101" }, { "D66", "D165" }, { "D66", "D166" }, { "D67", "D95" },
+                { "D68", "D69" }, { "D68", "D87" }, { "D68", "D91" }, { "D69", "D150" }, { "D69", "D157" }, { "D70", "D71" }, { "D70", "D86" }, { "D71", "D167" },
+                { "D72", "D73" }, { "D72", "D74" }, { "D72", "D126" }, { "D72", "D154" }, { "D73", "D106" }, { "D73", "D148" }, { "D74", "D105" }, { "D74", "D106" },
+                { "D74", "D126" }, { "D75", "D87" }, { "D76", "D77" }, { "D76", "D162" }, { "D77", "D94" }, { "D78", "D122" }, { "D79", "D80" }, { "D80", "D97" },
+                { "D80", "D99" }, { "D80", "D134" }, { "D80", "D148" }, { "D81", "D82" }, { "D81", "D141" }, { "D82", "D140" }, { "D82", "D146" }, { "D83", "D122" },
+                { "D83", "D123" }, { "D84", "D102" }, { "D84", "D119" }, { "D85", "D158" }, { "D86", "D145" }, { "D87", "D115" }, { "D88", "D89" }, { "D88", "D165" },
+                { "D88", "D166" }, { "D89", "D149" }, { "D90", "D91" }, { "D90", "D129" }, { "D92", "D93" }, { "D92", "D104" }, { "D93", "D109" }, { "D95", "D96" },
+                { "D97", "D98" }, { "D97", "D99" }, { "D97", "D134" }, { "D97", "D153" }, { "D98", "D110" }, { "D99", "D110" }, { "D100", "DG" }, { "D102", "D169" },
+                { "D103", "D139" }, { "D104", "D156" }, { "D105", "D106" }, { "D105", "D110" }, { "D106", "D110" }, { "D106", "D148" }, { "D108", "D129" }, { "D108", "D162" },
+                { "D109", "D128" }, { "D109", "D136" }, { "D110", "D148" }, { "D111", "D112" }, { "D111", "D113" }, { "D111", "D122" }, { "D112", "D114" }, { "D113", "D114" },
+                { "D114", "D161" }, { "D115", "D116" }, { "D115", "D160" }, { "D116", "D135" }, { "D116", "D144" }, { "D117", "D118" }, { "D117", "D120" }, { "D117", "D121" },
+                { "D118", "D119" }, { "D119", "D169" }, { "D121", "D127" }, { "D122", "D123" }, { "D124", "D142" }, { "D125", "D171" }, { "D126", "D154" }, { "D130", "D155" },
+                { "D131", "D132" }, { "D131", "D133" }, { "D132", "D153" }, { "D133", "D134" }, { "D134", "D153" }, { "D135", "D137" }, { "D137", "D160" }, { "D138", "D139" },
+                { "D140", "D141" }, { "D140", "D146" }, { "D142", "D144" }, { "D143", "D148" }, { "D143", "D170" }, { "D149", "D159" }, { "D150", "D157" }, { "D152", "D163" },
+                { "D158", "D159" }, { "D163", "D164" }, { "D172", "D173" },
+            },
+        },
+        -- orggate (2.0.8, M 15 Nov 2026: off the zeppelin in Durotar the
+        -- arrow pointed at Orgrimmar through the cliff): the walk between
+        -- the zeppelin tower's two feet and Orgrimmar's gate, the shortest
+        -- one on the Kalimdor walking maps (Polestar_Nav_KAL, the Forever
+        -- client's navigation grid, read as data), cut down to its corners.
+        -- toCity: only for a way into that city (its gate OG is the city
+        -- roads' G2) or to a place right by these roads (reach yards: the
+        -- zeppelin docks, coming out of the gate); anything else in Durotar
+        -- is left alone.
+        [1411] = {
+            near = 150, reach = 40, toCity = 1454,
+            gates = { "OG" },
+            nodes = {
+                A1 = { 0.5079, 0.1401 }, A2 = { 0.5055, 0.1413 }, A3 = { 0.4913, 0.1389 }, B1 = { 0.5047, 0.1247 }, K1 = { 0.4882, 0.1401 },
+                K2 = { 0.4874, 0.1413 }, K3 = { 0.4850, 0.1413 }, K4 = { 0.4842, 0.1401 }, K5 = { 0.4756, 0.1271 }, K6 = { 0.4669, 0.1271 },
+                M = { 0.4653, 0.1188 }, OG = { 0.4638, 0.0924 },
+            },
+            edges = {
+                { "A1", "A2" }, { "A2", "A3" }, { "A3", "K2" }, { "B1", "K1" }, { "K1", "K2" }, { "K2", "K3" }, { "K3", "K4" }, { "K4", "K5" },
+                { "K5", "K6" }, { "K6", "M" }, { "M", "OG" },
+            },
+        },
+    }
+    function Way.RoadAim(entry, plan, px, py, here)
+        local map = PlayerMap()
+        local net = map and Way.ROADS[map]
+        if not net or not plan.x or not plan.y then entry.road = nil return nil end
+        local tx, ty = plan.x, plan.y
+        local memo = entry.road
+        if memo and memo.map == map and memo.tx == tx and memo.ty == ty and memo.ride == (plan.ride and true or false)
+            and Yards(px, py, memo.px, memo.py) < 3 then
+            return memo.aim, memo.rest
+        end
+        local function Build(net, map)
+            if net.w ~= nil then return end
+            local w, adj = {}, {}
+            for name, n in pairs(net.nodes) do
+                local s = SpotWorld({ mapID = map, x = n[1], y = n[2] })
+                if not s then w = false break end
+                w[name] = s
+            end
+            if w then
+                for _, e in ipairs(net.edges) do
+                    local a, b = w[e[1]], w[e[2]]
+                    local d = Yards(a[1], a[2], b[1], b[2])
+                    adj[e[1]] = adj[e[1]] or {}
+                    adj[e[2]] = adj[e[2]] or {}
+                    adj[e[1]][e[2]], adj[e[2]][e[1]] = d, d
+                end
+                net.adj = adj
+            end
+            net.w = w
+        end
+        Build(net, map)
+        local w = net.w
+        if not w then return nil end
+        if w[net.gates[1]][3] ~= here then entry.road = nil return nil end
+        -- The road nearest a place: its two ends, the point on it, how far.
+        local function Nearest(x, y, net, w) -- (orggate: another map's roads too)
+            local best
+            for _, e in ipairs(net.edges) do
+                local a, b = w[e[1]], w[e[2]]
+                local dx, dy = b[1] - a[1], b[2] - a[2]
+                local len2 = dx * dx + dy * dy
+                local t = 0
+                if len2 > 0 then t = math.max(0, math.min(1, ((x - a[1]) * dx + (y - a[2]) * dy) / len2)) end
+                local qx, qy = a[1] + t * dx, a[2] + t * dy
+                local d = Yards(x, y, qx, qy)
+                if not best or d < best.d then best = { d = d, a = e[1], b = e[2], qx = qx, qy = qy } end
+            end
+            return best
+        end
+        local function Keep(aim, rest)
+            entry.road = { map = map, tx = tx, ty = ty, px = px, py = py, ride = plan.ride and true or false, aim = aim, rest = rest }
+            return aim, rest
+        end
+        local P = Nearest(px, py, net, w)
+        if not P or P.d > net.near then return Keep(nil) end -- not by the roads
+        if Yards(px, py, tx, ty) < 40 then return Keep(nil) end
+        local T = Nearest(tx, ty, net, w)
+        -- flyride (2.0.9, M 16 Nov 2026 in the Valley of Strength, "Fly to
+        -- Ratchet" to Scooty in Booty Bay, the arrow sending him back to
+        -- the gate): a boat later on (plan.ride) is no way out of the city
+        -- when a flight comes first: the flight master is the place to go.
+        local outside = (plan.ride and not plan.fly and not net.docks) or T.d > (net.targetNear or net.near) -- (bbroads: Booty Bay's boat leaves from inside)
+        if net.toCity then -- orggate
+            outside = T.d > (net.reach or 0)
+            if outside then
+                -- only a way into the city itself
+                local city = Way.ROADS[net.toCity]
+                if (plan.ride and not plan.fly) or not city then return Keep(nil) end -- flyride (2.0.9)
+                Build(city, net.toCity)
+                local C = city.w and city.w[city.gates[1]][3] == here and Nearest(tx, ty, city, city.w)
+                if not C or C.d > city.near then return Keep(nil) end
+            end
+        end
+        if not outside and ((P.a == T.a and P.b == T.b) or (P.a == T.b and P.b == T.a)) then return Keep(nil) end -- the same stretch
+        -- the shortest way along the roads, from where the player joins them
+        local dist, prev, done = {}, {}, {}
+        dist[P.a] = P.d + Yards(P.qx, P.qy, w[P.a][1], w[P.a][2])
+        dist[P.b] = P.d + Yards(P.qx, P.qy, w[P.b][1], w[P.b][2])
+        while true do
+            local at, best
+            for name, d in pairs(dist) do
+                if not done[name] and (not best or d < best) then at, best = name, d end
+            end
+            if not at then break end
+            done[at] = true
+            for other, len in pairs(net.adj[at] or {}) do
+                if not done[other] and (dist[other] == nil or best + len < dist[other]) then
+                    dist[other], prev[other] = best + len, at
+                end
+            end
+        end
+        local goal, total
+        if outside then
+            for _, g in ipairs(net.gates) do
+                if dist[g] then
+                    local c = dist[g] + Yards(w[g][1], w[g][2], tx, ty)
+                    if not total or c < total then goal, total = g, c end
+                end
+            end
+        else
+            for _, name in ipairs({ T.a, T.b }) do
+                if dist[name] then
+                    local c = dist[name] + Yards(w[name][1], w[name][2], T.qx, T.qy) + T.d
+                    if not total or c < total then goal, total = name, c end
+                end
+            end
+        end
+        if not goal then return Keep(nil) end
+        -- bbroads (2.0.9): out past the gate (Booty Bay's tunnel, on the road
+        -- north): not led back to it
+        if outside and Yards(px, py, tx, ty) <= Yards(w[goal][1], w[goal][2], tx, ty) + 15 then return Keep(nil) end
+        local way = {}
+        local at = goal
+        while at do
+            table.insert(way, 1, at)
+            at = prev[at]
+        end
+        -- the corners already reached are behind
+        local i = 1
+        while way[i] and Yards(px, py, w[way[i]][1], w[way[i]][2]) <= 10 do i = i + 1 end
+        if not way[i] then return Keep(nil) end
+        return Keep(w[way[i]], total - dist[way[i]])
+    end
+    -- forward (2.0.12, a route with forward = true: the ways round Dalaran):
+    -- a point is also passed once the player is nearer the route's next
+    -- point (the spot, after the last) than the point itself is, so a
+    -- player who joins the route anywhere along it is not sent back.
+    -- nearest (2.0.29, a route with nearest = true: a long way walked corner
+    -- by corner, Razorfen Kraul's): the route is joined at the stretch
+    -- nearest the player and followed from there, each point passed in turn;
+    -- a point with maps = { [map] = true } only counts while the player
+    -- stands on one of those maps (the points above the Great Lift and
+    -- those below it lie over each other). Its points are passed closer by
+    -- (route.reach, route.leg yards), so no corner is cut.
+    local function RouteNext(route, done, px, py, here, faction, jumped, spotWorld)
+        local worlds = route.nearest and route.fdjWorlds or nil
+        if not worlds then
+            worlds = {}
+            local all = true
+            for i, via in ipairs(route) do
+                if type(via) == "table" and (not via.faction or via.faction == faction) then worlds[i] = SpotWorld(via) end
+                if not worlds[i] then all = false end
+            end
+            if route.nearest and all then
+                route.fdjWorlds = worlds
+                -- What is left of the way from each point on (yards), for
+                -- choosing between a spot's routes by the whole way.
+                local rest, n = {}, #route
+                rest[n] = (spotWorld and worlds[n] and spotWorld[3] == worlds[n][3]) and Yards(worlds[n][1], worlds[n][2], spotWorld[1], spotWorld[2]) or 0
+                for i = n - 1, 1, -1 do
+                    rest[i] = rest[i + 1] + Yards(worlds[i][1], worlds[i][2], worlds[i + 1][1], worlds[i + 1][2])
+                end
+                route.fdjRest = rest
+            end
+        end
+        local map = nil
+        if route.nearest then
+            map = PlayerMap() or 0
+            -- A point counts while the player stands on its level's maps.
+            local function On(i)
+                local w, via = worlds[i], route[i]
+                return w ~= nil and w[3] == here and (not via.maps or via.maps[map] == true)
+            end
+            -- The stretch of the way the player is on: the nearest one, but
+            -- the one walked last (or the next two) while still by it, so
+            -- another part of the way coming close does not take over.
+            local best, bestD, near, nearD
+            for i = 1, #route do
+                if On(i) then
+                    local d = Yards(px, py, worlds[i][1], worlds[i][2])
+                    if not nearD or d < nearD then near, nearD = i, d end
+                    if On(i + 1) then
+                        local ds = LegYards(px, py, worlds[i][1], worlds[i][2], worlds[i + 1][1], worlds[i + 1][2])
+                        if not bestD or ds < bestD then best, bestD = i, ds end
+                    end
+                end
+            end
+            local at = (not jumped) and done.at or nil
+            if at then
+                local keep, keepD
+                for i = at, math.min(at + 2, #route - 1) do
+                    if On(i) and On(i + 1) then
+                        local ds = LegYards(px, py, worlds[i][1], worlds[i][2], worlds[i + 1][1], worlds[i + 1][2])
+                        if ds <= 25 and (not keepD or ds < keepD) then keep, keepD = i, ds end
+                    end
+                end
+                if keep then best = keep end
+            end
+            done.at = best
+            -- The points ahead, passed one after the other: by standing at
+            -- one, or (on its own level) once past it.
+            local k = (best or (near and near - 1) or 0) + 1
+            while k <= #route do
+                local w = worlds[k]
+                if not (w and w[3] == here) then break end
+                local passed = Yards(px, py, w[1], w[2]) <= (route.reach or VIA_REACHED)
+                if not passed and On(k) then
+                    local n = worlds[k + 1] or spotWorld
+                    if n and n[3] == here then
+                        passed = (worlds[k + 1] ~= nil and LegYards(px, py, w[1], w[2], n[1], n[2]) <= (route.leg or VIA_LEG))
+                            or Yards(px, py, n[1], n[2]) < Yards(w[1], w[2], n[1], n[2])
+                    end
+                end
+                if not passed then break end
+                k = k + 1
+            end
+            if k > #route then return nil end
+            -- smoothturn (2.0.37): the arrow does not aim at the next corner
+            -- itself (passing beside it, it swung sideways for a moment) but
+            -- at the way a little ahead: the place 12 yards further along it
+            -- from where the player is on it, so it turns into each bend
+            -- gently. Up to the end of the level (the lift) or of the way.
+            if best and k <= best + 1 then
+                local a, b = worlds[best], worlds[best + 1]
+                local dx, dy = b[1] - a[1], b[2] - a[2]
+                local len2 = dx * dx + dy * dy
+                local t = len2 > 0 and math.max(0, math.min(1, ((px - a[1]) * dx + (py - a[2]) * dy) / len2)) or 0
+                local cx, cy = a[1] + t * dx, a[2] + t * dy
+                -- farahead (2.0.39): 12 yards only for a player on the way.
+                -- Standing beside it (round a mob, along the other side of
+                -- the road) those 12 yards lay almost straight across, and
+                -- the arrow pointed sideways at the way instead of along it:
+                -- from 4 yards off the way on, the place aimed at lies 2
+                -- more yards ahead for each yard further off (40 at most:
+                -- further ahead the straight line there left the walkable
+                -- ground by the lift), so near the way the arrow leads along
+                -- it and back onto it at a slant, and far off it, back to
+                -- it. On the way itself nothing changes.
+                local need, i = math.min(40, 12 + 2 * math.max(0, Yards(px, py, cx, cy) - 4)), best
+                while true do
+                    local n = worlds[i + 1]
+                    local seg = Yards(cx, cy, n[1], n[2])
+                    if seg >= need then
+                        local aim = { cx + (n[1] - cx) * need / seg, cy + (n[2] - cy) * need / seg, n[3], map = n.map, region = n.region, ahead = seg - need }
+                        return aim, route[i + 1]
+                    end
+                    need = need - seg
+                    if not On(i + 2) then return n, route[i + 1] end
+                    cx, cy, i = n[1], n[2], i + 1
+                end
+            end
+            return worlds[k], route[k]
         end
         for i, via in ipairs(route) do
             if worlds[i] and via.climb and (jumped or ClimbCell(via.climb, px, py, here) == ".") then done[i] = nil end
@@ -3372,10 +3991,19 @@ do
                         break
                     end
                 else
-                    if Yards(px, py, w[1], w[2]) <= VIA_REACHED then reached = i break end
+                    if Yards(px, py, w[1], w[2]) <= (route.reach or VIA_REACHED) then reached = i break end
                     local n
                     for j = i + 1, #route do if worlds[j] then n = worlds[j] break end end
-                    if n and n[3] == here and LegYards(px, py, w[1], w[2], n[1], n[2]) <= VIA_LEG then reached = i break end
+                    -- nearest: the other level's points only by standing at them.
+                    local level = not map or not via.maps or via.maps[map]
+                    if level and n and n[3] == here and LegYards(px, py, w[1], w[2], n[1], n[2]) <= (route.leg or VIA_LEG) then reached = i break end
+                    if route.forward and level then
+                        local ahead = n or spotWorld
+                        if ahead and ahead[3] == here and Yards(px, py, ahead[1], ahead[2]) < Yards(w[1], w[2], ahead[1], ahead[2]) then
+                            reached = i
+                            break
+                        end
+                    end
                 end
             end
         end
@@ -3387,10 +4015,38 @@ do
         end
         return nil
     end
+    -- direct (2.0.12): a part of the map from where the straight line is
+    -- the way ({ mapID, x0, y0, x1, y1 }: Lordamere Lake north-west of
+    -- Dalaran): no point on the way for a player standing in it.
+    -- gate (2.0.28): one place the way has to pass through, from certain
+    -- zones only ({ gate = { mapID, x, y, label, fromMaps = { [map] = true } } }:
+    -- the Great Lift between the Barrens and Thousand Needles). Standing on
+    -- one of those maps the arrow leads to the gate, until the player is at
+    -- it; on any other map (through it, or never behind it) straight on.
     local function NextVia(entry, px, py, here)
         local routes = ViaRoutes(entry)
         if not routes then return nil end
-        local target = SpotWorld(entry.spot)
+        -- (Inline: this file's main chunk is at Lua's limit of 200 locals.)
+        local vias = FDJ.ARROW_VIAS and entry.spot and FDJ.ARROW_VIAS[SpotKey(entry.spot)]
+        if type(vias) == "table" and type(vias.gate) == "table" then
+            local gate = vias.gate
+            if not (type(gate.fromMaps) == "table" and gate.fromMaps[PlayerMap() or 0]) then return nil end
+            local w = SpotWorld(gate)
+            if not w or w[3] ~= here or Yards(px, py, w[1], w[2]) <= VIA_REACHED then return nil end
+            return w, gate
+        end
+        local box = type(vias) == "table" and vias.direct
+        if type(box) == "table" then
+            local a = SpotWorld({ mapID = box.mapID, x = box.x0, y = box.y0 })
+            local b = SpotWorld({ mapID = box.mapID, x = box.x1, y = box.y1 })
+            if a and b and a[3] == here and b[3] == here
+                and px >= math.min(a[1], b[1]) and px <= math.max(a[1], b[1])
+                and py >= math.min(a[2], b[2]) and py <= math.max(a[2], b[2]) then
+                entry.viaRoute = nil
+                return nil
+            end
+        end
+        local target = SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot) -- spawns: the place being tried
         local nearSpot = target and target[3] == here and Yards(px, py, target[1], target[2]) <= VIA_AT_SPOT
         local faction = Faction()
         entry.viaDone = entry.viaDone or {}
@@ -3403,15 +4059,41 @@ do
         local best, bestW, bestVia, bestD
         local playerMap = PlayerMap()
         for r, route in ipairs(routes) do
-            if type(route) == "table" then
+            -- zones (2.0.16): a route with zones = { [map] = true } (the
+            -- Monastery's) is only for a player standing in one of them.
+            if type(route) == "table" and not (type(route.zones) == "table" and not route.zones[playerMap or 0]) then
                 if type(entry.viaDone[r]) ~= "table" then entry.viaDone[r] = {} end
-                local w, via = RouteNext(route, entry.viaDone[r], px, py, here, faction, jumped)
+                local w, via = RouteNext(route, entry.viaDone[r], px, py, here, faction, jumped, target)
+                -- bynet (2.0.9, M 16 Nov 2026, on Stranglethorn's road 1,900
+                -- yards south of the Rebel Camp: the arrow led back, to the
+                -- nearest corner of a hand-made way far off to the side:
+                -- "not only rely on these points that you made"): such a
+                -- way (byNet) only leads a player who is by it; from
+                -- further off the walking net leads to the place itself.
+                if w and route.byNet and FDJ.WalkNetAim and w[3] == here
+                    and Yards(px, py, w[1], w[2]) > ((r == entry.viaRoute) and 250 or 150) then
+                    w, via = nil, nil
+                end
                 if not w and r == entry.viaRoute then return nil end -- the route followed is walked: the spot itself
                 if w then
                     -- the way there on foot or by flight (Travel): from
                     -- Orgrimmar the Sun Rock Retreat route, by wind rider
                     local d = w[3] == here and Travel(here, px, py, w[1], w[2], playerMap, w.map) or Yards(px, py, w[1], w[2]) + FAR_ZONE * 10
-                    if r == entry.viaRoute then d = d * VIA_SWITCH end -- the route being followed keeps the arrow
+                    -- nearest (2.0.29): a long way is chosen by all of it (to
+                    -- its next point, then along it to the spot), not by how
+                    -- near its next point is.
+                    -- The stretch to its next point is off the way (a straight
+                    -- line, over whatever lies between): counted two and a
+                    -- half times; a next point on the other level (above or
+                    -- below the Great Lift) is no way at all.
+                    if route.nearest and route.fdjRest then
+                        d = d * (route.off or 2.5) -- off (2.0.8): more where the straight line is a hillside (the Wetlands' ways)
+                        for i = 1, #route do
+                            if route[i] == via then d = d + (route.fdjRest[i] or 0) break end
+                        end
+                        if via.maps and not via.maps[playerMap or 0] then d = d + FAR_ZONE * 10 end
+                    end
+                    if r == entry.viaRoute then d = d * (route.nearest and 0.9 or VIA_SWITCH) end -- the route being followed keeps the arrow
                     if not bestD or d < bestD then best, bestW, bestVia, bestD = r, w, via, d end
                 end
             end
@@ -3420,16 +4102,77 @@ do
         -- Near the spot: straight to it, unless a climb comes first (the
         -- Messenger Bag is up on the wall, over the heads of those below).
         if nearSpot and not (bestVia and bestVia.climb) then return nil end
+        -- wholeway (2.0.34): what is left of the way after its next point
+        -- (yards along its points to the spot), so the arrow can tell the
+        -- distance to the spot itself, not to the next corner.
+        if bestVia then
+            local route, rest = routes[best], nil
+            if route.fdjRest then
+                for i = 1, #route do
+                    if route[i] == bestVia then rest = route.fdjRest[i] + (bestW.ahead or 0) break end
+                end
+            else
+                local prev, on = bestW, false
+                rest = 0
+                for _, v in ipairs(route) do
+                    if v == bestVia then
+                        on = true
+                    elseif on and type(v) == "table" and (not v.faction or v.faction == faction) then
+                        local w = SpotWorld(v)
+                        if w and w[3] == prev[3] then
+                            rest = rest + Yards(prev[1], prev[2], w[1], w[2])
+                            prev = w
+                        end
+                    end
+                end
+                if target and target[3] == prev[3] then rest = rest + Yards(prev[1], prev[2], target[1], target[2]) end
+            end
+            entry.viaRest = rest
+        end
         return bestW, bestVia
     end
 
     -- Distance (yards) and the turn from where the player faces to where the
     -- arrow points, and the plan (Plan above). nil: no position, or no way.
+    -- spawns (2.0.36): a spot with several places it can be found
+    -- (spot.spawns = { { x, y }, ... }, on the spot's map: Lonebrow's
+    -- Journal): the arrow leads to the nearest not tried yet, kept once the
+    -- player is within 150 yards of it; at it, "Not found? Next spot" sends
+    -- it to the next (after the last, the first again).
+    FDJ.ArrowSpawn = function(entry)
+        local spot = entry and entry.spot
+        local list = spot and spot.spawns
+        if type(list) ~= "table" or #list < 2 then return nil end
+        entry.spawnTried = entry.spawnTried or {}
+        if not entry.spawnLocked or not entry.spawnAt then
+            local px, py, here = PlayerWorld()
+            local best, bestD
+            for i, s in ipairs(list) do
+                if not entry.spawnTried[i] then
+                    local w = SpotWorld({ mapID = s.mapID or spot.mapID, x = s.x, y = s.y })
+                    local d = (w and px and w[3] == here) and Yards(px, py, w[1], w[2]) or (1e9 + i)
+                    if not bestD or d < bestD then best, bestD = i, d end
+                end
+            end
+            if not best then entry.spawnTried, best, bestD = {}, 1, nil end
+            entry.spawnAt = best
+            if bestD and bestD < 150 then entry.spawnLocked = true end
+        end
+        entry.spawnSpots = entry.spawnSpots or {}
+        local t = entry.spawnSpots[entry.spawnAt]
+        if not t then
+            local s = list[entry.spawnAt]
+            t = { mapID = s.mapID or spot.mapID, x = s.x, y = s.y, label = spot.label, detail = spot.detail }
+            entry.spawnSpots[entry.spawnAt] = t
+        end
+        return t
+    end
     local function Measure(entry)
-        local target = SpotWorld(entry.spot)
+        local target = SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot)
         if not target then return nil end
         local px, py, here = PlayerWorld()
         if not px then return nil end
+        entry.viaRest = nil
         local viaWorld, via = NextVia(entry, px, py, here) -- arrowvia
         if viaWorld then target = viaWorld end
         -- Worked out again every half second, or sooner after a jump (a
@@ -3439,18 +4182,118 @@ do
         local moved = entry.plannedX and Yards(px, py, entry.plannedX, entry.plannedY) or math.huge
         local region = Way.Region(here, PlayerMap(), px, py) -- way
         if plan == nil or now - (entry.plannedAt or 0) >= PLAN_EVERY or moved > 25 or (plan and plan.here ~= region) then
-            plan = Plan(entry, px, py, here, target) or false
-            if plan and via then plan.via, plan.final = via, nil end -- arrowvia: not the spot itself yet
+            -- flyfirst (2.0.33): a walked way (Razorfen Kraul's) is for
+            -- walking. When a flight, boat or portal is the quicker way to
+            -- the spot itself, that is taken first (from Theramore's dock
+            -- the gryphon to Ratchet, not the long walk); the walked way
+            -- is picked up again wherever the ride lands.
+            local direct = (via and via.maps) and Plan(entry, px, py, here, SpotWorld(entry.spot)) or nil
+            -- walkfirst (2.0.16, a route with walkfirst = true: the
+            -- Monastery's): the flight master or dock to leave from lies
+            -- further along the walked way (Chillwind Camp's gryphon, coming
+            -- from the Monastery): the way is walked while it leads nearer
+            -- to him (100 yards or more), not the straight line over the
+            -- mountains; the flight is offered once he is near.
+            if direct and (direct.fly or direct.ride) and not direct.atMaster and not direct.aboard and direct.x then
+                local routes = ViaRoutes(entry)
+                local route = routes and routes[entry.viaRoute or 0]
+                local worlds = route and route.walkfirst and route.fdjWorlds
+                local mine = Yards(px, py, direct.x, direct.y)
+                if worlds and mine > 60 then
+                    local at = 1
+                    for i = 1, #route do
+                        if route[i] == via then at = i break end
+                    end
+                    for i = at, #route do
+                        local w = worlds[i]
+                        if w and Yards(w[1], w[2], direct.x, direct.y) < mine - 100 then direct = nil break end
+                    end
+                end
+            end
+            -- flyahead (2.0.16, walkfirst routes): a flight that lands on
+            -- the walked way ahead (Southshore to Chillwind Camp, on the
+            -- way to the Monastery) is weighed by the way really left to
+            -- walk, not the straight line: taken when it leaves less than
+            -- FLY_WORTH of it.
+            if via and via.maps and not (direct and (direct.fly or direct.ride or direct.aboard or direct.atMaster)) then
+                local routes = ViaRoutes(entry)
+                local route = routes and routes[entry.viaRoute or 0]
+                local worlds = route and route.walkfirst and route.fdjWorlds
+                local goal = worlds and SpotWorld(entry.spot)
+                if goal and route.fdjRest and target then
+                    local a, b = FlyCost(here, px, py, goal[1], goal[2], PlayerMap(), goal.map, region,
+                        Way.Region(goal[3], goal.map, goal[1], goal[2]))
+                    if a and b then
+                        local at = 1
+                        for i = 1, #route do
+                            if route[i] == via then at = i break end
+                        end
+                        local walk = Yards(px, py, target[1], target[2]) + (entry.viaRest or route.fdjRest[at] or 0)
+                        for i = at, #route do
+                            local w = worlds[i]
+                            if w and Yards(w[1], w[2], b[1], b[2]) <= 60 then
+                                local flown = Yards(px, py, a[1], a[2]) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + route.fdjRest[i]
+                                if flown < walk * FLY_WORTH then
+                                    direct = { here = region, fly = b }
+                                    if Yards(px, py, a[1], a[2]) <= AT_MASTER then
+                                        direct.atMaster = true
+                                    else
+                                        direct.x, direct.y = a[1], a[2]
+                                    end
+                                    entry.fly = { a, b }
+                                end
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+            if direct and (direct.fly or direct.ride or direct.aboard or direct.atMaster) then
+                plan = direct
+            else
+                plan = Plan(entry, px, py, here, target) or false
+                if plan and via then plan.via, plan.final = via, nil end -- arrowvia: not the spot itself yet
+            end
+            -- wholeway (2.0.34): walking to a point on the way (no ride or
+            -- flight first): the rest of the way from it counts too.
+            if plan then
+                plan.rest = (plan.via and not plan.fly and not plan.ride) and entry.viaRest or nil
+            end
             entry.plan, entry.plannedAt, entry.plannedX, entry.plannedY = plan, now, px, py
         end
         if not plan then return nil end
-        if plan.aboard or plan.atMaster then return nil, nil, plan end
-        local distance = Yards(plan.x, plan.y, px, py)
+        if plan.aboard or plan.atMaster then plan.elevator = nil return nil, nil, plan end
+        local ax, ay = plan.x, plan.y
+        local lift = Way.UndercityLift and Way.UndercityLift(entry, plan, px, py, here, SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot)) -- ucelevator (2.0.7)
+        plan.elevator = lift and true or nil
+        if lift then ax, ay = lift[1], lift[2] end
+        -- orgroads (2.0.8): in a city with its roads known, the next corner
+        local road, roadRest
+        if not lift and Way.RoadAim then road, roadRest = Way.RoadAim(entry, plan, px, py, here) end
+        -- walknet (2.0.9, M 16 Nov 2026 in Westfall, the arrow to a tablet in
+        -- Stranglethorn "wants me to go through the mountain"): a walk into
+        -- another zone follows the continent's walking net, corner by corner
+        -- (Systems/WalkNet.lua). A hand-made way (a via) keeps its own corners
+        -- while the player is on it; a corner of it far off in another zone
+        -- (M in Westfall again, "legit nothing changed": the tablet's own way
+        -- starts in Stranglethorn, its nearest corner lay over the mountain)
+        -- is walked to along the net like any place.
+        -- walkgrid (2.0.9, M in the Ruins of Zul'Kunda: "It's just sending me
+        -- through walls"): where a place's ground is known cell by cell, the
+        -- arrow walks round its walls, to a hand-made way's near corner too
+        -- (the last argument: only the cells may lead there, not the net).
+        if not lift and not road and FDJ.WalkNetAim and plan.x and plan.y then
+            road, roadRest = FDJ.WalkNetAim(entry, plan.x, plan.y, px, py, here, plan.via and Yards(px, py, plan.x, plan.y) <= 150 or false)
+        end
+        plan.road = road and true or nil
+        if road then ax, ay = road[1], road[2] end
+        plan.aimX, plan.aimY = ax, ay
+        local distance = Yards(ax, ay, px, py) + (road and roadRest or 0)
         local turn
         if type(GetPlayerFacing) == "function" then
             local ok, facing = pcall(GetPlayerFacing)
             facing = ok and Number(facing) or nil
-            if facing then turn = math.atan2(plan.y - py, plan.x - px) - facing end
+            if facing then turn = math.atan2(ay - py, ax - px) - facing end
         end
         return distance, turn, plan
     end
@@ -3616,6 +4459,21 @@ do
     local follows = {}    -- [source] = the spot a tracked chain page is at
     local shown           -- what the arrow points at now
     local frame
+    -- spawns (2.0.36): "Not found? Next spot" (FDJ.ArrowSpawn, above).
+    FDJ.NextArrowSpawn = function()
+        local entry = shown
+        local list = entry and entry.spot and entry.spot.spawns
+        if type(list) ~= "table" then return end
+        entry.spawnTried = entry.spawnTried or {}
+        if entry.spawnAt then entry.spawnTried[entry.spawnAt] = true end
+        local left = false
+        for i = 1, #list do if not entry.spawnTried[i] then left = true end end
+        if not left then entry.spawnTried = { [entry.spawnAt or 1] = true } end
+        entry.spawnLocked, entry.spawnAt = nil, nil
+        entry.plan, entry.plannedAt, entry.viaRoute = nil, nil, nil
+        local f = _G.ForeverDungeonJournalArrow
+        if f then f.fdjWait = 0 end -- redrawn on the next frame
+    end
     local Choose
 
     local function Reached(entry)
@@ -3694,13 +4552,17 @@ do
         end
         local distance, turn, plan
         if not inside then distance, turn, plan = Measure(entry) end
-        local final = plan and plan.final
+        local final = plan and plan.final and not plan.elevator and not plan.road -- ucelevator, orgroads: at the elevator / a corner is not at the spot
         -- An NPC under the ground (or up a tower): standing over them outside
         -- is not there yet.
         local floor = final and distance and distance <= FLOOR_NEAR and Floor(entry) or nil
         local below = floor ~= nil and floor < 0 and not Indoors()
         local above = floor ~= nil and floor > 0
-        if distance and final and not below and distance <= ARRIVED and entry.source == "manual" then
+        -- spawns (2.0.36): standing at one of a spot's places: the arrow stays,
+        -- with "Not found? Next spot" under it.
+        local spawnHere = type(entry.spot.spawns) == "table" and #entry.spot.spawns > 1
+            and distance ~= nil and final and not below and distance <= ARRIVED + 4 or false
+        if distance and final and not below and distance <= ARRIVED and entry.source == "manual" and not spawnHere then
             Reached(entry)
             return
         end
@@ -3709,7 +4571,26 @@ do
         local near = distance ~= nil and final and not below and (distance <= ARRIVED or (f.fdjNear and distance <= ARRIVED + 4)) or false
         f.fdjNear = near
         -- questrp (2.0.8): while the NPC's scene runs, the arrow stays at him
-        local hide = inside or (near and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))))
+        local hide = inside or (near and not spawnHere and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))))
+        if f.nextSpawn then
+            f.nextSpawn:SetShown(spawnHere and not inside)
+            if spawnHere then
+                f.nextSpawn:SetText(FDJ.L("ARROW_NEXT_SPAWN", (entry.spawnAt or 1) + 1 > #entry.spot.spawns and 1 or (entry.spawnAt or 1) + 1, #entry.spot.spawns))
+            end
+        end
+        -- goalhere (2.0.9, M 16 Nov 2026): at the place to kill / collect the
+        -- arrow stays, standing right at its spot too.
+        if type(entry.spot.goalLines) == "table" then hide = inside end
+        -- pickup (2.0.9, M 16 Nov 2026 at the tablets: "I don't like how the
+        -- arrow disappears when reaching a pick up item, it should just
+        -- switch to text: Pick it up"): at a thing to pick up the arrow stays.
+        if entry.spot.pickUp then hide = inside end
+        -- talkto (2.0.9, M 16 Nov 2026 at Nogg and Sovik in Orgrimmar, two
+        -- quest givers side by side: "Let's just stop making the arrow
+        -- disappear ... once we are close, just have the explanation of
+        -- what we have to do ... talk to X NPC"): the arrow no longer goes
+        -- away at its spot; there it says who to talk to.
+        hide = inside
         if hide ~= f.fdjHidden then
             f.fdjHidden = hide
             f:SetAlpha(hide and 0 or 1)
@@ -3886,6 +4767,12 @@ do
         -- routeauto (2.0.8): the flight the arrow says to take, for
         -- Systems/RouteAuto.lua (no new local: this scope is at Lua's limit).
         FDJ.arrowFly, FDJ.arrowFlyAt = plan and plan.fly or nil, (GetTime and GetTime()) or 0
+        -- lootitem (2.0.36): the item that starts the quest is in the bags
+        -- but the quest is not taken yet: say to use it.
+        local use = entry.spot.useItem
+        if type(use) == "table" and (doing == nil or doing == "") then
+            doing = "|cff59ff59" .. FDJ.L("ARROW_USE_ITEM", FreeText(use[2]) or use[2]) .. "|r"
+        end
         -- way: the hearthstone, when it is the quicker way: a line of its
         -- own under the next step (or in its place when there is none).
         local hearth = plan and plan.hearth and FDJ.L("ARROW_HEARTH", plan.hearth) or ""
@@ -3894,7 +4781,10 @@ do
             f.route:SetText("")
             f.hearth:SetText("")
         elseif distance then
-            f.distance:SetText(FDJ.L("ARROW_DISTANCE", math.floor(distance + 0.5)))
+            -- wholeway (2.0.34): on a way walked point by point, the yards
+            -- to the spot itself along it, not to the next corner (to the
+            -- flight master or the dock when a ride comes first, as before).
+            f.distance:SetText(FDJ.L("ARROW_DISTANCE", math.floor(distance + ((plan and plan.rest) or 0) + 0.5)))
             -- upstairs (2.0.8): an NPC up the stairs (FDJ.NPC_UPSTAIRS), once
             -- its portrait shows: "Go upstairs" (no new local: at Lua's limit)
             local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE"))
@@ -3904,13 +4794,78 @@ do
             -- getto (2.0.22): the place to get to, on its own line under the
             -- yards, the next step (if any) under it.
             local getTo = Way.GetTo(entry)
-            if getTo ~= "" then step = (step ~= "" and (getTo .. "\n" .. step)) or getTo end
+            -- onedest (2.0.7): "Take the zeppelin to Orgrimmar" / "Fly to
+            -- Undercity" already names where to: no "Get to Orgrimmar" over
+            -- it. It shows again once the ride or flight is behind.
+            if plan and (plan.fly or plan.ride) then getTo = "" end
+            if plan and plan.elevator then
+                -- ucelevator (2.0.7): the ride first, how to get out under it
+                local lift = FDJ.L("ARROW_ELEVATOR")
+                step = (step ~= "" and (step .. "\n" .. lift)) or lift
+            elseif getTo ~= "" then
+                step = (step ~= "" and (getTo .. "\n" .. step)) or getTo
+            end
             f.route:SetText(step)
             f.hearth:SetText(hearth)
         else
             f.distance:SetText(entry.zone)
             f.route:SetText(Way.GetTo(entry)) -- getto (2.0.22)
             f.hearth:SetText("")
+        end
+        -- goalhere (2.0.9): there: what to kill / collect in place of the
+        -- yards (as the tracker shows it), nothing about the way; the arrow
+        -- keeps pointing into the area (not while standing on its spot).
+        if type(entry.spot.goalLines) == "table" then
+            f.distance:SetText(#entry.spot.goalLines > 0 and table.concat(entry.spot.goalLines, "\n") or (FreeText(entry.spot.detail) or ""))
+            f.route:SetText("")
+            f.hearth:SetText("")
+            FDJ.arrowFly = nil
+            -- nopointhere (2.0.9, M 16 Nov 2026 at the Balia'mah Ruins, Troll
+            -- Witchery's trolls in front of him: "my character is literally
+            -- facing where he has to go, but the arrow points to go back"):
+            -- the place is an area (its spot is only the middle of where the
+            -- mobs stand, here 200 yards behind him), so inside it nothing
+            -- points anywhere: the name and what to kill / collect only.
+            turn = nil
+        end
+        -- pickup (2.0.9): standing at a thing to pick up: "Pick it up" in
+        -- place of the yards, no pointer. swimunder (2.0.9, M at The Second
+        -- Troll Legend, on the bottom of the Vile Reef: "here it should say
+        -- Swim underwater, once water has been reached"): a thing lying under
+        -- water, the player in the water and near it: "Swim underwater" under
+        -- the yards, and over "Pick it up" right above it.
+        if entry.spot.pickUp and not inside and not (type(entry.spot.goalLines) == "table") then
+            if entry.spot.underwater and distance and distance <= 150
+                and type(IsSwimming) == "function" and select(2, pcall(IsSwimming)) == true then
+                if near then
+                    -- divedown (M over the tablet, "it's telling me to pick it up
+                    -- now but I'm still so far up in the water"): the game tells
+                    -- an addon no height, so over the thing it says to dive, and
+                    -- where to pick it up, not that it is in reach.
+                    f.distance:SetText("|cff8fd0ff" .. FDJ.L("ARROW_DIVE_DOWN") .. "|r\n|cff59ff59" .. FDJ.L("ARROW_PICK_UP_BOTTOM") .. "|r")
+                    f.route:SetText("")
+                    f.hearth:SetText("")
+                    turn = nil
+                else
+                    f.route:SetText("|cff8fd0ff" .. FDJ.L("ARROW_SWIM_UNDER") .. "|r")
+                end
+            elseif near then
+                f.distance:SetText("|cff59ff59" .. FDJ.L("ARROW_PICK_UP") .. "|r")
+                f.route:SetText("")
+                f.hearth:SetText("")
+                turn = nil
+            end
+        end
+        -- talkto (2.0.9): at the spot of an NPC: "Talk to <NPC>" in place
+        -- of the yards, no pointer (not while the NPC's scene runs, at a
+        -- place to kill / collect, a thing to pick up or one of several
+        -- places to look).
+        if near and not inside and not spawnHere and not entry.spot.pickUp and type(entry.spot.goalLines) ~= "table"
+            and NPC(entry.spot) and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))) then
+            f.distance:SetText("|cff59ff59" .. FDJ.L("ARROW_TALK_TO", FreeText(NPC(entry.spot)) or NPC(entry.spot)) .. "|r")
+            f.route:SetText("")
+            f.hearth:SetText("")
+            turn = nil
         end
         if turn then
             if f.arrow.SetRotation then f.arrow:SetRotation(turn) end
@@ -3991,6 +4946,17 @@ do
         f.hearth = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         f.hearth:SetPoint("TOP", f.route, "BOTTOM", 0, -2)
         f.hearth:SetTextColor(0.56, 0.82, 1.00)
+        -- spawns (2.0.36): "Not found? Next spot", at one of a spot's places.
+        do
+            local okB, b = pcall(CreateFrame, "Button", nil, f, "UIPanelButtonTemplate")
+            if okB and b then
+                b:SetSize(190, 22)
+                b:SetPoint("TOP", f.hearth, "BOTTOM", 0, -4)
+                b:SetScript("OnClick", function() if FDJ.NextArrowSpawn then FDJ.NextArrowSpawn() end end)
+                b:Hide()
+                f.nextSpawn = b
+            end
+        end
         f:SetScript("OnDragStart", function(self)
             self.fdjDragging = true
             self:StartMoving()
@@ -4167,7 +5133,9 @@ do
     end
     -- A followed chain page's next spot (nil: nothing more, or not followed).
     -- The chain moving on or ending takes its spot shown on the map along.
-    function FDJ.FollowWaypoint(source, spot, questTitle, turnIn)
+    -- goalhere (2.0.9): goalLines, at the place to kill / collect (a route's
+    -- stop, Systems/QuestText.lua): the lines shown in place of the yards.
+    function FDJ.FollowWaypoint(source, spot, questTitle, turnIn, goalLines)
         if source == nil then return end
         if type(spot) ~= "table" or not spot.mapID then
             if follows[source] then
@@ -4177,13 +5145,26 @@ do
             end
             return
         end
-        local key = SpotKey(spot) .. (turnIn and "|in" or "|up")
+        local key = SpotKey(spot) .. (turnIn and "|in" or "|up") .. (spot.useItem and "|use" or "") -- lootitem: the reminder comes and goes
         local old = follows[source]
+        -- goalhere (2.0.9): the same spot, there or not (yet): the lines kept
+        -- up to date as kills and loot come in; the arrow stays as it is
+        -- (right-clicked away: still away). The next quest at the same place
+        -- (The Second Rebellion done, Bad Medicine left): its name on it.
+        if old and old.key == key then
+            old.spot.goalLines = type(goalLines) == "table" and goalLines or nil
+            if type(questTitle) == "string" and old.spot.questTitle ~= questTitle then
+                old.spot.questTitle = questTitle
+                if shown == old then Choose() end
+            end
+            return
+        end
         if old and old.key == key then return end
         if old and manual and manual.chain == source then manual = nil end
         local copy = Copy(spot)
         copy.questTitle = questTitle
         copy.turnIn = turnIn and true or nil
+        copy.goalLines = type(goalLines) == "table" and goalLines or nil
         follows[source] = { spot = copy, source = source, key = key }
         Choose()
     end
@@ -4191,11 +5172,49 @@ do
         return shown and shown.spot or nil, shown and shown.source or nil
     end
 
+    -- dungeonroute (2.0.5): what the way from one spot to another costs, in
+    -- yards on foot, counted as the arrow counts it (flight points found,
+    -- boats, zeppelins, portals). from = nil: from where the player stands,
+    -- and then with the hearthstone when it is ready and the quicker way.
+    -- nil: no way known.
+    function FDJ.WayCost(from, to)
+        if type(to) ~= "table" or not to.mapID then return nil end
+        local t = Way.Point(to.mapID, tonumber(to.x) or 0, tonumber(to.y) or 0)
+        if not t then return nil end
+        local p
+        if from then
+            p = Way.Point(from.mapID, tonumber(from.x) or 0, tonumber(from.y) or 0)
+        else
+            local px, py, here = PlayerWorld()
+            if px and here then
+                local map = PlayerMap()
+                p = { px, py, here, region = Way.Region(here, map, px, py), map = map }
+            end
+        end
+        if not p then return nil end
+        local cost = p.region == t.region and Way.Leg(p, t) or nil
+        if not cost or cost > Way.RIDE_WORTH then
+            local _, found = Way.Search(p, t)
+            cost = found or cost
+        end
+        if not from and Way.HearthReady() then
+            local bindName, bind = Way.BindSpot()
+            if bind and not (bind[3] == p[3] and Yards(p[1], p[2], bind[1], bind[2]) < Way.HEARTH_NEAR) and not Way.AtBind(bindName) then
+                local _, after = Way.Search(bind, t)
+                if after and (not cost or Way.HEARTH_CAST + after + Way.HEARTH_SAVES <= cost) then
+                    cost = Way.HEARTH_CAST + after
+                end
+            end
+        end
+        return cost
+    end
     -- Where the arrow leads right now (world yards) and, on the way round
     -- something, that point's label (2.0.12; for tests and /dj debugging).
     function FDJ.WaypointArrowAim()
         local plan = shown and shown.plan
         if not plan then return nil end
+        if plan.elevator and plan.aimX then return plan.aimX, plan.aimY, "elevator" end -- ucelevator (2.0.7)
+        if plan.road and plan.aimX then return plan.aimX, plan.aimY, "road" end -- orgroads (2.0.8)
         return plan.x, plan.y, plan.via and plan.via.label or nil
     end
     -- A route switched on again: its arrow comes back if it was hidden.

@@ -8,6 +8,9 @@ FDJ.FOREVER_QUEST_XP_FALLBACK[378] = 5750
 FDJ.QUEST_PREREQ_CHAINS[98823] = {{
     id = 95664,
     name = "Elder Knowledge",
+    -- excavhorde (2.0.7): started by the Titan Relic from inside the dungeon,
+    -- so the route hands it in (and takes Earthen Echo) after the run.
+    startsInDungeon = true,
 }}
 FDJ.QUEST_PREREQ_CHAINS[98824] = {{
     id = 95810,
@@ -535,7 +538,7 @@ FDJ.QUEST_PREREQ_DETAILS[450] = {
     map = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
     turninMap = { mapID = 1421, x = 0.428, y = 0.409, label = "Apothecary Renferrel — The Sepulcher", targetName = "Apothecary Renferrel" },
     requiredItems = {
-        {3255, "Berard's Journal", 1, "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)", map = { markerType = "location", mapID = 1421, x = 0.430, y = 0.732, label = "Berard's Bookshelf — Pyrewood Village", detail = "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)" }},
+        {3255, "Berard's Journal", 1, "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)", map = { markerType = "location", mapID = 1421, x = 0.430, y = 0.732, label = "Berard's Bookshelf — Pyrewood Village", detail = "Found on Berard's Bookshelf in the Pyrewood Village inn (Silverpine Forest 43, 73)", pickUp = true }},
     },
 }
 FDJ.QUEST_PREREQ_DETAILS[451] = {
@@ -625,7 +628,7 @@ do
         pickup = GROMGOL, turnin = GROMGOL,
         map = KINWEELAY,
         requiredItems = {
-            {4094, "Tablet Shard", 1, "From the tablet Gri'lek the Wanderer, at the bottom of the Vile Reef (around 25, 23)", map = { mapID = 1434, x = 0.248, y = 0.230, label = "Gri'lek the Wanderer — the Vile Reef", detail = "The tablet at the bottom of the Vile Reef (around 25, 23)" }},
+            {4094, "Tablet Shard", 1, "From the tablet Gri'lek the Wanderer, at the bottom of the Vile Reef (around 25, 23)", map = { mapID = 1434, x = 0.248, y = 0.230, label = "Gri'lek the Wanderer — the Vile Reef", detail = "The tablet at the bottom of the Vile Reef (around 25, 23)", pickUp = true, underwater = true }},
         },
     }
     FDJ.QUEST_PREREQ_DETAILS[95748] = {
@@ -634,7 +637,7 @@ do
         pickup = GROMGOL, turnin = GROMGOL,
         map = KINWEELAY,
         requiredItems = {
-            {2007, "The Third Troll Legend", 1, "Rubbing of the tablet Fall of Gurubashi, in the troll ruins on the coast north of the Vile Reef (around 23, 12)", map = { mapID = 1434, x = 0.230, y = 0.120, label = "Fall of Gurubashi — troll ruins north of the Vile Reef", detail = "The tablet in the troll ruins on the coast (around 23, 12)" }},
+            {2007, "The Third Troll Legend", 1, "Rubbing of the tablet Fall of Gurubashi, in the troll ruins on the coast north of the Vile Reef (around 23, 12)", map = { mapID = 1434, x = 0.230, y = 0.120, label = "Fall of Gurubashi — troll ruins north of the Vile Reef", detail = "The tablet in the troll ruins on the coast (around 23, 12)", pickUp = true }},
         },
     }
     FDJ.QUEST_PREREQ_DETAILS[95770] = {
@@ -742,7 +745,10 @@ do
 
     -- Objects, not NPCs: nothing to target from the map.
     local function Tablet(name, x, y, where)
-        return { markerType = "location", mapID = 1434, x = x, y = y, label = name .. " — Stranglethorn Vale", detail = where }
+        -- pickUp: a thing to pick up (the arrow stays there and says so);
+        -- underwater: on the bottom of the Vile Reef ("Swim underwater")
+        return { markerType = "location", mapID = 1434, x = x, y = y, label = name .. " — Stranglethorn Vale", detail = where, pickUp = true,
+            underwater = (name == "Gri'lek the Wanderer") or nil }
     end
 
     local LEAD_IN = {
@@ -853,6 +859,36 @@ do
         if quest.id == 97130 then
             quest.turninMap = FDJ.QUEST_START_MAPS[97130]
             break
+        end
+    end
+
+    -- drownedally (2.0.9, M: "the tracking guide, the one with the arrow, for
+    -- Alliance Drowned City quests"): what the Route needs to know.
+    --  - Sergeant Yohwa's two quests are taken together (the second does not
+    --    wait for the first to be handed in).
+    --  - Where each lead-in is done: the Kurzen men of both of Yohwa's quests
+    --    stand at Kurzen's Compound (Jungle Fighters and Medicine Men, 28
+    --    spawns around 44.7, 10.4); the Skullsplitter Mystics south of it (24
+    --    spawns around 45.9, 36.4; the Witch Doctors a little further south).
+    --    Forever client tables via Polestar forever-db (spawns of 937, 940,
+    --    780, 670). Kurzen's Mystery: its four tablets have their places
+    --    already (requiredItems' maps).
+    --  - Dibbs' two quests are done inside the dungeon: handed in after the
+    --    run. His two follow-ups are deliveries: no run of their own.
+    do
+        local KURZEN = { markerType = "location", mapID = 1434, x = 0.447, y = 0.104, label = "Kurzen's Compound — Stranglethorn Vale", detail = "Kurzen Jungle Fighters and Medicine Men, in and around Kurzen's Compound" } -- (no town named here: the arrow would say "Get to" it)
+        local SKULLSPLITTERS = { markerType = "location", mapID = 1434, x = 0.459, y = 0.364, label = "Skullsplitter trolls — Stranglethorn Vale", detail = "Skullsplitter Mystics and Witch Doctors in the troll ruins south of Kurzen's Compound" }
+        FDJ.QUEST_PREREQ_DETAILS[203].objectiveMap = KURZEN
+        FDJ.QUEST_PREREQ_DETAILS[204].objectiveMap = KURZEN
+        FDJ.QUEST_PREREQ_DETAILS[205].objectiveMap = SKULLSPLITTERS
+        for _, id in ipairs({ 95799, 95798 }) do
+            for _, step in ipairs(FDJ.QUEST_PREREQ_CHAINS[id]) do
+                if step.id == 204 then step.together = true end
+                if step.id == 95787 or step.id == 95788 then step.needsDungeon = true end
+            end
+        end
+        for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
+            if quest.id == 95799 or quest.id == 95798 then quest.routeNoRun = true end
         end
     end
 
@@ -971,6 +1007,14 @@ do
         if boss.name == "Gahz'rilla" then
             boss.summonItem = MALLET
             boss.summonChain = { page = PAGE, quest = MAIN }
+        end
+    end
+    -- summonhelp (2.0.9, M 16 Nov 2026): the quest Gahz'rilla (2770) says he
+    -- has to be summoned, above its Objective, with "How to summon
+    -- Gahz'rilla" opening this chain (Core/Journal.lua, FDJ.PlaceSummonHelp).
+    for _, quest in ipairs((zf and zf.quests) or {}) do
+        if quest.id == 2770 then
+            quest.summonHelp = { boss = "Gahz'rilla", item = MALLET, itemName = "Mallet of Zul'Farrak", page = PAGE, quest = MAIN }
         end
     end
 end
@@ -1943,7 +1987,12 @@ do
     local EITRIGG = { mapID = 1454, x = 0.344, y = 0.386, label = "Eitrigg — Grommash Hold, Orgrimmar", targetName = "Eitrigg" }
     local NAZEER = { mapID = 1445, x = 0.360, y = 0.310, label = "Nazeer Bloodspike — Brackenwall Village, Dustwallow Marsh", targetName = "Nazeer Bloodspike" }
     local ULKA = { mapID = 1445, x = 0.702, y = 0.188, label = "Sergeant Ulka — Alcaz Island, Dustwallow Marsh", targetName = "Sergeant Ulka" }
-    local SHAW = { mapID = 1453, x = 0.758, y = 0.598, label = "Master Mathias Shaw — SI:7, Old Town, Stormwind", targetName = "Mathias Shaw" }
+    -- shawspot (2.0.9, Pekins on Discord, 15 Nov 2026: "more towards the
+    -- south of Old Town at 79, 71"): 75.8, 59.8 was his place on the old
+    -- Stormwind map; on Forever's map he stands at 78.3, 70.7 (Forever
+    -- client tables via Polestar forever-db, spawn of NPC 332; the same
+    -- spot the journal already uses for Shaw's Report).
+    local SHAW = { mapID = 1453, x = 0.783, y = 0.707, label = "Master Mathias Shaw — SI:7, Old Town, Stormwind", targetName = "Master Mathias Shaw" }
     local SULLY = { mapID = 1445, x = 0.662, y = 0.452, label = "Sully McCleary — inn, Theramore", targetName = "Sully McCleary" }
     local SULLY_OUT = { mapID = 1445, x = 0.634, y = 0.424, label = "Sully McCleary — outside Theramore, across the bridge", targetName = "Sully McCleary" }
     local LANDALOCK = { mapID = 1416, x = 0.154, y = 0.738, label = "Archmage Lan'dalock — Violet Hold entrance, Dalaran", targetName = "Archmage Lan'dalock" }
@@ -2005,7 +2054,7 @@ do
     D[95194] = {
         level = 53, requires = 48,
         objective = "Seek out the SI:7 agent stationed on Theramore Isle.",
-        pickup = "Master Mathias Shaw, SI:7, Old Town, Stormwind City (75.8, 59.8)", turnin = AT_SULLY,
+        pickup = "Master Mathias Shaw, SI:7, Old Town, Stormwind City (78.3, 70.7)", turnin = AT_SULLY,
         map = SHAW, turninMap = SULLY,
     }
     D[95196] = {
@@ -2942,10 +2991,10 @@ end
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
-    local FUREN = "Furen Longbeard, Dwarven District, Stormwind (58.0, 16.8)"
-    local FUREN_MAP = { mapID = 1453, x = 0.580, y = 0.168, label = "Furen Longbeard — Stormwind", targetName = "Furen Longbeard" }
+    local FUREN = "Furen Longbeard, Dwarven District, Stormwind (64.6, 37.2)"
+    local FUREN_MAP = { mapID = 1453, x = 0.646, y = 0.372, label = "Furen Longbeard — Stormwind", targetName = "Furen Longbeard" }
     local YORUS = "Yorus Barleybrew, Lakeshire, Redridge Mountains"
-    -- Where he stands (the Lakeshire inn).
+    -- rfkroute (2.0.28): where he stands (the Lakeshire inn), for the route.
     local YORUS_MAP = { mapID = 1433, x = 0.215, y = 0.447, label = "Yorus Barleybrew — Lakeshire", targetName = "Yorus Barleybrew" }
     local THUNGRIM = "Thun'grim Firegaze, hills east of the Crossroads, The Barrens (57, 30)"
     local THUNGRIM_MAP = { mapID = 1413, x = 0.570, y = 0.300, label = "Thun'grim Firegaze — east of the Crossroads", targetName = "Thun'grim Firegaze", detail = "On the hilltop east of the Crossroads, just south of Thorn Hill" }
@@ -2991,7 +3040,7 @@ do
     C[1782] = {
         { id = 1699, name = "The Rethban Gauntlet" },
         { id = 1702, name = "The Shieldsmith" },
-        { id = 1701, name = "Fire Hardened Mail" },
+        { id = 1701, name = "Fire Hardened Mail", needsDungeon = true }, -- rfkroute: handed in after the run
     }
     C[1848] = {
         { id = 1824, name = "Trial at the Field of Giants" },

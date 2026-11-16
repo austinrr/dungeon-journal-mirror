@@ -7179,6 +7179,56 @@ do
     end
 end
 
+-- dalaranvias (2.0.12): the arrow's lines on the way round Dalaran.
+do
+    local WEST = "Round Dalaran's west wall, along the lake"
+    local NORTH = "Round Dalaran's north side, along the lake shore"
+    local LINES = {
+        deDE = { "Um Dalarans Westmauer herum, am See entlang", "Um Dalarans Nordseite herum, am Seeufer entlang" },
+        frFR = { "Contournez le mur ouest de Dalaran, le long du lac", "Contournez Dalaran par le nord, le long de la rive du lac" },
+        esES = { "Rodea la muralla oeste de Dalaran, junto al lago", "Rodea Dalaran por el norte, por la orilla del lago" },
+        esMX = { "Rodea la muralla oeste de Dalaran, junto al lago", "Rodea Dalaran por el norte, por la orilla del lago" },
+        itIT = { "Aggira le mura ovest di Dalaran, lungo il lago", "Aggira Dalaran da nord, lungo la riva del lago" },
+        ptBR = { "Contorne a muralha oeste de Dalaran, ao longo do lago", "Contorne Dalaran pelo norte, pela margem do lago" },
+        ruRU = { "В обход западной стены Даларана, вдоль озера", "В обход Даларана с севера, вдоль берега озера" },
+        koKR = { "달라란 서쪽 성벽을 돌아 호수를 따라가세요", "달라란 북쪽을 돌아 호숫가를 따라가세요" },
+        zhCN = { "沿湖绕过达拉然的西墙", "沿湖岸从北侧绕过达拉然" },
+        zhTW = { "沿湖繞過達拉然的西牆", "沿湖岸從北側繞過達拉然" },
+    }
+    for lang, pair in pairs(LINES) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places[WEST], content.places[NORTH] = pair[1], pair[2]
+        end
+    end
+end
+
+
+-- liftgate (2.0.28): the arrow's lines at the Great Lift.
+do
+    local UP = "Take the Great Lift up to the Barrens"
+    local DOWN = "Take the Great Lift down to Thousand Needles"
+    local LINES = {
+        deDE = { "Nimm den Großen Aufzug hinauf ins Brachland", "Nimm den Großen Aufzug hinunter nach Tausend Nadeln" },
+        frFR = { "Prenez le Grand Élévateur pour monter aux Tarides", "Prenez le Grand Élévateur pour descendre à Mille pointes" },
+        esES = { "Toma el Gran Elevador para subir a Los Baldíos", "Toma el Gran Elevador para bajar a Las Mil Agujas" },
+        esMX = { "Toma el Gran Elevador para subir a Los Baldíos", "Toma el Gran Elevador para bajar a Las Mil Agujas" },
+        itIT = { "Prendi il Grande Ascensore per salire alle Savane", "Prendi il Grande Ascensore per scendere a Millepicchi" },
+        ptBR = { "Pegue o Grande Elevador para subir aos Sertões", "Pegue o Grande Elevador para descer a Mil Agulhas" },
+        ruRU = { "Поднимитесь на Великом подъемнике в Степи", "Спуститесь на Великом подъемнике в Тысячу Игл" },
+        koKR = { "거대한 승강기를 타고 불모의 땅으로 올라가세요", "거대한 승강기를 타고 버섯구름 봉우리로 내려가세요" },
+        zhCN = { "乘坐升降梯上到贫瘠之地", "乘坐升降梯下到千针石林" },
+        zhTW = { "搭乘升降梯上到貧瘠之地", "搭乘升降梯下到千針石林" },
+    }
+    for lang, pair in pairs(LINES) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.places = content.places or {}
+            content.places[UP], content.places[DOWN] = pair[1], pair[2]
+        end
+    end
+end
 
 -- Blueleaf Tubers (1221), 2.0.50: the reminder to take the three quest
 -- items from beside Mebok Mizzyrix. Item names as each client names them

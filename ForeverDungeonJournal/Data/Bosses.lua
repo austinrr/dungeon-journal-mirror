@@ -707,6 +707,19 @@ FDJ.STATIC_DISPLAY_IDS = {
     [247231] = 131644,  -- Unbound Spirit
     [269104] = 12235,   -- Moontouched Wanderer
     [269111] = 145808,  -- Gortek the Apprentice
+    -- bakelooks (2.0.9): the five bosses that were known by NPC ID only:
+    -- their looks as the game gave them on M's client (15 Nov 2026; Obsidian
+    -- Sentinel's and Theldren's are AzerothCore's too). Each has its bundled
+    -- picture, so nothing is asked of the game for them any more.
+    [7023] = 5285,      -- Obsidian Sentinel (Uldaman)
+    [16101] = 16018,    -- Jarien (jariensothos 2.0.9: https://octowow.st/db/?npc=16101)
+    [16102] = 16003,    -- Sothos (https://octowow.st/db/?npc=16102)
+    [16080] = 15997,    -- Mor Grayhoof (morgrayhoof 2.0.9: https://octowow.st/db/?npc=16080)
+    [10263] = 5047,     -- Burning Felguard (lbrsaudit 2.0.9: https://octowow.st/db/?npc=10263)
+    [16059] = 15981,    -- Theldren (Blackrock Depths)
+    [250034] = 2424,    -- Tunnelweb Matriarch (Blackmaw Hold)
+    [261974] = 143035,  -- Cinder (Shaper's Terrace)
+    [262297] = 143122,  -- Snowtalon (Shaper's Terrace)
 }
 
 -- 1.9.4: Primeval Elemental (The Drowned City) has no NPC ID of its own yet:
@@ -792,6 +805,23 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Razorfen Spearhide"] = 6078, -- npc 4438
     ["Wildspawn Rogue"] = 2021, -- npc 11452
     ["Wildspawn Betrayer"] = 10032, -- npc 11454
+    -- dmtrash (2.0.9, M 16 Nov 2026): Dire Maul trash, by their looks (octowow.st
+    -- Classic database, https://octowow.st/db/?npc=<id>; Phase Lasher also
+    -- classicdb.ch). Were by NPC ID first: the game's lookup gave several of
+    -- them another mob's look (a flower as a tree, trees as satyrs).
+    ["Warpwood Crusher"] = 12929, -- npc 13021
+    ["Warpwood Stomper"] = 6350, -- npc 11465
+    ["Wildspawn Satyr"] = 11345, -- npc 11451
+    ["Phase Lasher"] = 13109, -- npc 13196
+    ["Mana Remnant"] = 14272, -- npc 11483
+    ["Arcane Aberration"] = 14253, -- npc 11480
+    ["Residual Monstrosity"] = 14254, -- npc 11484
+    -- mobpics (2.0.9): a row shows no portraits at all while one of its mobs
+    -- is unknown (the Wand had Arcane Torrent, the Talisman a family name)
+    ["Arcane Torrent"] = 10315, -- npc 14399
+    ["Eldreth Spirit"] = 10751, -- npc 11472 (stands for all Eldreth spirits)
+    ["Ironbark Protector"] = 13489, -- npc 11459
+    ["Petrified Treant"] = 2078, -- npc 11458
     ["Scarlet Soldier"] = 2522, -- npc 4286
     ["Scarlet Gallant"] = 2463, -- npc 4287
     ["Scarlet Beastmaster"] = 2497, -- npc 4288
@@ -800,6 +830,69 @@ FDJ.TRASH_MOB_DISPLAY_IDS = {
     ["Scarlet Chaplain"] = 2501, -- npc 4299
     ["Scarlet Monk"] = 2603, -- npc 4540
     ["Arcanist Doan"] = 5266, -- npc 6487
+    -- bakelooks (2.0.9): the mobs known by NPC ID only (TRASH_MOB_NPC_IDS,
+    -- below), now with their look, so the bundled picture shows at once and
+    -- nothing is asked of the game for them: the look the game itself gave
+    -- for the NPC on M's client (/dj bake, 15 Nov 2026); where the game gave
+    -- none, AzerothCore's creature_template_model (marked). Phantasm, Mana
+    -- Stalker and Mindless Horror are still found in the game.
+    ["Scarlet Diviner"] = 2507, -- npc 4291 (AzerothCore)
+    ["Atal'ai Witch Doctor"] = 6671, -- npc 5259
+    ["Spectral Citizen"] = 10484, -- npc 10384
+    ["Thuzadin Shadowcaster"] = 10632, -- npc 10398
+    ["Thuzadin Necromancer"] = 10542, -- npc 10400
+    ["Ghoul Ravener"] = 10626, -- npc 10406
+    ["Fleshflayer Ghoul"] = 414, -- npc 10407 (AzerothCore)
+    ["Rockwing Gargoyle"] = 7533, -- npc 10408
+    ["Rockwing Screecher"] = 11071, -- npc 10409
+    ["Crypt Crawler"] = 6841, -- npc 10412
+    ["Crypt Beast"] = 9758, -- npc 10413
+    ["Patchwork Horror"] = 1693, -- npc 10414 (AzerothCore)
+    ["Bile Spewer"] = 9760, -- npc 10416
+    ["Venom Belcher"] = 12819, -- npc 10417
+    ["Crimson Guardsman"] = 10495, -- npc 10418
+    ["Crimson Conjuror"] = 10490, -- npc 10419
+    ["Crimson Initiate"] = 10497, -- npc 10420
+    ["Crimson Defender"] = 10500, -- npc 10421
+    ["Crimson Sorcerer"] = 10504, -- npc 10422
+    ["Crimson Priest"] = 10509, -- npc 10423
+    ["Crimson Gallant"] = 10515, -- npc 10424
+    ["Crimson Battle Mage"] = 10530, -- npc 10425
+    ["Crimson Inquisitor"] = 10516, -- npc 10426
+    ["Wailing Banshee"] = 8782, -- npc 10464
+    ["Scholomance Adept"] = 11161, -- npc 10469
+    ["Scholomance Occultist"] = 11126, -- npc 10472
+    ["Scholomance Necromancer"] = 11155, -- npc 10477
+    ["Splintered Skeleton"] = 9788, -- npc 10478
+    ["Risen Warrior"] = 7847, -- npc 10486
+    ["Risen Protector"] = 11489, -- npc 10487
+    ["Risen Construct"] = 12074, -- npc 10488
+    ["Risen Bonewarder"] = 11397, -- npc 10491
+    ["Diseased Ghoul"] = 519, -- npc 10495
+    ["Spectral Researcher"] = 3942, -- npc 10499 (AzerothCore)
+    ["Spectral Teacher"] = 3942, -- npc 10500
+    ["Crimson Monk"] = 10534, -- npc 11043
+    ["Scholomance Handler"] = 11124, -- npc 11257
+    ["Scholomance Dark Summoner"] = 11177, -- npc 11582
+    ["Mana Echo"] = 14272, -- npc 246600
+    ["Arcane Elemental"] = 130208, -- npc 246888
+    ["Arcane Echo"] = 130218, -- npc 246992
+    ["Saturated Remnant"] = 130223, -- npc 247001
+    ["Seeking Remnant"] = 130224, -- npc 247003
+    ["Legashi Summoner"] = 2875, -- npc 247248
+    ["Fallen Warrior"] = 200, -- npc 255069
+    ["Skeletal Warder"] = 612, -- npc 255070
+    ["Blackmaw Druid"] = 3024, -- npc 258516
+    ["Krol'dok Brute"] = 1045, -- npc 258687
+    ["Marsh Crocolisk"] = 1035, -- npc 260796
+    ["Young Riptooth"] = 960, -- npc 260799
+    ["Thicket Lurker"] = 1337, -- npc 260800
+    ["Thicket Hunter"] = 11315, -- npc 260801
+    ["Thicket Matriarch"] = 1339, -- npc 260802
+    ["Highland Spider"] = 1088, -- npc 260803
+    ["Highland Lurker"] = 545, -- npc 260804
+    ["Highland Snapper"] = 7114, -- npc 260810
+    ["Marsh Skulker"] = 807, -- npc 274715
 }
 
 -- trashnpc (2.0.22): trash mobs whose look is not known yet, by NPC ID
@@ -875,5 +968,8 @@ FDJ.TRASH_MOB_NPC_IDS = {
     -- lootaudit2 (2.0.8): their looks found in the game by NPC ID (Wowhead
     -- Forever was asking for a human check, so no display IDs this time)
     ["Krol'dok Brute"] = 258687,
+    -- lootaudit3 (2.0.9): Alcaz Prison, the Enchantresses' Spire (Wowhead Forever npc)
+    ["Strashaz Enchantress"] = 255373,
+
     ["Scarlet Diviner"] = 4291,
 }

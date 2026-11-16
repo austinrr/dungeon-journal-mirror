@@ -1706,12 +1706,35 @@ end
 -- The number each player rolled ("Need Roll - 87 for <item> by <name>").
 -- itemID -> lower-case name -> number
 local rollValue = {}
+local rollName = {} -- itemID -> lower-case name -> the name as the game wrote it
 local function SetRollValue(link, name, n)
     local id = ItemIDOf(link)
     n = tonumber(n)
     if not id or not n or type(name) ~= "string" then return end
     rollValue[id] = rollValue[id] or {}
     rollValue[id][name:lower()] = n
+    rollName[id] = rollName[id] or {}
+    rollName[id][name:lower()] = name
+end
+-- rollhistory (2.0.9, M 16 Nov 2026: "I want to see how much I rolled ...
+-- and if I hover the items, I want to see the roll history of the other
+-- players"): every roll on an item, the winning one first: { name =, k = "need" /
+-- "greed", n = number }. Kept on the Need roll (need.rolls) and on the
+-- boss's loot (e.rolls), so the Run Log shows them later.
+local function RollList(id)
+    local vals = id and rollValue[id]
+    if not vals then return nil end
+    local list = {}
+    for lower, n in pairs(vals) do
+        list[#list + 1] = { name = (rollName[id] and rollName[id][lower]) or lower, k = (rollChoice[id] and rollChoice[id][lower]) or nil, n = n }
+    end
+    -- (Need before Greed, as the game decides; then the higher number)
+    table.sort(list, function(a, b)
+        local na, nb = a.k == "need" and 1 or 0, b.k == "need" and 1 or 0
+        if na ~= nb then return na > nb end
+        return a.n > b.n
+    end)
+    return list
 end
 local function RollOf(id, name)
     local t = id and rollValue[id]
@@ -1866,12 +1889,13 @@ local function AddBossLoot(link, sourceNpc, winner, fromRoll)
             if winner and not e.w then e.w = winner end
             if e.w and not e.r then e.r = ChoiceOf(id, e.w) end
             if e.w and not e.n then e.n = RollOf(id, e.w) end
+            e.rolls = RollList(id) or e.rolls -- (rollhistory)
             Changed()
             return
         end
     end
     table.insert(target.loot, { id = id, link = link, w = winner, r = winner and ChoiceOf(id, winner) or nil,
-        n = winner and RollOf(id, winner) or nil })
+        n = winner and RollOf(id, winner) or nil, rolls = RollList(id) }) -- (rollhistory)
     Changed()
 end
 
@@ -1939,15 +1963,26 @@ local function OnRollNumber(link, name, n)
             end
         end
     end
-    local run = current
-    for _, k in ipairs((run and run.kills) or {}) do
-        for _, e in ipairs(k.loot or {}) do
-            if e.id == id and e.w and not e.n then
-                local v = RollOf(id, e.w)
-                if v then e.n = v Changed() end
+    -- rollhistory (2.0.9): everyone's rolls on the Need roll and the boss loot
+    local list = RollList(id)
+    for _, r in ipairs(Store().runs) do
+        if not r.closed then
+            for _, need in ipairs(r.needs or {}) do
+                if need.id == id and Now() - (need.at or 0) < 900 then need.rolls = list end
             end
         end
     end
+    local run = current
+    for _, k in ipairs((run and run.kills) or {}) do
+        for _, e in ipairs(k.loot or {}) do
+            if e.id == id then e.rolls = list end
+            if e.id == id and e.w and not e.n then
+                local v = RollOf(id, e.w)
+                if v then e.n = v end
+            end
+        end
+    end
+    Changed()
 end
 
 local function OnLootChat(text)

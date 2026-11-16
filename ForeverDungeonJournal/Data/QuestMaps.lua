@@ -17,14 +17,20 @@ FDJ.QUEST_START_MAPS = {
     [92422] = { mapID = 1420, x = 0.6520, y = 0.6020, label = "Deathguard Kristof — southeast of Brill" },
 
     [214]  = { mapID = 1436, x = 0.5667, y = 0.4735, label = "Scout Riell" },
-    [168]  = { mapID = 1453, x = 0.6680, y = 0.4380, label = "Wilder Thistlenettle" },
-    [167]  = { mapID = 1453, x = 0.6680, y = 0.4380, label = "Wilder Thistlenettle" },
+    -- swmap (2.0.9): the Stormwind markers moved to Forever's Stormwind map
+    -- (they were at their places on the old map): Wilder Thistlenettle,
+    -- Nikova Raskol, Brohann Caskbelly, Shylamiir, Lord Grayson
+    -- Shadowbreaker (here and in QuestChains.lua), Highlord Bolvar
+    -- Fordragon, Grimand Elmore, Furen Longbeard (QuestUpdates.lua). Forever
+    -- client tables via Polestar forever-db (their spawns).
+    [168]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
+    [167]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
     [2040] = { mapID = 1453, x = 0.6300, y = 0.3400, label = "Shoni the Shilent — Dwarven District, Stormwind", targetName = "Shoni the Shilent" },
     [166]  = { mapID = 1436, x = 0.5640, y = 0.4750, label = "Gryan Stoutmantle" },
 
     -- Ragefire Chasm quest givers.
-    [5723] = { mapID = 1456, x = 0.7040, y = 0.3220, label = "Rahauro" },
-    [5722] = { mapID = 1456, x = 0.7040, y = 0.3220, label = "Rahauro" },
+    [5723] = { mapID = 1456, x = 0.701, y = 0.295, label = "Rahauro" },
+    [5722] = { mapID = 1456, x = 0.701, y = 0.295, label = "Rahauro" },
     [5728] = { mapID = 1454, x = 0.3200, y = 0.3780, label = "Thrall" },
     [5761] = { mapID = 1454, x = 0.4960, y = 0.5060, label = "Neeru Fireblade" },
     [5725] = { mapID = 1458, x = 0.5620, y = 0.9260, label = "Varimathras" },
@@ -40,7 +46,7 @@ FDJ.QUEST_START_MAPS = {
     -- spots Forever players report: 73.4, 62.3 and 71.8, 60.1).
     -- On the map the pin walks her loop (x/y: the middle of it, for
     -- "near the spot" checks).
-    [388] = { mapID = 1453, x = 0.744, y = 0.600, label = "Nikova Raskol — Old Town", targetName = "Nikova Raskol",
+    [388] = { mapID = 1453, x = 0.764, y = 0.637, label = "Nikova Raskol — Old Town", targetName = "Nikova Raskol",
         patrol = { { 0.734, 0.554 }, { 0.763, 0.602 }, { 0.761, 0.637 }, { 0.737, 0.622 }, { 0.722, 0.608 } } },
     [378] = { mapID = 1437, x = 0.496, y = 0.182, label = "Motley Garmason — Dun Modr" },
     [391] = { mapID = 1453, x = 0.518, y = 0.693, label = "Warden Thelwater — The Stockade", targetName = "Warden Thelwater" },
@@ -108,14 +114,14 @@ FDJ.QUEST_START_MAPS = {
     [1394] = { mapID = 1458, x = 0.574, y = 0.654, label = "Parqual Fintallas — Undercity", targetName = "Parqual Fintallas" },
     [1445] = { mapID = 1435, x = 0.480, y = 0.550, label = "Fel'zerul — Swamp of Sorrows", targetName = "Fel'zerul" },
     [1446] = { mapID = 1425, x = 0.336, y = 0.752, label = "Atal'ai Exile — The Hinterlands", targetName = "Atal'ai Exile" },
-    [1475] = { mapID = 1453, x = 0.668, y = 0.434, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
+    [1475] = { mapID = 1453, x = 0.695, y = 0.404, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
     [2200] = { mapID = 1455, x = 0.360, y = 0.034, label = "Talvash del Kissel — Ironforge", targetName = "Talvash del Kissel" },
     [2202] = { mapID = 1418, x = 0.024, y = 0.460, label = "Jarkal Mossmeld — Badlands", targetName = "Jarkal Mossmeld" },
     [2283] = { mapID = 1454, x = 0.594, y = 0.368, label = "Dran Droffers — Orgrimmar", targetName = "Dran Droffers" },
     [2284] = { mapID = 1454, x = 0.594, y = 0.368, label = "Dran Droffers — Orgrimmar", targetName = "Dran Droffers" },
     [2339] = { mapID = 1418, x = 0.024, y = 0.460, label = "Jarkal Mossmeld — Badlands", targetName = "Jarkal Mossmeld" },
     [2342] = { mapID = 1458, x = 0.624, y = 0.484, label = "Patrick Garrett — Undercity", targetName = "Patrick Garrett" },
-    [2398] = { mapID = 1455, x = 0.738, y = 0.130, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
+    [2398] = { mapID = 1455, x = 0.746, y = 0.117, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
     [2418] = { mapID = 1418, x = 0.424, y = 0.524, label = "Rigglefuzz — Badlands", targetName = "Rigglefuzz" },
     [2768] = { mapID = 1446, x = 0.524, y = 0.284, label = "Chief Engineer Bilgewhizzle — Tanaris", targetName = "Chief Engineer Bilgewhizzle" },
     [2770] = { mapID = 1441, x = 0.780, y = 0.770, label = "Wizzle Brassbolts — Thousand Needles", targetName = "Wizzle Brassbolts" },
@@ -192,7 +198,7 @@ FDJ.QUEST_START_MAPS = {
     [7482] = { mapID = 1444, x = 0.310, y = 0.442, label = "Scholar Runethorn — Feralas", targetName = "Scholar Runethorn" },
     [7488] = { mapID = 1444, x = 0.304, y = 0.460, label = "Latronicus Moonspear — Feralas", targetName = "Latronicus Moonspear" },
     [7489] = { mapID = 1444, x = 0.760, y = 0.438, label = "Talo Thornhoof — Feralas", targetName = "Talo Thornhoof" },
-    [92456] = { mapID = 1453, x = 0.404, y = 0.652, label = "Shylamiir — Stormwind", targetName = "Shylamiir" },
+    [92456] = { mapID = 1453, x = 0.315, y = 0.626, label = "Shylamiir — Stormwind", targetName = "Shylamiir" },
     [92457] = { mapID = 1421, x = 0.684, y = 0.452, label = "Image of Archmage Modera — Silverpine Forest", targetName = "Image of Archmage Modera" },
     [92458] = { mapID = 1421, x = 0.684, y = 0.452, label = "Image of Archmage Modera — Silverpine Forest", targetName = "Image of Archmage Modera" },
     [92489] = { mapID = 1453, x = 0.488, y = 0.874, label = "High Sorcerer Andromath — Stormwind", targetName = "High Sorcerer Andromath" },
@@ -229,14 +235,14 @@ FDJ.QUEST_START_MAPS = {
     [4768] = { mapID = 1418, x = 0.030, y = 0.476, label = "Shadowmage Vivian Lagrave — Badlands", targetName = "Shadowmage Vivian Lagrave" },
     [5526] = { mapID = 1450, x = 0.516, y = 0.444, label = "Rabine Saturna — Moonglade", targetName = "Rabine Saturna" },
     [5247] = { mapID = 1423, x = 0.475, y = 0.168, label = "Aurora Skycaller — Eastern Plaguelands", targetName = "Aurora Skycaller" },
-    [7643] = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+    [7643] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     [7631] = { mapID = 1428, x = 0.126, y = 0.314, label = "Mor'zul Bloodbringer — Burning Steppes", targetName = "Mor'zul Bloodbringer" },
     [7629] = { mapID = 1428, x = 0.124, y = 0.314, label = "Gorzeeki Wildeyes — Burning Steppes", targetName = "Gorzeeki Wildeyes" },
-    [7647] = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+    [7647] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     [7668] = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
     [5463] = { mapID = 1423, x = 0.739, y = 0.490, label = "Leonid Barthalomew the Revered — Eastern Plaguelands", targetName = "Leonid Barthalomew the Revered" },
-    [707] = { mapID = 1455, x = 0.738, y = 0.130, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
-    [8415] = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+    [707] = { mapID = 1455, x = 0.746, y = 0.117, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
+    [8415] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     [5281] = { mapID = 1423, x = 0.718, y = 0.544, label = "Caretaker Alen — Eastern Plaguelands", targetName = "Caretaker Alen" },
     [5961] = { mapID = 1458, x = 0.580, y = 0.916, label = "Lady Sylvanas Windrunner — Undercity", targetName = "Lady Sylvanas Windrunner" },
     [722] = { mapID = 1418, x = 0.443, y = 0.120, label = "Hammertoe Grez — Uldaman excavation (outside the instance)", detail = "Hammertoe is in the outer excavation caves, before the instance portal" },
@@ -452,7 +458,7 @@ FDJ.MAP_QUEST_PINS = {
         } },
         { floor = 4, x = 0.354, y = 0.177, spots = {
             { name = "Thermaplugg's Safe", quests = {
-                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" }, -- its own quest (still a step of Gnomer-gooooone!)
+                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" }, -- its own quest
             } },
         } },
     },

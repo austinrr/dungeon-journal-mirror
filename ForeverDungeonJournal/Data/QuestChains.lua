@@ -102,8 +102,10 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 2947, name = "Return of the Ring" },
     },
     [2950] = {
-        { id = 2945, name = "Grime-Encrusted Ring" },
-        { id = 2949, name = "Return of the Ring" },
+        -- gnomerhorde (2.0.9): for the route: the ring drops inside, and it
+        -- is cleaned at the Sparklematic inside, so both come after the run
+        { id = 2945, name = "Grime-Encrusted Ring", startsInDungeon = true },
+        { id = 2949, name = "Return of the Ring", needsDungeon = true },
     },
 
     -- Gnomeregan. Optional breadcrumb quests are intentionally excluded.
@@ -114,10 +116,9 @@ FDJ.QUEST_PREREQ_CHAINS = {
     [2962] = {
         { id = 2926, name = "Gnogaine" },
     },
-    -- Rig Wars only needs to be accepted/in progress to make Chief Engineer
-    -- Scooty available; it does not need to be completed first.
+    -- rigwarsfix (2.0.9, M 16 Nov 2026): fixed in Forever, Rig Wars no longer
+    -- has to be in the log for Chief Engineer Scooty; it is its own quest only.
     [2843] = {
-        { id = 2841, name = "Rig Wars", standalone = true, acceptOnly = true }, -- also listed on its own (players looked for it); "(accept only)" in the chain list
         { id = 2842, name = "Chief Engineer Scooty" },
     },
 
@@ -897,14 +898,14 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Brohann Caskbelly in Stormwind wants you to search for the Temple of Atal'Hakkar.",
         pickup = "Brohann Caskbelly, Stormwind",
         turnin = "Brohann Caskbelly, Stormwind",
-        map = { mapID = 1453, x = 0.668, y = 0.434, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
+        map = { mapID = 1453, x = 0.695, y = 0.404, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
     },
     [1449] = {
         level = 43, requires = 38,
         objective = "Speak with High Thane Falstad Wildhammer at Aerie Peak in the Hinterlands.",
         pickup = "Brohann Caskbelly, Stormwind",
         turnin = "Falstad Wildhammer, The Hinterlands",
-        map = { mapID = 1453, x = 0.668, y = 0.434, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
+        map = { mapID = 1453, x = 0.695, y = 0.404, label = "Brohann Caskbelly — Stormwind", targetName = "Brohann Caskbelly" },
     },
     [1450] = {
         level = 43, requires = 38,
@@ -1216,14 +1217,14 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Speak with Highlord Bolvar Fordragon after speaking with Lady Katrana Prestor.",
         pickup = "Highlord Bolvar Fordragon, Stormwind",
         turnin = "Highlord Bolvar Fordragon, Stormwind",
-        map = { mapID = 1453, x = 0.774, y = 0.188, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
+        map = { mapID = 1453, x = 0.802, y = 0.383, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
     },
     [4186] = {
         level = 54, requires = 48,
         objective = "Take Bolvar's Decree to Magistrate Solomon in Lakeshire.",
         pickup = "Highlord Bolvar Fordragon, Stormwind",
         turnin = "Magistrate Solomon, Redridge Mountains",
-        map = { mapID = 1453, x = 0.774, y = 0.188, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
+        map = { mapID = 1453, x = 0.802, y = 0.383, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
     },
     [4223] = {
         level = 54, requires = 48,
@@ -1497,7 +1498,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "You must search the world for a being capable of restoring the power to the Fragment of the Dragon's Eye. The only information you possess about such a being is that they exist.",
         pickup = "Highlord Bolvar Fordragon, Stormwind",
         turnin = "Haleh, Winterspring",
-        map = { mapID = 1453, x = 0.774, y = 0.188, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
+        map = { mapID = 1453, x = 0.802, y = 0.383, label = "Highlord Bolvar Fordragon — Stormwind", targetName = "Highlord Bolvar Fordragon" },
     },
     [6569] = {
         level = 60, requires = 55,
@@ -1588,42 +1589,42 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Travel to Ironforge and get High Priest Rohan's Exorcism Censer. You will need to make a donation of 150 gold in order to secure it.",
         pickup = "Lord Grayson Shadowbreaker, Stormwind",
         turnin = "High Priest Rohan, Ironforge",
-        map = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+        map = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     },
     [7639] = {
         level = 60, requires = 60,
         objective = "Return the Exorcism Censer to Lord Grayson Shadowbreaker in the Cathedral District of Stormwind.",
         pickup = "High Priest Rohan, Ironforge",
         turnin = "Lord Grayson Shadowbreaker, Stormwind",
-        map = { mapID = 1455, x = 0.234, y = 0.064, label = "High Priest Rohan — Ironforge", targetName = "High Priest Rohan" },
+        map = { mapID = 1455, x = 0.247, y = 0.082, label = "High Priest Rohan — Ironforge", targetName = "High Priest Rohan" },
     },
     [7640] = {
         level = 60, requires = 60,
         objective = "Use the Exorcism Censer to drive out the spirits that torment Terrordale. When you have slain 25 Terrordale Spirits, return to Lord Grayson Shadowbreaker in the Cathedral District of Stormwind.",
         pickup = "Lord Grayson Shadowbreaker, Stormwind",
         turnin = "Lord Grayson Shadowbreaker, Stormwind",
-        map = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+        map = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     },
     [7641] = {
         level = 60, requires = 60,
         objective = "Speak with Grimand Elmore in Stormwind's Dwarven District.",
         pickup = "Lord Grayson Shadowbreaker, Stormwind",
         turnin = "Grimand Elmore, Stormwind",
-        map = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+        map = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     },
     [7642] = {
         level = 60, requires = 60,
         objective = "Bring 40 Runecloth, 6 Arcanite Bars, 10 Arthas' Tears, 5 Stratholme Holy Water vials, and 150 gold to Grimand Elmore in the Dwarven District of Stormwind.",
         pickup = "Grimand Elmore, Stormwind",
         turnin = "Grimand Elmore, Stormwind",
-        map = { mapID = 1453, x = 0.516, y = 0.122, label = "Grimand Elmore — Stormwind", targetName = "Grimand Elmore" },
+        map = { mapID = 1453, x = 0.597, y = 0.338, label = "Grimand Elmore — Stormwind", targetName = "Grimand Elmore" },
     },
     [7648] = {
         level = 60, requires = 60,
         objective = "Take the Arcanite Barding to Lord Grayson Shadowbreaker in Stormwind's Cathedral District for his inspection.",
         pickup = "Grimand Elmore, Stormwind",
         turnin = "Lord Grayson Shadowbreaker, Stormwind",
-        map = { mapID = 1453, x = 0.516, y = 0.122, label = "Grimand Elmore — Stormwind", targetName = "Grimand Elmore" },
+        map = { mapID = 1453, x = 0.597, y = 0.338, label = "Grimand Elmore — Stormwind", targetName = "Grimand Elmore" },
     },
     [7645] = {
         level = 60, requires = 60,
@@ -1780,7 +1781,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Acquire special horse feed used for feeding a spirit horse. Merideth Carlson in Southshore apparently is the source for such food. Travel to the Dire Maul dungeon in Feralas and slay Tendris Warpwood. Doing so will free the Ancient Equine Spirit. Feed it the special horse feed, thereby soothing the spirit. Finally, give it the Arcanite Barding so it may bless it.",
         pickup = "Lord Grayson Shadowbreaker, Cathedral of Light, Stormwind",
         turnin = "Ancient Equine Spirit, Dire Maul",
-        map = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+        map = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     },
     [7644] = {
         startsInDungeon = true,
@@ -1794,7 +1795,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         objective = "Bring an Azerothian Diamond and a Pristine Black Diamond to Lord Grayson Shadowbreaker in the Cathedral District of Stormwind.",
         pickup = "Lord Grayson Shadowbreaker, Stormwind",
         turnin = "Lord Grayson Shadowbreaker, Stormwind",
-        map = { mapID = 1453, x = 0.494, y = 0.476, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
+        map = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     },
     [7667] = {
         level = 60, requires = 58,
@@ -1989,13 +1990,18 @@ FDJ.QUEST_PREREQ_DETAILS = {
 
     -- Gnomeregan prerequisite steps.
     [2926] = { level = 27, requires = 20, objective = "Use the Empty Leaden Collection Phial on a living Irradiated Invader or Irradiated Pillager, then return the full phial to Ozzie Togglevolt.", pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh", turnin = "Ozzie Togglevolt, Kharanos, Dun Morogh", description = "Required before The Only Cure is More Green Glow.", map = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", detail = "Start Gnogaine here" }, requiredItems = { {9284, "Full Leaden Collection Phial", 1, "Use the Vial on an Irradiated Invader just outside the instance", map = { mapID = 1426, x = 0.243, y = 0.398, label = "Irradiated Invaders — outside Gnomeregan", detail = "Use the Vial on an Irradiated Invader just outside the instance" }} } },
-    [2841] = { level = 35, requires = 25, objective = "Accept Rig Wars from Nogg. You do not need to complete it before continuing to Chief Engineer Scooty.", pickup = "Nogg, Valley of Honor, Orgrimmar", turnin = "Nogg, Orgrimmar", description = "Rig Wars must be in progress to unlock the transporter chain in Forever.", note = "Accept Rig Wars first; completion is not required for Chief Engineer Scooty.", warning = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear.", map = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", detail = "Accept Rig Wars here" } },
+    [2841] = { level = 35, requires = 25, objective = "Retrieve the Rig Blueprints and Thermaplugg's Safe Combination and bring them to Nogg in Orgrimmar.", pickup = "Nogg, Valley of Honor, Orgrimmar", turnin = "Nogg, Orgrimmar", map = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", detail = "Accept Rig Wars here" } },
     [2842] = { level = 35, requires = 20, objective = "Speak with Scooty in Booty Bay.", pickup = "Sovik, Valley of Honor, Orgrimmar", turnin = "Scooty, Booty Bay, Stranglethorn Vale", description = "Required before Gnomer-gooooone!", map = { mapID = 1454, x = 0.756, y = 0.252, label = "Sovik — Valley of Honor, Orgrimmar", detail = "Start Chief Engineer Scooty here" } },
 
     -- Razorfen Kraul / Scarlet Monastery prerequisite steps.
     [1100] = { level = 27, requires = 23, objective = "Read Henrig Lonebrow's Journal and take it to Falfindel Waywarder in Thalanaar.", pickup = "Henrig Lonebrow's Journal beside his corpse at the bottom of the Great Lift", turnin = "Falfindel Waywarder, Thalanaar, Feralas", description = "Required before The Crone of the Kraul.", map = { mapID = 1441, x = 0.307, y = 0.244, label = "Henrig Lonebrow — bottom of the Great Lift", detail = "Loot Lonebrow's Journal here",
-        },
-    },
+        -- spawns (2.0.36): the journal has two spots (Wowhead Forever comments,
+        -- Nov 2026): by his body at the lift's foot, and by a second body about
+        -- 110 yards down the road (31.3, 28.1). The arrow tries the nearest first.
+        spawns = { { x = 0.307, y = 0.244 }, { x = 0.313, y = 0.281 } } },
+        -- The book gives Henrig Lonebrow's Journal (item 5791), which starts the
+        -- quest: in the bags, the route goes on (and says to use it).
+        lootItem = { 5791, "Henrig Lonebrow's Journal" } },
     [1109] = { level = 33, requires = 30, objective = "Bring 1 pile of Kraul Guano to Master Apothecary Faranell in the Undercity.", pickup = "Master Apothecary Faranell, Apothecarium, Undercity", turnin = "Master Apothecary Faranell, Apothecarium, Undercity", description = "Required before Hearts of Zeal.", map = { mapID = 1458, x = 0.480, y = 0.690, label = "Master Apothecary Faranell — Apothecarium", detail = "Start Going, Going, Guano! here" } },
     [96391] = { level = 15, requires = 9, objective = "Deliver the Dark Iron Map to Earthseer Farsen in Dun Morogh.", pickup = "Dark Iron Map, dropped by Dark Iron Spies at Ironband's Compound, Dun Morogh", turnin = "Earthseer Farsen, Dun Morogh", description = "The Dark Iron Map starts this quest and leads directly into Old Ironforge Incursion.", map = { mapID = 1426, x = 0.770, y = 0.600, label = "Dark Iron Spies — Ironband's Compound", detail = "Farm Dark Iron Spies here for the Dark Iron Map" } },
 

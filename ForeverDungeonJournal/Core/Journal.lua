@@ -238,12 +238,26 @@ FDJ.DUNGEON_MAPS = {
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\DrownedCityAtalByzalMap", texBottom = 683 / 1024, label = "Atal'Byzal" },
         },
         entrance = { floor = 1, x = 0.846, y = 0.521, angle = 0 }, -- the swirl in Sunken Hollow
+        -- drownedpins (2.0.9, M 16 Nov 2026, his marked map): where to swim
+        -- down to Atal'Byzal (his green dot).
+        transitions = {
+            { floor = 1, to = 2, x = 0.575, y = 0.599, tipKey = "MAP_SWIM_HERE" }, -- (M: the text on hover only)
+            { floor = 1, to = 2, x = 0.590, y = 0.837, tipKey = "MAP_SWIM_HERE" }, -- the other way down, by Umbra (M's black dot): a swim too
+            -- drownedexits (2.0.9, M 16 Nov 2026, his marked Atal'Byzal map): the two ways
+            -- back up, at the corridor's ends
+            { floor = 2, to = 1, x = 0.679, y = 0.113, labelKey = "MAP_SHARK_EXIT", color = { 1.00, 0.25, 0.20 } }, -- red: danger (M)
+            { floor = 2, to = 1, x = 0.262, y = 0.792, labelKey = "MAP_SAFE_EXIT" },
+        },
         bosses = {
             { name = "Zul'Alai",            floor = 1, x = 0.697, y = 0.572 },
             -- In the round flooded room east of Var'Taka (OMGmacros's update, same
             -- thread): reached by swimming, from the pool to the south or from
             -- the big basin; the 2nd boss for most groups.
-            { name = "Primeval Elemental",  floor = 1, x = 0.618, y = 0.672 },
+            -- drownedpins (2.0.9, M 16 Nov 2026): on the Atal'Byzal page, in
+            -- its round chamber (M said the second page; the spot on it is ours)
+            { name = "Primeval Elemental",  floor = 2, x = 0.667, y = 0.550 },
+            { name = "Umbra",               floor = 1, x = 0.545, y = 0.829 }, -- drownedpins: M's black dot
+            { name = "\"Pyromancer\" Braxton", floor = 1, x = 0.495, y = 0.368 }, -- drownedpins: M's orange dot
             { name = "Var'Taka",            floor = 1, x = 0.514, y = 0.689 },
             { name = "Captain Dreadrise",   floor = 1, x = 0.546, y = 0.344 }, -- he paths around there
             { name = "Deathless Marrow",    floor = 1, x = 0.349, y = 0.536 },
@@ -279,15 +293,30 @@ FDJ.DUNGEON_MAPS = {
             { name = "Overlord Mugg",              floor = 1, x = 0.688, y = 0.242 },
         },
     },
-    -- No boss positions known yet.
     ["Alcaz Prison"] = {
         -- Level 1: Main Unit (the entrance); Level 2: Maximum Security Unit.
         floors = {
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\AlcazPrisonMap", texBottom = 683 / 1024 },
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\AlcazPrisonMap2", texBottom = 683 / 1024 },
         },
-        entrance = { floor = 1, x = 0.353, y = 0.160, angle = 180 }, -- the swirl at the top of the stairs (label on the left, clear of "Main Unit")
-        bosses = {},
+        -- the swirl at the top of the stairs; its label above it (alcazpins:
+        -- The Questioner's room is on its left, "Main Unit" on its right)
+        entrance = { floor = 1, x = 0.353, y = 0.160, angle = 180, labelPos = "top" },
+        -- alcazstairs (2.0.9, M 16 Nov 2026): the stairs down to level 2, south
+        -- of the crossroads, opened with Wrex's Keyring (his marked screenshot)
+        transitions = {
+            { floor = 1, to = 2, x = 0.330, y = 0.552, tipKey = "MAP_WREX_KEYRING" },
+        },
+        -- alcazpins (2.0.9): where the bosses are, from a player's marked map
+        -- screenshots on Discord (falling/Ekiroth, 15 Nov 2026, "Bosses are
+        -- there as shown; order like in game"), each on its room's centre.
+        bosses = {
+            { name = "Overseer Wrex",          floor = 1, x = 0.642, y = 0.338 }, -- the crescent room by Matarius Cell
+            { name = "The Questioner",         floor = 1, x = 0.247, y = 0.173 }, -- the green room left of the entrance
+            { name = "Tidemistress Ca'zass",   floor = 1, x = 0.355, y = 0.714 }, -- the purple crescent room, south
+            { name = "Katerina the Cleaner",   floor = 2, x = 0.390, y = 0.715 }, -- the crescent room, south-west
+            { name = "Blazeroar",              floor = 2, x = 0.661, y = 0.714 }, -- the great room, south-east
+        },
     },
     ["Shaper's Terrace"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ShapersTerraceMap", texBottom = 683 / 1024 } },
@@ -2857,6 +2886,67 @@ FDJ.PlaceGuideButton = function(quest, cursorY)
     button:Show()
     return cursorY + 33
 end
+-- summonhelp (2.0.9, M 16 Nov 2026, Gahz'rilla): a quest for a boss that has
+-- to be summoned (summonHelp on the quest: { boss, item, page, quest }): a
+-- red line saying so above Objective, then "How to summon <boss>", which
+-- opens the item's quest chain (the Mallet of Zul'Farrak) at the step not
+-- done yet. Returns the new cursorY.
+FDJ.PlaceSummonHelp = function(quest, cursorY)
+    local help = type(quest) == "table" and type(quest.summonHelp) == "table" and quest.summonHelp or nil
+    local note, button = frame and frame.questSummonNote, frame and frame.questSummonButton
+    if not help then
+        if note then note:Hide() end
+        if button then button.help = nil; button:Hide() end
+        return cursorY
+    end
+    if not note then
+        note = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+        note:SetJustifyH("LEFT")
+        frame.questSummonNote = note
+    end
+    if not button then
+        button = CreateFrame("Button", nil, frame.questDetailContent, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
+        frame.questSummonButton = button
+        button:SetHeight(24)
+        button:RegisterForClicks("LeftButtonUp")
+        button:SetScript("OnClick", function(self)
+            local h = self.help
+            if not (h and FDJ.OpenQuestChain) then return end
+            local stepID
+            for _, step in ipairs(QUEST_PREREQ_CHAINS[h.quest] or {}) do
+                if type(step) == "table" and step.id and not FDJ.QuestTurnedIn(step.id) then
+                    stepID = step.id
+                    break
+                end
+            end
+            GameTooltip:Hide()
+            FDJ.OpenQuestChain(h.page, h.quest, stepID)
+        end)
+    end
+    local bossName = BossName(help.boss)
+    local itemName = help.itemName
+    if help.item and FDJ.CanUseClientLocalizedText and FDJ.CanUseClientLocalizedText() then
+        local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+        local ok, name = pcall(getInfo, help.item)
+        if ok and type(name) == "string" and name ~= "" then itemName = name end
+    end
+    note:ClearAllPoints()
+    note:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+    note:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
+    note:SetText(L("SUMMON_QUEST_NOTE", bossName, itemName or ""))
+    note:SetTextColor(0.62, 0.10, 0.05)
+    note:Show()
+    cursorY = cursorY + (note:GetStringHeight() or 28) + 8
+    button.help = help
+    button:SetText(L("HOW_TO_SUMMON", bossName))
+    local fs = button:GetFontString()
+    button:SetWidth(math.max(112, math.min(240, math.ceil(((fs and fs:GetStringWidth()) or 90) + 24))))
+    button:ClearAllPoints()
+    button:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
+    button:Show()
+    return cursorY + 33
+end
 -- A step page's label under its title: "Guide: step 2 of 5" for a guide
 -- quest's steps, "Required prerequisite" otherwise.
 FDJ.StepMetaLabel = function(step)
@@ -3107,13 +3197,15 @@ local function StartNextPortraitResolve()
     local npcID = table.remove(portraitResolveQueue, 1)
     if not npcID then return end
 
-    local model = portraitModels[npcID]
+    -- rtvcap (2.0.9): one hidden model for every look-up (one at a time),
+    -- not one per creature kept for the session.
+    local model = portraitModels[1]
     if not model then
         model = CreateFrame("PlayerModel", nil, UIParent)
         model:SetSize(1, 1)
         model:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
         model:SetAlpha(0)
-        portraitModels[npcID] = model
+        portraitModels[1] = model
     end
 
     portraitResolveSerial = portraitResolveSerial + 1
@@ -3254,6 +3346,45 @@ local function TrySetDisplayPortrait(texture, displayID)
     if not FDJ.AcquirePortrait then return false end
     local ok, shown = pcall(FDJ.AcquirePortrait, texture, displayID)
     return ok and shown == true
+end
+
+-- pairportrait (2.0.9, M 16 Nov 2026: Jarien and Sothos, "they are
+-- together, so if you could put the portraits together in the boss entry";
+-- then "get rid of the silver portrait. Have those portraits be the same
+-- size ... close to each other"): a boss entry for two (boss.pairNpcID)
+-- has both portraits side by side, the same size (paired), the second
+-- just right of the first, overlapping it a little, and no rare frame.
+-- normal: the first portrait's size otherwise. Returns the second portrait
+-- (the name goes right of it), or nil. holder.fdjPair is made on the
+-- first such entry; it stays shown while it waits for its picture (the
+-- portrait pool gives one only to a texture on screen). (An FDJ field:
+-- this chunk is at Lua's limit of locals.)
+FDJ.SetPairPortrait = function(holder, main, boss, normal, paired)
+    local pair = boss and type(boss.pairNpcID) == "number" and boss.pairNpcID or nil
+    local t = holder.fdjPair
+    if not pair then
+        main:SetSize(normal, normal)
+        if t then
+            if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, t) end
+            t:SetTexture(nil)
+            t:Hide()
+        end
+        return nil
+    end
+    if not t then
+        t = holder:CreateTexture(nil, "ARTWORK", nil, 3)
+        holder.fdjPair = t
+    end
+    main:SetSize(paired, paired)
+    t:SetSize(paired, paired)
+    t:ClearAllPoints()
+    t:SetPoint("LEFT", main, "RIGHT", -math.floor(paired * 0.18 + 0.5), 0)
+    t:SetTexCoord(main:GetTexCoord())
+    t:Show()
+    if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, t) end
+    t:SetTexture(nil)
+    TrySetDisplayPortrait(t, STATIC_DISPLAY_IDS[pair])
+    return t
 end
 
 local function SetBossPortrait(texture, dungeonName, boss)
@@ -3424,23 +3555,16 @@ FDJ.PrewarmBossPortraits = function()
         prewarmTexture:Hide()
     end
     local work = {}
-    for _, dungeonName in ipairs(FDJ.ORDER or {}) do
-        local dungeon = DB[dungeonName]
-        for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
-            if not boss.trash then work[#work + 1] = { dungeonName, boss } end
-        end
-    end
-    -- The mobs drawn on Trash Drops rows.
-    for _, displayID in pairs(FDJ.TRASH_MOB_DISPLAY_IDS or {}) do
-        work[#work + 1] = { nil, nil, displayID }
-    end
-    -- trashnpc: the trash mobs known by NPC ID are looked up all together
-    -- (mobfast, 2.0.31; Systems/LootFilter.lua), not one by one here.
-    -- noinstance (2.0.7): the trash mobs known by NPC ID are no longer all
-    -- looked up here; each is looked up when a page shows it.
-    for mobName, mobNpcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do -- trashnpc: a saved look warmed
-        local saved = FDJ.MobDisplay and FDJ.MobDisplay(mobNpcID)
-        if saved then work[#work + 1] = { nil, nil, saved } end
+    -- rtvcap (2.0.9, a player's report: graphics device lost over and over
+    -- in Ragefire Chasm, the game's render target slots used up): every
+    -- portrait the game draws is a render target, so the warm-up no longer
+    -- draws every boss of every dungeon (some 125) and every Trash Drops mob:
+    -- only the bosses of the dungeon the journal opens on. The others are
+    -- drawn when their page is opened (Systems/PortraitPool.lua keeps at most
+    -- PORTRAIT_LIVE_MAX).
+    local dungeon = selectedDungeon and DB[selectedDungeon]
+    for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
+        if not boss.trash then work[#work + 1] = { selectedDungeon, boss } end
     end
     local index = 0
     -- loginlag (2.0.8, DeadLeaves on Discord, 15 Nov 2026: a few seconds of
@@ -5753,9 +5877,13 @@ RefreshQuestList = function()
             button.fdjQuestLevel = quest.level
             local rawChain = (not rpgHidden) and GetQuestPrereqChain(quest) or nil
             -- turninclean: ready to hand in, the row shows only the big ?
-            -- and "Turn in": no chain, In Dungeon, class or faction icons.
+            -- and "Turn in": no In Dungeon, class or faction icons.
             -- They all come back with the tick once it is handed in.
-            local chain = (not ready) and rawChain or nil
+            -- turninchain (2.0.9, M 16 Nov 2026: "I think we should still
+            -- have the possibility to show the list in case somebody wants
+            -- to help a friend that's stuck behind"): the chain icon stays,
+            -- and the chain list opens from it or from Show Quest Chain.
+            local chain = rawChain
 
             local chainExpanded = chain and expandedQuestChains[quest.id] == true
             -- questguide: a guide quest's steps open from a red Guide
@@ -7198,6 +7326,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questChainButton:Hide()
     end
     FDJ.PlaceGuideButton(nil, 0) -- questguide
+    FDJ.PlaceSummonHelp(nil, 0) -- summonhelp
     if frame.questStartLinkButton then
         frame.questStartLinkButton.questID = nil
         frame.questStartLinkButton:Hide()
@@ -7681,6 +7810,7 @@ RefreshQuestDetail = function()
         FDJ.PlaceStepHaveItRow(false) -- chainturnin
         FDJ.PlaceObjectiveMapButton(nil, 0) -- glowingshard
         FDJ.PlaceGuideButton(nil, 0) -- questguide
+        FDJ.PlaceSummonHelp(nil, 0) -- summonhelp
         FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon") -- insidequest
         FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon")
         if frame.questTurninText then frame.questTurninText:SetText("") end
@@ -7845,6 +7975,7 @@ RefreshQuestDetail = function()
         frame.questWarningText:Hide()
     end
     cursorY = FDJ.PlaceGuideButton(quest, cursorY) -- questguide: How to complete
+    cursorY = FDJ.PlaceSummonHelp(quest, cursorY) -- summonhelp: How to summon
 
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
     -- insidequest: done and handed in inside the dungeon.
@@ -9263,7 +9394,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 end)
                 t:SetScript("OnEnter", function(self)
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(self.toFloor and L("MAP_FLOOR", self.toFloor) or self.noteText or "", 0.35, 1, 0.35)
+                    GameTooltip:SetText(self.tipText or (self.toFloor and L("MAP_FLOOR", self.toFloor)) or self.noteText or "", 0.35, 1, 0.35)
                     GameTooltip:Show()
                 end)
                 t:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -9278,7 +9409,13 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             t:SetPoint("CENTER", holder, "TOPLEFT", tr.x * artW, -(tr.y * artH))
             -- Notes (no level change) only show their text on hover.
             t.noteText = tr.note and L(tr.labelKey) or nil
-            t.label:SetText(tr.note and "" or L(tr.labelKey or "MAP_FLOOR", tr.to))
+            -- tipKey (2.0.9, M 16 Nov 2026 at The Drowned City's swim down): the
+            -- ladder alone, its text only on hover
+            t.tipText = tr.tipKey and L(tr.tipKey, tr.to) or nil
+            t.label:SetText((tr.note or tr.tipKey) and "" or L(tr.labelKey or "MAP_FLOOR", tr.to))
+            -- (a transition's own colour: The Drowned City's red Shark exit)
+            local c = type(tr.color) == "table" and tr.color or nil
+            t.label:SetTextColor(c and c[1] or 0.35, c and c[2] or 1.00, c and c[3] or 0.35)
             t:Show()
         end
     end
@@ -10017,8 +10154,36 @@ RefreshHomeDungeonCards = function()
     end
 
     if frame.homeEmptyText then
-        frame.homeEmptyText:SetText(L("ALL_DUNGEONS_HIDDEN"))
-        frame.homeEmptyText:SetShown(#shownDungeons == 0 and not homeEditMode)
+        local empty = #shownDungeons == 0 and not homeEditMode
+        -- levelempty (2.0.9, M 16 Nov 2026): empty only because of "Show only
+        -- my level range": say so (too low for any dungeon: the level the
+        -- first ones start at), with "Show all dungeons anyway" under it.
+        local levelEmpty, lowest = false, nil
+        if empty and ForeverDungeonJournalDB.onlyMyLevelRange then
+            for _, dungeonName in ipairs(ORDER) do
+                if not (FDJ.HomeFilterHides and FDJ.HomeFilterHides(dungeonName))
+                    and not FDJ.HiddenDungeons()[dungeonName]
+                    and not (FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(dungeonName, true)) then
+                    levelEmpty = true
+                    local low = FDJ.DungeonLevelRange and FDJ.DungeonLevelRange(DB[dungeonName])
+                    if low and (not lowest or low < lowest) then lowest = low end
+                end
+            end
+        end
+        local listLevel = FDJ.ListLevel and FDJ.ListLevel()
+        if levelEmpty and listLevel and lowest and listLevel < lowest then
+            frame.homeEmptyText:SetText(L("LEVEL_TOO_LOW_DUNGEONS", lowest))
+        elseif levelEmpty then
+            frame.homeEmptyText:SetText(L("NO_DUNGEONS_MY_LEVEL"))
+        else
+            frame.homeEmptyText:SetText(L("ALL_DUNGEONS_HIDDEN"))
+        end
+        frame.homeEmptyText:SetShown(empty)
+        if frame.homeShowAllButton then
+            frame.homeShowAllButton.text:SetText(L("SHOW_ALL_DUNGEONS_ANYWAY"))
+            frame.homeShowAllButton:SetWidth(math.max(160, math.ceil((frame.homeShowAllButton.text:GetStringWidth() or 140) + 32)))
+            frame.homeShowAllButton:SetShown(levelEmpty)
+        end
     end
 
     frame.homeCardsContent:SetHeight(contentHeight)
@@ -10127,6 +10292,13 @@ RefreshBossList = function()
                 boss
             )
             button.question:SetShown(not hasPortrait)
+            do -- pairportrait (2.0.9): two portraits side by side, no rare frame
+                local second = FDJ.SetPairPortrait(button, button.portrait, boss, face, isChild and 30 or 38)
+                if second then
+                    button.rareBorder:Hide()
+                    button.name:SetPoint("LEFT", second, "RIGHT", 9, 1)
+                end
+            end
 
             local bossLevel = BossLevelText(selectedDungeon, boss)
             if bossLevel then
@@ -10415,8 +10587,7 @@ FDJ.UpdateQuestsTBD = function()
     label:SetShown((d and d.fullQuestsTBD and selectedMode == "quests") and true or false)
 end
 
--- Compact view: every loot page opens in the detailed view; Compact View
--- applies to the page it was pressed on (remembered for that page only).
+-- Compact view: see compactall below (one choice for every page since 2.0.9).
 function FDJ.LootCompactKey()
     local d = selectedDungeon and DB[selectedDungeon]
     local b = d and d.bosses and d.bosses[selectedBoss]
@@ -10428,8 +10599,12 @@ function FDJ.LootCompactPages()
     end
     return ForeverDungeonJournalDB.compactLootPages
 end
+-- compactall (2.0.9, M 16 Nov 2026: "once somebody switches, it switches
+-- for every single page"): the view chosen is one setting for every loot
+-- page (detailed until Compact View is pressed), kept between sessions.
+-- (compactLootPages, the old per-page choice, is no longer read.)
 function FDJ.IsLootCompactPage()
-    return ForeverDungeonJournalDB and FDJ.LootCompactPages()[FDJ.LootCompactKey()] == true or false
+    return type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.compactLoot == true or false
 end
 
 RefreshLoot = function()
@@ -10511,6 +10686,13 @@ RefreshLoot = function()
         boss
     )
     frame.selectedBossQuestion:SetShown(not hasPortrait)
+    do -- pairportrait (2.0.9): two portraits side by side, no rare frame
+        local second = FDJ.SetPairPortrait(frame.selectedBossPortrait:GetParent(), frame.selectedBossPortrait, boss, 68, 56)
+        frame.selectedBossName:ClearAllPoints()
+        frame.selectedBossName:SetPoint("LEFT", second or frame.selectedBossPortrait, "RIGHT", second and 12 or 16, 7)
+        frame.selectedBossName:SetPoint("RIGHT", -14, 0)
+        if second and frame.selectedBossRareBorder then frame.selectedBossRareBorder:Hide() end
+    end
 
     local bossLevel = BossLevelText(selectedDungeon, boss)
     if frame.selectedBossLevelBadge and frame.selectedBossLevelText then
@@ -10805,6 +10987,8 @@ RefreshLoot = function()
             if rowFaces and crowdedRecipes and not (FDJ.RecipeRowKeepsPortrait and FDJ.RecipeRowKeepsPortrait(item)) then
                 rowFaces = false -- crowdedrecipes (2.0.7): the sources stay as text
             end
+            -- sourcetip (2.0.9): a family's row says the family on its portraits too
+            row.fdjMobTip = (type(item) == "table" and type(item.sourceTip) == "string" and item.sourceTip ~= "") and (FDJ.LocalizeSourceTip or FreeText)(item.sourceTip) or nil -- sourcetipl10n (2.0.9)
             if FDJ.SetRowMobs and FDJ.SetRowMobs(row, rowFaces and trashSource or nil) then
                 row.slot:SetText(ItemSlot(item[3]))
             end
@@ -10817,6 +11001,11 @@ RefreshLoot = function()
                 local everyMob = boss.trash and type(item) == "table" and item.allTrash and true or false
                 if everyMob then row.fdjSourceText = L("DROPS_FROM", L("ALL_TRASH")) end
                 if row.fdjAllTrash then row.fdjAllTrash:Hide() end
+                -- sourcetip (2.0.9, M 16 Nov 2026): a whole family drops it (Dire
+                -- Maul's satyrs): one of them on the row, the family in the tooltip
+                if type(item) == "table" and type(item.sourceTip) == "string" and item.sourceTip ~= "" then
+                    row.fdjSourceText = L("DROPS_FROM", (FDJ.LocalizeSourceTip or FreeText)(item.sourceTip)) -- sourcetipl10n (2.0.9)
+                end
             end
 
             -- Keep the name and type clear of the trash mob portraits.
@@ -11017,8 +11206,9 @@ RefreshLoot = function()
         b.text:SetPoint("CENTER")
         b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         b:SetScript("OnClick", function()
-            local pages, key = FDJ.LootCompactPages(), FDJ.LootCompactKey()
-            pages[key] = not pages[key] or nil
+            if type(ForeverDungeonJournalDB) == "table" then -- compactall (2.0.9)
+                ForeverDungeonJournalDB.compactLoot = not FDJ.IsLootCompactPage() or nil
+            end
             PlayJournalOptionSound()
             RefreshLoot()
         end)
@@ -12322,10 +12512,10 @@ local function CreateGlobalSearchUI()
             if result.mode == "recipe" and result.subText == nil then
                 result.subText = FDJ.GetRecipeSearchRequirement(result.itemID, result.recipeSlot) or ""
             end
-            if row.fdjPortrait then
-                row.fdjPortrait = nil
-                if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, row.icon) end
-            end
+            -- (always handed back, not only when it had one: softhost, 2.0.9:
+            -- a row that found no room for its portrait is given it later)
+            row.fdjPortrait = nil
+            if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, row.icon) end
             row.icon:SetTexture(result.icon or "Interface\\Icons\\INV_Misc_QuestionMark")
             if result.kind == "boss" then
                 -- the boss's portrait when the journal has its look, else a skull
@@ -12810,6 +13000,25 @@ local function CreateMainFrame()
     homeEmptyText:SetJustifyH("CENTER")
     homeEmptyText:SetTextColor(0.75, 0.72, 0.66)
     homeEmptyText:Hide()
+    -- levelempty (2.0.9, M 16 Nov 2026: "I don't want anybody to have trouble
+    -- finding dungeons"): under the message when only "Show only my level
+    -- range" empties the list: opens Options on that option, its row pulsing,
+    -- for the player to untick it.
+    frame.homeShowAllButton = CreateFrame("Button", nil, home, "BackdropTemplate")
+    frame.homeShowAllButton:SetHeight(28)
+    frame.homeShowAllButton:SetPoint("TOP", homeEmptyText, "BOTTOM", 0, -18)
+    SetBackdrop(frame.homeShowAllButton, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 12, 4)
+    frame.homeShowAllButton:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
+    frame.homeShowAllButton:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
+    frame.homeShowAllButton:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+    frame.homeShowAllButton.text = frame.homeShowAllButton:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
+    frame.homeShowAllButton.text:SetPoint("CENTER", 0, 0)
+    frame.homeShowAllButton.text:SetTextColor(1.00, 0.82, 0.27)
+    frame.homeShowAllButton:SetScript("OnClick", function()
+        PlayJournalOptionSound()
+        if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_MY_LEVEL_RANGE") end
+    end)
+    frame.homeShowAllButton:Hide()
 
     local homeLine = home:CreateTexture(nil, "ARTWORK")
     frame.homeLine = homeLine
@@ -14093,6 +14302,14 @@ local function CreateMainFrame()
     frame:SetScript("OnHide", function()
         -- sunonce (2.0.8): the next time the journal opens, the beam plays again
         if FDJ.ResetChainSheen then FDJ.ResetChainSheen() end
+        -- rtvcap (2.0.9): closed: its pages' portraits are let go (their
+        -- render targets freed; the page draws them again when the journal
+        -- opens), keeping only a few, a moment later (not if opened again).
+        if FDJ.ReleaseHiddenPortraits and C_Timer and C_Timer.After then
+            C_Timer.After(0.5, function()
+                if frame and not frame:IsShown() then pcall(FDJ.ReleaseHiddenPortraits, frame, 8) end
+            end)
+        end
         -- The Favourites window is parented to UIParent so it can stay open
         -- while navigating inside the journal. When the journal itself closes,
         -- explicitly close the popup as well (including during combat).
@@ -14443,15 +14660,6 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         return
     end
 
-    if msg:match("^wing") then
-        local wing = FDJ.ScarletWingFromWord and FDJ.ScarletWingFromWord(msg:match("^wing%s+(%S+)") or "")
-        if wing and FDJ.SetScarletWing and FDJ.SetScarletWing(wing) then
-            print("|cffffd100Dungeon Journal|r " .. wing)
-        else
-            print("|cffffd100Dungeon Journal|r /dj wing graveyard  |  /dj wing library")
-        end
-        return
-    end
     if msg == "options" or msg == "settings" or msg == "config" then
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
         return
@@ -14462,12 +14670,6 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
             local inDungeon = FDJ.RunLog and FDJ.RunLog.IsInside and FDJ.RunLog.IsInside()
             if inDungeon then
                 print("|cffd8a83cDungeonJournal|r The tracker starts with the first kill in this dungeon.")
-                -- 2.0.4: what the game reported, so a "no tracker" report can be checked.
-                local sig = FDJ.RunLogSignals
-                if sig then
-                    print(string.format("|cffd8a83cDungeonJournal|r Kills seen this session: %d (hidden %d), XP lines %d, bosses %d.",
-                        sig.hidden + sig.plain, sig.hidden, sig.xp, sig.boss))
-                end
             else
                 print("|cffd8a83cDungeonJournal|r No active dungeon run to show.")
             end
@@ -14477,39 +14679,6 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
     if msg == "reset" then -- 2.0.4: the dungeon was reset, end the run (the tracker's reset button)
         if not (FDJ.ResetTrackedRun and FDJ.ResetTrackedRun()) then
             print("|cffd8a83cDungeonJournal|r No active dungeon run to end.")
-        end
-        return
-    end
-    if msg == "bossids" or msg:match("^bossids%s") then
-        -- 2.0.4: the boss events the game has sent (noted by the Dungeon
-        -- Tracker, Systems/RunLog.lua), to check which bosses have one in
-        -- Forever. /dj bossids <word> shows only those whose dungeon or boss
-        -- name has that word. "new": an ID the tracker's list doesn't have.
-        local function Say(text) print("|cffd8a83cDungeonJournal|r " .. text) end
-        local want = msg:match("^bossids%s+(.+)$")
-        local events = ForeverDungeonJournalDB and ForeverDungeonJournalDB.bossEvents
-        local list = {}
-        for id, e in pairs(type(events) == "table" and events or {}) do
-            if type(e) == "table" then
-                local text = (tostring(e.dungeon or "?") .. " " .. tostring(e.name or "?")):lower()
-                if not want or text:find(want, 1, true) then list[#list + 1] = { id = id, e = e } end
-            end
-        end
-        table.sort(list, function(a, b)
-            local da, db = tostring(a.e.dungeon or ""), tostring(b.e.dungeon or "")
-            if da ~= db then return da < db end
-            return a.id < b.id
-        end)
-        if #list == 0 then
-            Say(want and ("No boss events noted yet for: " .. want)
-                or "No boss events noted yet. They are noted from now on in every dungeon: kill some bosses, then type /dj bossids again.")
-            return
-        end
-        local known = FDJ.RUNLOG_ENCOUNTERS or {}
-        for _, x in ipairs(list) do
-            local mapped = known[x.id]
-            local note = mapped and ("= " .. tostring(mapped[2])) or "|cff00ff00new|r"
-            Say(string.format("%s - %s: %d  %s  (x%d)", tostring(x.e.dungeon or "?"), tostring(x.e.name or "?"), x.id, note, x.e.n or 1))
         end
         return
     end
@@ -14532,10 +14701,11 @@ SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg)
         return
     end
 
-    if msg:match("^scale") then
-        local value = tonumber(msg:match("^scale%s+([%d%.]+)"))
+    -- /dj resize (M, 16 Nov 2026: "keep it DJ resize"), was /dj scale; /dj wing removed
+    if msg:match("^resize") then
+        local value = tonumber(msg:match("^resize%s+([%d%.]+)"))
         local scale = FDJ.SetJournalScale and FDJ.SetJournalScale(value or 1)
-        print("|cffd8a83cDungeonJournal|r scale: " .. tostring(scale))
+        print("|cffd8a83cDungeonJournal|r resize: " .. tostring(scale))
         return
     end
 
@@ -14719,7 +14889,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         elseif GetAddOnMetadata then
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
-        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.8"
+        addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.9"
         print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
         return
     end
