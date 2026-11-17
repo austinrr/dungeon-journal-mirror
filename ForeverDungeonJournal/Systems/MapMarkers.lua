@@ -2260,25 +2260,25 @@ do
 
     do
         local strings = {
-            enUS = { ARROW_NEXT_SPAWN = "Not found? Next spot (%d/%d)", ARROW_USE_ITEM = "Use %s in your bags to start the quest", ARROW_DISTANCE = "%d yds", ARROW_TIP_MOVE = "Drag to move.", ARROW_TIP_HIDE = "Right-click to hide the arrow.",
+            enUS = { ARROW_NEXT_SPAWN = "Not found? Next spot (%d/%d)", ARROW_USE_ITEM = "Use %s in your bags to start the quest", ARROW_DISTANCE = "%d yds", ARROW_TIP_MOVE = "Drag to move.", ARROW_TIP_HIDE = "Shift + right-click to hide the arrow.",
                 ARROW_BOAT = "Take the boat to %s", ARROW_ZEPPELIN = "Take the zeppelin to %s", ARROW_FLY = "Fly to %s" },
-            deDE = { ARROW_NEXT_SPAWN = "Nicht gefunden? Nächster Ort (%d/%d)", ARROW_USE_ITEM = "Benutze %s in deinen Taschen, um die Quest anzunehmen", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Ziehen zum Verschieben.", ARROW_TIP_HIDE = "Rechtsklick blendet den Pfeil aus.",
+            deDE = { ARROW_NEXT_SPAWN = "Nicht gefunden? Nächster Ort (%d/%d)", ARROW_USE_ITEM = "Benutze %s in deinen Taschen, um die Quest anzunehmen", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Ziehen zum Verschieben.", ARROW_TIP_HIDE = "Umschalt + Rechtsklick blendet den Pfeil aus.",
                 ARROW_BOAT = "Nimm das Schiff nach %s", ARROW_ZEPPELIN = "Nimm den Zeppelin nach %s", ARROW_FLY = "Flieg nach %s" },
-            frFR = { ARROW_NEXT_SPAWN = "Introuvable ? Endroit suivant (%d/%d)", ARROW_USE_ITEM = "Utilisez %s dans vos sacs pour commencer la quête", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Faites glisser pour déplacer.", ARROW_TIP_HIDE = "Clic droit pour masquer la flèche.",
+            frFR = { ARROW_NEXT_SPAWN = "Introuvable ? Endroit suivant (%d/%d)", ARROW_USE_ITEM = "Utilisez %s dans vos sacs pour commencer la quête", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Faites glisser pour déplacer.", ARROW_TIP_HIDE = "Maj + clic droit pour masquer la flèche.",
                 ARROW_BOAT = "Prenez le bateau pour %s", ARROW_ZEPPELIN = "Prenez le zeppelin pour %s", ARROW_FLY = "Volez vers %s" },
-            esES = { ARROW_NEXT_SPAWN = "¿No está? Siguiente lugar (%d/%d)", ARROW_USE_ITEM = "Usa %s de tus bolsas para empezar la misión", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arrastra para mover.", ARROW_TIP_HIDE = "Clic derecho para ocultar la flecha.",
+            esES = { ARROW_NEXT_SPAWN = "¿No está? Siguiente lugar (%d/%d)", ARROW_USE_ITEM = "Usa %s de tus bolsas para empezar la misión", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arrastra para mover.", ARROW_TIP_HIDE = "Mayús + clic derecho para ocultar la flecha.",
                 ARROW_BOAT = "Toma el barco a %s", ARROW_ZEPPELIN = "Toma el zepelín a %s", ARROW_FLY = "Vuela a %s" },
-            itIT = { ARROW_NEXT_SPAWN = "Non trovato? Prossimo punto (%d/%d)", ARROW_USE_ITEM = "Usa %s nelle borse per iniziare la missione", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Trascina per spostare.", ARROW_TIP_HIDE = "Clic destro per nascondere la freccia.",
+            itIT = { ARROW_NEXT_SPAWN = "Non trovato? Prossimo punto (%d/%d)", ARROW_USE_ITEM = "Usa %s nelle borse per iniziare la missione", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Trascina per spostare.", ARROW_TIP_HIDE = "Maiusc + clic destro per nascondere la freccia.",
                 ARROW_BOAT = "Prendi la nave per %s", ARROW_ZEPPELIN = "Prendi lo zeppelin per %s", ARROW_FLY = "Vola a %s" },
-            ptBR = { ARROW_NEXT_SPAWN = "Não achou? Próximo local (%d/%d)", ARROW_USE_ITEM = "Use %s nas bolsas para começar a missão", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arraste para mover.", ARROW_TIP_HIDE = "Clique com o botão direito para ocultar a seta.",
+            ptBR = { ARROW_NEXT_SPAWN = "Não achou? Próximo local (%d/%d)", ARROW_USE_ITEM = "Use %s nas bolsas para começar a missão", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arraste para mover.", ARROW_TIP_HIDE = "Shift + clique com o botão direito para ocultar a seta.",
                 ARROW_BOAT = "Pegue o barco para %s", ARROW_ZEPPELIN = "Pegue o zepelim para %s", ARROW_FLY = "Voe para %s" },
-            ruRU = { ARROW_NEXT_SPAWN = "Не нашли? Следующее место (%d/%d)", ARROW_USE_ITEM = "Используйте %s из сумки, чтобы взять задание", ARROW_DISTANCE = "%d м", ARROW_TIP_MOVE = "Перетащите, чтобы переместить.", ARROW_TIP_HIDE = "Щелкните правой кнопкой, чтобы скрыть стрелку.",
+            ruRU = { ARROW_NEXT_SPAWN = "Не нашли? Следующее место (%d/%d)", ARROW_USE_ITEM = "Используйте %s из сумки, чтобы взять задание", ARROW_DISTANCE = "%d м", ARROW_TIP_MOVE = "Перетащите, чтобы переместить.", ARROW_TIP_HIDE = "Shift + щелчок правой кнопкой, чтобы скрыть стрелку.",
                 ARROW_BOAT = "Корабль: %s", ARROW_ZEPPELIN = "Дирижабль: %s", ARROW_FLY = "Полёт: %s" },
-            koKR = { ARROW_NEXT_SPAWN = "없나요? 다음 장소 (%d/%d)", ARROW_USE_ITEM = "가방의 %s|1을;를; 사용해 퀘스트를 시작하세요", ARROW_DISTANCE = "%d미터", ARROW_TIP_MOVE = "드래그하여 이동합니다.", ARROW_TIP_HIDE = "오른쪽 클릭으로 화살표를 숨깁니다.",
+            koKR = { ARROW_NEXT_SPAWN = "없나요? 다음 장소 (%d/%d)", ARROW_USE_ITEM = "가방의 %s|1을;를; 사용해 퀘스트를 시작하세요", ARROW_DISTANCE = "%d미터", ARROW_TIP_MOVE = "드래그하여 이동합니다.", ARROW_TIP_HIDE = "Shift + 오른쪽 클릭으로 화살표를 숨깁니다.",
                 ARROW_BOAT = "%s행 배를 타세요", ARROW_ZEPPELIN = "%s행 비행선을 타세요", ARROW_FLY = "%s(으)로 비행하세요" },
-            zhCN = { ARROW_NEXT_SPAWN = "没找到？下一个地点 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以开始任务", ARROW_DISTANCE = "%d码", ARROW_TIP_MOVE = "拖动以移动。", ARROW_TIP_HIDE = "右键点击隐藏箭头。",
+            zhCN = { ARROW_NEXT_SPAWN = "没找到？下一个地点 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以开始任务", ARROW_DISTANCE = "%d码", ARROW_TIP_MOVE = "拖动以移动。", ARROW_TIP_HIDE = "Shift+右键点击隐藏箭头。",
                 ARROW_BOAT = "乘船前往%s", ARROW_ZEPPELIN = "乘坐飞艇前往%s", ARROW_FLY = "飞往%s" },
-            zhTW = { ARROW_NEXT_SPAWN = "沒找到？下一個地點 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以開始任務", ARROW_DISTANCE = "%d碼", ARROW_TIP_MOVE = "拖曳以移動。", ARROW_TIP_HIDE = "右鍵點擊隱藏箭頭。",
+            zhTW = { ARROW_NEXT_SPAWN = "沒找到？下一個地點 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以開始任務", ARROW_DISTANCE = "%d碼", ARROW_TIP_MOVE = "拖曳以移動。", ARROW_TIP_HIDE = "Shift+右鍵點擊隱藏箭頭。",
                 ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
         }
         local more = {
@@ -3530,6 +3530,13 @@ do
                 -- starts at S7, at the valley's west end (the walking map has
                 -- its floors climbing there, 35 to 61 yards up); Doras on top.
                 FM = { 0.4512, 0.6392 },
+                -- orgauction (2.0.10, M 17 Nov 2026 on the road to the
+                -- auction house, the arrow sending him back round by the
+                -- Drag): the road east from the Valley of Strength into the
+                -- auction house, its only way in (the Forever client's
+                -- walking map with its floors, Polestar_Nav_Kalimdor, read
+                -- as data: 82 yards from 51.5, 64.3 to the auctioneers).
+                AH1 = { 0.5263, 0.6469 }, AH2 = { 0.5530, 0.6469 },
             },
             edges = {
                 { "S1", "S2" }, { "S2", "S3" }, { "S3", "S4" }, { "S4", "S5" }, { "S5", "S6" }, { "S6", "S7" }, { "S1", "R1" }, { "R1", "R2" },
@@ -3544,6 +3551,7 @@ do
                 { "C8", "C9" }, { "C9", "C10" }, { "C10", "C11" }, { "C11", "C12" }, { "C12", "C13" }, { "C13", "C14" }, { "C14", "C15" }, { "C15", "W4" },
                 { "W12", "P1" }, { "P1", "P2" }, { "P2", "P3" }, { "P3", "P4" }, { "P4", "P5" }, { "P5", "P6" },
                 { "S7", "FM" }, -- orgtower (2.0.9)
+                { "S3", "AH1" }, { "S4", "AH1" }, { "AH1", "AH2" }, -- orgauction (2.0.10)
             },
         },
         -- bbroads (2.0.9, M 16 Nov 2026 on Booty Bay's west dock, the arrow
@@ -4970,9 +4978,14 @@ do
         end)
         -- PostClick keeps the template's own click (the target macro).
         f:SetScript(f._fdjCanTarget and "PostClick" or "OnClick", function(self, button)
+            -- shiftdismiss (2.0.10, M 17 Nov 2026: "so many times I right
+            -- click it by mistake"): only Shift + right-click hides it; a
+            -- plain right-click does nothing.
             if button == "RightButton" then
-                GameTooltip:Hide()
-                Dismiss(shown)
+                if IsShiftKeyDown and IsShiftKeyDown() then
+                    GameTooltip:Hide()
+                    Dismiss(shown)
+                end
             elseif button == "LeftButton" and not self.fdjTargets and not self.fdjDragging
                 and ((GetTime and GetTime()) or 0) - (self.fdjDragEnd or -10) > 0.3 then
                 GameTooltip:Hide()

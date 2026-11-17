@@ -126,9 +126,27 @@ end
 local function Match(p, text)
     if not p or type(text) ~= "string" then return nil end
     local caps = { text:match(p.pattern) }
+    -- rollfix (2.0.10, M 16 Nov 2026: the Need roll showed no numbers, his
+    -- or the others'): the client can put a tag before the line ("[Loot]: ")
+    -- and links or colours round the names. Tried again without them, the
+    -- line matched anywhere in the text (item links are kept).
+    if #caps == 0 then
+        local clean = text:gsub("|HlootHistory:[^|]*|h.-|h:?%s*", "")
+            :gsub("|Hplayer:[^|]*|h%[?([^%]|]*)%]?|h", "%1")
+            :gsub("|c%x%x%x%x%x%x%x%x([^|]*)|r", "%1")
+        caps = { clean:match(p.pattern) }
+        if #caps == 0 then caps = { clean:match((p.pattern:gsub("^%^", ""))) } end
+    end
     if #caps == 0 then return nil end
     local args = {}
-    for k, argIndex in ipairs(p.order) do args[argIndex] = caps[k] end
+    for k, argIndex in ipairs(p.order) do
+        local v = caps[k]
+        -- rollfix (2.0.10): a name in colour or as a link: the plain name
+        if type(v) == "string" and not v:find("|Hitem:", 1, true) then
+            v = v:gsub("|Hplayer:[^|]*|h%[?([^%]|]*)%]?|h", "%1"):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+        end
+        args[argIndex] = v
+    end
     return args
 end
 
@@ -864,6 +882,17 @@ function FDJ.RunLogEncounterName(id, name)
     local d = FDJ.DB and FDJ.DB[dungeon]
     if not d then return name end
     local wings = FDJ.RunLogWingGroups and insideMap and FDJ.RunLogWingGroups[insideMap]
+    -- strayboss2: an encounter ID listed under another dungeon than the one
+    -- you're in (another of its wings is fine) doesn't name the kill: the
+    -- game's own name does (Forever gives some dungeons new IDs).
+    local here = (current and current.dungeon) or insideDungeon
+    if inside and here and here ~= dungeon then
+        local sameMap = false
+        for _, w in ipairs(wings or {}) do
+            if w == dungeon then sameMap = true break end
+        end
+        if not sameMap then return name end
+    end
     if inside and not insideDungeon and not wings then
         insideDungeon = dungeon
         if current and not current.dungeon then current.dungeon = dungeon end
@@ -1216,6 +1245,56 @@ local function AddKill(guid, name, how)
         boss = BossFor(dungeon, npc, name)
     end
 
+    -- strayboss (M 17 Nov 2026: a streamer killed Kirtonos the Herald; his
+    -- portrait was crossed off, and an extra skull one too): the game's boss
+    -- event (ENCOUNTER_END) can name a boss differently from the journal
+    -- (and Scholomance's events are not in Data/RunLogEncounters.lua). Such
+    -- a name made a second kill, listed at the end of the tracker as a skull.
+    -- Now a boss event under a name no boss here has (and no fight's, like
+    -- the Ring of Law), coming within 30 seconds of a boss's death that had
+    -- no boss event yet, is that death's event; and a boss's death coming
+    -- within 30 seconds after such an event takes that kill over. Either way
+    -- the boss learns the name, so the next one matches at once (and older
+    -- runs' extra skulls are put right).
+    if how == "boss" and name and not boss and not FightGroup(dungeon, name) then
+        local at = Now()
+        for i = #run.kills, 1, -1 do
+            local k = run.kills[i]
+            if at - (k.t or 0) > 30 then break end
+            local kb = k.b and BossFor(dungeon, k.n, k.b)
+            if kb and not k.ev then
+                k.ev = 1
+                if kb.npcID and AddBossAlias(kb.npcID, name) and FixBossKillsAll then FixBossKillsAll() end
+                Changed()
+                return k
+            end
+        end
+    elseif boss and how ~= "boss" then
+        local at = Now()
+        for i = #run.kills, 1, -1 do
+            local k = run.kills[i]
+            if at - (k.t or 0) > 30 then break end
+            local waiting = k.sb and not k.b -- strayboss2: the event still waiting for its boss
+            if waiting or (k.ev and k.b and k.b ~= boss.name and not BossFor(dungeon, k.n, k.b) and not FightGroup(dungeon, k.b)) then
+                local stray = k.sb or k.b
+                k.sb = nil
+                k.b, k.wb = boss.name, nil
+                k.n = k.n or npc
+                k.m = k.m or name
+                k.r = boss.rare and 1 or nil
+                if not k.r and IsFinal(dungeon, k.n, k.m, boss) then k.f = 1 end
+                if key then
+                    k.g = 1
+                    run.killedG[key] = true
+                end
+                if boss.npcID then AddBossAlias(boss.npcID, stray) end
+                SetKillTimes(run, k)
+                Changed()
+                return k
+            end
+        end
+    end
+
     -- The same death, told by another event: complete that kill.
     for i = #recent, 1, -1 do
         local r = recent[i]
@@ -1244,6 +1323,7 @@ local function AddKill(guid, name, how)
         end
         if same then
             r.src[how == "corpse" and "guid" or how] = true
+            if how == "boss" then k.ev = 1 end -- strayboss: its boss event came
             if key and not r.key then
                 r.key = key
                 k.g = 1
@@ -1311,7 +1391,29 @@ local function AddKill(guid, name, how)
     -- partykill (2.0.4): a kill by your group on a mob the game keeps hidden.
     if how == "party" and not npc and not name then kill.a = 1 end
     ClassifyKill(run, kill)
-    if how == "boss" and not kill.b and name then kill.b = name kill.wb = nil end
+    if how == "boss" and not kill.b and name then
+        if not boss and not FightGroup(dungeon, name) and C_Timer and C_Timer.After then
+            -- strayboss2 (M 17 Nov 2026, Ras Frostwhisper on stream: "as soon
+            -- as the boss died the skull insta appeared with an X, and 1 second
+            -- later Ras also got the X"): a boss event under a name no boss
+            -- here has, before any boss died, waits 5 seconds unlisted; the
+            -- boss's own death in that time takes it (above), so no skull
+            -- shows even for a moment. Nobody claims it: it is listed under
+            -- its own name, as before (a boss the journal doesn't have).
+            kill.sb = name
+            local pending, pendingRun = kill, run
+            C_Timer.After(5, function()
+                if pending.sb and not pending.b then
+                    pending.b, pending.sb = pending.sb, nil
+                    SetKillTimes(pendingRun, pending)
+                    Changed()
+                end
+            end)
+        else
+            kill.b = name kill.wb = nil
+        end
+    end
+    if how == "boss" then kill.ev = 1 end -- strayboss: its boss event came
     if how == "boss" then RefineFightKill(run, dungeon, kill) end -- ringoflaw (2.0.8)
     if how == "boss" and boss and type(boss.killWith) == "table" and kill.b == boss.name then
         EventEndsFight(run, kill, boss) -- ruuzlu
@@ -2133,8 +2235,13 @@ local function OnWorld()
         end
         if inside and current then Leave() end
         Enter(map, dungeon)
+        -- hideleave: a tracker closed before you left alive shows again
+        if FDJ.TrackerEnteredDungeon then pcall(FDJ.TrackerEnteredDungeon) end
     elseif inside then
         Leave()
+        -- hideleave (2.0.10): out of the dungeon alive (not a ghost on a
+        -- corpse run): Options > Hide Tracker unticks itself
+        if not Ghost() and FDJ.TrackerLeftAlive then pcall(FDJ.TrackerLeftAlive) end
         CloseStale()
     else
         CloseStale()

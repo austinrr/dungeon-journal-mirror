@@ -1003,7 +1003,7 @@ DB["Blackfathom Deeps"] = {
         objective = "Defeat Lorgus Jett in Blackfathom Deeps.",
         rewardSummary = "40s  •  Darkspear Trolls +150  •  Earthen Ring +150",
         id = 6565,
-        liveXPFallback = 6489,
+        liveXPFallback = 6300, -- xpfix (2.0.10): Wowhead Forever
         rewardChoice = true,
         rewardItems = {{17694, "Band of the Fist", 3}, {17695, "Chestnut Mantle", 3}},
         name = "Allegiance to the Old Gods",
@@ -1030,7 +1030,7 @@ DB["Blackfathom Deeps"] = {
         objective = "Recover the Fathom Core from the Fathom Stone in Blackfathom Deeps.",
         rewardSummary = "45s  •  Darkspear Trolls +150  •  Earthen Ring +150",
         id = 6921,
-        liveXPFallback = 6746,
+        liveXPFallback = 6550, -- xpfix (2.0.10): Wowhead Forever
         rewardItems = {
         },
         name = "Amongst the Ruins",
@@ -1044,7 +1044,7 @@ DB["Blackfathom Deeps"] = {
         objective = "Bring the Strange Water Globe to Je'neu Sancrea at Zoram'gar Outpost, Ashenvale.",
         rewardSummary = "Darkspear Trolls +150",
         id = 6922,
-        liveXPFallback = 7468,
+        liveXPFallback = 7250, -- xpfix (2.0.10): Wowhead Forever
         rewardChoice = true,
         rewardItems = {{16886, "Outlaw Sabre", 3}, {16887, "Witch's Finger", 3}, {270043, "Dreamer's Chestguard", 3}},
         name = "Baron Aquanis",
@@ -1898,7 +1898,7 @@ FDJ.DB["Excavation Site: Wetlands"] = {
         rewardSummary = "",
         additionalRewardItems = {{271745, "Bloody Map", 1}},
         rewardItems = {{271740, "Knife-Polishing Rag", 3}, {271732, "Dirt-Heavy Bracers", 3}},
-        liveXPFallback = 7158,
+        liveXPFallback = 6950, -- xpfix (2.0.10): Wowhead Forever (was 7158)
         rewardChoice = true,
         -- excavhorde (2.0.7): where he stands (Wowhead Forever: 51.4, 59.2), the
         -- same spot his turn-ins already had; this said 47.8, 56.3 (the door).
@@ -2741,7 +2741,10 @@ FDJ.DB["Razorfen Kraul"] = {
     icon = "Interface\\Icons\\INV_Misc_MonsterClaw_03",
     quests = {{
         objective = "Use the Crate with Holes to summon a Snufflenose Gopher and the Command Stick to make it find 6 Blueleaf Tubers. Bring them, the Command Stick and the Crate back to Mebok Mizzyrix.",
-        rewardSummary = "A Small Container of Gems",
+        -- tubersreward (2.0.10, M 17 Nov 2026): the reward as an item card
+        -- (Wowhead Forever: A Small Container of Gems, Ratchet +150, 5,000 XP)
+        rewardSummary = "Ratchet +150",
+        rewardItems = {{6755, "A Small Container of Gems", 1}},
         id = 1221,
         name = "Blueleaf Tubers",
         -- 2.0.50: the three quest items wait beside the quest giver.
@@ -2751,7 +2754,7 @@ FDJ.DB["Razorfen Kraul"] = {
         level = 26,
         requires = 20,
         turnin = "Mebok Mizzyrix, Ratchet, The Barrens",
-        liveXPFallback = 2100,
+        liveXPFallback = 5000,
     }, {
         objective = "Escort Willix the Importer out of Razorfen Kraul.",
         rewardSummary = "",
@@ -3101,10 +3104,13 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
     icon = "Interface\\Icons\\INV_Misc_Bone_HumanSkull_01",
     quests = {{
         objective = "Return Vorrel Sengutz's wedding ring (from Nancy Vishas) to Monika Sengutz in Tarren Mill.",
-        rewardSummary = "Vorrel's Boots",
+        -- questrewards3 (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever):
+        -- Vorrel's Boots on top of the choice, Undercity +150
+        rewardSummary = "Undercity +150",
         id = 1051,
         rewardChoice = true,
         rewardItems = {{7750, "Mantle of Woe", 2}, {4643, "Grimsteel Cape", 2}},
+        additionalRewardItems = {{7751, "Vorrel's Boots", 2}},
         name = "Vorrel's Revenge",
         faction = "Horde",
         pickup = "Vorrel Sengutz, inside the Graveyard",
@@ -4755,6 +4761,9 @@ FDJ.DB["Zul'Farrak"] = {
         liveXPFallback = 405,
     }, {
         objective = "Bring the Tiara of the Deep to Tabetha in Dustwallow Marsh.",
+        -- questrewards3 (2.0.10, M 17 Nov 2026): Wowhead Forever: a choice of
+        -- Gemshale Pauldrons or Dank Shoulderpads (new in Forever), and the
+        -- Spellshifter Rod on top, with 65s
         rewardSummary = "65s",
         id = 2846,
         name = "Tiara of the Deep",
@@ -4763,7 +4772,8 @@ FDJ.DB["Zul'Farrak"] = {
         level = 46,
         requires = 40,
         rewardChoice = true,
-        rewardItems = {{9527, "Spellshifter Rod", 3}, {9531, "Gemshale Pauldrons", 3}},
+        rewardItems = {{9531, "Gemshale Pauldrons", 2}, {270098, "Dank Shoulderpads", 2}},
+        additionalRewardItems = {{9527, "Spellshifter Rod", 2}},
         note = "The Tiara drops from Hydromancer Velratha.\n\nOptional introductory quest:",
         noteQuestLink = { id = 2861, name = "Tabetha's Task" },
         turnin = "Tabetha, Dustwallow Marsh",
@@ -4771,7 +4781,9 @@ FDJ.DB["Zul'Farrak"] = {
     },
     {
         objective = "Bring the Divino-matic Rod to Chief Engineer Bilgewhizzle in Gadgetzan.",
-        rewardSummary = "",
+        -- questrewards3 (2.0.10, M 17 Nov 2026): Wowhead Forever adds the
+        -- Magister Cowl to the choice; Gadgetzan +200
+        rewardSummary = "Gadgetzan +200",
         id = 2768,
         name = "Divino-matic Rod",
         faction = "Both",
@@ -4779,7 +4791,7 @@ FDJ.DB["Zul'Farrak"] = {
         level = 47,
         requires = 40,
         rewardChoice = true,
-        rewardItems = {{9533, "Masons Fraternity Ring", 3}, {9534, "Engineer's Guild Headpiece", 3}},
+        rewardItems = {{9533, "Masons Fraternity Ring", 3}, {9534, "Engineer's Guild Headpiece", 3}, {270099, "Magister Cowl", 3}},
         note = "The rod drops from Sergeant Bly after the pyramid event.",
         turnin = "Chief Engineer Bilgewhizzle, Gadgetzan, Tanaris",
         liveXPFallback = 6300,
@@ -10166,7 +10178,11 @@ FDJ.DB["Blackrock Depths"] = {
         liveXPFallback = 560,
     }, {
         objective = "Bring the Lost Thunderbrew Recipe to Ragnar Thunderbrew in Kharanos.",
-        rewardSummary = "",
+        -- brdrewards (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever)
+        rewardSummary = "1g 65s",
+        rewardChoice = true,
+        rewardItems = {{11964, "Swiftstrike Cudgel", 2}, {12000, "Limb Cleaver", 2}, {270123, "Ragnar's Favorite Hat", 2}},
+        additionalRewardItems = {{12003, "Dark Dwarven Lager", 1, 10}},
         id = 4126,
         name = "Hurley Blackbreath",
         faction = "Alliance",
@@ -10194,7 +10210,11 @@ FDJ.DB["Blackrock Depths"] = {
         liveXPFallback = 560,
     }, {
         objective = "Bring the Lost Thunderbrew Recipe to Vivian Lagrave in Kargath.",
-        rewardSummary = "",
+        -- brdrewards (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever)
+        rewardSummary = "85s",
+        rewardChoice = true,
+        rewardItems = {{11964, "Swiftstrike Cudgel", 2}, {12000, "Limb Cleaver", 2}, {270123, "Ragnar's Favorite Hat", 2}},
+        additionalRewardItems = {{3928, "Superior Healing Potion", 1, 5}, {6149, "Greater Mana Potion", 1, 5}},
         id = 4134,
         name = "Lost Thunderbrew Recipe",
         faction = "Horde",
@@ -10223,7 +10243,10 @@ FDJ.DB["Blackrock Depths"] = {
     },
     {
         objective = "Enter Blackrock Depths and track down Lord Incendius. Slay him and return any source of information you may find to Thunderheart.",
-        rewardSummary = "",
+        -- harmonyrewards (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever)
+        rewardSummary = "2g 55s",
+        rewardChoice = true,
+        rewardItems = {{12113, "Sunborne Cape", 2}, {12114, "Nightfall Gloves", 2}, {12112, "Crypt Demon Bracers", 2}, {12115, "Stalwart Clutch", 3}},
         id = 3907,
         name = "Disharmony of Fire",
         faction = "Horde",
@@ -10250,7 +10273,11 @@ FDJ.DB["Blackrock Depths"] = {
     },
     {
         objective = "Help Marshal Windsor get his gear back and free his friends. Return to Marshal Maxwell if you succeed.",
-        rewardSummary = "",
+        -- brdrewards (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever)
+        rewardSummary = "1g 75s  •  Stormwind +150",
+        rewardChoice = true,
+        rewardItems = {{12061, "Blade of Reckoning", 3}, {12062, "Skilled Fighting Blade", 2}},
+        additionalRewardItems = {{12065, "Ward of the Elements", 2}},
         id = 4322,
         name = "Jail Break!",
         faction = "Alliance",
@@ -10320,7 +10347,10 @@ FDJ.DB["Blackrock Depths"] = {
     {
         note = "Needs both KILL ON SIGHT quests and the Grark Lorkrub escort first.",
         objective = "Travel to Blackrock Depths and slay General Angerforge! Return to Warlord Goretooth when the task is complete.",
-        rewardSummary = "",
+        -- brdrewards (2.0.10, M 17 Nov 2026): its rewards (Wowhead Forever)
+        rewardSummary = "2g 65s  •  Orgrimmar +150",
+        rewardChoice = true,
+        rewardItems = {{12059, "Conqueror's Medallion", 3}, {270126, "Conqueror's Pendant", 3}},
         id = 4132,
         name = "Operation: Death to Angerforge",
         faction = "Horde",
@@ -10331,9 +10361,16 @@ FDJ.DB["Blackrock Depths"] = {
         liveXPFallback = 7750,
     },
     {
-        note = "Show Cyrus a Black Dragonflight Molt first (A Taste of Flame, or kill the drake he summons). Then kill Bael'Gar and use the Altered Black Dragonflight Molt on his remains to collect the Encased Fiery Essence.",
+        -- tasteofflame (2.0.10, M 17 Nov 2026): its first step is now its
+        -- chain (Data/QuestUpdates.lua, BEGIN tasteofflame); its rewards
+        -- (Wowhead Forever, classicdb, warcraft.wiki.gg): one of three, 2g 65s.
+        note = "Kill Bael'Gar, then use the Altered Black Dragonflight Molt on his remains to collect the Encased Fiery Essence.",
         objective = "Travel to Blackrock Depths and slay Bael'Gar. Use the Altered Black Dragonflight Molt on Bael'Gar's remains to capture the Fiery Essence. Return the Encased Fiery Essence to Cyrus Therepentous.",
-        rewardSummary = "",
+        rewardSummary = "2g 65s",
+        rewardChoice = true,
+        rewardItems = {{12066, "Shaleskin Cape", 2}, {12082, "Wyrmhide Spaulders", 2}, {12083, "Valconian Sash", 2}},
+        requiredItem = {11230, "Encased Fiery Essence", 1, 1, "From Bael'Gar's remains: use the Altered Black Dragonflight Molt on them"},
+        providedItem = {11231, "Altered Black Dragonflight Molt", 1, "Given by Cyrus Therepentous when you accept the quest"},
         id = 4024,
         name = "A Taste of Flame",
         faction = "Both",

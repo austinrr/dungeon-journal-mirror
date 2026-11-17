@@ -37,7 +37,9 @@ local function Settings()
     db.armor = nil
     for key in pairs(db.armorTypes) do
         if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate"
-            and key ~= "Cloak" and key ~= "Ring" and key ~= "Neck" and key ~= "Trinket" then db.armorTypes[key] = nil end
+            and key ~= "Cloak" and key ~= "Ring" and key ~= "Neck" and key ~= "Trinket"
+            and key ~= "Head" and key ~= "Shoulder" and key ~= "Chest" and key ~= "Wrist" -- armorslots
+            and key ~= "Hands" and key ~= "Waist" and key ~= "Legs" and key ~= "Feet" then db.armorTypes[key] = nil end
     end
     -- Weapon types ticked in the Weapon Filter (none ticked = no filter).
     if type(db.weaponTypes) ~= "table" then db.weaponTypes = {} end
@@ -134,6 +136,23 @@ local function JewelryType(item)
 end
 local function AnyJewelryTicked(t)
     for _, key in ipairs(JEWELRY_TYPES) do if t[key] then return true end end
+    return false
+end
+-- armorslots (2.0.10, M 17 Nov 2026: "a window that covers all the pieces
+-- we are missing, helm shoulders etc"): Head ... Feet, in a second box right
+-- of the Armor drop-down. Like Cloak / Ring / Neck / Trinket, ticking any
+-- of them shows only the ticked slots (of the ticked armor types, if any).
+local ARMOR_SLOT_CHOICES = { "Head", "Shoulder", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet" }
+local function ArmorSlot(item)
+    local slot = type(item) == "table" and item[3]
+    if type(slot) ~= "string" then return nil end
+    local first = slot:match("^%s*([^,]+)")
+    first = first and first:gsub("%s+$", "")
+    if first and ARMOR_SLOTS[first] then return first end
+    return nil
+end
+local function AnyArmorSlotTicked(t)
+    for _, key in ipairs(ARMOR_SLOT_CHOICES) do if t[key] then return true end end
     return false
 end
 local function ArmorLabel(key)
@@ -267,12 +286,38 @@ local RANGED = {
     Thrown = { WARRIOR = 1, HUNTER = 1, ROGUE = 1 },
 }
 
-local function Allowed(rule, class, level)
+-- futurearmor (2.0.10, M 17 Nov 2026: "if a level 30 paladin ticks show my
+-- class loot, level 40+ plate should be valid for him, same for warrior;
+-- hunters and shamans should see mail pieces that are level 40+"; the
+-- Discord report by Krylo): gear the class learns to wear at a later level
+-- (plate and mail at 40) counts as usable when the item itself needs that
+-- level or more, since by the time the character can equip it, the class
+-- can wear it. itemLevel: the item's required level (nil when not known yet:
+-- then the character's own level decides, as before).
+local function Allowed(rule, class, level, itemLevel)
     if not rule then return true end
     if rule.ALL then return true end
     local need = rule[class]
     if not need then return false end
-    return level >= need
+    if level >= need then return true end
+    return type(itemLevel) == "number" and itemLevel >= need
+end
+
+-- The level an item needs: from the game's item data, or for an item whose
+-- ID is not known yet, the "Requires Level" line the game showed (item.tip).
+local function ItemRequiredLevel(item)
+    local id = item and item[1]
+    if type(id) == "number" and id > 0 then
+        if type(GetItemInfo) ~= "function" then return nil end
+        local ok, _, _, _, _, itemMinLevel = pcall(GetItemInfo, id)
+        if ok and type(itemMinLevel) == "number" and itemMinLevel > 0 then return itemMinLevel end
+        return nil
+    end
+    for _, line in ipairs(type(item) == "table" and type(item.tip) == "table" and item.tip or {}) do
+        local n = type(line) == "string" and tonumber(line:lower():match("^requires level (%d+)"))
+        if n then return n end
+    end
+    return nil
 end
 
 local function ClassCanUse(item)
@@ -294,7 +339,7 @@ local function ClassCanUse(item)
         if kind == "Shield" then return Allowed(ARMOR.Shield, class, level) end
         return Allowed(ONE_HAND[kind], class, level)
     end
-    return Allowed(ARMOR[kind], class, level)
+    return Allowed(ARMOR[kind], class, level, level < 60 and ItemRequiredLevel(item) or nil)
 end
 FDJ.LootFilterClassCanUse = ClassCanUse
 
@@ -776,10 +821,10 @@ function FDJ.FilterBossLoot(boss)
     local on = db.enabled
     local showRecipes = on and db.recipes
     local classOnly = on and db.classOnly
-    local wantStats = on and AnyStatWanted(db)
+    local wantStats = on and AnyStatWanted(db) and not FDJ.lootFilterSkipStats -- fastshow
     local minLevel = on and db.minLevel or nil
     local armor = on and AnyArmorTicked(db) and db.armorTypes or nil
-    local resists = on and AnyResistTicked(db) and db.resists or nil
+    local resists = on and AnyResistTicked(db) and not FDJ.lootFilterSkipStats and db.resists or nil -- fastshow
     local weapons = on and AnyWeaponTicked(db) and db.weaponTypes or nil
     if showRecipes and not classOnly and not wantStats and not minLevel and not armor and not resists and not weapons then return boss end
     local shown = {}
@@ -791,11 +836,17 @@ function FDJ.FilterBossLoot(boss)
             if classOnly and not ClassCanUse(item) then keep = false end
             if keep and armor then
                 local itemArmor = ArmorType(item)
-                if itemArmor and not armor[itemArmor] then keep = false end
-                if keep and AnyJewelryTicked(armor) then
+                local slotsOn = AnyArmorSlotTicked(armor) -- armorslots
+                -- armorslots: slots ticked with no armor type = any type
+                if itemArmor and not armor[itemArmor]
+                    and not (slotsOn and not AnyArmorTypeTicked(armor)) then keep = false end
+                if keep and (AnyJewelryTicked(armor) or slotsOn) then
                     local jewel = JewelryType(item)
+                    local piece = slotsOn and ArmorSlot(item) or nil -- armorslots
                     if jewel then
                         if not armor[jewel] then keep = false end
+                    elseif piece then
+                        if not armor[piece] then keep = false end
                     elseif not itemArmor
                         and not (UntypedArmor(item) and AnyArmorTypeTicked(armor)) -- untypedarmor
                         and not (weapons and WeaponType(item)) then
@@ -808,6 +859,7 @@ function FDJ.FilterBossLoot(boss)
                 if itemWeapon then
                     if not weapons[itemWeapon] then keep = false end
                 elseif not (armor and (ArmorType(item) or IsCloak(item) or armor[JewelryType(item) or ""]
+                    or armor[ArmorSlot(item) or ""] -- armorslots
                     or (UntypedArmor(item) and AnyArmorTypeTicked(armor)))) then -- untypedarmor
                     keep = false
                 end
@@ -985,6 +1037,9 @@ local function RefreshWindow(frame)
         win.show.icon:SetPoint("RIGHT", showText, "LEFT", -2, -3)
     end
     win.matchAll.fdjLabel:SetText(L("LF_MATCH_ALL"))
+    if win.questRewards then
+        win.questRewards.fdjLabel:SetText("|TInterface\\GossipFrame\\AvailableQuestIcon:16:16:0:0|t " .. L("LF_QUEST_REWARDS"))
+    end
     win.minLabel:SetText(L("LF_MIN_LEVEL"))
     local on = Settings().enabled and true or false
     win.toggle:SetText(on and L("LF_DISABLE") or L("LF_ENABLE"))
@@ -999,9 +1054,11 @@ local function RefreshWindow(frame)
     if win.armor then
         local ticked = Settings().armorTypes or {}
         local names = {}
-        for _, armor in ipairs(ARMOR_CHOICES) do
-            if ticked[armor] then
-                names[#names + 1] = ArmorLabel(armor)
+        for _, list in ipairs({ ARMOR_CHOICES, ARMOR_SLOT_CHOICES }) do -- armorslots
+            for _, armor in ipairs(list) do
+                if ticked[armor] then
+                    names[#names + 1] = ArmorLabel(armor)
+                end
             end
         end
         -- Like Resistances: "Armor", or "Armor (2)" with ticks (nothing ticked = all).
@@ -1178,9 +1235,25 @@ local function CreateWindow(frame)
     menu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
     menu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
     menu:Hide()
+    -- armorslots: Head ... Feet in a box of their own right of the list, as
+    -- tall as it; Head..Wrist line up with Cloth..Plate, Hands..Feet with
+    -- Cloak..Trinket. Part of the list: opens and closes with it.
+    local slotMenu = CreateFrame("Frame", nil, menu, "BackdropTemplate")
+    win.armor.slotMenu = slotMenu
+    slotMenu:SetSize(130, menu:GetHeight())
+    slotMenu:SetPoint("TOPLEFT", menu, "TOPRIGHT", 2, 0)
+    slotMenu:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 12,
+        insets = { left = 3, right = 3, top = 3, bottom = 3 },
+    })
+    slotMenu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
+    slotMenu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
     win.armor.options = {}
-    for i, value in ipairs(choices) do
-        local option = CreateFrame("Button", nil, menu)
+    for _, list in ipairs({ { menu, choices }, { slotMenu, ARMOR_SLOT_CHOICES } }) do
+    for i, value in ipairs(list[2]) do
+        local option = CreateFrame("Button", nil, list[1])
         option:SetPoint("TOPLEFT", 6, RowY(i))
         option:SetPoint("TOPRIGHT", -6, RowY(i))
         option:SetHeight(21)
@@ -1210,6 +1283,7 @@ local function CreateWindow(frame)
             Changed(frame)
         end)
         win.armor.options[#win.armor.options + 1] = option
+    end
     end
     win.armor:SetScript("OnClick", function()
         if win.resist and win.resist.menu then win.resist.menu:Hide() end
@@ -1443,6 +1517,10 @@ local function CreateWindow(frame)
     win.matchAll = MakeCheck(win, frame, function() return Settings().matchAll end, function(v) Settings().matchAll = v end)
     win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - 34 - math.ceil(#STATS / 2) * 28 - 6)
     win.checks[#win.checks + 1] = win.matchAll
+    -- questrewards (2.0.10): Show results lists matching quest rewards too
+    win.questRewards = MakeCheck(win, frame, function() return Settings().questRewards end, function(v) Settings().questRewards = v or nil end)
+    win.questRewards:SetPoint("TOPLEFT", win.matchAll, "BOTTOMLEFT", 0, -4)
+    win.checks[#win.checks + 1] = win.questRewards
 
     -- Resistance drop-down, built like the armor one, right under it.
     -- Ticked schools: the item needs at least one of them.
@@ -1528,9 +1606,10 @@ local function CreateWindow(frame)
     end
 
     -- Fit the window to its content: the bottom buttons sit a fixed gap
-    -- under "Item must have all ticked stats".
+    -- under "Item must have all ticked stats" ("Show quest rewards too").
     win:SetScript("OnShow", function(self)
-        local top, bottom = self:GetTop(), self.matchAll and self.matchAll:GetBottom()
+        local last = self.questRewards or self.matchAll
+        local top, bottom = self:GetTop(), last and last:GetBottom()
         if top and bottom then self:SetHeight(math.floor(top - bottom + 0.5) + 70) end
     end)
 
@@ -1920,6 +1999,132 @@ FDJ.LocalizeDungeonName = function(internalName)
     return baseLocalizeDungeonName(internalName)
 end
 
+-- questrewards (2.0.10, M 17 Nov 2026: "under Item must have all stats, an
+-- option to toggle that says: Show quest rewards too"): with it ticked, Show
+-- results also lists the dungeons' quests whose rewards match the filter,
+-- each after its dungeon's bosses: the quest's name with a note icon, its
+-- matching rewards as the loot. The quests are the dungeon's quest list's
+-- (this character's faction; class and profession quests as the Quests
+-- options say; RPG Mode: only quests it shows). The quest data has no slot
+-- for its rewards, so it is read from the game's item data.
+local REWARD_EQUIP = {
+    INVTYPE_HEAD = "Head", INVTYPE_NECK = "Neck", INVTYPE_SHOULDER = "Shoulder", INVTYPE_BODY = "Shirt",
+    INVTYPE_CHEST = "Chest", INVTYPE_ROBE = "Chest", INVTYPE_WAIST = "Waist", INVTYPE_LEGS = "Legs",
+    INVTYPE_FEET = "Feet", INVTYPE_WRIST = "Wrist", INVTYPE_HAND = "Hands", INVTYPE_FINGER = "Finger",
+    INVTYPE_TRINKET = "Trinket", INVTYPE_CLOAK = "Back", INVTYPE_WEAPON = "One-Hand", INVTYPE_SHIELD = "Off Hand",
+    INVTYPE_2HWEAPON = "Two-Hand", INVTYPE_WEAPONMAINHAND = "Main Hand", INVTYPE_WEAPONOFFHAND = "Off Hand",
+    INVTYPE_HOLDABLE = "Held In Off-hand", INVTYPE_RANGED = "Ranged", INVTYPE_RANGEDRIGHT = "Ranged",
+    INVTYPE_THROWN = "Thrown", INVTYPE_TABARD = "Tabard", INVTYPE_RELIC = "Relic",
+}
+local REWARD_KIND = {
+    [4] = { [1] = "Cloth", [2] = "Leather", [3] = "Mail", [4] = "Plate", [6] = "Shield" },
+    [2] = { [0] = "Axe", [1] = "Axe", [2] = "Bow", [3] = "Gun", [4] = "Mace", [5] = "Mace", [6] = "Polearm",
+        [7] = "Sword", [8] = "Sword", [10] = "Staff", [13] = "Fist Weapon", [15] = "Dagger", [18] = "Crossbow", [19] = "Wand" },
+}
+local QUEST_REWARD_ICON = "Interface\\GossipFrame\\AvailableQuestIcon" -- resultquest: the quest pages' "!"
+-- "Head, Plate", "Two-Hand, Sword", "Finger"... as in the loot data; "" when
+-- not gear or not known yet.
+local function RewardSlot(id)
+    local equipLoc, classID, subID
+    local instant = (C_Item and C_Item.GetItemInfoInstant) or GetItemInfoInstant
+    if type(instant) == "function" then
+        local ok, _, _, _, loc, _, cid, sid = pcall(instant, id)
+        if ok then equipLoc, classID, subID = loc, cid, sid end
+    end
+    if not equipLoc and type(GetItemInfo) == "function" then
+        local ok, _, _, _, _, _, _, _, _, loc, _, _, cid, sid = pcall(GetItemInfo, id)
+        if ok then equipLoc, classID, subID = loc, cid, sid end
+    end
+    local first = REWARD_EQUIP[equipLoc or ""]
+    if not first then return "" end
+    local kind
+    if first == "Back" then
+        kind = "Cloth"
+    elseif first ~= "Thrown" and REWARD_KIND[classID] then
+        kind = REWARD_KIND[classID][subID]
+    end
+    return kind and (first .. ", " .. kind) or first
+end
+local function QuestRewardIDs(quest, add)
+    local lists = { quest.rewardItems, quest.additionalRewardItems, quest.noteRewardItems }
+    for i = 1, 3 do
+        local list = lists[i]
+        for _, reward in ipairs(type(list) == "table" and list or {}) do
+            local id = type(reward) == "table" and tonumber(reward[1])
+            if id and id > 0 then add(id, reward) end
+        end
+    end
+end
+local function QuestRewardsShown(dungeonName, quest)
+    if type(quest) ~= "table" or quest.hideFromMainList then return false end
+    if FDJ.QuestMatchesFaction and not FDJ.QuestMatchesFaction(quest, FDJ.PlayerFaction and FDJ.PlayerFaction() or nil) then return false end
+    if FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(dungeonName, quest) then return false end
+    return true
+end
+local function QuestRewardBosses(dungeonName, dungeon)
+    local out = {}
+    for _, quest in ipairs(dungeon.quests or {}) do
+        if QuestRewardsShown(dungeonName, quest) then
+            local loot, seen = {}, {}
+            QuestRewardIDs(quest, function(id, reward)
+                if seen[id] then return end
+                seen[id] = true
+                loot[#loot + 1] = { id, reward[2], RewardSlot(id), tonumber(reward[3]) or 1 }
+            end)
+            if #loot > 0 then
+                local title = quest.name or ""
+                if FDJ.LocalizeQuestField and quest.id then title = FDJ.LocalizeQuestField(quest.id, "name", title) or title end
+                local icon = QUEST_REWARD_ICON
+                if quest.id and FDJ.IsRepeatableQuest and FDJ.IsRepeatableQuest(quest.id) and FDJ.REPEATABLE_QUEST_TEXTURE then
+                    icon = FDJ.REPEATABLE_QUEST_TEXTURE -- the blue ? of a repeatable quest, as in the quest list
+                end
+                out[#out + 1] = { name = title, loot = loot, customIcon = icon, fdjQuestRewards = quest.id or true, fdjQuest = quest }
+            end
+        end
+    end
+    return out
+end
+
+-- resultquest (2.0.10, M 17 Nov 2026: "clicking on the exclamation mark
+-- should redirect to the official quest page in the dungeon"): the "!" of a
+-- quest entry in the page's list opens the quest on its dungeon's Quests
+-- tab; a click on the rest of the row shows the quest on the right.
+function FDJ.ApplyResultQuestMark(button, entry)
+    local quest = type(entry) == "table" and rawget(entry, "fdjQuest") or nil
+    local mark = button and button.fdjQuestMark
+    if not (quest and button.portrait) then
+        if mark then mark:Hide() end
+        return
+    end
+    if not mark then
+        mark = CreateFrame("Button", nil, button)
+        button.fdjQuestMark = mark
+        mark.hl = mark:CreateTexture(nil, "HIGHLIGHT")
+        mark.hl:SetAllPoints()
+        mark.hl:SetBlendMode("ADD")
+        mark:SetScript("OnClick", function(self)
+            if self.dungeonName and self.questID and FDJ.OpenQuestPage then
+                FDJ.OpenQuestPage(self.dungeonName, self.questID)
+            end
+        end)
+        mark:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(self.title or "", 1.00, 0.82, 0.00)
+            GameTooltip:AddLine(L("BOSS_QUEST_TIP"), 0.35, 1.00, 0.35)
+            GameTooltip:Show()
+        end)
+        mark:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
+    mark:ClearAllPoints()
+    mark:SetAllPoints(button.portrait)
+    mark:SetFrameLevel((button:GetFrameLevel() or 1) + 5)
+    mark.hl:SetTexture(rawget(entry, "customIcon") or QUEST_REWARD_ICON)
+    mark.dungeonName = rawget(entry, "fdjDungeon")
+    mark.questID = quest.id
+    mark.title = rawget(entry, "name")
+    mark:Show()
+end
+
 local function BuildPage()
     local bosses, itemCount = {}, 0
     local db = Settings()
@@ -1945,6 +2150,23 @@ local function BuildPage()
                 itemCount = itemCount + #shown
             end
         end
+        if dungeon and db.enabled and db.questRewards then -- questrewards
+            for _, quest in ipairs(QuestRewardBosses(dungeonName, dungeon)) do
+                local shown = FDJ.FilterBossLoot(quest).loot or {}
+                if recipesOnly then
+                    local recipes = {}
+                    for _, item in ipairs(shown) do
+                        if IsRecipe(item) then recipes[#recipes + 1] = item end
+                    end
+                    shown = recipes
+                end
+                if #shown > 0 then
+                    quest.loot, quest.fdjDungeon = shown, dungeonName
+                    bosses[#bosses + 1] = quest
+                    itemCount = itemCount + #shown
+                end
+            end
+        end
     end
     FDJ.lootFilterStrict = nil
     FDJ.lootFilterHidden = 0
@@ -1955,42 +2177,136 @@ end
 local warmWorker, warmQueue, warmDone, requestedData
 local warmLeft = 0 -- settle: items whose tooltip was still empty at the last read
 local WARM_PER_FRAME = 8
-local function WarmTooltips(onDone)
-    local queue = {}
+-- fastshow (2.0.10, M 17 Nov 2026: "fix the lag when we click Show results:
+-- it lasts quite a few seconds and people might think it's not working and
+-- close it before it loads"). Show results first reads the tooltip of the
+-- items it checks for stats, 8 a frame: every loot item of every dungeon,
+-- a few seconds. Now: only the items the other filters (class, armor,
+-- weapon, level) keep are read, each once; each frame reads for up to 12 ms
+-- (at least 8 items); and a box on the journal says "Searching the loot...
+-- 42%" with a bar, until the results open.
+local WARM_BUDGET_MS = 12
+local warmTotal, warmProgress = 0, nil
+local function HideLoading(frame)
+    if frame and frame.lootFilterLoading then frame.lootFilterLoading:Hide() end
+end
+local function ShowLoading(frame, done, total)
+    if not (frame and CreateFrame) then return end
+    local box = frame.lootFilterLoading
+    if not box then
+        box = CreateFrame("Frame", nil, frame, "BackdropTemplate")
+        frame.lootFilterLoading = box
+        box:SetSize(300, 64)
+        box:SetPoint("CENTER", frame, "CENTER", 0, 0)
+        box:SetFrameStrata("FULLSCREEN_DIALOG")
+        box:SetFrameLevel(90)
+        box:EnableMouse(true)
+        box:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 14,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 },
+        })
+        box:SetBackdropColor(0.055, 0.05, 0.043, 0.97)
+        box:SetBackdropBorderColor(0.62, 0.50, 0.30, 1)
+        box.text = box:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
+        box.text:SetPoint("TOP", 0, -12)
+        box.text:SetTextColor(1.00, 0.82, 0.27)
+        box.bar = CreateFrame("StatusBar", nil, box)
+        box.bar:SetPoint("BOTTOMLEFT", 16, 13)
+        box.bar:SetPoint("BOTTOMRIGHT", -16, 13)
+        box.bar:SetHeight(10)
+        box.bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+        box.bar:SetStatusBarColor(0.95, 0.72, 0.20)
+        box.bar.bg = box.bar:CreateTexture(nil, "BACKGROUND")
+        box.bar.bg:SetAllPoints()
+        box.bar.bg:SetColorTexture(0, 0, 0, 0.6)
+        frame:HookScript("OnHide", function() box:Hide() end)
+    end
+    total = math.max(1, total or 1)
+    local pct = math.floor(100 * math.min(done or 0, total) / total)
+    box.text:SetText(L("LF_SEARCHING", pct))
+    box.bar:SetMinMaxValues(0, total)
+    box.bar:SetValue(math.min(done or 0, total))
+    box:Show()
+end
+local function WarmTooltips(onDone, progress)
+    -- a read the player is watching is never cut short by a quiet one
+    -- (an item's data arriving); it builds the results itself when done
+    if warmQueue and warmProgress and not progress then return end
+    if warmProgress and warmProgress ~= progress then HideLoading(warmProgress) end
+    warmProgress = progress
+    local queue, seen = {}, {}
+    local function Add(id)
+        if id and id > 0 and not seen[id] and not textCache[id] then
+            seen[id] = true
+            queue[#queue + 1] = id
+        end
+    end
+    local hidden, dimmed = FDJ.lootFilterHidden, FDJ.lootFilterDimmed
+    local filterOn = Settings().enabled
+    FDJ.lootFilterSkipStats = true
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
+        if FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName) then dungeon = nil end
         for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
-            for _, item in ipairs(boss.loot or {}) do
-                local id = item[1]
-                if id and id > 0 and not textCache[id] and not IsRecipe(item) then queue[#queue + 1] = id end
+            local list = boss.loot or {}
+            if filterOn and not boss.childOf then
+                local ok, kept = pcall(FDJ.FilterBossLoot, boss)
+                if ok and type(kept) == "table" and type(kept.loot) == "table" then list = kept.loot end
+            end
+            if not boss.childOf then
+                for _, item in ipairs(list) do
+                    if not IsRecipe(item) then Add(item[1]) end
+                end
+            end
+        end
+        if dungeon and filterOn and Settings().questRewards then -- questrewards
+            for _, quest in ipairs(QuestRewardBosses(dungeonName, dungeon)) do
+                local ok, kept = pcall(FDJ.FilterBossLoot, quest)
+                for _, item in ipairs((ok and type(kept) == "table" and kept.loot) or quest.loot) do
+                    if not IsRecipe(item) then Add(item[1]) end
+                end
             end
         end
     end
+    FDJ.lootFilterSkipStats = nil
+    FDJ.lootFilterHidden, FDJ.lootFilterDimmed = hidden, dimmed
     warmDone = onDone
     warmLeft = 0
+    warmTotal = #queue
     if #queue == 0 or not CreateFrame then
         warmQueue = nil
+        if warmProgress then HideLoading(warmProgress) warmProgress = nil end
         if onDone then onDone() end
         return
     end
     warmQueue = queue
+    if warmProgress then ShowLoading(warmProgress, 0, warmTotal) end
     if not warmWorker then
         warmWorker = CreateFrame("Frame")
         warmWorker:SetScript("OnUpdate", function(self)
             local q = warmQueue
             if not q then self:Hide() return end
-            for _ = 1, WARM_PER_FRAME do
+            local clock = type(debugprofilestop) == "function" and debugprofilestop or nil
+            local start = clock and clock() or 0
+            local n = 0
+            while true do
                 local id = table.remove(q)
                 if not id then break end
                 if not requestedData and C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
                     pcall(C_Item.RequestLoadItemDataByID, id)
                 end
                 if not TooltipText(id) then warmLeft = warmLeft + 1 end -- settle
+                n = n + 1
+                if n >= WARM_PER_FRAME and (not clock or clock() - start >= WARM_BUDGET_MS) then break end
             end
+            if warmProgress then ShowLoading(warmProgress, warmTotal - #q, warmTotal) end
             if #q == 0 then
                 warmQueue = nil
                 requestedData = true
                 self:Hide()
+                if warmProgress then HideLoading(warmProgress) warmProgress = nil end
                 local done = warmDone
                 warmDone = nil
                 if done then done() end
@@ -2003,7 +2319,7 @@ end
 local OpenLootFilterPage
 function FDJ.ShowLootFilterResults(frame, keepBoss)
     if Settings().enabled and (AnyStatWanted(Settings()) or AnyResistTicked(Settings())) then
-        WarmTooltips(function() OpenLootFilterPage(frame, keepBoss) end)
+        WarmTooltips(function() OpenLootFilterPage(frame, keepBoss) end, frame) -- fastshow: with the box
     else
         OpenLootFilterPage(frame, keepBoss)
     end

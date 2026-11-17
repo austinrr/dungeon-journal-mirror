@@ -2258,6 +2258,7 @@ do
         if type(boss) ~= "table" or not FDJ.IsRPGMode() then return false end
         local real, dungeon = Real(boss, name)
         if not dungeon or FullyOpen(dungeon) then return false end
+        if real.fdjQuestRewards then return false end -- questrewards: its quest was checked already
         if real.trash or real.recipeTab then return not MapOpen(dungeon) end
         return not Seen(dungeon, real)
     end

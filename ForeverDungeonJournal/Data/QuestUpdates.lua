@@ -2348,7 +2348,11 @@ do
             -- rfdstep (2.0.31): the chain's Rot and Regret step is done in Maraudon.
             if q.id == 93604 and not q.warning then q.warning = "WARNING: This chain has a step in Maraudon" end
             if q.id == 3341 or q.id == 3636 then
-                q.rewardItems = { {10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3}, {10823, "Vanquisher's Sword", 3} }
+                -- rfdsword (2.0.10): a choice of the Talisman or the Ring; the
+                -- Vanquisher's Sword comes on top (Wowhead Forever)
+                q.rewardChoice = true
+                q.rewardItems = { {10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3} }
+                q.additionalRewardItems = { {10823, "Vanquisher's Sword", 3} }
                 q.rewardSummary = (q.id == 3341) and "Undercity +150" or "Stormwind +150"
             end
             if q.id == 6521 then
@@ -2390,6 +2394,9 @@ do
     local JARKAL = { mapID = 1418, x = 0.026, y = 0.460, label = "Jarkal Mossmeld — Kargath, Badlands", targetName = "Jarkal Mossmeld" }
     local MAGELLAS = { mapID = 1455, x = 0.696, y = 0.186, label = "High Explorer Magellas — Hall of Explorers, Ironforge", targetName = "High Explorer Magellas" }
     local DINITA = { mapID = 1455, x = 0.338, y = 0.602, label = "Dinita Stonemantle — The Vault, Ironforge", targetName = "Dinita Stonemantle" }
+    -- discshorde (2.0.10): Wowhead Forever NPC spots, Thunder Bluff
+    local TRUTHSEEKER = { mapID = 1456, x = 0.344, y = 0.472, label = "Sage Truthseeker — Thunder Bluff", targetName = "Sage Truthseeker" }
+    local BENA = { mapID = 1456, x = 0.468, y = 0.334, label = "Bena Winterhoof — Thunder Bluff", targetName = "Bena Winterhoof" }
 
     -- A journal entry that becomes a chain step keeps its page as a step.
     local function AsStep(q)
@@ -2459,6 +2466,10 @@ do
         rewardSummary = "Darkspear Trolls +100",
         rewards = "Jarkal's Enhancing Necklace\n5,600 XP • Darkspear Trolls +100",
         rewardItems = { { 7888, "Jarkal's Enhancing Necklace", 3 } },
+        -- raceunavailable (2.0.10, M 16 Nov 2026: "That quest is not available to
+        -- your race" for his Undead): as Compendium of the Fallen
+        warning = "Undead cannot take this quest",
+        unavailableRaces = { Scourge = true },
     }, {
         { id = 2283, name = "Necklace Recovery" },
         { id = 2284, name = "Necklace Recovery, Take 2" },
@@ -2469,14 +2480,24 @@ do
     })
 
     -- Alliance Platinum Discs: the reward comes one step later.
-    local discRewards
+    -- discshorde (2.0.10, M 17 Nov 2026: "fix this reward choice for both
+    -- factions"): the same for the Horde (2280, then 2440 at Bena
+    -- Winterhoof); the reward (Wowhead Forever 2439 / 2440): 5 Superior
+    -- Healing Potions or 5 Greater Mana Potions, and the Thawpelt Sack on top.
+    local DISC_CHOICE = { { 3928, "Superior Healing Potion", 1, 5 }, { 6149, "Greater Mana Potion", 1, 5 } }
+    local DISC_ALSO = { { 9587, "Thawpelt Sack", 1 } }
     for _, q in ipairs((FDJ.DB and FDJ.DB["Uldaman"] and FDJ.DB["Uldaman"].quests) or {}) do
         if q.id == 2279 then
-            discRewards = q.rewardItems
             q.rewardItems = {}
             q.rewardChoice = nil
             q.rewardSummary = "Ironforge +150"
             q.turninMap = q.turninMap or MAGELLAS
+        elseif q.id == 2280 then
+            q.rewardItems = {}
+            q.rewardChoice = nil
+            q.additionalRewardItems = nil
+            q.rewardSummary = "Thunder Bluff +150"
+            q.turninMap = q.turninMap or TRUTHSEEKER
         end
     end
     Insert("Uldaman", 2279, {
@@ -2489,10 +2510,27 @@ do
         liveXPFallback = 420,
         rewardSummary = "",
         rewardChoice = true,
-        rewardItems = discRewards or { { 3928, "Superior Healing Potion", 1 }, { 6149, "Greater Mana Potion", 1 }, { 9587, "Thawpelt Sack", 2 } },
+        rewardItems = DISC_CHOICE,
+        additionalRewardItems = DISC_ALSO,
     }, {
         { id = 2278, name = "The Platinum Discs" },
         { id = 2279, name = "The Platinum Discs" },
+    })
+    Insert("Uldaman", 2280, {
+        id = 2440, name = "The Platinum Discs", faction = "Horde", level = 47, requires = 40,
+        pickup = "Sage Truthseeker, Thunder Bluff (34.4, 47.2)",
+        objective = "Take the reward voucher to Bena Winterhoof in Thunder Bluff.",
+        turnin = "Bena Winterhoof, Thunder Bluff (46.8, 33.4)",
+        startMap = TRUTHSEEKER, turninMap = BENA,
+        providedItem = { 8070, "Reward Voucher", 1, "Given by Sage Truthseeker when you accept the quest" },
+        liveXPFallback = 420,
+        rewardSummary = "Thunder Bluff +10",
+        rewardChoice = true,
+        rewardItems = DISC_CHOICE,
+        additionalRewardItems = DISC_ALSO,
+    }, {
+        { id = 2278, name = "The Platinum Discs" },
+        { id = 2280, name = "The Platinum Discs" },
     })
 
     -- WoW Forever quest XP (forever-tool / Wowhead Forever, Nov 2026).
@@ -2503,7 +2541,7 @@ do
         [1139] = 10250, [2200] = 4450, [2201] = 6300, [2204] = 1650, [2283] = 4800, [2284] = 4800,
         [2339] = 7300, [2278] = 8200, [2279] = 5250, [2280] = 5250, [1956] = 7800,
         [2198] = 5800, [2199] = 2450, [2318] = 6750, [2338] = 350, [2340] = 1850,
-        [2341] = 5600, [2361] = 5600, [2439] = 420,
+        [2341] = 5600, [2361] = 5600, [2439] = 420, [2440] = 420,
         -- Zul'Farrak
         [2769] = 405, [2770] = 14200, [2861] = 410, [2846] = 12100, [2768] = 12600, [2864] = 390,
         [2865] = 7800, [3042] = 7800, [3527] = 10500, [2991] = 10500, [2936] = 9700,
@@ -4264,3 +4302,170 @@ end
 -- END onyxiaattunement
 
 
+
+-- BEGIN knightofmourning
+-- knightofmourning (2.0.10, M 17 Nov 2026): the Forsaken paladin chain into
+-- Blackmaw Hold (Wowhead Forever, quests 93030 and 99187): The Knight of
+-- Mourning (listen to his tale), then The Reliquary of Tyr (the journal
+-- entry), which awards the Sword of Mourning. The Reliquary of Tyr drops
+-- from Elder Shaman Bloodmane (Wowhead Forever item 286415). The Knight of
+-- Mourning stands in Tirisfal Glades (17.6, 67.4); players pick up both
+-- quests from him.
+do
+    local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
+    local bh = FDJ.DB and FDJ.DB["Blackmaw Hold"]
+    local KNIGHT = "Knight of Mourning, Tirisfal Glades (17.6, 67.4)"
+    local KNIGHT_MAP = { mapID = 1420, x = 0.176, y = 0.674, label = "Knight of Mourning — Tirisfal Glades", targetName = "Knight of Mourning" }
+    C[99187] = {
+        { id = 93030, name = "The Knight of Mourning" },
+    }
+    D[93030] = {
+        level = 58, requires = 50,
+        objective = "Speak with the Knight of Mourning to learn more about his unfinished quest.",
+        pickup = KNIGHT,
+        turnin = KNIGHT,
+        map = KNIGHT_MAP,
+    }
+    XP[93030] = 620
+    XP[99187] = 13550
+    if bh then
+        bh.quests = bh.quests or {}
+        local have = false
+        for _, q in ipairs(bh.quests) do if q.id == 99187 then have = true end end
+        if not have then
+            table.insert(bh.quests, {
+                id = 99187, name = "The Reliquary of Tyr",
+                classOnly = "PALADIN", faction = "Horde",
+                level = 58, requires = 50,
+                pickup = KNIGHT, turnin = KNIGHT,
+                startMap = KNIGHT_MAP, turninMap = KNIGHT_MAP,
+                objective = "Travel to Blackmaw Hold in Kalimdor, and recover the Reliquary of Tyr.",
+                liveXPFallback = 13550,
+                rewardSummary = "",
+                rewardItems = { {286408, "Sword of Mourning", 3} },
+                requiredItem = { 286415, "Reliquary of Tyr", 4, 1, "Dropped by: Elder Shaman Bloodmane, Blackmaw Hold" },
+                note = "Forsaken paladin class quest. The Reliquary of Tyr drops from Elder Shaman Bloodmane.",
+            })
+        end
+    end
+end
+-- END knightofmourning
+
+-- BEGIN tasteofflame
+-- tasteofflame (2.0.10, M 17 Nov 2026: "This quest is actually a chain, and
+-- we do not show the start"; then: "It starts from Squire, then you get Set
+-- Them Ablaze, and then you unlock Trinkets, which gives you as a reward the
+-- molt, which then you can bring to the guy"): A Taste of Flame in Blackrock
+-- Depths (4024) after Squire Maltrake (3462), Set Them Ablaze! (3463),
+-- Trinkets... (3481: the Hoard of the Black Dragonflight, with the Black
+-- Dragonflight Molt inside) and A Taste of Flame (4022: show the molt to
+-- Cyrus Therepentous). Levels, givers, spots, XP, money and rewards: Wowhead
+-- Forever (quests 3462, 3463, 3481, 4022; Velarok Windblade, Squire
+-- Maltrake and the hoard at 39, 39 in Searing Gorge; Cyrus at 94.8, 31.6 in
+-- Burning Steppes). Cyrus's other A Taste of Flame (4023, elite: the drake
+-- he summons drops a molt) also opens 4024: it counts for step 4.
+do
+    local VELAROK = { mapID = 1427, x = 0.390, y = 0.390, label = "Velarok Windblade — Searing Gorge", targetName = "Velarok Windblade" }
+    local MALTRAKE = { mapID = 1427, x = 0.390, y = 0.390, label = "Squire Maltrake — Searing Gorge", targetName = "Squire Maltrake" }
+    local HOARD = { mapID = 1427, x = 0.390, y = 0.389, label = "Hoard of the Black Dragonflight — Searing Gorge" }
+    local CYRUS = { mapID = 1428, x = 0.948, y = 0.316, label = "Cyrus Therepentous — Burning Steppes", targetName = "Cyrus Therepentous" }
+    local VELAROK_TEXT = "Velarok Windblade, Searing Gorge (39.0, 39.0)"
+    local MALTRAKE_TEXT = "Squire Maltrake, Searing Gorge (39.0, 39.0)"
+    local HOARD_TEXT = "Hoard of the Black Dragonflight, Searing Gorge (39.0, 38.9)"
+    local CYRUS_TEXT = "Cyrus Therepentous, Burning Steppes (94.8, 31.6)"
+    FDJ.QUEST_PREREQ_CHAINS[4024] = {
+        { id = 3462, name = "Squire Maltrake" },
+        { id = 3463, name = "Set Them Ablaze!" },
+        { id = 3481, name = "Trinkets..." },
+        { id = 4022, name = "A Taste of Flame" },
+    }
+    FDJ.QUEST_PREREQ_DETAILS[3462] = {
+        level = 50, requires = 40,
+        objective = "Speak with Squire Maltrake.",
+        pickup = VELAROK_TEXT, turnin = MALTRAKE_TEXT,
+        map = VELAROK, turninMap = MALTRAKE,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[3463] = {
+        level = 52, requires = 40,
+        objective = "Set the North, South, East, and West Sentry Towers on fire by using the Torch of Retribution inside each of the buildings.",
+        pickup = MALTRAKE_TEXT, turnin = MALTRAKE_TEXT,
+        map = MALTRAKE, turninMap = MALTRAKE,
+        providedItem = {10515, "Torch of Retribution", 1, "Given by Squire Maltrake when you accept the quest: use it on the Sentry Brazier inside each tower"},
+        note = "Elite quest.",
+    }
+    FDJ.QUEST_PREREQ_DETAILS[3481] = {
+        level = 50, requires = 40,
+        objective = "Open the chest.",
+        pickup = HOARD_TEXT, turnin = HOARD_TEXT,
+        startObject = {"Hoard of the Black Dragonflight", "Interface\\Icons\\INV_Box_02", "Beside Squire Maltrake, Searing Gorge (39.0, 38.9)"},
+        map = HOARD, turninMap = HOARD,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[4022] = {
+        level = 54, requires = 52,
+        objective = "Show Cyrus Therepentous the Black Dragonflight Molt you received from Velarok Windblade.",
+        pickup = CYRUS_TEXT, turnin = CYRUS_TEXT,
+        map = CYRUS, turninMap = CYRUS,
+        requiredItems = { {10575, "Black Dragonflight Molt", 1, "Inside the Hoard of the Black Dragonflight (Trinkets...)"} },
+        note = "No molt? Cyrus has another A Taste of Flame (elite): after accepting it, ask him how to prove your worth and kill the Frenzied Black Drake he summons for its molt. It opens the Blackrock Depths quest too.",
+    }
+    -- rewards and money (Wowhead Forever)
+    FDJ.PREREQ_REWARD_ITEMS_FALLBACK[3463] = { items = { {10742, "Dragonflight Leggings", 2}, {10743, "Drakefire Headguard", 2}, {10744, "Axe of the Ebon Drake", 2}, {270114, "Dragonscale Pants", 2} }, choice = true }
+    FDJ.PREREQ_REWARD_MONEY_FALLBACK[3463] = 23000
+    FDJ.PREREQ_REWARD_ITEMS_FALLBACK[3481] = { items = { {10569, "Hoard of the Black Dragonflight", 1} }, choice = false }
+    FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
+    FDJ.QUEST_DONE_BY[4022] = { 4023 }
+    local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
+    XP[3462] = 470; XP[3463] = 7600; XP[3481] = 470; XP[4022] = 5450
+end
+-- END tasteofflame
+
+-- BEGIN onyxiaxp
+-- onyxiaxp (2.0.10, M 17 Nov 2026, with his Onyxia Attunement XP audit):
+-- every quest of both attunement chains with its WoW Forever XP. Wowhead
+-- Forever gives each quest a base XP and Forever's multiplier; the game
+-- grants base x multiplier rounded to 50 (checked against the game's own
+-- reward window: Wild Ancients 6,600 x 2.675 = 17,650). 23 of the 31 steps
+-- had no XP of their own, and the two finals showed the bare base (8,300 /
+-- 9,950). The same quest IDs on the Blackrock Spire pages get it too.
+do
+    local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
+    -- Alliance: Dragonkin Menace ... Drakefire Amulet
+    XP[4182] = 5450; XP[4183] = 4100; XP[4184] = 4100; XP[4185] = 540
+    XP[4186] = 5450; XP[4223] = 540; XP[4224] = 540
+    XP[4241] = 11450 -- 5,450 x 2.1
+    XP[4242] = 9800 -- 5,450 x 1.8
+    XP[4264] = 11150; XP[4282] = 11150 -- 6,200 x 1.8
+    XP[4322] = 13950 -- 7,750 x 1.8
+    XP[6402] = 660; XP[6403] = 9950; XP[99435] = 9950 -- (99435: Forever's other The Great Masquerade)
+    XP[6501] = 6600
+    XP[6502] = 22200 -- 8,300 x 2.675
+    -- Horde: Blood and Thunder ... Blood of the Black Dragon Champion
+    XP[98325] = 660
+    XP[4903] = 15350 -- 8,300 x 1.85
+    XP[4941] = 6600
+    XP[4974] = 26600 -- 9,950 x 2.675
+    XP[6566] = 660; XP[6567] = 3300; XP[6568] = 4950; XP[6569] = 6600; XP[6570] = 4950
+    XP[6582] = 6600; XP[6583] = 6600; XP[6584] = 6600; XP[6585] = 6600
+    XP[6601] = 4950
+    XP[6602] = 26600 -- 9,950 x 2.675
+end
+-- END onyxiaxp
+
+-- BEGIN rfkhorde
+-- rfkhorde (2.0.10): Show on Map spots for two Horde Razorfen Kraul quests
+-- (Wowhead Forever): An Unholy Alliance is handed in to Varimathras
+-- (Undercity 56.2, 92.6); Trial at the Field of Giants is done at the
+-- silithid mounds south of Camp Taurajo (44.5, 70.5).
+do
+    local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
+    for _, quest in ipairs((rfk and rfk.quests) or {}) do
+        if quest.id == 6522 then
+            quest.turninMap = { mapID = 1458, x = 0.562, y = 0.926, label = "Varimathras — Royal Quarter, Undercity", targetName = "Varimathras" }
+        end
+    end
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if type(D[1824]) == "table" then
+        D[1824].objectiveMap = { markerType = "location", mapID = 1413, x = 0.445, y = 0.705, label = "Field of Giants — The Barrens", detail = "Silithid Creepers, Swarmers and Grubs at the mounds south of Camp Taurajo drop Twitching Antennae" }
+    end
+end
+-- END rfkhorde

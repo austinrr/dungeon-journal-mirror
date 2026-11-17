@@ -605,12 +605,19 @@ FDJ.DUNGEON_MAPS = {
         floors = { { uiMapID = 225, tiles = "Interface\\WorldMap\\TheStockade\\TheStockade1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\TheStockade1_s1", x0 = 0.7685, y0 = 0.4311, x1 = 0.8024, y1 = 0.4820 } } } },
         entrance = { floor = 1, x = 0.500, y = 0.815, angle = 0 },
         bosses = {
+            -- stockpins (2.0.10, M 16 Nov 2026): the rooms of his marked map,
+            -- lined up with ours on the two round rooms; Targorr kept where he
+            -- was (he walks several spots).
             { name = "Targorr the Dread",   x = 0.440, y = 0.445 },
-            { name = "Kam Deepfury",        x = 0.320, y = 0.380 },
-            { name = "Hamhock",             x = 0.780, y = 0.455 },
-            { name = "Bazil Thredd",        x = 0.215, y = 0.255 },
-            { name = "Dextren Ward",        x = 0.735, y = 0.575 },
-            { name = "Bruegal Ironknuckle", x = 0.500, y = 0.190 },
+            -- altspawn: the other spots he can stand in (his marked map)
+            { name = "Targorr the Dread",   x = 0.499, y = 0.205, alt = true },
+            { name = "Targorr the Dread",   x = 0.310, y = 0.413, alt = true },
+            { name = "Targorr the Dread",   x = 0.569, y = 0.544, alt = true },
+            { name = "Kam Deepfury",        x = 0.692, y = 0.288 },
+            { name = "Hamhock",             x = 0.780, y = 0.457 },
+            { name = "Bazil Thredd",        x = 0.864, y = 0.527 },
+            { name = "Dextren Ward",        x = 0.215, y = 0.261 },
+            { name = "Bruegal Ironknuckle", x = 0.291, y = 0.444 },
         },
     },
     ["Blackfathom Deeps"] = {
@@ -1999,18 +2006,11 @@ local function GetLiveQuestXP(quest)
     if type(GetQuestLogRewardXP) == "function" then
         local ok, xp = pcall(GetQuestLogRewardXP, quest.id)
         if ok and not IsSecret(xp) and type(xp) == "number" then
-            -- Forever 1.60.1 currently exposes stale/base quest-log XP for a few
-            -- BFD quests while the server/turn-in frame awards the values below.
-            -- Only replace the exact stale amount; any level-scaled value is left alone.
-            local correctedBFDXP = {
-                [6565] = { stale = 6300, current = 6489 }, -- Allegiance to the Old Gods
-                [6921] = { stale = 6550, current = 6746 }, -- Amongst the Ruins
-                [6922] = { stale = 7250, current = 7468 }, -- Baron Aquanis
-            }
-            local correction = correctedBFDXP[quest.id]
-            if correction and xp == correction.stale then
-                return correction.current
-            end
+            -- xpfix (2.0.10, M 17 Nov 2026: "we have some wrong experience
+            -- values"): the quest log's XP for Allegiance to the Old Gods,
+            -- Amongst the Ruins and Baron Aquanis (6,300 / 6,550 / 7,250) is
+            -- what Wowhead Forever lists too; it is no longer swapped for the
+            -- 3% higher amounts (6,489 / 6,746 / 7,468).
             if xp > 0 then return xp end
             local request = questDataRequests[quest.id]
             if xp == 0 and request and request.state == "loaded" then return 0 end
@@ -7676,7 +7676,7 @@ local function RefreshPrerequisiteQuestDetail(step)
 
                 local itemName, itemLink, quality = ItemInfo(item[1])
                 local r, g, b = GetAuthoritativeItemQuality(item[1], itemLink, quality, item[3] or 1)
-                button.name:SetText(itemName or item[2])
+                button.name:SetText((itemName or item[2]) .. ((type(item[4]) == "number" and item[4] > 1) and (" \195\151" .. item[4]) or "")) -- discscount (2.0.10): "×5"
                 button.name:SetTextColor(r, g, b)
                 local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
                 button:SetBackdropColor(unpack(theme.lootRow))
@@ -8449,7 +8449,7 @@ RefreshQuestDetail = function()
             else
                 r, g, b = QualityColor(item[3] or 3)
             end
-            button.name:SetText(itemName or item[2])
+            button.name:SetText((itemName or item[2]) .. ((type(item[4]) == "number" and item[4] > 1) and (" \195\151" .. item[4]) or "")) -- discscount (2.0.10): "×5"
             button.name:SetTextColor(r, g, b)
             button:SetBackdropColor(unpack(theme.lootRow))
             button:SetBackdropBorderColor(unpack(theme.border))
@@ -8505,35 +8505,12 @@ RefreshQuestDetail = function()
     end
 
     local showXP = xp and (xp > 0 or (xp == 0 and quest.showZeroXP))
-    if frame.questXPReward and showXP then
-        frame.questXPReward:ClearAllPoints()
-        frame.questXPReward:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -summaryY)
-        frame.questXPReward.text:SetText(FormatNumber(xp) .. " XP")
-        frame.questXPReward:Show()
-        hasRewardBar = true
-    elseif frame.questXPReward then
-        frame.questXPReward:Hide()
-    end
-
-    if frame.questMoneyReward and money and money > 0 then
-        frame.questMoneyReward:ClearAllPoints()
-        if showXP and frame.questXPReward then
-            frame.questMoneyReward:SetPoint("LEFT", frame.questXPReward, "RIGHT", 8, 0)
-        else
-            frame.questMoneyReward:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -summaryY)
-        end
-        frame.questMoneyReward.text:SetText(FormatQuestMoney(money))
-        local moneyWidth = math.ceil((frame.questMoneyReward.text:GetStringWidth() or 0) + 16)
-        frame.questMoneyReward:SetWidth(math.max(40, math.min(120, moneyWidth)))
-        frame.questMoneyReward:Show()
-        hasRewardBar = true
-    elseif frame.questMoneyReward then
-        frame.questMoneyReward:Hide()
-    end
-
-    if hasRewardBar then
-        summaryY = summaryY + 34
-    end
+    -- itemsfirst (2.0.10, M 17 Nov 2026: "I wanted the item not to be below
+    -- the other usual stuff like XP and reputation"): under "You will also
+    -- receive" the items everyone gets come first, then the XP (with the
+    -- money beside it), then the reputation, as on every other quest.
+    if frame.questXPReward then frame.questXPReward:Hide() end
+    if frame.questMoneyReward then frame.questMoneyReward:Hide() end
 
     if quest.additionalRewardItems and #quest.additionalRewardItems > 0 then
         frame.questAdditionalRewardButtons = frame.questAdditionalRewardButtons or {}
@@ -8568,6 +8545,31 @@ RefreshQuestDetail = function()
             frame.questAdditionalRewardButtons[i]:Show()
         end
         summaryY = summaryY + (math.floor((#quest.additionalRewardItems - 1) / 2) + 1) * 54 + 4
+    end
+
+    -- itemsfirst: the XP (and money) line, under those items
+    if frame.questXPReward and showXP then
+        frame.questXPReward:ClearAllPoints()
+        frame.questXPReward:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -summaryY)
+        frame.questXPReward.text:SetText(FormatNumber(xp) .. " XP")
+        frame.questXPReward:Show()
+        hasRewardBar = true
+    end
+    if frame.questMoneyReward and money and money > 0 then
+        frame.questMoneyReward:ClearAllPoints()
+        if showXP and frame.questXPReward then
+            frame.questMoneyReward:SetPoint("LEFT", frame.questXPReward, "RIGHT", 8, 0)
+        else
+            frame.questMoneyReward:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -summaryY)
+        end
+        frame.questMoneyReward.text:SetText(FormatQuestMoney(money))
+        local moneyWidth = math.ceil((frame.questMoneyReward.text:GetStringWidth() or 0) + 16)
+        frame.questMoneyReward:SetWidth(math.max(40, math.min(120, moneyWidth)))
+        frame.questMoneyReward:Show()
+        hasRewardBar = true
+    end
+    if hasRewardBar then
+        summaryY = summaryY + 34
     end
 
     frame.questRewardSummary:ClearAllPoints()
@@ -8611,6 +8613,53 @@ RefreshQuestDetail = function()
     frame.questDetailContent:SetHeight(math.max(1, totalHeight))
     FDJ.ApplyQuestDetailScroll("quest:" .. tostring(selectedDungeon) .. ":" .. tostring(selectedQuestFaction) .. ":" .. tostring(quest.id or quest.name), totalHeight)
     UpdateScrollBarVisibility(frame.questDetailScroll, totalHeight)
+end
+
+-- resultquest (2.0.10, M 17 Nov 2026: a quest shown on the Loot Filter page
+-- (Show quest rewards too) "should show the whole quest as normal in the
+-- right panel"): with such an entry selected there, the quest page on the
+-- right is that quest's, drawn as on its own dungeon's Quests tab.
+FDJ.PlainQuestDetail = RefreshQuestDetail
+RefreshQuestDetail = function(...)
+    local page = DB[selectedDungeon]
+    local entry = page and page.lootFilterPage and page.bosses and page.bosses[selectedBoss]
+    local quest = type(entry) == "table" and rawget(entry, "fdjQuest") or nil
+    local realName = quest and rawget(entry, "fdjDungeon")
+    local real = realName and DB[realName]
+    local index
+    for i, q in ipairs((real and real.quests) or {}) do
+        if q == quest then index = i break end
+    end
+    if not index then return FDJ.PlainQuestDetail(...) end
+    local pageName, pageQuest = selectedDungeon, selectedQuest
+    selectedDungeon, selectedQuest = realName, index
+    selectedQuestFaction = FDJ.PlayerFaction() or selectedQuestFaction
+    local ok, err = pcall(FDJ.PlainQuestDetail, ...)
+    selectedDungeon, selectedQuest = pageName, pageQuest
+    if not ok and geterrorhandler then geterrorhandler()(err) end
+end
+-- The page's right side: the quest for a quest entry, the loot for a boss.
+FDJ.ShowResultQuest = function(entry)
+    if not frame then return false end
+    local page = DB[selectedDungeon]
+    local quest = type(entry) == "table" and rawget(entry, "fdjQuest") or nil
+    if not (quest and page and page.lootFilterPage and selectedMode == "bosses") then
+        if frame.fdjResultQuest then
+            frame.fdjResultQuest = nil
+            if selectedMode == "bosses" and frame.questRightPanel:IsShown() then
+                frame.questRightPanel:Hide()
+                frame.rightPanel:Show()
+            end
+        end
+        return false
+    end
+    if frame.fdjResultQuest ~= quest then selectedPrereqStep = nil end
+    frame.fdjResultQuest = quest
+    frame.rightPanel:Hide()
+    frame.questRightPanel:Show()
+    if quest.id then RequestQuestRewardData(quest.id) end
+    RefreshQuestDetail()
+    return true
 end
 
 SetQuestFaction = function(faction)
@@ -9225,6 +9274,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 marker:SetScript("OnEnter", function(self)
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
                     GameTooltip:SetText(self.bossName or "")
+                    if self.altSpawn then GameTooltip:AddLine(L("MAP_ALT_SPAWN"), 0.85, 0.85, 0.85) end -- altspawn
                     if self.questTitle then -- questmob
                         GameTooltip:AddLine(self.questTitle, 1, 0.82, 0)
                         GameTooltip:AddLine(L("MAP_QUEST_TARGET"), 0.92, 0.92, 0.92)
@@ -9303,6 +9353,12 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             end)
             marker:ClearAllPoints()
             marker:SetPoint("CENTER", holder, "TOPLEFT", mapBoss.x * artW, -(mapBoss.y * artH))
+            -- altspawn (2.0.10, M 16 Nov 2026: "an opaque Targorr pin on the other
+            -- spots just to show it could spawn there too"): alt = true, faded,
+            -- under the boss's own pin, "Can also spawn here" on hover.
+            marker.altSpawn = mapBoss.alt and true or nil
+            marker:SetAlpha(mapBoss.alt and 0.45 or 1)
+            if mapBoss.alt then marker:SetFrameLevel(holder:GetFrameLevel() + 8) end
             marker:SetShown(size > 0) -- boss icon size 0% hides them
         end
     end
@@ -9933,7 +9989,15 @@ local function MakeHomeDungeonCard(parent, dungeonName)
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
         GameTooltip:SetText(DungeonName(activeDungeonName))
         if homeEditMode then
-            if FDJ.HiddenDungeons()[activeDungeonName] then
+            -- keepshown (2.0.10): hidden by an auto-hide option: says which,
+            -- and that a click shows it anyway
+            local reason = not FDJ.HiddenDungeons()[activeDungeonName]
+                and not (FDJ.ShownDungeons and FDJ.ShownDungeons()[activeDungeonName])
+                and FDJ.DungeonAutoHideReason and FDJ.DungeonAutoHideReason(activeDungeonName) or nil
+            if reason then
+                GameTooltip:AddLine(L("AUTO_HIDDEN_BY", L(reason)), 1, 0.82, 0.27, true)
+                GameTooltip:AddLine(L("CLICK_SHOW_ANYWAY"), 1, 1, 1, true)
+            elseif FDJ.HiddenDungeons()[activeDungeonName] then
                 GameTooltip:AddLine(L("CLICK_RESTORE_DUNGEON"), 1, 1, 1)
             else
                 GameTooltip:AddLine(L("CLICK_HIDE_DUNGEON"), 1, 1, 1)
@@ -9957,9 +10021,28 @@ local function MakeHomeDungeonCard(parent, dungeonName)
         local activeDungeonName = self.dungeonName
         if not activeDungeonName then return end
         if homeEditMode then
-            FDJ.HiddenDungeons()[activeDungeonName] = not FDJ.HiddenDungeons()[activeDungeonName] or nil
+            -- keepshown (2.0.10): a hidden card is shown again, also when an
+            -- auto-hide option hides it (it is then kept shown anyway); a shown
+            -- card is hidden by hand.
+            local hidden = FDJ.HiddenDungeons()
+            local shown = FDJ.ShownDungeons and FDJ.ShownDungeons() or {}
+            local autoHidden = FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(activeDungeonName) or false
+            if hidden[activeDungeonName] or autoHidden then
+                hidden[activeDungeonName] = nil
+                if FDJ.IsDungeonAutoHidden and FDJ.IsDungeonAutoHidden(activeDungeonName, nil, true) then
+                    shown[activeDungeonName] = true
+                end
+            else
+                hidden[activeDungeonName] = true
+                shown[activeDungeonName] = nil
+            end
             PlayJournalOptionSound()
             RefreshHomeDungeonCards()
+            -- the tooltip says what the next click does
+            if GameTooltip:IsOwned(self) then
+                local onEnter = self:GetScript("OnEnter")
+                if onEnter then pcall(onEnter, self) end
+            end
             return
         end
         -- rpgdone (2.0.8): a locked page opens a small box (the locked text
@@ -10008,7 +10091,11 @@ RefreshHomeDungeonCards = function()
         end
     end
 
-    local rows = math.max(1, math.ceil(#shownDungeons / 2))
+    -- resizeframe (2.0.10 test): a wider window fits more columns of cards,
+    -- each at least as wide as in the normal window (2 columns at least).
+    local gap = 12
+    local cols = math.max(2, math.floor(((frame.homePanel:GetWidth() or 814) - 51 + gap) / (383 + gap)))
+    local rows = math.max(1, math.ceil(#shownDungeons / cols))
     local rowStep = 138
     local contentHeight = (#shownDungeons == 0) and 126 or (rows * rowStep - 12)
     local viewportHeight = frame.homeScroll:GetHeight() or 0
@@ -10020,8 +10107,7 @@ RefreshHomeDungeonCards = function()
     frame.homeScroll:SetPoint("BOTTOMRIGHT", frame.homePanel, "BOTTOMRIGHT", needsScroll and -31 or -15, 15)
 
     local contentWidth = math.max(700, (frame.homeScroll:GetWidth() or 760) - 2)
-    local gap = 12
-    local cardWidth = math.floor((contentWidth - gap) / 2)
+    local cardWidth = math.floor((contentWidth - gap * (cols - 1)) / cols)
     frame.homeCardsContent:SetWidth(contentWidth)
 
     for i, dungeonName in ipairs(shownDungeons) do
@@ -10033,8 +10119,8 @@ RefreshHomeDungeonCards = function()
             homeDungeonCards[i] = card
         end
 
-        local col = (i - 1) % 2
-        local row = math.floor((i - 1) / 2)
+        local col = (i - 1) % cols
+        local row = math.floor((i - 1) / cols)
         card.dungeonName = dungeonName
 
         -- Every dungeon tile keeps exactly the same dimensions. If the final
@@ -10201,6 +10287,144 @@ RefreshBossList = function()
         FDJ.SetBossGroupOpen(selectedDungeon, shownBoss.childOf, true)
     end
 
+    -- bosscompact (2.0.10, M 17 Nov 2026: "add the compact views to bosses
+    -- that have many lines and have to scroll to see all"): a boss list that
+    -- needs scrolling gets a Compact view / Detailed view button at the top
+    -- right of the list, like the loot list's. Compact rows are smaller (small
+    -- portrait, level medallion and name), so many more bosses fit. One choice
+    -- for every list, kept between sessions (like the loot's compactall); a
+    -- list that fits anyway stays detailed and shows no button.
+    local bossMany = false
+    local stretch = 1 -- fillrows: detailed rows grown to fill the list
+    do
+        local h, rows, count = 0, 0, 0
+        for _, b in ipairs(dungeon.bosses) do
+            local child = type(b) == "table" and b.childOf ~= nil
+            local hidden = (child and not FDJ.BossGroupOpen(selectedDungeon, b.childOf))
+                or (type(b) == "table" and b.listHidden)
+            if not hidden then
+                h = h + (child and FDJ.BOSS_CHILD_HEIGHT or 55) + 6
+                rows = rows + (child and FDJ.BOSS_CHILD_HEIGHT or 55)
+                count = count + 1
+            end
+        end
+        local vp = frame.bossListScroll and frame.bossListScroll:GetHeight() or 0
+        bossMany = vp > 0 and h > vp + 4
+        -- fillrows (M 17 Nov 2026: "can we avoid the dead space even in
+        -- detailed view, show them all in one page but make them bigger so
+        -- they fit"): a detailed list shorter than the list's height has its
+        -- rows (portraits, level medallions) grown to fill it, up to 1.45x.
+        if not bossMany and vp > 0 and rows > 0 then
+            stretch = math.max(1, math.min(1.45, (vp - (count - 1) * 6) / rows))
+        end
+    end
+    -- nocompactbosses (2.0.10, M 17 Nov 2026: "No compact view for bosses as
+    -- of now. I'll think about it later"): the boss list is always detailed
+    -- and has no Compact view button; the compact code stays here, unused.
+    local compact = false
+    FDJ.bossListCompact = compact
+    -- textbosses (2.0.10, M 17 Nov 2026: "in the compact view I would like
+    -- the bosses to just be without their portrait and in alphabetical order.
+    -- Trash and recipes should always stay at the bottom ... just in a text
+    -- line"): a dungeon's compact list is names only, A to Z. (The Loot
+    -- Filter's and a recipe search's lists keep their portraits and order.)
+    local textList = compact and not (dungeon.lootFilterPage or dungeon.recipeSearch)
+    local gap = compact and 4 or 6
+    -- bosscolumns (M 17 Nov 2026: "in the boss compact view can we avoid
+    -- scrolling completely and possibly add another column"): compact rows
+    -- in two columns, read down the left one, then the right one, each row as
+    -- tall as lets the whole list fit without scrolling (32 down to 20 px;
+    -- only a list too long even then still scrolls). The RARE and faction
+    -- labels give way to the name (the silver frame and the crest stay).
+    local colRows, rowH, colW, visIndex = 0, 32, 315, 0
+    if compact then
+        local visible = 0
+        for _, b in ipairs(dungeon.bosses) do
+            local child = type(b) == "table" and b.childOf ~= nil
+            local hidden = (child and not FDJ.BossGroupOpen(selectedDungeon, b.childOf))
+                or (type(b) == "table" and b.listHidden)
+            if not hidden then visible = visible + 1 end
+        end
+        colRows = math.max(1, math.ceil(visible / 2))
+        if colRows > 12 then gap = 2 end
+        local vp = frame.bossListScroll and frame.bossListScroll:GetHeight() or 0
+        if vp > 0 then
+            -- fillrows: up to 64 px, so a short list fills the page too
+            -- (textbosses: text rows up to 30 px)
+            rowH = math.max(20, math.min(textList and 30 or 64, math.floor((vp - (colRows - 1) * gap) / colRows)))
+        end
+        colW = math.floor((315 - 6) / 2)
+    end
+    -- textbosses: the rows' order: the bosses A to Z (a group's bosses A to Z
+    -- under it), then Trash Drops, Recipes & Patterns and the chests as they
+    -- come in the list.
+    local textPos
+    if textList then
+        textPos = {}
+        local tops, kids, bottom = {}, {}, {}
+        for i, b in ipairs(dungeon.bosses) do
+            if type(b) == "table" then
+                local child = b.childOf ~= nil
+                local folded = (child and not FDJ.BossGroupOpen(selectedDungeon, b.childOf)) or b.listHidden
+                if not folded then
+                    local view = FDJ.RPGBossView and FDJ.RPGBossView(selectedDungeon, b) or b
+                    local key = string.lower(tostring(BossName(view.name) or ""))
+                    if b.trash or b.recipeTab or b.lootChest then
+                        bottom[#bottom + 1] = i
+                    elseif child then
+                        kids[b.childOf] = kids[b.childOf] or {}
+                        table.insert(kids[b.childOf], { i = i, key = key })
+                    else
+                        tops[#tops + 1] = { i = i, key = key, name = b.name }
+                    end
+                end
+            end
+        end
+        local function AZ(a, c)
+            if a.key == c.key then return a.i < c.i end
+            return a.key < c.key
+        end
+        table.sort(tops, AZ)
+        local n = 0
+        for _, t in ipairs(tops) do
+            textPos[t.i] = n
+            n = n + 1
+            local list = kids[t.name]
+            kids[t.name] = nil
+            if list then
+                table.sort(list, AZ)
+                for _, k in ipairs(list) do textPos[k.i] = n n = n + 1 end
+            end
+        end
+        for _, list in pairs(kids) do -- (a group not shown: its bosses anyway)
+            for _, k in ipairs(list) do textPos[k.i] = n n = n + 1 end
+        end
+        for _, i in ipairs(bottom) do textPos[i] = n n = n + 1 end
+    end
+    if false and bossMany and not frame.bossCompactButton and frame.leftPanel then -- nocompactbosses
+        local cb = CreateFrame("Button", nil, frame.leftPanel, "BackdropTemplate")
+        frame.bossCompactButton = cb
+        cb:SetSize(104, 20)
+        SetBackdrop(cb, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 9, 2)
+        cb:SetBackdropColor(0.12, 0.10, 0.08, 0.95)
+        cb:SetBackdropBorderColor(0.52, 0.33, 0.11, 1)
+        cb.text = cb:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
+        cb.text:SetPoint("CENTER")
+        cb:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
+        cb:SetPoint("TOPRIGHT", frame.leftPanel, "TOPRIGHT", -14, -11)
+        cb:SetScript("OnClick", function()
+            if type(ForeverDungeonJournalDB) == "table" then
+                ForeverDungeonJournalDB.compactBosses = not (ForeverDungeonJournalDB.compactBosses == true) or nil
+            end
+            PlayJournalOptionSound()
+            RefreshBossList()
+        end)
+    end
+    if frame.bossCompactButton then
+        frame.bossCompactButton:SetShown(false) -- nocompactbosses
+        frame.bossCompactButton.text:SetText(L(compact and "LOOT_DETAILED" or "LOOT_COMPACT"))
+    end
+
     for i = 1, math.max(#bossButtons, #dungeon.bosses) do
         local button = bossButtons[i]
 
@@ -10223,13 +10447,33 @@ RefreshBossList = function()
             if type(dungeon.bosses[i]) == "table" and dungeon.bosses[i].listHidden then folded = true end
             local rowHeight = isChild and FDJ.BOSS_CHILD_HEIGHT or 55
             button:ClearAllPoints()
-            button:SetPoint("TOPLEFT", frame.bossContent, "TOPLEFT", isChild and FDJ.BOSS_CHILD_INDENT or 0, -listY)
-            button:SetSize(isChild and (315 - FDJ.BOSS_CHILD_INDENT) or 315, rowHeight)
-            if not folded then listY = listY + rowHeight + 6 end
-            local face = isChild and 34 or 44
+            if compact then
+                -- bosscolumns: down the left column, then the right one
+                rowHeight = rowH
+                local pos = (textPos and textPos[i]) or visIndex -- textbosses: A to Z
+                local col = pos < colRows and 0 or 1
+                local rowInCol = col == 0 and pos or (pos - colRows)
+                local indent = isChild and 8 or 0
+                button:SetPoint("TOPLEFT", frame.bossContent, "TOPLEFT", col * (colW + 6) + indent, -rowInCol * (rowH + gap))
+                button:SetSize(colW - indent, rowH)
+                if not folded then visIndex = visIndex + 1 end
+            else
+                button:SetPoint("TOPLEFT", frame.bossContent, "TOPLEFT", isChild and FDJ.BOSS_CHILD_INDENT or 0, -listY)
+                rowHeight = math.floor(rowHeight * stretch) -- fillrows
+                button:SetSize(isChild and (315 - FDJ.BOSS_CHILD_INDENT) or 315, rowHeight)
+                if not folded then listY = listY + rowHeight + gap end
+            end
+            local face = compact and math.max(16, math.min(44, rowH - 6)) or math.floor((isChild and 34 or 44) * stretch + 0.5) -- fillrows
             button.portrait:SetSize(face, face)
             button.rareBorder:SetSize(face * 64 / 44, face * 64 / 44)
-            button.levelBadge:SetSize(isChild and 24 or 28, isChild and 24 or 28)
+            local badge = compact and math.max(14, math.min(20, face - 6)) or math.floor((isChild and 24 or 28) * math.min(stretch, 1.25) + 0.5) -- fillrows
+            button.levelBadge:SetSize(badge, badge)
+            button.levelBadge:ClearAllPoints()
+            button.levelBadge:SetPoint("CENTER", button.portrait, "BOTTOMLEFT", compact and 4 or 8, 2)
+            button.name:SetFontObject((compact and rowH < 44) and "ForeverDJ_GameFontNormalSmall" or "ForeverDJ_GameFontNormal") -- fillrows: tall compact rows, the usual size
+            -- bosscolumns: two lines of name where the row has room, else one
+            if button.name.SetMaxLines then button.name:SetMaxLines(compact and (rowH >= 28 and 2 or 1) or 0) end
+            button.question:SetFontObject(compact and "ForeverDJ_GameFontNormalLarge" or "ForeverDJ_GameFontNormalHuge")
             if isChild and not button.childLine then
                 button.childLine = button:CreateTexture(nil, "BACKGROUND")
                 button.childLine:SetColorTexture(0.52, 0.33, 0.11, 0.9)
@@ -10244,7 +10488,7 @@ RefreshBossList = function()
                     local last = not (type(nextBoss) == "table" and nextBoss.childOf ~= nil)
                     button.childLine:ClearAllPoints()
                     button.childLine:SetWidth(2)
-                    button.childLine:SetPoint("TOP", button, "TOPLEFT", -FDJ.BOSS_CHILD_INDENT / 2, 6)
+                    button.childLine:SetPoint("TOP", button, "TOPLEFT", -FDJ.BOSS_CHILD_INDENT / 2, gap)
                     if last then
                         button.childLine:SetPoint("BOTTOM", button, "LEFT", -FDJ.BOSS_CHILD_INDENT / 2, 0)
                     else
@@ -10255,8 +10499,8 @@ RefreshBossList = function()
                     button.childTick:SetPoint("LEFT", button, "LEFT", -FDJ.BOSS_CHILD_INDENT / 2, 0)
                     button.childTick:SetPoint("RIGHT", button, "LEFT", 0, 0)
                 end
-                button.childLine:SetShown(isChild)
-                button.childTick:SetShown(isChild)
+                button.childLine:SetShown(isChild and not compact) -- bosscolumns: no guide lines across columns
+                button.childTick:SetShown(isChild and not compact)
             end
 
             -- rpgpartial: RPG Mode, a boss not killed yet is a ? ("???").
@@ -10278,14 +10522,44 @@ RefreshBossList = function()
             -- already include the dragon frame in the art, so do not overlay a second one.
             button.rareBorder:SetShown(isRare)
             button.name:ClearAllPoints()
-            button.name:SetPoint("LEFT", button.portrait, "RIGHT", 11, 1)
-            if isRare then
+            if textList then
+                button.name:SetPoint("LEFT", button, "LEFT", 10, 0) -- textbosses
+            else
+                button.name:SetPoint("LEFT", button.portrait, "RIGHT", compact and 8 or 11, 1)
+            end
+            if compact then
+                button.rare:Hide() -- bosscolumns: the name takes the room
+                button.name:SetPoint("RIGHT", -4, 0)
+            elseif isRare then
                 button.name:SetPoint("RIGHT", button.rare, "LEFT", -8, 0)
             else
                 button.name:SetPoint("RIGHT", -10, 0)
             end
             if FDJ.ApplyBossFactionTag then FDJ.ApplyBossFactionTag(button, boss, isRare) end
+            if compact and button.fdjFactionTag and button.fdjFactionTag:IsShown() then
+                -- bosscolumns: the crest alone at the row's end
+                button.fdjFactionTag:Hide()
+                button.fdjFactionIcon:ClearAllPoints()
+                button.fdjFactionIcon:SetPoint("RIGHT", button, "RIGHT", -4, 0)
+                button.name:SetPoint("RIGHT", button.fdjFactionIcon, "LEFT", -4, 0)
+            end
+            if FDJ.ApplyResultQuestMark then FDJ.ApplyResultQuestMark(button, boss) end -- resultquest
 
+            if textList then
+                -- textbosses: no portrait (nor its pair, frame or ?)
+                if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, button.portrait) end
+                button.portrait:SetTexture(nil)
+                button.portrait:Hide()
+                button.rareBorder:Hide()
+                button.question:Hide()
+                local pair = button.fdjPair
+                if pair then
+                    if FDJ.ReleasePortrait then pcall(FDJ.ReleasePortrait, pair) end
+                    pair:SetTexture(nil)
+                    pair:Hide()
+                end
+            else
+            button.portrait:Show()
             local hasPortrait = SetBossPortrait(
                 button.portrait,
                 selectedDungeon,
@@ -10293,15 +10567,19 @@ RefreshBossList = function()
             )
             button.question:SetShown(not hasPortrait)
             do -- pairportrait (2.0.9): two portraits side by side, no rare frame
-                local second = FDJ.SetPairPortrait(button, button.portrait, boss, face, isChild and 30 or 38)
+                local second = FDJ.SetPairPortrait(button, button.portrait, boss, face,
+                    compact and math.max(14, face - 2) or math.floor((isChild and 30 or 38) * stretch + 0.5)) -- bosscolumns, fillrows
                 if second then
                     button.rareBorder:Hide()
                     button.name:SetPoint("LEFT", second, "RIGHT", 9, 1)
                 end
             end
+            end
 
             local bossLevel = BossLevelText(selectedDungeon, boss)
-            if bossLevel then
+            -- nolevel (M 17 Nov 2026: "get rid of the level in compact view"):
+            -- compact rows show no level medallion (the boss page still does)
+            if bossLevel and not compact then
                 button.levelText:SetText(bossLevel)
                 FitBossLevelText(button.levelText, bossLevel)
                 button.levelBadge:Show()
@@ -10362,8 +10640,14 @@ RefreshBossList = function()
                     -- row's far end it was easy to miss): the name only as wide
                     -- as its text, the + just past it.
                     button.name:ClearAllPoints()
-                    button.name:SetPoint("LEFT", button.portrait, "RIGHT", 11, 1)
-                    local room = (button:GetWidth() or 315) - 7 - (button.portrait:GetWidth() or 44) - 11 - 6 - 20 - 10
+                    local room
+                    if textList then -- textbosses
+                        button.name:SetPoint("LEFT", button, "LEFT", 10, 0)
+                        room = (button:GetWidth() or 150) - 10 - 6 - 20 - 6
+                    else
+                        button.name:SetPoint("LEFT", button.portrait, "RIGHT", 11, 1)
+                        room = (button:GetWidth() or 315) - 7 - (button.portrait:GetWidth() or 44) - 11 - 6 - 20 - 10
+                    end
                     local textWidth = tonumber(button.name:GetStringWidth()) or 0
                     if textWidth < 10 then textWidth = room end -- width not known yet: as far as it can go
                     button.name:SetWidth(math.max(20, math.min(math.ceil(textWidth) + 2, room)))
@@ -10378,9 +10662,16 @@ RefreshBossList = function()
         end
     end
 
+    if compact then listY = colRows * (rowH + gap) - gap end -- bosscolumns
     local contentHeight = math.max(1, listY) -- altarbosses (2.0.24): was #bosses * 61
     frame.bossContent:SetHeight(contentHeight)
     UpdateScrollBarVisibility(frame.bossListScroll, contentHeight)
+    do -- bosscompact: a compact list is shorter, so keep the scroll inside it
+        local maxScroll = math.max(0, contentHeight - (frame.bossListScroll:GetHeight() or 0))
+        if (frame.bossListScroll:GetVerticalScroll() or 0) > maxScroll then
+            frame.bossListScroll:SetVerticalScroll(maxScroll)
+        end
+    end
 end
 
 -- malletchain: on the boss page of a boss with chainButton = { page, quest,
@@ -10607,11 +10898,38 @@ function FDJ.IsLootCompactPage()
     return type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.compactLoot == true or false
 end
 
+-- resizeframe (2.0.10 test; at file level: the function that builds the
+-- window is at Lua 5.1's limit of 60 upvalues): after the window is resized with its corner
+-- grip (Systems/Resize.lua), the page shown is laid out for the new size:
+-- the dungeon cards (more columns when wide), the boss list (Compact view
+-- only when it still needs scrolling), the loot columns, the quest page,
+-- the map (fitted to the page again, zoom and floor kept).
+FDJ.RelayoutForSize = function()
+    if not frame or not frame:IsShown() then return end
+    if frame.homePanel and frame.homePanel:IsShown() then
+        if RefreshHomeDungeonCards then pcall(RefreshHomeDungeonCards) end
+        return
+    end
+    if not (selectedDungeon and DB[selectedDungeon]) then return end
+    if frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown() and FDJ.DUNGEON_MAPS[selectedDungeon] then
+        pcall(FDJ.RenderCustomDungeonMap, FDJ.DUNGEON_MAPS[selectedDungeon], frame.dungeonMapFloor)
+        return
+    end
+    if RefreshBossList then pcall(RefreshBossList) end
+    if frame.lootScroll then frame.lootScroll.fdjLastWidth = math.floor(frame.lootScroll:GetWidth() or 0) end
+    if RefreshLoot then pcall(RefreshLoot) end
+    if frame.questLeftPanel and frame.questLeftPanel:IsShown() then
+        if RefreshQuestList then pcall(RefreshQuestList) end
+        if RefreshQuestDetail then pcall(RefreshQuestDetail) end
+    end
+end
+
 RefreshLoot = function()
     for _, row in ipairs(lootRows) do HideSearchItemHighlight(row) end
     for _, row in ipairs(frame.lootChildRows or {}) do HideSearchItemHighlight(row) end -- lootchildren
     local dungeon = DB[selectedDungeon]
     local boss = dungeon.bosses[selectedBoss]
+    if FDJ.ShowResultQuest and FDJ.ShowResultQuest(boss) then return end -- resultquest
     if FDJ.FilterBossLoot then
         boss = FDJ.FilterBossLootForPage(boss)
         FDJ.UpdateLootFilterNote(frame)
@@ -10807,17 +11125,29 @@ RefreshLoot = function()
     local mobPortraits = HasMobPortraits()
     -- moborder (2.0.25): the page's mob order (2.0.24: a column per mob).
     if FDJ.PlanMobSlots then FDJ.PlanMobSlots((boss.trash and mobPortraits) and loot or nil) end
+    -- wideloot (2.0.10 test, M 17 Nov 2026: "the boss loot page looks kinda
+    -- bad resized, way too much dead space"; then "very scuffed, but it works
+    -- perfect on Drakkisath"): in a window made bigger than normal (corner
+    -- grip), the loot is a grid that always fills the page's width: as many
+    -- columns as fit at 360 or more each (like Drakkisath's two), the rows
+    -- stretched to share the whole width, filled left to right, even when the
+    -- items would fit in one column. The normal-size window is as before.
+    local wideLoot = (frame:GetWidth() or 850) > 870
+    local wideCols = 1
+    if wideLoot then
+        wideCols = math.max(1, math.floor((math.floor(frame.lootScroll:GetWidth() or SINGLE_WIDTH) + COL_GAP) / (360 + COL_GAP)))
+    end
     do
         local vp = frame.lootScroll:GetHeight() or 0
         local many = false
         if layoutLoot then
             local n = #layoutLoot
-            many = vp > 0 and n > 1 and (mobPortraits and n or math.ceil(n / 2)) * ROW_STEP > vp + 4
+            many = vp > 0 and n > 1 and ((wideLoot and math.ceil(n / wideCols)) or (mobPortraits and n) or math.ceil(n / 2)) * ROW_STEP > vp + 4
         elseif vp > 0 and #loot > 1 then
             local h = (#sections - 1) * LINE_STEP
             for _, sec in ipairs(sections) do
                 local n = math.max(0, sec.last - sec.first + 1)
-                h = h + (mobPortraits and n or math.ceil(n / 2)) * ROW_STEP
+                h = h + ((wideLoot and math.ceil(n / wideCols)) or (mobPortraits and n) or math.ceil(n / 2)) * ROW_STEP
             end
             for _, it in ipairs(loot) do -- lootchildren: their rows too
                 if type(it) == "table" and type(it.makes) == "table" then h = h + 44 end
@@ -10846,6 +11176,12 @@ RefreshLoot = function()
     local rowWidth = twoColumns and math.floor((availableWidth - COL_GAP) / 2) or SINGLE_WIDTH
     frame.lootContent:SetWidth(twoColumns and availableWidth or SINGLE_WIDTH)
     FDJ.lootTwoColumns = twoColumns
+    if wideLoot then -- wideloot: the grid below
+        twoColumns = false
+        rowWidth = math.floor((availableWidth - COL_GAP * (wideCols - 1)) / wideCols)
+        frame.lootContent:SetWidth(availableWidth)
+        FDJ.lootTwoColumns = true
+    end
 
     local rowPos, lineY = {}, {}
     local cursorY = 0
@@ -10857,7 +11193,22 @@ RefreshLoot = function()
         local count = math.max(0, section.last - section.first + 1)
         -- (a pair of rows is as tall as the taller of the two, child rows
         -- included: lootchildren)
-        if twoColumns then
+        if wideLoot then
+            -- wideloot: a row of the grid is as tall as its tallest item
+            local k = 0
+            while k <= count - 1 do
+                local h = 0
+                for c = 0, wideCols - 1 do
+                    if k + c <= count - 1 then
+                        local index = section.first + k + c
+                        rowPos[index] = { c * (rowWidth + COL_GAP), cursorY }
+                        h = math.max(h, ROW_STEP + ChildExtra(index))
+                    end
+                end
+                cursorY = cursorY + h
+                k = k + wideCols
+            end
+        elseif twoColumns then
             local k = 0
             while k <= count - 1 do
                 local left, right = section.first + k, section.first + k + 1
@@ -13384,6 +13735,7 @@ local function CreateMainFrame()
     lootScroll:HookScript("OnSizeChanged", function(self, width)
         width = math.floor(width or 0)
         if width == self.fdjLastWidth then return end
+        if FDJ.journalSizing then return end -- resizeframe: laid out on release
         self.fdjLastWidth = width
         if frame:IsShown() and FDJ.RefreshLootNow then FDJ.RefreshLootNow() end
     end)

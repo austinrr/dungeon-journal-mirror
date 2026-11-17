@@ -97,22 +97,39 @@ end
 FDJ.DungeonLevelRange = DungeonLevelRange
 FDJ.ListLevel = ListLevel
 
+-- keepshown (2.0.10, M 17 Nov 2026; Discord report by HonestAuntyElle: an
+-- auto-hidden dungeon could not be shown again in Hide Dungeons, whatever
+-- was clicked): dungeons the player chose to show in Hide Dungeons although
+-- an auto-hide option would hide them. Per character, like the dungeons
+-- hidden by hand.
+function FDJ.ShownDungeons()
+    ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
+    local char = ForeverDungeonJournalCharacterDB
+    if type(char.shownDungeons) ~= "table" then char.shownDungeons = {} end
+    return char.shownDungeons
+end
+
+-- Which auto-hide option hides a dungeon (its option's label key), or nil.
 -- ignoreLevelRange (levelempty, 2.0.9): as if "Show only my level range" were off
-function FDJ.IsDungeonAutoHidden(dungeonName, ignoreLevelRange)
+-- only (rehide): check just that one option (its saved setting's name)
+local function AutoHideReason(dungeonName, ignoreLevelRange, only)
     local db = Store()
-    if not db.autoHideOutleveled and not db.autoHideQuestsDone and not db.onlyMyLevelRange then return false end
+    if not db.autoHideOutleveled and not db.autoHideQuestsDone and not db.onlyMyLevelRange then return nil end
+    if only then
+        db = { [only] = db[only] }
+    end
     local dungeon = FDJ.DB and FDJ.DB[dungeonName]
-    if not dungeon then return false end
+    if not dungeon then return nil end
 
     -- Never hide the dungeon the player is standing in.
     if FDJ.CurrentDungeon then
         local ok, current = pcall(FDJ.CurrentDungeon)
-        if ok and current == dungeonName then return false end
+        if ok and current == dungeonName then return nil end
     end
 
     if db.autoHideOutleveled then
         local level, top = ListLevel(), MaxDungeonLevel(dungeon)
-        if level and top and level > top then return true end
+        if level and top and level > top then return "OPT_HIDE_OUTLEVELED" end
     end
     -- levelrange (2.0.9, M 16 Nov 2026: "players can choose to show only
     -- dungeons in their range level"): only those whose level range (the
@@ -121,13 +138,33 @@ function FDJ.IsDungeonAutoHidden(dungeonName, ignoreLevelRange)
     if db.onlyMyLevelRange and not ignoreLevelRange then
         local level = ListLevel()
         local low, top = DungeonLevelRange(dungeon)
-        if level and low and (level < low or (top and level > top)) then return true end
+        if level and low and (level < low or (top and level > top)) then return "OPT_MY_LEVEL_RANGE" end
     end
     if db.autoHideQuestsDone then
         local ok, done = pcall(AllQuestsDone, dungeon)
-        if ok and done then return true end
+        if ok and done then return "OPT_HIDE_QUESTS_DONE" end
     end
-    return false
+    return nil
+end
+
+-- ignoreShown (keepshown): as if the player had not chosen to show it
+function FDJ.IsDungeonAutoHidden(dungeonName, ignoreLevelRange, ignoreShown)
+    if not ignoreShown and FDJ.ShownDungeons()[dungeonName] then return false end
+    return AutoHideReason(dungeonName, ignoreLevelRange) ~= nil
+end
+function FDJ.DungeonAutoHideReason(dungeonName)
+    return AutoHideReason(dungeonName)
+end
+
+-- rehide (2.0.10, M 17 Nov 2026: "if the auto hide option is untoggled and
+-- retoggled, the dungeons get hidden again, like a reset"): turning an
+-- auto-hide option on drops the "show it anyway" picks for the dungeons
+-- that option hides, so they are hidden again.
+local function RehideFor(option)
+    local shown = FDJ.ShownDungeons()
+    for dungeonName in pairs(shown) do
+        if AutoHideReason(dungeonName, nil, option) then shown[dungeonName] = nil end
+    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -139,6 +176,17 @@ local OPTIONS = {
     { header = "OPT_UI" },
     -- bindtop (2.0.11): the key bind first on General, so players see it at once.
     { keybind = true, label = "OPT_BIND" },
+    -- resizemode (2.0.10, M 17 Nov 2026): opens the journal with a handle on
+    -- each corner to drag it bigger (Systems/Resize.lua)
+    {
+        buttons = {
+            { label = "OPT_RESIZE", tip = "OPT_RESIZE_TIP",
+                click = function() if FDJ.StartResizeMode then FDJ.StartResizeMode() end end },
+            -- resetsize (M 17 Nov 2026): the normal size and scale again
+            { label = "OPT_RESET_SIZE", tip = "OPT_RESET_SIZE_TIP",
+                click = function() if FDJ.ResetJournalSize then FDJ.ResetJournalSize() end end },
+        },
+    },
     {
         label = "OPT_HIDE_ITEM_LINE",
         tip = "OPT_HIDE_ITEM_LINE_TIP",
@@ -190,6 +238,14 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
+        -- tierhide (2.0.10): the Tier Sets icon (Systems/TierSets.lua)
+        label = "OPT_HIDE_TIER",
+        tip = "OPT_HIDE_TIER_TIP",
+        get = function() return FDJ.IsTierIconHidden and FDJ.IsTierIconHidden() or false end,
+        set = function(on) if FDJ.SetTierIconHidden then FDJ.SetTierIconHidden(on) end end,
+        refreshHome = true,
+    },
+    {
         label = "OPT_HIDE_RUNLOG",
         tip = "OPT_HIDE_RUNLOG_TIP",
         get = function() return FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden() or false end,
@@ -228,21 +284,30 @@ local OPTIONS = {
         label = "OPT_MY_LEVEL_RANGE",
         tip = "OPT_MY_LEVEL_RANGE_TIP",
         get = function() return Store().onlyMyLevelRange == true end,
-        set = function(on) Store().onlyMyLevelRange = on or nil end,
+        set = function(on)
+            Store().onlyMyLevelRange = on or nil
+            if on then RehideFor("onlyMyLevelRange") end
+        end,
         refreshHome = true,
     },
     {
         label = "OPT_HIDE_OUTLEVELED",
         tip = "OPT_HIDE_OUTLEVELED_TIP",
         get = function() return Store().autoHideOutleveled == true end,
-        set = function(on) Store().autoHideOutleveled = on or nil end,
+        set = function(on)
+            Store().autoHideOutleveled = on or nil
+            if on then RehideFor("autoHideOutleveled") end
+        end,
         refreshHome = true,
     },
     {
         label = "OPT_HIDE_QUESTS_DONE",
         tip = "OPT_HIDE_QUESTS_DONE_TIP",
         get = function() return Store().autoHideQuestsDone == true end,
-        set = function(on) Store().autoHideQuestsDone = on or nil end,
+        set = function(on)
+            Store().autoHideQuestsDone = on or nil
+            if on then RehideFor("autoHideQuestsDone") end
+        end,
         refreshHome = true,
     },
     {

@@ -1,4 +1,159 @@
-DungeonJournal 2.0.9
+DungeonJournal 2.0.10
+
+CHANGES IN 2.0.10 (the release after 2.0.9)
+- Tier Sets: Compact view is the same Compact view / Detailed view button
+  as the boss and loot lists' (it was a tick box).
+- Dungeon Tracker: leaving the dungeon alive unticks Options > Hide Tracker
+  (the tracker's X ticks it). The tracker closed with the X stays closed
+  outside and shows again the next time you go into a dungeon. Leaving as a
+  ghost (a corpse run) keeps it hidden, as before.
+- A dungeon page opened right after the Onyxia Attunement or Cozy Sleeping
+  Bag page had no Dungeons button at the top left (it now always has it).
+- The Platinum Discs (Uldaman), both factions: the reward is a choice of 5
+  Superior Healing Potions or 5 Greater Mana Potions, with the Thawpelt Sack
+  on top (it was one of the choices). The Horde chain now ends like the
+  Alliance one: hand the reward voucher to Bena Winterhoof in Thunder Bluff
+  (Sage Truthseeker's step gives Thunder Bluff +150). Reward choices with
+  more than one of an item show how many ("x5").
+- Quest pages: under "You will also receive", the items everyone gets now
+  come first, then the XP (and money), then the reputation.
+- Blueleaf Tubers: the reward shows as an item (A Small Container of Gems),
+  with Ratchet +150. Bring the End / Bring the Light: the Vanquisher's Sword
+  is no longer one of the choices; it comes on top of the Amberglow
+  Talisman or the Purified Ring.
+- XP fixed (Wowhead Forever): Allegiance to the Old Gods 6,300, Amongst the
+  Ruins 6,550, Baron Aquanis 7,250, Open the Maw 6,950 (they showed about 3%
+  more).
+- Quest rewards fixed: Tiara of the Deep (a choice of Gemshale Pauldrons
+  or Dank Shoulderpads, plus the Spellshifter Rod and 65s), Divino-matic
+  Rod (Magister Cowl added to the choice; Gadgetzan +200) and Vorrel's
+  Revenge (Vorrel's Boots on top of the choice; Undercity +150).
+- Dungeon map on the big map (M) inside a dungeon: it now goes on top of
+  anything another map addon draws in the map window (OpenMap and the like
+  were fighting it). The World Map button still switches to their map, and
+  Options > Hide Dungeon Map inside the dungeon hands M back to them.
+- Dungeon Tracker: killing a boss could cross off an extra skull portrait
+  at the end of the tracker, when the game's boss event names the boss
+  differently from the journal (seen on Kirtonos the Herald, Scholomance).
+  That event now counts for the boss that just died (and the other way
+  round), and the boss learns the name; older runs are put right too. An
+  event arriving before the boss's death waits 5 seconds unlisted, so the
+  skull doesn't even flash (seen on Ras Frostwhisper); and an encounter ID
+  the addon knows from another dungeon no longer names a kill here.
+- Tier Sets (shown from level 50; Options > Hide Tier Sets unticked shows it
+  sooner): a round icon on the home page, right of the Onyxia icon (of
+  the Sleeping Bag's or the Raids medallion when those are hidden), with
+  the same golden glow: the Tier 0 chest piece of the character's class.
+  Its page (in place of the dungeon list, under the icons): Tier 0, the
+  class's set, its eight pieces in a row (Head to Feet), each with its
+  name and the boss and dungeon it drops from; hover for the item's
+  tooltip, click to open its boss page, shift-click to link it. "Show
+  Classes" at the top, a drop-down: All (ticks every class; again, back to
+  your own), then every class with its icon; the ticked classes' sets show,
+  one row each, the character's own first (kept per character). "Compact
+  view" beside it:
+  one slim line per class (class and set name, then the eight pieces as
+  small icons; name and where it drops in the tooltip), so every class
+  fits on one page (kept between sessions). (Systems/TierSets.lua)
+- The home page's row of icons works as tabs: the WoW Forever emblem shows
+  the dungeon list (its "Forever dungeons only" switch is in Options), the
+  Tier Sets icon the Tier Sets page, the Onyxia icon the Onyxia Attunement
+  page; the page shown has its icon lit (gold ring, brighter glow), and
+  clicking a lit Tier Sets or Onyxia icon goes back to the dungeon list.
+  On the Onyxia Attunement page the icons stay at the top, in place of the
+  Dungeons button.
+- Tier Sets: under each class's Tier 0 pieces, a small arrow down to the
+  Tier 0.5 piece it becomes, with the Tier 0.5 quest that gives it (Compact
+  view: after an arrow on the same line); the Tier 0.5 set's name on the
+  class's line. The character's own class's pieces it has (worn, in the
+  bags or in the bank) have a green tick. Options > Hide Tier Sets, or
+  right-click the icon > Hide, hides its icon. "Tier 0" and "Tier 0.5"
+  stand left of each class's two rows (no Tier 0 heading over the list).
+  The pieces have the colour of their quality as the game shows it (many
+  Tier 0.5 pieces are epic in WoW Forever). Hovering the text under a piece
+  (who drops it) shows the boss's portrait, name and dungeon; under a Tier
+  0.5 piece, the quest that gives it. The tick on the pieces you own is a
+  bold green one. A boss page opened from a piece has "Back to Tiers" at
+  the top left (where the Dungeons button is), back to the Tier Sets page
+  where it was. The round Tier Sets icon no longer shows the item icon's
+  thin light edge at its top. The Cozy Sleeping Bag icon works the same way (its page
+  keeps the icons at the top, its icon lit). The lit icon has a thin round
+  gold ring around it (it was a square).
+- Hide Dungeons: a dungeon hidden by an auto-hide option (quests done,
+  outleveled, my level range) can be shown again: its tooltip says which
+  option hides it, and a click keeps it shown anyway (per character). A
+  second click hides it by hand (Discord report by HonestAuntyElle).
+  Turning that option off and on again hides those dungeons again.
+- Loot Filter, Armor: a second box right of the list with Head, Shoulder,
+  Chest, Wrist, Hands, Waist, Legs and Feet. Ticking slots shows only those
+  slots (of the ticked armor types, if any), like Cloak / Ring / Neck /
+  Trinket: Plate + Head = plate helms only.
+- Loot Filter: "Show quest rewards too" (under "Item must have all ticked
+  stats"): Show results also lists the dungeons' quests whose rewards match
+  the filter, each after its dungeon's bosses (the quest's name, its
+  matching rewards). Quests as in the dungeon's quest list. A quest's row
+  has the quest pages' "!" (a repeatable quest's blue ?); clicking the row
+  shows the whole quest on the right, as on its dungeon's Quests tab;
+  clicking the "!" opens the quest on its dungeon's Quests tab.
+- Loot Filter, Show results with stats ticked: much quicker (only the items
+  the other filters keep are read, each once, as many a frame as fit), and
+  a box on the journal says "Searching the loot... 42%" with a bar until
+  the results open.
+- Resize: the window no longer jumps when a corner is taken. It grows by
+  exactly as far as the mouse moves, the opposite corner stays put, and it
+  stops at the screen's edge.
+- Loot Filter, "Only show loot my class can use": below level 40, plate (for
+  paladins and warriors) and mail (for hunters and shamans) needing level 40
+  or more counts as usable: by the time you can wear it, your class can.
+- Blackmaw Hold: the Forsaken paladin quest The Reliquary of Tyr (Sword of
+  Mourning) with its first step The Knight of Mourning (Tirisfal Glades,
+  17.6, 67.4); the Reliquary drops from Elder Shaman Bloodmane.
+- Item tooltips: an item with charges shows them ("3 Charges", under its
+  "Use:" line, as on the real item): Manual Crowd Pummeler (Discord report).
+  The game's tooltip of the item itself has no charges line; only an owned
+  copy has one. (Systems/ItemCharges.lua, FDJ.ITEM_CHARGES)
+- Options > General > Resize: opens the journal with a handle on three of
+  its corners (not the top right, where the close button is), each with a
+  note pointing at it ("Drag the corners to resize"; the notes bounce and
+  flash; OK closes them, the corners stay draggable until the journal is
+  closed, then the grip is Rescale again; Reset Size beside it puts the
+  journal back to its normal size and scale). Dragging
+  makes the window itself bigger (more dungeon cards in a row, more bosses,
+  wider loot columns, bigger maps); not smaller than the normal window;
+  right-click on a handle resets the size; kept between sessions. In a
+  bigger window the loot is a grid filling the page's whole width (as many
+  columns as fit at 360 or more each), left to right. The corner grip is
+  Rescale again (scales the whole window, as before).
+- Boss list: a short list's rows grow to fill it (bigger portraits, up to
+  1.45x), so there is no empty space under the bosses.
+- The Stockade map: Targorr the Dread's other spawn spots shown as faded
+  pins ("Can also spawn here").
+- The Stockade map: Kam Deepfury, Hamhock, Bazil Thredd, Dextren Ward and
+  Bruegal Ironknuckle moved to their rooms.
+- Uldaman: Necklace Recovery, Take 3 is greyed out for the Undead ("Undead
+  cannot take this quest"), as Compendium of the Fallen.
+- Fixed: the Run Log's Need rolls showed no numbers (yours or the other
+  players'): the roll lines in chat were not recognised when the game adds
+  a tag or name links/colours to them.
+- Onyxia Attunement: every quest of both chains shows its WoW Forever XP
+  (23 steps had none; Drakefire Amulet is 22,200 and Blood of the Black
+  Dragon Champion 26,600, not 8,300 / 9,950). The same quests on the
+  Blackrock Spire pages too (Warlord's Command 15,350, For The Horde!
+  26,600).
+- Waypoint arrow: Shift + right-click hides it now; a plain right-click
+  does nothing (no more hiding it by mistake).
+- Blackrock Depths: the rewards of Hurley Blackbreath, Lost Thunderbrew
+  Recipe, Jail Break! and Operation: Death to Angerforge are shown now
+  (their choice of items, the items everyone gets, money and reputation).
+- Blackrock Depths, Disharmony of Fire (Horde): its rewards are shown now,
+  one of Sunborne Cape, Nightfall Gloves, Crypt Demon Bracers or Stalwart
+  Clutch, and 2g 55s.
+- Blackrock Depths, A Taste of Flame: its chain is shown now (Squire
+  Maltrake, Set Them Ablaze!, Trinkets... with the Black Dragonflight Molt
+  in the hoard, then A Taste of Flame: show the molt to Cyrus Therepentous;
+  his elite drake quest counts for that step too), and its rewards: one of Shaleskin Cape, Wyrmhide Spaulders or Valconian Sash,
+  and 2g 65s; the Encased Fiery Essence and the Altered Black Dragonflight
+  Molt as its items.
 
 CHANGES IN 2.0.9 (the release after 2.0.8)
 - Alcaz Prison map: stairs to level 2 south of the crossroads ("Open with

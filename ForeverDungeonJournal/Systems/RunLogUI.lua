@@ -1888,6 +1888,27 @@ end
 -- shows the tracker again (for players who never read "/dj tracker"). It
 -- hides the run it was ticked for: a new run unticks it by itself and the
 -- tracker works as usual.
+-- hideleave (2.0.10, M 17 Nov 2026: "if somebody goes out of the dungeon and
+-- it's not dead, I want the option to automatically untick"; Killer Kenney
+-- closed it, came back with a new group and it never showed): out of the
+-- dungeon alive, Hide Tracker unticks; the tracker its X closed stays closed
+-- until you go into a dungeon again, then it shows as usual. Out as a ghost
+-- (a corpse run) it stays ticked, as before.
+function FDJ.TrackerLeftAlive()
+    if not FDJ.TrackerOption("hide") then return end
+    local db = TrackerDB()
+    db.hideRun = nil
+    if db.dismissedRun ~= nil then db.dismissedUntilEnter = true end
+    FDJ.SetTrackerOption("hide", false)
+end
+function FDJ.TrackerEnteredDungeon()
+    local db = TrackerDB()
+    if not db.dismissedUntilEnter then return end
+    db.dismissedUntilEnter = nil
+    db.dismissedRun = nil
+    if FDJ.UpdateRunTracker then pcall(FDJ.UpdateRunTracker) end
+end
+
 function FDJ.SetTrackerHidden(on)
     if on then
         if FDJ.trackerHint then FDJ.trackerHint:Hide() end
@@ -1902,16 +1923,16 @@ function FDJ.SetTrackerHidden(on)
 end
 do
     local strings = {
-        enUS = { OPT_TRACK_HIDE = "Hide Tracker", OPT_TRACK_HIDE_TIP = "Hides the tracker for this run. Closing it with its X ticks this; a new run unticks it by itself. \"/dj tracker\" or unticking it shows the tracker again." },
-        deDE = { OPT_TRACK_HIDE = "Tracker ausblenden", OPT_TRACK_HIDE_TIP = "Blendet den Tracker für diesen Run aus. Schließen mit dem X setzt diesen Haken; ein neuer Run entfernt ihn von selbst. „/dj tracker“ oder Haken entfernen zeigt den Tracker wieder." },
-        frFR = { OPT_TRACK_HIDE = "Masquer le suivi", OPT_TRACK_HIDE_TIP = "Masque le suivi pour ce run. Le fermer avec son X coche cette case ; un nouveau run la décoche tout seul. « /dj tracker » ou la décocher réaffiche le suivi." },
-        esES = { OPT_TRACK_HIDE = "Ocultar el seguimiento", OPT_TRACK_HIDE_TIP = "Oculta el seguimiento en esta run. Cerrarlo con su X marca esta casilla; una run nueva la desmarca sola. «/dj tracker» o desmarcarla vuelve a mostrar el seguimiento." },
-        itIT = { OPT_TRACK_HIDE = "Nascondi tracker", OPT_TRACK_HIDE_TIP = "Nasconde il tracker per questa run. Chiuderlo con la X spunta questa casella; una nuova run la toglie da sola. «/dj tracker» o togliere la spunta mostra di nuovo il tracker." },
-        ptBR = { OPT_TRACK_HIDE = "Ocultar rastreador", OPT_TRACK_HIDE_TIP = "Oculta o rastreador nesta run. Fechá-lo no X marca esta opção; uma nova run a desmarca sozinha. «/dj tracker» ou desmarcá-la mostra o rastreador de novo." },
-        ruRU = { OPT_TRACK_HIDE = "Скрыть трекер", OPT_TRACK_HIDE_TIP = "Скрывает трекер в этом забеге. Закрытие крестиком ставит эту галочку; новый забег снимает её сам. «/dj tracker» или снятие галочки снова показывает трекер." },
-        koKR = { OPT_TRACK_HIDE = "추적기 숨기기", OPT_TRACK_HIDE_TIP = "이번 던전 진행에서 추적기를 숨깁니다. X로 닫으면 자동으로 체크되고, 새 진행이 시작되면 저절로 해제됩니다. \"/dj tracker\"를 입력하거나 체크를 해제하면 다시 표시됩니다." },
-        zhCN = { OPT_TRACK_HIDE = "隐藏追踪器", OPT_TRACK_HIDE_TIP = "本次副本中隐藏追踪器。用 X 关闭时会自动勾选；开始新的副本时会自动取消。输入“/dj tracker”或取消勾选即可再次显示。" },
-        zhTW = { OPT_TRACK_HIDE = "隱藏追蹤器", OPT_TRACK_HIDE_TIP = "本次副本中隱藏追蹤器。用 X 關閉時會自動勾選；開始新的副本時會自動取消。輸入「/dj tracker」或取消勾選即可再次顯示。" },
+        enUS = { OPT_TRACK_HIDE = "Hide Tracker", OPT_TRACK_HIDE_TIP = "Hides the tracker for this run. Closing it with its X ticks this; leaving the dungeon alive or a new run unticks it by itself. \"/dj tracker\" or unticking it shows the tracker again." },
+        deDE = { OPT_TRACK_HIDE = "Tracker ausblenden", OPT_TRACK_HIDE_TIP = "Blendet den Tracker für diesen Run aus. Schließen mit dem X setzt diesen Haken; den Dungeon lebend verlassen oder ein neuer Run entfernt ihn von selbst. „/dj tracker“ oder Haken entfernen zeigt den Tracker wieder." },
+        frFR = { OPT_TRACK_HIDE = "Masquer le suivi", OPT_TRACK_HIDE_TIP = "Masque le suivi pour ce run. Le fermer avec son X coche cette case ; sortir du donjon en vie ou un nouveau run la décoche tout seul. « /dj tracker » ou la décocher réaffiche le suivi." },
+        esES = { OPT_TRACK_HIDE = "Ocultar el seguimiento", OPT_TRACK_HIDE_TIP = "Oculta el seguimiento en esta run. Cerrarlo con su X marca esta casilla; salir de la mazmorra con vida o una run nueva la desmarca sola. «/dj tracker» o desmarcarla vuelve a mostrar el seguimiento." },
+        itIT = { OPT_TRACK_HIDE = "Nascondi tracker", OPT_TRACK_HIDE_TIP = "Nasconde il tracker per questa run. Chiuderlo con la X spunta questa casella; uscire dal dungeon da vivo o una nuova run la toglie da sola. «/dj tracker» o togliere la spunta mostra di nuovo il tracker." },
+        ptBR = { OPT_TRACK_HIDE = "Ocultar rastreador", OPT_TRACK_HIDE_TIP = "Oculta o rastreador nesta run. Fechá-lo no X marca esta opção; sair da masmorra vivo ou uma nova run a desmarca sozinha. «/dj tracker» ou desmarcá-la mostra o rastreador de novo." },
+        ruRU = { OPT_TRACK_HIDE = "Скрыть трекер", OPT_TRACK_HIDE_TIP = "Скрывает трекер в этом забеге. Закрытие крестиком ставит эту галочку; выход из подземелья живым или новый забег снимает её сам. «/dj tracker» или снятие галочки снова показывает трекер." },
+        koKR = { OPT_TRACK_HIDE = "추적기 숨기기", OPT_TRACK_HIDE_TIP = "이번 던전 진행에서 추적기를 숨깁니다. X로 닫으면 자동으로 체크되고, 살아서 던전을 나가거나 새 진행이 시작되면 저절로 해제됩니다. \"/dj tracker\"를 입력하거나 체크를 해제하면 다시 표시됩니다." },
+        zhCN = { OPT_TRACK_HIDE = "隐藏追踪器", OPT_TRACK_HIDE_TIP = "本次副本中隐藏追踪器。用 X 关闭时会自动勾选；活着离开副本或开始新的副本时会自动取消。输入“/dj tracker”或取消勾选即可再次显示。" },
+        zhTW = { OPT_TRACK_HIDE = "隱藏追蹤器", OPT_TRACK_HIDE_TIP = "本次副本中隱藏追蹤器。用 X 關閉時會自動勾選；活著離開副本或開始新的副本時會自動取消。輸入「/dj tracker」或取消勾選即可再次顯示。" },
     }
     strings.esMX = strings.esES
     for locale, entries in pairs(strings) do
@@ -3381,12 +3402,14 @@ function FDJ.ToggleRunTracker(on)
         if trackerClosedNotice then trackerClosedNotice:Hide() end
         db.on = true
         db.dismissedRun = nil
+        db.dismissedUntilEnter = nil -- hideleave
         -- asked for it with Track on screen: that overrides "Never track"
         if FDJ.TrackerOption("never") then FDJ.SetTrackerOption("never", false) end
         if FDJ.TrackerOption("hide") then db.hideRun = nil FDJ.SetTrackerOption("hide", false) end
     else
         db.on = nil
         db.dismissedRun = run and run.id or nil
+        db.dismissedUntilEnter = nil -- hideleave
     end
     FDJ.UpdateRunTracker()
 end

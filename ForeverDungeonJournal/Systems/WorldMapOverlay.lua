@@ -15,6 +15,7 @@ local PlaceToggle
 local saved
 local wantWorld = false   -- the player switched to the world map this session
 local toggle, backdrop
+local RaiseOverlay -- mappriority (below)
 -- True while the journal is open on a boss page that was opened from a boss
 -- pin on the world map: the world map keeps showing the dungeon map.
 local keepWithJournal = false
@@ -105,6 +106,16 @@ local function Attach(dungeonName)
     panel:SetAllPoints(backdrop)
     panel:SetFrameLevel(backdrop:GetFrameLevel() + 1)
     panel:Show()
+    -- mappriority: on top of anything other map addons draw in the window
+    -- (checked again a moment later: they often draw after the map opens).
+    if RaiseOverlay then
+        pcall(RaiseOverlay)
+        if C_Timer and C_Timer.After then
+            for _, wait in ipairs({ 0.1, 0.5, 1.5 }) do
+                C_Timer.After(wait, function() if attached then pcall(RaiseOverlay) end end)
+            end
+        end
+    end
 
     -- Right-click anywhere on the dungeon map: switch to the world map (as
     -- Blizzard's map does to zoom out). Hooked once; only acts while attached.
@@ -173,6 +184,7 @@ local function UpdateWingButtons(dungeonName)
                 button:SetText(label)
                 local fs = button.GetFontString and button:GetFontString()
                 button:SetSize(math.max(90, math.ceil(((fs and fs:GetStringWidth()) or 70) + 24)), 22)
+                if backdrop then button:SetFrameStrata(backdrop:GetFrameStrata()) end -- mappriority
                 button:SetFrameLevel(panel:GetFrameLevel() + 40)
                 if button.SetEnabled then button:SetEnabled(wing ~= dungeonName) end
                 button:Show()
@@ -206,6 +218,79 @@ local function IsOurs(f)
     for _, b in ipairs((journal and journal.dungeonMapFloorButtons) or {}) do if f == b then return true end end
     for _, b in ipairs(wingButtons) do if f == b then return true end end
     return false
+end
+
+-- mappriority (2.0.10, M 17 Nov 2026: "I would just like Dungeon Journal to
+-- get priority ... whatever other [map addons] they have ... if they want to
+-- remove it, they already have the option"): inside a dungeon the dungeon
+-- map goes above every other layer in the map window, also another map
+-- addon's map (OpenMap and the like: Doug_Craft's report, the two maps
+-- fighting): above the highest frame there, and on its layer (strata) when
+-- a map-sized frame of theirs sits on a higher one. Set when the map opens
+-- and checked again a moment later, never forced back over and over (two
+-- addons doing that flicker). Options > Hide Dungeon Map inside the dungeon
+-- gives the map back to them.
+local STRATA = { "BACKGROUND", "LOW", "MEDIUM", "HIGH", "DIALOG", "FULLSCREEN", "FULLSCREEN_DIALOG" }
+local STRATA_RANK = {}
+for i, s in ipairs(STRATA) do STRATA_RANK[s] = i end
+local function ButtonStrata()
+    local s = backdrop and backdrop:GetFrameStrata()
+    if s and (STRATA_RANK[s] or 0) > STRATA_RANK.HIGH then return s end
+    return "HIGH"
+end
+RaiseOverlay = function()
+    if not (attached and backdrop and WorldMapFrame) then return end
+    local journal = Journal()
+    local panel = journal and journal.dungeonMapPanel
+    local host = WorldMapFrame.ScrollContainer or WorldMapFrame
+    local rank = STRATA_RANK[WorldMapFrame:GetFrameStrata()] or STRATA_RANK.HIGH
+    local top = host.GetFrameLevel and host:GetFrameLevel() or 1
+    local hl, hb, hr, ht = ScreenRect(host)
+    local area = hl and (hr - hl) * (ht - hb) or 0
+    local function Look(f)
+        if not f or f == backdrop or f == panel or IsOurs(f) then return false end
+        local ok, shown = pcall(f.IsShown, f)
+        if not (ok and shown) then return false end
+        local okL, lvl = pcall(f.GetFrameLevel, f)
+        if okL and type(lvl) == "number" and lvl > top then top = lvl end
+        -- a map-sized layer on a higher strata (another addon's map)
+        local okS, s = pcall(f.GetFrameStrata, f)
+        local r = okS and STRATA_RANK[s]
+        if r and r > rank and area > 0 then
+            local l, b, rr, t = ScreenRect(f)
+            if l and (math.min(rr, hr) - math.max(l, hl)) * (math.min(t, ht) - math.max(b, hb)) >= area * 0.5 then
+                rank = r
+            end
+        end
+        return true
+    end
+    local function Scan(f, depth)
+        if not f or depth > 4 or not f.GetChildren then return end
+        for _, child in ipairs({ f:GetChildren() }) do
+            if Look(child) then Scan(child, depth + 1) end
+        end
+    end
+    pcall(Scan, host, 1)
+    if host ~= WorldMapFrame and WorldMapFrame.GetChildren then
+        for _, child in ipairs({ WorldMapFrame:GetChildren() }) do
+            if child ~= host and child ~= WorldMapFrame.BorderFrame then pcall(Look, child) end
+        end
+    end
+    local strata = STRATA[rank] or WorldMapFrame:GetFrameStrata()
+    backdrop:SetFrameStrata(strata)
+    backdrop:SetFrameLevel(math.min(top + 20, 8000))
+    if panel and panel:GetParent() == backdrop then
+        panel:SetFrameStrata(strata)
+        panel:SetFrameLevel(backdrop:GetFrameLevel() + 1)
+    end
+    if toggle then
+        toggle:SetFrameStrata(ButtonStrata())
+        toggle:SetFrameLevel(backdrop:GetFrameLevel() + 50)
+    end
+    for _, b in ipairs(wingButtons) do
+        b:SetFrameStrata(strata)
+        if panel then b:SetFrameLevel(panel:GetFrameLevel() + 40) end
+    end
 end
 
 local function BlockingFrame()
@@ -394,6 +479,7 @@ local function UpdateToggle(dungeonName)
         -- Other addons often add their map buttons a moment after the map
         -- opens, so check once more shortly after.
         if C_Timer and C_Timer.After then C_Timer.After(0.2, function() pcall(PlaceToggle) end) end
+        toggle:SetFrameStrata(ButtonStrata()) -- mappriority
         toggle:SetFrameLevel(((backdrop and backdrop:GetFrameLevel()) or 1) + 50)
         toggle:Show()
     else

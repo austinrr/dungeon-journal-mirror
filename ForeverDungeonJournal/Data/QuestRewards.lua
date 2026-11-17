@@ -83,10 +83,10 @@ FDJ.FOREVER_QUEST_XP_FALLBACK = {
     [6564] = 1300,
     [6562] = 435,
     [6563] = 1750,
-    [6565] = 6489,
+    [6565] = 6300,  -- xpfix (2.0.10): Wowhead Forever (was 6489)
     [6561] = 3300,
-    [6921] = 6746,
-    [6922] = 7468,
+    [6921] = 6550,  -- xpfix (2.0.10): Wowhead Forever (was 6746)
+    [6922] = 7250,  -- xpfix (2.0.10): Wowhead Forever (was 7468)
 
     -- Ragefire Chasm
     [5723] = 1050,
