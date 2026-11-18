@@ -1,4 +1,53 @@
-DungeonJournal 2.0.11
+DungeonJournal 2.0.12
+
+CHANGES IN 2.0.12 (the release after 2.0.11)
+- Quest rewards fixed (from Wowhead Forever): The Love Potion adds Boots
+  of Requite and Private Rocknot's Spare Bracers to its choice; The Last
+  Element is a choice of Lagrave's Seal or Dark Iron Signet; The Demon
+  Forge gives 5 Potions of Demonslaying; Pusillin and the Elder Azj'Tordin
+  adds Incanter's Pantaloons to its choice; Lethtendris's Web (both
+  factions) is a choice of Lorespinner, Warpwood Bracers or Satyrhide
+  Armbands; Houses of the Holy also gives 5 Superior Healing Potions and 5
+  Greater Mana Potions; Ramstein gives both rings (no choice); Kirtonos the
+  Herald also gives the Spectral Essence; The Lich, Ras Frostwhisper gives
+  Darrowshire Strongguard as well as the choice of three.
+- Quest rewards fixed (Ragefire Chasm to Maraudon audit, Wowhead Forever):
+  The Lost Tablets of Will is a choice of Medal of Courage or Medal of
+  Valor; both Uldaman Reagent Runs give 5 Greater Mender's Potions; A Tale
+  Spun Around the Fire also gives Translated Tale of I'lalai and Tale of
+  I'lalai in Zandali; Findings for the Explorer's League also gives
+  Translated Tale of I'lalai; Data Rescue gives both the Repairman's Cape
+  and the Mechanic's Pipehammer; The Tempest's Weapons (Horde) also gives
+  Elementalist's Guard, as for the Alliance.
+- Quest XP (until the game has the quest loaded) corrected for 67 quests
+  from Ragefire Chasm to Gnomeregan, Scarlet Monastery and Razorfen Kraul,
+  e.g. Ragefire Chasm's quests about doubled, In the Name of the Light
+  15,300, The Test of Righteousness 3,850, The Wrath of Rath'mael 4,600.
+- Quest XP (until the game has the quest loaded) corrected for 83 more
+  quests: Compendium of the Fallen, Mythology of the Titans, Hearts of
+  Zeal, Remember That I Love You, Destruction in Deadmines, Unending
+  Torment, Hall of Thanes, and the Blackrock Depths, Dire Maul, Lower and
+  Upper Blackrock Spire, Scholomance and Stratholme quests (the old numbers
+  were missing Forever's dungeon-quest bonus), e.g. Shards of the Felvine
+  22,200, The Madness Within 23,650, General Drakkisath's Demise 26,600.
+- New quest: Ever After (Blackrock Depths, the Rugged Traveler on the
+  hidden ledge: Premo's Poise-Demanding Uniform, 3 Student Fodder,
+  Traveler's Symbols).
+- Drop chances are out of the item tooltips for now, and so is the
+  "Hide drop rates" option.
+- Arrow, Undercity: to Varimathras, Sylvanas and the others in the Royal
+  Quarter it now leads up the Apothecarium's stairs, through the door with
+  the Royal Dreadguards, along the hall (it bends west) and up the dais's
+  steps, instead of pointing straight at them through the walls. From the
+  Rogues' Quarter, the War Quarter and the elevators too.
+- Arrow, Thunder Bluff: the rises are open ground now. Standing on a rise,
+  the arrow points straight at a spot on the same rise (the wind rider
+  tower from anywhere on the main rise), and straight at the bridge or
+  elevator that starts the way off it, instead of round by the roads.
+- Dungeon Tracker: with a controller on, Reset asks for a second click
+  instead of a popup (the popup broke the controller until /reload).
+- Vorrel's Revenge: a note at the top says the quest is completed
+  outside the dungeon, in the lake below Undercity.
 
 CHANGES IN 2.0.11 (the release after 2.0.10)
 - All dungeons: hovering an item on a boss's loot page shows how often

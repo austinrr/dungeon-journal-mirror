@@ -2971,6 +2971,8 @@ do
             rewardSummary = "",
             rewardChoice = true,
             rewardItems = WEAPONS,
+            -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit): the shield as for the Alliance (not the unconfirmed rune)
+            additionalRewardItems = {{280696, "Elementalist's Guard", 3}},
             startMap = PRATE_MAP,
         })
     end
@@ -4578,3 +4580,197 @@ do
     end
 end
 -- END shamanvoodoo
+
+-- xpaudit (2.0.12, M 18 Nov 2026: the RFC to Maraudon quest audit, "XP for
+-- 67 quests (two sources agree)"): the offline XP (used only until the game
+-- has the quest's own reward loaded; the live value always wins) for the
+-- quests where forever-tool.com (Battle.net data) and ForeverChanges agree,
+-- or where Wowhead Forever's quest page settles it. Left as they were: the
+-- six with only one source (97288, 92415, 92753, 1113, 1050, 1049). The
+-- quest's own liveXPFallback and the XP in its rewards text change with it.
+-- The Wrath of Rath'mael (92422) had 0 XP before; both sources give 4,600.
+do
+    local XP = {
+        [166] = 6200, [214] = 2950, [373] = 2050, [377] = 4400, [386] = 4200, [387] = 5550,
+        [388] = 5550, [391] = 4950, [707] = 700, [914] = 4300, [959] = 2650, [962] = 3300,
+        [971] = 6550, [1013] = 5600, [1014] = 8850, [1048] = 12250, [1053] = 15300, [1098] = 5350,
+        [1101] = 7950, [1102] = 8500, [1109] = 6950, [1142] = 7250, [1144] = 7250, [1198] = 5700,
+        [1199] = 6050, [1200] = 7850, [1486] = 3100, [1487] = 4000, [1491] = 2650, [1740] = 5100,
+        [1806] = 3850, [2040] = 3700, [2769] = 410, [2841] = 8200, [2904] = 5800, [2922] = 4750,
+        [2924] = 5500, [2926] = 3950, [2928] = 4400, [2929] = 6200, [2930] = 6550, [2962] = 4400,
+        [5722] = 1800, [5723] = 2150, [5724] = 2950, [5725] = 2950, [5728] = 2350, [5761] = 2350,
+        [6561] = 7850, [6562] = 440, [6981] = 5150, [92401] = 4600, [92421] = 4600, [92422] = 4600,
+        [92456] = 9400, [92489] = 9400, [95189] = 6200, [95195] = 6200, [95204] = 5450, [95216] = 5450,
+        [95250] = 3900, [95795] = 6150, [96986] = 9400, [96987] = 9400, [96988] = 9400, [98823] = 6950,
+        [98824] = 6150,
+    }
+    local fallback = FDJ.FOREVER_QUEST_XP_FALLBACK
+    local function Grouped(n)
+        local s = tostring(n)
+        while true do
+            local done
+            s, done = s:gsub("^(%d+)(%d%d%d)", "%1,%2")
+            if done == 0 then return s end
+        end
+    end
+    if fallback then
+        for id, xp in pairs(XP) do fallback[id] = xp end
+    end
+    for _, dungeon in pairs(FDJ.DB or {}) do
+        for _, quest in ipairs(dungeon.quests or {}) do
+            local xp = quest.id and XP[quest.id]
+            if xp then
+                quest.liveXPFallback = xp
+                if type(quest.rewards) == "string" then
+                    quest.rewards = quest.rewards:gsub("%d[%d,]* XP", Grouped(xp) .. " XP")
+                end
+            end
+        end
+    end
+end
+
+-- BEGIN audit212
+-- audit212 (2.0.12, M 18 Nov 2026: "I have a new quest report. We gotta make
+-- sure we get everything fixed"): the 2.0.12 quest rewards, XP and missing
+-- quests audit.
+-- XP: the offline XP (used only until the game has the quest's own reward
+-- loaded; the live value always wins) for 83 quests. Each value is
+-- Wowhead Forever's own data (the quest's base XP times Forever's dungeon
+-- quest multiplier, from the Forever client) and Icy Veins agrees on every
+-- one; the old values were the base XP without the multiplier. Mayara
+-- Brightwing and Vivian Lagrave (4766, 4769) had 0 and get Wowhead's 660;
+-- Starfall (5250) keeps 580 (Wowhead's own number).
+-- New quest: Ever After (82062, the Blackrock Depths secret ledge). Wowhead
+-- Forever (quest 82062; items 221315, 221316, 216619). State Secrets (96376 /
+-- 96377 / 96379) taken out again (M 18 Nov 2026: "please remove state secret
+-- ... It's a double"), and The Broken Glaive (98830, M: "It's not in the game
+-- yet ... just data mined"). Left out: The Heart of the Void
+-- (78916 / 78917: Wowhead Forever lists it at level 25 with 0 XP, a Season
+-- of Discovery leftover), The Challenge (left off on purpose, as before).
+do
+    local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
+    local function Add(dungeonName, quest, afterID)
+        local db = FDJ.DB and FDJ.DB[dungeonName]
+        if not db then return end
+        db.quests = db.quests or {}
+        local at
+        for i, q in ipairs(db.quests) do
+            if q.id == quest.id then return end
+            if afterID and q.id == afterID then at = i end
+        end
+        if XP and quest.liveXPFallback then XP[quest.id] = quest.liveXPFallback end
+        table.insert(db.quests, (at or #db.quests) + 1, quest)
+    end
+    local function Pin(dungeonName, spotName, entry)
+        local pins = FDJ.MAP_QUEST_PINS and FDJ.MAP_QUEST_PINS[dungeonName]
+        if not pins then return end
+        for _, floor in ipairs(pins) do
+            for _, spot in ipairs(floor.spots or {}) do
+                if spot.name == spotName then
+                    spot.quests = spot.quests or {}
+                    for _, q in ipairs(spot.quests) do if q.id == entry.id then return end end
+                    table.insert(spot.quests, entry)
+                    return
+                end
+            end
+        end
+    end
+    local share = FDJ.QUEST_SHAREABILITY_AUDIT
+
+    -- Ever After: the Rugged Traveler on the hidden ledge. Level 56,
+    -- requires 48, not shareable; 8,400 XP and 85s; the door on the ledge
+    -- (fixed by the 17 Nov hotfix) takes you to a ledge above Lord
+    -- Incendius, with no way back.
+    Add("Blackrock Depths", {
+        id = 82062, name = "Ever After",
+        faction = "Both", level = 56, requires = 48, startsInDungeon = true,
+        pickup = "Rugged Traveler, on a hidden ledge above the lava, Blackrock Depths",
+        objective = "Speak with the Rugged Traveler.",
+        turnin = "Rugged Traveler, Blackrock Depths",
+        liveXPFallback = 8400,
+        rewardSummary = "85s  •  +300 with your faction's capitals",
+        rewardItems = {
+            { 221316, "Premo's Poise-Demanding Uniform", 1 },
+            { 216619, "Student Fodder", 2, 3 },
+            { 221315, "Traveler's Symbols", 3 },
+        },
+        note = "Take the bridge just east of the Ring of Law that runs north over the lava and clear it. On its left side, by the small brazier, jump from the railing onto the platform against the wall, follow it to the corner and keep your left shoulder on the wall until you drop onto the rock ledge below: the Rugged Traveler is there. The door on the ledge takes you to a ledge above Lord Incendius; there is no way back. Not shareable.",
+    })
+    if share then share[82062] = false end
+
+    -- The XP.
+    local NEW = {
+        [1049] = 8450, [1050] = 8900, [1113] = 7850, [4701] = 12500, [4724] = 11850,
+        [4729] = 12500, [4742] = 16200, [4764] = 4400, [4766] = 660, [4768] = 22200,
+        [4769] = 660, [4771] = 23650, [4788] = 15100, [4862] = 12500, [4866] = 18900,
+        [4867] = 18900, [4981] = 11850, [4982] = 11850, [5001] = 12500, [5047] = 17650,
+        [5081] = 16200, [5089] = 12850, [5102] = 26600, [5125] = 21900, [5127] = 16600,
+        [5160] = 17650, [5212] = 14500, [5214] = 17450, [5243] = 14500, [5251] = 17450,
+        [5262] = 17450, [5263] = 18250, [5282] = 17450, [5341] = 15700, [5343] = 15700,
+        [5382] = 15700, [5384] = 19700, [5463] = 14500, [5466] = 23650, [5515] = 15700,
+        [5518] = 17650, [5525] = 17650, [5526] = 22200, [5529] = 14750, [5848] = 13850,
+        [6163] = 9900, [7441] = 20750, [7461] = 23650, [7463] = 13200, [7481] = 19700,
+        [7482] = 19700, [7483] = 3300, [7484] = 3300, [7485] = 3300, [7488] = 20200,
+        [7489] = 20200, [7492] = 1500, [7494] = 1500, [7498] = 15700, [7499] = 15700,
+        [7500] = 15700, [7501] = 15700, [7502] = 15700, [7503] = 15700, [7504] = 15700,
+        [7505] = 15700, [7506] = 15700, [7507] = 19900, [7604] = 6600, [7629] = 13200,
+        [7631] = 13200, [7647] = 19900, [7668] = 19900, [7703] = 22200, [8945] = 16600,
+        [92415] = 6200, [92753] = 2700, [96393] = 3200, [96394] = 2300, [96395] = 2300,
+        [96403] = 2950, [97288] = 3450, [98423] = 2550,
+    }
+    local function Grouped(n)
+        local s = tostring(n)
+        while true do
+            local done
+            s, done = s:gsub("^(%d+)(%d%d%d)", "%1,%2")
+            if done == 0 then return s end
+        end
+    end
+    if XP then
+        for id, xp in pairs(NEW) do XP[id] = xp end
+    end
+    for _, dungeon in pairs(FDJ.DB or {}) do
+        for _, quest in ipairs(dungeon.quests or {}) do
+            local xp = quest.id and NEW[quest.id]
+            if xp then
+                quest.liveXPFallback = xp
+                if type(quest.rewards) == "string" then
+                    quest.rewards = quest.rewards:gsub("%d[%d,]* XP", Grouped(xp) .. " XP")
+                end
+            end
+        end
+    end
+end
+-- END audit212
+
+-- BEGIN vorrellake
+-- vorrellake (2.0.12, M 18 Nov 2026): Vorrel's Revenge's note (the warning
+-- above the objective, Data/Dungeons.lua) in the other languages.
+do
+    local WARN = {
+        deDE = "Diese Quest wird außerhalb des Dungeons abgeschlossen, im See unterhalb von Unterstadt.",
+        frFR = "Cette quête se termine hors du donjon, dans le lac sous Fossoyeuse.",
+        esES = "Esta misión se completa fuera de la mazmorra, en el lago bajo Entrañas.",
+        esMX = "Esta misión se completa fuera del calabozo, en el lago bajo Entrañas.",
+        itIT = "Questa missione si completa fuori dal dungeon, nel lago sotto Sepulcra.",
+        ptBR = "Esta missão é concluída fora da masmorra, no lago abaixo de Cidade Baixa.",
+        ruRU = "Это задание выполняется за пределами подземелья, в озере под Подгородом.",
+        koKR = "이 퀘스트는 던전 밖, 언더시티 아래의 호수에서 완료합니다.",
+        zhCN = "此任务在地下城外完成，位于幽暗城下方的湖中。",
+        zhTW = "此任務在地城外完成，位於幽暗城下方的湖中。",
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for lang, text in pairs(WARN) do
+        local c = FDJ.ContentLocales[lang]
+        if not c and lang ~= "esMX" then
+            c = {}
+            FDJ.ContentLocales[lang] = c
+        end
+        if c then
+            c.quests = c.quests or {}
+            c.quests[1051] = c.quests[1051] or {}
+            c.quests[1051].warning = text
+        end
+    end
+end
+-- END vorrellake

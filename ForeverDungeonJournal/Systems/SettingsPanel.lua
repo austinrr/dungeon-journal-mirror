@@ -381,14 +381,6 @@ local OPTIONS = {
     -- option panel, the options: Hide drop rates, Hide quest item drops").
     { header = "OPT_LOOT" },
     {
-        label = "OPT_HIDE_DROP_RATES",
-        tip = "OPT_HIDE_DROP_RATES_TIP",
-        get = function() return Store().hideDropRates == true end,
-        set = function(on)
-            Store().hideDropRates = on or nil
-        end,
-    },
-    {
         label = "OPT_HIDE_QUEST_DROPS",
         tip = "OPT_HIDE_QUEST_DROPS_TIP",
         get = function() return Store().hideQuestDrops == true end,
@@ -1678,25 +1670,25 @@ end
 -- lootoptions (2.0.11): Options > Loot.
 do
     local strings = {
-        enUS = { OPT_LOOT = "Loot", OPT_HIDE_DROP_RATES = "Hide drop rates", OPT_HIDE_DROP_RATES_TIP = "Item tooltips on boss loot pages don't show the \"Drop chance\" line.",
+        enUS = { OPT_LOOT = "Loot",
             OPT_HIDE_QUEST_DROPS = "Hide quest item drops", OPT_HIDE_QUEST_DROPS_TIP = "Boss loot pages don't list the quest items a boss drops." },
-        deDE = { OPT_LOOT = "Beute", OPT_HIDE_DROP_RATES = "Dropchancen ausblenden", OPT_HIDE_DROP_RATES_TIP = "Gegenstands-Tooltips auf den Beuteseiten der Bosse zeigen die Zeile „Dropchance“ nicht.",
+        deDE = { OPT_LOOT = "Beute",
             OPT_HIDE_QUEST_DROPS = "Questgegenstände in der Beute ausblenden", OPT_HIDE_QUEST_DROPS_TIP = "Die Beuteseiten der Bosse führen die Questgegenstände nicht auf, die ein Boss fallen lässt." },
-        frFR = { OPT_LOOT = "Butin", OPT_HIDE_DROP_RATES = "Masquer les chances de butin", OPT_HIDE_DROP_RATES_TIP = "Les infobulles des objets sur les pages de butin des boss n'affichent pas la ligne « Chance de butin ».",
+        frFR = { OPT_LOOT = "Butin",
             OPT_HIDE_QUEST_DROPS = "Masquer les objets de quête du butin", OPT_HIDE_QUEST_DROPS_TIP = "Les pages de butin des boss ne listent pas les objets de quête qu'un boss laisse tomber." },
-        esES = { OPT_LOOT = "Botín", OPT_HIDE_DROP_RATES = "Ocultar probabilidades de botín", OPT_HIDE_DROP_RATES_TIP = "La descripción de los objetos en las páginas de botín de los jefes no muestra la línea «Probabilidad de botín».",
+        esES = { OPT_LOOT = "Botín",
             OPT_HIDE_QUEST_DROPS = "Ocultar objetos de misión del botín", OPT_HIDE_QUEST_DROPS_TIP = "Las páginas de botín de los jefes no muestran los objetos de misión que suelta un jefe." },
-        itIT = { OPT_LOOT = "Bottino", OPT_HIDE_DROP_RATES = "Nascondi probabilità di drop", OPT_HIDE_DROP_RATES_TIP = "I tooltip degli oggetti nelle pagine del bottino dei boss non mostrano la riga «Probabilità di drop».",
+        itIT = { OPT_LOOT = "Bottino",
             OPT_HIDE_QUEST_DROPS = "Nascondi oggetti di missione dal bottino", OPT_HIDE_QUEST_DROPS_TIP = "Le pagine del bottino dei boss non elencano gli oggetti di missione che un boss lascia cadere." },
-        ptBR = { OPT_LOOT = "Saque", OPT_HIDE_DROP_RATES = "Ocultar chances de saque", OPT_HIDE_DROP_RATES_TIP = "As dicas dos itens nas páginas de saque dos chefes não mostram a linha «Chance de saque».",
+        ptBR = { OPT_LOOT = "Saque",
             OPT_HIDE_QUEST_DROPS = "Ocultar itens de missão do saque", OPT_HIDE_QUEST_DROPS_TIP = "As páginas de saque dos chefes não listam os itens de missão que um chefe deixa cair." },
-        ruRU = { OPT_LOOT = "Добыча", OPT_HIDE_DROP_RATES = "Скрыть шанс добычи", OPT_HIDE_DROP_RATES_TIP = "Подсказки предметов на страницах добычи боссов не показывают строку «Шанс добычи».",
+        ruRU = { OPT_LOOT = "Добыча",
             OPT_HIDE_QUEST_DROPS = "Скрыть предметы для заданий", OPT_HIDE_QUEST_DROPS_TIP = "На страницах добычи боссов не показываются предметы для заданий, которые падают с босса." },
-        koKR = { OPT_LOOT = "전리품", OPT_HIDE_DROP_RATES = "획득 확률 숨기기", OPT_HIDE_DROP_RATES_TIP = "우두머리 전리품 페이지의 아이템 툴팁에 \"획득 확률\" 줄을 표시하지 않습니다.",
+        koKR = { OPT_LOOT = "전리품",
             OPT_HIDE_QUEST_DROPS = "퀘스트 아이템 숨기기", OPT_HIDE_QUEST_DROPS_TIP = "우두머리 전리품 페이지에 우두머리가 떨구는 퀘스트 아이템을 표시하지 않습니다." },
-        zhCN = { OPT_LOOT = "掉落", OPT_HIDE_DROP_RATES = "隐藏掉落几率", OPT_HIDE_DROP_RATES_TIP = "首领掉落页面的物品提示不显示“掉落几率”一行。",
+        zhCN = { OPT_LOOT = "掉落",
             OPT_HIDE_QUEST_DROPS = "隐藏任务物品掉落", OPT_HIDE_QUEST_DROPS_TIP = "首领掉落页面不列出首领掉落的任务物品。" },
-        zhTW = { OPT_LOOT = "掉落", OPT_HIDE_DROP_RATES = "隱藏掉落機率", OPT_HIDE_DROP_RATES_TIP = "首領掉落頁面的物品提示不顯示「掉落機率」一行。",
+        zhTW = { OPT_LOOT = "掉落",
             OPT_HIDE_QUEST_DROPS = "隱藏任務物品掉落", OPT_HIDE_QUEST_DROPS_TIP = "首領掉落頁面不列出首領掉落的任務物品。" },
     }
     strings.esMX = strings.esES

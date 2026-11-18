@@ -3601,6 +3601,22 @@ do
         if best and bestD <= 14 then entry.ucDownAt = (GetTime and GetTime()) or 0 return nil end -- ucdown: on the elevator
         return best, false
     end
+    -- ucroyal (2.0.12): up in the ruins (as Way.UndercityIn tells it), not down in the city
+    function Way.UCUp(entry, px, py)
+        local UC = Way.UC
+        if PlayerMap() ~= UC.map then return false end
+        -- (ucTop alone is not enough: the Apothecarium and other parts of the
+        -- city below count as outdoors to the game, which sets it; M 18 Nov
+        -- 2026, still the straight line at the door)
+        if not entry.ucTop then return false end
+        local c = SpotWorld({ mapID = UC.map, x = UC.center[1], y = UC.center[2] })
+        if not c then return false end
+        local north, side = px - c[1], math.abs(py - c[2])
+        if side > 75 or north < -30 then return false end
+        local now = (GetTime and GetTime()) or 0
+        if entry.ucDownAt and now - entry.ucDownAt < 90 then return false end
+        return true
+    end
     -- orgroads (2.0.8): inside Orgrimmar the arrow follows the roads. The
     -- straight line to Borstan in the Drag from the Valley of Strength went
     -- through the cliff (M, 15 Nov 2026). The city's roads from the patrol
@@ -3850,6 +3866,71 @@ do
                 { "L4", "SB1" }, { "SB1", "SB2" }, { "SB2", "SRC" }, { "L1", "M1" }, { "L4", "M1" }, { "M1", "H1" }, { "M1", "NR" },
                 { "NR", "EN" }, { "NR", "H1" }, { "H1", "EB1" }, { "EB1", "EB2" }, { "EB2", "ERC" },
             },
+            -- tbopen (2.0.12, M 18 Nov 2026 on the main rise at 39.9, 57.0,
+            -- "Fly to Ratchet", the arrow sending him right round the road:
+            -- "it does not understand that I can just walk straight to the
+            -- big tower"): the rises are open ground. Standing on one, the
+            -- arrow goes straight to a spot on the same rise, and straight to
+            -- whichever of its corners (bridge ends, elevators) starts the
+            -- shortest way off it. The outlines read off M's map screenshot,
+            -- kept a little inside the edges.
+            areas = {
+                { -- the main rise (the wind rider tower)
+                    poly = { { 0.340, 0.440 }, { 0.375, 0.400 }, { 0.420, 0.345 }, { 0.470, 0.315 }, { 0.530, 0.305 }, { 0.575, 0.330 },
+                        { 0.610, 0.365 }, { 0.645, 0.405 }, { 0.660, 0.470 }, { 0.660, 0.560 }, { 0.635, 0.620 }, { 0.585, 0.645 },
+                        { 0.530, 0.660 }, { 0.490, 0.690 }, { 0.450, 0.685 }, { 0.400, 0.665 }, { 0.360, 0.640 }, { 0.340, 0.600 }, { 0.335, 0.520 } },
+                    nodes = { "L1", "L2", "L3", "ES", "L4", "SB1", "M1", "H1", "NR", "EN", "EB1", "HB2" },
+                },
+                { -- the Spirit Rise
+                    poly = { { 0.180, 0.150 }, { 0.240, 0.120 }, { 0.300, 0.140 }, { 0.320, 0.210 }, { 0.315, 0.290 }, { 0.270, 0.315 }, { 0.205, 0.290 }, { 0.175, 0.220 } },
+                    nodes = { "SRC", "SB2" },
+                },
+                { -- the Elder Rise
+                    poly = { { 0.700, 0.230 }, { 0.770, 0.215 }, { 0.835, 0.240 }, { 0.840, 0.310 }, { 0.790, 0.340 }, { 0.720, 0.335 }, { 0.695, 0.290 } },
+                    nodes = { "ERC", "EB2" },
+                },
+                { -- the Hunter Rise
+                    poly = { { 0.515, 0.745 }, { 0.570, 0.715 }, { 0.640, 0.725 }, { 0.665, 0.800 }, { 0.650, 0.900 }, { 0.580, 0.935 }, { 0.520, 0.890 }, { 0.505, 0.810 } },
+                    nodes = { "HRC", "HB1" },
+                },
+            },
+        },
+        -- ucroyal (2.0.12, M 18 Nov 2026 in the Apothecarium at 53.1, 64.0,
+        -- An Unholy Alliance to Varimathras, the arrow pointing straight at
+        -- him: "arrow needs to understand that to reach this npc i need to
+        -- enter this door"): the Royal Quarter is only reached through the
+        -- door at the top of the Apothecarium's stairs (the Royal Dreadguards)
+        -- and the long hall behind it, which bends west before it reaches the
+        -- throne room; Varimathras and Sylvanas stand up on its dais, its
+        -- steps on the west side. The corners: the shortest walks on the
+        -- Eastern Kingdoms walking maps (Polestar_Nav_EK, the Forever client's
+        -- navigation grid with its floors, Polestar's router run offline) to
+        -- Varimathras from the Apothecarium, the Rogues' Quarter, the War
+        -- Quarter and the elevator, merged. Only for a spot in the Royal
+        -- Quarter (onlyNear) and only down in the city (ucDown: up in the
+        -- ruins the elevator comes first, as before).
+        [1458] = {
+            near = 140, targetNear = 30, onlyNear = true, ucDown = true, close = 12, pass = 5,
+            gates = { "S" },
+            -- the spot's nearest stretch must touch the throne room: the
+            -- Apothecarium's lab lies under the hall (Master Apothecary
+            -- Faranell, 28 yards lower) and is not reached through it
+            targetNodes = { VT = true, R4 = true, R3b = true, R3 = true, R1 = true },
+            nodes = {
+                VT = { 0.5624, 0.9248 }, R4 = { 0.5606, 0.9518 }, R3b = { 0.5606, 0.9582 }, R3 = { 0.5562, 0.9582 }, R1 = { 0.5475, 0.9257 },
+                H8 = { 0.5258, 0.8932 }, H7 = { 0.4910, 0.8801 }, H6 = { 0.4824, 0.8737 }, H5 = { 0.4607, 0.8346 }, H4 = { 0.4563, 0.7890 },
+                H3 = { 0.4630, 0.7304 }, H2 = { 0.4807, 0.6979 }, D = { 0.5215, 0.6426 }, S = { 0.5301, 0.6457 }, A1 = { 0.5649, 0.6718 },
+                B1 = { 0.5822, 0.6328 }, B2 = { 0.5866, 0.6262 }, B3 = { 0.5910, 0.6328 }, B4 = { 0.6083, 0.6457 }, B5 = { 0.6474, 0.6457 },
+                B6 = { 0.6648, 0.5612 }, B7 = { 0.7039, 0.5156 }, B8 = { 0.7082, 0.4961 }, C1 = { 0.5779, 0.6848 }, C2 = { 0.5997, 0.7109 },
+                C3 = { 0.7082, 0.7109 }, N1 = { 0.5041, 0.6003 }, N2 = { 0.5041, 0.5808 }, N3 = { 0.4954, 0.5676 }, N4 = { 0.4954, 0.5417 },
+                N5 = { 0.4824, 0.5156 }, N6 = { 0.4824, 0.3594 }, N7 = { 0.4868, 0.3138 },
+            },
+            edges = {
+                { "VT", "R4" }, { "R4", "R3b" }, { "R3b", "R3" }, { "R3", "R1" }, { "R1", "H8" }, { "H8", "H7" }, { "H7", "H6" }, { "H6", "H5" },
+                { "H5", "H4" }, { "H4", "H3" }, { "H3", "H2" }, { "H2", "D" }, { "D", "S" }, { "D", "N1" }, { "N1", "N2" }, { "N2", "N3" },
+                { "N3", "N4" }, { "N4", "N5" }, { "S", "A1" }, { "A1", "B1" }, { "B1", "B2" }, { "B2", "B3" }, { "B3", "B4" }, { "B4", "B5" },
+                { "B5", "B6" }, { "B6", "B7" }, { "B7", "B8" }, { "A1", "C1" }, { "C1", "C2" }, { "C2", "C3" }, { "N5", "N6" }, { "N6", "N7" },
+            },
         },
         -- orggate (2.0.8, M 15 Nov 2026: off the zeppelin in Durotar the
         -- arrow pointed at Orgrimmar through the cliff): the walk between
@@ -3901,6 +3982,14 @@ do
                     adj[e[1]][e[2]], adj[e[2]][e[1]] = d, d
                 end
                 net.adj = adj
+                for _, area in ipairs(net.areas or {}) do -- tbopen: the open rises' outlines in world yards
+                    area.wpoly = {}
+                    for i, p in ipairs(area.poly) do
+                        local s = SpotWorld({ mapID = map, x = p[1], y = p[2] })
+                        if not s then area.wpoly = nil break end
+                        area.wpoly[i] = s
+                    end
+                end
             end
             net.w = w
         end
@@ -3929,8 +4018,28 @@ do
         end
         local P = Nearest(px, py, net, w)
         if not P or P.d > net.near then return Keep(nil) end -- not by the roads
-        if Yards(px, py, tx, ty) < 40 then return Keep(nil) end
+        if net.ucDown and Way.UCUp and Way.UCUp(entry, px, py) then return Keep(nil) end -- ucroyal: up in the ruins
+        if Yards(px, py, tx, ty) < (net.close or 40) then return Keep(nil) end -- (ucroyal: the dais's steps are 14 yards from Varimathras)
         local T = Nearest(tx, ty, net, w)
+        if net.onlyNear and (T.d > (net.targetNear or net.near) -- ucroyal: only for a spot by these ways
+            or (net.targetNodes and not (net.targetNodes[T.a] or net.targetNodes[T.b]))) then return Keep(nil) end
+        -- tbopen (2.0.12): the open rise a place stands on
+        local function Area(x, y)
+            for _, area in ipairs(net.areas or {}) do
+                local poly = area.wpoly
+                if poly then
+                    local inside, j = false, #poly
+                    for i = 1, #poly do
+                        local xi, yi, xj, yj = poly[i][1], poly[i][2], poly[j][1], poly[j][2]
+                        if ((yi > y) ~= (yj > y)) and x < (xj - xi) * (y - yi) / (yj - yi) + xi then inside = not inside end
+                        j = i
+                    end
+                    if inside then return area end
+                end
+            end
+        end
+        local PA, TA = Area(px, py), (T.d <= (net.targetNear or net.near)) and Area(tx, ty) or nil
+        if PA and PA == TA then return Keep(nil) end -- tbopen: across the same rise, straight
         -- flyride (2.0.9, M 16 Nov 2026 in the Valley of Strength, "Fly to
         -- Ratchet" to Scooty in Booty Bay, the arrow sending him back to
         -- the gate): a boat later on (plan.ride) is no way out of the city
@@ -3952,6 +4061,12 @@ do
         local dist, prev, done = {}, {}, {}
         dist[P.a] = P.d + Yards(P.qx, P.qy, w[P.a][1], w[P.a][2])
         dist[P.b] = P.d + Yards(P.qx, P.qy, w[P.b][1], w[P.b][2])
+        if PA then -- tbopen: on an open rise each of its corners is a straight walk away
+            for _, name in ipairs(PA.nodes) do
+                local d = w[name] and Yards(px, py, w[name][1], w[name][2])
+                if d and (not dist[name] or d < dist[name]) then dist[name], prev[name] = d, nil end
+            end
+        end
         while true do
             local at, best
             for name, d in pairs(dist) do
@@ -3974,9 +4089,13 @@ do
                 end
             end
         else
-            for _, name in ipairs({ T.a, T.b }) do
-                if dist[name] then
-                    local c = dist[name] + Yards(w[name][1], w[name][2], T.qx, T.qy) + T.d
+            local ends = { T.a, T.b }
+            for _, name in ipairs(TA and TA.nodes or {}) do ends[#ends + 1] = name end -- tbopen
+            for i, name in ipairs(ends) do
+                if dist[name] and w[name] then
+                    local c
+                    if i > 2 then c = dist[name] + Yards(w[name][1], w[name][2], tx, ty) -- tbopen: straight across the target's rise
+                    else c = dist[name] + Yards(w[name][1], w[name][2], T.qx, T.qy) + T.d end
                     if not total or c < total then goal, total = name, c end
                 end
             end
@@ -3993,7 +4112,7 @@ do
         end
         -- the corners already reached are behind
         local i = 1
-        while way[i] and Yards(px, py, w[way[i]][1], w[way[i]][2]) <= 10 do i = i + 1 end
+        while way[i] and Yards(px, py, w[way[i]][1], w[way[i]][2]) <= (net.pass or 10) do i = i + 1 end -- (ucroyal: the door 9 yards up the stairs is not passed)
         if not way[i] then return Keep(nil) end
         return Keep(w[way[i]], total - dist[way[i]])
     end

@@ -2426,7 +2426,7 @@ FDJ.DB["Gnomeregan"] = {
         objective = "Bring a Prismatic Punch Card to Master Mechanic Castpipe in Ironforge.",
         rewardSummary = "25s",
         id = 2930,
-        rewardChoice = true,
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit): both are received, no choice
         rewardItems = {{9605, "Repairman's Cape", 2}, {9604, "Mechanic's Pipehammer", 2}},
         name = "Data Rescue",
         faction = "Alliance",
@@ -3108,6 +3108,9 @@ FDJ.DB["Scarlet Monastery: Graveyard"] = {
         -- Vorrel's Boots on top of the choice, Undercity +150
         rewardSummary = "Undercity +150",
         id = 1051,
+        -- vorrellake (2.0.12, M 18 Nov 2026): "add a disclaimer to this quest ...
+        -- this quest is completed outside the dungeon in the lake below Undercity"
+        warning = "This quest is completed outside the dungeon, in the lake below Undercity.",
         rewardChoice = true,
         rewardItems = {{7750, "Mantle of Woe", 2}, {4643, "Grimsteel Cape", 2}},
         additionalRewardItems = {{7751, "Vorrel's Boots", 2}},
@@ -4335,7 +4338,8 @@ FDJ.DB["Uldaman"] = {
         pickup = "Ghak Healtouch, Thelsamar, Loch Modan",
         level = 42,
         requires = 38,
-        rewardItems = {{9030, "Restorative Potion", 1, 5}},
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit; Wowhead Forever)
+        rewardItems = {{250947, "Greater Mender's Potion", 1, 5}},
         turnin = "Ghak Healtouch, Thelsamar, Loch Modan",
         liveXPFallback = 3450,
     },
@@ -4348,7 +4352,8 @@ FDJ.DB["Uldaman"] = {
         pickup = "Jarkal Mossmeld, Kargath, Badlands",
         level = 42,
         requires = 36,
-        rewardItems = {{9030, "Restorative Potion", 1, 5}},
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit; Wowhead Forever)
+        rewardItems = {{250947, "Greater Mender's Potion", 1, 5}},
         turnin = "Jarkal Mossmeld, Kargath, Badlands",
         liveXPFallback = 3450,
     },
@@ -4414,7 +4419,9 @@ FDJ.DB["Uldaman"] = {
         pickup = "Advisor Belgrum, Ironforge",
         level = 45,
         requires = 35,
-        rewardItems = {{6723, "Medal of Courage", 2}},
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit; Wowhead Forever)
+        rewardChoice = true,
+        rewardItems = {{6723, "Medal of Courage", 2}, {270095, "Medal of Valor", 2}},
         turnin = "Advisor Belgrum, Ironforge",
         liveXPFallback = 5850,
     },
@@ -5293,6 +5300,8 @@ FDJ.DB["The Drowned City"] = {
         rewardSummary = "35s",
         rewards = "Choose: Ceremonial Mallet, Sacrificial Sword or I'lalai Flayer\nAlso: Translated Tale of I'lalai, Tale of I'lalai in Zandali\n2,350 XP • 35s",
         rewardItems = {{279885, "Ceremonial Mallet", 3}, {279886, "Sacrificial Sword", 3}, {279887, "I'lalai Flayer", 3}},
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit; Wowhead Forever)
+        additionalRewardItems = {{270312, "Translated Tale of I'lalai", 1}, {270313, "Tale of I'lalai in Zandali", 1}},
         rewardChoice = true,
     }, {
         id = 95776,
@@ -5356,6 +5365,8 @@ FDJ.DB["The Drowned City"] = {
         rewardSummary = "35s  •  Stormwind +75  •  Ironforge +50",
         rewards = "Choose: Ancient Voodoo Pouch or Intrepid Explorer's Chainmail\nAlso: Translated Tale of I'lalai\n2,350 XP • 35s • Stormwind +75 • Ironforge +50",
         rewardItems = {{279880, "Ancient Voodoo Pouch", 2}, {279881, "Intrepid Explorer's Chainmail", 2}},
+        -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit; Wowhead Forever)
+        additionalRewardItems = {{272124, "Translated Tale of I'lalai", 1}},
         rewardChoice = true,
     }, {
         -- Follow-up to Magics of the Drowned City (Wowhead Forever quest 95798).
@@ -7547,6 +7558,8 @@ FDJ.DB["Scholomance"] = {
         requires = 55,
         rewardChoice = true,
         rewardItems = {{15805, "Penelope's Rose", 3}, {15806, "Mirah's Song", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        additionalRewardItems = {{13544, "Spectral Essence", 2}},
         note = "Use the Blood of Innocents at the brazier on the Scholomance porch. Rewards the Spectral Essence.",
         turnin = "Eva Sarkhoff, Caer Darrow, Western Plaguelands",
         liveXPFallback = 8300,
@@ -7587,7 +7600,9 @@ FDJ.DB["Scholomance"] = {
         level = 60,
         requires = 57,
         rewardChoice = true,
-        rewardItems = {{13982, "Warblade of Caer Darrow", 3}, {13986, "Crown of Caer Darrow", 3}, {13984, "Darrowspike", 3}, {14002, "Darrowshire Strongguard", 3}},
+        rewardItems = {{13982, "Warblade of Caer Darrow", 3}, {13986, "Crown of Caer Darrow", 3}, {13984, "Darrowspike", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        additionalRewardItems = {{14002, "Darrowshire Strongguard", 3}},
         turnin = "Magistrate Marduke, Caer Darrow, Western Plaguelands",
         liveXPFallback = 9950,
     },
@@ -8485,7 +8500,8 @@ FDJ.DB["Dire Maul: East"] = {
         level = 58,
         requires = 54,
         rewardChoice = true,
-        rewardItems = {{18411, "Spry Boots", 2}, {18410, "Sprinter's Sword", 2}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        rewardItems = {{18411, "Spry Boots", 2}, {18410, "Sprinter's Sword", 2}, {270127, "Incanter's Pantaloons", 2}},
         note = "Chase and talk to Pusillin through the wing until he fights, then kill him for the book. He also drops the Crescent Key.",
         turnin = "Azj'Tordin, Lariss Pavilion, Feralas",
         liveXPFallback = 7750,
@@ -8513,7 +8529,9 @@ FDJ.DB["Dire Maul: East"] = {
         pickup = "Latronicus Moonspear, Feathermoon Stronghold, Feralas",
         level = 57,
         requires = 54,
-        rewardItems = {{18491, "Lorespinner", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        rewardChoice = true,
+        rewardItems = {{18491, "Lorespinner", 3}, {270124, "Warpwood Bracers", 3}, {270125, "Satyrhide Armbands", 3}},
         note = "The web drops from Lethtendris.\n\nOptional introductory quest:",
         noteQuestLink = { id = 7494, name = "Feathermoon Stronghold" },
         turnin = "Latronicus Moonspear, Feathermoon Stronghold, Feralas",
@@ -8542,7 +8560,9 @@ FDJ.DB["Dire Maul: East"] = {
         pickup = "Talo Thornhoof, Camp Mojache, Feralas",
         level = 57,
         requires = 54,
-        rewardItems = {{18491, "Lorespinner", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        rewardChoice = true,
+        rewardItems = {{18491, "Lorespinner", 3}, {270124, "Warpwood Bracers", 3}, {270125, "Satyrhide Armbands", 3}},
         note = "The web drops from Lethtendris.\n\nOptional introductory quest:",
         noteQuestLink = { id = 7492, name = "Camp Mojache" },
         turnin = "Talo Thornhoof, Camp Mojache, Feralas",
@@ -9451,6 +9471,8 @@ FDJ.DB["Stratholme: Living"] = {
         requires = 55,
         rewardChoice = true,
         rewardItems = {{13216, "Crown of the Penitent", 3}, {13217, "Band of the Penitent", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        additionalRewardItems = {{3928, "Superior Healing Potion", 1, 5}, {6149, "Greater Mana Potion", 1, 5}},
         note = "Collect 5 Stratholme Holy Water from the supply crates in the streets; some crates spawn enemies.",
         turnin = "Leonid Barthalomew the Revered, Light's Hope Chapel, Eastern Plaguelands",
         liveXPFallback = 6600,
@@ -9840,7 +9862,7 @@ FDJ.DB["Stratholme: Undead"] = {
         pickup = "Nathanos Blightcaller, Marris Stead, Eastern Plaguelands",
         level = 60,
         requires = 56,
-        rewardChoice = true,
+        -- rewardfix (2.0.12, M 18 Nov 2026): both rings are received, no choice
         rewardItems = {{18022, "Royal Seal of Alexis", 3}, {17001, "Elemental Circle", 2}},
         note = "Optional introductory quest:",
         noteQuestLink = { id = 5961, name = "The Champion of the Banshee Queen" },
@@ -10158,7 +10180,8 @@ FDJ.DB["Blackrock Depths"] = {
         level = 54,
         requires = 50,
         rewardChoice = true,
-        rewardItems = {{11866, "Nagmara's Whipping Belt", 3}, {11962, "Manacle Cuffs", 3}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        rewardItems = {{11866, "Nagmara's Whipping Belt", 3}, {11962, "Manacle Cuffs", 3}, {270120, "Boots of Requite", 3}, {270121, "Private Rocknot's Spare Bracers", 3}},
         turnin = "Mistress Nagmara, Blackrock Depths",
         liveXPFallback = 5450,
     },
@@ -10266,7 +10289,9 @@ FDJ.DB["Blackrock Depths"] = {
         pickup = "Shadowmage Vivian Lagrave, Kargath, Badlands",
         level = 54,
         requires = 48,
-        rewardItems = {{12038, "Lagrave's Seal", 2}},
+        -- rewardfix (2.0.12, M 18 Nov 2026, his confirmed reward list; Wowhead Forever)
+        rewardChoice = true,
+        rewardItems = {{12038, "Lagrave's Seal", 2}, {270119, "Dark Iron Signet", 2}},
         note = "Essence of the Elements drops from BRD elementals and golems.",
         turnin = "Shadowmage Vivian Lagrave, Kargath, Badlands",
         liveXPFallback = 5450,
@@ -11018,7 +11043,7 @@ FDJ.DB["Upper Blackrock Spire"] = {
         pickup = "Lorax, Winterspring",
         level = 60,
         requires = 55,
-        rewardItems = {{12696, "Plans: Demon Forged Breastplate", 3}, {12849, "Demon Kissed Sack", 2}, {9224, "Elixir of Demonslaying", 1}},
+        rewardItems = {{12696, "Plans: Demon Forged Breastplate", 3}, {12849, "Demon Kissed Sack", 2}, {9224, "Potion of Demonslaying", 1, 5}}, -- rewardfix (2.0.12): 5 of them
         turnin = "Lorax, Winterspring",
         liveXPFallback = 8300,
     },

@@ -2124,21 +2124,22 @@ if StaticPopupDialogs then
 end
 
 do
-    -- reset button, its tooltip, the confirmation, the chat line, the boss portraits' loot line
+    -- reset button, its tooltip, the confirmation, the chat line, the boss portraits' loot line,
+    -- the second click that confirms with a controller on (padfocus, 2.0.12)
     local strings = {
-        enUS = { "Reset Tracker", "Ends this run. The next kill starts a new run.", "Reset the tracker? This run ends and the next kill starts a new one.", "Tracker reset: the next kill starts a new run.", "Right-click to show loot" },
-        deDE = { "Tracker zurücksetzen", "Beendet diesen Run. Der nächste Kill startet einen neuen Run.", "Tracker zurücksetzen? Dieser Run endet und der nächste Kill startet einen neuen.", "Tracker zurückgesetzt: Der nächste Kill startet einen neuen Run.", "Rechtsklick, um die Beute zu zeigen" },
-        frFR = { "Réinitialiser le suivi", "Termine ce run. Le prochain kill lance un nouveau run.", "Réinitialiser le suivi ? Ce run se termine et le prochain kill en lance un nouveau.", "Suivi réinitialisé : le prochain kill lance un nouveau run.", "Clic droit pour afficher le butin" },
-        esES = { "Reiniciar el seguimiento", "Termina esta run. La próxima muerte inicia una nueva run.", "¿Reiniciar el seguimiento? Esta run termina y la próxima muerte inicia una nueva.", "Seguimiento reiniciado: la próxima muerte inicia una nueva run.", "Clic derecho para mostrar el botín" },
-        itIT = { "Resetta il tracker", "Termina questa run. La prossima uccisione avvia una nuova run.", "Resettare il tracker? Questa run finisce e la prossima uccisione ne avvia una nuova.", "Tracker resettato: la prossima uccisione avvia una nuova run.", "Clic destro per mostrare il bottino" },
-        ptBR = { "Reiniciar o rastreador", "Encerra esta run. A próxima morte inicia uma nova run.", "Reiniciar o rastreador? Esta run termina e a próxima morte inicia uma nova.", "Rastreador reiniciado: a próxima morte inicia uma nova run.", "Clique com o botão direito para mostrar o saque" },
-        ruRU = { "Сбросить трекер", "Завершает этот забег. Следующее убийство начнёт новый забег.", "Сбросить трекер? Этот забег завершится, а следующее убийство начнёт новый.", "Трекер сброшен: следующее убийство начнёт новый забег.", "Правый клик — показать добычу" },
-        koKR = { "추적기 초기화", "이 런을 끝냅니다. 다음 처치로 새 런이 시작됩니다.", "추적기를 초기화할까요? 이 런이 끝나고 다음 처치로 새 런이 시작됩니다.", "추적기 초기화됨: 다음 처치로 새 런이 시작됩니다.", "우클릭하여 전리품 보기" },
-        zhCN = { "重置追踪器", "结束本轮。下一次击杀将开始新的一轮。", "重置追踪器？本轮将结束，下一次击杀将开始新的一轮。", "追踪器已重置：下一次击杀将开始新的一轮。", "右键点击显示掉落" },
-        zhTW = { "重置追蹤器", "結束本輪。下一次擊殺將開始新的一輪。", "重置追蹤器？本輪將結束，下一次擊殺將開始新的一輪。", "追蹤器已重置：下一次擊殺將開始新的一輪。", "右鍵點擊顯示掉落" },
+        enUS = { "Reset Tracker", "Ends this run. The next kill starts a new run.", "Reset the tracker? This run ends and the next kill starts a new one.", "Tracker reset: the next kill starts a new run.", "Right-click to show loot", "Click again to confirm." },
+        deDE = { "Tracker zurücksetzen", "Beendet diesen Run. Der nächste Kill startet einen neuen Run.", "Tracker zurücksetzen? Dieser Run endet und der nächste Kill startet einen neuen.", "Tracker zurückgesetzt: Der nächste Kill startet einen neuen Run.", "Rechtsklick, um die Beute zu zeigen", "Zum Bestätigen erneut klicken." },
+        frFR = { "Réinitialiser le suivi", "Termine ce run. Le prochain kill lance un nouveau run.", "Réinitialiser le suivi ? Ce run se termine et le prochain kill en lance un nouveau.", "Suivi réinitialisé : le prochain kill lance un nouveau run.", "Clic droit pour afficher le butin", "Cliquez à nouveau pour confirmer." },
+        esES = { "Reiniciar el seguimiento", "Termina esta run. La próxima muerte inicia una nueva run.", "¿Reiniciar el seguimiento? Esta run termina y la próxima muerte inicia una nueva.", "Seguimiento reiniciado: la próxima muerte inicia una nueva run.", "Clic derecho para mostrar el botín", "Haz clic otra vez para confirmar." },
+        itIT = { "Resetta il tracker", "Termina questa run. La prossima uccisione avvia una nuova run.", "Resettare il tracker? Questa run finisce e la prossima uccisione ne avvia una nuova.", "Tracker resettato: la prossima uccisione avvia una nuova run.", "Clic destro per mostrare il bottino", "Clicca di nuovo per confermare." },
+        ptBR = { "Reiniciar o rastreador", "Encerra esta run. A próxima morte inicia uma nova run.", "Reiniciar o rastreador? Esta run termina e a próxima morte inicia uma nova.", "Rastreador reiniciado: a próxima morte inicia uma nova run.", "Clique com o botão direito para mostrar o saque", "Clique de novo para confirmar." },
+        ruRU = { "Сбросить трекер", "Завершает этот забег. Следующее убийство начнёт новый забег.", "Сбросить трекер? Этот забег завершится, а следующее убийство начнёт новый.", "Трекер сброшен: следующее убийство начнёт новый забег.", "Правый клик — показать добычу", "Нажмите ещё раз для подтверждения." },
+        koKR = { "추적기 초기화", "이 런을 끝냅니다. 다음 처치로 새 런이 시작됩니다.", "추적기를 초기화할까요? 이 런이 끝나고 다음 처치로 새 런이 시작됩니다.", "추적기 초기화됨: 다음 처치로 새 런이 시작됩니다.", "우클릭하여 전리품 보기", "확인하려면 다시 클릭하세요." },
+        zhCN = { "重置追踪器", "结束本轮。下一次击杀将开始新的一轮。", "重置追踪器？本轮将结束，下一次击杀将开始新的一轮。", "追踪器已重置：下一次击杀将开始新的一轮。", "右键点击显示掉落", "再次点击以确认。" },
+        zhTW = { "重置追蹤器", "結束本輪。下一次擊殺將開始新的一輪。", "重置追蹤器？本輪將結束，下一次擊殺將開始新的一輪。", "追蹤器已重置：下一次擊殺將開始新的一輪。", "右鍵點擊顯示掉落", "再次點擊以確認。" },
     }
     strings.esMX = strings.esES
-    local keys = { "TRACKER_RESET", "TRACKER_RESET_TIP", "TRACKER_RESET_CONFIRM", "TRACKER_NEW_RUN_DONE", "TRACKER_SHOW_LOOT" }
+    local keys = { "TRACKER_RESET", "TRACKER_RESET_TIP", "TRACKER_RESET_CONFIRM", "TRACKER_NEW_RUN_DONE", "TRACKER_SHOW_LOOT", "TRACKER_RESET_AGAIN" }
     for locale, list in pairs(strings) do
         local t = FDJ.Locales and FDJ.Locales[locale]
         if t then
@@ -2436,12 +2437,27 @@ local function BuildTracker()
         GameTooltip:Show()
     end)
     reset:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    reset:SetScript("OnClick", function()
+    reset:SetScript("OnClick", function(self)
         if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then
             pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         end
         GameTooltip:Hide()
-        if StaticPopup_Show and StaticPopupDialogs and StaticPopupDialogs.FDJ_TRACKER_RESET then
+        -- padfocus (2.0.12, kaanu): with the gamepad on, a StaticPopup from addon
+        -- code taints gamepad input until /reload, so confirm with a second click instead.
+        if GetCVarBool and GetCVarBool("GamePadEnable") then
+            local now = GetTime()
+            if self.resetArmedUntil and now <= self.resetArmedUntil then
+                self.resetArmedUntil = nil
+                FDJ.ResetTrackedRun()
+            else
+                self.resetArmedUntil = now + 3
+                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                GameTooltip:SetText(L("TRACKER_RESET"), 1, 0.82, 0)
+                GameTooltip:AddLine(L("TRACKER_RESET_CONFIRM"), 1, 1, 1, true)
+                GameTooltip:AddLine(L("TRACKER_RESET_AGAIN"), 0.25, 1, 0.25, true)
+                GameTooltip:Show()
+            end
+        elseif StaticPopup_Show and StaticPopupDialogs and StaticPopupDialogs.FDJ_TRACKER_RESET then
             StaticPopup_Show("FDJ_TRACKER_RESET", L("TRACKER_RESET_CONFIRM"))
         else
             FDJ.ResetTrackedRun()

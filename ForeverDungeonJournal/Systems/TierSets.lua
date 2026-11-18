@@ -557,7 +557,8 @@ local function FillCell(cell, id, size, cellW, compact, sources, questIndex, own
     cell.compact = compact
     local tick = TickSize(compact)
     cell.check:SetSize(tick, tick)
-    cell.check:SetShown(own == true and Owned(id))
+    -- (dev, not in a release: /dj tiercheck ticks every piece to preview it)
+    cell.check:SetShown((own == true and Owned(id)) or FDJ.tierCheckTest == true)
     if compact then
         cell.name:Hide()
         cell.source:Hide()

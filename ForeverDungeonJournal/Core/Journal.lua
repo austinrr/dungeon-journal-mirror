@@ -4236,7 +4236,11 @@ local function ShowItemTooltip(row)
     itemTooltip:Hide()
     itemTooltip:SetOwner(row, "ANCHOR_NONE")
     if itemTooltip.ClearLines then itemTooltip:ClearLines() end
-    if not row.item[1] or row.item[1] <= 0 then
+    -- owntip (2.0.12, M 18 Nov 2026, Tortheldrin's Broken Glaive: "Just
+    -- write your own tooltip. We don't need the real one from the game"):
+    -- item.ownTip shows the journal's own tooltip (the name, then where it
+    -- comes from) instead of the game's, even with a real item ID.
+    if not row.item[1] or row.item[1] <= 0 or row.item.ownTip then
         local r, g, b = QualityColor(tonumber(row.item[4]) or tonumber(row.item[3]) or 1)
         itemTooltip:AddLine(row.item[2] or L("ITEM"), r, g, b)
         for _, line in ipairs(type(row.item.tip) == "table" and row.item.tip or {}) do -- drownedloot
@@ -4245,6 +4249,9 @@ local function ShowItemTooltip(row)
             else
                 itemTooltip:AddLine(line, 1, 1, 1, true)
             end
+        end
+        if row.item.ownTip and row.fdjSourceText and row.fdjSourceText ~= "" then
+            itemTooltip:AddLine(row.fdjSourceText, 1.00, 0.82, 0.10, true)
         end
         itemTooltip:Show()
         if FDJ.RefreshTooltipBacking then FDJ.RefreshTooltipBacking() end
@@ -13323,7 +13330,8 @@ local function CreateMainFrame()
 
     ApplyLocaleFontTree(frame)
 
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+    -- padfocus (2.0.12, kaanu): named: the game's gamepad B close looks for a button named *CloseButton.
+    local close = CreateFrame("Button", "ForeverDungeonJournalFrameCloseButton", frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -3, -3)
     frame.closeButton = close
 
