@@ -87,6 +87,25 @@ local function HookCompare()
     end
 end
 
+-- novendorline (2.0.11, M 18 Nov 2026: Auctionator adds "Vendor 4s 75c"
+-- under the game's own Sell Price; "disable it and force our tooltip ... it
+-- has to disable only the vendor price, any other item like pawn etc must
+-- work"): on item tooltips opened from the journal, Auctionator's Vendor
+-- line is left out (and the game's Sell Price it would clear stays). Its
+-- Auction / Disenchant lines and every other addon's lines are untouched,
+-- and everywhere else Auctionator works as always.
+local function SkipAuctionatorVendor()
+    local A = _G.Auctionator
+    local T = type(A) == "table" and A.Tooltip
+    if type(T) ~= "table" or type(T.AddVendorTip) ~= "function" or T.fdjVendorWrapped then return end
+    local original = T.AddVendorTip
+    T.AddVendorTip = function(tooltipFrame, ...)
+        if OwnedByJournal(tooltipFrame) then return end
+        return original(tooltipFrame, ...)
+    end
+    T.fdjVendorWrapped = true
+end
+
 local f = CreateFrame("Frame")
 f:RegisterEvent("PLAYER_LOGIN")
 f:SetScript("OnEvent", function()
@@ -94,6 +113,7 @@ f:SetScript("OnEvent", function()
         Hook(_G[name])
     end
     pcall(HookCompare)
+    pcall(SkipAuctionatorVendor) -- novendorline
 end)
 
 -- The journal calls this right after filling its item tooltip, in case the

@@ -1,4 +1,54 @@
-DungeonJournal 2.0.10
+DungeonJournal 2.0.11
+
+CHANGES IN 2.0.11 (the release after 2.0.10)
+- All dungeons: hovering an item on a boss's loot page shows how often
+  that boss drops it ("Drop chance: 21%"), from Wowhead Forever's loot data
+  (Classic Wowhead's for the few bosses with too few kills recorded on
+  Forever yet). Quest items don't show one.
+- Loot Filter: the Weapon filter now has Held In Off-hand (after Shield),
+  so you can show only off-hand items like orbs and tomes.
+- Item tooltips in the journal: with Auctionator installed, its "Vendor"
+  price line no longer shows under the game's own Sell Price. Auctionator's
+  other lines, Pawn and other addons show as before.
+- Arrow: on a tower with two zeppelins (Orgrimmar), the arrow now keeps
+  pointing at the dock of the zeppelin you need until you stand there,
+  instead of disappearing.
+- Arrow: to a spot down in Undercity it now leads through the ruins' gate
+  and the throne room to the elevator, instead of round by the sewers.
+- Arrow: in Thunder Bluff it now follows the rises and the bridges between
+  them (rough first version).
+- Quest lists: right-click a quest you have for the game's small menu with
+  Share Quest and Abandon Quest.
+- New Options section, Loot: "Hide drop rates" (no Drop chance line on
+  item tooltips) and "Hide quest item drops" (boss loot pages leave out
+  the quest items a boss drops). Both off by default.
+- New option (Options, Dungeon Tracker): "Lock Tracker". The tracker can't
+  be moved, and its resize corner and X are gone. Right-click still opens
+  Options.
+- Upper Blackrock Spire: new Map tab, the Blackrock Spire map with its
+  boss pins and the entrance. Hall of Binding and the Rookery top left,
+  Dragonspire Hall (the entrance) under them, the main spire on the right.
+  Arrows mark the ways between the parts (green: Dragonspire Hall to the
+  Hall of Binding; blue: the Rookery to the main spire): click one and its
+  partner flashes.
+- Blackrock Depths: The Challenge (the long Tier 0.5 chain step with the
+  Banner of Provocation) is no longer in the quest list for now.
+- Sunken Temple, Da Voodoo (Shaman): now for Alliance shamans too. Their
+  chain starts with Mastering the Elements at Bath'rah the Windwatcher
+  (Alterac Mountains), then Spirit Totem. The first step (Mastering the
+  Elements / Elemental Mastery) now lists the items it needs: Elemental
+  Air, Earth, Fire and Water.
+- Home page: the round icons at the top (WoW Forever, Cozy Sleeping Bag,
+  Onyxia, Tier Sets) now make the same page-turn sound as opening the
+  journal, instead of a click.
+- New option (Options, Quests): "Hide unavailable quests". Hides the quests
+  marked Unavailable (not in WoW Forever for now, or not for your race).
+  Off by default. If an update makes one of them available again, the
+  option turns itself off so you see it.
+- Uldaman, Necklace Recovery, Take 3 (Horde): no longer says Undead can't
+  take it. Undead can. Its first step (Necklace Recovery) now says at the
+  top: "As Horde you can't start the quest from the necklace, you need to
+  have the quest first."
 
 CHANGES IN 2.0.10 (the release after 2.0.9)
 - Tier Sets: Compact view is the same Compact view / Detailed view button

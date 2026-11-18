@@ -3331,9 +3331,63 @@ do
             local from = Ends(ride)
             if from and from.region == hereR and Yards(px, py, from[1], from[2]) <= OFF_DOCK then
                 plan.ride, plan.aboard = ride, true
+                -- dockaim (2.0.11, M 18 Nov 2026 on Orgrimmar's zeppelin tower,
+                -- its two docks 24 yards apart: "it should point at the one
+                -- going to undercity here, not just lose the arrow"): at the
+                -- tower the arrow keeps pointing at this ride's own dock
+                -- (where its zeppelin master stands) until the player stands
+                -- there; after that it is gone, as before, for the crossing.
+                -- dockback (M, same night: "if i step away the arrow does not
+                -- reappear"): walked off the dock again (12 yards), the arrow
+                -- is back. Carried away without walking (the place changes
+                -- while the character's own speed is 0) is the crossing: no
+                -- arrow for the rest of it.
+                local d = Yards(px, py, from[1], from[2])
+                if type(GetUnitSpeed) == "function" and entry.rideLastX then
+                    local ok, speed = pcall(GetUnitSpeed, "player")
+                    -- carriedtwice (M: "it worked ... then i tried again and it
+                    -- didnt reappear"): stopping after a few steps looked like
+                    -- being carried once (moved, speed 0). Carried only counts
+                    -- three looks in a row; walking near the dock clears it.
+                    if ok and speed == 0 and Yards(px, py, entry.rideLastX, entry.rideLastY) > 1.5 then
+                        entry.rideCarriedN = (entry.rideCarriedN or 0) + 1
+                        if entry.rideCarriedN >= 3 then entry.rideCarried = true end
+                    else
+                        entry.rideCarriedN = nil
+                        if ok and speed and speed > 0 and d <= 45 then entry.rideCarried = nil end
+                    end
+                end
+                entry.rideLastX, entry.rideLastY = px, py
+                -- onboard (M, standing on the docked zeppelin: "the arrow should
+                -- understand when im on the zeppelin, its telling me to go
+                -- back"): the game does not say one stands on a zeppelin, so
+                -- it goes by the side of the dock one is on. Landward: toward
+                -- the middle of the tower (halfway to the tower's other dock)
+                -- or, at a dock on its own, toward where the player came
+                -- from. Past the dock on the far side is aboard: no arrow.
+                -- The arrow is back only on the landward side.
+                if ride.inland == nil then
+                    ride.inland = false
+                    for _, other in ipairs(RIDES) do
+                        local o = other ~= ride and other.kind ~= "portal" and Ends(other)
+                        if o and o[3] == from[3] then
+                            local gap = Yards(o[1], o[2], from[1], from[2])
+                            if gap > 5 and gap <= 60 then ride.inland = { (o[1] + from[1]) / 2, (o[2] + from[2]) / 2 } break end
+                        end
+                    end
+                end
+                local land = ride.inland or (entry.rideFromX and Yards(entry.rideFromX, entry.rideFromY, from[1], from[2]) >= 10 and { entry.rideFromX, entry.rideFromY }) or nil
+                local side = land and (Yards(px, py, land[1], land[2]) - Yards(from[1], from[2], land[1], land[2])) or nil
+                if d <= 8 or (side and side > 3) then
+                    entry.rideAtDock = true
+                elseif d >= 12 and not entry.rideCarried and (not side or side < -3) then
+                    entry.rideAtDock = nil
+                end
+                if not entry.rideAtDock and not entry.rideCarried and d <= 45 and ride.kind ~= "portal" then plan.dockX, plan.dockY = from[1], from[2] end
                 return plan
             end
-            entry.ride = nil
+            entry.ride, entry.rideAtDock, entry.rideCarried, entry.rideLastX, entry.rideLastY = nil, nil, nil, nil, nil
+            entry.rideCarriedN = nil
         end
         local cost = hereR == goalR and Way.Leg(p, t) or nil
         -- flyland (2.0.9, M 16 Nov 2026 in Hillsbrad, the arrow to The
@@ -3354,8 +3408,11 @@ do
             plan.ride = ride
             local from = Ends(ride)
             if ride.kind ~= "portal" and Yards(px, py, from[1], from[2]) <= DOCK then
+                if entry.ride ~= ride then entry.rideAtDock, entry.rideFromX, entry.rideFromY = nil, px, py end -- dockaim, onboard
                 entry.ride = ride
                 plan.aboard = true
+                if Yards(px, py, from[1], from[2]) <= 8 then entry.rideAtDock = true end -- dockaim
+                if not entry.rideAtDock then plan.dockX, plan.dockY = from[1], from[2] end
                 return plan
             end
             gx, gy = from[1], from[2]
@@ -3491,6 +3548,58 @@ do
         if bestD <= 14 then entry.ucRode = now return best end
         if entry.ucRode and now - entry.ucRode < 60 then return nil end
         return best
+    end
+    -- ucway (2.0.11, M 18 Nov 2026 on the road from the zeppelin tower, the
+    -- arrow to a quest giver down in Undercity: "its not understanding the
+    -- road to undercity, im standing here and its telling me to go back"):
+    -- the walking net knows no elevators, so its only way down into the city
+    -- was round by the sewers. To a spot down in the city, from outside or
+    -- from up in the ruins, the way is the front door: the ruins' gate, the
+    -- throne room, then the nearer elevator down. The gate and the throne
+    -- room lie straight north of the tomb the city's map is centred on (the
+    -- throne room hall 88 to 104 yards north of it, as above; the gate by
+    -- the Tirisfal map, 61.9, 65.1). Returns the point to aim at, and
+    -- whether the walking net may lead to it (outside the walls).
+    Way.UC.gate, Way.UC.throne = { 0.6600, 0.0124 }, { 0.6600, 0.2858 }
+    function Way.UndercityIn(entry, plan, px, py, here, target)
+        local UC = Way.UC
+        if not (plan and plan.final and target and target.map == UC.map) then return nil end
+        if PlayerMap() == UC.map and not entry.ucTop then return nil end -- down in the city already
+        local c = SpotWorld({ mapID = UC.map, x = UC.center[1], y = UC.center[2] })
+        if not c or c[3] ~= here or target[3] ~= here then return nil end
+        -- a spot up in the ruins themselves (not down in the city): as before
+        if Yards(target[1], target[2], c[1], c[2]) > 330 then return nil end
+        local north, side = px - c[1], math.abs(py - c[2])
+        -- ucdown (M, down in the Apothecarium, the quest giver on his left and
+        -- the arrow sending him 1,850 yards the other way): parts of the city
+        -- below count as outdoors to the game, which looked like standing up
+        -- in the ruins. On the city's map, up in the ruins is only their own
+        -- strip (the tomb, the throne room, the courtyard: within 75 yards
+        -- east or west of the middle, not south of the tomb); anywhere else
+        -- is down in the city. Having stood at an elevator, it is the ride
+        -- down for the next minute and a half.
+        if PlayerMap() == UC.map then
+            if side > 75 or north < -30 then return nil end
+            local now = (GetTime and GetTime()) or 0
+            if entry.ucDownAt and now - entry.ucDownAt < 90 then return nil end
+        end
+        local gate = SpotWorld({ mapID = UC.map, x = UC.gate[1], y = UC.gate[2] })
+        local throne = SpotWorld({ mapID = UC.map, x = UC.throne[1], y = UC.throne[2] })
+        if not gate or not throne then return nil end
+        if north > (gate[1] - c[1]) + 10 or (side > 45 and north > 110) or north < -60 or side > 150 then
+            return gate, true -- outside the walls: to the gate, along the roads
+        end
+        if north > (throne[1] - c[1]) + 6 then return throne, false end
+        local best, bestD
+        for _, lift in ipairs(UC.lifts) do
+            local w = SpotWorld({ mapID = UC.map, x = lift[1], y = lift[2] })
+            if w then
+                local ld = Yards(px, py, w[1], w[2])
+                if not bestD or ld < bestD then best, bestD = w, ld end
+            end
+        end
+        if best and bestD <= 14 then entry.ucDownAt = (GetTime and GetTime()) or 0 return nil end -- ucdown: on the elevator
+        return best, false
     end
     -- orgroads (2.0.8): inside Orgrimmar the arrow follows the roads. The
     -- straight line to Borstan in the Drag from the Valley of Strength went
@@ -3717,6 +3826,29 @@ do
                 { "D131", "D132" }, { "D131", "D133" }, { "D132", "D153" }, { "D133", "D134" }, { "D134", "D153" }, { "D135", "D137" }, { "D137", "D160" }, { "D138", "D139" },
                 { "D140", "D141" }, { "D140", "D146" }, { "D142", "D144" }, { "D143", "D148" }, { "D143", "D170" }, { "D149", "D159" }, { "D150", "D157" }, { "D152", "D163" },
                 { "D158", "D159" }, { "D163", "D164" }, { "D172", "D173" },
+            },
+        },
+        -- tbroads (2.0.11, M 18 Nov 2026 on the bridge from Hunter Rise, the
+        -- arrow to Auld Stonespire: "i think the arrow has no idea about
+        -- thunder bluff, its sending me nowhere"): Thunder Bluff's rises and
+        -- the bridges between them. The walking net lies flat, so it mixed
+        -- the city up on the mesas with the plains under them (noNet: it is
+        -- left out here). The rises, bridge ends and the two elevators read
+        -- off M's map screenshot (rough: one corner per rise and bridge end).
+        [1456] = {
+            near = 200, targetNear = 200, noNet = true,
+            gates = { "ES", "EN" },
+            nodes = {
+                HRC = { 0.589, 0.801 }, HB1 = { 0.546, 0.760 }, HB2 = { 0.476, 0.679 },
+                L1 = { 0.449, 0.640 }, L2 = { 0.400, 0.615 }, L3 = { 0.362, 0.598 }, ES = { 0.355, 0.630 }, L4 = { 0.373, 0.492 },
+                SB1 = { 0.362, 0.451 }, SB2 = { 0.308, 0.305 }, SRC = { 0.254, 0.199 },
+                M1 = { 0.465, 0.500 }, H1 = { 0.546, 0.492 }, NR = { 0.492, 0.394 }, EN = { 0.511, 0.313 },
+                EB1 = { 0.605, 0.370 }, EB2 = { 0.700, 0.310 }, ERC = { 0.768, 0.280 },
+            },
+            edges = {
+                { "HRC", "HB1" }, { "HB1", "HB2" }, { "HB2", "L1" }, { "L1", "L2" }, { "L2", "L3" }, { "L3", "ES" }, { "L3", "L4" },
+                { "L4", "SB1" }, { "SB1", "SB2" }, { "SB2", "SRC" }, { "L1", "M1" }, { "L4", "M1" }, { "M1", "H1" }, { "M1", "NR" },
+                { "NR", "EN" }, { "NR", "H1" }, { "H1", "EB1" }, { "EB1", "EB2" }, { "EB2", "ERC" },
             },
         },
         -- orggate (2.0.8, M 15 Nov 2026: off the zeppelin in Durotar the
@@ -4270,7 +4402,16 @@ do
             entry.plan, entry.plannedAt, entry.plannedX, entry.plannedY = plan, now, px, py
         end
         if not plan then return nil end
-        if plan.aboard or plan.atMaster then plan.elevator = nil return nil, nil, plan end
+        if plan.aboard or plan.atMaster then
+            plan.elevator = nil
+            -- dockaim (2.0.11): at the tower, the turn to this ride's own dock
+            if plan.aboard and plan.dockX and type(GetPlayerFacing) == "function" then
+                local ok, facing = pcall(GetPlayerFacing)
+                facing = ok and Number(facing) or nil
+                if facing then return nil, math.atan2(plan.dockY - py, plan.dockX - px) - facing, plan end
+            end
+            return nil, nil, plan
+        end
         local ax, ay = plan.x, plan.y
         local lift = Way.UndercityLift and Way.UndercityLift(entry, plan, px, py, here, SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot)) -- ucelevator (2.0.7)
         plan.elevator = lift and true or nil
@@ -4290,7 +4431,22 @@ do
         -- through walls"): where a place's ground is known cell by cell, the
         -- arrow walks round its walls, to a hand-made way's near corner too
         -- (the last argument: only the cells may lead there, not the net).
-        if not lift and not road and FDJ.WalkNetAim and plan.x and plan.y then
+        -- ucway (2.0.11): down into Undercity by the front door (no new
+        -- local: this scope is at Lua's limit)
+        plan.ucIn, plan.ucNet = nil, nil
+        if not lift and not road and Way.UndercityIn then
+            plan.ucIn, plan.ucNet = Way.UndercityIn(entry, plan, px, py, here, SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot))
+        end
+        if plan.ucIn then
+            if plan.ucNet and FDJ.WalkNetAim then road, roadRest = FDJ.WalkNetAim(entry, plan.ucIn[1], plan.ucIn[2], px, py, here, false) end
+            if road then
+                roadRest = (roadRest or 0) + Yards(plan.ucIn[1], plan.ucIn[2], plan.x, plan.y)
+            else
+                road, roadRest = plan.ucIn, Yards(plan.ucIn[1], plan.ucIn[2], plan.x, plan.y)
+            end
+        end
+        if not lift and not road and FDJ.WalkNetAim and plan.x and plan.y
+            and not (Way.ROADS[PlayerMap() or 0] or {}).noNet then -- tbroads
             road, roadRest = FDJ.WalkNetAim(entry, plan.x, plan.y, px, py, here, plan.via and Yards(px, py, plan.x, plan.y) <= 150 or false)
         end
         plan.road = road and true or nil

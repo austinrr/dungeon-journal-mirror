@@ -284,7 +284,7 @@ local function Build(frame)
             return
         end
         if GameTooltip then GameTooltip:Hide() end
-        if PlaySound and SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_OPEN then pcall(PlaySound, SOUNDKIT.IG_CHARACTER_INFO_OPEN) end
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
         FDJ.OpenOnyxiaChain()
     end)
     b:SetScript("OnEnter", function(self)

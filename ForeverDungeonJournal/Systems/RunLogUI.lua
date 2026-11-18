@@ -1998,6 +1998,31 @@ do
     end
 end
 
+-- locktracker (2.0.11): Options > Dungeon Tracker > Lock Tracker
+do
+    local strings = {
+        enUS = { OPT_TRACK_LOCK = "Lock Tracker", OPT_TRACK_LOCK_TIP = "The tracker can't be moved and loses its resize corner and its X. Right-click still opens Options." },
+        deDE = { OPT_TRACK_LOCK = "Tracker sperren", OPT_TRACK_LOCK_TIP = "Der Tracker lässt sich nicht mehr verschieben und verliert die Größenecke und sein X. Rechtsklick öffnet weiterhin die Optionen." },
+        frFR = { OPT_TRACK_LOCK = "Verrouiller le suivi", OPT_TRACK_LOCK_TIP = "Le suivi ne peut plus être déplacé et perd son coin de redimensionnement et son X. Le clic droit ouvre toujours les options." },
+        esES = { OPT_TRACK_LOCK = "Bloquear el seguimiento", OPT_TRACK_LOCK_TIP = "El seguimiento no se puede mover y pierde la esquina para cambiar el tamaño y su X. El clic derecho sigue abriendo las opciones." },
+        itIT = { OPT_TRACK_LOCK = "Blocca tracker", OPT_TRACK_LOCK_TIP = "Il tracker non si può spostare e perde l'angolo per ridimensionarlo e la X. Il clic destro apre ancora le opzioni." },
+        ptBR = { OPT_TRACK_LOCK = "Travar rastreador", OPT_TRACK_LOCK_TIP = "O rastreador não pode ser movido e perde o canto de redimensionar e o X. O clique direito ainda abre as opções." },
+        ruRU = { OPT_TRACK_LOCK = "Закрепить трекер", OPT_TRACK_LOCK_TIP = "Трекер нельзя перемещать, у него пропадают уголок изменения размера и крестик. Правый щелчок по-прежнему открывает настройки." },
+        koKR = { OPT_TRACK_LOCK = "추적기 잠금", OPT_TRACK_LOCK_TIP = "추적기를 옮길 수 없고 크기 조절 모서리와 X가 사라집니다. 오른쪽 클릭으로는 여전히 설정을 열 수 있습니다." },
+        zhCN = { OPT_TRACK_LOCK = "锁定追踪器", OPT_TRACK_LOCK_TIP = "追踪器无法移动，右下角的缩放角和 X 也会隐藏。右键点击仍可打开选项。" },
+        zhTW = { OPT_TRACK_LOCK = "鎖定追蹤器", OPT_TRACK_LOCK_TIP = "追蹤器無法移動，右下角的縮放角和 X 也會隱藏。右鍵點擊仍可開啟選項。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
 -- Right-click on the tracker: a small menu with Options (opens Options >
 -- Dungeon Tracker).
 local trackerMenu
@@ -2263,6 +2288,8 @@ local tracker
 function FDJ.RunTrackerDrag(start)
     local t = tracker
     if not t then return end
+    -- locktracker (2.0.11): Options > Dungeon Tracker > Lock Tracker
+    if start and FDJ.TrackerOption("lock") then return end
     if start then
         t:StartMoving()
         t.fdjMoving = true
@@ -2434,6 +2461,7 @@ local function BuildTracker()
         if FDJ.RefreshRunLog then FDJ.RefreshRunLog() end
         ShowTrackerClosedNotice()
     end)
+    t.close = close -- locktracker
 
     t.timeLabel = t:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     t.timeLabel:SetPoint("TOPLEFT", 10, -30)
@@ -3260,6 +3288,12 @@ function FDJ.UpdateRunTracker()
     end
     local t = tracker or BuildTracker()
     t.run = run
+    -- locktracker (2.0.11, M 18 Nov 2026: "once toggled, the tracker cant be
+    -- moved, loses the bottom right re size corner, and loses the X. only
+    -- right click to open option stays")
+    local locked = FDJ.TrackerOption("lock")
+    if t.close then t.close:SetShown(not locked) end
+    if t.grip then t.grip:SetShown(not locked) end
     t.title:SetText(DungeonLabel(run))
     -- the name as wide as it is (cut short with "..." only when it has to),
     -- the reset button right after it while the run is going

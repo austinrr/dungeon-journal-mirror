@@ -784,6 +784,41 @@ FDJ.DUNGEON_MAPS = {
             { name = "Darkmaster Gandling",      floor = 4, x = 0.682, y = 0.302 },
         },
     },
+    ["Upper Blackrock Spire"] = {
+        -- ubrsmap (2.0.11, M 18 Nov 2026: "can we add this map without all the
+        -- helper text but just with the right boss pins"): the Blackrock Spire
+        -- parchment M sent, a guide's copy with its labels, arrows and route
+        -- lines painted out (the halls' own names kept). Laid out as M asked:
+        -- on the left the Hall of Binding and the Rookery above Dragonspire
+        -- Hall (with the entrance); on the right the main spire (Hall of
+        -- Blackhand to Spire Throne). Pins where that guide had them; Gyth
+        -- just above Rend in the stadium, where Rend rides him in.
+        floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\UpperBlackrockSpireMap", texBottom = 683 / 1024 } },
+        entrance = { floor = 1, x = 0.186, y = 0.855, angle = 0 }, -- the swirl at the foot of Dragonspire Hall
+        -- maplinks (2.0.11, M's marked maps): two pairs of arrows; clicking
+        -- one flashes the other. Pointing the way M drew them (angle: 0 =
+        -- right, 90 = up). Green: up out of Dragonspire Hall (its top left
+        -- room), right into the Hall of Binding (at the top). Blue: down out
+        -- of the Rookery (its bottom left), up-right into the main spire (its
+        -- west side).
+        links = {
+            { x = 0.104, y = 0.605, to = 2, angle = 90 },
+            { x = 0.125, y = 0.160, to = 1, angle = 0 },
+            { x = 0.128, y = 0.506, to = 4, angle = 270, color = { 0.30, 0.60, 1.00 } },
+            { x = 0.345, y = 0.585, to = 3, angle = 45, color = { 0.30, 0.60, 1.00 } },
+        },
+        bosses = {
+            { name = "Pyroguard Emberseer",     x = 0.131, y = 0.289 },
+            { name = "Solakar Flamewreath",     x = 0.226, y = 0.416 },
+            { name = "Jed Runewatcher",         x = 0.479, y = 0.438 },
+            { name = "Goraluk Anvilcrack",      x = 0.430, y = 0.438 },
+            { name = "Gyth",                    x = 0.615, y = 0.394 },
+            { name = "Warchief Rend Blackhand", x = 0.615, y = 0.433 },
+            { name = "The Beast",               x = 0.794, y = 0.506 },
+            { name = "Lord Valthalak",          x = 0.807, y = 0.564 },
+            { name = "General Drakkisath",      x = 0.459, y = 0.730 },
+        },
+    },
     ["Sunken Temple"] = {
         -- stmap (2.0.49): one map, the game's own Temple of Atal'Hakkar map
         -- (M's copy, 13 Nov 2026), in place of the five floors of 2.0.40. The
@@ -824,6 +859,89 @@ FDJ.DUNGEON_MAPS = {
         },
     },
 }
+
+-- maplinks (2.0.11, M 18 Nov 2026, Upper Blackrock Spire: "add arrows that
+-- point to the other location, 1 connects to 2, and 2 to the last one, they
+-- don't have to switch page, just when clicking on arrow 1 it highlights
+-- arrow 2"): data.links = { { x, y, to = n, color }, ... }, n the arrow it
+-- leads to. Each arrow (green, like the level arrows, or its own color)
+-- points at its angle, else at the one it leads to; clicking it makes that
+-- one light up three times.
+FDJ.RenderMapLinks = function(holder, data, floorIndex, artW, artH, baseH)
+    if not frame then return end
+    frame.dungeonMapLinks = frame.dungeonMapLinks or {}
+    local arrows, links, shown, byIndex = frame.dungeonMapLinks, (data and data.links) or {}, 0, {}
+    local ART = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapLinkArrow"
+    for i, lk in ipairs(links) do
+        if (lk.floor or 1) == floorIndex then
+            shown = shown + 1
+            local a = arrows[shown]
+            if not a then
+                a = CreateFrame("Button", nil, holder)
+                a.icon = a:CreateTexture(nil, "ARTWORK")
+                a.icon:SetTexture(ART)
+                a.icon:SetAllPoints()
+                -- The flash: the arrow itself lit up, its own size (M: "only
+                -- the arrow itself highlight, not an extra outside glow").
+                a.glow = a:CreateTexture(nil, "OVERLAY")
+                a.glow:SetTexture(ART)
+                a.glow:SetAllPoints()
+                a.glow:SetBlendMode("ADD")
+                a.glow:SetVertexColor(1.00, 0.90, 0.45)
+                a.icon:SetVertexColor(0.35, 1.00, 0.35)
+                a.hl = a:CreateTexture(nil, "HIGHLIGHT")
+                a.hl:SetTexture(ART)
+                a.hl:SetAllPoints()
+                a.hl:SetBlendMode("ADD")
+                a.hl:SetAlpha(0.45)
+                a:SetScript("OnClick", function(self)
+                    local target = self.target and frame.dungeonMapLinkByIndex and frame.dungeonMapLinkByIndex[self.target]
+                    if target and FDJ.PulseMapLink then FDJ.PulseMapLink(target) end
+                end)
+                arrows[shown] = a
+            end
+            if a:GetParent() ~= holder then a:SetParent(holder) end
+            local size = math.max(20, math.floor(baseH * 0.07))
+            a:SetSize(size, size)
+            local c = type(lk.color) == "table" and lk.color or nil -- green unless the link says
+            a.icon:SetVertexColor(c and c[1] or 0.35, c and c[2] or 1.00, c and c[3] or 0.35)
+            a:SetFrameLevel(holder:GetFrameLevel() + 16)
+            a:ClearAllPoints()
+            a:SetPoint("CENTER", holder, "TOPLEFT", lk.x * artW, -(lk.y * artH))
+            -- The art points up; turn it to the link's angle (0 = right,
+            -- 90 = up), else towards the arrow it leads to.
+            local to, rot = links[lk.to], 0
+            if lk.angle then
+                rot = math.rad(lk.angle) - math.pi / 2
+            elseif to then
+                rot = math.atan2(-(to.y - lk.y) * artH, (to.x - lk.x) * artW) - math.pi / 2
+            end
+            for _, t in ipairs({ a.icon, a.glow, a.hl }) do
+                if t.SetRotation then t:SetRotation(rot) end
+            end
+            a.target = lk.to
+            a:SetScript("OnUpdate", nil)
+            a.glow:SetAlpha(0)
+            byIndex[i] = a
+            a:Show()
+        end
+    end
+    frame.dungeonMapLinkByIndex = byIndex
+    for i = shown + 1, #arrows do arrows[i]:Hide() end
+end
+-- Three gold flashes over about two and a half seconds.
+FDJ.PulseMapLink = function(a)
+    a.pulse = 0
+    a:SetScript("OnUpdate", function(self, elapsed)
+        self.pulse = (self.pulse or 0) + elapsed
+        if self.pulse >= 2.4 then
+            self.glow:SetAlpha(0)
+            self:SetScript("OnUpdate", nil)
+            return
+        end
+        self.glow:SetAlpha(0.5 - 0.5 * math.cos(self.pulse * 7.854))
+    end)
+end
 
 local function LanguageDisplayName(locale)
     for _, info in ipairs(LANGUAGE_CHOICES) do
@@ -1920,6 +2038,11 @@ local function QuestMatchesFaction(quest, faction)
         and not FDJ.PlayerHasProfession(quest.profession) then
         return false
     end
+    -- hideunavailable (2.0.11): "Hide unavailable quests" (Options, Quests)
+    if ForeverDungeonJournalDB.hideUnavailableQuests and FDJ.IsQuestUnavailable
+        and FDJ.IsQuestUnavailable(quest) then
+        return false
+    end
     return true
 end
 
@@ -2360,6 +2483,54 @@ FDJ.ShareQuestByID = function(questID)
         pcall(QuestLogPushQuest)
     elseif QuestFramePushQuestButton and type(QuestFramePushQuestButton.Click) == "function" then
         pcall(QuestFramePushQuestButton.Click, QuestFramePushQuestButton)
+    end
+end
+
+-- questrowmenu (2.0.11): abandon through the game's own "Abandon <quest>?"
+-- confirmation, as the quest log does.
+FDJ.AbandonQuestByID = function(questID, name)
+    if type(questID) ~= "number" or not IsQuestInLog(questID) then return end
+    if C_QuestLog and type(C_QuestLog.SetSelectedQuest) == "function" and type(C_QuestLog.SetAbandonQuest) == "function" then
+        pcall(C_QuestLog.SetSelectedQuest, questID)
+        pcall(C_QuestLog.SetAbandonQuest)
+    elseif type(SelectQuestLogEntry) == "function" and type(SetAbandonQuest) == "function" then
+        local index
+        if type(GetQuestLogIndexByID) == "function" then
+            local ok, i = pcall(GetQuestLogIndexByID, questID)
+            if ok and type(i) == "number" and i > 0 then index = i end
+        end
+        if not index then return end
+        pcall(SelectQuestLogEntry, index)
+        pcall(SetAbandonQuest)
+    else
+        return
+    end
+    local title = name
+    if type(GetAbandonQuestName) == "function" then
+        local ok, own = pcall(GetAbandonQuestName)
+        if ok and type(own) == "string" and own ~= "" then title = own end
+    end
+    if type(StaticPopup_Show) == "function" then StaticPopup_Show("ABANDON_QUEST", title or "") end
+end
+
+FDJ.ShowQuestRowMenu = function(owner, questID, name)
+    if type(questID) ~= "number" or not IsQuestInLog(questID) then return end
+    local share, abandon = SHARE_QUEST or "Share Quest", ABANDON_QUEST or "Abandon Quest"
+    local canShare = FDJ.IsQuestShareableNow(questID) and (type(IsInGroup) ~= "function" or IsInGroup())
+    if MenuUtil and type(MenuUtil.CreateContextMenu) == "function" then
+        MenuUtil.CreateContextMenu(owner, function(_, root)
+            local b = root:CreateButton(share, function() FDJ.ShareQuestByID(questID) end)
+            if b and b.SetEnabled then b:SetEnabled(canShare and true or false) end
+            root:CreateButton(abandon, function() FDJ.AbandonQuestByID(questID, name) end)
+        end)
+        return
+    end
+    if type(EasyMenu) == "function" and CreateFrame then
+        FDJ.questRowMenuFrame = FDJ.questRowMenuFrame or CreateFrame("Frame", "ForeverDungeonJournalQuestRowMenu", UIParent, "UIDropDownMenuTemplate")
+        EasyMenu({
+            { text = share, notCheckable = true, disabled = not canShare, func = function() FDJ.ShareQuestByID(questID) end },
+            { text = abandon, notCheckable = true, func = function() FDJ.AbandonQuestByID(questID, name) end },
+        }, FDJ.questRowMenuFrame, "cursor", 0, 0, "MENU")
     end
 end
 
@@ -4114,6 +4285,12 @@ local function ShowItemTooltip(row)
         if not (row.fdjSourceText and row.fdjSourceText ~= "") then itemTooltip:AddLine(" ") end
         itemTooltip:AddLine(L(row.item.dropNote), 1.00, 0.50, 0.25, true)
     end
+    -- droprates (2.0.11): how often the boss of this page drops it
+    local chance = FDJ.DropChanceText and FDJ.DropChanceText(row.fdjDungeonName, row.fdjBossName, row.item[1])
+    if chance then
+        if not (row.fdjSourceText and row.fdjSourceText ~= "") and type(row.item.dropNote) ~= "string" then itemTooltip:AddLine(" ") end
+        itemTooltip:AddLine(chance, 1.00, 0.82, 0.10, true)
+    end
     if row.fdjMapLocation then
         itemTooltip:AddLine(L("ITEM_CLICK_MAP"), 0.35, 1.00, 0.35, true)
     elseif row.fdjBossJump and not row.mapLocation and FDJ.BossDropSource and FDJ.BossDropSource(row.item[1]) then
@@ -5331,7 +5508,16 @@ local function MakeQuestButton(parent)
     end)
     button.chainRows = {}
 
-    button:SetScript("OnClick", function(self)
+    -- questrowmenu (2.0.11, M 18 Nov 2026: "if i right click on a quest i
+    -- have, i want to have this little blizzard panel that appears, but we
+    -- should only have share and abandon"): right-click on a quest that is in
+    -- the quest log: the game's own context menu, Share Quest / Abandon Quest.
+    button:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    button:SetScript("OnClick", function(self, mouseButton)
+        if mouseButton == "RightButton" then
+            if not self.fdjRPGHidden and FDJ.ShowQuestRowMenu then FDJ.ShowQuestRowMenu(self, self.questID, self.fdjQuestName) end
+            return
+        end
         -- Shift-click with a chat box open links the quest instead of selecting it.
         if not self.fdjRPGHidden and FDJ.TryLinkQuest and FDJ.TryLinkQuest(self.questID, self.fdjQuestName, self.fdjQuestLevel) then return end
         SelectQuest(self.questIndex)
@@ -5706,6 +5892,7 @@ FDJ.UpdateQuestFactionButtons = UpdateFactionButtons
 local function BuildVisibleQuestIndexes()
     wipe(visibleQuestIndexes)
     if FDJ.FactionLocked(selectedDungeon) then selectedQuestFaction = FDJ.PlayerFaction() end -- questrowtrial
+    if FDJ.ApplyViewFaction then FDJ.ApplyViewFaction(selectedQuestFaction) end -- voodooview
 
     local dungeon = DB[selectedDungeon]
     local quests = dungeon.quests or {}
@@ -7442,7 +7629,9 @@ local function RefreshPrerequisiteQuestDetail(step)
     if stepRequired and #stepRequired > 0 and frame.questRequiredItemsHeader then
         local usefulRequired = {}
         for _, requiredItem in ipairs(stepRequired) do
-            if type(requiredItem[4]) == "string" and requiredItem[4] ~= "" then
+            -- requiredicons (2.0.11): details.showRequiredIcons shows the
+            -- items without a source line too (the four elementals).
+            if details.showRequiredIcons or (type(requiredItem[4]) == "string" and requiredItem[4] ~= "") then
                 usefulRequired[#usefulRequired + 1] = requiredItem
             end
         end
@@ -7751,6 +7940,7 @@ end
 
 RefreshQuestDetail = function()
     if FDJ.FactionLocked(selectedDungeon) then selectedQuestFaction = FDJ.PlayerFaction() end -- questrowtrial
+    if FDJ.ApplyViewFaction then FDJ.ApplyViewFaction(selectedQuestFaction) end -- voodooview
     for _, button in ipairs(questRewardButtons) do HideSearchItemHighlight(button) end
     for _, button in ipairs(questNoteRewardButtons) do HideSearchItemHighlight(button) end
     if frame and frame.questNoteItemButton then HideSearchItemHighlight(frame.questNoteItemButton) end
@@ -8847,6 +9037,7 @@ local function ClearDungeonMapArt()
     for _, tex in ipairs(frame.dungeonMapArtTiles or {}) do tex:Hide() end
     for _, marker in ipairs(frame.dungeonMapBossMarkers or {}) do marker:Hide() end
     for _, m in ipairs(frame.dungeonMapNumbers or {}) do m:Hide() end -- ststatues (2.0.6)
+    for _, a in ipairs(frame.dungeonMapLinks or {}) do a:Hide() end -- maplinks (2.0.11)
 end
 
 local function RenderRagefireMap()
@@ -9478,6 +9669,8 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     for i = used + 1, #frame.dungeonMapTransitions do
         frame.dungeonMapTransitions[i]:Hide()
     end
+    -- maplinks (2.0.11): arrows between the parts of one map page.
+    if FDJ.RenderMapLinks then FDJ.RenderMapLinks(holder, data, floorIndex, artW, artH, baseH) end
 
     -- Yellow "?" where a quest objective is picked up or clicked on the spot.
     frame.dungeonMapObjectives = frame.dungeonMapObjectives or {}
@@ -11278,7 +11471,7 @@ RefreshLoot = function()
 
             local item = loot[i]
             row.item = item
-            row.fdjDungeonName = selectedDungeon
+            row.fdjDungeonName = boss.fdjDungeon or selectedDungeon -- (Matching loot: the boss's own dungeon, for the drop chance)
             row.fdjBossName = boss.name
             row.icon:SetTexture(ItemIcon(item[1]))
             if FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(row, item[1]) end

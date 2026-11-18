@@ -167,7 +167,9 @@ FDJ.LootFilterSettings = Settings
 -- weapon unless the Armor filter is also set and the item is armor of a
 -- ticked type (e.g. Leather + Dagger for a rogue).
 -- Swords, axes and maces come one- and two-handed; the other types only one way.
-local WEAPON_TYPES = { "1H Sword", "2H Sword", "1H Axe", "2H Axe", "1H Mace", "2H Mace", "Dagger", "Fist Weapon", "Polearm", "Staff", "Bow", "Gun", "Crossbow", "Wand", "Thrown", "Shield" }
+-- heldoffhand (2.0.11, M 18 Nov 2026: "we forgot to add held in off hands in
+-- the loot filter"): "Held In Off-hand" items, last, after Shield.
+local WEAPON_TYPES = { "1H Sword", "2H Sword", "1H Axe", "2H Axe", "1H Mace", "2H Mace", "Dagger", "Fist Weapon", "Polearm", "Staff", "Bow", "Gun", "Crossbow", "Wand", "Thrown", "Shield", "Held In Off-hand" }
 local HANDED = { Sword = true, Axe = true, Mace = true }
 local WEAPON_SET = {}
 for _, w in ipairs(WEAPON_TYPES) do WEAPON_SET[w] = true end
@@ -179,6 +181,7 @@ local function WeaponType(item)
     if not first then first = slot end
     first = first:gsub("%s+$", "")
     if first == "Thrown" then return "Thrown" end
+    if first:lower() == "held in off-hand" then return "Held In Off-hand" end -- heldoffhand
     if kind and first ~= "Projectile" then
         kind = kind:gsub("%s+$", "")
         if HANDED[kind] then return (first == "Two-Hand" and "2H " or "1H ") .. kind end
@@ -2759,4 +2762,30 @@ function FDJ.SetRowMobs(row, sourceText)
         row.name:SetPoint("RIGHT", row, "RIGHT", -10 - row.fdjMobSpan * 38, 0)
     end
     return #names > 0
+end
+
+-- lootoptions (2.0.11, M 18 Nov 2026: Options > Loot > "Hide quest item
+-- drops"): boss loot pages leave out the quest items ("Quest Item" in the
+-- loot tables). The boss handed to the page is a copy of the boss without
+-- them (the same copy every time, so the page sees one boss); the search's
+-- Matching loot page and the recipe tab are left as they are.
+do
+    local plain = FDJ.FilterBossLootForPage
+    local copies = setmetatable({}, { __mode = "k" })
+    FDJ.FilterBossLootForPage = function(boss, ...)
+        if ForeverDungeonJournalDB and ForeverDungeonJournalDB.hideQuestDrops
+            and type(boss) == "table" and type(boss.loot) == "table" and not boss.fdjDungeon and not boss.recipeTab then
+            local copy = copies[boss]
+            if copy == nil then
+                local loot, cut = {}, false
+                for _, item in ipairs(boss.loot) do
+                    if type(item) == "table" and item[3] == "Quest Item" then cut = true else loot[#loot + 1] = item end
+                end
+                copy = cut and setmetatable({ loot = loot }, { __index = boss }) or false
+                copies[boss] = copy
+            end
+            if copy then boss = copy end
+        end
+        return plain(boss, ...)
+    end
 end

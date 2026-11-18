@@ -2466,10 +2466,9 @@ do
         rewardSummary = "Darkspear Trolls +100",
         rewards = "Jarkal's Enhancing Necklace\n5,600 XP • Darkspear Trolls +100",
         rewardItems = { { 7888, "Jarkal's Enhancing Necklace", 3 } },
-        -- raceunavailable (2.0.10, M 16 Nov 2026: "That quest is not available to
-        -- your race" for his Undead): as Compendium of the Fallen
-        warning = "Undead cannot take this quest",
-        unavailableRaces = { Scourge = true },
+        -- undeadok (2.0.11, M 18 Nov 2026): Undead CAN do this chain. The
+        -- "not available to your race" came from the Shattered Necklace
+        -- itself (it starts the Alliance quest), so no Undead warning here.
     }, {
         { id = 2283, name = "Necklace Recovery" },
         { id = 2284, name = "Necklace Recovery, Take 2" },
@@ -2478,6 +2477,31 @@ do
         { id = 2339, name = "Find the Gems and Power Source" },
         { id = 2340, name = "Deliver the Gems" },
     })
+    -- necklacenote (2.0.11, M 18 Nov 2026): on the chain's first step, at
+    -- the top: the necklace only starts the quest for the Alliance.
+    if D[2283] then
+        D[2283].warning = "As Horde you can't start the quest from the necklace, you need to have the quest first."
+        D[2283].warningTop = true
+    end
+    local NECKLACE_NOTE = {
+        deDE = "Als Horde könnt Ihr die Quest nicht über die Halskette starten, Ihr müsst die Quest zuerst haben.",
+        frFR = "Côté Horde, vous ne pouvez pas commencer la quête avec le collier : vous devez d'abord avoir la quête.",
+        esES = "Como Horda no puedes empezar la misión desde el collar; primero necesitas tener la misión.",
+        itIT = "Come Orda non puoi iniziare la missione dalla collana: devi prima avere la missione.",
+        ptBR = "Como Horda, você não pode iniciar a missão pelo colar; precisa ter a missão primeiro.",
+        ruRU = "За Орду нельзя начать задание с ожерелья: сначала нужно взять задание.",
+        koKR = "호드는 목걸이로 퀘스트를 시작할 수 없습니다. 먼저 퀘스트를 받아야 합니다.",
+        zhCN = "部落无法通过项链开始任务，你需要先接到任务。",
+        zhTW = "部落無法透過項鍊開始任務，你需要先接到任務。",
+    }
+    for lang, text in pairs(NECKLACE_NOTE) do
+        local c = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if c then
+            c.quests = c.quests or {}
+            c.quests[2283] = c.quests[2283] or {}
+            c.quests[2283].warning = text
+        end
+    end
 
     -- Alliance Platinum Discs: the reward comes one step later.
     -- discshorde (2.0.10, M 17 Nov 2026: "fix this reward choice for both
@@ -2713,7 +2737,11 @@ do
                 note = "The Fragment of the Firelands drops from Magmus, the guardian at the door to the Imperial Seat in Blackrock Depths. Seen picked up at level 49.",
             })
         end
-        if not have[9015] then
+        -- challengeoff (2.0.11, M 18 Nov 2026: "remove this quest from brd for
+        -- now, its a long tier 0.5 chain that people wont look for when going
+        -- in the dungeon"): left out of the quest list. To bring it back,
+        -- drop the "false and".
+        if false and not have[9015] then
             table.insert(db.quests, {
                 id = 9015,
                 name = "The Challenge",
@@ -4469,3 +4497,84 @@ do
     end
 end
 -- END rfkhorde
+
+-- BEGIN shamanvoodoo
+-- 2.0.11 (M 18 Nov 2026: "add this shaman sunken temple quest for alliance
+-- shamans ... alliance starts with Mastering the Elements, then goes on to
+-- the other 2 quests"). Da Voodoo (8413) is for both factions (Wowhead
+-- Forever: Side Both). Its chain's first step is the faction's own:
+-- Mastering the Elements (8411, Bath'rah the Windwatcher) for the Alliance,
+-- Elemental Mastery (8410, Beram Skychaser) for the Horde; then Spirit
+-- Totem (8412). Both first steps list the four elementals they need
+-- (Wowhead Forever quests 8410 / 8411, forever-tool 8411: 3,800 XP).
+do
+    local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
+    local AIR, EARTH, FIRE, WATER = { 7069, "Elemental Air", 1 }, { 7067, "Elemental Earth", 1 },
+        { 7068, "Elemental Fire", 1 }, { 7070, "Elemental Water", 1 }
+    local BATHRAH = { mapID = 1416, x = 0.804, y = 0.668, label = "Bath'rah the Windwatcher — Alterac Mountains", targetName = "Bath'rah the Windwatcher" }
+    if D[8410] then
+        D[8410].requiredItems = { AIR, FIRE, EARTH, WATER }
+        D[8410].showRequiredIcons = true
+    end
+    D[8411] = {
+        level = 52, requires = 50,
+        objective = "Bring the elements earth, air, fire and water to Bath'rah the Windwatcher.",
+        pickup = "Bath'rah the Windwatcher, Alterac Mountains",
+        turnin = "Bath'rah the Windwatcher, Alterac Mountains",
+        map = BATHRAH, turninMap = BATHRAH,
+        requiredItems = { AIR, EARTH, FIRE, WATER },
+        showRequiredIcons = true,
+    }
+    XP[8411] = 3800
+    for _, q in ipairs((FDJ.DB and FDJ.DB["Sunken Temple"] and FDJ.DB["Sunken Temple"].quests) or {}) do
+        if q.id == 8413 then q.faction = "Both" end
+    end
+    local FIRST = { id = 8410, name = "Elemental Mastery" }
+    C[8413] = { FIRST, { id = 8412, name = "Spirit Totem" } }
+    -- voodooview (M 18 Nov 2026, on the Alliance tab of a Horde character:
+    -- "the first step of the alliance shows a pick up in thunder bluff"):
+    -- the first step follows the faction tab being looked at
+    -- (FDJ.ApplyViewFaction, called by the quest pages); with no tab told,
+    -- the character's own faction.
+    local function Apply(view)
+        local faction = view
+        if faction ~= "Alliance" and faction ~= "Horde" then
+            if type(UnitFactionGroup) ~= "function" then return end
+            local ok, own = pcall(UnitFactionGroup, "player")
+            if not ok or (type(issecretvalue) == "function" and issecretvalue(own)) then return end
+            faction = own
+        end
+        if faction == "Alliance" then
+            FIRST.id, FIRST.name = 8411, "Mastering the Elements"
+        elseif faction == "Horde" then
+            FIRST.id, FIRST.name = 8410, "Elemental Mastery"
+        end
+    end
+    Apply()
+    if CreateFrame then
+        local f = CreateFrame("Frame")
+        f:RegisterEvent("PLAYER_LOGIN")
+        f:SetScript("OnEvent", function() Apply() end)
+    end
+    function FDJ.ApplyViewFaction(faction) Apply(faction) end
+    -- The game's own names and objectives where forever-tool has them
+    -- (official Battle.net data); the rest stay English.
+    local LOC = {
+        deDE = { name = "Die Beherrschung der Elemente", objective = "Bringt Bath'rah dem Windbehüter die Elemente Erde, Luft, Feuer und Wasser." },
+        frFR = { name = "Maîtriser les éléments" },
+        esES = { name = "Dominar los elementos" },
+        ptBR = { name = "Dominando os elementos" },
+        ruRU = { name = "Покорение Стихий" },
+        koKR = { name = "원소에 대한 깨달음", objective = "바람의감시자 바스라에게 바람, 불, 대지, 물의 원소를 가져가야 합니다." },
+        zhTW = { name = "控制元素", objective = "將土元素、風元素、火元素和水元素交給『觀風者』巴斯拉。" },
+    }
+    for lang, fields in pairs(LOC) do
+        local c = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if c then
+            c.quests = c.quests or {}
+            c.quests[8411] = c.quests[8411] or {}
+            for field, text in pairs(fields) do c.quests[8411][field] = text end
+        end
+    end
+end
+-- END shamanvoodoo

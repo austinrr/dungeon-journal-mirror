@@ -1298,7 +1298,7 @@ local function BuildButton(frame)
     b:SetScript("OnClick", function(self, button)
         if button == "RightButton" then ShowHideMenu(self) return end -- tierhide
         if GameTooltip then GameTooltip:Hide() end
-        if PlaySound and SOUNDKIT and SOUNDKIT.IG_CHARACTER_INFO_OPEN then pcall(PlaySound, SOUNDKIT.IG_CHARACTER_INFO_OPEN) end
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
         if FDJ.ActiveHomeTab() == "tier" then
             FDJ.ShowDungeonsTab()
         else
