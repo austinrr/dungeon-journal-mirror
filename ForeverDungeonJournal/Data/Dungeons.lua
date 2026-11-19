@@ -2125,7 +2125,6 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "",
         rewardChoice = true,
         rewardItems = {{279835, "Vine Pruner's Cloak", 3}, {279836, "Thorn Protecting Girdle", 3}},
-        note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
         startMap = { mapID = 1453, x = 0.314, y = 0.628, label = "Shylamiir — Stormwind City", targetName = "Shylamiir" }, -- The Park; Forever harbor-layout map (Classic was 0.149, 0.496)
     }, {
         id = 92489,
@@ -2140,7 +2139,6 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "1g",
         rewardChoice = true,
         rewardItems = {{251962, "Violet Sash", 3}, {279849, "Runebound Gloves", 3}},
-        note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
         startMap = { mapID = 1453, x = 0.488, y = 0.876, label = "High Sorcerer Andromath — Stormwind City", targetName = "High Sorcerer Andromath" }, -- Wizard's Sanctum; Forever harbor-layout map (Classic was 0.375, 0.817)
     }, {
         id = 92457,
@@ -2204,7 +2202,7 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "",
         rewardChoice = true,
         rewardItems = {{279845, "Item 279845", 3}, {279846, "Item 279846", 3}},
-        note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
+        note = "This quest is done at the library, in the Alliance portal area of Wrath of the Lich King's Dalaran.",
     }, {
         id = 96988,
         name = "Source of Power",
@@ -2218,7 +2216,6 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "",
         rewardChoice = true,
         rewardItems = {{279847, "Unstable Power Core", 3}, {279848, "Construct Cloak", 3}},
-        note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
         startMap = { mapID = 1458, x = 0.466, y = 0.741, label = "Doctor Martin Felben — Undercity", targetName = "Doctor Martin Felben" },
     }, {
         id = 96986,
@@ -2233,7 +2230,6 @@ FDJ.DB["City of Dalaran"] = {
         rewardSummary = "1g",
         rewardChoice = true,
         rewardItems = {{251963, "Gravewalker Boots", 3}, {251965, "Undead Knight's Bracers", 3}},
-        note = "Quest data is recorded in the beta; dungeon access may be unavailable.",
         startMap = { mapID = 1424, x = 0.626, y = 0.206, label = "Melisara — Tarren Mill", targetName = "Melisara" },
     }},
     bosses = {
@@ -3823,7 +3819,7 @@ FDJ.DB["Scarlet Monastery: Cathedral"] = {
         level = 40,
         requires = 35,
         rewardItems = {{277236, "Pauldrons of Vindication", 3}},
-        note = "The end of the chain, after By The Light's Grace.",
+        note = "After By The Light's Grace. The chain goes on in Stormwind with Some Good News, all the way to Materials of Significance (Maraudon, Blackrock Depths).",
         turnin = "Aeonas, Cathedral of Light, Stormwind",
     }
     },
@@ -4904,6 +4900,29 @@ FDJ.DB["Zul'Farrak"] = {
             {221359, "Pristine Owlbeast Quill", 1, "Dropped by Vicious, Primitive and Savage Owlbeasts in The Hinterlands", map = { mapID = 1425, x = 0.540, y = 0.452, label = "Owlbeasts — The Hinterlands", detail = "Dropped by Vicious, Primitive and Savage Owlbeasts in The Hinterlands" }},
             {221361, "Zukk'ash Resin", 1, "Dropped by the Zukk'ash silithid in Feralas, south of Camp Mojache (around 73, 63)", count = 5, map = { mapID = 1444, x = 0.730, y = 0.630, label = "Zukk'ash silithid — Feralas", detail = "Dropped by the Zukk'ash silithid south of Camp Mojache (around 73, 63)" }},
             {221360, "Farraki Papyrus", 1, "Dropped by the Zul'Farrak Zombies that rise from the graves in Zul'Farrak", count = 8},
+        },
+    },
+    {
+        -- roguetalisman (2.1.0, M 19 Nov 2026): Wowhead Forever quest 80411
+        -- (level 50, requires 45, rogue, both sides, Fahrad, not sharable,
+        -- 4,700 XP and 1g 4s 12c). Its chain (How to unlock): Data/QuestUpdates.lua.
+        classOnly = "ROGUE",
+        warning = "Solo job: you must do it alone, outside any group.",
+        objective = "Find The Talisman of Kazdor inside of Zul'Farrak. Then, bring it to Fahrad at Ravenholdt Manor. You must complete the job alone.",
+        rewardSummary = "1g 4s 12c",
+        id = 80411,
+        name = "The Talisman of Kazdor",
+        faction = "Both",
+        pickup = "Fahrad, Ravenholdt Manor, Alterac Mountains",
+        startMap = { mapID = 1416, x = 0.845, y = 0.803, label = "Fahrad — Ravenholdt Manor", targetName = "Fahrad" },
+        turninMap = { mapID = 1416, x = 0.845, y = 0.803, label = "Fahrad — Ravenholdt Manor", targetName = "Fahrad" },
+        level = 50,
+        requires = 45,
+        note = "Rogues: complete The Manor, Ravenholdt, The Horn of Xelthos, and The Eye of Bhossca. At level 45, return to a major city for Fahrad's letter. At Ravenholdt Manor, complete Fool Me Twice by speaking to Fahrad; he then offers The Talisman of Kazdor. Enter Zul'Farrak alone.",
+        turnin = "Fahrad, Ravenholdt Manor, Alterac Mountains",
+        liveXPFallback = 4700,
+        requiredItems = {
+            {217609, "Talisman of Kazdor", 1, "Found inside Zul'Farrak, on your solo run"},
         },
     },
     },
@@ -6052,6 +6071,7 @@ FDJ.DB["Blackmaw Hold"] = {
         objective = "Find the owner of the Feathered Charm Necklace.",
         turnin = "Unele, Ursolan, Azshara (43.4, 17.4)", -- confirmed by M (2.0.37)
         rewardItems = {{279893, "Nama's Cherished Necklace", 3}},
+        repNeeds = { { faction = 576, name = "Timbermaw Hold", standing = 4 } }, -- repneeds (2.0.13, M 19 Nov 2026)
     }},
     bosses = {
         {
@@ -6739,8 +6759,21 @@ FDJ.DB["Shaper's Terrace"] = {
             name = "Vitrix",
             npcID = 272561,
             aliases = {"Vitrix"},
+            -- vitrixloot (2.0.13, M 19 Nov 2026): Vitrix's whole drop list from
+            -- Wowhead Forever (npc=272561), in Wowhead's order (its Mote of Unstable
+            -- Magic left out: M, 19 Nov 2026). The
+            -- Wand, Gauntlets and Eyeball were also seen in Loot Rolls from
+            -- Vitrix (screenshots, 10, 12 and 15 Nov 2026).
             loot = {
-                -- Player-confirmed drop, 10 Nov 2026 (screenshot).
+                {280032, "Bolt's Charged Eyeball", "Trinket", 3, tip = {
+                    "Binds when picked up",
+                    "Unique-Equipped",
+                    "Trinket",
+                    "|cff1eff00Equip: Dealing damage has a chance to deal 60 Nature damage to you or your current target. Deals 3 times as much damage to Dinosaurs.|r",
+                    "Requires Level 58",
+                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 37|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {280026, "Albinofur Grips", "Hands, Mail", 3},
                 {280031, "Sparklance Wand", "Ranged, Wand", 3, tip = {
                     "Binds when picked up",
                     {"Ranged", "Wand"},
@@ -6752,8 +6785,27 @@ FDJ.DB["Shaper's Terrace"] = {
                     "Requires Level 58",
                     "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 42|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 96|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in a Loot Roll from Vitrix (player screenshot, 12 Nov 2026).
-                -- Cinder drops it too (Wowhead Forever: Cinder 5/7).
+                {280029, "Cinderedge Crescent", "One-Hand, Axe", 3, tip = {
+                    "Binds when picked up",
+                    {"One-Hand", "Axe"},
+                    {"69 - 129 Damage", "Speed 2.40"},
+                    "(41.2 damage per second)",
+                    "+10 Stamina",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 0.5%.|r",
+                    "|cff1eff00Equip: +14 Attack Power.|r",
+                    "Requires Level 58",
+                    "Sell Price: 5|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 86|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 36|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {280027, "Crownroar Chestplate", "Chest, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Plate"},
+                    "657 Armor",
+                    "+21 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases healing done by up to 40 and damage done by up to 13 for all magical spells and effects.|r",
+                    "Requires Level 58",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 51|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
                 {280028, "Heartflame Gauntlets", "Hands, Plate", 3, tip = {
                     "Binds when picked up",
                     {"Hands", "Plate"},
@@ -6764,22 +6816,6 @@ FDJ.DB["Shaper's Terrace"] = {
                     "Requires Level 58",
                     "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 5|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 67|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
                 }},
-                -- Seen in a Loot Roll from Vitrix (M's screenshot, 15 Nov 2026);
-                -- Icy Veins WoW Forever: dropped by Bolt and Vitrix.
-                {280032, "Bolt's Charged Eyeball", "Trinket", 3, tip = {
-                    "Binds when picked up",
-                    "Unique-Equipped",
-                    "Trinket",
-                    "|cff1eff00Equip: Dealing damage has a chance to deal 60 Nature damage to you or your current target. Deals 3 times as much damage to Dinosaurs.|r",
-                    "Requires Level 58",
-                    "Sell Price: 2|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 37|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
-                }},
-            },
-            -- Crownroar Chestplate: seen dropping from Snowtalon (12 Nov 2026);
-            -- still listed here as probable until it's known whether Vitrix
-            -- drops it too.
-            probableLoot = {
-                {280027, "Crownroar Chestplate", "Chest, Plate", 3},
             },
         },
         {
@@ -6839,6 +6875,9 @@ FDJ.DB["Shaper's Terrace"] = {
                 -- the mobs; OneForAll's Shaper's Terrace list has the same IDs.
                 {287044, "Predator's Shroud", "Back", 3, "Stegodon Young"},
                 {287045, "Ancient Mattock", "One-Hand, Axe", 3, "Ravasaur Juvenile"},
+                -- stpattern (2.0.13, M 19 Nov 2026): Wowhead Forever item=252938,
+                -- epic, "Dropped by" Azurepetal Trapper and Emerald Flayer (elites).
+                {252938, "Pattern: Blue Dragonscale Helm", "Recipe, Leatherworking", 4, "Azurepetal Trapper / Emerald Flayer"},
             },
             -- trashaudit (2.0.14): in Shaper's Terrace's item ID block (Wowhead
             -- Forever, OneForAll) but no drop recorded yet: "probably drops".
@@ -9168,6 +9207,7 @@ FDJ.DB["Dire Maul: North"] = {
         liveXPFallback = 6600,
     },
     {
+        classOnly = { "WARRIOR", "PALADIN" }, -- (twoclasses: Ziefog on Discord, 19 Nov 2026)
         objective = "Return Nostro's Compendium of Dragon Slaying to the Athenaeum.",
         rewardSummary = "",
         id = 7507,
@@ -9515,6 +9555,8 @@ FDJ.DB["Stratholme: Living"] = {
         level = 60,
         requires = 55,
         note = "Malor's Strongbox in the Scarlet Bastion holds the medallion. Give it to Aurius in the chapel before fighting the Baron.",
+        -- leadsdungeon (2.0.13, M 18 Nov 2026): "leads to: Aurius' Reckoning"
+        leadsToQuestLink = { id = 5125, name = "Aurius' Reckoning", dungeon = "Stratholme: Undead" },
         turnin = "Aurius, Stratholme",
     },
     {
@@ -11786,8 +11828,8 @@ FDJ.ORDER = {
     "Wailing Caverns",
     "Shadowfang Keep",
     "Blackfathom Deeps",
+    "The Stockade", -- (2.0.13, M 19 Nov 2026: before the Excavation Site, its level range is lower)
     "Excavation Site: Wetlands",
-    "The Stockade",
     "City of Dalaran",
     "Gnomeregan",
     "Razorfen Kraul",

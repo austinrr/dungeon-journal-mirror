@@ -118,6 +118,7 @@ FDJ.Locales.zhCN = {
     ["NO_DUNGEONS_MY_LEVEL"] = "没有适合你等级的地下城。",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "仍然显示所有地下城",
     ["SUMMON_QUEST_NOTE"] = "%s需要召唤：在它水池边的锣上使用%s。",
+    ["REP_REQUIRES"] = "需要声望：%s（%s）",
     ["HOW_TO_SUMMON"] = "如何召唤%s",
     ["MAP_WREX_KEYRING"] = "用雷克斯的钥匙串打开，前往第%d层",
     ["OPT_MY_LEVEL_RANGE"] = "只显示我的等级范围",

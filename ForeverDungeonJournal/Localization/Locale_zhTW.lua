@@ -118,6 +118,7 @@ FDJ.Locales.zhTW = {
     ["NO_DUNGEONS_MY_LEVEL"] = "沒有適合你等級的地城。",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "仍然顯示所有地城",
     ["SUMMON_QUEST_NOTE"] = "%s需要召喚：在牠水池邊的鑼上使用%s。",
+    ["REP_REQUIRES"] = "需要聲望：%s（%s）",
     ["HOW_TO_SUMMON"] = "如何召喚%s",
     ["MAP_WREX_KEYRING"] = "用雷克斯的鑰匙串打開，前往第%d層",
     ["OPT_MY_LEVEL_RANGE"] = "只顯示我的等級範圍",

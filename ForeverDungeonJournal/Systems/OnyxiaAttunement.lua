@@ -150,7 +150,21 @@ local function CanStart()
 end
 FDJ.OnyxiaCanStart = CanStart
 
+-- onyxiadone (2.0.13, M 18 Nov 2026: "just auto toggle hide once somebody is
+-- attuned to Onyxia"): once the chain's last quest is handed in (the
+-- Drakefire Amulet), the icon is hidden on that character (Options > Hide
+-- Onyxia Attunement shows ticked). Unticking it there shows it again, on
+-- that character.
+local function Attuned()
+    local quest = FDJ.ONYXIA_QUESTS and FDJ.ONYXIA_QUESTS[Faction()]
+    if not (quest and FDJ.QuestTurnedIn) then return false end
+    local ok, done = pcall(FDJ.QuestTurnedIn, quest)
+    return ok and done and true or false
+end
 function FDJ.IsOnyxiaIconShown()
+    if Attuned() then
+        return ForeverDungeonJournalCharacterDB and ForeverDungeonJournalCharacterDB.showOnyxiaAttuned == true or false
+    end
     local v = ForeverDungeonJournalDB and ForeverDungeonJournalDB.showOnyxiaIcon
     if v == true then return true end
     if v == false then return false end
@@ -169,6 +183,14 @@ end
 
 function FDJ.SetOnyxiaIconShown(on)
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+    if Attuned() then -- onyxiadone: this character's own choice
+        ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
+        ForeverDungeonJournalCharacterDB.showOnyxiaAttuned = on and true or nil
+        if menu then menu:Hide() end
+        if not on and FDJ.StopOnyxiaPulse then FDJ.StopOnyxiaPulse() end
+        Replace()
+        return
+    end
     -- untickbelow (2.0.12): unticking (or Hide) below the chain's level goes
     -- back to the default (nil: the icon comes, with its popup, on the ding)
     -- instead of hiding it for good, so a player who ticked it early just to
@@ -184,6 +206,23 @@ function FDJ.SetOnyxiaIconShown(on)
     if menu then menu:Hide() end
     if not on and FDJ.StopOnyxiaPulse then FDJ.StopOnyxiaPulse() end -- hidden at once
     Replace()
+end
+
+-- onyxiadone: the last quest handed in: the icon goes at once.
+do
+    local watch = CreateFrame("Frame")
+    watch:RegisterEvent("QUEST_TURNED_IN")
+    watch:SetScript("OnEvent", function(_, _, questID)
+        local quest = FDJ.ONYXIA_QUESTS and FDJ.ONYXIA_QUESTS[Faction()]
+        if not quest or tonumber(questID) ~= quest then return end
+        if FDJ.StopOnyxiaPulse then pcall(FDJ.StopOnyxiaPulse) end
+        if C_Timer and C_Timer.After then
+            C_Timer.After(1, function()
+                Replace()
+                if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
+            end)
+        end
+    end)
 end
 
 -- Right-click: a small menu with Hide (the same as the Sleeping Bag's).

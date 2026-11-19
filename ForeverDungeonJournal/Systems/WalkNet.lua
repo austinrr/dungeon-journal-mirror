@@ -104,7 +104,7 @@ do
                 end
             end
         end
-        net = { X = X, Y = Y, A = A, B = B, L = L, C = C, F = F, at = at, buckets = buckets, n = n, m = m }
+        net = { X = X, Y = Y, A = A, B = B, L = L, C = C, F = F, at = at, buckets = buckets, n = n, m = m, mesh = tonumber(data.mesh) }
         nets[c] = net
         FDJ.WALKNET[c] = { nodes = {}, edges = {} } -- the strings are not needed again
         return net
@@ -127,7 +127,10 @@ do
     -- -> { { d = yards to the stretch, e = edge, t = how far along it (0 at a, 1 at b), x, y = the point on it }, ... }
     local function Joins(net, c, side, x, y, reach)
         local zone = ZoneAt(c, x, y)
-        if not zone then return nil end
+        -- nozone (2.0.13, M 18 Nov 2026 on Theramore's pier, the arrow
+        -- pointing straight over the water at the Barrens: "it's not
+        -- recognizing the dock"): out on a pier the game may name no zone
+        -- for the place: the nearest stretches then, whatever their zone
         local X, Y, A, B, F = net.X, net.Y, net.A, net.B, net.F
         local found, seen = {}, {}
         local bx0, bx1 = math.floor((x - reach) / BUCKET), math.floor((x + reach) / BUCKET)
@@ -161,7 +164,7 @@ do
         for i = 1, #found do
             local j = found[i]
             if limit and j.d > limit then break end
-            if ZoneAt(c, j.x, j.y) == zone then
+            if not zone or ZoneAt(c, j.x, j.y) == zone then
                 if not limit then limit = j.d * 1.3 + 40 end
                 out[#out + 1] = j
                 if #out >= 12 then break end
@@ -174,18 +177,20 @@ do
     -- costs (dist), how many yards it is (walk) and its next corner (next;
     -- none: straight to the place from there).
     local fields = {}
-    local function Field(net, c, side, tx, ty)
+    local function Field(net, c, side, tx, ty, plain) -- (openahead: plain = by the yards alone, roads no cheaper)
         for i = 1, #fields do
             local f = fields[i]
-            if f.c == c and f.side == side and Yards(f.tx, f.ty, tx, ty) < 2 then return f end
+            if f.c == c and f.side == side and f.plain == plain and Yards(f.tx, f.ty, tx, ty) < 2 then return f end
         end
         local joins = Joins(net, c, side, tx, ty, NEAR)
         if joins and #joins == 0 then joins = Joins(net, c, side, tx, ty, FAR) end
-        local field = { c = c, side = side, tx = tx, ty = ty, dist = {}, walk = {}, next = {} }
-        if #fields >= 3 then table.remove(fields, 1) end
+        local field = { c = c, side = side, tx = tx, ty = ty, plain = plain, dist = {}, walk = {}, next = {} }
+        if #fields >= 4 then table.remove(fields, 1) end
         fields[#fields + 1] = field
         if not joins or #joins == 0 then field.none = true return field end
         local A, B, L, C, F, at = net.A, net.B, net.L, net.C, net.F, net.at
+        local OFF = OFF
+        if plain then C, OFF = L, 1 end
         local dist, walk, nextOf = field.dist, field.walk, field.next
         -- a binary heap of { cost, node }
         local heapCost, heapNode, size = {}, {}, 0
@@ -295,6 +300,35 @@ do
         local X, Y = net.X, net.Y
         local here, there = ZoneAt(c, px, py), ZoneAt(c, tx, ty)
         local node, field = state.node, state.field
+        -- openahead (2.0.13, M 18 Nov 2026 in Hillsbrad Fields on the way to
+        -- Southshore's gryphon, the arrow leading back to a corner of the
+        -- way it had begun at Dalaran: "it's telling me to go back when
+        -- there's so much space in front of me ... a bit too strict on your
+        -- anchor points"): in the place's own zone, when the shortest walk
+        -- along the net (by the yards alone, roads no cheaper) is hardly
+        -- longer than the straight line, nothing stands between: the
+        -- straight line, also off a way already begun.
+        if here and here == there then
+            local side = Side()
+            local plain = Field(net, c, side, tx, ty, true)
+            local joins = not plain.none and Joins(net, c, side, px, py, NEAR) or nil
+            local short
+            for i = 1, joins and #joins or 0 do
+                local j = joins[i]
+                local e = j.e
+                local f = net.F[e]
+                local a, b = plain.walk[net.A[e]], plain.walk[net.B[e]]
+                if Bit(f, 8) and a then
+                    local w = j.d + j.t * net.L[e] + a
+                    if not short or w < short then short = w end
+                end
+                if Bit(f, 4) and b then
+                    local w = j.d + (1 - j.t) * net.L[e] + b
+                    if not short or w < short then short = w end
+                end
+            end
+            if short and short < straight * 1.2 + 60 then return Off(true) end
+        end
         if node then
             -- A way once begun is kept, corner by corner: the same corner
             -- until it is reached, then the next. Only a player who walks
@@ -304,11 +338,42 @@ do
                 node = nil
             else
                 if d < state.closest then state.closest = d end
+                -- betterway (2.0.13, M 18 Nov 2026 on the road south of
+                -- Nijel's Point, walking on south past the corner the arrow
+                -- had begun with: "even after I get out of the road, it's
+                -- still sending me back when I'm literally supposed to go
+                -- straight forward"): every 15 yards walked, the way from
+                -- where the player stands now: when it is shorter than going
+                -- on to the kept corner, the arrow takes it.
+                if not state.lookX or Yards(px, py, state.lookX, state.lookY) >= 15 then
+                    state.lookX, state.lookY = px, py
+                    local side = Side()
+                    local joins = Joins(net, c, side, px, py, NEAR)
+                    local best, fresh, way
+                    for i = 1, joins and #joins or 0 do
+                        local j = joins[i]
+                        local e = j.e
+                        local f = net.F[e]
+                        local na, nb = net.A[e], net.B[e]
+                        if Bit(f, 8) and field.dist[na] then
+                            local cost = OFF * j.d + j.t * net.C[e] + field.dist[na]
+                            if not best or cost < best then best, fresh, way = cost, na, j.d + j.t * net.L[e] + field.walk[na] end
+                        end
+                        if Bit(f, 4) and field.dist[nb] then
+                            local cost = OFF * j.d + (1 - j.t) * net.C[e] + field.dist[nb]
+                            if not best or cost < best then best, fresh, way = cost, nb, j.d + (1 - j.t) * net.L[e] + field.walk[nb] end
+                        end
+                    end
+                    if fresh and fresh ~= node and field.walk[node] and way + 25 < d + field.walk[node] then
+                        node = fresh
+                        state.closest = Yards(px, py, X[node], Y[node])
+                    end
+                end
             end
         end
         if not node then
-            if not here or not there then return Off() end
-            local sameZone = here == there and not state.on
+            if not there then return Off() end -- (nozone: the player's own zone not named: led by the net all the same)
+            local sameZone = here ~= nil and here == there and not state.on
             local side = Side()
             field = Field(net, c, side, tx, ty)
             if field.none then return Off() end
@@ -343,6 +408,18 @@ do
             -- for a player standing on a road (a stretch the walking maps
             -- price as one): the road is followed.
             local onRoad = pick and pick.d <= ONROAD and L[pick.e] > 0 and C[pick.e] / L[pick.e] <= 0.9
+            -- netsane (2.0.13, M 18 Nov 2026, off his hearthstone in
+            -- Stormwind's Trade District with the arrow to Archbishop
+            -- Benedictus in the Cathedral, 390 yards off: "it keeps telling
+            -- me that this npc is 20k yards away and pointing me to the
+            -- wrong direction"): the net's nearest stretch to a place can be
+            -- one it only reaches the long way round the continent (inside
+            -- a building, on another level). A way many times the straight
+            -- line is no way round a ridge: the straight line it is.
+            if way > straight * 6 + 600 then
+                state.node, state.field = nil, nil
+                return nil
+            end
             if sameZone and not onRoad and way < straight * LONGER + 60 then
                 state.node, state.field = nil, nil
                 return nil
@@ -378,6 +455,21 @@ do
             state.closest = Yards(px, py, X[node], Y[node])
         end
         state.on, state.node, state.field = true, node, field
+        -- openmesh (2.0.13): across open ground (its points, net.mesh on)
+        -- the arrow looks up to three points ahead, so it points along
+        -- the walk and not at each point in turn.
+        local far = node
+        if net.mesh then
+            for _ = 1, 3 do
+                local following = field.next[far]
+                if not (following and far >= net.mesh and following >= net.mesh) then break end
+                far = following
+            end
+        end
+        if far ~= node then
+            state.aim, state.rest = { X[far], Y[far] }, field.walk[far]
+            return state.aim, state.rest
+        end
         state.aim, state.rest = { X[node], Y[node] }, field.walk[node]
         return state.aim, state.rest
     end

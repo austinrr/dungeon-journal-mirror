@@ -618,6 +618,20 @@ local pendingXP = {}   -- { clock, amount }: XP that came before its kill
 -- quest or a summoning item to appear are optional. A dungeon without boss
 -- data completes on its final boss.
 local function AllBossesDown(run, kill)
+    -- finalfirst (2.0.13, M 19 Nov 2026, a Stratholme: Undead run on stream
+    -- shown done before Baron Rivendare died - the Black Guard Swordsmith's
+    -- kill, a boss the page doesn't have, counted for the boss still open:
+    -- "there is no way the tracker can end before the last boss is dead.
+    -- This logic should apply to every single dungeon"): no run is done
+    -- while its final boss is not dead.
+    local final = Bosses(run.dungeon)
+    if final and (final.finalNpc or next(final.finalNames)) then
+        local dead = kill and kill.f and true or false
+        for _, k in ipairs(run.kills or {}) do
+            if k.f and k.b then dead = true break end
+        end
+        if not dead then return false end
+    end
     local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     local needed, known, group = {}, {}, {}
     for _, b in ipairs((d and d.bosses) or {}) do
@@ -858,6 +872,16 @@ local function FixBossKills(run)
         run.completed = true
         run.finalKill = run.finalKill or lastBoss.t
         changed = true
+    end
+    -- latekill (2.1.0, Kostiantyn on Discord 19 Nov 2026: Wailing Caverns
+    -- done, Mutanus in the log, the RPG Mode page still locked): a death the
+    -- tracker turns into a boss kill afterwards (counted as trash first, its
+    -- name known later) is told to RPG Mode too, as a kill counted at once
+    -- is: the final boss opens the page. (Hidden tracker or not.)
+    if changed and not run.test and FDJ.RPGRunLogBoss then
+        for _, k in ipairs(run.kills) do
+            if k.b then pcall(FDJ.RPGRunLogBoss, dungeon, k.b, k.n) end
+        end
     end
     return changed
 end

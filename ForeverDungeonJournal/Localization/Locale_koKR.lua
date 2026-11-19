@@ -118,6 +118,7 @@ FDJ.Locales.koKR = {
     ["NO_DUNGEONS_MY_LEVEL"] = "내 레벨에 맞는 던전이 없습니다.",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "그래도 모든 던전 보기",
     ["SUMMON_QUEST_NOTE"] = "%s: 소환해야 하는 보스입니다. 연못 옆 징에서 %s 아이템을 사용하세요.",
+    ["REP_REQUIRES"] = "평판 필요: %s (%s)",
     ["HOW_TO_SUMMON"] = "%s 소환 방법",
     ["MAP_WREX_KEYRING"] = "렉스의 열쇠고리로 열면 %d층으로 갑니다",
     ["OPT_MY_LEVEL_RANGE"] = "내 레벨 범위만 보기",

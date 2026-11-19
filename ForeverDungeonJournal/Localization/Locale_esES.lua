@@ -115,6 +115,7 @@ FDJ.Locales.esES = {
     ["NO_DUNGEONS_MY_LEVEL"] = "No hay mazmorras para tu nivel.",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "Mostrar todas las mazmorras igualmente",
     ["SUMMON_QUEST_NOTE"] = "%s debe ser invocado: usa %s en el gong junto a su estanque.",
+    ["REP_REQUIRES"] = "Requiere %s con %s",
     ["HOW_TO_SUMMON"] = "Cómo invocar a %s",
     ["MAP_WREX_KEYRING"] = "Abre con el llavero de Wrex para el nivel %d",
     ["OPT_MY_LEVEL_RANGE"] = "Mostrar solo mi rango de niveles",

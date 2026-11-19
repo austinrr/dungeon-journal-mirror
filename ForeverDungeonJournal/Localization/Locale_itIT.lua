@@ -115,6 +115,7 @@ FDJ.Locales.itIT = {
     ["NO_DUNGEONS_MY_LEVEL"] = "Nessuna spedizione per il tuo livello.",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "Mostra comunque tutte le spedizioni",
     ["SUMMON_QUEST_NOTE"] = "%s va evocato: usa %s sul gong vicino alla sua pozza.",
+    ["REP_REQUIRES"] = "Richiede %s con %s",
     ["HOW_TO_SUMMON"] = "Come evocare %s",
     ["MAP_WREX_KEYRING"] = "Apri con il portachiavi di Wrex per il livello %d",
     ["OPT_MY_LEVEL_RANGE"] = "Mostra solo il mio intervallo di livelli",

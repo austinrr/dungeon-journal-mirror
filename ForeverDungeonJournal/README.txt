@@ -1,4 +1,154 @@
-DungeonJournal 2.0.12
+DungeonJournal 2.1.0
+
+CHANGES IN 2.1.0 (the release after 2.0.12)
+- Dire Maul: North: Nostro's Compendium now shows only to warriors and
+  paladins ("WARRIOR / PALADIN ONLY", with both class icons), like the other
+  class quests, and its
+  note, start and hand-in are translated (reported on Discord by Ziefog).
+- Stratholme: Living: The Medallion of Faith is repeatable in WoW Forever. It
+  is now listed twice, like Blackmaw Pouches: the quest itself, ticked once
+  you have handed it in, and a repeatable entry that is always there
+  (reported on Discord by Ziefog).
+- A Brother In Need and the rest of the Alliance Paladin storyline are now
+  translated into all languages.
+- Maraudon and Blackrock Depths: new Alliance Paladin quest, Materials of
+  Significance (from Gregory in Felwood, from level 45), in both dungeons'
+  quest lists, with where to get each of its four parts and its whole chain:
+  the Alliance Paladin storyline from the Strange Orb in Darkshore, through
+  A Brother In Need, Some Good News, The Mysterious Merchant and Elrick,
+  Paladin of the Silver Hand, to In Search of Aeonas. Each dungeon's page
+  marks its own part with a gold edge (reported on Discord by Nurax).
+- Zul'Farrak: new rogue quest, The Talisman of Kazdor (both factions, from
+  level 45), with its chain to unlock it: The Manor, Ravenholdt, The Horn of
+  Xelthos, The Eye of Bhossca, Fahrad's letter at level 45 and Fool Me Twice.
+- RPG Mode: a dungeon's page now opens when the run tracker counts its final
+  boss a moment after the kill. Wailing Caverns stayed locked with Mutanus
+  the Devourer dead in the run's log (reported on Discord by Kostiantyn).
+- Rot and Regret: the stray "Choose: Overgrown Cuffs or Thornplated Cord /
+  11,100 XP" line under the rewards is gone (the rewards and XP were
+  already shown above it).
+- Zul'Farrak map: Theka the Martyr, Hydromancer Velratha and Ruuzlu (beside
+  Chief Ukorz Sandscalp) added. Sergeant Bly is on the pyramid, on the spot
+  Dustwraith had; Dustwraith is off the map for now.
+- Zul'Farrak map: boss pictures that covered each other (Sergeant Bly and
+  Shadowpriest Sezz'ziz, Zerillis and Sandarr Dunereaver) now sit side by
+  side.
+- Dungeon Tracker: a Lua error could stop it from showing at all ("/dj
+  tracker" did nothing, the text stayed in the chat box): a fight that can
+  be one of several bosses (the Ring of Law's) got the + of a group like the
+  altars', and once that + was clicked every redraw broke. Only real groups
+  get the + now.
+- Blackfathom Deeps map (Level 2): faded Lorgus Jett pins on the two other
+  spots he can spawn at, up the northern channel ("Can also spawn here"), as
+  Targorr's in The Stockade.
+- Arrow, Undercity: the way to Doctor Martin Felben (Source of Power), from
+  anywhere in the city, goes down the little passage on the lab's west side
+  (past the two abominations), not through the Royal Quarter's door.
+- Run tracker: a run is never shown as done before the dungeon's final boss
+  is dead, in every dungeon (a Stratholme run was shown done before Baron
+  Rivendare, after a boss the journal doesn't list was killed).
+- Arrow: an NPC's picture could be another NPC's or your own character's
+  (Dorn Plainstalker with an undead face). A picture only counts once it
+  has really loaded, never your own, and seeing the NPC (target, mouseover,
+  nameplate) corrects it. Pictures saved before are learned again once.
+- The Coldbringer's Eye: a red line under the objective says Amnennar
+  doesn't drop the Eye: after killing him, click the Eye on the floor. The Eye's tooltip says
+  the same.
+- Arrow, Dorn Plainstalker (Test of Faith and the rest of the Test of Lore
+  chain, Thousand Needles): it leads up the path from the canyon floor into
+  his cave, not round and up onto the mesa above it.
+- Tracker: the close button (X) and the resize corner only show while the
+  mouse is over the tracker window.
+- Arrow: when the hearthstone is the quicker way, it says only "Hearth to
+  ...", not the flight or boat as well. The flight or boat shows when the
+  hearthstone is on cooldown or no quicker.
+- Woodwyrd (Word of the Woods, Rot and Regret, Passing the Blame): the arrow
+  and map point now go to him in the Forlorn Gardens (69.9, 72.1), not to
+  Mithera's spot.
+- Test of Faith: Show on Map under its objective points at the planks on
+  the mesa to jump from, and the arrow says "Jump off the planks" there.
+- Fragments of the Pylons, Powering the Pylons and Rot and Regret: the
+  Pylon Fragment and Pylon Shard say which crystal they come from (Magram
+  village 68.1, 79.1; Gelkis village 36.1, 85.6), the Mana Sieve says it is
+  on the top floor of the big temple (46.0, 78.1). Click one of them, or the
+  Vial of Earth Song Water, to see where it is on the map.
+- Arrow, the Mana Sieve: it leads to the temple's top floor by its north
+  door, from the low ground west of the temple round to the long stairway
+  north of it and up, or along the upper level from the city and the east.
+- Arrow, inside the temple of Shen'dralas: to a place outside it (Mithera
+  after Meeting the Magister, and any other), it says "Leave the temple" and
+  leads out by its door first, not through the walls.
+- Arrow: an NPC's picture could be the one before it (Mithera's arrow with
+  Magister Kirandis's face); the saved pictures are learned again once.
+- Quest pages: a quest that needs a reputation shows it above Objective:
+  "Requires Neutral with Timbermaw Hold" (green when you have it, red when
+  not) and a reputation bar with your standing. Blackmaw Hold: The Twin
+  Bears, Blackmaw Reclamation and A Lost Memento (Timbermaw Hold, Neutral).
+- Alcaz Prison (Horde): the Kor'kron quests' giver is Nazeer Bloodpike (the
+  journal had "Bloodspike", so clicking to target him missed), and his spot
+  in Brackenwall Village is corrected.
+- Dungeon list: The Stockade now comes before Excavation Site: Wetlands
+  (its level range is lower).
+- Quest chains: a step's "Show Turn In" button only shows once the step is
+  in your quest log and ready to hand in.
+- Rituals of Power (mage, Scarlet Monastery Library): the chain now starts
+  with Journey to the Marsh, from your mage trainer in a capital city. Its
+  objective, start and hand-in lines are translated into all languages.
+  Its start names only the trainers of the faction the quest list shows.
+- Shaper's Terrace trash: Pattern: Blue Dragonscale Helm (from Azurepetal
+  Trappers and Emerald Flayers).
+- Shaper's Terrace, Vitrix: full drop list (Wowhead Forever): Bolt's Charged
+  Eyeball, Albinofur Grips, Sparklance Wand, Cinderedge Crescent, Crownroar
+  Chestplate and Heartflame Gauntlets.
+- Agamaggan's Blood (Razorfen Downs): under the Maraudon warning, a line
+  saying the quest is completed in the area outside Razorfen Downs.
+- City of Dalaran quests: the old "Quest data is recorded in the beta" notes
+  are gone. Opportunistic Education's note now says where it is done: the
+  library, in the Alliance portal area of Wrath of the Lich King's Dalaran.
+- Quests: an objective that is done and has no count ("Western pylon found")
+  now says "(Complete)", in the tracker and on the quest page.
+- Map: a "Turn in here" ? put on the map now goes away by itself when its
+  quest is handed in, also one put there by a click on the arrow.
+- Arrow, open ground (Desolace and the north of Shen'dralas so far): the
+  arrow now knows the open ground between the roads (a point every 150
+  yards, joined where the walking maps say the straight line can be walked),
+  so it leads straight across the plains instead of round by the roads.
+- Arrow, long walks: the arrow no longer holds on to a corner behind you.
+  Every 15 yards it looks at the way from where you stand, and takes it when
+  it is shorter than going back to the corner it had begun with.
+- Arrow, roads: 49 small breaks in the road net are joined (road ends a few
+  yards from the next stretch of road). On the road south of Nijel's Point
+  in Desolace the arrow led back north and round by the west road; it now
+  follows the road south.
+- Quests, both factions shown: the round ! (and links) of a quest of the
+  other faction now open that faction's list, not your own faction's list
+  with the wrong quest unfolded.
+- The Medallion of Faith (Stratholme: Living): its Notes show Leads to:
+  Aurius' Reckoning. Click it to open that quest on Stratholme: Undead.
+- Undercity: the arrow to the bat handler follows the canal ring, the
+  bridges into the Trade Quarter and the ramp up to him, from anywhere in
+  the lower city (the Apothecarium's lab and the elevators too), instead of
+  pointing straight through the walls. To Doctor Martin Felben it goes down
+  the lab's ramp.
+- Arrow: a place inside a building in a city (Archbishop Benedictus in
+  Stormwind's Cathedral) no longer shows as 20,000 yards away with the
+  arrow pointing out of the city.
+- Home page icons (Tier Sets, Onyxia, Sleeping Bag): clicking the one
+  already open keeps its page (a double click no longer jumps back to the
+  dungeon list). The WoW Forever emblem goes back to the dungeons.
+- Arrow: in the place's own zone, when the ground ahead is open, the
+  arrow goes straight to the place instead of back to a corner of the way
+  it was following (Dalaran to Southshore's gryphon master).
+- Menethil Harbor: the arrow to the boats follows the quay and the piers
+  (the boat to Theramore leaves from the southern pier) instead of pointing
+  straight over the water.
+- Arrow: while you are a ghost it leads to your corpse first, then back to
+  where it was leading once you are alive.
+- Arrow: out on a pier (Theramore's) the arrow follows the walked way
+  into town instead of pointing straight over the water.
+- The Onyxia Attunement icon hides by itself once the character is attuned
+  (the chain's last quest handed in). Options > Hide Onyxia Attunement,
+  unticked, shows it again on that character.
 
 CHANGES IN 2.0.12 (the release after 2.0.11)
 - Quest rewards fixed (from Wowhead Forever): The Love Potion adds Boots
@@ -2074,7 +2224,7 @@ CHANGES IN 2.0.23
 
 CHANGES IN 2.0.22
 - Alcaz Prison: every quest now has its quest giver and real quest ID.
-  - Horde: Eitrigg (Grommash Hold) > Nazeer Bloodspike (Brackenwall Village)
+  - Horde: Eitrigg (Grommash Hold) > Nazeer Bloodpike (Brackenwall Village)
     > Sergeant Ulka on Alcaz Island, who gives No Orc Left Behind, A Little
     Payback and Blood Red Bandanas. Thrall Needs to Know shows the whole chain.
   - A Little Payback: given and taken back by Sergeant Ulka; its three

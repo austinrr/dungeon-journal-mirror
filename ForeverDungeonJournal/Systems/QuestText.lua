@@ -124,6 +124,28 @@ local function Learned(questID)
 end
 FDJ.LearnedQuestText = Learned
 
+-- objdone (2.0.13, M 18 Nov 2026, Strange Pylons with the western pylon
+-- found: "my quest log says I found the Western pylon, but our quest log in
+-- the journal does not"): whether a quest's objective i is done: the
+-- game's list, and its quest log's own line when the list does not say so.
+-- A done line without a count ("Western pylon found") gets the game's
+-- "(Complete)" after it (FDJ.ObjectiveDoneText), as in the quest log.
+function FDJ.ObjectiveDone(questID, i, objective)
+    if type(objective) == "table" and objective.finished == true then return true end
+    if not (questID and i and C_QuestLog and C_QuestLog.GetLogIndexForQuestID) then return false end
+    if type(GetQuestLogLeaderBoard) ~= "function" then return false end
+    local okI, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
+    if not okI or type(index) ~= "number" or index <= 0 then return false end
+    local ok, _, _, finished = pcall(GetQuestLogLeaderBoard, i, index)
+    return ok and (finished == true or finished == 1)
+end
+function FDJ.ObjectiveDoneText(text, done)
+    if not done or type(text) ~= "string" or text:find("%d+%s*/%s*%d+") then return text end
+    local word = type(COMPLETE) == "string" and COMPLETE or "Complete"
+    if text:find(word, 1, true) then return text end
+    return text .. " (" .. word .. ")"
+end
+
 local function ProgressLines(questID)
     if not (questID and C_QuestLog and C_QuestLog.GetLogIndexForQuestID and C_QuestLog.GetQuestObjectives) then return nil end
     local okI, index = pcall(C_QuestLog.GetLogIndexForQuestID, questID)
@@ -145,11 +167,12 @@ local function ProgressLines(questID)
         return #translated > 0 and table.concat(translated, "\n") or nil
     end
     local lines = {}
-    for _, o in ipairs(objectives) do
+    for i, o in ipairs(objectives) do
         local text = type(o) == "table" and Str(o.text)
         if text then
-            local finished = o.finished
+            local finished = FDJ.ObjectiveDone(questID, i, o) -- objdone
             text, finished = FDJ.ObjectiveLineOverride(questID, text, finished) -- glowingshard
+            text = FDJ.ObjectiveDoneText(text, finished)
             -- Finished objectives are muted, like the game's quest log.
             lines[#lines + 1] = finished and ("|cff6e5c40" .. text .. "|r") or text
         end
@@ -1020,11 +1043,11 @@ do
                     for _, line in ipairs(own) do lines[#lines + 1] = { CountFirst(line[1]), line[2] } end
                     return lines
                 end
-                for _, objective in ipairs(list) do
+                for i, objective in ipairs(list) do
                     local text = type(objective) == "table" and Plain(objective.text) or nil
                     if type(text) == "string" and text ~= "" then
-                        local named, done = FDJ.ObjectiveLineOverride(id, text, objective.finished == true) -- glowingshard
-                        lines[#lines + 1] = { named ~= text and named or CountFirst(text), done }
+                        local named, done = FDJ.ObjectiveLineOverride(id, text, FDJ.ObjectiveDone(id, i, objective)) -- glowingshard (objdone)
+                        lines[#lines + 1] = { FDJ.ObjectiveDoneText(named ~= text and named or CountFirst(text), done), done }
                     end
                 end
                 if #lines == 0 and #list == 0 and LogIndex(id) then
@@ -2566,6 +2589,22 @@ do
         end)
         grip:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
+        -- hoverbits (2.0.13, M 19 Nov 2026: "if I'm not hovering over the
+        -- tracking window, the X doesn't show, and not even the rescale mark
+        -- in the bottom right. Just have it so they appear on hover"): the
+        -- close button and the corner grip are only seen with the mouse over
+        -- the window (or while the corner is being dragged).
+        close:SetAlpha(0)
+        grip:SetAlpha(0)
+        f:HookScript("OnUpdate", function(self)
+            local over = (self:IsMouseOver(4, -4, -4, 4) or grip.dragging) and true or false
+            if over ~= self.fdjHoverBits then
+                self.fdjHoverBits = over
+                close:SetAlpha(over and 1 or 0)
+                grip:SetAlpha(over and 1 or 0)
+            end
+        end)
+
         f.rows = {}
         f:SetScale(math.max(MIN_SCALE, math.min(MAX_SCALE, tonumber(Slot(index).scale) or 1)))
         f:Hide()
@@ -2864,10 +2903,10 @@ do
                     -- away looked like it broke): what to kill / collect there in
                     -- place of the yards (FDJ.RouteGoalLines).
                     if FDJ.RouteNotReady then FDJ.RouteNotReady(name) end
-                    FDJ.FollowWaypoint(name, stop.spot, stop.title, stop.turnIn, FDJ.RouteGoalLines(plan, stop))
+                    FDJ.FollowWaypoint(name, stop.spot, stop.title, stop.turnIn, FDJ.RouteGoalLines(plan, stop), type(stop.id) == "string" and stop.id:find("^goto:") ~= nil, stop.skipQuest)
                 elseif stop then
                     if not stop.entrance and FDJ.RouteNotReady then FDJ.RouteNotReady(name) end
-                    FDJ.FollowWaypoint(name, stop.spot, stop.title, stop.turnIn)
+                    FDJ.FollowWaypoint(name, stop.spot, stop.title, stop.turnIn, nil, type(stop.id) == "string" and stop.id:find("^goto:") ~= nil, stop.skipQuest) -- (skipnow)
                 else
                     if FDJ.RouteNotReady then FDJ.RouteNotReady(name) end
                     FDJ.FollowWaypoint(name, nil)
@@ -2894,6 +2933,7 @@ do
     function FDJ.RouteGoalHere(stop)
         if type(stop) ~= "table" or type(stop.id) ~= "string" or not stop.id:find("^goto:") then return false end
         if stop.exact then return false end -- drownedally (2.0.9): one thing at one place (a tablet), not an area
+        if type(stop.spot) == "table" and stop.spot.exact then return false end -- (plankjump: a spot of one place, the arrow pointing at it)
         local spot = stop.spot
         if type(spot) ~= "table" or spot.targetName or not spot.mapID then return false end
         FDJ.routeGoalsHere = FDJ.routeGoalsHere or {}
@@ -2908,10 +2948,14 @@ do
         local sub = type(GetSubZoneText) == "function" and GetSubZoneText() or ""
         if type(sub) ~= "string" then sub = "" end
         local locale = type(GetLocale) == "function" and GetLocale() or ""
-        if yards and yards <= 100 and sub ~= "" then areas[key] = { sub = sub, locale = locale } end
+        -- goalnear (2.0.13): a small place (spot.goalNear yards: the Lordamere
+        -- Internment Camp, 40): the arrow leads right into it
+        local reach = tonumber(spot.goalNear)
+        if yards and yards <= (reach or 100) and sub ~= "" then areas[key] = { sub = sub, locale = locale } end
         local learned = areas[key]
         local inArea = sub ~= "" and type(learned) == "table" and learned.sub == sub and learned.locale == locale
-        if (yards and yards <= 250) or inArea or (here[stop.id] and yards and yards <= 400) then
+        if reach then inArea = inArea and yards ~= nil and yards <= reach + 150 end
+        if (yards and yards <= (reach or 250)) or inArea or (here[stop.id] and yards and yards <= (reach and reach + 110 or 400)) then
             here[stop.id] = true
             return true
         end
@@ -3438,3 +3482,137 @@ do
         end
     end
 end
+
+-- repneeds (2.0.13, M 19 Nov 2026, The Twin Bears: "we need a neutral
+-- reputation with the Timbermaw Hold ... display it a bit better instead of
+-- having it hidden in the notes ... the official reputation bar from your
+-- character ... at the top above objective. And it says requires neutral.
+-- And then it shows what you have"): a quest's reputation needs
+-- (quest.repNeeds = { { faction = factionID, name = "...", standing = 1-8 } }):
+-- per faction a line "Requires <standing> with <faction>" (green when you
+-- have it, red when not) and a bar like the game's reputation bar with your
+-- standing and its progress. Placed above Objective; returns the new cursorY.
+;(function()
+    local STANDING_EN = { "Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted" }
+    local COLORS = {
+        { 0.80, 0.30, 0.22 }, { 0.80, 0.30, 0.22 }, { 0.75, 0.27, 0.00 }, { 0.90, 0.70, 0.00 },
+        { 0.00, 0.60, 0.10 }, { 0.00, 0.60, 0.10 }, { 0.00, 0.60, 0.10 }, { 0.00, 0.60, 0.10 },
+    }
+    local function Secret(v) return type(issecretvalue) == "function" and issecretvalue(v) end
+    local function Label(n)
+        local sex = 2
+        if type(UnitSex) == "function" then local ok, v = pcall(UnitSex, "player") if ok and tonumber(v) then sex = v end end
+        if type(GetText) == "function" then
+            local ok, text = pcall(GetText, "FACTION_STANDING_LABEL" .. n, sex)
+            if ok and type(text) == "string" and text ~= "" and not text:find("^FACTION_STANDING") then return text end
+        end
+        local g = _G["FACTION_STANDING_LABEL" .. n]
+        return (type(g) == "string" and g ~= "") and g or STANDING_EN[n] or "?"
+    end
+    local function Color(n)
+        local c = type(FACTION_BAR_COLORS) == "table" and FACTION_BAR_COLORS[n]
+        if type(c) == "table" and tonumber(c.r) then return c.r, c.g, c.b end
+        c = COLORS[n] or COLORS[4]
+        return c[1], c[2], c[3]
+    end
+    -- The player's standing with a faction: name, standing (1-8), value in
+    -- the standing, its size; nil when the game does not say.
+    local function Standing(factionID)
+        if C_Reputation and type(C_Reputation.GetFactionDataByID) == "function" then
+            local ok, d = pcall(C_Reputation.GetFactionDataByID, factionID)
+            if ok and type(d) == "table" and tonumber(d.reaction) and not Secret(d.reaction) then
+                local low, high, cur = tonumber(d.currentReactionThreshold) or 0, tonumber(d.nextReactionThreshold) or 0, tonumber(d.currentStanding) or 0
+                return d.name, d.reaction, cur - low, high - low
+            end
+        end
+        if type(GetFactionInfoByID) == "function" then
+            local ok, name, _, standing, low, high, value = pcall(GetFactionInfoByID, factionID)
+            if ok and tonumber(standing) and not Secret(standing) then
+                return name, standing, (tonumber(value) or 0) - (tonumber(low) or 0), (tonumber(high) or 0) - (tonumber(low) or 0)
+            end
+        end
+        return nil
+    end
+    local function Row(journal, i)
+        journal.fdjRepRows = journal.fdjRepRows or {}
+        local row = journal.fdjRepRows[i]
+        if row then return row end
+        local parent = journal.questDetailContent
+        row = {}
+        row.text = parent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+        row.text:SetJustifyH("LEFT")
+        local bar = CreateFrame("StatusBar", nil, parent)
+        bar:SetSize(230, 16)
+        bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+        bar:SetMinMaxValues(0, 1)
+        bar.bg = bar:CreateTexture(nil, "BACKGROUND")
+        bar.bg:SetAllPoints()
+        bar.bg:SetColorTexture(0, 0, 0, 0.55)
+        -- a thin dark edge round it
+        for _, side in ipairs({ { "TOPLEFT", "TOPRIGHT", 0, 1 }, { "BOTTOMLEFT", "BOTTOMRIGHT", 0, -1 } }) do
+            local line = bar:CreateTexture(nil, "BORDER")
+            line:SetColorTexture(0.12, 0.08, 0.03, 1)
+            line:SetPoint(side[1], bar, side[1], -1, side[4])
+            line:SetPoint(side[2], bar, side[2], 1, side[4])
+            line:SetHeight(1)
+        end
+        for _, side in ipairs({ { "TOPLEFT", "BOTTOMLEFT", -1 }, { "TOPRIGHT", "BOTTOMRIGHT", 1 } }) do
+            local line = bar:CreateTexture(nil, "BORDER")
+            line:SetColorTexture(0.12, 0.08, 0.03, 1)
+            line:SetPoint(side[1], bar, side[1], side[3], 1)
+            line:SetPoint(side[2], bar, side[2], side[3], -1)
+            line:SetWidth(1)
+        end
+        bar.label = bar:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+        bar.label:SetPoint("CENTER", bar, "CENTER", 0, 0)
+        row.bar = bar
+        journal.fdjRepRows[i] = row
+        return row
+    end
+    function FDJ.PlaceRepNeeds(quest, cursorY)
+        local journal = _G.ForeverDungeonJournalFrame
+        if not (journal and journal.questDetailContent) then return cursorY end
+        local needs = type(quest) == "table" and type(quest.repNeeds) == "table" and quest.repNeeds or {}
+        local shown = 0
+        for i, need in ipairs(needs) do
+            local factionID, want = tonumber(need.faction), tonumber(need.standing) or 4
+            if factionID then
+                shown = i
+                local row = Row(journal, i)
+                local name, have, value, size = Standing(factionID)
+                if type(name) ~= "string" or name == "" or Secret(name) then name = need.name or "?" end
+                local met = have and have >= want
+                row.text:ClearAllPoints()
+                row.text:SetPoint("TOPLEFT", journal.questDetailContent, "TOPLEFT", 0, -cursorY)
+                row.text:SetText(FDJ.L("REP_REQUIRES", Label(want), name))
+                if met then row.text:SetTextColor(0.05, 0.42, 0.05) else row.text:SetTextColor(0.62, 0.10, 0.05) end
+                row.text:Show()
+                cursorY = cursorY + (row.text:GetStringHeight() or 14) + 4
+                local bar = row.bar
+                bar:ClearAllPoints()
+                bar:SetPoint("TOPLEFT", journal.questDetailContent, "TOPLEFT", 1, -cursorY)
+                if have then
+                    bar:SetStatusBarColor(Color(have))
+                    if size and size > 0 then
+                        bar:SetValue(math.max(0, math.min(1, value / size)))
+                        bar.label:SetText(Label(have) .. "  " .. math.floor(value) .. " / " .. math.floor(size))
+                    else
+                        bar:SetValue(1)
+                        bar.label:SetText(Label(have))
+                    end
+                else
+                    bar:SetStatusBarColor(0.4, 0.4, 0.4)
+                    bar:SetValue(0)
+                    bar.label:SetText(type(UNKNOWN) == "string" and UNKNOWN or "Unknown")
+                end
+                bar:Show()
+                cursorY = cursorY + 16 + 10
+            end
+        end
+        for i, row in ipairs(journal.fdjRepRows or {}) do
+            if i > shown then row.text:Hide() row.bar:Hide() end
+        end
+        return cursorY
+    end
+end)()
+

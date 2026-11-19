@@ -115,6 +115,7 @@ FDJ.Locales.frFR = {
     ["NO_DUNGEONS_MY_LEVEL"] = "Aucun donjon pour votre niveau.",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "Afficher quand même tous les donjons",
     ["SUMMON_QUEST_NOTE"] = "%s doit être invoqué : utilisez %s sur le gong près de son bassin.",
+    ["REP_REQUIRES"] = "Requiert %s auprès de %s",
     ["HOW_TO_SUMMON"] = "Comment invoquer %s",
     ["MAP_WREX_KEYRING"] = "Ouvrez avec le trousseau de Wrex pour le niveau %d",
     ["OPT_MY_LEVEL_RANGE"] = "Afficher seulement ma tranche de niveaux",

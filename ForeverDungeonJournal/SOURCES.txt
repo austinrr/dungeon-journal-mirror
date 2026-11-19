@@ -649,7 +649,7 @@ Baron Aquanis quest (6922), Strange Water Globe item-start, rewards, and practic
 2026-11-11 Alcaz Prison quests (2.0.22)
 - Quest IDs, series, objectives, reward items, reputation and comments: Wowhead Forever quests 95483, 96369, 95454, 95309, 95283, 95284, 95285, 96332, 96334, 95262, 95263, 96335, 96337, 96376, 96377, 96379, 96381, 95194, 95196, 95198, 96772 (https://www.wowhead.com/forever/quest=<id>); NPC spots: Wowhead Forever NPCs 260146 / 260271 (Sully McCleary), 260383 (Sergeant Ulka), 332 (Mathias Shaw)
 - XP: https://forever-tool.com/en/quests/zone/16620/ , https://forever-tool.com/en/quests/zone/15/ , https://foreverchanges.pro/quests/alcaz-prison
-- Horde givers and order (Eitrigg, Nazeer Bloodspike, Sergeant Ulka): Ke on the Discord (report-new-loot-quests, 'Alcaz Prison Quests Horde'); The Dragon's Journal giver and turn-in: Ed on the Discord
+- Horde givers and order (Eitrigg, Nazeer Bloodpike, Sergeant Ulka): Ke on the Discord (report-new-loot-quests, 'Alcaz Prison Quests Horde'); The Dragon's Journal giver and turn-in: Ed on the Discord
 - Mason Connery's text and treasure: https://foreverchanges.pro/quest/96337/more-valuable-than-gold , https://foreverchanges.pro/quest/96335/the-man-in-the-iron-chains
 - Krol'dok Horde chain: Show Them How It's Done needed first, Snax on the Discord ('Riverglades Dungeon Chain')
 
@@ -1508,4 +1508,99 @@ Route: The Drowned City, Alliance (2.0.9)
 - Undercity's Royal Quarter way (2.0.12, ucroyal): M in game (18 Nov 2026, three screenshots in the Apothecarium at 54.8, 65.9 and 53.1, 64.0, An Unholy Alliance to Varimathras, the arrow pointing straight at him): "arrow needs to understand that to reach this npc i need to enter this door". The corners of the way (the stairs and door with the Royal Dreadguards, the hall bending west, the dais steps on the throne room's west side): shortest walks to Varimathras (NPC 2425, world 1288.5, 333.5, -60) from the Apothecarium, the Rogues' Quarter, the War Quarter and the elevator, found with Polestar's walking router run offline (Path.FindSync) on its walking maps of the Eastern Kingdoms with their floors (Polestar_Nav / Polestar_Nav_EK, https://github.com/fitzforge/polestar, GPL-3.0-or-later; grown from Shortest Path Forever's format by Cillian Berragan, https://github.com/cjber/shortest-path-forever), 2026-11-18; only the corner points are in the addon. Spawn points of Varimathras, Lady Sylvanas Windrunner, the Royal Dreadguards along the hall and Master Apothecary Faranell (in the lab under the hall, 28 yards lower): Polestar forever-db spawn table (data/spawn.jsonl); Undercity's map bounds: its ui_map table.
 - Thunder Bluff's open rises (2.0.12, tbopen): M in game (18 Nov 2026, four screenshots on the main rise at 39.9, 57.0 and 42.5, 59.7, "Fly to Ratchet", the arrow sending him round the road: "it does not understand that I can just walk straight to the big tower"). The rises' outlines: read off M's map screenshot.
 - Scarlet Monastery's Horde Routes (2.0.12, smhorde): M (18 Nov 2026): "build horde route for scarlet monastery all wings". The quests' givers and hand-ins, the order of the chains (Going, Going, Guano! 1109 before Hearts of Zeal 1113; Test of Faith 1149 > Test of Endurance 1150 > Test of Strength 1151 > Test of Lore 1152, 1154, 6627, 1159, 1160, 6628 > Final Passage 1394) and the objectives (Into The Scarlet Monastery 1048 and In the Name of the Light 1053: kill 3977 Whitemane, 3976 Mograine, 3975 Herod, 3974 Loksey, in that order; Test of Lore 1160: item 5861 Beginnings of the Undead Threat): Forever client tables via Polestar forever-db (https://github.com/fitzforge/polestar, forever-db/data/quest.jsonl, quest_prereq.jsonl, quest_objective.jsonl, quest_start.jsonl, quest_end.jsonl). Where Grenka Bloodscreech (NPC 4490, Thousand Needles 26.6, 55.6) and Rok'Alim the Pounder (NPC 4499, 17.1, 38.1 and 10.6, 23.1) stand: its spawn table. The walked ways from Undercity's ruins to the foot of the Monastery's stairs and to the Graveyard's door: Polestar's walking router run offline on its Eastern Kingdoms walking maps (Polestar_Nav / Polestar_Nav_EK, GPL-3.0-or-later; grown from Shortest Path Forever's format by Cillian Berragan, https://github.com/cjber/shortest-path-forever), 2026-11-18; only the corner points are in the addon. The Graveyard's and the Library's doors: measured in the game (Systems/ScarletWing.lua).
+- Undercity, the Apothecarium's lab and the way to the bat handler (2.0.13, uclab): M (18 Nov 2026, at Doctor Martin Felben with "Fly to The Sepulcher"): "it doesn't understand that I have to go back up here through this passage". The corners: the shortest walk from Doctor Martin Felben (NPC 11044) to Michael Garrett (NPC 4551) on the Eastern Kingdoms walking maps (Polestar_Nav_EK, the Forever client's navigation grid with its floors; Polestar's router run offline, https://github.com/fitzforge/polestar, GPL-3.0-or-later), 2026-11-18; the two NPCs' places: Polestar forever-db spawns.
+- Undercity, the lower city's ways to the bat handler (2.0.13, ucring): M (18 Nov 2026, on the canal ring at 52.1, 51.3 with "Fly to The Sepulcher"): "it's not following the circle of Undercity ... it's sending me back". The shortest walks to Michael Garrett (NPC 4551) from 245 places of the lower city, every 24 yards, on the Eastern Kingdoms walking maps (Polestar_Nav_EK, the Forever client's navigation grid; Polestar's router run offline, https://github.com/fitzforge/polestar, GPL-3.0-or-later), 2026-11-18, cut to their corners and merged; only the corners are in the addon.
+- The PvP page's battlegrounds (2.0.13, pvptab/pvpicon): M (18 Nov 2026): "all the battlegrounds with their cards ... the loading screens without the WoW icon, and then the new battleground"; then "add PvP as an extra button ... appears once the player reaches level 10 ... Warsong Gulch first ... level 20 Arathi Basin ... level 51 Alterac Valley" (Darkspear Islands at 30, its own opening level). The battlegrounds, level ranges and team sizes (Warsong Gulch 10-60 10v10, Arathi Basin 20-60 15v15, Darkspear Islands 30-60 15v15, Alterac Valley 51-60 40v40): Icy Veins (https://www.icy-veins.com/wow-forever/pvp-overview), dving.net (https://dving.net/guides/wow-forever-pvp-guide2), ExitLag (https://www.exitlag.com/blog/wow-forever-pvp/); Darkspear Islands 15v15 30-60 also Blizzard's own announcement (https://worldofwarcraft.blizzard.com/news/24307308, per gamertagmythras.com: Blizzard published a range only for Darkspear Islands). Loading screens' file IDs (131883 LoadScreenWarsongGulch, 131820 LoadScreenArathiBasin, 131861 LoadScreenPvPBattleground, 8423398 loadscreen_darkspearislands): the wowdev community listfile (https://github.com/wowdev/wow-listfile), 18 Nov 2026.
+- City of Dalaran's Horde Route (2.0.13, dalhorde): M (18 Nov 2026): "make me the dungeon route arrow for Dalaran Horde". The chain and its givers (Prison Break In 544, Key to the City 93680, Dalaran Patrols 545 after 544, Blood in the Streets 92434 to the Image of Archmage Modera, Heart of Disruption 96984 back to Magus Wordeen Voidglare) and where the four traitors (NPC 2411 Ricter, 2412 Alina, 2413 Dermot, 2414 Kegan Darkmar), the Dalaran Summoners (2358) and Elemental Slaves (2359), Voidglare (2410), Melisara (2278), Doctor Martin Felben (11044) and Modera (269127) stand: Forever client tables via Polestar forever-db (https://github.com/fitzforge/polestar, quest_start/quest_end/quest_prereq/quest_objective/item_source/spawn). Key to the City's Warden's Footlocker at about 16, 88 on the Alterac Mountains map: leprestore.com (https://leprestore.com/guides/world-of-warcraft-forever/wow-forever-dalaran-sewer-key-alliance-horde-guide/, from beta reports); Prison Break In and Key to the City both at the Lordamere Internment Camp, Modera at the sewer gate: conquestcapped.com (https://conquestcapped.com/guides/wow-forever/wow-forever-dalaran-attunement/). The walked ways: Polestar's walking router run offline on its Eastern Kingdoms walking maps (Polestar_Nav / Polestar_Nav_EK, GPL-3.0-or-later; grown from Shortest Path Forever's format by Cillian Berragan, https://github.com/cjber/shortest-path-forever), 2026-11-18; only the corner points are in the addon.
 - The 2.0.12 quest audit (2.0.12, audit212): M (18 Nov 2026): "I have a new quest report. We gotta make sure we get everything fixed" (DungeonJournal_2.0.12_Quest_Rewards_XP_and_Missing_Quests_Audit.pdf). XP for 83 quests: Wowhead Forever's quest data (the base XP and Forever's dungeon-quest multiplier on each quest page, https://www.wowhead.com/forever/quest=<id>), checked against the Icy Veins values in the audit (all 83 agree); Mayara Brightwing and Vivian Lagrave: Wowhead's 660 (Polestar forever-db agrees). Ever After (82062): Wowhead Forever quest page (level, required level, XP, money, rewards, givers, not shareable); Ever After's route and its door: endgametools.com (https://endgametools.com/en/wow-forever/news/wow-forever-blackrock-depths-secret) and the 17 Nov hotfixes (https://worldofwarcraft.blizzard.com/en-us/news/24315281); its rewards' item IDs: Wowhead Forever tooltips (221316, 216619, 221315). The Heart of the Void (78916, 78917): left out, Wowhead Forever lists it at level 25 with 0 XP.
+
+openmesh (2.0.13): the open-ground points and their joins in Data/WalkNet.lua
+(Kalimdor, Desolace and the north of Shen'dralas): worked out on Polestar's
+walking maps (Polestar_Nav_Kalimdor, Path.FindManySync), a point every 150
+yards, joined to the 16 points round it and to the net's corners within 120
+yards where the walk is at most 1.2 times the straight line.
+
+chainstops (2.0.13): Fragments of the Pylons' two crystals (Desolace 68.1, 79.1
+and 36.1, 85.6), Powering the Pylons' Mana Sieve (Shen'dralas 46.0, 78.1) and
+its pylons (43.5, 34.2 and 73.0, 23.3):
+https://warcraftmaps.com/quest/96010/fragments-of-the-pylons
+https://warcraftmaps.com/quest/96018/powering-the-pylons
+Objectives' names and order: https://db.icy-veins.com/wow-forever/quests/96018
+https://foreverchanges.pro/quest/96018/powering-the-pylons
+vitrixloot (2.0.13): Vitrix's drops: https://www.wowhead.com/forever/npc=272561/vitrix
+Also lists Vitrix's Eyeball, Crownroar Chestplate and Albinofur Grips:
+https://timesaver.gg/tools/wow-forever/dungeon-loot/the-shapers-terrace
+stpattern (2.0.13): Pattern: Blue Dragonscale Helm, dropped by Azurepetal Trapper and
+Emerald Flayer: https://www.wowhead.com/forever/item=252938/pattern-blue-dragonscale-helm
+marshstep (2.0.13): Journey to the Marsh, step 1 of Rituals of Power (reported by
+thanu5987 on Discord): https://www.wowhead.com/forever/quest=1947/journey-to-the-marsh
+nazeername (2.0.13): Nazeer Bloodpike, reported by KILLDARK on Discord (game screenshots);
+https://warcraft.wiki.gg/wiki/Nazeer_Bloodpike ; spot: Polestar forever-db, spawn of NPC 4791.
+labwest (2.0.13): the passage from Undercity's canal ring down to the lab's west side:
+Polestar's router on the Forever client's walking maps (Polestar_Nav_EK), to Doctor
+Martin Felben's spawn (forever-db, z -80.3).
+labjoin (2.0.13): M in game (19 Nov 2026, screenshots at 52.6, 63.7, 47.2, 59.6 and
+48.6, 56.5): the passage after the two abominations is the way to the lab, "not the big
+entrance with the royal guards". The passage's top joined to the ring's way (49.5, 56.8).
+woodwyrdspot (2.0.13): Woodwyrd at 69.9, 72.1 in Shen'dralas: M's in-game map (19 Nov 2026),
+the game's ? for Word of the Woods under his cursor. Polestar forever-db has the NPC
+(254674) but no spawn for him.
+dorncave (2.0.13): Dorn Plainstalker (NPC 2986) spawn -5183.5, -2807, z -6.9 (Polestar forever-db
+spawn table; Thousand Needles map bounds from its ui_map table: 53.95, 41.48). The way into his cave:
+Polestar's walking router (Path.FindSync, Polestar_Nav / Polestar_Nav_Kalimdor,
+https://github.com/fitzforge/polestar, GPL-3.0-or-later) run offline from the canyon floor (54.6,
+45.3), Freewind Post's side and the east, 2026-11-19; only the corner points are in the addon. M in
+game (19 Nov 2026, screenshots at 54.6, 42.6 on the mesa and 54.6, 45.3 below the path).
+plankjump (2.0.13): Test of Faith's planks due south of the rune circle at 26.4, 31.4 in Thousand
+Needles (the arrow's spot 26.4, 32.4, south of the circle: M's screenshot with the arrow at 30.6 pointing behind him): M in game (19 Nov 2026, screenshots at 26.4,
+31.7 and 26.4, 31.4 facing them, the planks dead ahead). The quest
+text ("leap from the planks overlooking Thousand Needles"): classicdb, https://classicdb.ch/?quest=1149 ;
+Dorn Plainstalker at the Weathered Nook (54.0, 41.5): games.gg's WoW Forever Thousand Needles guide,
+https://games.gg/world-of-warcraft/guides/wow-forever-thousand-needles-leveling-guide/
+grenkaway (2.0.13): Grenka Bloodscreech (NPC 4490) spawns -5603.5, -1603.5 / -5591.5, -1612.5 /
+-5591.5, -1577.5 (Polestar forever-db spawn table: 26.6, 55.8 / 26.8, 55.4 / 26.0, 55.4 in Thousand
+Needles). The path up to her cave: Polestar's walking router (Polestar_Nav_Kalimdor, GPL-3.0-or-later)
+run offline from 28.8, 49.3, 30, 45 and 35, 50, 2026-11-19. M in game (19 Nov 2026, screenshots at
+28.8, 49.3).
+patrolline (2.0.13): Rok'Alim the Pounder's (NPC 4499) path on the west side of Thousand Needles:
+Wowhead's WoW Forever NPC page, 20 places from 10.3, 22.9 to 25.9, 41.6,
+https://www.wowhead.com/forever/npc=4499/rokalim-the-pounder (read in the browser pane, 19 Nov 2026);
+Wowhead Classic's page shows him over the same west side (145 places, 7.8, 13 to 33.6, 43),
+https://www.wowhead.com/classic/npc=4499/rokalim-the-pounder ; Polestar forever-db spawn table: 17.1,
+38.1 and 10.6, 23.1. M in game (19 Nov 2026, screenshot of the Forever page's map).
+zfpins (2.0.13): Zul'Farrak map, Theka the Martyr at 52.8, 26.9 and Hydromancer Velratha at
+28.9, 36.6 on the map art, Sergeant Bly on Dustwraith's old spot (31.0, 16.0), Ruuzlu beside
+Chief Ukorz Sandscalp: M in game (19 Nov 2026, his screenshot of the map with the spots marked).
+roguetalisman (2.1.0): The Talisman of Kazdor and its chain, from M's notes (19 Nov 2026) and
+Wowhead Forever: https://www.wowhead.com/forever/quest=80411/the-talisman-of-kazdor (level 50,
+requires 45, rogue, both sides, Fahrad, not sharable, 4,700 XP, 1g 4s 12c, item 217609),
+https://www.wowhead.com/forever/quest=80526/fool-me-twice (level 50, requires 45, 470 XP),
+https://www.wowhead.com/forever/quest=6681/the-manor-ravenholdt (level 24, requires 24, 1,950 XP;
+pages read in the browser pane, 19 Nov 2026). Polestar forever-db: 6681 started by item 17126
+(Elegant Letter), ended by Fahrad (NPC 6707), his spawn at 84.5, 80.3 in Alterac Mountains.
+letterfix (2.1.0): The Manor, Ravenholdt's letter on the Alliance side from Mathias Shaw in
+Stormwind only, and Detect Traps for the trapped chest in the cave passage: the comments on
+https://www.wowhead.com/forever/quest=6681/the-manor-ravenholdt (17 to 19 Nov 2026).
+materials (2.1.0): Materials of Significance, Wowhead Forever (read in the browser pane, 19 Nov 2026):
+https://www.wowhead.com/forever/quest=81790/materials-of-significance (level 53, requires 45,
+Alliance Paladin, Gregory, 12,750 XP, 1g 67s 52c, items 220166-220170),
+https://www.wowhead.com/forever/quest=81766/the-bloody-missive (5,900 XP, 1g 4s 12c),
+https://www.wowhead.com/forever/quest=96476/in-search-of-aeonas (2,650 XP; the horse: comment by
+Archknightz), https://www.wowhead.com/forever/quest=81944/a-newly-discovered-purpose (Symbol of
+Faith, 6,550 XP, Brave Stonetorch 67.4, 14.8), https://www.wowhead.com/forever/npc=221636/gregory
+(44.6, 52.0), https://www.wowhead.com/forever/item=220166/fiery-infernal-core (Infernal Bodyguard,
+Infernal Sentry), https://www.wowhead.com/forever/item=220168/triple-brewed-molten-lager (Plugger
+Spazzring). Nurax on Discord (19 Nov 2026, quest log screenshot: 12,750 XP, 1g 67s 52c). The grave
+dust's spot and the chain: M's notes. The infernals' spot: Polestar forever-db spawns (NPCs 7135, 7136).
+fullchain (2.1.0): the Alliance Paladin storyline between Aeonas the Vindicated and The Bloody
+Missive, Wowhead Forever (read in the browser pane, 19 Nov 2026): Katherine the Pure's Starts tab,
+https://www.wowhead.com/forever/npc=5492/katherine-the-pure ; the series Some Good News > The
+Mysterious Merchant > Elrick, Paladin of the Silver Hand,
+https://www.wowhead.com/forever/quest=81762/some-good-news (2,350 XP),
+https://www.wowhead.com/forever/quest=81764/the-mysterious-merchant (4,700 XP, 82s 25c, Elrick at
+66.4, 45.4), https://www.wowhead.com/forever/quest=81765/elrick-paladin-of-the-silver-hand (5,900 XP,
+1g 3s 25c, Innkeeper Janene 66.6, 45.2; the group warning: Ennoris's comment, 18 Nov 2026),
+https://www.wowhead.com/forever/quest=79970/aeonas-the-vindicated (series ends there).
+repeatonce (2.1.0): The Medallion of Faith repeatable in WoW Forever: Ziefog on Discord (19 Nov 2026,
+screenshot of the quest list).
+twoclasses (2.1.0): Nostro's Compendium for warriors and paladins: Ziefog on Discord (19 Nov 2026).

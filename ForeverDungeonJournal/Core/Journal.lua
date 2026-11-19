@@ -462,15 +462,24 @@ FDJ.DUNGEON_MAPS = {
         -- This client has no Zul'Farrak map, so the game's map art is bundled.
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ZulFarrakMap", texBottom = 683 / 1024 } },
         entrance = { floor = 1, x = 0.552, y = 0.880, angle = 0 },
+        -- zfpins (2.0.13, M 19 Nov 2026, marked on his map): Theka the Martyr
+        -- and Hydromancer Velratha added, Sergeant Bly on the spot Dustwraith
+        -- had (Dustwraith off the map for now), Ruuzlu beside Chief Ukorz
+        -- Sandscalp. pinspread: pins that would cover each other are moved
+        -- apart to sit side by side (FDJ.SpreadMapPins).
+        spreadPins = true,
         bosses = {
             { name = "Antu'sul",              x = 0.646, y = 0.276 },
             { name = "Witch Doctor Zum'rah",  x = 0.442, y = 0.176 },
             { name = "Shadowpriest Sezz'ziz", x = 0.296, y = 0.174 },
+            { name = "Sergeant Bly",          x = 0.310, y = 0.160 },
+            { name = "Theka the Martyr",      x = 0.528, y = 0.269 },
+            { name = "Hydromancer Velratha",  x = 0.289, y = 0.366 },
             { name = "Gahz'rilla",            x = 0.312, y = 0.414 },
             { name = "Zerillis",              x = 0.548, y = 0.401 },
             { name = "Sandarr Dunereaver",    x = 0.524, y = 0.428 },
-            { name = "Dustwraith",            x = 0.310, y = 0.160 },
             { name = "Chief Ukorz Sandscalp", x = 0.422, y = 0.329 },
+            { name = "Ruuzlu",                x = 0.423, y = 0.329 },
         },
     },
     ["Scarlet Monastery: Graveyard"] = {
@@ -642,6 +651,10 @@ FDJ.DUNGEON_MAPS = {
             { name = "Lady Sarevess",        floor = 1, x = 0.110, y = 0.385 },
             { name = "Gelihast",             floor = 1, x = 0.540, y = 0.575 },
             { name = "Lorgus Jett",          floor = 2, x = 0.325, y = 0.700 },
+            -- altspawn (2.0.13, M 19 Nov 2026, the two spots he marked on the
+            -- Level 2 map, up the northern channel): faded, "Can also spawn here"
+            { name = "Lorgus Jett",          floor = 2, x = 0.385, y = 0.194, alt = true },
+            { name = "Lorgus Jett",          floor = 2, x = 0.442, y = 0.231, alt = true },
             { name = "Baron Aquanis",        floor = 2, x = 0.420, y = 0.720, npcID = 12876 }, -- not a journal boss: portrait from its NPC ID
             { name = "Twilight Lord Kelris", floor = 2, x = 0.525, y = 0.810 },
             { name = "Aku'mai",              floor = 2, x = 0.855, y = 0.860 },
@@ -1023,9 +1036,10 @@ local visibleQuestIndexes = {}
 local journalCache = {}
 -- v0.7.0 could save a previous creature's display under the next NPC's ID.
 -- Discard only that derived cache once; keep all user settings.
-if ForeverDungeonJournalDB.portraitCacheVersion ~= 2 then
+-- (3, 2.0.13: the arrow could save Magister Kirandis's face as Mithera's: once more)
+if ForeverDungeonJournalDB.portraitCacheVersion ~= 4 then
     ForeverDungeonJournalDB.displayIDs = {}
-    ForeverDungeonJournalDB.portraitCacheVersion = 2
+    ForeverDungeonJournalDB.portraitCacheVersion = 4
 end
 ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
 
@@ -2014,6 +2028,22 @@ function FDJ.PlayerHasProfession(token)
     return false
 end
 
+-- twoclasses (2.1.0, M 19 Nov 2026; Ziefog on Discord: Nostro's Compendium
+-- is "Warry Pally only"): classOnly is one class ("PALADIN") or a list of
+-- them ({ "WARRIOR", "PALADIN" }); true when the class token is one of them.
+function FDJ.QuestClassMatches(classOnly, token)
+    if not classOnly then return true end
+    if type(token) ~= "string" then return false end
+    token = token:upper()
+    if type(classOnly) == "table" then
+        for _, c in ipairs(classOnly) do
+            if tostring(c):upper() == token then return true end
+        end
+        return false
+    end
+    return tostring(classOnly):upper() == token
+end
+
 local function QuestMatchesFaction(quest, faction)
     if not quest then return false end
     local forFaction = quest.faction == "Both"
@@ -2030,7 +2060,7 @@ local function QuestMatchesFaction(quest, faction)
         end
         if type(issecretvalue) == "function" and issecretvalue(playerClass) then playerClass = nil end
         if type(playerClass) == "string" and playerClass ~= ""
-            and tostring(quest.classOnly):upper() ~= playerClass then
+            and not FDJ.QuestClassMatches(quest.classOnly, playerClass) then
             return false
         end
     end
@@ -2058,7 +2088,7 @@ function FDJ.QuestCountsForCharacter(quest)
     if quest.classOnly and type(UnitClass) == "function" then
         local ok, _, token = pcall(UnitClass, "player")
         if ok and type(token) == "string" and not (type(issecretvalue) == "function" and issecretvalue(token))
-            and token ~= "" and tostring(quest.classOnly):upper() ~= token:upper() then
+            and token ~= "" and not FDJ.QuestClassMatches(quest.classOnly, token) then
             return false
         end
     end
@@ -2333,6 +2363,7 @@ local function IsQuestFinished(questID)
     end
     -- choicestep (2.0.37): one of a step's other quests handed in does it.
     if FDJ.DoneByOther and FDJ.DoneByOther(questID) then return true end
+    if FDJ.DoneOnce and FDJ.DoneOnce(questID) then return true end -- repeatonce (2.1.0)
 
     -- A permanently completed quest is always complete.
     if C_QuestLog and type(C_QuestLog.IsQuestFlaggedCompleted) == "function" then
@@ -2694,8 +2725,28 @@ local function GetQuestClassRestriction(quest)
     end
     if not quest or not quest.classOnly then return nil end
 
-    local token = tostring(quest.classOnly):upper()
-    local className = token:sub(1, 1) .. token:sub(2):lower()
+    -- twoclasses (2.1.0): several classes: all their names, and the colour
+    -- and icon of the player's own class when it is one of them.
+    local list = type(quest.classOnly) == "table" and quest.classOnly or { quest.classOnly }
+    local player
+    if UnitClass then
+        local ok, _, t = pcall(UnitClass, "player")
+        if ok and type(t) == "string" and not (type(issecretvalue) == "function" and issecretvalue(t)) then player = t:upper() end
+    end
+    local token = tostring(list[1]):upper()
+    local names = {}
+    for _, c in ipairs(list) do
+        local t = tostring(c):upper()
+        if player and t == player then token = t end
+        names[#names + 1] = t
+    end
+    -- (classicons, M 19 Nov 2026: "it's missing the paladin class icon"):
+    -- the other classes' icons too, after the first one's.
+    local others
+    for _, t in ipairs(names) do
+        if t ~= token then others = others or {} others[#others + 1] = t end
+    end
+    local className = table.concat(names, " / ")
     local r, g, b = 1, 1, 1
 
     if RAID_CLASS_COLORS and RAID_CLASS_COLORS[token] then
@@ -2705,7 +2756,7 @@ local function GetQuestClassRestriction(quest)
         r, g, b = 0.53, 0.53, 0.93
     end
 
-    return L("CLASS_ONLY", string.upper(className)), r, g, b, token
+    return L("CLASS_ONLY", string.upper(className)), r, g, b, token, others
 end
 
 local function GetScrollBar(scrollFrame)
@@ -6344,6 +6395,8 @@ RefreshQuestList = function()
             local both = quest.faction == "Both" or quest.faction == "Neutral"
             local iconTopY = (inLog and not complete) and -27 or -8
             local _, _, _, _, questClassToken = GetQuestClassRestriction(quest)
+            button.fdjClass2 = select(6, GetQuestClassRestriction(quest)) -- classicons (2.1.0)
+            button.fdjClass2 = type(button.fdjClass2) == "table" and button.fdjClass2[1] or nil
             button.allianceIcon:SetShown(both or quest.faction == "Alliance")
             button.hordeIcon:SetShown(both or quest.faction == "Horde")
 
@@ -6426,11 +6479,20 @@ RefreshQuestList = function()
                 local pick = showPick and button.pickUp
                 if pick and button.classIcon and button.classIcon:IsShown() then
                     button.classIcon:ClearAllPoints()
-                    button.classIcon:SetPoint("RIGHT", pick, "LEFT", 0, 0)
+                    -- classicons (2.1.0, M 19 Nov 2026): two class icons sit a
+                    -- little higher, clear of the In Dungeon icon below them.
+                    button.classIcon:SetPoint("RIGHT", pick, "LEFT", 0, button.fdjClass2 and 9 or 0)
                 end
                 if button.pickUpLabel and button.pickUpLabel:IsShown() then
                     button.pickUpLabel:ClearAllPoints()
                     local by = (pick and button.classIcon and button.classIcon:IsShown()) and button.classIcon or pick
+                    if by == button.classIcon and button.fdjClass2 then -- classicons: left of the second class icon
+                        if not button.classIcon2 then
+                            button.classIcon2 = button:CreateTexture(nil, "OVERLAY")
+                            button.classIcon2:SetSize(20, 20)
+                        end
+                        by = button.classIcon2
+                    end
                     if by then
                         -- pickclear (2.0.8): on the title's first line, above
                         -- the chain and In Dungeon icons of the line below.
@@ -6462,6 +6524,27 @@ RefreshQuestList = function()
             end
             if button.UpdateHaveItLabel then button:UpdateHaveItLabel() end
             button.haveIt:SetShown(inLog and not complete)
+            -- classicons (2.1.0): a quest for two classes shows both icons,
+            -- the second left of the first; the faction crests move over.
+            if button.fdjClass2 and button.classIcon and button.classIcon:IsShown() then
+                if not button.classIcon2 then
+                    button.classIcon2 = button:CreateTexture(nil, "OVERLAY")
+                    button.classIcon2:SetSize(20, 20)
+                end
+                SetQuestRestrictionIcon(button.classIcon2, button.fdjClass2)
+                button.classIcon2:ClearAllPoints()
+                button.classIcon2:SetPoint("RIGHT", button.classIcon, "LEFT", -2, 0)
+                button.classIcon2:Show()
+                for _, crest in ipairs({ button.allianceIcon, button.hordeIcon }) do
+                    if crest:IsShown() and crest:GetNumPoints() > 0 then
+                        local point, rel, relPoint, x, y = crest:GetPoint(1)
+                        crest:ClearAllPoints()
+                        crest:SetPoint(point, rel, relPoint, (x or 0) - 22, y or 0)
+                    end
+                end
+            elseif button.classIcon2 then
+                button.classIcon2:Hide()
+            end
 
             if complete and not ready then
                 button.name:SetTextColor(0.30, 1.00, 0.36)
@@ -6875,6 +6958,7 @@ FDJ.QuestTurnedIn = function(questID)
         return ok and done == true
     end
     if FDJ.DoneByOther and FDJ.DoneByOther(questID) then return true end -- choicestep (2.0.37)
+    if FDJ.DoneOnce and FDJ.DoneOnce(questID) then return true end -- repeatonce (2.1.0)
     if C_QuestLog and type(C_QuestLog.IsQuestFlaggedCompleted) == "function" then
         local ok, value = pcall(C_QuestLog.IsQuestFlaggedCompleted, questID)
         return ok and value == true
@@ -7331,6 +7415,25 @@ FDJ.PlaceStepItemButtons = function(items, startIndex, cursorY, width)
         button.name:SetTextColor(r, g, b)
         button:SetBackdropColor(unpack(theme.lootRow))
         button:SetBackdropBorderColor(unpack(theme.border))
+        -- dungeonitem (2.1.0, Materials of Significance): an item that comes
+        -- from the dungeon whose page this is (item.dungeon) is marked with a
+        -- gold edge, so each dungeon's own part of a quest stands out.
+        if item.dungeon and item.dungeon == selectedDungeon then
+            if not button.fdjHereGlow then
+                local glow = CreateFrame("Frame", nil, button, "BackdropTemplate")
+                glow:SetPoint("TOPLEFT", button, "TOPLEFT", -3, 3)
+                glow:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 3, -3)
+                glow:SetFrameLevel(button:GetFrameLevel() + 5)
+                glow:EnableMouse(false)
+                SetBackdrop(glow, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 9, 2)
+                glow:SetBackdropColor(1.00, 0.78, 0.08, 0.10)
+                glow:SetBackdropBorderColor(1.00, 0.82, 0.12, 1.00)
+                button.fdjHereGlow = glow
+            end
+            button.fdjHereGlow:Show()
+        elseif button.fdjHereGlow then
+            button.fdjHereGlow:Hide()
+        end
         button:ClearAllPoints()
         local col = (i - 1) % 2
         local row = math.floor((i - 1) / 2)
@@ -7383,10 +7486,11 @@ local function RefreshPrerequisiteQuestDetail(step)
         local ok, objectives = pcall(C_QuestLog.GetQuestObjectives, questID)
         if ok and type(objectives) == "table" and #objectives > 0 then
             local parts = {}
-            for _, objective in ipairs(objectives) do
+            for i, objective in ipairs(objectives) do
                 if type(objective) == "table" and not IsSecret(objective.text)
                     and type(objective.text) == "string" and objective.text ~= "" then
-                    parts[#parts + 1] = objective.text
+                    -- objdone (2.0.13): a done line without a count: "(Complete)"
+                    parts[#parts + 1] = FDJ.ObjectiveDoneText and FDJ.ObjectiveDoneText(objective.text, FDJ.ObjectiveDone(questID, i, objective)) or objective.text
                 end
             end
             if #parts > 0 then objectiveText = table.concat(parts, "\n") end
@@ -7521,6 +7625,7 @@ local function RefreshPrerequisiteQuestDetail(step)
     end
     FDJ.PlaceGuideButton(nil, 0) -- questguide
     FDJ.PlaceSummonHelp(nil, 0) -- summonhelp
+    if FDJ.PlaceRepNeeds then FDJ.PlaceRepNeeds(nil, 0) end -- repneeds
     if frame.questStartLinkButton then
         frame.questStartLinkButton.questID = nil
         frame.questStartLinkButton:Hide()
@@ -7719,6 +7824,14 @@ local function RefreshPrerequisiteQuestDetail(step)
             frame.questStartsText:ClearAllPoints()
             frame.questStartsText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
             local pickupText = QuestField(questID, "pickup", details.pickup)
+            -- sidepickup (2.0.13, M 19 Nov 2026, Journey to the Marsh: on the
+            -- Alliance side no Horde cities, and the other way round): a step
+            -- with a start per faction (details.pickupAlliance / pickupHorde)
+            -- shows the one of the faction the quest list is showing.
+            local side = (selectedQuestFaction == "Alliance" or selectedQuestFaction == "Horde") and selectedQuestFaction or nil
+            if side and type(details["pickup" .. side]) == "string" then
+                pickupText = QuestField(questID, "pickup" .. side, details["pickup" .. side])
+            end
             frame.questStartsText:SetText(pickupText)
             frame.questStartsText:SetTextColor(0.10, 0.065, 0.025)
             frame.questStartsText:Show()
@@ -7773,7 +7886,10 @@ local function RefreshPrerequisiteQuestDetail(step)
             and math.abs((startMap.x or 0) - (turninMap.x or 0)) < 0.01
             and math.abs((startMap.y or 0) - (turninMap.y or 0)) < 0.01
         local turninButton = frame.questTurninMapButton or (not startMap and frame.questMapButton) or nil
-        if turninMap and not sameNPC and turninButton then
+        -- turnready (2.0.13, M 19 Nov 2026: "if the quest has not been
+        -- completed yet, don't show the show turn in button"): only while
+        -- the step is in the quest log and ready to hand in.
+        if turninMap and not sameNPC and turninButton and inLog and complete then
             turninButton:ClearAllPoints()
             turninButton.quest = nil
             turninButton.prereqLocation = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(turninMap)) or turninMap
@@ -8008,6 +8124,7 @@ RefreshQuestDetail = function()
         FDJ.PlaceObjectiveMapButton(nil, 0) -- glowingshard
         FDJ.PlaceGuideButton(nil, 0) -- questguide
         FDJ.PlaceSummonHelp(nil, 0) -- summonhelp
+        if FDJ.PlaceRepNeeds then FDJ.PlaceRepNeeds(nil, 0) end -- repneeds
         FDJ.SetHeaderDungeonIcon("questObjectiveDungeonIcon") -- insidequest
         FDJ.SetHeaderDungeonIcon("questTurninDungeonIcon")
         if frame.questTurninText then frame.questTurninText:SetText("") end
@@ -8064,7 +8181,24 @@ RefreshQuestDetail = function()
             local textWidth = math.min(frame.selectedQuestClass:GetStringWidth() or 0,
                 frame.selectedQuestClass:GetWidth() or 118)
             frame.selectedQuestClassIcon:ClearAllPoints()
-            frame.selectedQuestClassIcon:SetPoint("TOP", frame.selectedQuestClass, "BOTTOMRIGHT", -textWidth / 2, -3)
+            -- classicons (2.1.0): a second class's icon right of the first,
+            -- the pair centred under the words.
+            local other = select(6, GetQuestClassRestriction(quest))
+            other = type(other) == "table" and other[1] or nil
+            if other and not frame.selectedQuestClassIcon2 then
+                frame.selectedQuestClassIcon2 = frame.selectedQuestClassIcon:GetParent():CreateTexture(nil, "OVERLAY")
+                frame.selectedQuestClassIcon2:SetSize(frame.selectedQuestClassIcon:GetWidth(), frame.selectedQuestClassIcon:GetHeight())
+            end
+            if other then
+                frame.selectedQuestClassIcon:SetPoint("TOP", frame.selectedQuestClass, "BOTTOMRIGHT", -textWidth / 2 - (frame.selectedQuestClassIcon:GetWidth() + 3) / 2, -3)
+                SetQuestRestrictionIcon(frame.selectedQuestClassIcon2, other)
+                frame.selectedQuestClassIcon2:ClearAllPoints()
+                frame.selectedQuestClassIcon2:SetPoint("LEFT", frame.selectedQuestClassIcon, "RIGHT", 3, 0)
+                frame.selectedQuestClassIcon2:Show()
+            else
+                frame.selectedQuestClassIcon:SetPoint("TOP", frame.selectedQuestClass, "BOTTOMRIGHT", -textWidth / 2, -3)
+                if frame.selectedQuestClassIcon2 then frame.selectedQuestClassIcon2:Hide() end
+            end
             frame.selectedQuestClassIcon:Show()
         end
 
@@ -8073,6 +8207,7 @@ RefreshQuestDetail = function()
     else
         if frame.selectedQuestClass then frame.selectedQuestClass:Hide() end
         if frame.selectedQuestClassIcon then frame.selectedQuestClassIcon:Hide() end
+        if frame.selectedQuestClassIcon2 then frame.selectedQuestClassIcon2:Hide() end -- classicons
         frame.selectedQuestComplete:ClearAllPoints()
         frame.selectedQuestComplete:SetPoint("TOPRIGHT", frame.questTextInset, "TOPRIGHT", -16, -11)
     end
@@ -8173,6 +8308,7 @@ RefreshQuestDetail = function()
     end
     cursorY = FDJ.PlaceGuideButton(quest, cursorY) -- questguide: How to complete
     cursorY = FDJ.PlaceSummonHelp(quest, cursorY) -- summonhelp: How to summon
+    if FDJ.PlaceRepNeeds then cursorY = FDJ.PlaceRepNeeds(quest, cursorY) end -- repneeds: reputation needed
 
     cursorY = PlaceHeader(frame.questObjectiveHeader, cursorY)
     -- insidequest: done and handed in inside the dungeon.
@@ -8189,6 +8325,25 @@ RefreshQuestDetail = function()
     frame.questDetailText:SetText(frame.fdjObjText)
     frame.questDetailText:SetTextColor(0.10, 0.065, 0.025)
     cursorY = cursorY + (frame.questDetailText:GetStringHeight() or 30) + 13
+    -- objnote (2.0.13, M 19 Nov 2026, The Coldbringer's Eye: "a little
+    -- disclaimer text below the objective ... so that we are safe and they
+    -- see it"): quest.objectiveNote, in red under the objective and its
+    -- progress lines. (No new local: frame fields only.)
+    if type(quest.objectiveNote) == "string" and quest.objectiveNote ~= "" then
+        if not frame.questObjectiveNoteText then
+            frame.questObjectiveNoteText = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal") -- (the warning's size: Small was too small, M 19 Nov 2026)
+            frame.questObjectiveNoteText:SetJustifyH("LEFT")
+        end
+        frame.questObjectiveNoteText:ClearAllPoints()
+        frame.questObjectiveNoteText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -(cursorY - 6))
+        frame.questObjectiveNoteText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
+        frame.questObjectiveNoteText:SetText(QuestField(quest.id, "objectiveNote", quest.objectiveNote))
+        frame.questObjectiveNoteText:SetTextColor(0.62, 0.10, 0.05)
+        frame.questObjectiveNoteText:Show()
+        cursorY = cursorY - 6 + (frame.questObjectiveNoteText:GetStringHeight() or 14) + 13
+    elseif frame.questObjectiveNoteText then
+        frame.questObjectiveNoteText:Hide()
+    end
     cursorY = FDJ.PlaceObjectiveMapButton(quest, cursorY) -- glowingshard
     if FDJ.PlaceQuestDescription then cursorY = FDJ.PlaceQuestDescription(frame, frame.fdjDescText, cursorY, PlaceHeader) end
 
@@ -8494,6 +8649,7 @@ RefreshQuestDetail = function()
             local link = noteLink or leadsLink
             frame.questLeadsToButton:ClearAllPoints()
             frame.questLeadsToButton.questID = link.id
+            frame.questLeadsToButton.questDungeon = link.dungeon -- leadsdungeon (2.0.13): a next step on another dungeon's page
             if noteLink then
                 -- Optional/breadcrumb quest links in Notes show the localized
                 -- quest title itself instead of implying a required chain.
@@ -9227,6 +9383,45 @@ FDJ.SavedMapFloor = function(dungeonName, data)
     return data and (data.defaultFloor or (data.entrance and data.entrance.floor)) or 1
 end
 
+-- pinspread (2.0.13, M 19 Nov 2026: "the portraits overlapping looks kind of
+-- bad"): on a map with spreadPins, boss pins that would cover each other are
+-- pushed apart, each along the line between them, just far enough for the
+-- rings to touch, so they sit side by side near their spots. Pins on the
+-- very same spot go left to right in list order. Faded "can also spawn
+-- here" pins stay where they are, under the others.
+function FDJ.SpreadMapPins(markers, count, size)
+    local gap, pins = size * 1.32, {}
+    for i = 1, count do
+        local m = markers[i]
+        if m and m.fdjPX and not m.altSpawn and m:IsShown() then
+            m.fdjSX, m.fdjSY = m.fdjPX, m.fdjPY
+            pins[#pins + 1] = m
+        end
+    end
+    for _ = 1, 40 do
+        local moved = false
+        for i = 1, #pins - 1 do
+            for j = i + 1, #pins do
+                local a, b = pins[i], pins[j]
+                local dx, dy = b.fdjSX - a.fdjSX, b.fdjSY - a.fdjSY
+                local d = math.sqrt(dx * dx + dy * dy)
+                if d < gap - 0.5 then
+                    if d < 0.01 then dx, dy, d = 1, 0, 1 end
+                    local push = (gap - d) / 2
+                    a.fdjSX, a.fdjSY = a.fdjSX - dx / d * push, a.fdjSY - dy / d * push
+                    b.fdjSX, b.fdjSY = b.fdjSX + dx / d * push, b.fdjSY + dy / d * push
+                    moved = true
+                end
+            end
+        end
+        if not moved then break end
+    end
+    for _, m in ipairs(pins) do
+        m:ClearAllPoints()
+        m:SetPoint("CENTER", m:GetParent(), "TOPLEFT", m.fdjSX, -m.fdjSY)
+    end
+end
+
 FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     if not frame or not frame.dungeonMapArtHolder or not data then return end
     ClearDungeonMapArt()
@@ -9558,11 +9753,13 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             marker:SetAlpha(mapBoss.alt and 0.45 or 1)
             if mapBoss.alt then marker:SetFrameLevel(holder:GetFrameLevel() + 8) end
             marker:SetShown(size > 0) -- boss icon size 0% hides them
+            marker.fdjPX, marker.fdjPY = mapBoss.x * artW, mapBoss.y * artH -- pinspread
         end
     end
     for i = shown + 1, #frame.dungeonMapBossMarkers do
         frame.dungeonMapBossMarkers[i]:Hide()
     end
+    if data.spreadPins and FDJ.SpreadMapPins then FDJ.SpreadMapPins(frame.dungeonMapBossMarkers, shown, size) end
 
     -- Entrance: the usual instance-portal icon with a yellow, black-outlined
     -- "Entrance" label next to it.
@@ -9983,6 +10180,15 @@ SelectQuestByID = function(questID)
     local quests = DB[selectedDungeon].quests or {}
     for index, quest in ipairs(quests) do
         if quest.id == questID then
+            -- questside (2.0.13, M 18 Nov 2026): a quest of the other faction
+            -- opened by its id (the round !, a link): its faction's list.
+            local side = quest.faction
+            if (side == "Alliance" or side == "Horde") and side ~= selectedQuestFaction and not FDJ.FactionHiddenFor(selectedDungeon, side) then
+                selectedQuestFaction = side
+                ForeverDungeonJournalDB.questFaction = side
+                UpdateFactionButtons()
+                BuildVisibleQuestIndexes()
+            end
             SelectQuest(index, quest.hideFromMainList == true)
             return
         end
@@ -14583,7 +14789,15 @@ local function CreateMainFrame()
     FDJ.OwnFonts(frame.questLeadsToButton) -- ownfonts (2.0.8)
     frame.questLeadsToButton:SetSize(270, 24)
     frame.questLeadsToButton:SetScript("OnClick", function(self)
-        if self.questID then SelectQuestByID(self.questID) end
+        if not self.questID then return end
+        -- leadsdungeon (2.0.13): the next step is on another dungeon's page
+        -- (The Medallion of Faith, Stratholme: Living, leads to Aurius'
+        -- Reckoning, Stratholme: Undead): open that page on it.
+        if self.questDungeon and self.questDungeon ~= selectedDungeon and FDJ.OpenQuestPage then
+            FDJ.OpenQuestPage(self.questDungeon, self.questID)
+            return
+        end
+        SelectQuestByID(self.questID)
     end)
     frame.questLeadsToButton:Hide()
 
@@ -15410,6 +15624,17 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
         -- SavedVariables load after this file runs, so the display-ID cache
         -- captured at load time was a throwaway table. Rebind it to the real
         -- saved table so resolved portraits persist between sessions.
+        -- portraitwipe (2.0.13, M 19 Nov 2026: Mithera's arrow still with
+        -- Magister Kirandis's face): the wipe at the top of this file runs on
+        -- the table made before the saved one loads; the saved pictures are
+        -- wiped here, once (version 3), and learned again.
+        -- (4, 2.0.13: Dorn Plainstalker with an undead face: once more, after
+        -- the arrow's lookups were made safe, arrowsafe in Systems/MapMarkers.lua)
+        if ForeverDungeonJournalDB.portraitCacheVersion ~= 4 then
+            ForeverDungeonJournalDB.displayIDs = {}
+            ForeverDungeonJournalDB.portraitCacheVersion = 4
+            if FDJ.arrowDisplayIDs then for k in pairs(FDJ.arrowDisplayIDs) do FDJ.arrowDisplayIDs[k] = nil end end
+        end
         ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
         if displayIDCache ~= ForeverDungeonJournalDB.displayIDs then
             for k, v in pairs(displayIDCache) do

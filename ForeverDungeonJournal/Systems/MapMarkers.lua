@@ -1667,8 +1667,55 @@ FDJ.MapMarkers.InitAutoClear = function()
     watch:RegisterEvent("QUEST_ACCEPTED")
     watch:RegisterEvent("QUEST_TURNED_IN")
     watch:RegisterEvent("QUEST_LOG_UPDATE")
+    -- turninclear (2.0.13, M 18 Nov 2026, Magus Wordeen Voidglare's ? for
+    -- Prison Break In still on the map after handing it in: "once we turn
+    -- in the quest, it should be gone instantly by itself ... for every
+    -- single kind of quest"): a "Turn in here" pin put on the map without
+    -- its quest's number (a click on the arrow) goes by the quest's name:
+    -- the game's name of the quest handed in, and the journal's.
+    local function NamesOf(id)
+        local names = {}
+        if C_QuestLog and type(C_QuestLog.GetTitleForQuestID) == "function" then
+            local ok, title = pcall(C_QuestLog.GetTitleForQuestID, id)
+            if ok and type(title) == "string" and title ~= "" then names[title] = true end
+        end
+        local function Add(name)
+            if type(name) ~= "string" or name == "" then return end
+            names[name] = true
+            local shown = FDJ.LocalizeQuestField and FDJ.LocalizeQuestField(id, "name", name)
+            if type(shown) == "string" and shown ~= "" then names[shown] = true end
+        end
+        for _, chain in pairs(FDJ.QUEST_PREREQ_CHAINS or {}) do
+            if type(chain) == "table" then
+                for _, step in ipairs(chain) do
+                    if type(step) == "table" and step.id == id then Add(step.name) end
+                end
+            end
+        end
+        for _, dungeon in pairs(FDJ.DB or {}) do
+            if type(dungeon) == "table" and type(dungeon.quests) == "table" then
+                for _, quest in ipairs(dungeon.quests) do
+                    if type(quest) == "table" and quest.id == id then Add(quest.name) end
+                end
+            end
+        end
+        return names
+    end
+    local function SweepByName(id)
+        local names, gone = nil, {}
+        for _, target in pairs(mapTargets) do
+            if target.turnIn and not target.fdjAutoQuest and type(target.questTitle) == "string" then
+                names = names or NamesOf(id)
+                if names[target.questTitle] then gone[#gone + 1] = target end
+            end
+        end
+        for _, target in ipairs(gone) do RemoveTarget(target) end
+        if #gone > 0 then UpdateMapMarkers() end
+    end
     watch:SetScript("OnEvent", function(_, event, a)
         if event == "QUEST_TURNED_IN" and tonumber(a) then justTurnedIn[tonumber(a)] = true end
+        if next(mapTargets) == nil then return end
+        if event == "QUEST_TURNED_IN" and tonumber(a) then pcall(SweepByName, tonumber(a)) end
         if next(mapTargets) == nil then return end
         local ok = pcall(Sweep)
         if not ok then return end
@@ -2241,6 +2288,24 @@ end
 do
     local ART = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\WaypointArrow"
     local FALLBACK_ART = "Interface\\Minimap\\MinimapArrow" -- until the game has seen the new file
+    do -- upstairs (2.0.13)
+        local strings = { enUS = "Go upstairs", deDE = "Geh nach oben", frFR = "Montez à l'étage", esES = "Sube al piso de arriba", itIT = "Sali al piano di sopra",
+            ptBR = "Suba ao andar de cima", ruRU = "Поднимитесь наверх", koKR = "위층으로 올라가세요", zhCN = "上楼", zhTW = "上樓" }
+        strings.esMX = strings.esES
+        for locale, text in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_UPSTAIRS == nil then t.ARROW_UPSTAIRS = text end
+        end
+    end
+    do -- arrowkill (2.0.13)
+        local strings = { enUS = "Kill %s", deDE = "Töte %s", frFR = "Tuez %s", esES = "Mata a %s", itIT = "Uccidi %s", ptBR = "Mate %s",
+            ruRU = "Убейте: %s", koKR = "%s 처치", zhCN = "击杀%s", zhTW = "擊殺%s" }
+        strings.esMX = strings.esES
+        for locale, text in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_KILL == nil then t.ARROW_KILL = text end
+        end
+    end
     local ARRIVED = 8      -- yards: there
     local STEP = 0.05      -- seconds between redraws
     local PLAN_EVERY = 0.5 -- seconds between working out the way again
@@ -2305,6 +2370,37 @@ do
         }
         for locale, entries in pairs(more) do
             for key, value in pairs(entries) do strings[locale][key] = value end
+        end
+        -- skipnow (2.0.13)
+        local skipnow = {
+            enUS = { "Skip for now", "Leave this quest off the Route for now and go on to what's next. Tick it in the tracker to put it back." },
+            deDE = { "Vorerst überspringen", "Diese Quest vorerst aus der Route nehmen und mit dem Nächsten weitermachen. Hake sie im Tracker an, um sie zurückzuholen." },
+            frFR = { "Passer pour l'instant", "Retirer cette quête de l'itinéraire pour l'instant et passer à la suite. Cochez-la dans le suivi pour la remettre." },
+            esES = { "Saltar por ahora", "Quitar esta misión de la ruta por ahora y seguir con lo siguiente. Márcala en el seguimiento para volver a añadirla." },
+            itIT = { "Salta per ora", "Togli questa missione dal percorso per ora e passa alla successiva. Spuntala nel tracker per rimetterla." },
+            ptBR = { "Pular por enquanto", "Tirar esta missão da rota por enquanto e seguir para a próxima. Marque-a no rastreador para colocá-la de volta." },
+            ruRU = { "Пропустить пока", "Убрать это задание из маршрута на время и перейти к следующему. Отметьте его в списке, чтобы вернуть." },
+            koKR = { "일단 건너뛰기", "이 퀘스트를 일단 경로에서 빼고 다음으로 넘어갑니다. 추적기에서 체크하면 다시 넣을 수 있습니다." },
+            zhCN = { "暂时跳过", "暂时将此任务移出路线，继续下一步。在追踪器中勾选即可放回。" },
+            zhTW = { "暫時跳過", "暫時將此任務移出路線，繼續下一步。在追蹤器中勾選即可放回。" },
+        }
+        for locale, pair in pairs(skipnow) do
+            if strings[locale] then strings[locale].ARROW_SKIP_NOW, strings[locale].ARROW_SKIP_NOW_TIP = pair[1], pair[2] end
+        end
+        -- plankjump (2.0.13): Test of Faith's planks
+        local jump = { enUS = "Jump off the planks", deDE = "Spring von den Planken", frFR = "Sautez des planches",
+            esES = "Salta desde los tablones", itIT = "Salta giù dalle assi", ptBR = "Pule das tábuas",
+            ruRU = "Прыгните с досок", koKR = "널빤지에서 뛰어내리세요", zhCN = "从木板上跳下去", zhTW = "從木板上跳下去" }
+        for locale, text in pairs(jump) do
+            if strings[locale] then strings[locale].ARROW_JUMP_PLANKS = text end
+        end
+        -- patrolline (2.0.13): Rok'Alim the Pounder
+        local patrol = { enUS = "Find Rok'Alim: he patrols the west side", deDE = "Finde Rok'Alim: Er patrouilliert auf der Westseite",
+            frFR = "Trouvez Rok'Alim : il patrouille du côté ouest", esES = "Busca a Rok'Alim: patrulla por el lado oeste",
+            itIT = "Trova Rok'Alim: pattuglia il lato ovest", ptBR = "Encontre Rok'Alim: ele patrulha o lado oeste",
+            ruRU = "Он патрулирует западную часть зоны", koKR = "지역 서쪽을 순찰합니다", zhCN = "它在区域西侧巡逻", zhTW = "牠在區域西側巡邏" }
+        for locale, text in pairs(patrol) do
+            if strings[locale] then strings[locale].ARROW_ROKALIM_PATROL = text end
         end
         for locale, entries in pairs(strings) do
             local t = FDJ.Locales and FDJ.Locales[locale]
@@ -3319,7 +3415,7 @@ do
         local hereR = Way.Region(here, playerMap, px, py)
         local goalR = Way.Region(target[3], goalMap, gx, gy)
         local plan = { here = hereR }
-        if not target[3] or not here then
+        if not target[3] or not here or entry.source == "corpse" then -- (corpserun: a ghost walks; no flight, boat or hearthstone)
             plan.final, plan.x, plan.y = true, gx, gy
             return plan
         end
@@ -3916,6 +4012,50 @@ do
             -- Apothecarium's lab lies under the hall (Master Apothecary
             -- Faranell, 28 yards lower) and is not reached through it
             targetNodes = { VT = true, R4 = true, R3b = true, R3 = true, R1 = true },
+            -- uclab (2.0.13, M 18 Nov 2026 at Doctor Martin Felben, "Fly to
+            -- The Sepulcher", the arrow pointing straight at the bat handler:
+            -- "it doesn't understand that I have to go back up here through
+            -- this passage"): the Apothecarium's lab lies under the hall, and
+            -- its way out is the ramp on its south-east side, up to the canal
+            -- ring (L1 ... L8; LW the passage on its west side). From there
+            -- round the ring, in through the south-east passage and up over
+            -- the middle of the Trade Quarter to the bat handler on the upper
+            -- ring (T1 ... FM). The same source as the corners above, run
+            -- from Felben to Michael Garrett. The game does not tell floors
+            -- apart, so which of the two the player is on (the hall or the
+            -- lab under it) is the last of these passed: the hall's door and
+            -- far end, or the lab's ramp.
+            hallNodes = { VT = true, R4 = true, R3b = true, R3 = true, R1 = true, H8 = true, H7 = true, H6 = true, H5 = true, H4 = true, H3 = true, H2 = true },
+            labNodes = { L1 = true, L2 = true, L3 = true, L4 = true, L5 = true, L6 = true, L7 = true, LW = true,
+                P7 = true }, -- (labwest: the passage's foot; labjoin: the rest of it on no floor, the way down from the ring)
+            -- labjoin (2.0.13, M 19 Nov 2026 at the Royal Quarter's door,
+            -- "not the big entrance with the royal guards"): into the lab
+            -- only by the west passage, never up the south-east ramp's way
+            -- (L8 to L9); the ways out of it stay as they were
+            labNotIn = { L8 = "L9" },
+            tradeNodes = { T5 = true, T6 = true, T8 = true, T9 = true, FM = true, F11 = true }, -- (ucring: the ramp and the Trade Quarter's upper ring only)
+            -- ucring: the stairs up to the Royal Quarter's door and the War
+            -- Quarter's way there (Varimathras's ways), kept apart from the
+            -- bat handler's ways (F...): each place uses its own
+            royalNodes = { D = true, S = true, N1 = true, N2 = true, N3 = true, N4 = true, N5 = true, N6 = true, N7 = true },
+            -- ucring (2.0.13, M 18 Nov 2026 on the canal ring at 52.1, 51.3,
+            -- "Fly to The Sepulcher": "it's not following the circle of
+            -- Undercity ... it's sending me back"): the ways from anywhere
+            -- in the lower city (the canal ring, the four quarters, the
+            -- bridges into the Trade Quarter) to the bat handler, up the ramp
+            -- to the Trade Quarter's upper ring: the shortest walks to
+            -- Michael Garrett from 245 places of the lower city (every 24
+            -- yards; Polestar's router on the Forever client's walking maps,
+            -- run offline), cut to their corners and merged (F1 ... and the
+            -- corners above). The upper ring is right over the lower floor:
+            -- come from out in the city, the arrow stays on the lower floor's
+            -- ways until the top of the ramp is passed (tradeUp), and back
+            -- there once a lower corner of the Trade Quarter is (tradeDown).
+            tradeUp = { T5 = 5, T6 = 4 }, -- (the ramp and its top; the lower floor runs right under the ring and the platform)
+            tradeDown = { T1 = 6, F10 = 6, F74 = 6, F114 = 6, F115 = 6, F123 = 6, F165 = 6, F166 = 6, F189 = 6, F203 = 6 },
+            farNodes = { FM = true, T9 = true },
+            floorMarks = { hall = { D = 5, H5 = 10, H6 = 10, H7 = 10, H8 = 10, R1 = 10 }, lab = { L5 = 10, L6 = 10, L7 = 10, L9 = 8, P7 = 8 } },
+            labSpots = { { 0.4661, 0.7412 } }, -- Doctor Martin Felben
             nodes = {
                 VT = { 0.5624, 0.9248 }, R4 = { 0.5606, 0.9518 }, R3b = { 0.5606, 0.9582 }, R3 = { 0.5562, 0.9582 }, R1 = { 0.5475, 0.9257 },
                 H8 = { 0.5258, 0.8932 }, H7 = { 0.4910, 0.8801 }, H6 = { 0.4824, 0.8737 }, H5 = { 0.4607, 0.8346 }, H4 = { 0.4563, 0.7890 },
@@ -3924,13 +4064,146 @@ do
                 B6 = { 0.6648, 0.5612 }, B7 = { 0.7039, 0.5156 }, B8 = { 0.7082, 0.4961 }, C1 = { 0.5779, 0.6848 }, C2 = { 0.5997, 0.7109 },
                 C3 = { 0.7082, 0.7109 }, N1 = { 0.5041, 0.6003 }, N2 = { 0.5041, 0.5808 }, N3 = { 0.4954, 0.5676 }, N4 = { 0.4954, 0.5417 },
                 N5 = { 0.4824, 0.5156 }, N6 = { 0.4824, 0.3594 }, N7 = { 0.4868, 0.3138 },
+                -- uclab
+                L1 = { 0.4868, 0.7304 }, L2 = { 0.4780, 0.7499 }, L3 = { 0.4780, 0.7629 }, L4 = { 0.4868, 0.7824 }, L5 = { 0.5084, 0.8020 },
+                L6 = { 0.5258, 0.7956 }, L7 = { 0.5258, 0.7824 }, L8 = { 0.5518, 0.6718 }, LW = { 0.4563, 0.7304 },
+                L9 = { 0.5431, 0.7087 }, -- (ucring: 25 yards down the ramp, past the stairs to the hall: in the lab from here)
+                -- labwest (2.0.13, M 19 Nov 2026 on the canal ring by the
+                -- Apothecarium at 46.9, 59.7, the arrow to Doctor Martin
+                -- Felben leading back east round to the south-east ramp:
+                -- "Source of Power is actually below through this little
+                -- passage"): the passage from the ring down to the lab's west
+                -- side (Polestar's router on the Forever client's walking
+                -- maps, to Felben's own spot, z -80: 145 yards, was 278). Only
+                -- a way in: its top is not joined to the ring's ways, so the
+                -- ways out of the lab (to the bat handler) stay as they were.
+                -- (labjoin, M 19 Nov 2026 at 48.6, 56.5, "this little passage after
+                -- the two abominations is where you have to go ... not the big
+                -- entrance with the royal guards": its top joined to the ring's
+                -- way, P0, so the arrow comes to it from anywhere on the ring)
+                P0 = { 0.4690, 0.5872 },
+                P1 = { 0.4520, 0.5872 }, P2 = { 0.4433, 0.6002 }, P3 = { 0.4476, 0.6653 }, P4 = { 0.4433, 0.6718 },
+                P5 = { 0.4346, 0.6913 }, P6 = { 0.4389, 0.7044 }, P7 = { 0.4476, 0.7109 },
+                T1 = { 0.6995, 0.5026 }, T2 = { 0.6735, 0.4570 }, T4 = { 0.6778, 0.4309 }, T5 = { 0.6821, 0.4375 }, T6 = { 0.6648, 0.4375 },
+                T8 = { 0.6604, 0.4570 }, T9 = { 0.6518, 0.4895 }, FM = { 0.6324, 0.4858 },
+                -- ucring (2.0.13): the lower city's ways to the bat handler
+                F1 = { 0.4607, 0.1315 }, F2 = { 0.5302, 0.1315 }, F3 = { 0.5779, 0.1771 }, F4 = { 0.6387, 0.1706 }, F5 = { 0.6431, 0.1771 }, F6 = { 0.6431, 0.2227 },
+                F7 = { 0.6561, 0.2552 }, F8 = { 0.6648, 0.3203 }, F9 = { 0.6995, 0.3659 }, F10 = { 0.6995, 0.3789 }, F11 = { 0.6604, 0.4440 }, F12 = { 0.5432, 0.1380 },
+                F13 = { 0.5692, 0.1771 }, F14 = { 0.5084, 0.1380 }, F15 = { 0.5562, 0.1445 }, F16 = { 0.6561, 0.2357 }, F17 = { 0.7516, 0.1706 }, F18 = { 0.7430, 0.1836 },
+                F19 = { 0.7082, 0.1706 }, F20 = { 0.6822, 0.1771 }, F21 = { 0.6648, 0.2552 }, F22 = { 0.8211, 0.1380 }, F23 = { 0.8211, 0.1511 }, F24 = { 0.8124, 0.1576 },
+                F25 = { 0.8515, 0.1576 }, F26 = { 0.8385, 0.1771 }, F27 = { 0.8298, 0.1771 }, F28 = { 0.7169, 0.1836 }, F29 = { 0.4476, 0.1641 }, F30 = { 0.4650, 0.1771 },
+                F31 = { 0.4867, 0.1380 }, F32 = { 0.5562, 0.1771 }, F33 = { 0.4824, 0.1445 }, F34 = { 0.4997, 0.1511 }, F35 = { 0.5171, 0.1380 }, F36 = { 0.6518, 0.2292 },
+                F37 = { 0.6040, 0.1836 }, F38 = { 0.6127, 0.1706 }, F39 = { 0.6214, 0.1706 }, F40 = { 0.6561, 0.3073 }, F41 = { 0.6431, 0.2031 }, F42 = { 0.6735, 0.2096 },
+                F43 = { 0.6648, 0.2227 }, F44 = { 0.6995, 0.1706 }, F45 = { 0.7212, 0.1706 }, F46 = { 0.8429, 0.1706 }, F47 = { 0.8342, 0.1576 }, F48 = { 0.7343, 0.1836 },
+                F49 = { 0.4693, 0.2552 }, F50 = { 0.5041, 0.2747 }, F51 = { 0.5605, 0.1966 }, F52 = { 0.4693, 0.1966 }, F53 = { 0.4954, 0.1836 }, F54 = { 0.5388, 0.2227 },
+                F55 = { 0.5692, 0.1966 }, F56 = { 0.5823, 0.1901 }, F57 = { 0.5302, 0.2227 }, F58 = { 0.5649, 0.2031 }, F59 = { 0.6214, 0.2096 }, F60 = { 0.6257, 0.2031 },
+                F61 = { 0.6778, 0.2031 }, F62 = { 0.7473, 0.2096 }, F63 = { 0.7473, 0.1966 }, F64 = { 0.7516, 0.2031 }, F65 = { 0.7951, 0.2227 }, F66 = { 0.7690, 0.2227 },
+                F67 = { 0.8472, 0.2162 }, F68 = { 0.5475, 0.2162 }, F69 = { 0.5519, 0.2422 }, F70 = { 0.5692, 0.2617 }, F71 = { 0.5779, 0.2617 }, F72 = { 0.5823, 0.2552 },
+                F73 = { 0.6214, 0.2357 }, F74 = { 0.6952, 0.3854 }, F75 = { 0.6952, 0.2357 }, F76 = { 0.6735, 0.2357 }, F77 = { 0.7343, 0.2552 }, F78 = { 0.7256, 0.2422 },
+                F79 = { 0.6995, 0.2422 }, F80 = { 0.7647, 0.2162 }, F81 = { 0.7864, 0.2292 }, F82 = { 0.8168, 0.2357 }, F83 = { 0.4997, 0.2812 }, F84 = { 0.5258, 0.2422 },
+                F85 = { 0.5692, 0.2812 }, F86 = { 0.5996, 0.2617 }, F87 = { 0.6040, 0.2682 }, F88 = { 0.6040, 0.2552 }, F89 = { 0.6691, 0.3268 }, F90 = { 0.7169, 0.2682 },
+                F91 = { 0.7169, 0.2552 }, F92 = { 0.7212, 0.2617 }, F93 = { 0.7864, 0.3203 }, F94 = { 0.7907, 0.3268 }, F95 = { 0.7951, 0.4245 }, F96 = { 0.7864, 0.4310 },
+                F97 = { 0.7386, 0.4310 }, F98 = { 0.7126, 0.3789 }, F99 = { 0.6822, 0.4114 }, F100 = { 0.7994, 0.2682 }, F101 = { 0.7907, 0.2487 }, F102 = { 0.8211, 0.2812 },
+                F103 = { 0.4954, 0.3138 }, F104 = { 0.5041, 0.3073 }, F105 = { 0.5084, 0.3008 }, F106 = { 0.5084, 0.2812 }, F107 = { 0.5345, 0.3268 }, F108 = { 0.5345, 0.3659 },
+                F109 = { 0.5258, 0.3789 }, F110 = { 0.5258, 0.4245 }, F111 = { 0.5302, 0.4310 }, F112 = { 0.5823, 0.4310 }, F113 = { 0.6083, 0.3789 }, F114 = { 0.6170, 0.3789 },
+                F115 = { 0.6431, 0.4179 }, F116 = { 0.6735, 0.4245 }, F117 = { 0.5475, 0.3203 }, F118 = { 0.5388, 0.3203 }, F119 = { 0.5953, 0.2747 }, F120 = { 0.5866, 0.3073 },
+                F121 = { 0.6083, 0.2487 }, F122 = { 0.6214, 0.3659 }, F123 = { 0.6214, 0.3854 }, F124 = { 0.6952, 0.3594 }, F125 = { 0.7343, 0.3203 }, F126 = { 0.7343, 0.3073 },
+                F127 = { 0.7647, 0.3138 }, F128 = { 0.7951, 0.3789 }, F129 = { 0.8168, 0.3008 }, F130 = { 0.8168, 0.2747 }, F131 = { 0.8429, 0.3138 }, F132 = { 0.4780, 0.3529 },
+                F133 = { 0.5736, 0.1901 }, F134 = { 0.4911, 0.3203 }, F135 = { 0.5388, 0.3529 }, F136 = { 0.5692, 0.3659 }, F137 = { 0.5736, 0.3789 }, F138 = { 0.5649, 0.3854 },
+                F139 = { 0.5605, 0.3789 }, F140 = { 0.5475, 0.3529 }, F141 = { 0.7864, 0.3594 }, F142 = { 0.8255, 0.3138 }, F143 = { 0.8429, 0.3594 }, F144 = { 0.8429, 0.3398 },
+                F145 = { 0.4563, 0.4375 }, F146 = { 0.4693, 0.4375 }, F147 = { 0.4693, 0.4896 }, F148 = { 0.4954, 0.5546 }, F149 = { 0.4954, 0.5677 }, F150 = { 0.5562, 0.6653 },
+                F151 = { 0.6214, 0.6458 }, F152 = { 0.6518, 0.6327 }, F153 = { 0.6518, 0.5807 }, F154 = { 0.4737, 0.4179 }, F155 = { 0.4693, 0.3984 }, F156 = { 0.4780, 0.3789 },
+                F157 = { 0.7734, 0.3594 }, F158 = { 0.8429, 0.3789 }, F159 = { 0.8385, 0.3333 }, F160 = { 0.4737, 0.3854 }, F161 = { 0.4693, 0.4635 }, F162 = { 0.5302, 0.4505 },
+                F163 = { 0.5779, 0.4505 }, F164 = { 0.6083, 0.5026 }, F165 = { 0.6170, 0.5026 }, F166 = { 0.6431, 0.4635 }, F167 = { 0.7386, 0.4505 }, F168 = { 0.7126, 0.5026 },
+                F169 = { 0.8385, 0.3659 }, F170 = { 0.7386, 0.1901 }, F171 = { 0.4824, 0.5091 }, F172 = { 0.5258, 0.4570 }, F173 = { 0.5432, 0.5221 }, F174 = { 0.5345, 0.5221 },
+                F175 = { 0.5258, 0.5026 }, F176 = { 0.7473, 0.4961 }, F177 = { 0.7430, 0.5026 }, F178 = { 0.7430, 0.5156 }, F179 = { 0.7647, 0.5156 }, F180 = { 0.7734, 0.5286 },
+                F181 = { 0.7820, 0.5286 }, F182 = { 0.7951, 0.5026 }, F183 = { 0.7951, 0.4570 }, F184 = { 0.7864, 0.4505 }, F185 = { 0.7734, 0.5091 }, F186 = { 0.5128, 0.5612 },
+                F187 = { 0.5041, 0.5742 }, F188 = { 0.5041, 0.5872 }, F189 = { 0.6952, 0.4961 }, F190 = { 0.7777, 0.5351 }, F191 = { 0.8385, 0.5221 }, F192 = { 0.4650, 0.5872 },
+                F193 = { 0.4737, 0.5872 }, F194 = { 0.4997, 0.6002 }, F195 = { 0.5432, 0.6653 }, F196 = { 0.4693, 0.5612 }, F197 = { 0.4911, 0.5872 }, F198 = { 0.5345, 0.5612 },
+                F199 = { 0.5475, 0.5546 }, F200 = { 0.5692, 0.6002 }, F201 = { 0.5910, 0.6132 }, F202 = { 0.6214, 0.5156 }, F203 = { 0.6214, 0.4961 }, F204 = { 0.7169, 0.6197 },
+                F205 = { 0.6995, 0.6458 }, F206 = { 0.6691, 0.6458 }, F207 = { 0.6648, 0.6327 }, F208 = { 0.7343, 0.5612 }, F209 = { 0.7212, 0.6132 }, F210 = { 0.7603, 0.5481 },
+                F211 = { 0.7864, 0.5221 }, F212 = { 0.7907, 0.5416 }, F213 = { 0.7951, 0.5286 }, F214 = { 0.7994, 0.5351 }, F215 = { 0.8255, 0.5742 }, F216 = { 0.8124, 0.5872 },
+                F217 = { 0.8124, 0.6132 }, F218 = { 0.8038, 0.6197 }, F219 = { 0.7864, 0.6393 }, F220 = { 0.7734, 0.6523 }, F221 = { 0.7734, 0.6653 }, F222 = { 0.7560, 0.6718 },
+                F223 = { 0.7299, 0.7044 }, F224 = { 0.5692, 0.6783 }, F225 = { 0.7777, 0.6458 }, F226 = { 0.7343, 0.6913 }, F227 = { 0.4520, 0.5872 }, F228 = { 0.4954, 0.5937 },
+                F229 = { 0.5996, 0.6327 }, F230 = { 0.5823, 0.6002 }, F231 = { 0.6648, 0.6132 }, F232 = { 0.5996, 0.6197 }, F233 = { 0.6127, 0.6002 }, F234 = { 0.6040, 0.6132 },
+                F235 = { 0.6040, 0.6262 }, F236 = { 0.6691, 0.5546 }, F237 = { 0.7473, 0.6002 }, F238 = { 0.7256, 0.6262 }, F239 = { 0.7690, 0.6067 }, F240 = { 0.7603, 0.6002 },
+                F241 = { 0.7516, 0.6067 }, F242 = { 0.7256, 0.6327 }, F243 = { 0.7082, 0.6327 }, F244 = { 0.7169, 0.7109 }, F245 = { 0.8168, 0.6067 }, F246 = { 0.4389, 0.6067 },
+                F247 = { 0.4476, 0.6262 }, F248 = { 0.4433, 0.6002 }, F249 = { 0.5128, 0.6197 }, F250 = { 0.5519, 0.6523 }, F251 = { 0.6604, 0.6197 }, F252 = { 0.7430, 0.6262 },
+                F253 = { 0.7169, 0.6327 }, F254 = { 0.7951, 0.6393 }, F255 = { 0.8168, 0.6458 }, F256 = { 0.4389, 0.6783 }, F257 = { 0.4476, 0.6653 }, F258 = { 0.5215, 0.6458 },
+                F259 = { 0.5171, 0.6653 }, F260 = { 0.5171, 0.6523 }, F261 = { 0.5302, 0.6458 }, F262 = { 0.6561, 0.6262 }, F263 = { 0.5996, 0.6523 }, F264 = { 0.7039, 0.6523 },
+                F265 = { 0.6735, 0.6523 }, F266 = { 0.7603, 0.6653 }, F267 = { 0.7907, 0.6588 }, F268 = { 0.7647, 0.6718 }, F269 = { 0.7864, 0.6978 }, F270 = { 0.5041, 0.6067 },
+                F271 = { 0.6083, 0.7109 }, F272 = { 0.6952, 0.7044 }, F273 = { 0.7430, 0.6913 }, F274 = { 0.7126, 0.7044 }, F275 = { 0.8472, 0.7109 }, F276 = { 0.8298, 0.7044 },
+                F277 = { 0.5692, 0.7044 }, F278 = { 0.6257, 0.7239 }, F279 = { 0.7430, 0.7044 }, F280 = { 0.7647, 0.7369 }, F281 = { 0.7560, 0.7564 }, F282 = { 0.7734, 0.7499 },
             },
             edges = {
+                { "N3", "P0" }, { "P0", "P1" }, { "P1", "P2" }, { "P2", "P3" }, { "P3", "P4" }, { "P4", "P5" }, { "P5", "P6" }, { "P6", "P7" }, { "P7", "LW" }, -- labwest
                 { "VT", "R4" }, { "R4", "R3b" }, { "R3b", "R3" }, { "R3", "R1" }, { "R1", "H8" }, { "H8", "H7" }, { "H7", "H6" }, { "H6", "H5" },
                 { "H5", "H4" }, { "H4", "H3" }, { "H3", "H2" }, { "H2", "D" }, { "D", "S" }, { "D", "N1" }, { "N1", "N2" }, { "N2", "N3" },
                 { "N3", "N4" }, { "N4", "N5" }, { "S", "A1" }, { "A1", "B1" }, { "B1", "B2" }, { "B2", "B3" }, { "B3", "B4" }, { "B4", "B5" },
                 { "B5", "B6" }, { "B6", "B7" }, { "B7", "B8" }, { "A1", "C1" }, { "C1", "C2" }, { "C2", "C3" }, { "N5", "N6" }, { "N6", "N7" },
+                -- uclab
+                { "L1", "L2" }, { "L2", "L3" }, { "L3", "L4" }, { "LW", "L4" }, { "L4", "L5" }, { "L5", "L6" }, { "L6", "L7" }, { "L7", "L9" }, { "L9", "L8" },
+                { "L8", "A1" }, { "B7", "T1" }, { "T1", "T2" }, { "T2", "T4" }, { "T4", "T5" }, { "T5", "T6" }, { "T6", "T8" }, { "T8", "T9" },
+                { "T9", "FM" },
+                -- ucring
+                { "A1", "B2" }, { "A1", "F150" }, { "A1", "F195" }, { "A1", "L8" }, { "B1", "B2" }, { "B1", "F224" }, { "B2", "B3" }, { "B2", "B4" }, { "B2", "F151" },
+                { "B2", "F224" }, { "B3", "F229" }, { "B4", "B5" }, { "B5", "B6" }, { "B5", "F151" }, { "B5", "F152" }, { "B5", "F231" }, { "B5", "F251" }, { "B5", "F262" },
+                { "B5", "F263" }, { "B6", "B7" }, { "B6", "F152" }, { "B6", "F207" }, { "B6", "F231" }, { "B6", "F251" }, { "B6", "F262" }, { "B7", "F153" }, { "B7", "F189" },
+                { "B7", "F236" }, { "B7", "T1" }, { "C1", "C2" }, { "C1", "F224" }, { "C1", "F271" }, { "C1", "F277" }, { "C1", "F278" }, { "C2", "C3" }, { "C2", "F223" },
+                { "C2", "F244" }, { "C2", "F272" }, { "C2", "F276" }, { "C3", "F223" }, { "C3", "F226" }, { "C3", "F266" }, { "C3", "F269" }, { "C3", "F271" }, { "C3", "F274" },
+                { "C3", "F279" }, { "F1", "F12" }, { "F1", "F2" }, { "F1", "F29" }, { "F10", "F9" }, { "F10", "F98" }, { "F10", "F99" }, { "F10", "T4" }, { "F100", "F101" },
+                { "F101", "F80" }, { "F102", "F81" }, { "F103", "F104" }, { "F103", "F132" }, { "F103", "F156" }, { "F103", "F160" }, { "F104", "F105" }, { "F104", "F134" }, { "F105", "F106" },
+                { "F106", "F51" }, { "F106", "F68" }, { "F107", "F108" }, { "F108", "F109" }, { "F108", "F118" }, { "F108", "F140" }, { "F109", "F110" }, { "F109", "F135" }, { "F11", "T6" },
+                { "F11", "T8" }, { "F110", "F111" }, { "F111", "F112" }, { "F112", "F113" }, { "F113", "F114" }, { "F113", "F115" }, { "F114", "F115" }, { "F115", "F116" }, { "F115", "F123" },
+                { "F116", "T4" }, { "F117", "F118" }, { "F119", "F73" }, { "F12", "F13" }, { "F12", "F3" }, { "F12", "F31" }, { "F120", "F121" }, { "F121", "F73" }, { "F122", "F123" },
+                { "F124", "F9" }, { "F125", "F126" }, { "F126", "F91" }, { "F127", "F128" }, { "F128", "F141" }, { "F128", "F95" }, { "F129", "F130" }, { "F129", "F142" }, { "F13", "F4" },
+                { "F130", "F81" }, { "F131", "F81" }, { "F133", "F51" }, { "F133", "F56" }, { "F135", "F140" }, { "F136", "F137" }, { "F137", "F138" }, { "F138", "F139" }, { "F139", "F140" },
+                { "F14", "F15" }, { "F141", "F157" }, { "F142", "F144" }, { "F142", "F159" }, { "F142", "F169" }, { "F143", "F144" }, { "F145", "F146" }, { "F146", "F147" }, { "F147", "F148" },
+                { "F147", "F161" }, { "F147", "F171" }, { "F148", "F149" }, { "F148", "F171" }, { "F149", "F150" }, { "F15", "F3" }, { "F15", "F35" }, { "F150", "F188" }, { "F150", "F249" },
+                { "F150", "F250" }, { "F150", "F258" }, { "F150", "F261" }, { "F151", "F201" }, { "F151", "F229" }, { "F151", "F230" }, { "F151", "F232" }, { "F151", "F235" }, { "F152", "F153" },
+                { "F154", "F155" }, { "F155", "F156" }, { "F158", "F159" }, { "F16", "F41" }, { "F16", "F6" }, { "F16", "F7" }, { "F16", "F73" }, { "F16", "F8" }, { "F162", "F163" },
+                { "F162", "F172" }, { "F163", "F164" }, { "F164", "F165" }, { "F165", "F166" }, { "F166", "F203" }, { "F166", "T2" }, { "F167", "F168" }, { "F167", "F184" }, { "F168", "T1" },
+                { "F169", "F191" }, { "F17", "F18" }, { "F170", "F44" }, { "F170", "F80" }, { "F172", "F175" }, { "F173", "F174" }, { "F174", "F175" }, { "F175", "F198" }, { "F175", "F199" },
+                { "F176", "F177" }, { "F177", "F178" }, { "F178", "F179" }, { "F179", "F180" }, { "F18", "F19" }, { "F18", "F24" }, { "F180", "F181" }, { "F180", "F185" }, { "F181", "F182" },
+                { "F182", "F183" }, { "F182", "F190" }, { "F182", "F211" }, { "F183", "F184" }, { "F183", "F213" }, { "F183", "F214" }, { "F186", "F187" }, { "F187", "F188" }, { "F189", "T2" },
+                { "F19", "F20" }, { "F19", "F28" }, { "F19", "F48" }, { "F19", "F63" }, { "F19", "F64" }, { "F19", "F80" }, { "F192", "F193" }, { "F193", "F194" }, { "F193", "F227" },
+                { "F193", "F270" }, { "F194", "F195" }, { "F195", "F197" }, { "F195", "F228" }, { "F195", "F270" }, { "F196", "F197" }, { "F197", "F227" }, { "F2", "F3" }, { "F2", "F31" },
+                { "F2", "F32" }, { "F2", "F35" }, { "F20", "F21" }, { "F20", "F44" }, { "F20", "F45" }, { "F200", "F201" }, { "F200", "F230" }, { "F202", "F203" }, { "F204", "F205" },
+                { "F205", "F206" }, { "F205", "F209" }, { "F205", "F238" }, { "F205", "F243" }, { "F205", "F253" }, { "F206", "F207" }, { "F207", "F265" }, { "F208", "F209" }, { "F21", "F6" },
+                { "F21", "F61" }, { "F21", "F76" }, { "F21", "F8" }, { "F210", "F211" }, { "F212", "F213" }, { "F215", "F216" }, { "F216", "F217" }, { "F217", "F218" }, { "F218", "F219" },
+                { "F218", "F245" }, { "F219", "F220" }, { "F219", "F225" }, { "F219", "F254" }, { "F22", "F23" }, { "F220", "F221" }, { "F221", "F222" }, { "F221", "F225" }, { "F222", "F223" },
+                { "F222", "F226" }, { "F222", "F268" }, { "F225", "F254" }, { "F226", "F244" }, { "F227", "F228" }, { "F227", "F246" }, { "F227", "F248" }, { "F228", "L8" }, { "F23", "F24" },
+                { "F23", "F47" }, { "F233", "F234" }, { "F234", "F235" }, { "F237", "F238" }, { "F239", "F240" }, { "F24", "F48" }, { "F240", "F241" }, { "F241", "F242" }, { "F242", "F243" },
+                { "F242", "F252" }, { "F242", "F253" }, { "F244", "F273" }, { "F247", "F248" }, { "F248", "F257" }, { "F25", "F26" }, { "F254", "F255" }, { "F256", "F257" }, { "F259", "F260" },
+                { "F26", "F27" }, { "F260", "F261" }, { "F264", "F265" }, { "F267", "F268" }, { "F27", "F28" }, { "F275", "F276" }, { "F279", "F280" }, { "F279", "F281" }, { "F279", "F282" },
+                { "F3", "F4" }, { "F30", "F31" }, { "F31", "F33" }, { "F32", "F4" }, { "F34", "F35" }, { "F34", "F53" }, { "F36", "F6" }, { "F36", "F8" }, { "F37", "F38" },
+                { "F38", "F5" }, { "F38", "F51" }, { "F38", "F56" }, { "F39", "F5" }, { "F4", "F5" }, { "F40", "F7" }, { "F40", "F9" }, { "F41", "F60" }, { "F41", "F7" },
+                { "F42", "F43" }, { "F43", "F8" }, { "F44", "F63" }, { "F45", "F66" }, { "F45", "F80" }, { "F46", "F47" }, { "F48", "F80" }, { "F49", "F50" }, { "F5", "F6" },
+                { "F50", "F51" }, { "F51", "F68" }, { "F51", "F83" }, { "F51", "F84" }, { "F52", "F53" }, { "F54", "F55" }, { "F55", "F56" }, { "F55", "F57" }, { "F55", "F58" },
+                { "F55", "F68" }, { "F59", "F60" }, { "F6", "F7" }, { "F62", "F63" }, { "F63", "F66" }, { "F63", "F80" }, { "F65", "F66" }, { "F66", "F67" }, { "F69", "F70" },
+                { "F7", "F8" }, { "F70", "F71" }, { "F71", "F72" }, { "F72", "F73" }, { "F72", "F85" }, { "F73", "F86" }, { "F73", "F88" }, { "F74", "F9" }, { "F74", "T4" },
+                { "F75", "F76" }, { "F75", "F79" }, { "F75", "F91" }, { "F75", "F92" }, { "F77", "F78" }, { "F78", "F79" }, { "F8", "F9" }, { "F80", "F81" }, { "F80", "F82" },
+                { "F87", "F88" }, { "F89", "F9" }, { "F90", "F91" }, { "F93", "F94" }, { "F94", "F95" }, { "F95", "F96" }, { "F96", "F97" }, { "F97", "F98" }, { "F98", "F99" },
+                { "F99", "T4" }, { "FM", "T9" }, { "T1", "T2" }, { "T2", "T4" }, { "T4", "T5" }, { "T5", "T6" }, { "T8", "T9" },
             },
+        },
+        -- menethildocks (2.0.13, M 18 Nov 2026 on Menethil Harbor's quay,
+        -- "Take the boat to Theramore", the arrow pointing straight over the
+        -- water at the far pier: "it's not really understanding that I'm on
+        -- the dock where I have to go ... the one for Theramore is the one
+        -- on the left"): the quay and the two piers (the boat to Theramore
+        -- leaves from the southern one, TH; the boat from Auberdine lands at
+        -- the northern one, AU): the walk between them on the Forever
+        -- client's walking map (Polestar_Nav_EK, Polestar's router run
+        -- offline), cut down to its corners. Only for a place on the piers.
+        [1437] = {
+            near = 70, targetNear = 25, onlyNear = true, docks = true, close = 12, pass = 6,
+            gates = { "Q1" },
+            nodes = {
+                TH = { 0.0521, 0.6371 }, S2 = { 0.0574, 0.6364 }, S1 = { 0.0645, 0.6289 }, SR = { 0.0887, 0.6062 }, Q1 = { 0.0887, 0.5956 },
+                NR = { 0.0776, 0.5790 }, N2 = { 0.0615, 0.5850 }, AU = { 0.0483, 0.5704 },
+            },
+            edges = { { "TH", "S2" }, { "S2", "S1" }, { "S1", "SR" }, { "SR", "Q1" }, { "Q1", "NR" }, { "NR", "N2" }, { "N2", "AU" } },
         },
         -- orggate (2.0.8, M 15 Nov 2026: off the zeppelin in Durotar the
         -- arrow pointed at Orgrimmar through the cliff): the walk between
@@ -3958,7 +4231,11 @@ do
     function Way.RoadAim(entry, plan, px, py, here)
         local map = PlayerMap()
         local net = map and Way.ROADS[map]
-        if not net or not plan.x or not plan.y then entry.road = nil return nil end
+        if not net or not plan.x or not plan.y then
+            entry.road = nil
+            if not net then Way.ucFloor, entry.ucOuter, entry.ucTradeUp = nil, nil, nil end -- uclab, ucring: out of the city
+            return nil
+        end
         local tx, ty = plan.x, plan.y
         local memo = entry.road
         if memo and memo.map == map and memo.tx == tx and memo.ty == ty and memo.ride == (plan.ride and true or false)
@@ -3980,6 +4257,15 @@ do
                     adj[e[1]] = adj[e[1]] or {}
                     adj[e[2]] = adj[e[2]] or {}
                     adj[e[1]][e[2]], adj[e[2]][e[1]] = d, d
+                    -- uclab: the stretches of the hall, of the lab under it, of the Trade Quarter
+                    -- (ucring: and the Royal Quarter's ways apart from the bat handler's)
+                    local function In(set) return set and (set[e[1]] or set[e[2]]) end
+                    local function Tree(n) return n:sub(1, 1) == "F" and n ~= "FM" end
+                    if In(net.tradeNodes) then e.group = "trade"
+                    elseif In(net.hallNodes) then e.group = "hall"
+                    elseif In(net.labNodes) then e.group = "lab"
+                    elseif In(net.royalNodes) then e.group = "royal"
+                    elseif net.royalNodes and (Tree(e[1]) or Tree(e[2])) then e.group = "fm" end
                 end
                 net.adj = adj
                 for _, area in ipairs(net.areas or {}) do -- tbopen: the open rises' outlines in world yards
@@ -3998,9 +4284,9 @@ do
         if not w then return nil end
         if w[net.gates[1]][3] ~= here then entry.road = nil return nil end
         -- The road nearest a place: its two ends, the point on it, how far.
-        local function Nearest(x, y, net, w) -- (orggate: another map's roads too)
+        local function Nearest(x, y, net, w, skip, skip2, skip3, only) -- (orggate: another map's roads too; uclab: not the stretches of the other floor; ucring: nor the Trade Quarter's upper ring, nor the other place's ways; or only one group's)
             local best
-            for _, e in ipairs(net.edges) do
+            for _, e in ipairs(net.edges) do if not ((e.group and (e.group == skip or e.group == skip2 or e.group == skip3)) or (only and e.group ~= only)) then
                 local a, b = w[e[1]], w[e[2]]
                 local dx, dy = b[1] - a[1], b[2] - a[2]
                 local len2 = dx * dx + dy * dy
@@ -4008,21 +4294,80 @@ do
                 if len2 > 0 then t = math.max(0, math.min(1, ((x - a[1]) * dx + (y - a[2]) * dy) / len2)) end
                 local qx, qy = a[1] + t * dx, a[2] + t * dy
                 local d = Yards(x, y, qx, qy)
-                if not best or d < best.d then best = { d = d, a = e[1], b = e[2], qx = qx, qy = qy } end
-            end
+                if not best or d < best.d then best = { d = d, a = e[1], b = e[2], qx = qx, qy = qy, group = e.group } end
+            end end
             return best
         end
         local function Keep(aim, rest)
             entry.road = { map = map, tx = tx, ty = ty, px = px, py = py, ride = plan.ride and true or false, aim = aim, rest = rest }
             return aim, rest
         end
-        local P = Nearest(px, py, net, w)
+        -- uclab: the floor the player is on (the last of its marks passed),
+        -- and whether the spot is down in the lab
+        local skipP, skipT, skipNet, noIn
+        if net.floorMarks then
+            for floor, marks in pairs(net.floorMarks) do
+                for name, r in pairs(marks) do
+                    if Yards(px, py, w[name][1], w[name][2]) <= r then Way.ucFloor = floor end
+                end
+            end
+            local labSpot = false
+            for _, spot in ipairs(net.labSpots or {}) do
+                local s = SpotWorld({ mapID = map, x = spot[1], y = spot[2] })
+                if s and Yards(tx, ty, s[1], s[2]) <= 20 then labSpot = true end
+            end
+            skipT = labSpot and "hall" or "lab"
+            if labSpot and Way.ucFloor ~= "lab" then noIn = net.labNotIn end -- labjoin
+            local T0 = Nearest(tx, ty, net, w, skipT)
+            local royal = T0 and net.targetNodes and (net.targetNodes[T0.a] or net.targetNodes[T0.b]) and true or false
+            -- ucring: the bat handler's ways, or the Royal Quarter's
+            if net.royalNodes then
+                -- (ucfar: the bat handler by his own stretch up on the
+                -- ring; the lower floor's ways run right under him and
+                -- were the nearer ones for the game's own flight point)
+                local F = net.farNodes and Nearest(tx, ty, net, w, nil, nil, nil, "trade")
+                skipNet = (F and F.d <= 30 and (net.farNodes[F.a] or net.farNodes[F.b])) and "royal" or "fm"
+            end
+            -- not known (the arrow started here): the hall for a spot in the
+            -- Royal Quarter, as before; the lab for any other
+            if Way.ucFloor == "lab" then skipP = "hall" elseif Way.ucFloor == "hall" then skipP = "lab" else skipP = royal and "lab" or "hall" end
+        end
+        -- ucring: up on the Trade Quarter's ring or down under it (the last mark passed)
+        local skipTrade
+        if net.tradeUp then
+            for name, r in pairs(net.tradeDown or {}) do
+                if w[name] and Yards(px, py, w[name][1], w[name][2]) <= r then entry.ucTradeUp = nil end
+            end
+            for name, r in pairs(net.tradeUp) do
+                if w[name] and Yards(px, py, w[name][1], w[name][2]) <= r then entry.ucTradeUp = true end
+            end
+            -- the arrow started right on the upper ring (by the bat handler)
+            if not entry.ucTradeUp and not entry.ucOuter then
+                local A = Nearest(px, py, net, w, skipP)
+                if A and A.group == "trade" and A.d <= 4 then entry.ucTradeUp = true end
+            end
+            if not entry.ucTradeUp and skipNet == "royal" then skipTrade = "trade" end -- (the bat handler's way only)
+        end
+        local P = Nearest(px, py, net, w, skipP, skipTrade, skipNet)
+        -- ucring: up on the ring, its own ways first (the lower floor's are under them)
+        if net.tradeUp and entry.ucTradeUp and skipNet == "royal" then
+            local up = Nearest(px, py, net, w, nil, nil, nil, "trade")
+            if up and up.d <= 12 then P = up end
+        end
         if not P or P.d > net.near then return Keep(nil) end -- not by the roads
         if net.ucDown and Way.UCUp and Way.UCUp(entry, px, py) then return Keep(nil) end -- ucroyal: up in the ruins
-        if Yards(px, py, tx, ty) < (net.close or 40) then return Keep(nil) end -- (ucroyal: the dais's steps are 14 yards from Varimathras)
-        local T = Nearest(tx, ty, net, w)
+        if Yards(px, py, tx, ty) < (net.close or 40) -- (ucroyal: the dais's steps are 14 yards from Varimathras)
+            and not (skipTrade and skipNet == "royal") then return Keep(nil) end -- (ucring: under the bat handler's platform, not by him)
+        local T = Nearest(tx, ty, net, w, skipT, nil, skipNet, skipNet == "royal" and "trade" or nil) -- (ucring: the bat handler stands up on the ring)
         if net.onlyNear and (T.d > (net.targetNear or net.near) -- ucroyal: only for a spot by these ways
-            or (net.targetNodes and not (net.targetNodes[T.a] or net.targetNodes[T.b]))) then return Keep(nil) end
+            or (net.targetNodes and not (net.targetNodes[T.a] or net.targetNodes[T.b]
+                or (skipT == "hall" and T.group == "lab") -- uclab: a spot in the lab
+                or (net.farNodes and (net.farNodes[T.a] or net.farNodes[T.b]))))) then return Keep(nil) end -- uclab: the bat handler
+        if P.group == "lab" and T.group == "lab" and Yards(px, py, tx, ty) < 40 then return Keep(nil) end -- uclab: across the lab, straight
+        -- uclab: to the bat handler from out in the city. (ucring: off an
+        -- elevator too: they come down beside the Trade Quarter, its lower
+        -- floor, and the bat handler is up its ramp.)
+        if net.farNodes and (net.farNodes[T.a] or net.farNodes[T.b]) and P.group ~= "trade" then entry.ucOuter = true end
         -- tbopen (2.0.12): the open rise a place stands on
         local function Area(x, y)
             for _, area in ipairs(net.areas or {}) do
@@ -4075,7 +4420,7 @@ do
             if not at then break end
             done[at] = true
             for other, len in pairs(net.adj[at] or {}) do
-                if not done[other] and (dist[other] == nil or best + len < dist[other]) then
+                if not done[other] and not (noIn and noIn[at] == other) and (dist[other] == nil or best + len < dist[other]) then
                     dist[other], prev[other] = best + len, at
                 end
             end
@@ -4283,6 +4628,26 @@ do
     -- one of those maps the arrow leads to the gate, until the player is at
     -- it; on any other map (through it, or never behind it) straight on.
     local function NextVia(entry, px, py, here)
+        -- buildingexit (2.0.13, M 19 Nov 2026 in the temple of Shen'dralas
+        -- after Meeting the Magister, the arrow to Mithera through its walls:
+        -- "it should point me to the exit, because the NPC is outside"): a
+        -- building with one way out (FDJ.ARROW_EXITS: its middle, radius in
+        -- yards, door): indoors in it, with the place to go outside it, the
+        -- arrow leads to the door first.
+        for _, exit in ipairs(FDJ.ARROW_EXITS or {}) do
+            if type(exit) == "table" and PlayerMap() == exit.mapID and Indoors() then
+                local c, door = SpotWorld(exit), SpotWorld(exit.door)
+                local t = SpotWorld(FDJ.ArrowSpawn(entry) or entry.spot)
+                local r = tonumber(exit.radius) or 60
+                -- (to the door all the time indoors, up to the doorway: the
+                -- arrow turns to the place only once outside, M 19 Nov 2026)
+                if c and door and c[3] == here and door[3] == here and Yards(px, py, c[1], c[2]) <= r
+                    and not (t and t[3] == here and Yards(t[1], t[2], c[1], c[2]) <= r)
+                    and Yards(px, py, door[1], door[2]) > 5 then
+                    return door, exit.door
+                end
+            end
+        end
         local routes = ViaRoutes(entry)
         if not routes then return nil end
         -- (Inline: this file's main chunk is at Lua's limit of 200 locals.)
@@ -4360,7 +4725,9 @@ do
         entry.viaRoute = best
         -- Near the spot: straight to it, unless a climb comes first (the
         -- Messenger Bag is up on the wall, over the heads of those below).
-        if nearSpot and not (bestVia and bestVia.climb) then return nil end
+        -- (dorncave, 2.0.13: nor a point with keep = true, the way up into a
+        -- cave whose mouth is within those yards: Dorn Plainstalker's)
+        if nearSpot and not (bestVia and (bestVia.climb or bestVia.keep)) then return nil end
         -- wholeway (2.0.34): what is left of the way after its next point
         -- (yards along its points to the spot), so the arrow can tell the
         -- distance to the spot itself, not to the next corner.
@@ -4604,6 +4971,12 @@ do
     end
     -- What the NPC is called for /targetexact (nil: not an NPC).
     local function NPC(spot)
+        -- (npclocation, 2.0.13, M 19 Nov 2026 targeting Rok'Alim, no picture on
+        -- the arrow: a place on the map, not a quest giver's pin - no raid mark,
+        -- no click macro - can still name the NPC met there: Grenka
+        -- Bloodscreech in her cave, Rok'Alim on his path. Their picture and
+        -- "Kill <name>" go by that name.)
+        if spot and spot.markerType == "location" and type(spot.targetName) == "string" and spot.targetName ~= "" then return spot.targetName end
         if not spot or not IsTargetableNPCMarker(spot) then return nil end
         return QuestGiverName(spot)
     end
@@ -4658,6 +5031,10 @@ do
     function Way.GetTo(entry)
         local spot = entry and entry.spot
         if type(spot) ~= "table" then return "" end
+        -- (nogetto, 2.0.13, M 19 Nov 2026 on Rok'Alim's path: "Why does it
+        -- say get to Thalanaar?": his path's far end is near that flight
+        -- point, but the place to go is the path itself: spot.noGetTo)
+        if spot.noGetTo then return "" end
         if entry.getTo == nil then
             local found = false
             local city = tonumber(spot.mapID)
@@ -4774,6 +5151,11 @@ do
     -- tracked chain's spot steps aside until its next step).
     local function Dismiss(entry)
         if not entry then return end
+        if entry.source == "corpse" then -- corpserun: hidden until alive again
+            Way.corpseOff = true
+            Choose()
+            return
+        end
         local chain = entry.chain or (entry.source ~= "manual" and entry.source) or nil
         if chain and FDJ.StopChainArrow and FDJ.StopChainArrow(chain) then
             if manual and (manual == entry or manual.chain == chain) then manual = nil end
@@ -4831,6 +5213,7 @@ do
             end
             f.route:SetText(flight.to and FDJ.L("ARROW_FLYING", PlaceName(flight.to)) or "")
             f.hearth:SetText("")
+            if f.skipNow then f.skipNow:Hide() end -- skipnow
             return
         end
         local distance, turn, plan
@@ -4855,6 +5238,7 @@ do
         f.fdjNear = near
         -- questrp (2.0.8): while the NPC's scene runs, the arrow stays at him
         local hide = inside or (near and not spawnHere and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))))
+        if f.skipNow then f.skipNow:SetShown(entry.spot.skipQuest ~= nil and not inside) end -- skipnow (2.0.13)
         if f.nextSpawn then
             f.nextSpawn:SetShown(spawnHere and not inside)
             if spawnHere then
@@ -4880,9 +5264,13 @@ do
             f:EnableMouse(not hide)
         end
         ClickTargets(f, (not hide and final and distance and distance <= NEAR_NPC) and entry.spot or nil)
+        if FDJ.ArrowItemButton then FDJ.ArrowItemButton(f, (not hide) and entry.spot or nil) end -- arrowitem (2.0.13)
         -- npcicon (2.0.13)
         if f.npc then
-            local on = (f.fdjTargets and not hide) and true or false
+            -- (seenportrait, 2.0.13: a spot with seenPortrait = true - Rok'Alim on
+            -- his patrol - shows the NPC's picture as soon as the game shows him
+            -- (target, mouseover, nameplate), wherever the arrow's spot is)
+            local on = ((f.fdjTargets or (entry.spot.seenPortrait and FDJ.ArrowNpcSeen and FDJ.ArrowNpcSeen(f, NPC(entry.spot)))) and not hide) and true or false
             if on ~= (f.fdjNpcOn or false) then
                 f.fdjNpcOn, f.fdjNpcUnit, f.fdjNpcAt = on, nil, nil
                 f.npc:SetShown(on)
@@ -4941,34 +5329,31 @@ do
                     local now = (GetTime and GetTime()) or 0
                     if f.fdjResolving ~= npcID then
                         f.fdjResolving, f.fdjResolveAt, f.fdjResolveTries = npcID, now, 1
-                        if not f.model then
-                            local okM, model = pcall(CreateFrame, "PlayerModel", nil, UIParent)
-                            if okM and model then
-                                model:SetSize(1, 1)
-                                model:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-                                model:SetAlpha(0)
-                                f.model = model
-                                FDJ.arrowLookupFrame = f
-                            end
-                        end
+                        -- ownmodel (2.0.13, M 19 Nov 2026: Mithera's arrow with
+                        -- Magister Kirandis's face): each lookup its own hidden
+                        -- model (FDJ.ArrowTakeModel), so the last NPC's model
+                        -- still loading can no longer be read as this one's.
+                        FDJ.ArrowFreeModel(f)
+                        f.model = FDJ.ArrowTakeModel()
+                        FDJ.arrowLookupFrame = f
                         if f.model then
                             f.model:Show()
                             if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
+                            FDJ.ArrowModelAsk(f.model) -- arrowsafe
                             if not pcall(f.model.SetCreature, f.model, npcID) then FDJ.arrowDisplayIDs[npcID] = false end
                         else
                             FDJ.arrowDisplayIDs[npcID] = false
                         end
                     elseif f.model then
                         local okD, display = pcall(f.model.GetDisplayInfo, f.model)
-                        if okD and type(display) == "number" and display > 0 then
+                        if okD and type(display) == "number" and display > 0 and FDJ.ArrowModelGood(f.model, display) then -- arrowsafe
                             FDJ.arrowDisplayIDs[npcID] = display
                             f.fdjResolving, f.fdjNpcUnit, f.fdjNpcAt = nil, nil, nil
                             if type(ForeverDungeonJournalDB) == "table" then -- portraitretry: kept for next time
                                 ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
                                 ForeverDungeonJournalDB.displayIDs[npcID] = display
                             end
-                            if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
-                            f.model:Hide()
+                            FDJ.ArrowFreeModel(f) -- ownmodel
                         elseif now - (f.fdjResolveAt or now) >= 2.5 then
                             -- portraitretry (2.0.18): ask again, as the trash mob
                             -- portraits do: an NPC this client has not met comes
@@ -4980,6 +5365,7 @@ do
                             local asked = false
                             if f.fdjResolveTries <= 12 then
                                 if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
+                                FDJ.ArrowModelAsk(f.model) -- arrowsafe
                                 asked = pcall(f.model.SetCreature, f.model, npcID)
                             end
                             if not asked then
@@ -4987,7 +5373,7 @@ do
                                 FDJ.arrowDisplayRetry = FDJ.arrowDisplayRetry or {}
                                 FDJ.arrowDisplayRetry[npcID] = now + 30
                                 f.fdjResolving = nil
-                                f.model:Hide()
+                                FDJ.ArrowFreeModel(f) -- ownmodel
                             end
                         end
                     end
@@ -5013,12 +5399,13 @@ do
                         if not unit and C_NamePlate and type(C_NamePlate.GetNamePlates) == "function" then
                             local okP, plates = pcall(C_NamePlate.GetNamePlates)
                             for _, plate in ipairs(okP and type(plates) == "table" and plates or {}) do
-                                local token = plate and plate.namePlateUnitToken
+                                local token = plate and (plate.namePlateUnitToken or (plate.UnitFrame and plate.UnitFrame.unit)) -- (arrowsafe: either)
                                 if Is(token) then unit = token break end
                             end
                         end
                     end
                     local npcID = name and FDJ.ARROW_NPC_IDS and FDJ.ARROW_NPC_IDS[name]
+                    if unit and npcID and FDJ.ArrowLearnFromUnit then FDJ.ArrowLearnFromUnit(npcID, unit) end -- arrowsafe
                     local display = npcID and FDJ.arrowDisplayIDs and FDJ.arrowDisplayIDs[npcID] or nil
                     local key = unit or (display and ("display" .. display)) or "none"
                     if key ~= f.fdjNpcUnit or unit then
@@ -5073,15 +5460,21 @@ do
             local step = (below and FDJ.L("ARROW_BELOW")) or (above and FDJ.L("ARROW_ABOVE"))
                 or (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))) -- questrp (2.0.8)
                 or (f.fdjNpcOn and FDJ.NPC_UPSTAIRS and FDJ.NPC_UPSTAIRS[NPC(entry.spot) or ""] and FDJ.L("ARROW_GO_UP")) or doing
-            if step == "" and hearth ~= "" then step, hearth = "|cff8fd0ff" .. hearth .. "|r", "" end
+            -- hearthfirst (2.0.13, M 19 Nov 2026 in Dalaran, "Fly to Undercity"
+            -- over "Hearth to Freewind Post": "one might get confused ... let's
+            -- just always use the option that's faster first"): the hearthstone
+            -- the quicker way: that line alone, in place of the way's own (the
+            -- flight, the boat, where to get to); the way shows when it is on
+            -- cooldown or no quicker.
+            if hearth ~= "" then step, hearth = "|cff8fd0ff" .. hearth .. "|r", "" end
             -- getto (2.0.22): the place to get to, on its own line under the
             -- yards, the next step (if any) under it.
             local getTo = Way.GetTo(entry)
             -- onedest (2.0.7): "Take the zeppelin to Orgrimmar" / "Fly to
             -- Undercity" already names where to: no "Get to Orgrimmar" over
             -- it. It shows again once the ride or flight is behind.
-            if plan and (plan.fly or plan.ride) then getTo = "" end
-            if plan and plan.elevator then
+            if plan and (plan.fly or plan.ride or plan.hearth) then getTo = "" end -- (hearthfirst: nor over the hearthstone)
+            if plan and plan.elevator and not plan.hearth then
                 -- ucelevator (2.0.7): the ride first, how to get out under it
                 local lift = FDJ.L("ARROW_ELEVATOR")
                 step = (step ~= "" and (step .. "\n" .. lift)) or lift
@@ -5145,10 +5538,36 @@ do
         -- places to look).
         if near and not inside and not spawnHere and not entry.spot.pickUp and type(entry.spot.goalLines) ~= "table"
             and NPC(entry.spot) and not (FDJ.ArrowRPWait and FDJ.ArrowRPWait(NPC(entry.spot))) then
-            f.distance:SetText("|cff59ff59" .. FDJ.L("ARROW_TALK_TO", FreeText(NPC(entry.spot)) or NPC(entry.spot)) .. "|r")
+            -- arrowkill (2.0.13, M 18 Nov 2026 at Ricter: "these NPCs need to be killed, so the text should not be talk to"): a spot with kill = true
+            f.distance:SetText("|cff59ff59" .. FDJ.L(entry.spot.kill and "ARROW_KILL" or "ARROW_TALK_TO", FreeText(NPC(entry.spot)) or NPC(entry.spot)) .. "|r")
             f.route:SetText("")
             f.hearth:SetText("")
             turn = nil
+        end
+        -- upstairs (2.0.13, M 18 Nov 2026 at Kegan Darkmar, on the upper floor
+        -- of the camp's big house: "if the arrow could understand that we
+        -- need to get upstairs"): the game tells an addon no height, so a
+        -- spot with upstairs = true says so near it: "Go upstairs" under the
+        -- yards, and over "Kill <name>" at the spot itself.
+        if entry.spot.upstairs and not inside and distance and distance <= 60 then
+            if near then
+                f.distance:SetText("|cff8fd0ff" .. FDJ.L("ARROW_UPSTAIRS") .. "|r\n" .. (f.distance:GetText() or ""))
+            else
+                f.route:SetText("|cff8fd0ff" .. FDJ.L("ARROW_UPSTAIRS") .. "|r")
+            end
+        end
+        -- spothint (2.0.13, M 18 Nov 2026 at the Warden's Footlocker: "it
+        -- should say open the box in the house for the key"): a spot's own
+        -- line (spot.hint), near it: under the yards, and over "Pick it up"
+        -- at the spot itself.
+        -- grouphint (2.0.13): a line shown at any distance (spot.hintAlways), over the yards
+        -- (plankjump, 2.0.13: spot.hintKey, the line in the player's language)
+        if (type(entry.spot.hint) == "string" or entry.spot.hintKey) and not inside and distance and (distance <= 60 or entry.spot.hintAlways) then
+            if near or entry.spot.hintAlways then
+                f.distance:SetText("|cff8fd0ff" .. FDJ.WrapHint(entry.spot.hintKey and FDJ.L(entry.spot.hintKey) or entry.spot.hint) .. "|r\n" .. (f.distance:GetText() or ""))
+            else
+                f.route:SetText("|cff8fd0ff" .. FDJ.WrapHint(entry.spot.hintKey and FDJ.L(entry.spot.hintKey) or entry.spot.hint) .. "|r")
+            end
         end
         if turn then
             if f.arrow.SetRotation then f.arrow:SetRotation(turn) end
@@ -5164,10 +5583,17 @@ do
     local function ShowOnMap(entry)
         local show = FDJ.MapMarkers and FDJ.MapMarkers.ShowRecordedLocationOnMap
         if not entry or type(entry.spot) ~= "table" or not show then return end
+        -- (patrolnopin, 2.0.13, M 19 Nov 2026: "remove the X mark when clicking
+        -- on the map for this quest ... it's just a patrol"): a patrol's spot
+        -- is only the end of its line: the line alone, no pin.
+        if type(entry.spot.patrol) == "table" and FDJ.MapMarkers.ShowRouteOnMap then
+            FDJ.MapMarkers.ShowRouteOnMap(entry.spot.patrol)
+            return
+        end
         local spot = {}
         for k, v in pairs(entry.spot) do spot[k] = v end
         FDJ.pendingMarkerQuestTitle = QuestName(entry.spot)
-        FDJ.pendingMarkerTurnIn = entry.spot.turnIn and true or nil
+        FDJ.pendingMarkerTurnIn = (entry.spot.turnIn and not entry.spot.goTo) and true or nil
         show(spot, spot.label)
         local now = shown
         if now and now ~= entry and SpotKey(now.spot) == SpotKey(entry.spot) then
@@ -5238,6 +5664,31 @@ do
                 b:SetScript("OnClick", function() if FDJ.NextArrowSpawn then FDJ.NextArrowSpawn() end end)
                 b:Hide()
                 f.nextSpawn = b
+            end
+        end
+        -- skipnow (2.0.13): "Skip for now" under the arrow, at a Route's step
+        -- inside another dungeon (Rot and Regret, in Maraudon): leaves its
+        -- quest off the Route (FDJ.RouteSkipNow).
+        do
+            local okS, b = pcall(CreateFrame, "Button", nil, f, "UIPanelButtonTemplate")
+            if okS and b then
+                b:SetSize(130, 22)
+                b:SetPoint("TOP", f.hearth, "BOTTOM", 0, -4)
+                b:SetText(FDJ.L("ARROW_SKIP_NOW"))
+                b:SetScript("OnClick", function()
+                    local e = shown
+                    if GameTooltip then GameTooltip:Hide() end
+                    if e and e.spot and e.spot.skipQuest and FDJ.RouteSkipNow then FDJ.RouteSkipNow(e.source, e.spot.skipQuest) end
+                end)
+                b:SetScript("OnEnter", function(self)
+                    if not GameTooltip then return end
+                    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+                    GameTooltip:SetText(FDJ.L("ARROW_SKIP_NOW_TIP"), 1, 1, 1, 1, true)
+                    GameTooltip:Show()
+                end)
+                b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+                b:Hide()
+                f.skipNow = b
             end
         end
         f:SetScript("OnDragStart", function(self)
@@ -5344,6 +5795,63 @@ do
         return f
     end
 
+    -- corpserun (2.0.13, M 18 Nov 2026, a ghost at the graveyard with the
+    -- arrow to the Grimy Key: "when I'm dead, the arrow prioritizes pointing
+    -- me to my body"): while the character is a ghost the arrow leads to the
+    -- corpse (where the game shows it on the map), in front of anything
+    -- else; alive again, back to what it was at. (Way fields: this scope
+    -- has no locals to spare.)
+    ;(function()
+        local strings = { enUS = "Your corpse", deDE = "Dein Leichnam", frFR = "Votre cadavre", esES = "Tu cadáver", itIT = "Il tuo cadavere",
+            ptBR = "Seu cadáver", ruRU = "Ваше тело", koKR = "내 시체", zhCN = "你的尸体", zhTW = "你的屍體" }
+        strings.esMX = strings.esES
+        for locale, text in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_CORPSE == nil then t.ARROW_CORPSE = text end
+        end
+    end)()
+    function Way.Corpse()
+        if type(UnitIsGhost) ~= "function" then return nil end
+        local ok, ghost = pcall(UnitIsGhost, "player")
+        if not ok or (type(issecretvalue) == "function" and issecretvalue(ghost)) or ghost ~= true then
+            Way.corpse, Way.corpseOff = nil, nil
+            return nil
+        end
+        if Way.corpseOff then return nil end
+        if Way.corpse then return Way.corpse end
+        if not (C_DeathInfo and type(C_DeathInfo.GetCorpseMapPosition) == "function") then return nil end
+        local map, guard = PlayerMap(), 0
+        while map and guard < 4 do
+            local okPos, pos = pcall(C_DeathInfo.GetCorpseMapPosition, map)
+            local x, y
+            if okPos and type(pos) == "table" then
+                x, y = pos.x, pos.y
+                if (x == nil or y == nil) and pos.GetXY then x, y = pos:GetXY() end
+            end
+            if Number(x) and Number(y) and x > 0 and y > 0 and x < 1 and y < 1 then
+                Way.corpse = { spot = { mapID = map, x = x, y = y, label = FDJ.L("ARROW_CORPSE"), corpse = true, markerType = "location" }, source = "corpse", key = "corpse" }
+                return Way.corpse
+            end
+            local okInfo, info = pcall(C_Map.GetMapInfo, map)
+            map = okInfo and type(info) == "table" and Number(info.parentMapID) or nil
+            if map == 0 then map = nil end
+            guard = guard + 1
+        end
+        return nil
+    end
+    Way.corpseWatch = CreateFrame("Frame")
+    ;(function()
+        for _, event in ipairs({ "PLAYER_DEAD", "PLAYER_ALIVE", "PLAYER_UNGHOST", "PLAYER_ENTERING_WORLD" }) do
+            pcall(Way.corpseWatch.RegisterEvent, Way.corpseWatch, event)
+        end
+    end)()
+    Way.corpseWatch:SetScript("OnEvent", function()
+        Way.corpse = nil
+        local function again() if Choose then pcall(Choose) end end
+        again()
+        if C_Timer and C_Timer.After then C_Timer.After(1, again) end -- (the ghost and the corpse's place come a moment after)
+    end)
+
     -- The spot shown on the map first, else the one a tracked chain is at.
     Choose = function()
         local pick = manual
@@ -5353,6 +5861,7 @@ do
                 if done[source] ~= entry.key then pick = entry break end
             end
         end
+        if pick then pick = Way.Corpse() or pick end -- corpserun (only while the arrow is in use)
         shown = pick
         if not pick then
             if frame then frame:Hide() end
@@ -5370,6 +5879,8 @@ do
             and FDJ.IsRepeatableQuest(pick.spot.fdjAutoQuest)
         if repeatOnly and (pick.spot.turnIn or quest) then
             mark = "|T" .. FDJ.REPEATABLE_QUEST_TEXTURE .. ":0|t "
+        elseif pick.spot.goTo then
+            mark = "" -- gotomark
         elseif pick.spot.turnIn then
             mark = "|TInterface\\GossipFrame\\ActiveQuestIcon:0|t "
         elseif quest then
@@ -5423,7 +5934,7 @@ do
     -- The chain moving on or ending takes its spot shown on the map along.
     -- goalhere (2.0.9): goalLines, at the place to kill / collect (a route's
     -- stop, Systems/QuestText.lua): the lines shown in place of the yards.
-    function FDJ.FollowWaypoint(source, spot, questTitle, turnIn, goalLines)
+    function FDJ.FollowWaypoint(source, spot, questTitle, turnIn, goalLines, goTo, skipQuest)
         if source == nil then return end
         if type(spot) ~= "table" or not spot.mapID then
             if follows[source] then
@@ -5440,6 +5951,7 @@ do
         -- (right-clicked away: still away). The next quest at the same place
         -- (The Second Rebellion done, Bad Medicine left): its name on it.
         if old and old.key == key then
+            old.spot.goTo = goTo and true or nil -- gotomark
             old.spot.goalLines = type(goalLines) == "table" and goalLines or nil
             if type(questTitle) == "string" and old.spot.questTitle ~= questTitle then
                 old.spot.questTitle = questTitle
@@ -5452,7 +5964,14 @@ do
         local copy = Copy(spot)
         copy.questTitle = questTitle
         copy.turnIn = turnIn and true or nil
+        -- gotomark (2.0.13, M 18 Nov 2026, the arrow to where Dalaran
+        -- Patrols' mobs are, with the yellow ?: "why is it telling me to go
+        -- turn in the quest when I haven't completed the quest yet?"): a
+        -- place to kill or collect at is no hand-in: no ? on the arrow, and
+        -- no "Turn in here" on its map pin.
+        copy.goTo = goTo and true or nil
         copy.goalLines = type(goalLines) == "table" and goalLines or nil
+        copy.skipQuest = skipQuest -- skipnow (2.0.13): the Route's quest the arrow's "Skip for now" leaves off
         follows[source] = { spot = copy, source = source, key = key }
         Choose()
     end
@@ -5517,9 +6036,147 @@ end
 function FDJ.PauseArrowLookup()
     local f = FDJ.arrowLookupFrame
     if not (f and f.model) then return end
-    if f.model.ClearModel then pcall(f.model.ClearModel, f.model) end
-    f.model:Hide()
+    FDJ.ArrowFreeModel(f) -- ownmodel
     f.fdjResolving = nil
+end
+
+-- ownmodel (2.0.13): the hidden models the arrow learns NPC portraits with.
+-- A model put away is only taken again 10 seconds later: anything it was
+-- still loading has come in by then.
+do
+    local pool = {}
+    function FDJ.ArrowTakeModel()
+        local now = (GetTime and GetTime()) or 0
+        for _, m in ipairs(pool) do
+            if not m.fdjBusy and now - (m.fdjFreedAt or 0) >= 10 then
+                m.fdjBusy = true
+                m:Show()
+                return m
+            end
+        end
+        local ok, m = pcall(CreateFrame, "PlayerModel", nil, UIParent)
+        if not ok or not m then return nil end
+        m:SetSize(1, 1)
+        m:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+        m:SetAlpha(0)
+        m.fdjBusy = true
+        pool[#pool + 1] = m
+        return m
+    end
+    -- arrowsafe (2.0.13, M 19 Nov 2026, Dorn Plainstalker's arrow with an
+    -- undead face: "a lot of quests have been doing this"): a model asked
+    -- for an NPC it has not loaded yet still shows what it showed before
+    -- (the last NPC, or the player's own look), and that was being saved as
+    -- the NPC's face. Now a look only counts once the model has loaded the
+    -- new one, or it differs from what the model showed before asking - and
+    -- never the player's own. And once the NPC itself is seen (target,
+    -- mouseover, nameplate), its real look is learned from it, mending a
+    -- wrong one saved before.
+    local function Display(m)
+        local ok, d = pcall(m.GetDisplayInfo, m)
+        return ok and type(d) == "number" and d or nil
+    end
+    local mine, mineAt, mineModel
+    local function PlayerDisplay()
+        local now = (GetTime and GetTime()) or 0
+        if mine and mineAt and now - mineAt < 30 then return mine end
+        if not mineModel then
+            local ok, made = pcall(CreateFrame, "PlayerModel", nil, UIParent)
+            if not ok or not made then return nil end
+            mineModel = made
+            mineModel:SetSize(1, 1)
+            mineModel:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+            mineModel:SetAlpha(0)
+        end
+        local m = mineModel
+        m:Show()
+        pcall(m.SetUnit, m, "player")
+        mine, mineAt = Display(m), now
+        pcall(m.ClearModel, m)
+        m:Hide()
+        return mine
+    end
+    function FDJ.ArrowModelAsk(m)
+        if not m then return end
+        m.fdjBefore, m.fdjLoaded = Display(m), nil
+        if not m.fdjHooked and m.HookScript then
+            m.fdjHooked = true
+            pcall(m.HookScript, m, "OnModelLoaded", function(self) self.fdjLoaded = true end)
+        end
+    end
+    function FDJ.ArrowModelGood(m, display)
+        if not (m and display and display > 0) then return false end
+        if display == PlayerDisplay() then return false end
+        return m.fdjLoaded == true or display ~= m.fdjBefore
+    end
+    -- seenportrait (2.0.13, M 19 Nov 2026, on Rok'Alim's path: "make his
+    -- portrait appear once the game loads him ... so I don't have to spam
+    -- target macro him"): is the NPC shown by the game right now (target,
+    -- mouseover, a nameplate)? Looked at twice a second.
+    function FDJ.ArrowNpcSeen(f, name)
+        if not (f and type(name) == "string") then return false end
+        local now = (GetTime and GetTime()) or 0
+        if f.fdjSeenName == name and f.fdjSeenAt and now - f.fdjSeenAt < 0.5 then return f.fdjSeen end
+        f.fdjSeenName, f.fdjSeenAt, f.fdjSeen = name, now, false
+        local function Is(token)
+            if type(token) ~= "string" or type(UnitExists) ~= "function" then return false end
+            local okE, exists = pcall(UnitExists, token)
+            if not okE or not exists then return false end
+            local okN, unitName = pcall(UnitName, token)
+            if not okN or type(unitName) ~= "string" then return false end
+            if type(issecretvalue) == "function" and issecretvalue(unitName) then return false end
+            return unitName == name
+        end
+        if Is("target") or Is("mouseover") then f.fdjSeen = true return true end
+        if C_NamePlate and type(C_NamePlate.GetNamePlates) == "function" then
+            local okP, plates = pcall(C_NamePlate.GetNamePlates)
+            for _, plate in ipairs(okP and type(plates) == "table" and plates or {}) do
+                if Is(plate and (plate.namePlateUnitToken or (plate.UnitFrame and plate.UnitFrame.unit))) then
+                    f.fdjSeen = true
+                    return true
+                end
+            end
+        end
+        return false
+    end
+    local seer
+    function FDJ.ArrowLearnFromUnit(npcID, unit)
+        if not (npcID and unit) then return end
+        local now = (GetTime and GetTime()) or 0
+        FDJ.arrowUnitLearned = FDJ.arrowUnitLearned or {}
+        if FDJ.arrowUnitLearned[npcID] and now - FDJ.arrowUnitLearned[npcID] < 5 then return end
+        FDJ.arrowUnitLearned[npcID] = now
+        if not seer then
+            local ok, m = pcall(CreateFrame, "PlayerModel", nil, UIParent)
+            if not ok or not m then return end
+            seer = m
+            seer:SetSize(1, 1)
+            seer:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+            seer:SetAlpha(0)
+        end
+        seer:Show()
+        if not pcall(seer.SetUnit, seer, unit) then seer:Hide() return end
+        local display = Display(seer)
+        pcall(seer.ClearModel, seer)
+        seer:Hide()
+        if not display or display <= 0 or display == PlayerDisplay() then return end
+        FDJ.arrowDisplayIDs = FDJ.arrowDisplayIDs or {}
+        if FDJ.arrowDisplayIDs[npcID] ~= display then
+            FDJ.arrowDisplayIDs[npcID] = display
+            if type(ForeverDungeonJournalDB) == "table" then
+                ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
+                ForeverDungeonJournalDB.displayIDs[npcID] = display
+            end
+        end
+    end
+    function FDJ.ArrowFreeModel(f)
+        local m = f and f.model
+        if not m then return end
+        f.model = nil
+        if m.ClearModel then pcall(m.ClearModel, m) end
+        m:Hide()
+        m.fdjBusy, m.fdjFreedAt = nil, (GetTime and GetTime()) or 0
+    end
 end
 
 -- questrp (2.0.8, M 15 Nov 2026): a hand-in that starts a scene before the
@@ -5574,3 +6231,99 @@ do
     end
 end
 
+-- arrowitem (2.0.13, M 19 Nov 2026 at the western pylon with the Pile of
+-- Pylon Parts in the bags: "the pylon parts item that's clickable should
+-- appear at the arrow ... instead of the raid mark, and you can just click
+-- on it, and it's gonna use the item"): a spot with an item to use there
+-- (spot.clickItem = { itemID, name }) shows the item's icon left of the
+-- arrow's name while the item is in the bags; a click uses it (out of
+-- combat: the game's action button template, as the tracker's start items).
+;(function()
+    local SIZE = 32
+    local function Count(itemID)
+        local get = (C_Item and C_Item.GetItemCount) or GetItemCount
+        if type(get) ~= "function" then return 0 end
+        local ok, n = pcall(get, itemID)
+        return ok and tonumber(n) or 0
+    end
+    local function Icon(itemID)
+        local get = (C_Item and C_Item.GetItemIconByID) or GetItemIcon
+        if type(get) ~= "function" then return nil end
+        local ok, icon = pcall(get, itemID)
+        return ok and icon or nil
+    end
+    local function Build(f)
+        local ok, b = pcall(CreateFrame, "Button", nil, f, "InsecureActionButtonTemplate")
+        if not ok or not b then return nil end
+        b:SetSize(SIZE, SIZE)
+        b:SetFrameLevel((f:GetFrameLevel() or 1) + 5)
+        b:RegisterForClicks("LeftButtonUp")
+        b:SetAttribute("useOnKeyDown", false)
+        b:SetAttribute("type", "item")
+        b.icon = b:CreateTexture(nil, "ARTWORK")
+        b.icon:SetAllPoints()
+        b.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        local lit = b:CreateTexture(nil, "HIGHLIGHT")
+        lit:SetAllPoints()
+        lit:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
+        lit:SetBlendMode("ADD")
+        b:SetScript("PreClick", function(self)
+            if InCombatLockdown and InCombatLockdown() then
+                self:SetAttribute("type", nil) -- (no use in combat: the game would block it)
+                if UIErrorsFrame and ERR_NOT_IN_COMBAT then UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT, 1, 0.1, 0.1) end
+            end
+        end)
+        b:SetScript("PostClick", function(self) self:SetAttribute("type", "item") end)
+        b:SetScript("OnEnter", function(self)
+            if not GameTooltip then return end
+            GameTooltip:SetOwner(self, "ANCHOR_LEFT")
+            if self.itemID and GameTooltip.SetItemByID then
+                GameTooltip:SetItemByID(self.itemID)
+            else
+                GameTooltip:SetText(self.itemName or "", 1, 0.82, 0)
+            end
+            GameTooltip:Show()
+        end)
+        b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+        b:Hide()
+        return b
+    end
+    function FDJ.ArrowItemButton(f, spot)
+        local use = type(spot) == "table" and type(spot.clickItem) == "table" and spot.clickItem or nil
+        local itemID = use and tonumber(use[1])
+        local on = itemID and Count(itemID) > 0
+        if not on then
+            if f.fdjItem then f.fdjItem:Hide() end
+            return
+        end
+        f.fdjItem = f.fdjItem or Build(f)
+        local b = f.fdjItem
+        if not b then return end
+        if b.itemID ~= itemID then
+            b.itemID, b.itemName = itemID, use[2]
+            b:SetAttribute("item", "item:" .. itemID)
+            b.icon:SetTexture(Icon(itemID) or "Interface\\Icons\\INV_Misc_QuestionMark")
+        end
+        b:ClearAllPoints()
+        b:SetPoint("RIGHT", f.title, "LEFT", -3, 0)
+        b:Show()
+    end
+end)()
+
+-- hintwrap (2.0.13, M 19 Nov 2026, the pylon line under the arrow: "can we
+-- have this blue text on two lines? It's way too long like this on one
+-- line"): a spot's line longer than 45 letters is split in two at the
+-- space nearest its middle (a comma there first).
+function FDJ.WrapHint(text)
+    if type(text) ~= "string" or #text <= 45 or text:find("\n", 1, true) then return text end
+    local mid, best = #text / 2, nil
+    for i = 2, #text - 1 do
+        if text:sub(i, i) == " " and (not best or math.abs(i - mid) < math.abs(best - mid)) then best = i end
+    end
+    -- a comma within 20 letters of the middle: the break after it
+    for i = math.floor(mid) - 20, math.floor(mid) + 20 do
+        if i > 1 and i < #text and text:sub(i, i + 1) == ", " then best = i + 1 break end
+    end
+    if not best then return text end
+    return text:sub(1, best - 1) .. "\n" .. text:sub(best + 1)
+end

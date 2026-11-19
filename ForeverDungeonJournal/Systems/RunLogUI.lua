@@ -2193,96 +2193,8 @@ function FDJ.RunLogTestRemove(run)
     FDJ.RefreshRunLog()
 end
 
-local function TestDungeon(word)
-    local key = (word or ""):lower():gsub("[^%w]", "")
-    if key == "" then return nil end
-    for _, e in ipairs(FDJ.TESTLOG_DUNGEONS) do
-        if key == e[1] or key == e[2]:lower():gsub("[^%w]", "") then return e[2] end
-    end
-end
-
--- Returns a message for the chat.
-function FDJ.RunLogTest(args)
-    args = (args or ""):lower()
-    local tag = "|cffd8a83cDungeonJournal|r "
-    if args == "off" or args == "clear" then
-        FDJ.testRuns, FDJ.testRun = {}, nil
-        FDJ.UpdateRunTracker()
-        FDJ.RefreshRunLog()
-        return { tag .. "Test runs removed." }
-    end
-    local word, rest = args:match("^(%S+)%s*(.*)$")
-    local dungeon = TestDungeon(word)
-    local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
-    if not d then
-        local lines, line = { tag .. "/dj testlog <abbreviation> [number | done]   |   /dj testlog off" }, ""
-        for _, e in ipairs(FDJ.TESTLOG_DUNGEONS) do
-            if FDJ.DB and FDJ.DB[e[2]] then
-                local part = "|cffffd100" .. e[1] .. "|r " .. DungeonLabel({ dungeon = e[2] })
-                if #line > 0 and #line + #part > 230 then lines[#lines + 1] = line line = "" end
-                line = line .. (#line > 0 and ",  " or "") .. part
-            end
-        end
-        if #line > 0 then lines[#lines + 1] = line end
-        return lines
-    end
-    local done = rest == "done" or rest == "complete" or rest == "completed"
-    local count = tonumber(rest) -- altartracker (2.0.49): /dj testlog st 3: that many down
-    local bosses = {}
-    for _, b in ipairs(d.bosses or {}) do
-        -- altartracker (2.0.49): a group (Altar Bosses) is no kill of its own
-        if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab and not b.rare
-            and not b.children then
-            bosses[#bosses + 1] = b
-        end
-    end
-    local now = Now()
-    FDJ.testRunID = (FDJ.testRunID or 0) - 1
-    local map
-    for id, name in pairs(FDJ.INSTANCE_ID_TO_DUNGEON or {}) do
-        if name == dungeon then map = id break end
-    end
-    local upto = done and #bosses or (count and math.max(0, math.min(#bosses, math.floor(count))))
-        or math.max(1, math.ceil(#bosses / 2))
-    local start = now - (upto * 160 + 30)
-    local run = {
-        id = FDJ.testRunID, test = true, dungeon = dungeon, map = map, created = start,
-        kills = {}, needs = {}, exits = {}, deathTimes = {}, deaths = done and 0 or 1, otherXP = 0,
-        startedAt = start, firstTrash = start, firstKill = start, money = 1234 + #bosses * 321,
-    }
-    local colors = { [2] = "ff1eff00", [3] = "ff0070dd", [4] = "ffa335ee" }
-    local t = start
-    for i = 1, upto do
-        for _ = 1, 3 do
-            t = t + 30
-            run.kills[#run.kills + 1] = { t = t, m = "Test trash", x = 40 }
-        end
-        t = t + 70
-        local b = bosses[i]
-        local kill = { t = t, m = b.name, b = b.name, n = tonumber(b.npcID), x = 160, loot = {} }
-        -- altartracker (2.0.49): a group's boss (Gasher...) dies as trash does
-        if b.childOf then kill.b, kill.x = nil, 120 end
-        local item = type(b.loot) == "table" and b.loot[1]
-        if type(item) == "table" and item[1] then
-            kill.loot[1] = { id = tonumber(item[1]),
-                link = "|c" .. (colors[tonumber(item[4]) or 0] or "ffffffff") .. "[" .. tostring(item[2] or item[1]) .. "]|r" }
-        end
-        if done and i == upto then kill.f = 1 end
-        run.kills[#run.kills + 1] = kill
-        run.lastBoss = t
-    end
-    if done then
-        run.completed, run.finalKill, run.closed = true, t, true
-    end
-    FDJ.testRuns[#FDJ.testRuns + 1] = run
-    FDJ.testRun = run
-    local db = TrackerDB()
-    if db.dismissedRun and db.dismissedRun < 0 then db.dismissedRun = nil end
-    FDJ.UpdateRunTracker()
-    FDJ.RefreshRunLog()
-    return { tag .. "Test run: " .. DungeonLabel(run) .. " (" .. upto .. "/" .. #bosses .. " bosses"
-        .. (done and ", completed" or "") .. "). Also in /dj log.  /dj testlog off removes it." }
-end
+-- notest (2.0.13, M 19 Nov 2026): the test command (FDJ.RunLogTest) is
+-- out of the release; it stays in the vault build.
 
 local tracker
 -- Dragging the tracker: by its top part (title, time and XP).
@@ -3029,7 +2941,7 @@ end
 function FDJ.TrackerGroupRow(t, run, frames, y)
     local f
     for _, x in ipairs(frames or {}) do
-        if x.group and x:IsShown() and GroupOpen(x.group.boss.name) then f = x break end
+        if x.group and type(x.group.children) == "table" and x.group.boss and x:IsShown() and GroupOpen(x.group.boss.name) then f = x break end -- (groupfix)
     end
     local row = t.groupRow
     if not f then
@@ -3046,7 +2958,7 @@ function FDJ.TrackerGroupRow(t, run, frames, y)
         t.groupRow = row
     end
     row:SetFrameLevel(t:GetFrameLevel() + 5)
-    local list = f.group.children
+    local list = f.group.children or {} -- (groupfix)
     local start = RunStart(run) or run.created
     for i, c in ipairs(list) do
         local p = row.portraits[i]
@@ -3231,7 +3143,7 @@ local function LayoutBossButtons(frames)
     local n = 0
     for _, f in ipairs(frames or {}) do
         local cx, cy = f:GetCenter()
-        if shown and cx and f:IsShown() and not f.kill and f.boss and not f.group then
+        if shown and cx and f:IsShown() and not f.kill and f.boss and not f.group and not f.fightGroup then
             n = n + 1
             local b = BossButton(n)
             b.portrait = f
@@ -3371,7 +3283,13 @@ function FDJ.UpdateRunTracker()
             f.ring:Hide()
             f.kill, f.runStart = e.kill, start
             -- altartracker (2.0.49): a group's portrait, with its +
-            f.group = e.group and e or nil
+            -- (groupfix, 2.0.13, Malou on Discord 19 Nov 2026: "/dj tracker"
+            -- did nothing, a Lua error in TrackerGroupRow every redraw): only
+            -- a journal group (group = true, with its children) gets the +;
+            -- a fight (Ring of Law: group = the fight's name) has no children,
+            -- and its + opened a row of nothing that broke the tracker.
+            f.group = (e.group == true and type(e.children) == "table") and e or nil
+            f.fightGroup = type(e.group) == "string" or nil -- (groupfix: no click-to-target on it, as before)
             f.fdjX = left + col * (SIZE + GAP)
             if FDJ.TrackerGroupPlus then FDJ.TrackerGroupPlus(f) end
             f.isRare = isRare and true or nil

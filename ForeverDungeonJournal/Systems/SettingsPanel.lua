@@ -65,7 +65,7 @@ local function AllQuestsDone(dungeon)
         -- otherclass (2.0.8): another class's quest (or a profession the
         -- character doesn't have) never counts, "Show all ..." on or not
         local forClass = not quest.classOnly
-            or (class and tostring(quest.classOnly):upper() == class)
+            or (class and FDJ.QuestClassMatches(quest.classOnly, class)) -- (twoclasses)
         local forProfession = not quest.profession
             or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(quest.profession)
         if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id

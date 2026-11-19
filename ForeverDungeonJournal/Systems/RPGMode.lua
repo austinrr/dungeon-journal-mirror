@@ -454,7 +454,7 @@ local function Progress()
         local d = FDJ.DB and FDJ.DB[name]
         for _, q in ipairs((d and not d.previewOnly and d.quests) or {}) do
             local forFaction = q.faction == nil or q.faction == "Both" or q.faction == "Neutral" or q.faction == faction
-            local forClass = not q.classOnly or (class and tostring(q.classOnly):upper() == class)
+            local forClass = not q.classOnly or (class and FDJ.QuestClassMatches(q.classOnly, class)) -- (twoclasses)
             local forProfession = not q.profession or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(q.profession)
             if q.id and forFaction and forClass and forProfession and not q.hideFromMainList and not q.repeatable and not seen[q.id]
                 and not (FDJ.IsQuestLost and FDJ.IsQuestLost(q)) then -- a lost quest doesn't count
@@ -1720,7 +1720,7 @@ do
             for _, q in ipairs((d and not d.previewOnly and not d.questChainPage and d.quests) or {}) do
                 if type(q) == "table" and type(q.id) == "number" and not seen[q.id] then
                     local forFaction = q.faction == nil or q.faction == "Both" or q.faction == "Neutral" or q.faction == faction
-                    local forClass = not q.classOnly or (class and tostring(q.classOnly):upper() == class)
+                    local forClass = not q.classOnly or (class and FDJ.QuestClassMatches(q.classOnly, class)) -- (twoclasses)
                     local forProfession = not q.profession or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(q.profession)
                     if forFaction and forClass and forProfession and not q.hideFromMainList and not q.repeatable then
                         seen[q.id] = true
@@ -2636,8 +2636,10 @@ do
     -- runlogkills (2.0.7): the bosses in this character's saved runs (Character
     -- Logs), once per session at login: pages missed before this version open.
     local recoveredRuns = false
-    function FDJ.RPGRecoverRunLogKills()
-        if recoveredRuns then return end
+    -- (latekill, 2.1.0: force = read them again, past the once a session:
+    -- the "I already did this dungeon" check)
+    function FDJ.RPGRecoverRunLogKills(force)
+        if recoveredRuns and not force then return end
         recoveredRuns = true
         local log = CharDB().runLog
         if type(log) ~= "table" or type(log.runs) ~= "table" then return end
@@ -3212,7 +3214,7 @@ do
     -- Unsent Letter: VanCleef) opens the page for real, before any box.
     local function Proven(name)
         if FDJ.RPGCheckQuestProof then pcall(FDJ.RPGCheckQuestProof) end
-        if FDJ.RPGRecoverRunLogKills then pcall(FDJ.RPGRecoverRunLogKills) end
+        if FDJ.RPGRecoverRunLogKills then pcall(FDJ.RPGRecoverRunLogKills, true) end -- (latekill)
         return CharDB().rpgKills[name] == true
     end
 

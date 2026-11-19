@@ -115,6 +115,7 @@ FDJ.Locales.ptBR = {
     ["NO_DUNGEONS_MY_LEVEL"] = "Nenhuma masmorra para o seu nível.",
     ["SHOW_ALL_DUNGEONS_ANYWAY"] = "Mostrar todas as masmorras mesmo assim",
     ["SUMMON_QUEST_NOTE"] = "%s precisa ser invocado: use %s no gongo junto ao lago dele.",
+    ["REP_REQUIRES"] = "Requer %s com %s",
     ["HOW_TO_SUMMON"] = "Como invocar %s",
     ["MAP_WREX_KEYRING"] = "Abra com o chaveiro de Wrex para o nível %d",
     ["OPT_MY_LEVEL_RANGE"] = "Mostrar só a minha faixa de nível",
