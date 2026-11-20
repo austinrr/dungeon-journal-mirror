@@ -4,7 +4,7 @@
 -- Kingdoms (0) and Kalimdor (1) the arrow follows from one zone to another
 -- (Systems/WalkNet.lua). Shortest walks worked out here between the towns,
 -- flight points, passes, bridges and road points of each continent on the
--- walking maps of the Forever client (Polestar_Nav_EK / Polestar_Nav_Kalimdor,
+-- walking maps of the Forever client (the client's navigation grid,
 -- its navigation grid with floors and drops, read as data; SOURCES.txt), once
 -- for each faction (keeping clear of the other's towns), cut down to their
 -- corners. Only these corner points are in the addon.

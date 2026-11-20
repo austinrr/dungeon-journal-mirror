@@ -1528,6 +1528,13 @@ do
                         entry.state = "ready"
                     else
                         entry.state = "log"
+                        -- stepgoto (2.1.1, M 20 Nov 2026, Test of Lore: "it's
+                        -- not sending me to the objective"): a step done
+                        -- somewhere else first (details.objectiveMap: the
+                        -- book in Ashenvale) shows that place until it is
+                        -- done, as a quest of the list does (The Glowing Shard).
+                        local goTo = details.objectiveMap
+                        if type(goTo) == "table" and goTo.mapID then entry.turnin, entry.goTo = goTo, true end
                     end
                 elseif not current then
                     current = true
@@ -1987,13 +1994,14 @@ do
             local entry = self:GetParent().entry
             if JustDragged() or not entry then return end
             local spot, turnIn = entry.start, nil
-            if entry.state == "ready" or entry.state == "log" then spot, turnIn = entry.turnin, true end
+            if entry.state == "ready" or entry.state == "log" then spot, turnIn = entry.turnin, not entry.goTo end -- (stepgoto)
             local show = FDJ.MapMarkers and FDJ.MapMarkers.ShowRecordedLocationOnMap
             if not spot or not show then return end
             spot = (FDJ.LocalizeMapLocation and FDJ.LocalizeMapLocation(spot)) or spot
             FDJ.pendingMarkerQuestTitle = (entry.arrowName or entry.name)
             FDJ.pendingMarkerTurnIn = turnIn
             FDJ.pendingMarkerQuestID = entry.step and entry.step.id -- autoclear
+            FDJ.pendingMarkerObjective = entry.goTo and true or nil -- (stepgoto)
             show(spot, spot.label)
         end)
         mark:SetScript("OnEnter", function(self)
@@ -2002,7 +2010,10 @@ do
             local id, details = entry.step.id, entry.details
             TooltipBeside(self, SIDE + 4)
             local where
-            if entry.state == "ready" or entry.state == "log" then
+            if entry.goTo and entry.state == "log" then -- (stepgoto)
+                GameTooltip:SetText(T("SHOW_ON_MAP"), 1, 0.82, 0)
+                where = FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(entry.turnin.label) or entry.turnin.label
+            elseif entry.state == "ready" or entry.state == "log" then
                 GameTooltip:SetText(T("SHOW_TURN_IN"), 1, 0.82, 0)
                 where = Field(id, "turnin", details.turnin)
             else
@@ -2516,7 +2527,9 @@ do
         local fold = CreateFrame("Button", nil, over)
         f.fold = fold
         fold:SetSize(14, 14)
-        fold:SetPoint("CENTER", f, "TOPRIGHT", -36, -12)
+        -- foldleft (2.1.1, M 20 Nov 2026: "move the little minimize icon to the
+        -- left of the Dungeon Journal icon"): placed by Layout, just before the book.
+        fold:SetPoint("LEFT", f, "TOPLEFT", 46, -12)
         fold:SetFrameLevel(over:GetFrameLevel() + 2)
         fold:SetHighlightTexture("Interface\\Buttons\\UI-PlusButton-Hilight", "ADD")
         fold:SetScript("OnClick", function()
@@ -2623,10 +2636,17 @@ do
         title:SetWidth(0)
         title:SetText(FDJ.LocalizeDungeonName and FDJ.LocalizeDungeonName(name) or name)
         local full = (title.GetUnboundedStringWidth and title:GetUnboundedStringWidth()) or title:GetStringWidth() or 0
-        local textWidth = math.min(full, WIDTH - 2 * 46 - 19)
+        -- foldleft (2.1.1): the fold button, the book and the name, centred
+        -- together between the count (46 from the left) and the X (25 from
+        -- the right); a very long name is cut short.
+        local textWidth = math.min(full, WIDTH - 46 - 29 - 18 - 19)
         title:SetWidth(math.ceil(textWidth))
+        local blockWidth = 18 + 19 + textWidth
+        local left = math.max(46, math.min(math.floor((WIDTH - blockWidth) / 2), WIDTH - 29 - blockWidth))
+        f.fold:ClearAllPoints()
+        f.fold:SetPoint("LEFT", f, "TOPLEFT", left, -12)
         over.icon:ClearAllPoints()
-        over.icon:SetPoint("LEFT", f, "TOPLEFT", math.floor((WIDTH - 19 - textWidth) / 2), -12)
+        over.icon:SetPoint("LEFT", f, "TOPLEFT", left + 18, -12)
 
         local collapsed = Folded()[name] == true
         f.fold:SetNormalTexture(collapsed and "Interface\\Buttons\\UI-PlusButton-Up" or "Interface\\Buttons\\UI-MinusButton-Up")
@@ -2874,7 +2894,7 @@ do
                                 pending, spot, title = true, entry.start, (entry.arrowName or entry.name)
                                 break
                             elseif entry.state == "log" or entry.state == "ready" then
-                                pending, spot, title, turnIn = true, entry.turnin, (entry.arrowName or entry.name), true
+                                pending, spot, title, turnIn = true, entry.turnin, (entry.arrowName or entry.name), not entry.goTo -- (stepgoto)
                                 break
                             end
                         end
@@ -3585,7 +3605,13 @@ end
                 row.text:ClearAllPoints()
                 row.text:SetPoint("TOPLEFT", journal.questDetailContent, "TOPLEFT", 0, -cursorY)
                 row.text:SetText(FDJ.L("REP_REQUIRES", Label(want), name))
-                if met then row.text:SetTextColor(0.05, 0.42, 0.05) else row.text:SetTextColor(0.62, 0.10, 0.05) end
+                -- warnfont (2.1.1): red (not met) in the warning font.
+                if met then
+                    row.text:SetFontObject("ForeverDJ_GameFontNormal")
+                    row.text:SetTextColor(0.05, 0.42, 0.05)
+                else
+                    if FDJ.WarningFont then FDJ.WarningFont(row.text) else row.text:SetTextColor(0.62, 0.10, 0.05) end
+                end
                 row.text:Show()
                 cursorY = cursorY + (row.text:GetStringHeight() or 14) + 4
                 local bar = row.bar

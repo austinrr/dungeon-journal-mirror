@@ -165,7 +165,12 @@ local function View()
     if now == nil or now ~= shareStamp then ShareProgress() end
     return AccountProgress()
 end
-local function ViewTable(key)
+local ViewTable
+-- rpgexport (2.1.1, M 20 Nov 2026: an RPG Mode character on the website
+-- showed every dungeon): the pages the journal shows unlocked (with
+-- Account-Wide Unlocks, the account's), for the character code.
+FDJ.RPGKillsView = function() return ViewTable("rpgKills") end
+function ViewTable(key)
     local t = View()[key]
     t = type(t) == "table" and t or {}
     -- rpglegacy (2.0.8): with Account-Wide Unlocks on, the pages the
@@ -474,6 +479,7 @@ local function Progress()
     local maxPoints = total * QUEST_POINTS + pages * PAGE_POINTS
     return points, maxPoints, done, total, pagesDone, pages
 end
+FDJ.RPGJourney = Progress -- rpgexport (2.1.1): the Journey bar's numbers, for the character code
 
 -- ------------------------------------------------------------- home page
 -- Locked dungeons show nothing: an empty card with one line of text.
@@ -502,6 +508,14 @@ local function SketchFor(name)
     local displayID = npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[npcID]
     if displayID and SKETCHES[displayID] then return MEDIA .. "Sketch_" .. displayID end
     return MEDIA .. "Sketch_Unknown"
+end
+-- rpgexport (2.1.1): which sketch a locked card shows (Media\RPG\Sketch_<id>;
+-- nil: Sketch_Unknown), for the character code.
+FDJ.RPGSketchArt = function(name)
+    Build()
+    local npcID = finalNpcOf[name]
+    local displayID = npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[npcID]
+    return (displayID and SKETCHES[displayID]) and displayID or nil
 end
 
 local function JournalPage(card)

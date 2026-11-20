@@ -50,6 +50,10 @@ FDJ.ContentLocales.zhCN.dungeons = {
 }
 
 FDJ.ContentLocales.zhCN.slotParts = {
+    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+    ["Relic"] = "圣物",
+    ["Libram"] = "圣契",
+    ["Totem"] = "图腾",
     ["Chest"] = "胸部", ["Leather"] = "皮甲", ["Wrist"] = "手腕", ["Cloth"] = "布甲",
     ["Back"] = "背部", ["Waist"] = "腰部", ["Mail"] = "锁甲", ["Hands"] = "手",
     ["Feet"] = "脚", ["Legs"] = "腿部", ["Neck"] = "颈部", ["Finger"] = "手指",

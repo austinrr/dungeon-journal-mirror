@@ -761,6 +761,9 @@ DB["The Deadmines"] = {
         warning = "This is a chain quest with a step in The Deadmines",
         objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
         rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        -- firenotinside (2.1.1, M 20 Nov 2026: "obviously not inside the
+        -- dungeon"): Old Fire-Eye is killed in Silverpine Forest: no tint
+        dungeonStep = false,
         id = 95140,
         note = "Paladin class quest for undead and tauren. In this dungeon: Whitestone Oak Lumber drops from Goblin Woodcarvers. The other parts are the Enchanted Silver Ingot (Shadowfang Keep) and the Purified Kor Gem (Blackfathom Deeps).",
         liveXPFallback = 2650,
@@ -1076,6 +1079,9 @@ DB["Blackfathom Deeps"] = {
         warning = "This is a chain quest with a step in Blackfathom Deeps",
         objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
         rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        -- firenotinside (2.1.1, M 20 Nov 2026: "obviously not inside the
+        -- dungeon"): Old Fire-Eye is killed in Silverpine Forest: no tint
+        dungeonStep = false,
         id = 95140,
         note = "Paladin class quest for undead and tauren. In this dungeon: the Corrupted Kor Gem drops from Blackfathom Sea Witches inside, and from Blackfathom Tide Priestesses and Oracles at the entrance in Ashenvale, once you have Seeking the Kor Gem from Ulric Frostveil at Zoram'gar Outpost. He purifies it. The other parts are Whitestone Oak Lumber (The Deadmines) and the Enchanted Silver Ingot (Shadowfang Keep).",
         liveXPFallback = 2650,
@@ -1402,6 +1408,9 @@ DB["Shadowfang Keep"] = {
         warning = "This is a chain quest with a step in Shadowfang Keep",
         objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.",
         rewardSummary = "Undercity +150  •  Earthen Ring +150  •  Orgrimmar +75",
+        -- firenotinside (2.1.1, M 20 Nov 2026: "obviously not inside the
+        -- dungeon"): Old Fire-Eye is killed in Silverpine Forest: no tint
+        dungeonStep = false,
         id = 95140,
         note = "Paladin class quest for undead and tauren. In this dungeon: the Enchanted Silver Ingot lies on a table in Archmage Arugal's room, after you kill him. The other parts are Whitestone Oak Lumber (The Deadmines) and the Purified Kor Gem (Blackfathom Deeps).",
         liveXPFallback = 2650,
@@ -3365,6 +3374,10 @@ FDJ.DB["Scarlet Monastery: Library"] = {
         liveXPFallback = 3550,
     }, {
         warning = "This is a long chain that has a step in the Library",
+        -- notdungeon (2.1.1, M 20 Nov 2026: "this quest should not get the
+        -- faded color because this last part is not in the dungeon"): only
+        -- its Library step is done inside.
+        dungeonStep = false,
         objective = "Speak to Dorn Plainstalker in Thousand Needles.",
         rewardSummary = "",
         id = 1394,
@@ -3966,6 +3979,7 @@ FDJ.DB["Razorfen Downs"] = {
         rewardSummary = "",
         id = 3525,
         name = "Extinguishing the Idol",
+        warning = "Make sure every player in your group has completed the previous step before starting this quest.", -- idolwarn (2.1.0; worded by M 20 Nov 2026)
         faction = "Both",
         pickup = "Belnistrasz, Razorfen Downs",
         startsInDungeon = true,
@@ -5666,7 +5680,11 @@ FDJ.DB["Krol'dok Stronghold"] = {
         -- Krol'dok Moulding looted inside starts the first.
         id = 94981,
         name = "Key Ingredients",
-        warning = "The key from this quest unlocks the upper side of the dungeon.",
+        warning = "The key from this quest opens a shortcut to the last boss.",
+        -- notdungeon (2.1.1, M 20 Nov 2026: "to turn it in, I gotta go back
+        -- to Farholde Keep ... the key ingredient step is not a dungeon
+        -- step"): no teal tint on its page.
+        dungeonStep = false,
         level = 41,
         requires = 38,
         faction = "Alliance",
@@ -5684,7 +5702,11 @@ FDJ.DB["Krol'dok Stronghold"] = {
     }, {
         id = 94974,
         name = "Key Ingredients",
-        warning = "The key from this quest unlocks the upper side of the dungeon.",
+        warning = "The key from this quest opens a shortcut to the last boss.",
+        -- notdungeon (2.1.1, M 20 Nov 2026: "to turn it in, I gotta go back
+        -- to Farholde Keep ... the key ingredient step is not a dungeon
+        -- step"): no teal tint on its page.
+        dungeonStep = false,
         level = 41,
         requires = 38,
         faction = "Horde",
@@ -7801,6 +7823,9 @@ FDJ.DB["Scholomance"] = {
             loot = {
                 {14576, "Ebon Hilt of Marduk", "Main Hand, Sword", 3},
                 {18692, "Death Knight Sabatons", "Feet, Plate", 3},
+                -- marduknew (2.1.1, M 20 Nov 2026): his Forever drops (Wowhead Forever, binds when picked up)
+                {276069, "Gravetoll Gavel", "Two-Hand, Mace", 3},
+                {276071, "The Black Helm", "Head, Plate", 3},
             },
         },
         {
@@ -7811,6 +7836,9 @@ FDJ.DB["Scholomance"] = {
             loot = {
                 {14577, "Skullsmoke Pants", "Legs, Cloth", 3},
                 {18691, "Dark Advisor's Pendant", "Neck", 3},
+                -- vectusnew (2.1.1, M 20 Nov 2026): his Forever drops (Wowhead Forever, binds when picked up)
+                {276073, "Band of the Damned", "Finger", 3},
+                {276072, "Soulwoven Drape", "Back", 3},
                 {273121, "Blueprint: Sewing Machine", "Blueprint", 2}, -- bpaudit (2.0.9): Wowhead Forever: 1 drop in 17 loots
             },
         },
@@ -8649,6 +8677,8 @@ FDJ.DB["Dire Maul: East"] = {
             description = "The imp you chase through the Warpwood Quarter; he fights at the end and drops the Crescent Key.",
             loot = {
                 {18316, "Obsidian Bauble", "Off Hand", 3},
+                -- lootadd (2.1.1, M 20 Nov 2026): Wowhead Forever drops; wowtbc.gg Forever DM East loot table: 57/322
+                {18320, "Demondash Spaulders", "Shoulder, Mail", 3},
                 {18267, "Recipe: Runn Tum Tuber Surprise", "Recipe, Cooking", 2},
             },
         },
@@ -8662,6 +8692,9 @@ FDJ.DB["Dire Maul: East"] = {
                 {18323, "Satyr's Bow", "Ranged, Bow", 3},
                 -- It drops with a random enchantment ("of Frost Resistance"...).
                 {18319, "Fervent Helm", "Head, Mail", 3, "", "RANDOM_ENCHANT"},
+                -- lootadd (2.1.1, M 20 Nov 2026): Wowhead Forever drops; wowtbc.gg Forever DM East loot table: 71/378, 70/378
+                {18308, "Clever Hat", "Head, Leather", 3},
+                {18306, "Gloves of Shadowy Mist", "Hands, Cloth", 3},
             },
         },
         {
@@ -8687,6 +8720,8 @@ FDJ.DB["Dire Maul: East"] = {
             loot = {
                 {18325, "Felhide Cap", "Head, Leather", 3},
                 {18311, "Quel'dorai Channeling Rod", "Two-Hand, Staff", 3},
+                -- lootadd (2.1.1, M 20 Nov 2026): Wowhead Forever drops; wowtbc.gg Forever DM East loot table: 94/344
+                {18301, "Lethtendris's Wand", "Ranged, Wand", 3},
                 -- lootaudit (2.0.8, M 15 Nov 2026: his non-recipe loot audit, Wowhead Forever drops; Icy Veins Forever): Band of Vigor 11/54; Pimgib's Collar from her pet Pimgib (14349), 1/8
                 {18302, "Band of Vigor", "Finger", 3},
                 {18354, "Pimgib's Collar", "Trinket", 3},
@@ -8708,6 +8743,31 @@ FDJ.DB["Dire Maul: East"] = {
                 {18326, "Razor Gauntlets", "Hands, Plate", 3},
                 {18327, "Whipvine Cord", "Waist, Cloth", 3},
                 {18328, "Shadewood Cloak", "Back", 3},
+            },
+        },
+        {
+            -- isalien (2.1.1, M 20 Nov 2026: "add isalien with the usual text
+            -- for the tier 0.5"): the Dungeon Set 2 boss of this wing, summoned
+            -- in Alzzin the Wildshaper's hall with the Brazier (warcraft.wiki.gg:
+            -- her ghost haunts the hall where Alzzin resides). Optional: not on
+            -- the Dungeon Tracker. Loot: Wowhead Forever's drops (5 kills) and
+            -- wowtbc.gg's Forever DM East loot table.
+            name = "Isalien",
+            npcID = 16097,
+            rare = true,
+            rareLabel = "0.5 Quest Event", -- same label as Theldren, Kormok, Mor Grayhoof, Jarien and Sothos and Lord Valthalak
+            aliases = {"Isalien"},
+            description = "Summoned in Alzzin the Wildshaper's hall with the Brazier from the Dungeon Set 2 quests: one of the four bosses that drop a piece of Lord Valthalak's Amulet.",
+            trackerHidden = true,
+            loot = {
+                {22314, "Huntsman's Harpoon", "Two-Hand, Polearm", 3}, -- 2/5
+                {22472, "Boots of Ferocity", "Feet, Leather", 3}, -- 1/5
+                {22315, "Hammer of Revitalization", "Main Hand, Mace", 3}, -- 1/5
+                {22304, "Ironweave Gloves", "Hands, Cloth", 3}, -- 1/5
+                {22401, "Libram of Hope", "Relic, Libram", 3}, -- 1/5
+                {22345, "Totem of Tides", "Relic, Totem", 3}, -- 1/5
+                {21984, "Left Piece of Lord Valthalak's Amulet", "Quest Item", 1}, -- 2/5
+                {22046, "Right Piece of Lord Valthalak's Amulet", "Quest Item", 1}, -- 2/5
             },
         },
         {

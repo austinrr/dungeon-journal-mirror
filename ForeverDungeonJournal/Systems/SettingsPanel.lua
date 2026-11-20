@@ -174,6 +174,9 @@ local panel
 
 local OPTIONS = {
     { header = "OPT_UI" },
+    -- exporttab (2.1.1, M 20 Nov 2026: "I don't like the export button like
+    -- this. Just make an export tab before Discord"): the character code is
+    -- now on its own Export tab (BuildExportPage), not a button here.
     -- bindtop (2.0.11): the key bind first on General, so players see it at once.
     { keybind = true, label = "OPT_BIND" },
     -- resizemode (2.0.10, M 17 Nov 2026): opens the journal with a handle on
@@ -252,6 +255,13 @@ local OPTIONS = {
         set = function(on) if FDJ.SetRunLogButtonHidden then FDJ.SetRunLogButtonHidden(on) end end,
     },
     {
+        -- exporttitle (2.1.1): the Export button in the title bar (Systems/BugReport.lua)
+        label = "OPT_HIDE_EXPORT",
+        tip = "OPT_HIDE_EXPORT_TIP",
+        get = function() return FDJ.IsExportButtonHidden and FDJ.IsExportButtonHidden() or false end,
+        set = function(on) if FDJ.SetExportButtonHidden then FDJ.SetExportButtonHidden(on) end end,
+    },
+    {
         label = "OPT_HIDE_DUNGEON_MAP",
         tip = "OPT_HIDE_DUNGEON_MAP_TIP",
         get = function() return Store().worldMapOverlay == false end,
@@ -260,6 +270,7 @@ local OPTIONS = {
             if FDJ.RefreshWorldMapOverlay and WorldMapFrame and WorldMapFrame:IsShown() then pcall(FDJ.RefreshWorldMapOverlay) end
         end,
     },
+    -- (useprompt: its Hide option taken out, M 20 Nov 2026: "I don't want it")
     { header = "OPT_DUNGEON_LIST" },
     {
         label = "OPT_RPG_MODE",
@@ -1066,6 +1077,178 @@ local function BuildDiscordPage(page)
     end)
 end
 
+-- exporttab (2.1.1, M 20 Nov 2026: "make an export tab before Discord at
+-- the top ... everything is going to be in that tab"): what the /dj export
+-- window shows, on the Options' own tab: the character's name and quests
+-- done, the code (one line; a click selects all of it for Ctrl+C), the
+-- website's address to paste it at, and how to copy it. The code is made
+-- again each time the tab opens. Like the Discord tab, it never takes the
+-- keyboard by itself (it would block key bindings).
+local function BuildExportPage(page)
+    local y = PageTitle(page, "OPT_EXPORT")
+    local info = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+    info:SetPoint("TOPLEFT", LABEL_X, y - 10)
+    info:SetPoint("RIGHT", page, "RIGHT", -34, 0)
+    info:SetJustifyH("LEFT")
+
+    local code = CreateFrame("EditBox", nil, page)
+    code:SetMultiLine(false)
+    code:SetMaxLetters(0)
+    code:SetFontObject("ForeverDJ_GameFontHighlightSmall")
+    code:SetPoint("TOPLEFT", info, "BOTTOMLEFT", 6, -22)
+    code:SetPoint("RIGHT", page, "RIGHT", -40, 0)
+    code:SetHeight(22)
+    code:SetAutoFocus(false)
+    code:SetTextInsets(4, 4, 0, 0)
+    if code.SetClipsChildren then code:SetClipsChildren(true) end
+    code:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+    code:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    code:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
+    code:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    code:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+    -- Typing into it would only corrupt the code, so put it straight back.
+    code:SetScript("OnTextChanged", function(self, byUser)
+        if byUser then
+            self:SetText(page.code or "")
+            self:HighlightText()
+        end
+    end)
+    local codeBg = CreateFrame("Frame", nil, page, "BackdropTemplate")
+    codeBg:SetPoint("TOPLEFT", code, -6, 6)
+    codeBg:SetPoint("BOTTOMRIGHT", code, 6, -6)
+    codeBg:SetFrameLevel(math.max(0, code:GetFrameLevel() - 1))
+    if codeBg.SetBackdrop then
+        codeBg:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 10,
+            insets = { left = 2, right = 2, top = 2, bottom = 2 },
+        })
+        codeBg:SetBackdropColor(0, 0, 0, 0.6)
+        codeBg:SetBackdropBorderColor(0.28, 0.28, 0.28, 1)
+    end
+
+    -- exportgo (2.1.1, M 20 Nov 2026: "the export link ... send the user to
+    -- the export option page, with the usual highlight on the code"): the
+    -- gold band that pulses on an option row opened from elsewhere
+    -- (PulseRow), here on the code's row; FDJ.OpenExportTab asks for it.
+    local glow = page:CreateTexture(nil, "BACKGROUND", nil, 2)
+    glow:SetPoint("LEFT", page, "LEFT", 10, 0)
+    glow:SetPoint("RIGHT", page, "RIGHT", -10, 0)
+    glow:SetPoint("TOP", codeBg, "TOP", 0, 5)
+    glow:SetPoint("BOTTOM", codeBg, "BOTTOM", 0, -5)
+    glow:SetTexture("Interface\\Buttons\\WHITE8X8")
+    glow:SetVertexColor(1.00, 0.78, 0.25, 0.35)
+    glow:SetAlpha(0)
+    local pulse = glow:CreateAnimationGroup()
+    pulse:SetLooping("BOUNCE")
+    local fade = pulse:CreateAnimation("Alpha")
+    fade:SetFromAlpha(0)
+    fade:SetToAlpha(1)
+    fade:SetDuration(0.4)
+    pulse:SetScript("OnLoop", function(self)
+        self.loops = (self.loops or 0) + 1
+        if self.loops >= 6 then self:Stop() end
+    end)
+    function page.PulseCode()
+        pulse.loops = 0
+        pulse:Stop()
+        pulse:Play()
+    end
+
+    -- "Paste the code here:" and the website's address (a click selects it).
+    local siteLabel = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+    siteLabel:SetPoint("TOPLEFT", code, "BOTTOMLEFT", -6, -26)
+    panel.texts[#panel.texts + 1] = { siteLabel, "EXPORT_SITE" }
+    local site = CreateFrame("EditBox", nil, page, "InputBoxTemplate")
+    if FDJ.OwnFonts then FDJ.OwnFonts(site) end
+    site:SetSize(250, 22)
+    site:SetPoint("LEFT", siteLabel, "RIGHT", 12, 0)
+    site:SetAutoFocus(false)
+    site:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
+    site:SetScript("OnMouseUp", function(self) self:HighlightText() end)
+    site:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
+    site:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+    site:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+    site:SetScript("OnTextChanged", function(self, byUser)
+        if byUser then
+            self:SetText(FDJ.SITE_CHARACTER_URL or "")
+            self:HighlightText()
+        end
+    end)
+
+    local copy = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+    copy:SetPoint("TOPLEFT", siteLabel, "BOTTOMLEFT", 0, -22)
+    copy:SetPoint("RIGHT", page, "RIGHT", -34, 0)
+    copy:SetJustifyH("LEFT")
+    copy:SetTextColor(0.75, 0.72, 0.66)
+    panel.texts[#panel.texts + 1] = { copy, "EXPORT_COPY" }
+
+    -- exporthidetab (2.1.1, M 20 Nov 2026: "at the bottom an option to toggle
+    -- on and off called hide export button on main page ... I'm always going
+    -- to give them options to use their UI as they wish"): the same switch as
+    -- General's, at the bottom of this tab, under a gold rule.
+    local bottom = CreateFrame("Frame", nil, page)
+    bottom:SetPoint("BOTTOMLEFT", 0, 8)
+    bottom:SetPoint("BOTTOMRIGHT", 0, 8)
+    bottom:SetHeight(40)
+    local rule = GoldBand(page, "ARTWORK", 0.75, 0.3)
+    rule:SetPoint("BOTTOMLEFT", bottom, "TOPLEFT", 18, 4)
+    rule:SetPoint("BOTTOMRIGHT", bottom, "TOPRIGHT", -18, 4)
+    rule:SetHeight(1)
+    CreateOptionRow(bottom, {
+        label = "OPT_HIDE_EXPORT",
+        tip = "OPT_HIDE_EXPORT_TIP",
+        get = function() return FDJ.IsExportButtonHidden and FDJ.IsExportButtonHidden() or false end,
+        set = function(on) if FDJ.SetExportButtonHidden then FDJ.SetExportButtonHidden(on) end end,
+    }, -4)
+
+    -- exportlag (2.1.1, M 20 Nov 2026: "when I click on the export tab ...
+    -- there is some lag"): the tab opens at once and the code is made the
+    -- next moment (a quicker compression too, Systems/CharacterExport.lua).
+    -- Leaving the tab before then makes nothing.
+    local function Fill()
+        local ok, text, questCount, name = false, nil, nil, nil
+        if FDJ.BuildExportCode then ok, text, questCount, name = pcall(FDJ.BuildExportCode) end
+        if ok and type(text) == "string" then
+            page.code = text
+            info:SetText(string.format(L("EXPORT_HINT"), name or "?", questCount or 0))
+        else
+            page.code = ""
+            info:SetText(L("EXPORT_ERROR"))
+        end
+        code:SetText(page.code)
+        if code.SetCursorPosition then code:SetCursorPosition(0) end -- show the start
+        if page.pulseWanted then -- exportgo: opened from the Export button
+            page.pulseWanted = nil
+            -- pulseonce (2.1.1, M 20 Nov 2026: "only once, not every time we
+            -- open it or we click on it"): the first time only, for good
+            -- (once per account, exportPulseSeen).
+            local db = ForeverDungeonJournalDB
+            if type(db) == "table" and not db.exportPulseSeen then
+                db.exportPulseSeen = true
+                page.PulseCode()
+            end
+        end
+    end
+    page:SetScript("OnShow", function()
+        page.code = ""
+        info:SetText("")
+        code:SetText("")
+        code:ClearFocus()
+        site:SetText(FDJ.SITE_CHARACTER_URL or "")
+        if site.SetCursorPosition then site:SetCursorPosition(0) end
+        site:ClearFocus()
+        page.fillToken = (page.fillToken or 0) + 1
+        local token = page.fillToken
+        local function Later()
+            if page.fillToken == token and page:IsVisible() then Fill() end
+        end
+        if C_Timer and C_Timer.After then C_Timer.After(0.05, Later) else Fill() end
+    end)
+    page:SetScript("OnHide", function() page.fillToken = (page.fillToken or 0) + 1 end)
+end
+
 -- BEGIN scrollpages (2.0.10)
 -- An options page whose rows don't fit (General with the key bind, RPG Mode
 -- with the slider and the Export / Import buttons) scrolls: mouse wheel, or
@@ -1399,14 +1582,22 @@ local function CreatePanel()
         for i, e in ipairs(entries) do e.underline:SetShown(i == index) end
     end
 
-    -- ---------------------------------------------------- tab 2: Discord
+    -- ---------------------------------------------------- tab 2: Export
+    -- exporttab (2.1.1): the character code, before Discord (BuildExportPage)
+    local exportView = CreateFrame("Frame", nil, box)
+    exportView:SetAllPoints(box)
+    exportView:Hide()
+    BuildExportPage(exportView)
+    panel.exportView, panel.exportTab = exportView, 2 -- exportgo (FDJ.OpenExportTab)
+
+    -- ---------------------------------------------------- tab 3: Discord
     local discordView = CreateFrame("Frame", nil, box)
     discordView:SetAllPoints(box)
     BuildDiscordPage(discordView)
 
     -- ------------------------------------------------------------- tabs
-    local views = { optionsView, discordView }
-    local tabKeys = { "OPT_TAB_OPTIONS", "OPT_DISCORD" }
+    local views = { optionsView, exportView, discordView }
+    local tabKeys = { "OPT_TAB_OPTIONS", "RUNLOG_EXPORT", "OPT_DISCORD" }
     panel.tabs = {}
     local function SelectTab(index)
         panel.selectedTab = index
@@ -1469,6 +1660,218 @@ local function CreatePanel()
             left = left + tab:GetWidth() + 6
         end
     end
+
+    -- BEGIN optsearch
+    do
+        -- optsearch (2.1.1, M 20 Nov 2026: "top right of the options, add a little
+        -- search that people can type in their option and just find it"): a search
+        -- box at the top right. Typing lists every option whose name or tip has
+        -- each word typed (any case), under its section's name, each with its own
+        -- box to tick (the same option as on its page). Emptied (the X, or a
+        -- section clicked on the left), the pages are back as they were.
+        local results = CreateFrame("Frame", nil, optionsView)
+        results:SetPoint("TOPLEFT", SIDEBAR_W + 1, 0)
+        results:SetPoint("BOTTOMRIGHT", 0, 0)
+        results:Hide()
+        local resultsRows, resultsY = ScrollPage(results, PageTitle(results, "OPT_SEARCH_RESULTS"))
+        local noneFound = resultsRows:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisable")
+        noneFound:SetPoint("TOPLEFT", LABEL_X, resultsY - 7)
+        panel.texts[#panel.texts + 1] = { noneFound, "OPT_SEARCH_NONE" }
+        noneFound:Hide()
+
+        -- Lower case, letters with accents and Cyrillic too (string.lower is
+        -- A-Z only); colour codes out.
+        local function Fold(text)
+            local s = tostring(text or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):lower()
+            s = s:gsub("\195([\128-\158])", function(c)
+                local b = c:byte()
+                if b ~= 151 then return "\195" .. string.char(b + 32) end
+            end)
+            s = s:gsub("\208\129", "\209\145")
+            s = s:gsub("\208([\144-\159])", function(c) return "\208" .. string.char(c:byte() + 32) end)
+            s = s:gsub("\208([\160-\175])", function(c) return "\209" .. string.char(c:byte() - 32) end)
+            return s
+        end
+        local function OptionText(option, section)
+            local parts = { L(section) }
+            if option.label then parts[#parts + 1] = L(option.label) end
+            if option.tip then parts[#parts + 1] = L(option.tip) end
+            if option.keybind then parts[#parts + 1] = L("OPT_BIND_TIP") end
+            for _, spec in ipairs(option.buttons or {}) do
+                parts[#parts + 1] = L(spec.label)
+                if spec.tip then parts[#parts + 1] = L(spec.tip) end
+            end
+            return Fold(table.concat(parts, " "))
+        end
+
+        -- One row per option found, made the first time it is found.
+        local mirrors, sectionNames = {}, {}
+        local function Mirror(option)
+            local holder = mirrors[option]
+            if holder then return holder end
+            holder = CreateFrame("Frame", nil, resultsRows)
+            if option.keybind then
+                panel.keybinds[#panel.keybinds + 1] = CreateKeybindRow(holder, option, -4)
+                holder.h = 36
+            elseif option.slider then
+                CreateSliderRow(holder, option, 0)
+                holder.h = 54
+            elseif option.buttons then
+                CreateButtonsRow(holder, option, 0)
+                holder.h = 40
+            else
+                CreateOptionRow(holder, option, 0)
+                holder.h = 35
+            end
+            mirrors[option] = holder
+            return holder
+        end
+        local function SectionName(key)
+            local s = sectionNames[key]
+            if not s then
+                s = resultsRows:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+                s:SetTextColor(0.80, 0.68, 0.45)
+                sectionNames[key] = s
+            end
+            return s
+        end
+        local function RefreshValues()
+            for _, button in ipairs(panel.keybinds) do button.Refresh() end
+            for _, slider in ipairs(panel.sliders or {}) do slider:Refresh() end
+            for _, check in ipairs(panel.checks) do
+                local ok, value = pcall(check.option.get)
+                check:SetChecked(ok and value or false)
+            end
+        end
+
+        local searching = false
+        local function RunSearch(text)
+            local words = {}
+            for w in Fold(text):gmatch("%S+") do words[#words + 1] = w end
+            if #words == 0 then
+                if searching then
+                    searching = false
+                    results:Hide()
+                    SelectPage(panel.selectedPage or 1)
+                    RefreshValues()
+                end
+                return
+            end
+            searching = true
+            if panel.selectedTab ~= 1 then SelectTab(1) end
+            for _, p in ipairs(pages) do p:Hide() end
+            for _, e in ipairs(entries) do
+                e.fade:Hide()
+                e.underline:Hide()
+                e.text:SetTextColor(1, 0.82, 0)
+            end
+            for _, holder in pairs(mirrors) do holder:Hide() end
+            for _, s in pairs(sectionNames) do s:Hide() end
+            local y, found, section, shownSection = resultsY, 0, nil, nil
+            for _, option in ipairs(OPTIONS) do
+                if option.header then
+                    section = option.header
+                elseif not option.action then
+                    local text = OptionText(option, section)
+                    local all = true
+                    for _, w in ipairs(words) do
+                        if not text:find(w, 1, true) then all = false break end
+                    end
+                    if all then
+                        if shownSection ~= section then
+                            shownSection = section
+                            local s = SectionName(section)
+                            s:SetText(L(section))
+                            s:ClearAllPoints()
+                            s:SetPoint("TOPLEFT", 22, y - 6)
+                            s:Show()
+                            y = y - 24
+                        end
+                        local holder = Mirror(option)
+                        holder:ClearAllPoints()
+                        holder:SetPoint("TOPLEFT", resultsRows, "TOPLEFT", 0, y)
+                        holder:SetPoint("TOPRIGHT", resultsRows, "TOPRIGHT", 0, y)
+                        holder:SetHeight(holder.h)
+                        holder:Show()
+                        y = y - holder.h
+                        found = found + 1
+                    end
+                end
+            end
+            noneFound:SetShown(found == 0)
+            resultsRows:SetHeight(math.max(1, -y + 4))
+            results:Show()
+            if results.scroll then results.scroll:SetVerticalScroll(0) end
+            if results.fdjRefreshScroll then results.fdjRefreshScroll() end
+            RefreshValues()
+        end
+
+        -- The box, in the journal's own search box style (smaller).
+        local search = CreateFrame("EditBox", "ForeverDungeonJournalSettingsSearch", panel, "BackdropTemplate")
+        search:SetSize(176, 22)
+        search:SetPoint("BOTTOMRIGHT", box, "TOPRIGHT", -4, 4)
+        search:SetFrameLevel(box:GetFrameLevel() + 2)
+        search:SetAutoFocus(false)
+        search:SetMaxLetters(40)
+        search:SetFontObject("ForeverDJ_GameFontHighlightSmall")
+        search:SetTextInsets(22, 20, 0, 0)
+        search:SetJustifyH("LEFT")
+        search:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 10,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        search:SetBackdropColor(0.045, 0.043, 0.040, 0.98)
+        search:SetBackdropBorderColor(0.34, 0.31, 0.27, 1)
+        local icon = search:CreateTexture(nil, "ARTWORK")
+        icon:SetSize(12, 12)
+        icon:SetPoint("LEFT", 6, 0)
+        icon:SetTexture("Interface\\Common\\UI-Searchbox-Icon")
+        icon:SetVertexColor(0.72, 0.70, 0.66)
+        local placeholder = search:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+        placeholder:SetPoint("LEFT", 22, 0)
+        placeholder:SetPoint("RIGHT", -20, 0)
+        placeholder:SetJustifyH("LEFT")
+        placeholder:SetWordWrap(false)
+        placeholder:SetTextColor(0.48, 0.47, 0.44)
+        panel.texts[#panel.texts + 1] = { placeholder, "OPT_SEARCH" }
+        local clear = CreateFrame("Button", nil, search)
+        clear:SetSize(14, 14)
+        clear:SetPoint("RIGHT", -4, 0)
+        clear:SetNormalTexture("Interface\\Buttons\\UI-StopButton")
+        clear:SetHighlightTexture("Interface\\Buttons\\UI-Common-MouseHilight", "ADD")
+        clear:Hide()
+        clear:SetScript("OnClick", function()
+            search:SetText("")
+            search:ClearFocus()
+        end)
+        search:SetScript("OnTextChanged", function(self)
+            local text = self:GetText() or ""
+            placeholder:SetShown(text == "")
+            clear:SetShown(text ~= "")
+            RunSearch(text)
+        end)
+        search:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+        search:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+        panel.searchBox = search
+
+        -- A section clicked on the left: its page, the search emptied.
+        for _, e in ipairs(entries) do
+            e:HookScript("OnClick", function()
+                if searching then
+                    search:SetText("")
+                    search:ClearFocus()
+                end
+            end)
+        end
+        -- Closed: the search is emptied (Options opens on its pages again).
+        panel:HookScript("OnHide", function()
+            search:ClearFocus()
+            if (search:GetText() or "") ~= "" then search:SetText("") end
+        end)
+    end
+    -- END optsearch
 
     -- noclose (2.0.9): no Close button at the bottom; the X in the title bar
     -- (and Esc) close the panel.
@@ -1560,6 +1963,18 @@ local function PulseRow(check)
     check.fdjPulse.loops = 0
     check.fdjPulse:Stop()
     check.fdjPulse:Play()
+end
+
+-- exportgo (2.1.1, M 20 Nov 2026: "the export link to just send the user to
+-- the export option page, with the usual highlight on the code"): the
+-- Options open on the Export tab, and once the code is made its row pulses.
+function FDJ.OpenExportTab()
+    if not panel then CreatePanel() end
+    panel.selectedTab = panel.exportTab or 2
+    if panel.exportView then panel.exportView.pulseWanted = true end
+    if panel:IsShown() then panel:Hide() end
+    panel:Show()
+    if panel.Raise then panel:Raise() end
 end
 
 -- quiet: just open that page, no flashing row.
@@ -1690,6 +2105,31 @@ do
             OPT_HIDE_QUEST_DROPS = "隐藏任务物品掉落", OPT_HIDE_QUEST_DROPS_TIP = "首领掉落页面不列出首领掉落的任务物品。" },
         zhTW = { OPT_LOOT = "掉落",
             OPT_HIDE_QUEST_DROPS = "隱藏任務物品掉落", OPT_HIDE_QUEST_DROPS_TIP = "首領掉落頁面不列出首領掉落的任務物品。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
+-- optsearch (2.1.1): the Options search box's texts.
+do
+    local strings = {
+        enUS = { OPT_SEARCH = "Search options", OPT_SEARCH_RESULTS = "Search results", OPT_SEARCH_NONE = "No options found." },
+        deDE = { OPT_SEARCH = "Optionen durchsuchen", OPT_SEARCH_RESULTS = "Suchergebnisse", OPT_SEARCH_NONE = "Keine Optionen gefunden." },
+        frFR = { OPT_SEARCH = "Rechercher une option", OPT_SEARCH_RESULTS = "Résultats de la recherche", OPT_SEARCH_NONE = "Aucune option trouvée." },
+        esES = { OPT_SEARCH = "Buscar opciones", OPT_SEARCH_RESULTS = "Resultados de la búsqueda", OPT_SEARCH_NONE = "No se encontraron opciones." },
+        itIT = { OPT_SEARCH = "Cerca opzioni", OPT_SEARCH_RESULTS = "Risultati della ricerca", OPT_SEARCH_NONE = "Nessuna opzione trovata." },
+        ptBR = { OPT_SEARCH = "Buscar opções", OPT_SEARCH_RESULTS = "Resultados da busca", OPT_SEARCH_NONE = "Nenhuma opção encontrada." },
+        ruRU = { OPT_SEARCH = "Поиск настроек", OPT_SEARCH_RESULTS = "Результаты поиска", OPT_SEARCH_NONE = "Настройки не найдены." },
+        koKR = { OPT_SEARCH = "옵션 검색", OPT_SEARCH_RESULTS = "검색 결과", OPT_SEARCH_NONE = "옵션을 찾을 수 없습니다." },
+        zhCN = { OPT_SEARCH = "搜索选项", OPT_SEARCH_RESULTS = "搜索结果", OPT_SEARCH_NONE = "未找到选项。" },
+        zhTW = { OPT_SEARCH = "搜尋選項", OPT_SEARCH_RESULTS = "搜尋結果", OPT_SEARCH_NONE = "找不到選項。" },
     }
     strings.esMX = strings.esES
     for locale, entries in pairs(strings) do

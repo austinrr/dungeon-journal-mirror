@@ -22,7 +22,7 @@ FDJ.QUEST_START_MAPS = {
     -- Nikova Raskol, Brohann Caskbelly, Shylamiir, Lord Grayson
     -- Shadowbreaker (here and in QuestChains.lua), Highlord Bolvar
     -- Fordragon, Grimand Elmore, Furen Longbeard (QuestUpdates.lua). Forever
-    -- client tables via Polestar forever-db (their spawns).
+    -- client tables (their spawns).
     [168]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
     [167]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
     [2040] = { mapID = 1453, x = 0.6300, y = 0.3400, label = "Shoni the Shilent — Dwarven District, Stormwind", targetName = "Shoni the Shilent" },

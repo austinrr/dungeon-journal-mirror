@@ -1341,6 +1341,8 @@ local function CreateWindow()
     end
 
     local inset = win.Inset or win
+    -- exporttitle (2.1.1, M 20 Nov 2026): the Export button left the Character
+    -- Logs for the journal's title bar, left of Report (Systems/BugReport.lua).
     -- Left: the runs.
     local listScroll = CreateFrame("ScrollFrame", nil, win, "UIPanelScrollFrameTemplate")
     win.listScroll = listScroll
@@ -3810,4 +3812,147 @@ do
         end
         if C_Timer and C_Timer.After then C_Timer.After(3, function() FDJ.UpdateRunTracker() end) end
     end)
+end
+
+-- exporthint (2.1.1, M 20 Nov 2026: "a little pop-up that pops up ... only
+-- once ... whenever somebody updates ... whenever somebody downloads it ...
+-- but then not anymore ... close to the one that we have for the Onyxia
+-- pop-up ... once people open the journal, it points at the character logs
+-- and says you can now export your character's progress to the website"):
+-- the first time the journal shows, a note under the Export button (title
+-- bar, left of Report; exporttitle, M 20 Nov 2026: "move the pop-up ...
+-- pointing to that button") in the Onyxia popup's look, its red arrow
+-- pointing up at the button. Once per account for good (exportHintSeen); a
+-- click opens the Options' Export tab; gone after 12 seconds, or with the
+-- journal. Not while the button is hidden.
+do
+    local strings = {
+        enUS = { EXPORT_NOTE = "You can now export your character's progress to the website", EXPORT_NOTE_CLICK = "Click here or on %s." },
+        deDE = { EXPORT_NOTE = "Du kannst jetzt den Fortschritt deines Charakters auf die Website exportieren", EXPORT_NOTE_CLICK = "Hier oder auf %s klicken." },
+        frFR = { EXPORT_NOTE = "Vous pouvez maintenant exporter la progression de votre personnage vers le site", EXPORT_NOTE_CLICK = "Cliquez ici ou sur %s." },
+        esES = { EXPORT_NOTE = "Ahora puedes exportar el progreso de tu personaje al sitio web", EXPORT_NOTE_CLICK = "Haz clic aquí o en %s." },
+        itIT = { EXPORT_NOTE = "Ora puoi esportare i progressi del tuo personaggio sul sito", EXPORT_NOTE_CLICK = "Clicca qui o su %s." },
+        ptBR = { EXPORT_NOTE = "Agora você pode exportar o progresso do seu personagem para o site", EXPORT_NOTE_CLICK = "Clique aqui ou em %s." },
+        ruRU = { EXPORT_NOTE = "Теперь вы можете экспортировать прогресс персонажа на сайт", EXPORT_NOTE_CLICK = "Нажмите здесь или на «%s»." },
+        koKR = { EXPORT_NOTE = "이제 캐릭터 진행 상황을 웹사이트로 내보낼 수 있습니다", EXPORT_NOTE_CLICK = "여기 또는 %s을(를) 클릭하세요." },
+        zhCN = { EXPORT_NOTE = "现在你可以将角色进度导出到网站", EXPORT_NOTE_CLICK = "点击此处或%s。" },
+        zhTW = { EXPORT_NOTE = "現在你可以將角色進度匯出到網站", EXPORT_NOTE_CLICK = "點擊此處或%s。" },
+    }
+    strings.esMX = strings.esES
+    for locale, values in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(values) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+
+    local HINT_TIME = 12
+    local ARROW = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\QuestPrevArrow"
+    local hint
+
+    local function Build(icon)
+        local p = CreateFrame("Button", nil, icon, "BackdropTemplate")
+        p:SetFrameStrata("FULLSCREEN_DIALOG")
+        p:SetClampedToScreen(true)
+        p:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+        p:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 12,
+            insets = { left = 3, right = 3, top = 3, bottom = 3 },
+        })
+        p:SetBackdropColor(0, 0, 0, 0.92)
+        p:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
+        -- The Onyxia popup's red arrow (it points left), turned to point up
+        -- at the icon; it comes and goes, nudging toward it.
+        p.arrow = p:CreateTexture(nil, "OVERLAY")
+        p.arrow:SetTexture(ARROW)
+        p.arrow:SetVertexColor(1, 0.12, 0.08)
+        p.arrow:SetSize(24, 24)
+        if p.arrow.SetRotation then pcall(p.arrow.SetRotation, p.arrow, -math.pi / 2) end
+        -- okbutton (M 20 Nov 2026: "we need the little OK button so people
+        -- can close the thing ... on the top left, at the top, above"): the
+        -- tracker's boss note's small OK, over the text; it only closes.
+        p.ok = CreateFrame("Button", nil, p, "UIPanelButtonTemplate")
+        FDJ.OwnFonts(p.ok)
+        p.ok:SetSize(34, 16)
+        p.ok:SetNormalFontObject("ForeverDJ_GameFontNormalSmall")
+        p.ok:SetHighlightFontObject("ForeverDJ_GameFontHighlightSmall")
+        p.ok:SetText(OKAY or "OK")
+        p.ok:SetPoint("TOPLEFT", 10, -9)
+        p.ok:SetScript("OnClick", function() p:Hide() end)
+        p.text = p:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
+        p.text:SetPoint("TOPLEFT", 14, -30)
+        p.text:SetWidth(300)
+        p.text:SetJustifyH("LEFT")
+        p.text:SetTextColor(1, 1, 1)
+        p.text:SetShadowColor(0, 0, 0, 1)
+        p.text:SetShadowOffset(1, -1)
+        p.hint = p:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontDisableSmall")
+        p.hint:SetPoint("TOPLEFT", p.text, "BOTTOMLEFT", 0, -6)
+        p.hint:SetWidth(300)
+        p.hint:SetJustifyH("LEFT")
+        p:SetScript("OnUpdate", function(self, elapsed)
+            self.t = (self.t or 0) + elapsed
+            if self.t >= HINT_TIME then
+                self:Hide()
+                return
+            end
+            -- in over 0.3 s, out over the last 0.6 s
+            self:SetAlpha(math.min(1, self.t / 0.3, (HINT_TIME - self.t) / 0.6))
+            local wave = math.sin(self.t * 4)
+            self.arrow:SetAlpha(0.55 + 0.45 * wave)
+            self.arrow:ClearAllPoints()
+            self.arrow:SetPoint("TOP", self.fdjIcon, "BOTTOM", 0, -1 - 3 * math.abs(wave))
+        end)
+        p:SetScript("OnClick", function(self, button)
+            self:Hide()
+            -- exporttitle: the Options' Export tab, as the button does
+            if button == "LeftButton" and FDJ.OpenExportTab then pcall(FDJ.OpenExportTab) end
+        end)
+        p:SetScript("OnEnter", function(self) self:SetBackdropBorderColor(1, 0.82, 0.35, 1) end)
+        p:SetScript("OnLeave", function(self) self:SetBackdropBorderColor(0.6, 0.6, 0.6, 1) end)
+        p:Hide()
+        return p
+    end
+
+    -- force: show it even when already seen (not marked).
+    function FDJ.ShowExportHint(icon, force)
+        local db = ForeverDungeonJournalDB
+        if type(db) ~= "table" or not icon then return end
+        if db.exportHintSeen and not force then return end
+        if not (icon:IsVisible() and icon:GetLeft()) then return end
+        if FDJ.IsExportButtonHidden and FDJ.IsExportButtonHidden() then return end
+        if not force then db.exportHintSeen = true end
+        hint = hint or Build(icon)
+        hint.fdjIcon = icon
+        hint.text:SetText(L("EXPORT_NOTE"))
+        hint.hint:SetText(string.format(L("EXPORT_NOTE_CLICK"), L("RUNLOG_EXPORT")))
+        hint:SetSize(328, (hint.text:GetStringHeight() or 34) + (hint.hint:GetStringHeight() or 12) + 48)
+        hint:ClearAllPoints()
+        hint:SetPoint("TOP", icon, "BOTTOM", 0, -28)
+        hint.arrow:ClearAllPoints()
+        hint.arrow:SetPoint("TOP", icon, "BOTTOM", 0, -1)
+        hint.t = 0
+        hint:SetAlpha(0)
+        hint:Show()
+    end
+
+    -- The Export button: shown (the journal opened), after the title bar
+    -- has placed its buttons.
+    function FDJ.AttachExportHint(icon)
+        if not icon or icon.fdjExportHint then return end
+        icon.fdjExportHint = true
+        local function Try()
+            if C_Timer and C_Timer.After then
+                C_Timer.After(0.3, function() FDJ.ShowExportHint(icon) end)
+            else
+                FDJ.ShowExportHint(icon)
+            end
+        end
+        icon:HookScript("OnShow", Try)
+        if icon:IsVisible() then Try() end
+    end
 end

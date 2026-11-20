@@ -505,6 +505,10 @@ FDJ.ContentLocales.ruRU.bosses = {
 }
 
 FDJ.ContentLocales.ruRU.slotParts = {
+    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+    ["Relic"] = "Реликвия",
+    ["Libram"] = "Манускрипт",
+    ["Totem"] = "Тотем",
     ["Chest"] = "Грудь",
     ["Leather"] = "Кожа",
     ["Wrist"] = "Запястья",

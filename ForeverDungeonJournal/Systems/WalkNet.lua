@@ -268,6 +268,49 @@ do
         return field
     end
 
+    -- pullahead (2.1.1, M 20 Nov 2026 on the road through Riverglades'
+    -- Bristle Hills, the arrow to Farholde Keep pointing off to the left:
+    -- "it wants to find the anchor point ... make it cleaner"): the net's
+    -- stretch there runs 20 yards beside the road, so the next corner was
+    -- always off to the side. The arrow now looks ahead along the way and
+    -- aims at the furthest corner (up to PULL yards walked) whose way there
+    -- stays within LANE yards of the straight line to it: on a straight
+    -- way it points down the way, at a bend it still turns at the bend.
+    -- Not past a stretch that is steep or water (it is walked as it is).
+    local PULL, LANE = 160, 18
+    local function PullAhead(net, field, node, px, py)
+        local X, Y, A, B, L, C, at = net.X, net.Y, net.A, net.B, net.L, net.C, net.at
+        local passed = { node }
+        local best, cur, walked = node, node, Yards(px, py, X[node], Y[node])
+        for _ = 1, 40 do
+            local nxt = field.next[cur]
+            if not nxt then break end
+            local edge
+            for _, e in ipairs(at[cur] or {}) do
+                if (A[e] == cur and B[e] == nxt) or (B[e] == cur and A[e] == nxt) then edge = e break end
+            end
+            if not edge then break end
+            if L[edge] <= 0 or C[edge] / L[edge] > 1.15 then break end
+            walked = walked + L[edge]
+            if walked > PULL then break end
+            local qx, qy = X[nxt], Y[nxt]
+            local dx, dy = qx - px, qy - py
+            local len2 = dx * dx + dy * dy
+            if len2 <= 0 then break end
+            local inLane = true
+            for i = 1, #passed do
+                local mx, my = X[passed[i]], Y[passed[i]]
+                local t = math.max(0, math.min(1, ((mx - px) * dx + (my - py) * dy) / len2))
+                if Yards(mx, my, px + t * dx, py + t * dy) > LANE then inLane = false break end
+            end
+            if not inLane then break end
+            best = nxt
+            passed[#passed + 1] = nxt
+            cur = nxt
+        end
+        return best
+    end
+
     -- Where the arrow aims on the way from (px, py) to (tx, ty) on continent
     -- c: the next corner of the net and the yards from it to the place; nil
     -- when the straight line is the way (the same zone, no net near, the
@@ -466,6 +509,8 @@ do
                 far = following
             end
         end
+        local okPull, pulled = pcall(PullAhead, net, field, far, px, py) -- pullahead (2.1.1)
+        if okPull and pulled and field.walk[pulled] then far = pulled end
         if far ~= node then
             state.aim, state.rest = { X[far], Y[far] }, field.walk[far]
             return state.aim, state.rest
@@ -705,6 +750,38 @@ do
         local ax, ay = Centre(g, aimCell)
         state.aim, state.rest = { ax, ay }, field.walk[aimCell]
         return true, state.aim, state.rest
+    end
+
+    -- netwalk (2.1.1): the yards of the net's way from (px, py) to (tx, ty)
+    -- on continent c, for weighing a flight against it (Systems/MapMarkers.lua,
+    -- Plan); nil when the net does not know a way.
+    function FDJ.WalkNetYards(px, py, tx, ty, c)
+        if not (Number(tx) and Number(ty) and Number(px) and Number(py)) or not CONTINENT_MAP[c] then return nil end
+        local ok, yards = pcall(function()
+            local net = Net(c)
+            if not net then return nil end
+            local side = Side()
+            local field = Field(net, c, side, tx, ty)
+            if field.none then return nil end
+            local joins = Joins(net, c, side, px, py, NEAR)
+            if joins and #joins == 0 then joins = Joins(net, c, side, px, py, FAR) end
+            local A, B, C, F, L, dist = net.A, net.B, net.C, net.F, net.L, field.dist
+            local best, way
+            for i = 1, joins and #joins or 0 do
+                local j = joins[i]
+                local e = j.e
+                if Bit(F[e], 8) and dist[A[e]] then
+                    local cost = OFF * j.d + j.t * C[e] + dist[A[e]]
+                    if not best or cost < best then best, way = cost, j.d + j.t * L[e] + field.walk[A[e]] end
+                end
+                if Bit(F[e], 4) and dist[B[e]] then
+                    local cost = OFF * j.d + (1 - j.t) * C[e] + dist[B[e]]
+                    if not best or cost < best then best, way = cost, j.d + (1 - j.t) * L[e] + field.walk[B[e]] end
+                end
+            end
+            return way
+        end)
+        return ok and yards or nil
     end
 
     -- -> { x, y } (world yards) and the yards from there on, or nil.

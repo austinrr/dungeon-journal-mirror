@@ -49,19 +49,51 @@ local SETS = {
 -- which of the four armor exchanges of the Tier 0.5 chain gives each piece
 -- (1 An Earnest Proposition: Wrist; 2 Just Compensation: Hands, Waist; 3
 -- Anthion's Parting Words: Shoulder, Legs, Feet; 4 Saving the Best for
--- Last: Head, Chest). From the Forever client's quest rewards (Polestar
--- forever-db: quests 8905-9022, every class's).
+-- Last: Head, Chest). From the Forever client's quest rewards
+-- (quests 8905-9022, every class's).
+-- t05forever (2.1.1, M 20 Nov 2026, his Soulforge Gauntlets on: "the items in
+-- the tier 0.5 set don't have the right ID because I cannot link them, and
+-- also they have the wrong bonus"): Forever's own Dungeon Set 2, new items
+-- with new stats and set bonuses, one version per role for some classes
+-- (the quests give a box to pick one from). One Tier 0.5 row per version
+-- (M: "one row per version"), its spec icon under "Tier 0.5". Each version:
+-- Head ... Feet as above (SOURCES.txt).
 local SETS2 = {
-    WARRIOR = { 21999, 22001, 21997, 21996, 21998, 21994, 22000, 21995, name = "Battlegear of Heroism" },
-    PALADIN = { 22091, 22093, 22089, 22088, 22090, 22086, 22092, 22087, name = "Soulforge Armor" },
-    HUNTER = { 22013, 22016, 22060, 22011, 22015, 22010, 22017, 22061, name = "Beastmaster Armor" },
-    ROGUE = { 22005, 22008, 22009, 22004, 22006, 22002, 22007, 22003, name = "Darkmantle Armor" },
-    PRIEST = { 22080, 22082, 22083, 22079, 22081, 22078, 22085, 22084, name = "Vestments of the Virtuous" },
-    SHAMAN = { 22097, 22101, 22102, 22095, 22099, 22098, 22100, 22096, name = "The Five Thunders" },
-    MAGE = { 22065, 22068, 22069, 22063, 22066, 22062, 22067, 22064, name = "Sorcerer's Regalia" },
-    WARLOCK = { 22074, 22073, 22075, 22071, 22077, 22070, 22072, 22076, name = "Deathmist Raiment" },
-    DRUID = { 22109, 22112, 22113, 22108, 22110, 22106, 22111, 22107, name = "Feralheart Raiment" },
+    WARRIOR = { name = "Battlegear of Heroism",
+        { role = "MELEE", 226860, 226858, 226862, 226863, 226861, 226864, 226859, 226857 },
+        { role = "TANK", 226869, 226867, 226872, 226865, 226870, 226866, 226868, 226871 } },
+    PALADIN = { name = "Soulforge Armor",
+        { role = "MELEE", 226976, 226969, 226973, 226970, 226975, 226971, 226972, 226974 },
+        { role = "HEALER", 226981, 226979, 226984, 226977, 226982, 226978, 226980, 226983 },
+        { role = "TANK", 226989, 226987, 226992, 226985, 226990, 226986, 226988, 226991 } },
+    HUNTER = { name = "Beastmaster Armor",
+        { 226887, 226884, 226886, 226885, 226883, 226888, 226882, 226881 } },
+    ROGUE = { name = "Darkmantle Armor",
+        { 226829, 226826, 226825, 226830, 226828, 226832, 226827, 226831 } },
+    PRIEST = { name = "Vestments of the Virtuous",
+        { role = "HEALER", 226947, 226951, 226945, 226949, 226950, 226948, 226946, 226952 },
+        { role = "CASTER", 226957, 226955, 226960, 226953, 226958, 226954, 226956, 226959 } },
+    SHAMAN = { name = "The Five Thunders",
+        { role = "CASTER", 227002, 227003, 227004, 227001, 227006, 227008, 227005, 227007 },
+        { role = "HEALER", 227013, 227011, 227016, 227009, 227014, 227010, 227012, 227015 },
+        { role = "MELEE", 227021, 227019, 227024, 227017, 227022, 227018, 227020, 227023 } },
+    MAGE = { name = "Sorcerer's Regalia",
+        { 226935, 226936, 226932, 226929, 226930, 226934, 226933, 226931 } },
+    WARLOCK = { name = "Deathmist Raiment",
+        { 226909, 226912, 226906, 226907, 226911, 226905, 226910, 226908 } },
+    DRUID = { name = "Feralheart Raiment",
+        { role = "CASTER", 226773, 226778, 226776, 226775, 226777, 226772, 226779, 226774 },
+        { role = "HEALER", 226786, 226785, 226783, 226782, 226784, 226780, 226787, 226781 },
+        { role = "MELEE", 226792, 226790, 226795, 226788, 226793, 226789, 226791, 226794 },
+        { role = "TANK", 226801, 226798, 226804, 226796, 226802, 226797, 226799, 226803 } },
 }
+-- (the first version's pieces, for the set's name from its chest's tooltip)
+local SETS2_NAME = {}
+for token, set in pairs(SETS2) do
+    local first = { name = set.name }
+    for i = 1, 8 do first[i] = set[1][i] end
+    SETS2_NAME[token] = first
+end
 local PIECE_QUEST = { 4, 3, 4, 1, 2, 2, 3, 3 }
 local QUEST05 = { 8909, 8934, 8955, 9003 } -- (the names are the same for every class)
 local QUEST05_EN = { "An Earnest Proposition", "Just Compensation", "Anthion's Parting Words", "Saving the Best for Last" }
@@ -591,6 +623,101 @@ local function FillCell(cell, id, size, cellW, compact, sources, questIndex, own
     return h
 end
 
+-- t05forever: a version's label ("Tier 0.5" over its spec icon, or the icon
+-- alone in Compact view), and the cells, label and arrow of the versions
+-- after the first (made the first time a class with that many is shown; the
+-- rows are reused).
+-- t05icon (2.1.1, M 20 Nov 2026: "rather have the spec icon instead of
+-- melee ... show the spec icon, that's enough"): each version's spec icon
+-- (the class's talent tree icon) in place of its role's name.
+local SPEC_ICONS = {
+    WARRIOR = { MELEE = "Ability_Warrior_SavageBlow", TANK = "Ability_Warrior_DefensiveStance" },
+    PALADIN = { MELEE = "Spell_Holy_AuraOfLight", HEALER = "Spell_Holy_HolyBolt", TANK = "Spell_Holy_DevotionAura" },
+    PRIEST = { HEALER = "Spell_Holy_HolyBolt", CASTER = "Spell_Shadow_ShadowWordPain" },
+    SHAMAN = { CASTER = "Spell_Nature_Lightning", HEALER = "Spell_Nature_MagicImmunity", MELEE = "Spell_Nature_LightningShield" },
+    DRUID = { CASTER = "Spell_Nature_StarFall", HEALER = "Spell_Nature_HealingTouch", MELEE = "Ability_Druid_CatForm", TANK = "Ability_Racial_BearForm" },
+}
+-- t05tip (2.1.1, M 20 Nov 2026: "when hovering over the icon of the spec
+-- ... the little tooltip to say the spec name ... cat, bear ... both in
+-- compact and detail view"): the spec's name in the game's words.
+do
+    local strings = {
+        enUS = { TIER05_SPEC_WARRIOR_MELEE = "Arms / Fury", TIER05_SPEC_WARRIOR_TANK = "Protection", TIER05_SPEC_PALADIN_MELEE = "Retribution", TIER05_SPEC_PALADIN_HEALER = "Holy", TIER05_SPEC_PALADIN_TANK = "Protection", TIER05_SPEC_PRIEST_HEALER = "Holy", TIER05_SPEC_PRIEST_CASTER = "Shadow", TIER05_SPEC_SHAMAN_CASTER = "Elemental", TIER05_SPEC_SHAMAN_HEALER = "Restoration", TIER05_SPEC_SHAMAN_MELEE = "Enhancement", TIER05_SPEC_DRUID_CASTER = "Balance", TIER05_SPEC_DRUID_HEALER = "Restoration", TIER05_SPEC_DRUID_MELEE = "Cat", TIER05_SPEC_DRUID_TANK = "Bear" },
+        deDE = { TIER05_SPEC_WARRIOR_MELEE = "Waffen / Furor", TIER05_SPEC_WARRIOR_TANK = "Schutz", TIER05_SPEC_PALADIN_MELEE = "Vergeltung", TIER05_SPEC_PALADIN_HEALER = "Heilig", TIER05_SPEC_PALADIN_TANK = "Schutz", TIER05_SPEC_PRIEST_HEALER = "Heilig", TIER05_SPEC_PRIEST_CASTER = "Schatten", TIER05_SPEC_SHAMAN_CASTER = "Elementar", TIER05_SPEC_SHAMAN_HEALER = "Wiederherstellung", TIER05_SPEC_SHAMAN_MELEE = "Verstärkung", TIER05_SPEC_DRUID_CASTER = "Gleichgewicht", TIER05_SPEC_DRUID_HEALER = "Wiederherstellung", TIER05_SPEC_DRUID_MELEE = "Katze", TIER05_SPEC_DRUID_TANK = "Bär" },
+        frFR = { TIER05_SPEC_WARRIOR_MELEE = "Armes / Fureur", TIER05_SPEC_WARRIOR_TANK = "Protection", TIER05_SPEC_PALADIN_MELEE = "Vindicte", TIER05_SPEC_PALADIN_HEALER = "Sacré", TIER05_SPEC_PALADIN_TANK = "Protection", TIER05_SPEC_PRIEST_HEALER = "Sacré", TIER05_SPEC_PRIEST_CASTER = "Ombre", TIER05_SPEC_SHAMAN_CASTER = "Élémentaire", TIER05_SPEC_SHAMAN_HEALER = "Restauration", TIER05_SPEC_SHAMAN_MELEE = "Amélioration", TIER05_SPEC_DRUID_CASTER = "Équilibre", TIER05_SPEC_DRUID_HEALER = "Restauration", TIER05_SPEC_DRUID_MELEE = "Chat", TIER05_SPEC_DRUID_TANK = "Ours" },
+        esES = { TIER05_SPEC_WARRIOR_MELEE = "Armas / Furia", TIER05_SPEC_WARRIOR_TANK = "Protección", TIER05_SPEC_PALADIN_MELEE = "Reprensión", TIER05_SPEC_PALADIN_HEALER = "Sagrado", TIER05_SPEC_PALADIN_TANK = "Protección", TIER05_SPEC_PRIEST_HEALER = "Sagrado", TIER05_SPEC_PRIEST_CASTER = "Sombra", TIER05_SPEC_SHAMAN_CASTER = "Elemental", TIER05_SPEC_SHAMAN_HEALER = "Restauración", TIER05_SPEC_SHAMAN_MELEE = "Mejora", TIER05_SPEC_DRUID_CASTER = "Equilibrio", TIER05_SPEC_DRUID_HEALER = "Restauración", TIER05_SPEC_DRUID_MELEE = "Felino", TIER05_SPEC_DRUID_TANK = "Oso" },
+        itIT = { TIER05_SPEC_WARRIOR_MELEE = "Armi / Furia", TIER05_SPEC_WARRIOR_TANK = "Protezione", TIER05_SPEC_PALADIN_MELEE = "Castigo", TIER05_SPEC_PALADIN_HEALER = "Sacro", TIER05_SPEC_PALADIN_TANK = "Protezione", TIER05_SPEC_PRIEST_HEALER = "Sacro", TIER05_SPEC_PRIEST_CASTER = "Ombra", TIER05_SPEC_SHAMAN_CASTER = "Elementale", TIER05_SPEC_SHAMAN_HEALER = "Rigenerazione", TIER05_SPEC_SHAMAN_MELEE = "Potenziamento", TIER05_SPEC_DRUID_CASTER = "Equilibrio", TIER05_SPEC_DRUID_HEALER = "Rigenerazione", TIER05_SPEC_DRUID_MELEE = "Felino", TIER05_SPEC_DRUID_TANK = "Orso" },
+        ptBR = { TIER05_SPEC_WARRIOR_MELEE = "Armas / Fúria", TIER05_SPEC_WARRIOR_TANK = "Proteção", TIER05_SPEC_PALADIN_MELEE = "Retribuição", TIER05_SPEC_PALADIN_HEALER = "Sagrado", TIER05_SPEC_PALADIN_TANK = "Proteção", TIER05_SPEC_PRIEST_HEALER = "Sagrado", TIER05_SPEC_PRIEST_CASTER = "Sombra", TIER05_SPEC_SHAMAN_CASTER = "Elemental", TIER05_SPEC_SHAMAN_HEALER = "Restauração", TIER05_SPEC_SHAMAN_MELEE = "Aperfeiçoamento", TIER05_SPEC_DRUID_CASTER = "Equilíbrio", TIER05_SPEC_DRUID_HEALER = "Restauração", TIER05_SPEC_DRUID_MELEE = "Felino", TIER05_SPEC_DRUID_TANK = "Urso" },
+        ruRU = { TIER05_SPEC_WARRIOR_MELEE = "Оружие / Неистовство", TIER05_SPEC_WARRIOR_TANK = "Защита", TIER05_SPEC_PALADIN_MELEE = "Воздаяние", TIER05_SPEC_PALADIN_HEALER = "Свет", TIER05_SPEC_PALADIN_TANK = "Защита", TIER05_SPEC_PRIEST_HEALER = "Свет", TIER05_SPEC_PRIEST_CASTER = "Тьма", TIER05_SPEC_SHAMAN_CASTER = "Стихии", TIER05_SPEC_SHAMAN_HEALER = "Исцеление", TIER05_SPEC_SHAMAN_MELEE = "Совершенствование", TIER05_SPEC_DRUID_CASTER = "Баланс", TIER05_SPEC_DRUID_HEALER = "Исцеление", TIER05_SPEC_DRUID_MELEE = "Кошка", TIER05_SPEC_DRUID_TANK = "Медведь" },
+        koKR = { TIER05_SPEC_WARRIOR_MELEE = "무기 / 분노", TIER05_SPEC_WARRIOR_TANK = "방어", TIER05_SPEC_PALADIN_MELEE = "징벌", TIER05_SPEC_PALADIN_HEALER = "신성", TIER05_SPEC_PALADIN_TANK = "보호", TIER05_SPEC_PRIEST_HEALER = "신성", TIER05_SPEC_PRIEST_CASTER = "암흑", TIER05_SPEC_SHAMAN_CASTER = "정기", TIER05_SPEC_SHAMAN_HEALER = "복원", TIER05_SPEC_SHAMAN_MELEE = "고양", TIER05_SPEC_DRUID_CASTER = "조화", TIER05_SPEC_DRUID_HEALER = "회복", TIER05_SPEC_DRUID_MELEE = "표범", TIER05_SPEC_DRUID_TANK = "곰" },
+        zhCN = { TIER05_SPEC_WARRIOR_MELEE = "武器 / 狂怒", TIER05_SPEC_WARRIOR_TANK = "防护", TIER05_SPEC_PALADIN_MELEE = "惩戒", TIER05_SPEC_PALADIN_HEALER = "神圣", TIER05_SPEC_PALADIN_TANK = "防护", TIER05_SPEC_PRIEST_HEALER = "神圣", TIER05_SPEC_PRIEST_CASTER = "暗影", TIER05_SPEC_SHAMAN_CASTER = "元素", TIER05_SPEC_SHAMAN_HEALER = "恢复", TIER05_SPEC_SHAMAN_MELEE = "增强", TIER05_SPEC_DRUID_CASTER = "平衡", TIER05_SPEC_DRUID_HEALER = "恢复", TIER05_SPEC_DRUID_MELEE = "猎豹", TIER05_SPEC_DRUID_TANK = "熊" },
+        zhTW = { TIER05_SPEC_WARRIOR_MELEE = "武器 / 狂怒", TIER05_SPEC_WARRIOR_TANK = "防護", TIER05_SPEC_PALADIN_MELEE = "懲戒", TIER05_SPEC_PALADIN_HEALER = "神聖", TIER05_SPEC_PALADIN_TANK = "防護", TIER05_SPEC_PRIEST_HEALER = "神聖", TIER05_SPEC_PRIEST_CASTER = "暗影", TIER05_SPEC_SHAMAN_CASTER = "元素", TIER05_SPEC_SHAMAN_HEALER = "恢復", TIER05_SPEC_SHAMAN_MELEE = "增強", TIER05_SPEC_DRUID_CASTER = "平衡", TIER05_SPEC_DRUID_HEALER = "恢復", TIER05_SPEC_DRUID_MELEE = "獵豹", TIER05_SPEC_DRUID_TANK = "熊" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+local function Version(row, v)
+    if v == 1 then return row.cells2, row.lab05, row.arrowC end
+    row.extra = row.extra or {}
+    local extra = row.extra[v]
+    if not extra then
+        extra = { cells = {} }
+        for i = 1, 8 do extra.cells[i] = MakeCell(row) end
+        extra.lab = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+        extra.lab:SetTextColor(1.00, 0.82, 0.27)
+        extra.arrow = row:CreateTexture(nil, "ARTWORK")
+        extra.arrow:SetTexture("Interface\\ChatFrame\\ChatFrameExpandArrow")
+        extra.arrow:SetSize(16, 16)
+        extra.arrow:SetVertexColor(1, 0.82, 0.3)
+        row.extra[v] = extra
+    end
+    return extra.cells, extra.lab, extra.arrow
+end
+-- t05bigicon (2.1.1, M 20 Nov 2026: "make the icon a bit bigger and more
+-- centered below tier 0.5"): the spec icon is a small frame of its own
+-- (centered under "Tier 0.5" in the detailed view, left of the arrow in
+-- Compact view), made the first time; t05tip: hovered, the spec's name.
+local function SpecIcon(row, v, token, role)
+    local holder = v == 1 and row or row.extra[v]
+    local f = holder.specIcon
+    if not f then
+        f = CreateFrame("Frame", nil, row)
+        f.tex = f:CreateTexture(nil, "ARTWORK")
+        f.tex:SetAllPoints()
+        f.tex:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+        f:EnableMouse(true)
+        f:SetScript("OnEnter", function(self)
+            if not (GameTooltip and self.specKey) then return end
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(L(self.specKey), 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        f:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
+        holder.specIcon = f
+    end
+    f.tex:SetTexture("Interface\\Icons\\" .. SPEC_ICONS[token][role])
+    f.specKey = "TIER05_SPEC_" .. token .. "_" .. role
+    return f
+end
+local function HideVersions(row, from)
+    if from <= 1 and row.specIcon then row.specIcon:Hide() end
+    for v, extra in pairs(row.extra or {}) do
+        if v >= from then
+            for i = 1, 8 do extra.cells[i]:Hide() end
+            extra.lab:Hide()
+            extra.arrow:Hide()
+            if extra.specIcon then extra.specIcon:Hide() end
+        end
+    end
+end
+
 -- One class's row: its label, then the eight pieces side by side, and the
 -- Tier 0.5 pieces under them (tier05row).
 local function FillRow(row, token, width, compact)
@@ -629,7 +756,7 @@ local function FillRow(row, token, width, compact)
         row.sub:Hide()
         row.line:Show()
         row.t05:SetPoint("RIGHT", row, "TOPRIGHT", -4, -10)
-        row.t05:SetText(set2 and L("TIER05_LABEL", SetName(token, SETS2)) or "")
+        row.t05:SetText(set2 and L("TIER05_LABEL", SetName(token, SETS2_NAME)) or "")
         row.t05:Show()
     end
     if compact then
@@ -638,6 +765,9 @@ local function FillRow(row, token, width, compact)
         local gap = math.max(3, math.floor(step * 0.2))
         local size = step - 4 - gap
         local y = -math.floor((ROW_H_C - size - 4) / 2)
+        -- t05forever: one version, on the same line; more, each on a line
+        -- of its own under the Tier 0 pieces, its role left of the arrow
+        local count = set2 and #set2 or 0
         for i = 1, 8 do
             local cell = row.cells[i]
             cell:ClearAllPoints()
@@ -645,21 +775,50 @@ local function FillRow(row, token, width, compact)
             FillCell(cell, set[i], size, nil, true, Sources(set[i]), nil, own)
             cell:Show()
             row.arrows[i]:Hide()
-            local cell2 = row.cells2[i]
-            if set2 then
+            if count == 0 then row.cells2[i]:Hide() end
+        end
+        row.arrowC:Hide()
+        -- t05left (2.1.1, M 20 Nov 2026: "way too much dead space ... move
+        -- all the tier 0.5 to the left, so that it's close to the paladin
+        -- icon"): several versions: each on a line of its own under the Tier
+        -- 0 pieces, lined up with them, its spec icon and the arrow just left
+        -- of it; the class's name beside the Tier 0 line.
+        if count > 1 then
+            row.classIcon:ClearAllPoints()
+            row.classIcon:SetPoint("LEFT", row, "TOPLEFT", 2, y - math.floor((size + 4) / 2))
+        end
+        for v = 1, count do
+            local cells, lab, arrow = Version(row, v)
+            local yv = count > 1 and (y - v * ROW_H_C) or y
+            local x0 = count > 1 and LABEL_W or (LABEL_W + 8 * step + 26)
+            for i = 1, 8 do
+                local cell2 = cells[i]
                 cell2:ClearAllPoints()
-                cell2:SetPoint("TOPLEFT", row, "TOPLEFT", LABEL_W + 8 * step + 26 + (i - 1) * step, y)
-                FillCell(cell2, set2[i], size, nil, true, nil, PIECE_QUEST[i], own)
+                cell2:SetPoint("TOPLEFT", row, "TOPLEFT", x0 + (i - 1) * step, yv)
+                FillCell(cell2, set2[v][i], size, nil, true, nil, PIECE_QUEST[i], own)
                 cell2:Show()
-            else
-                cell2:Hide()
+            end
+            arrow:ClearAllPoints()
+            arrow:SetPoint("LEFT", row, "TOPLEFT", x0 - 24, yv - math.floor((size + 4) / 2))
+            arrow:Show()
+            lab:Hide()
+            local role = set2[v].role
+            if count > 1 and role and SPEC_ICONS[token] and SPEC_ICONS[token][role] then
+                local spec = SpecIcon(row, v, token, role)
+                local s = math.max(16, size - 6)
+                spec:SetSize(s, s)
+                spec:ClearAllPoints()
+                spec:SetPoint("RIGHT", row, "TOPLEFT", x0 - 26, yv - math.floor((size + 4) / 2))
+                spec:Show()
+            elseif v == 1 and row.specIcon then
+                row.specIcon:Hide()
             end
         end
-        row.arrowC:ClearAllPoints()
-        row.arrowC:SetPoint("LEFT", row, "TOPLEFT", LABEL_W + 8 * step + 2, y - math.floor((size + 4) / 2))
-        row.arrowC:SetShown(set2 ~= nil)
-        row:SetSize(width, ROW_H_C)
-        return ROW_H_C
+        HideVersions(row, count + 1)
+        if count == 0 and row.specIcon then row.specIcon:Hide() end
+        local height = ROW_H_C * (count > 1 and (count + 1) or 1)
+        row:SetSize(width, height)
+        return height
     end
     row.arrowC:Hide()
     -- tierlabels (2.0.10, M 17 Nov 2026: "I want 0 and 0.5 to the left of the
@@ -684,33 +843,57 @@ local function FillRow(row, token, width, compact)
     if not set2 then
         row.lab05:Hide()
         for i = 1, 8 do row.arrows[i]:Hide() row.cells2[i]:Hide() end
+        HideVersions(row, 1)
         local height = 32 + tallest
         row:SetSize(width, height)
         return height
     end
     local arrowY = 32 + tallest + 2
     local y2 = arrowY + 18
-    local tallest2 = 0
     for i = 1, 8 do
         local arrow = row.arrows[i]
         arrow:ClearAllPoints()
         arrow:SetPoint("TOP", row, "TOPLEFT", left + (i - 1) * (cellW + GAP) + math.floor(cellW / 2), -arrowY)
         arrow:Show()
-        local cell2 = row.cells2[i]
-        cell2:ClearAllPoints()
-        cell2:SetPoint("TOPLEFT", row, "TOPLEFT", left + (i - 1) * (cellW + GAP), -y2)
-        local h = FillCell(cell2, set2[i], ICON_SIZE, cellW, false, nil, PIECE_QUEST[i], own)
-        cell2:Show()
-        if h > tallest2 then tallest2 = h end
     end
-    row.lab05:ClearAllPoints()
-    row.lab05:SetPoint("LEFT", row, "TOPLEFT", 2, -(y2 + math.floor((ICON_SIZE + 4) / 2)))
-    row.lab05:SetWidth(left - 6)
-    row.lab05:SetText(L("TIER_05"))
-    row.lab05:Show()
-    local height = y2 + tallest2
-    row:SetSize(width, height)
-    return height
+    -- t05forever: each version's row under the one before, its role under
+    -- "Tier 0.5" on the left
+    for v, version in ipairs(set2) do
+        local cells, lab = Version(row, v)
+        local tallest2 = 0
+        for i = 1, 8 do
+            local cell2 = cells[i]
+            cell2:ClearAllPoints()
+            cell2:SetPoint("TOPLEFT", row, "TOPLEFT", left + (i - 1) * (cellW + GAP), -y2)
+            local h = FillCell(cell2, version[i], ICON_SIZE, cellW, false, nil, PIECE_QUEST[i], own)
+            cell2:Show()
+            if h > tallest2 then tallest2 = h end
+        end
+        lab:ClearAllPoints()
+        lab:SetJustifyH("LEFT")
+        lab:SetText(L("TIER_05"))
+        lab:Show()
+        local icon = version.role and SPEC_ICONS[token] and SPEC_ICONS[token][version.role]
+        if icon then
+            -- t05bigicon: "Tier 0.5" level with the pieces' top, the icon
+            -- centered under it
+            lab:SetPoint("TOPLEFT", row, "TOPLEFT", 2, -(y2 + 1))
+            lab:SetWidth(0)
+            local spec = SpecIcon(row, v, token, version.role)
+            spec:SetSize(30, 30)
+            spec:ClearAllPoints()
+            spec:SetPoint("TOP", lab, "BOTTOM", 0, -3)
+            spec:Show()
+        else
+            lab:SetPoint("LEFT", row, "TOPLEFT", 2, -(y2 + math.floor((ICON_SIZE + 4) / 2)))
+            lab:SetWidth(left - 6)
+            if v == 1 and row.specIcon then row.specIcon:Hide() end
+        end
+        y2 = y2 + tallest2 + (v < #set2 and ROW_GAP or 0)
+    end
+    HideVersions(row, #set2 + 1)
+    row:SetSize(width, y2)
+    return y2
 end
 
 -- tierclasses: the classes ticked in Show Classes, for this character (its

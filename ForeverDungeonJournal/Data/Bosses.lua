@@ -681,6 +681,8 @@ FDJ.STATIC_DISPLAY_IDS = {
     [264773] = 14424,   -- Bossman Toof
     [258968] = 141218,  -- Overlord Mugg
     [262716] = 17273,   -- Kroog (rare)
+    [268423] = 145448,  -- Zalfan Moonshadow (quest target, Wowhead Forever; zalfanpin)
+    [259256] = 144671,  -- Tunk (quest target; tunkpin; the look M's game gave him, 20 Nov 2026)
     -- Alcaz Prison
     [255391] = 7914,    -- Overseer Wrex
     [255997] = 4973,    -- Tidemistress Ca'zass
@@ -715,6 +717,7 @@ FDJ.STATIC_DISPLAY_IDS = {
     [16101] = 16018,    -- Jarien (jariensothos 2.0.9: https://octowow.st/db/?npc=16101)
     [16102] = 16003,    -- Sothos (https://octowow.st/db/?npc=16102)
     [16080] = 15997,    -- Mor Grayhoof (morgrayhoof 2.0.9: https://octowow.st/db/?npc=16080)
+    [16097] = 16000,    -- Isalien (isalien 2.1.1: Wowhead Forever NPC 16097, model 16000)
     [10263] = 5047,     -- Burning Felguard (lbrsaudit 2.0.9: https://octowow.st/db/?npc=10263)
     [16059] = 15981,    -- Theldren (Blackrock Depths)
     [250034] = 2424,    -- Tunnelweb Matriarch (Blackmaw Hold)
@@ -955,7 +958,7 @@ FDJ.TRASH_MOB_NPC_IDS = {
     ["Risen Bonewarder"] = 10491,
     ["Risen Warrior"] = 10486,
     ["Risen Protector"] = 10487,
-    -- Excavation Site: Wetlands (2.0.30; Polestar forever-db npc table)
+    -- Excavation Site: Wetlands (2.0.30; the client's npc table)
     ["Highland Lurker"] = 260804,
     ["Marsh Crocolisk"] = 260796,
     ["Highland Spider"] = 260803,

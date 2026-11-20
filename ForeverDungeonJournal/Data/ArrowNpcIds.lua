@@ -1,6 +1,6 @@
 -- ForeverDungeonJournal: NPC IDs of the quest NPCs the waypoint arrow leads to (2.0.14),
 -- for their portrait on the arrow. By name as the journal's map spots give it; the NPC
--- of that name standing nearest the spot (Polestar forever-db npc and spawn tables).
+-- of that name standing nearest the spot (the client's npc and spawn tables).
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.ARROW_NPC_IDS = {

@@ -290,3 +290,17 @@ end
 FDJ.DUNGEON_HOME_BOTTOM_BAND = {
     ["City of Dalaran"] = { 0.36, 0.26, 0.42, 4 },
 }
+
+-- dungeoncolors (2.1.1, M 20 Nov 2026): these dungeon pages take another
+-- dungeon's colours.
+for name, like in pairs({
+    ["The Drowned City"] = "Blackfathom Deeps",
+    ["Krol'dok Stronghold"] = "The Stockade",
+    ["Alcaz Prison"] = "The Stockade",
+    ["Sunken Temple"] = "Gnomeregan",
+    ["Stratholme: Undead"] = "Ruins of Lordaeron",
+    ["Stratholme: Living"] = "Ruins of Lordaeron",
+    ["Shaper's Terrace"] = "Gnomeregan",
+}) do
+    if FDJ.THEMES[like] then FDJ.THEMES[name] = FDJ.THEMES[like] end
+end

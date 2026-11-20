@@ -288,9 +288,25 @@ FDJ.DUNGEON_MAPS = {
             { name = "Slavecrusher Grox",          floor = 1, x = 0.331, y = 0.703 },
             { name = "Twilight Commander Zarmok",  floor = 1, x = 0.392, y = 0.734 },
             { name = "War Handler Ashka",          floor = 1, x = 0.621, y = 0.527 },
-            { name = "Nar'gurk",                   floor = 1, x = 0.411, y = 0.579 },
+            -- nargurkmove (2.1.1, M 20 Nov 2026, his marked map: "move
+            -- Nargorg to the green dot"): was 0.411, 0.579
+            { name = "Nar'gurk",                   floor = 1, x = 0.381, y = 0.526 },
             { name = "Bossman Toof",               floor = 1, x = 0.617, y = 0.432 },
             { name = "Overlord Mugg",              floor = 1, x = 0.688, y = 0.242 },
+            -- tunkpin (2.1.1, M 20 Nov 2026: "we should add Tunk on the map as
+            -- a quest mob, like we do for the mob in excavation site ... it's
+            -- here on the orange box"): Tunk (NPC 259256, AllTheThings), the
+            -- ogre blacksmith whose Krol'dok Moulding starts Key Ingredients'
+            -- chain, at his forge east of War Handler Ashka (where M marked
+            -- him; "a small blacksmithing area" after the third boss,
+            -- Mobalytics / Icy Veins). One pin for both factions' quests.
+            { name = "Tunk",                       floor = 1, x = 0.691, y = 0.493, npcID = 259256, quest = { 94981, 94974 } },
+            -- zalfanpin (2.1.1, M 20 Nov 2026 in the stronghold: "I found a
+            -- new quest mob Zalfan Moonshadow ... put him on the orange dot"):
+            -- Vengeance of the Highborne's target (NPC 268423, Wowhead
+            -- Forever), up the ramp toward Nar'gurk ("turn right when going up
+            -- the ramp to Nar'gurk, he paths", its comment).
+            { name = "Zalfan Moonshadow",          floor = 1, x = 0.430, y = 0.495, npcID = 268423, quest = 96771 },
         },
     },
     ["Alcaz Prison"] = {
@@ -1163,6 +1179,63 @@ local function QualityColor(q)
     return 0, 0.44, 0.87
 end
 
+-- redlevel (2.1.1, M 20 Nov 2026: "if a quest is too high level ... and you
+-- cannot pick it up, I want the level number to be red"): the level for
+-- "Available from Level %s", red while the character is below it (a darker
+-- red on the parchment pages).
+FDJ.QuestLevelText = function(required, onParchment)
+    local need = tonumber(required)
+    if not need then return tostring(required or "") end
+    local okL, level = pcall(UnitLevel, "player")
+    level = okL and tonumber(level) or nil
+    if level and level > 0 and level < need then
+        return (onParchment and "|cffc41414" or "|cffff3030") .. need .. "|r"
+    end
+    return tostring(need)
+end
+
+-- redlevelbold (2.1.1, M 20 Nov 2026: "it's a little hard to read the level
+-- requirement when it's red in the dungeon page. Give it a slight black
+-- stroke and make it bold"): on the quest page (the parchment) the red level
+-- is drawn again over itself, a size up with a thin black outline (a line's
+-- outline is for all of its text, so the number gets its own). It follows
+-- the line's text (a hook on its SetText) and is left out when the line
+-- wraps.
+FDJ.MarkRedLevel = function(meta, text)
+    if not meta or not meta.GetParent then return end
+    local mark = meta.fdjRedLevel
+    local s, e = nil, nil
+    if type(text) == "string" then s, e = text:find("|cffc41414", 1, true) end
+    local close = e and text:find("|r", e + 1, true)
+    if not close then
+        if mark then mark:Hide() end
+        return
+    end
+    local parent = meta:GetParent()
+    if not mark then
+        mark = parent:CreateFontString(nil, "OVERLAY")
+        mark:SetDrawLayer("OVERLAY", 7)
+        mark:SetJustifyH("LEFT")
+        meta.fdjRedLevel = mark
+        meta.fdjRedMeasure = parent:CreateFontString(nil, "OVERLAY")
+        meta.fdjRedMeasure:Hide()
+    end
+    local file, size, flags = meta:GetFont()
+    if not file then mark:Hide() return end
+    local measure = meta.fdjRedMeasure
+    measure:SetFont(file, size, flags or "")
+    measure:SetText(text:sub(1, s - 1))
+    local x = measure:GetStringWidth() or 0
+    if (meta.GetNumLines and (meta:GetNumLines() or 1) > 1) then mark:Hide() return end
+    pcall(mark.SetFont, mark, file, (tonumber(size) or 12) + 1, "OUTLINE")
+    mark:SetShadowOffset(0, 0)
+    mark:SetTextColor(0.92, 0.12, 0.10)
+    mark:SetText(text:sub(e + 1, close - 1))
+    mark:ClearAllPoints()
+    mark:SetPoint("LEFT", meta, "LEFT", x, 0)
+    mark:Show()
+end
+
 FDJ.StartsInsideDungeon = function(pickupText)
     if type(pickupText) ~= "string" then return false end
     local text = string.lower(pickupText)
@@ -1192,7 +1265,7 @@ end
 -- comes from there ("Jordan's Hammer, Shadowfang Keep courtyard"; an item
 -- one of its bosses drops). Not "outside" / "near" the dungeon.
 -- details.objectiveInDungeon = true / false settles it by hand.
-FDJ.ObjectiveInsideDungeon = function(details, dungeonName)
+FDJ.ObjectiveInsideDungeonIn = function(details, dungeonName)
     if type(details) ~= "table" then return false end
     if details.objectiveInDungeon ~= nil then return details.objectiveInDungeon == true end
     if FDJ.TurnInInsideDungeon(details.turnin, dungeonName) then return true end
@@ -1230,6 +1303,160 @@ FDJ.ObjectiveInsideDungeon = function(details, dungeonName)
         end
     end
     return false
+end
+
+-- anydungeon (2.1.1, M 20 Nov 2026 at A Crumpled Up Note on the Onyxia
+-- Attunement page: "it starts from the item that drops in dungeons ... if it
+-- drops from an item inside, it's obviously a dungeon step"): on a quest
+-- chain page of its own (Onyxia Attunement), which is no dungeon, a step
+-- done inside any dungeon counts.
+FDJ.ObjectiveInsideDungeon = function(details, dungeonName)
+    local page = type(dungeonName) == "string" and DB[dungeonName]
+    if type(page) == "table" and page.questChainPage and type(details) == "table" and details.objectiveInDungeon == nil then
+        if FDJ.TurnInInsideDungeon(details.turnin, dungeonName) then return true end
+        for name, dungeon in pairs(DB) do
+            if type(dungeon) == "table" and not dungeon.questChainPage and FDJ.ObjectiveInsideDungeonIn(details, name) then return true end
+        end
+        return false
+    end
+    return FDJ.ObjectiveInsideDungeonIn(details, dungeonName)
+end
+
+-- dungeontint (2.1.1, M 20 Nov 2026: "should we maybe give the teal color to
+-- every single main quest? We don't need to type in dungeon step, that's only
+-- for the chain steps"): the page tinted with the In Dungeon icon's teal,
+-- strongest at the top. On a dungeon's own quests and on its chain steps done
+-- inside; not on the other chain steps nor the Onyxia / Sleeping Bag pages.
+FDJ.ShowDungeonFade = function(on)
+    if not frame then return end
+    frame.questDungeonFadeWanted = on and true or false
+    -- notint (2.1.1, M 20 Nov 2026: "I really don't want to ship the color to
+    -- quests because I feel like people are gonna get confused", then "we
+    -- should keep the teal color for the dungeon chain steps"): only a
+    -- dungeon chain step's page is tinted (PlaceDungeonStepLabel); a
+    -- dungeon's own quests keep the plain page (RefreshQuestDetail).
+    -- (Use Standard Quest Colour removed, M 20 Nov 2026: "remove use
+    -- standard quest color in the quest tab")
+    local fade = frame.questDungeonFade
+    if on and not fade and frame.questTextInset then
+        -- (over the page's backdrop, which covers the BACKGROUND layer; under
+        -- its text and lines)
+        fade = frame.questTextInset:CreateTexture(nil, "ARTWORK", nil, -8)
+        fade:SetPoint("TOPLEFT", 4, -4)
+        fade:SetPoint("BOTTOMRIGHT", -4, 4)
+        fade:SetTexture("Interface\\Buttons\\WHITE8X8")
+        frame.questDungeonFade = fade
+    end
+    if fade and on then
+        -- the In Dungeon icon's teal on every dungeon (M 20 Nov 2026, after
+        -- trying each dungeon's own colour: "the teal was way cleaner"):
+        -- strong under the title, light at the bottom
+        local r, g, b = 0.10, 0.62, 0.66
+        local key = string.format("%.3f %.3f %.3f", r, g, b)
+        if fade.fdjTint ~= key then
+            fade.fdjTint = key
+            local okG = type(CreateColor) == "function" and pcall(fade.SetGradient, fade, "VERTICAL", CreateColor(r, g, b, 0.14), CreateColor(r, g, b, 0.62))
+            if not okG then
+                okG = fade.SetGradientAlpha and pcall(fade.SetGradientAlpha, fade, "VERTICAL", r, g, b, 0.14, r, g, b, 0.62)
+            end
+            if not okG then fade:SetVertexColor(r, g, b, 0.30) end
+        end
+    end
+    if fade then fade:SetShown(on and true or false) end
+end
+-- (plainquest) the option switched: the page open now follows it.
+FDJ.ReapplyDungeonFade = function()
+    if frame then FDJ.ShowDungeonFade(frame.questDungeonFadeWanted) end
+end
+
+-- dungeonstep (2.1.1, M 20 Nov 2026: "once we reach the actual step that's
+-- in the dungeon, I want it to be a bit clearer that we are there ... a
+-- disclaimer above the objective saying dungeon step in blue with black
+-- stroke, bold ... and the whole page to have a teal fade, a fade into the
+-- in dungeon icon color"): a chain step's page, when the step is done or
+-- started inside the dungeon (the same as its In Dungeon icons): "DUNGEON
+-- STEP" over its Objective, and the page tinted with the icon's teal,
+-- strongest at the top. show false: neither (any other page).
+FDJ.PlaceDungeonStepLabel = function(show, cursorY)
+    cursorY = cursorY or 0
+    if not frame then return cursorY end
+    if not FDJ.dungeonStepStrings then
+        FDJ.dungeonStepStrings = {
+            -- chainstep (2.1.1, M 20 Nov 2026: "change the text to dungeon
+            -- chain step"; the chain icon before it)
+            enUS = "Dungeon Chain Step", deDE = "Dungeon-Kettenschritt", frFR = "Étape de chaîne de donjon",
+            esES = "Paso de cadena de mazmorra", itIT = "Passo della catena nella spedizione",
+            ptBR = "Etapa da cadeia na masmorra", ruRU = "Этап цепочки в подземелье",
+            koKR = "던전 연계 퀘스트 단계", zhCN = "地下城任务链步骤", zhTW = "地城任務鏈步驟",
+        }
+        FDJ.dungeonStepStrings.esMX = FDJ.dungeonStepStrings.esES
+        for locale, text in pairs(FDJ.dungeonStepStrings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.DUNGEON_STEP == nil then t.DUNGEON_STEP = text end
+        end
+    end
+    FDJ.ShowDungeonFade(show)
+    local label = frame.questDungeonStepText
+    if not show then
+        if label then label:Hide() end
+        if frame.questDungeonStepIcon then frame.questDungeonStepIcon:Hide() end
+        return cursorY
+    end
+    if not label and frame.questDetailContent then
+        label = frame.questDetailContent:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
+        label:SetJustifyH("LEFT")
+        frame.questDungeonStepText = label
+    end
+    if not label then return cursorY end
+    -- (M: "can we try another font?"): the quest title's own font (Morpheus,
+    -- or the language's), a black outline round it; set again each time, so
+    -- the journal's language picks its letters.
+    -- The size from the font itself, not from the label: read back from the
+    -- label, each page shown made it a size bigger (25 is the size M liked).
+    local titleFont = _G.ForeverDJ_QuestTitleFont
+    local file, size
+    if titleFont and titleFont.GetFont then file, size = titleFont:GetFont() end
+    if not file then file, size = label:GetFont() end
+    if file then pcall(label.SetFont, label, file, (tonumber(size) or 18) + 7, "OUTLINE") end
+    label:SetShadowOffset(0, 0) -- (M: "the stroke slightly less": the outline alone, no shadow under it)
+    -- chainstep (M 20 Nov 2026: "put the chain before ... the chain icon ...
+    -- make sure it's big so that it's like the same size as the text"): the
+    -- quest chain icon of the list, as tall as the label's letters' line;
+    -- the label after it (a long language wraps beside it).
+    -- (M: "the ones that we're using to click on [have] some kind of black
+    -- background ... the one you put on the dungeon chain step does not"):
+    -- the icon on a dark square with a thin grey edge, as on the list's
+    -- dark rows; the square is the icon's frame (its texture is .chain).
+    local px = math.floor((tonumber(size) or 18) + 8.5)
+    if not frame.questDungeonStepIcon then
+        local box = CreateFrame("Frame", nil, frame.questDetailContent)
+        box.edge = box:CreateTexture(nil, "BACKGROUND")
+        box.edge:SetAllPoints()
+        box.edge:SetColorTexture(0.34, 0.31, 0.27, 1)
+        box.fill = box:CreateTexture(nil, "BORDER")
+        box.fill:SetPoint("TOPLEFT", 1, -1)
+        box.fill:SetPoint("BOTTOMRIGHT", -1, 1)
+        box.fill:SetColorTexture(0.05, 0.05, 0.05, 0.95)
+        box.chain = box:CreateTexture(nil, "ARTWORK")
+        box.chain:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\QuestChain.tga")
+        frame.questDungeonStepIcon = box
+    end
+    local box = frame.questDungeonStepIcon
+    box:SetSize(px + 6, px + 6)
+    box.chain:ClearAllPoints()
+    box.chain:SetPoint("CENTER")
+    box.chain:SetSize(px, px)
+    box:ClearAllPoints()
+    box:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -(cursorY - 2))
+    box:Show()
+    px = px + 6
+    label:SetText(L("DUNGEON_STEP"))
+    label:SetTextColor(0.30, 0.76, 1.00)
+    label:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - px - 14))
+    label:ClearAllPoints()
+    label:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", px + 6, -cursorY)
+    label:Show()
+    return cursorY + math.max(px, label:GetStringHeight() or 18) + 6
 end
 
 -- Chain step rows in the quest list: the small In Dungeon icon after the
@@ -1316,15 +1543,34 @@ end
 
 -- A quest started by an item that drops in the dungeon (from one of its
 -- bosses or its trash) starts inside too, whatever its text says.
+-- anydungeon (2.1.1, M 20 Nov 2026: "if it drops from an item inside, it's
+-- obviously a dungeon step"): the item's source naming the dungeon counts
+-- too (A Crumpled Up Note: "Drops from Dark Iron dwarves in Blackrock
+-- Depths"), and on a quest chain page of its own (Onyxia Attunement) any
+-- dungeon does.
 FDJ.StartItemDropsIn = function(quest, dungeonName)
     local item = type(quest) == "table" and quest.startItem
     local id = type(item) == "table" and item[1]
     local dungeon = id and dungeonName and DB[dungeonName]
     if type(dungeon) ~= "table" then return false end
-    for _, boss in ipairs(dungeon.bosses or {}) do
-        for _, loot in ipairs(type(boss) == "table" and boss.loot or {}) do
-            if type(loot) == "table" and loot[1] == id then return true end
+    local source = type(item[4]) == "string" and string.lower(item[4]) or ""
+    if source:find("outside", 1, true) or source:find("near ", 1, true) or source:find("entrance", 1, true) then source = "" end
+    local function DropsIn(name, d)
+        if source ~= "" then
+            local bare = string.lower(name)
+            bare = (bare:match("^(.-):") or bare):gsub("^the ", "")
+            if bare ~= "" and source:find(bare, 1, true) then return true end
         end
+        for _, boss in ipairs(type(d.bosses) == "table" and d.bosses or {}) do
+            for _, loot in ipairs(type(boss) == "table" and boss.loot or {}) do
+                if type(loot) == "table" and loot[1] == id then return true end
+            end
+        end
+        return false
+    end
+    if not dungeon.questChainPage then return DropsIn(dungeonName, dungeon) end
+    for name, d in pairs(DB) do
+        if type(d) == "table" and not d.questChainPage and DropsIn(name, d) then return true end
     end
     return false
 end
@@ -3157,7 +3403,7 @@ FDJ.PlaceSummonHelp = function(quest, cursorY)
     note:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     note:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
     note:SetText(L("SUMMON_QUEST_NOTE", bossName, itemName or ""))
-    note:SetTextColor(0.62, 0.10, 0.05)
+    FDJ.WarningFont(note) -- warnfont: its font and colour (Core/Fonts.lua)
     note:Show()
     cursorY = cursorY + (note:GetStringHeight() or 28) + 8
     button.help = help
@@ -6111,7 +6357,7 @@ RefreshQuestList = function()
                 button.pickUpLabel:Hide()
             end
             button.name:SetText(rpgHidden and "???" or QuestField(quest.id, "name", quest.name))
-            button.meta:SetText(rpgHidden and "" or L("AVAILABLE_FROM_LEVEL", quest.requires))
+            button.meta:SetText(rpgHidden and "" or L("AVAILABLE_FROM_LEVEL", FDJ.QuestLevelText(quest.requires))) -- (redlevel)
             local titleHeight = math.max(14, button.name:GetStringHeight() or 14)
             local metaHeight = math.max(12, button.meta:GetStringHeight() or 12)
             local baseRowHeight = math.max(48, 9 + titleHeight + 5 + metaHeight + 10)
@@ -7508,7 +7754,7 @@ local function RefreshPrerequisiteQuestDetail(step)
 
     local meta = FDJ.StepMetaLabel(step) -- questguide
     if requiredLevel then
-        meta = meta .. "  |  " .. L("AVAILABLE_FROM_LEVEL", tostring(requiredLevel))
+        meta = meta .. "  |  " .. L("AVAILABLE_FROM_LEVEL", FDJ.QuestLevelText(requiredLevel, true)) -- (redlevel)
     end
     frame.selectedQuestMeta:SetText(meta)
     frame.selectedQuestMeta:SetTextColor(0.25, 0.16, 0.08)
@@ -7670,7 +7916,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questWarningText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questWarningText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
         frame.questWarningText:SetText(topWarning)
-        frame.questWarningText:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(frame.questWarningText) -- warnfont: its font and colour (Core/Fonts.lua)
         frame.questWarningText:Show()
         cursorY = cursorY + (frame.questWarningText:GetStringHeight() or 22) + 12
     else
@@ -7678,6 +7924,10 @@ local function RefreshPrerequisiteQuestDetail(step)
     end
     cursorY = FDJ.PlaceStepHaveItRow(inLog and not FDJ.QuestTurnedIn(questID) -- chainturnin
         and FDJ.TurnInInsideDungeon(details.turnin, selectedDungeon), questID, details, title, cursorY)
+    -- dungeonstep (2.1.1): "DUNGEON STEP" over the Objective, the page in teal
+    cursorY = FDJ.PlaceDungeonStepLabel((not isItemStep) and details.dungeonStep ~= false and (details.dungeonStep == true or FDJ.ObjectiveInsideDungeon(details, selectedDungeon) -- (insideaudit: true by hand)
+        or details.startsInDungeon or FDJ.StartsInsideDungeon(details.pickup)
+        or FDJ.StartItemDropsIn(details, selectedDungeon)) and true or false, cursorY)
     frame.questObjectiveHeader:ClearAllPoints()
     frame.questObjectiveHeader:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
     frame.questObjectiveHeader:Show()
@@ -7919,7 +8169,7 @@ local function RefreshPrerequisiteQuestDetail(step)
         frame.questWarningText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         frame.questWarningText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
         frame.questWarningText:SetText(prereqWarning)
-        frame.questWarningText:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(frame.questWarningText) -- warnfont: its font and colour (Core/Fonts.lua)
         frame.questWarningText:Show()
         cursorY = cursorY + (frame.questWarningText:GetStringHeight() or 22) + 12
     elseif frame.questWarningText then
@@ -8073,6 +8323,7 @@ RefreshQuestDetail = function()
         frame.questTurninMapButton:Hide()
     end
     if frame.questRewardAlsoHeader then frame.questRewardAlsoHeader:Hide() end
+    FDJ.PlaceDungeonStepLabel(false) -- dungeonstep: only a dungeon step's page shows it
 
     if selectedPrereqStep then
         if RefreshPrerequisiteQuestDetail(selectedPrereqStep) then return end
@@ -8159,6 +8410,9 @@ RefreshQuestDetail = function()
 
     frame.selectedQuestName:SetText(QuestField(quest.id, "name", quest.name))
     frame.selectedQuestName:SetTextColor(1.00, 0.78, 0.16)
+    -- notint (2.1.1): a dungeon's own quest keeps the plain page (only a
+    -- dungeon chain step's page is tinted)
+    FDJ.ShowDungeonFade(false)
     frame.selectedQuestName:SetShadowColor(0, 0, 0, 1)
     frame.selectedQuestName:SetShadowOffset(1, -1)
 
@@ -8218,7 +8472,7 @@ RefreshQuestDetail = function()
     frame.selectedQuestName:SetPoint("RIGHT", frame.questTextInset, "RIGHT", -shareTitleInset, 0)
 
     frame.selectedQuestMeta:SetText(
-        L("AVAILABLE_FROM_LEVEL", quest.requires)
+        L("AVAILABLE_FROM_LEVEL", FDJ.QuestLevelText(quest.requires, true)) -- (redlevel)
         .. "     " .. FactionLabel(quest.faction)
 
     )
@@ -8300,7 +8554,7 @@ RefreshQuestDetail = function()
             end
         end
         frame.questWarningText:SetText(warningText)
-        frame.questWarningText:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(frame.questWarningText) -- warnfont: its font and colour (Core/Fonts.lua)
         frame.questWarningText:Show()
         cursorY = cursorY + (frame.questWarningText:GetStringHeight() or 28) + 10
     elseif frame.questWarningText then
@@ -8338,7 +8592,7 @@ RefreshQuestDetail = function()
         frame.questObjectiveNoteText:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -(cursorY - 6))
         frame.questObjectiveNoteText:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
         frame.questObjectiveNoteText:SetText(QuestField(quest.id, "objectiveNote", quest.objectiveNote))
-        frame.questObjectiveNoteText:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(frame.questObjectiveNoteText) -- warnfont: its font and colour (Core/Fonts.lua)
         frame.questObjectiveNoteText:Show()
         cursorY = cursorY - 6 + (frame.questObjectiveNoteText:GetStringHeight() or 14) + 13
     elseif frame.questObjectiveNoteText then
@@ -8505,7 +8759,7 @@ RefreshQuestDetail = function()
         requires:SetPoint("TOPLEFT", frame.questDetailContent, "TOPLEFT", 0, -cursorY)
         requires:SetWidth(math.max(120, (frame.questDetailContent:GetWidth() or 360) - 8))
         requires:SetText(L("REQUIRES_QUEST", QuestField(quest.startQuestLink.id, "name", quest.startQuestLink.name or L("PREVIOUS_QUEST"))))
-        requires:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(requires) -- warnfont: its font and colour (Core/Fonts.lua)
         requires:Show()
         cursorY = cursorY + (requires:GetStringHeight() or 14) + 6
         frame.questStartLinkButton:ClearAllPoints()
@@ -8552,7 +8806,7 @@ RefreshQuestDetail = function()
             noticeText = noticeText .. " " .. L("CHAIN_STEP", FDJ.ChainStepNumber(chain, pendingIndex), FDJ.ChainStepNumber(chain, chainLength))
         end
         frame.questChainNotice:SetText(noticeText)
-        frame.questChainNotice:SetTextColor(0.62, 0.10, 0.05)
+        FDJ.WarningFont(frame.questChainNotice) -- warnfont: its font and colour (Core/Fonts.lua)
         frame.questChainNotice:Show()
         cursorY = cursorY + (frame.questChainNotice:GetStringHeight() or 14) + 8
         if not pendingStep then frame.questMapButton.fdjLabelKey = nil end
@@ -9644,13 +9898,27 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     for _, mapBoss in ipairs(data.bosses or {}) do
         -- questmob: a quest's target shows only with its quest (faction,
         -- RPG Mode).
-        local questEntry
+        -- (tunkpin: quest may list one quest per faction; the one for the
+        -- quests shown is used)
+        local questEntry, mapQuest
         if mapBoss.quest then
-            for _, q in ipairs((dungeon and dungeon.quests) or {}) do
-                if type(q) == "table" and q.id == mapBoss.quest then questEntry = q break end
+            local ids = type(mapBoss.quest) == "table" and mapBoss.quest or { mapBoss.quest }
+            for _, id in ipairs(ids) do
+                for _, q in ipairs((dungeon and dungeon.quests) or {}) do
+                    if type(q) == "table" and q.id == id then
+                        if not questEntry or (FDJ.QuestMatchesFaction and selectedQuestFaction
+                            and not FDJ.QuestMatchesFaction(questEntry, selectedQuestFaction)) then
+                            questEntry, mapQuest = q, id
+                        end
+                        break
+                    end
+                end
             end
         end
+        -- (hidequestmobs, M 20 Nov 2026: "the hide quest button should hide
+        -- quest bosses as well": Hide quests hides them too)
         local questHidden = mapBoss.quest and (not questEntry
+            or (FDJ.MapQuestsHidden and FDJ.MapQuestsHidden(selectedDungeon))
             or (FDJ.QuestMatchesFaction and selectedQuestFaction and not FDJ.QuestMatchesFaction(questEntry, selectedQuestFaction))
             or (FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(selectedDungeon, questEntry)))
         if (mapBoss.floor or 1) == floorIndex and not questHidden then
@@ -9697,11 +9965,11 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 badge:ClearAllPoints()
                 badge:SetPoint("CENTER", marker, "TOPRIGHT", -bsize * 0.05, -bsize * 0.05)
                 badge:SetFrameLevel(marker:GetFrameLevel() + 3)
-                local done = FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(mapBoss.quest)
+                local done = FDJ.QuestTurnedIn and FDJ.QuestTurnedIn(mapQuest)
                 if badge.icon.SetDesaturated then badge.icon:SetDesaturated(done and true or false) end
                 badge:Show()
-                marker.questID = mapBoss.quest
-                marker.questTitle = QuestField(mapBoss.quest, "name", questEntry and questEntry.name or "")
+                marker.questID = mapQuest
+                marker.questTitle = QuestField(mapQuest, "name", questEntry and questEntry.name or "")
             else
                 if marker.questBadge then marker.questBadge:Hide() end
                 marker.questID, marker.questTitle = nil, nil
@@ -9721,7 +9989,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             marker.bossName = rpgHidden and "???" or (bossRecord and BossName(bossRecord.name) or mapBoss.name)
             if not bossRecord and FDJ.LocalizeFreeText then marker.bossName = FDJ.LocalizeFreeText(marker.bossName) or marker.bossName end
             local markerDungeon = selectedDungeon
-            local markerQuest = (not bossRecord) and mapBoss.quest or nil
+            local markerQuest = (not bossRecord) and mapQuest or nil
             marker:SetScript("OnClick", function()
                 -- questmob: a quest's target opens its quest.
                 if markerQuest then
@@ -11433,12 +11701,26 @@ RefreshLoot = function()
 
     frame.selectedBossDescription:SetText("")
     frame.selectedBossDescription:Hide()
+    if frame.bossLootNoteText then frame.bossLootNoteText:Hide() end
     if boss.fdjRPGHint then -- rpgpartial: how to reveal this boss
         frame.selectedBossDescription:SetText(boss.fdjRPGHint)
         frame.selectedBossDescription:Show()
     elseif boss.lootNote then -- a red line under the boss name (Titanosaur: Can drop 2 items)
-        frame.selectedBossDescription:SetText("|cffb01010" .. L(boss.lootNote) .. "|r")
-        frame.selectedBossDescription:Show()
+        -- warnfont (2.1.1): in the warning font, on a font string of its own
+        -- in the description's place (the description keeps its font for
+        -- the RPG hint).
+        if not frame.bossLootNoteText then
+            frame.bossLootNoteText = frame.selectedBossDescription:GetParent():CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+            frame.bossLootNoteText:SetPoint("TOPLEFT", frame.selectedBossType, "BOTTOMLEFT", 0, -7)
+            frame.bossLootNoteText:SetPoint("RIGHT", frame.selectedBossDescription:GetParent(), "RIGHT", -12, 0)
+            frame.bossLootNoteText:SetHeight(35)
+            frame.bossLootNoteText:SetJustifyH("LEFT")
+            frame.bossLootNoteText:SetJustifyV("TOP")
+            frame.bossLootNoteText:SetWordWrap(true)
+        end
+        frame.bossLootNoteText:SetText(L(boss.lootNote))
+        FDJ.WarningFont(frame.bossLootNoteText, true) -- warnfont: its font and colour
+        frame.bossLootNoteText:Show()
     end
     -- rpgdone (2.0.8): under a hidden boss, "I already did this dungeon".
     if FDJ.RPGDoneButton then pcall(FDJ.RPGDoneButton, frame, boss.fdjRPGHint and selectedDungeon or nil) end
@@ -14371,6 +14653,12 @@ local function CreateMainFrame()
     frame.selectedQuestMeta:SetPoint("RIGHT", -16, 0)
     frame.selectedQuestMeta:SetJustifyH("LEFT")
     ApplyQuestFont(frame.selectedQuestMeta, "ForeverDJ_QuestFontNormalSmall", "ForeverDJ_GameFontHighlightSmall")
+    -- (redlevelbold: the red level drawn bold with its outline, whatever sets the line)
+    if hooksecurefunc then
+        hooksecurefunc(frame.selectedQuestMeta, "SetText", function(self, text)
+            if FDJ.MarkRedLevel then pcall(FDJ.MarkRedLevel, self, text) end
+        end)
+    end
 
     -- Class quests also get the class icon on the metadata row, immediately
     -- after the Alliance/Horde faction icon(s). The existing class marker in

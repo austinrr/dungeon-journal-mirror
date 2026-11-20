@@ -2395,6 +2395,7 @@ do
         ["Aggem Thorncurse"] = "저주의가시 아겜",
         ["Aku'mai"] = "아쿠마이",
         ["Alzzin the Wildshaper"] = "칼날바람 알진",
+        ["Isalien"] = "이살리엔", -- isalien (2.1.1): Wowhead Forever ko
         ["Ambassador Flamelash"] = "사자 화염채찍",
         ["Amnennar the Coldbringer"] = "혹한의 암네나르",
         ["Ancient Stone Keeper"] = "고대 바위 문지기",
@@ -4003,6 +4004,7 @@ do
         ["Aggem Thorncurse"] = "Аггем Терновое Проклятие",
         ["Aku'mai"] = "Аку'май",
         ["Alzzin the Wildshaper"] = "Алззин Перевертень",
+        ["Isalien"] = "Изалиен", -- isalien (2.1.1): Wowhead Forever ru
         ["Ambassador Flamelash"] = "Посол Огнехлыст",
         ["Amnennar the Coldbringer"] = "Амненнар Хладовей",
         ["Ancient Stone Keeper"] = "Древний Хранитель Камня",
@@ -4855,6 +4857,7 @@ do
         ["Aggem Thorncurse"] = "阿格姆",
         ["Aku'mai"] = "阿库麦尔",
         ["Alzzin the Wildshaper"] = "奥兹恩",
+        ["Isalien"] = "伊萨利恩", -- isalien (2.1.1): cn.classic.wowhead.com npc=16097
         ["Ambassador Flamelash"] = "弗莱拉斯大使",
         ["Amnennar the Coldbringer"] = "寒冰之王亚门纳尔",
         ["Ancient Stone Keeper"] = "古代的石头看守者",
@@ -5652,6 +5655,7 @@ do
         ["Aggem Thorncurse"] = "阿格姆",
         ["Aku'mai"] = "阿庫麥爾",
         ["Alzzin the Wildshaper"] = "奧茲恩",
+        ["Isalien"] = "伊薩利恩", -- isalien (2.1.1): written from zhCN
         ["Ambassador Flamelash"] = "弗萊拉斯大使",
         ["Amnennar the Coldbringer"] = "寒冰之王亞門納爾",
         ["Ancient Stone Keeper"] = "古代的石頭看守者",

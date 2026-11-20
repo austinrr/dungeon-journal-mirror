@@ -1604,3 +1604,40 @@ https://www.wowhead.com/forever/quest=79970/aeonas-the-vindicated (series ends t
 repeatonce (2.1.0): The Medallion of Faith repeatable in WoW Forever: Ziefog on Discord (19 Nov 2026,
 screenshot of the quest list).
 twoclasses (2.1.0): Nostro's Compendium for warriors and paladins: Ziefog on Discord (19 Nov 2026).
+
+bmchain (2.1.1): Blackmaw Reclamation's chain
+- Theladron's in-game test (Discord thread "Blackmaw Hold prequest incomplete", 20 Nov 2026)
+- The Legashi Threat: https://www.wowhead.com/forever/quest=86746/the-legashi-threat
+- Report to Rageroar (comments: Neutral with Timbermaw Hold): https://www.wowhead.com/forever/quest=86752/report-to-rageroar
+- Missing Blackmaw Scouts: https://www.wowhead.com/forever/quest=86791/missing-blackmaw-scouts
+- Return to Rageroar's series: https://www.wowhead.com/forever/quest=86797/return-to-rageroar
+
+useprompt (2.1.1): A Small Favor's Amberhall's Soulstone (item 268646) and Twilight Thrall (NPC 258652): https://www.wowhead.com/forever/quest=94907/a-small-favor
+
+loreaspects / bookexact / denway (2.1.1): Test of Lore (1154), the Legacy of the Aspects
+- The book (object 20725) at 75.5, 74.4-74.5 in Ashenvale, and the way to it ("Go to /way 75.9 75.3, and go down", "go to the bottom, make a left", "the leftmost large circular space"): https://www.wowhead.com/forever/object=20725/the-legacy-of-the-aspects
+- At the bottom of Dor'danil in southern Ashenvale (the quest's text): https://wowclassicdb.com/wotlk/quest/1154 ; the den's entrance (76, 75): https://warcraft.wiki.gg/wiki/Test_of_Lore_(2) ; the French name: https://warcraft.wiki.gg/wiki/Dor%27Danil_Barrow_Den
+- Talondeep Path (Ashenvale 43, 71; Stonetalon Mountains 78, 42): a comment on https://www.wowhead.com/forever/zone=331
+- The way in through the den (door, tunnel, the way down round its east side, the rooms at the bottom): Polestar's walking router run offline on its Kalimdor walking maps (Polestar_Nav_Kalimdor, https://github.com/fitzforge/polestar, GPL-3.0-or-later; grown from Shortest Path Forever's format by Cillian Berragan, https://github.com/cjber/shortest-path-forever), 20 Nov 2026; only the corners are in the addon.
+
+tunkpin (2.1.1): Tunk in Krol'dok Stronghold
+- NPC 259256, drops the Krol'dok Moulding: AllTheThings 5.4.9 changelog, https://www.curseforge.com/wow/addons/all-the-things/files/9547803
+- At the blacksmith area near War Handler Ashka: https://www.icy-veins.com/wow-forever/krol-dok-stronghold-quests ; https://mobalytics.gg/wow-forever/dungeons/krol-dok-stronghold-complete-dungeon-guide-uncas ; the spot marked by M on the map, 20 Nov 2026
+
+marduknew / vectusnew (2.1.1): Scholomance's new drops
+- Gravetoll Gavel (276069), The Black Helm (276071): https://www.wowhead.com/forever/npc=10433/marduk-blackpool , https://www.wowhead.com/forever/item=276069 , https://www.wowhead.com/forever/item=276071
+- Band of the Damned (276073), Soulwoven Drape (276072): https://www.wowhead.com/forever/npc=10432/vectus , https://www.wowhead.com/forever/item=276073 , https://www.wowhead.com/forever/item=276072
+
+loreanswer (2.1.1): Test of Lore (6627), the answer to Braug Dimspirit's question
+- Neltharion: M in game at Braug Dimspirit (the question and its four answers), 20 Nov 2026; the step's answer already in the journal (ANSWER: Neltharion)
+
+t05forever (2.1.1): Tier 0.5, Forever's own Dungeon Set 2 (one version per role for some classes)
+- The sets, their versions and pieces: https://www.wowhead.com/forever/item-set=1778/battlegear-of-heroism , https://www.wowhead.com/forever/item-set=1673/soulforge-armor , https://www.wowhead.com/forever/item-set=1669/beastmaster-armor , https://www.wowhead.com/forever/item-set=1676/darkmantle-armor , https://www.wowhead.com/forever/item-set=1675/vestments-of-the-virtuous , https://www.wowhead.com/forever/item-set=1679/the-five-thunders , https://www.wowhead.com/forever/item-set=1671/sorcerers-regalia , https://www.wowhead.com/forever/item-set=1681/deathmist-raiment , https://www.wowhead.com/forever/item-set=1667/feralheart-raiment
+- Each piece's slot: Wowhead Forever's item search for each set's name (e.g. https://www.wowhead.com/forever/search?q=Soulforge)
+- The quests give a box to pick a version from, the same pieces per quest as before (Just Compensation: Radiant Gloves and Belt Set): https://www.wowhead.com/forever/item=227344/radiant-gloves-and-belt-set ; Soulforge Gauntlets (226975), as M's own in game, 20 Nov 2026: https://www.wowhead.com/forever/item=226975/soulforge-gauntlets
+
+zalfanpin / nargurkmove (2.1.1): Krol'dok Stronghold's map
+- Zalfan Moonshadow (NPC 268423, Vengeance of the Highborne's target), "found near Nar'gurk ... he paths" (its comment): https://www.wowhead.com/forever/npc=268423/zalfan-moonshadow ; his name in each language: the same page on Wowhead Forever's fr, ru, ko, cn and tw sites, and the quest's own text (es, pt)
+- Where Zalfan stands and where Nar'gurk is: the spots marked by M on the map, 20 Nov 2026
+- Zalfan Moonshadow's look (display 145448): the same Wowhead Forever page
+keyshortcut (2.1.1): Key Ingredients' note, the key opens a shortcut to the last boss (the upper side can be reached without it): M in game, 20 Nov 2026

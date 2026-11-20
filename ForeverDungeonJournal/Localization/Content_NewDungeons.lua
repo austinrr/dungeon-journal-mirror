@@ -6623,8 +6623,8 @@ end
 -- Quest objective names (the items, creatures and objects the journal's quests
 -- ask for) in the game's other languages, so the quest tracker and quest pages
 -- can show "12/20 Deviate Hide" in the journal's language when it is not the
--- game's. Generated from the Forever client's tables (Polestar forever-db
--- objectives and its locale name packs). English name -> one name per language
+-- game's. Generated from the Forever client's tables (quest
+-- objectives and their names in each language). English name -> one name per language
 -- in FDJ.OBJECTIVE_NAME_LOCALES order (false: not known).
 FDJ.OBJECTIVE_NAME_LOCALES = { "deDE", "esES", "frFR", "koKR", "ptBR", "ruRU", "zhCN", "zhTW" }
 FDJ.OBJECTIVE_NAMES = {
@@ -7566,6 +7566,55 @@ do
             zhCN = "精英任务：请组队对付Prince Halanox。",
             zhTW = "精英任務：請組隊對付Prince Halanox。",
         },
+        -- bmchain (2.1.1): the three quests at the start of the chain.
+        LEGASHI_O = {
+            deDE = "Tötet 5 Legashi Satyrs, 5 Legashi Rogues und 5 Legashi Hellcallers für Ekkal in den Ruinen von Eldarath.",
+            frFR = "Tuez 5 Legashi Satyrs, 5 Legashi Rogues et 5 Legashi Hellcallers pour Ekkal aux Ruines d'Eldarath.",
+            esES = "Mata a 5 Legashi Satyrs, 5 Legashi Rogues y 5 Legashi Hellcallers para Ekkal en las Ruinas de Eldarath.",
+            esMX = "Mata a 5 Legashi Satyrs, 5 Legashi Rogues y 5 Legashi Hellcallers para Ekkal en las Ruinas de Eldarath.",
+            itIT = "Uccidi 5 Legashi Satyrs, 5 Legashi Rogues e 5 Legashi Hellcallers per Ekkal alle Rovine di Eldarath.",
+            ptBR = "Mate 5 Legashi Satyrs, 5 Legashi Rogues e 5 Legashi Hellcallers para Ekkal nas Ruínas de Eldarath.",
+            ruRU = "Убейте 5 Legashi Satyrs, 5 Legashi Rogues и 5 Legashi Hellcallers для Ekkal в Руинах Эльдарата.",
+            koKR = "엘다라스 폐허의 Ekkal을 위해 Legashi Satyr 5마리, Legashi Rogue 5마리, Legashi Hellcaller 5마리를 처치하세요.",
+            zhCN = "为埃达拉斯废墟的Ekkal杀死5个Legashi Satyr、5个Legashi Rogue和5个Legashi Hellcaller。",
+            zhTW = "為埃達拉斯廢墟的Ekkal殺死5個Legashi Satyr、5個Legashi Rogue和5個Legashi Hellcaller。",
+        },
+        REPORT_O = {
+            deDE = "Sprecht mit Gatekeeper Rageroar in Ursolan.",
+            frFR = "Parlez à Gatekeeper Rageroar à Ursolan.",
+            esES = "Habla con Gatekeeper Rageroar en Ursolan.",
+            esMX = "Habla con Gatekeeper Rageroar en Ursolan.",
+            itIT = "Parla con Gatekeeper Rageroar a Ursolan.",
+            ptBR = "Fale com Gatekeeper Rageroar em Ursolan.",
+            ruRU = "Поговорите с Gatekeeper Rageroar в Ursolan.",
+            koKR = "Ursolan의 Gatekeeper Rageroar와 대화하세요.",
+            zhCN = "与Ursolan的Gatekeeper Rageroar交谈。",
+            zhTW = "與Ursolan的Gatekeeper Rageroar交談。",
+        },
+        REPORT_N = {
+            deDE = "Benötigt den Ruf 'Neutral' bei der Holzschlundfeste.",
+            frFR = "Nécessite d'être Neutre avec le Repaire des Grumegueules.",
+            esES = "Requiere reputación Neutral con el Bastión Fauces de Madera.",
+            esMX = "Requiere reputación Neutral con el Bastión Fauces de Madera.",
+            itIT = "Richiede la reputazione Neutrale con Timbermaw Hold.",
+            ptBR = "Requer reputação Neutro com Timbermaw Hold.",
+            ruRU = "Требуется репутация «Равнодушие» у Крепости Древобрюхов.",
+            koKR = "나무구렁 요새 평판 중립이 필요합니다.",
+            zhCN = "需要木喉要塞中立声望。",
+            zhTW = "需要木喉要塞中立聲望。",
+        },
+        SCOUTS_O = {
+            deDE = "Findet den Spähtrupp der Blackmaw bei den Lagern der Legashi östlich von Ursolan.",
+            frFR = "Retrouvez le groupe d'éclaireurs Blackmaw près des camps Legashi à l'est d'Ursolan.",
+            esES = "Encuentra al grupo de exploradores Blackmaw cerca de los campamentos Legashi al este de Ursolan.",
+            esMX = "Encuentra al grupo de exploradores Blackmaw cerca de los campamentos Legashi al este de Ursolan.",
+            itIT = "Trova la squadra di esploratori Blackmaw vicino agli accampamenti Legashi a est di Ursolan.",
+            ptBR = "Encontre o grupo de batedores Blackmaw perto dos acampamentos Legashi a leste de Ursolan.",
+            ruRU = "Найдите разведывательный отряд Blackmaw у лагерей Legashi к востоку от Ursolan.",
+            koKR = "Ursolan 동쪽 Legashi 야영지 근처에서 Blackmaw 정찰대를 찾으세요.",
+            zhCN = "在Ursolan以东的Legashi营地附近找到Blackmaw侦察队。",
+            zhTW = "在Ursolan以東的Legashi營地附近找到Blackmaw偵察隊。",
+        },
         FEED_N = {
             deDE = "Wiederholbar. Laut Abschlusstext verfüttert Ihr das Fleisch an einen hungrigen Peitscher, der eine Samenkapsel ausspuckt. Wo er steht, ist noch nicht bekannt; bitte meldet es auf Discord.",
             frFR = "Répétable. D'après son texte de fin, vous donnez la chair à un fouetteur affamé, qui recrache une gousse. On ne sait pas encore où il se trouve ; merci de le signaler sur Discord.",
@@ -7587,6 +7636,9 @@ do
         [97327] = { pickup = "EKKAL", turnin = "EKKAL" },
         [96246] = { pickup = "EKKAL", turnin = "EKKAL" },
         [92065] = { pickup = "RAGEROAR", turnin = "RAGEROAR", note = "RECLAIM_N" },
+        [86746] = { objective = "LEGASHI_O", pickup = "EKKAL", turnin = "EKKAL" }, -- bmchain (2.1.1)
+        [86752] = { objective = "REPORT_O", pickup = "EKKAL", turnin = "RAGEROAR", note = "REPORT_N" },
+        [86791] = { objective = "SCOUTS_O", pickup = "RAGEROAR", turnin = "KORSA" },
         [86777] = { objective = "FEARDRED_O", pickup = "KORSA", turnin = "KORSA" },
         [86792] = { objective = "THIN_O", pickup = "KORSA", turnin = "KORSA" },
         [86796] = { objective = "SATYR_O", pickup = "GRAAL_P", turnin = "KORSA" },
@@ -7659,7 +7711,7 @@ end
 -- pylon crystals, the Mana Sieve, the vial's entrance, Woodwyrd's new spot,
 -- Nazeer Bloodpike, "Leave the temple", Journey to the Marsh's name). Official
 -- names where known: Wowhead Forever's German pages (the six new quests' names
--- and objectives) and Polestar's Forever name packs (The Manor, Ravenholdt,
+-- and objectives) and the Forever client's own names (The Manor, Ravenholdt,
 -- Journey to the Marsh, Katherine the Pure, Mathias Shaw, Brave Stonetorch, the
 -- infernals, Elegant Letter); the rest translated by hand. The game's own quest
 -- title still comes first when the journal's language is the client's.
@@ -7768,7 +7820,7 @@ end
 -- Need, By The Light's Grace, Aeonas the Vindicated, Some Good News, The
 -- Mysterious Merchant, Elrick, Paladin of the Silver Hand), their starts,
 -- hand-ins and map spots, and The Medallion of Faith's note and repeatable
--- entry, in every language. Official names where known (Polestar's Forever
+-- entry, in every language. Official names where known (the Forever client's own
 -- name packs: Delgren the Purifier, Katherine the Pure, Innkeeper Janene,
 -- Elrick, Aurius; Il faut le détruire); the rest translated by hand.
 do
@@ -7952,3 +8004,30 @@ do
     end
 end
 -- END l10n210d
+
+-- BEGIN l10n210e
+-- (2.1.0): Extinguishing the Idol (Razorfen Downs): the warning at the top.
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local WARNING = {
+        "Stellt sicher, dass jeder Spieler eurer Gruppe den vorherigen Schritt abgeschlossen hat, bevor ihr diese Quest startet.",
+        "Assurez-vous que chaque joueur du groupe a terminé l'étape précédente avant de lancer cette quête.",
+        "Asegúrate de que todos los jugadores del grupo hayan completado el paso anterior antes de empezar esta misión.",
+        "Assicurati che ogni giocatore del gruppo abbia completato il passaggio precedente prima di avviare questa missione.",
+        "Certifique-se de que todos os jogadores do grupo tenham concluído a etapa anterior antes de iniciar esta missão.",
+        "Убедитесь, что все игроки группы выполнили предыдущий этап, прежде чем начинать это задание.",
+        "이 퀘스트를 시작하기 전에 파티원 모두가 이전 단계를 완료했는지 확인하세요.",
+        "开始此任务前，请确保队伍中的每位玩家都已完成上一步。",
+        "開始此任務前，請確認隊伍中的每位玩家都已完成上一步。",
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.quests = content.quests or {}
+        local q = content.quests[3525] or {}
+        content.quests[3525] = q
+        if q.warning == nil then q.warning = WARNING[i] end
+    end
+end
+-- END l10n210e

@@ -1,6 +1,106 @@
-DungeonJournal 2.1.0
+DungeonJournal 2.1.1
+
+CHANGES IN 2.1.1 (the release after 2.1.0)
+- Blackmaw Hold: Blackmaw Reclamation's chain now starts where it really
+  does, at Ekkal (The Legashi Threat, Report to Rageroar, Missing Blackmaw
+  Scouts), and Korsa's quests are all steps instead of "pick one"
+  (reported on Discord by Theladron).
+- Character code window: the code now sits on one line inside the box
+  (Ctrl+A, Ctrl+C still copy all of it) instead of spilling down the screen,
+  and it is a bit shorter.
+- Character code: the Options have an Export tab (before Discord) with the
+  code ready to copy and the website's address to paste it at, to see your
+  progress there while logged off. An Export button at the top of the
+  journal, left of Report, opens that tab (the first time, the code's row
+  lights up). Hide Export button on main page, at the bottom of the Export
+  tab (and in Options > General), hides it. /dj export shows the code in a
+  window. Your talents and Favourites go with it.
+  The first time you open the journal after this update, a note points at
+  the Export button to say so (once only).
+- Character code in RPG Mode: it now carries what your journal shows (the
+  pages you have unlocked, with Account-Wide Unlocks too, the locked cards'
+  sketches and your Journey bar), so the website can show the same.
+- Controller support (first version): the journal can be used with a
+  gamepad (tested by kaanu on Discord). With a controller, Show on Map marks
+  the spot without opening the world map (opening it broke the game's
+  controller mode): open the map yourself to see it.
+- Arrow: after dying, it now leads back to your corpse first, also where
+  the game doesn't show the corpse's place.
+- Arrow: on the same continent it only says to use your hearthstone when
+  that saves a long trip (like Booty Bay to Ironforge); otherwise it says
+  to fly.
+- Arrow: while flying, the flight master icon sits above the quest's name
+  and the time left is a yellow bar that empties as you fly.
+- Arrow: coming to Dalaran by the roads east and south of the city, it now
+  leads along the road to the plaza and up the great stairs, instead of
+  straight at the walls.
+- Quest tracker: the minimize button now sits left of the Dungeon Journal
+  book in its title bar.
+- Quest pages: in a quest chain, the step done inside the dungeon says
+  "Dungeon Chain Step" over its objective, with the chain icon, and its
+  page has a teal tint (the colour of the In Dungeon icon).
+- Quest chains: a step started by an item that drops inside a dungeon is a
+  dungeon step too (A Crumpled Up Note). On the Onyxia Attunement page, the
+  steps done inside Blackrock Depths count as dungeon steps.
+- Krol'dok Stronghold: Tunk, whose Krol'dok Moulding starts the key quests,
+  is on the dungeon's map at his forge, as a quest mob. Key Ingredients' page
+  no longer has the dungeon tint (it is all done in town), nor has Final
+  Passage's (only its Library step is done inside).
+- Krol'dok Stronghold: Zalfan Moonshadow (Vengeance of the Highborne) is on
+  the map as a quest mob, and Nar'gurk's pin is where he stands. Key
+  Ingredients' note: its key opens a shortcut to the last boss.
+- Scholomance: new drops for Marduk Blackpool (Gravetoll Gavel, The Black
+  Helm) and Vectus (Band of the Damned, Soulwoven Drape).
+- Dire Maul East: new drops for Pusillin (Demondash Spaulders), Zevrim
+  Thornhoof (Clever Hat, Gloves of Shadowy Mist) and Lethtendris
+  (Lethtendris's Wand).
+- Dire Maul East: Isalien, the Dungeon Set 2 (Tier 0.5) boss summoned in
+  Alzzin the Wildshaper's hall, is in the boss list with her portrait and
+  loot (marked 0.5 Quest Event, not on the Dungeon Tracker).
+- Loot: the slot of relics (Relic, Libram, Totem) is now translated, and so
+  is the 0.5 Quest Event label of the Dungeon Set 2 bosses.
+- Dungeon maps: Hide quests also hides the quest mobs (Tunk, Highland
+  Horror).
+- Quests: "Available from Level X" shows the level in red while your
+  character is too low to pick the quest up (bold, with a thin outline, on
+  the quest page).
+- Quest pages: the warnings and notes are now blue and a little bigger,
+  easier to read, also the line under a boss's name.
+- Razorfen Downs: Extinguishing the Idol's warning now says to make sure
+  everyone in the group has completed the previous step before starting it,
+  and The Coldbringer's Eye's note says the Eye isn't on Amnennar's body.
+- Quest chains: a step done somewhere else before it is handed in now leads
+  there first. Test of Lore (Horde): the arrow goes through the Talondeep
+  Path to the Dor'Danil Barrow Den in Ashenvale, where the Legacy of the
+  Aspects lies at the bottom, then back to Braug Dimspirit. The arrow keeps
+  pointing until you are at the book, and leads in at the den's door and down
+  through it ("Into the barrow den", "Down to the bottom", then left to the
+  book).
+- Test of Lore (Horde): on the last step, the arrow tells you the answer to
+  Braug Dimspirit's question (Neltharion).
+- Test of Lore (Horde): the Library step (the book) shows as a dungeon step.
+- Dungeon tint: every dungeon quest and quest-chain step checked. Quests
+  done only outside the dungeon (a trip to town, a hand-in, mobs outside
+  the instance) no longer have the tint, and steps done inside a dungeon
+  (also another dungeon than the page's) show as dungeon steps.
+- Tier Sets: Tier 0.5 shows Forever's own pieces (they link, with their real
+  stats and set bonuses), one row per version, marked by its spec icon, for
+  the classes that have several. Compact view: those rows sit right under
+  the Tier 0 pieces.
+- Waypoint arrow: a long way on foot is weighed as it is really walked
+  (round the mountains), so the arrow flies or uses your Hearthstone when
+  that is quicker, instead of a long walk to a zeppelin.
+- Waypoint arrow: at a thing to pick up, a loot bag stands where the arrow
+  was (in place of the crossed swords of a place to kill).
+- New colours for some dungeon pages.
+- Options: a search box at the top right. Type a word and every option
+  that matches shows, with its own box to tick.
+- A Small Favor (Krol'dok Stronghold chain): once the Twilight Thrall is weak,
+  a pop-up says to use Amberhall's Soulstone, with the item's button to click.
 
 CHANGES IN 2.1.0 (the release after 2.0.12)
+- Razorfen Downs: Extinguishing the Idol has a warning at the top to make
+  sure the whole group is on this step before starting the quest.
 - Dire Maul: North: Nostro's Compendium now shows only to warriors and
   paladins ("WARRIOR / PALADIN ONLY", with both class icons), like the other
   class quests, and its

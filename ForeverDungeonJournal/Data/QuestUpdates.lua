@@ -320,12 +320,171 @@ FDJ.QUEST_PREREQ_DETAILS[1152] = { level = 30, requires = 25, objective = "Find 
 FDJ.FOREVER_QUEST_XP_FALLBACK[1152] = 1200
 FDJ.QUEST_PREREQ_DETAILS[1154] = { level = 30, requires = 25, objective = "Find the Legacy of the Aspects and return it to Braug Dimspirit near the entrance to Talondeep Path in Stonetalon Mountains.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1154] = 1850
+-- loreaspects (2.1.1, M 20 Nov 2026 at Braug Dimspirit, Test of Lore in his
+-- log and the arrow on Braug: "for test of lore, I need to get the legacy of
+-- the aspects ... it is on Ashenvale ... I have to go through that passage
+-- ... through that cave"): the book is at the bottom of the Dor'Danil Barrow
+-- Den in southern Ashenvale (the quest's own text), its entrance at (76, 75)
+-- (Warcraft Wiki; Questie's mark). While the book is still to find, the
+-- arrow goes there (the walking net leads through the Talondeep Path
+-- tunnel), then back to Braug. The French name is the game's own (Warcraft
+-- Wiki); the arrow's line under it says where the book lies.
+-- bookexact (M 20 Nov 2026 in the den's subzone, the arrow gone 230 yards
+-- off: "we are still far from the book ... the arrow should not disappear
+-- right now"): one thing at one place, not an area to clear (exact), to pick
+-- up (pickUp: "Pick it up" and the loot bag at it), where Questie marks the
+-- book (75.8, 74.2).
+FDJ.QUEST_PREREQ_DETAILS[1154].objectiveMap = { mapID = 1440, x = 0.755, y = 0.745, label = "Dor'Danil Barrow Den \226\128\148 Ashenvale", noteKey = "ARROW_ASPECTS_BOOK",
+    markerType = "location", exact = true, pickUp = true }
+-- denway (2.1.1, M 20 Nov 2026 in front of the den's door, the arrow pointing
+-- left at the book under the hill: "it should tell me to go in"): the book
+-- (object 20725) lies at 75.5, 74.45 (Wowhead Forever), at the bottom of the
+-- den; its comments: "Go to /way 75.9 75.3, and go down", "go to the bottom,
+-- make a left, keep going straight", "the leftmost large circular space".
+-- The way in: a walking router on the Forever client's Kalimdor
+-- maps (the navigation grid, run offline from the door at 75.9, 75.3 to
+-- the den's lowest floor under the book): in at the door, east along the
+-- tunnel and down round the east side, then west through the bottom rooms
+-- (415 yards). Each point is passed only by walking by it (4 yards), so the
+-- ground above the den does not count; keep: led along it even within 60
+-- yards of the book. The line under the arrow says which part it is.
+do
+    FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+    local IN, DOWN, LEFT = "Into the barrow den", "Down to the bottom", "Left at the bottom, to the book in the big room"
+    -- (labelNear: the line only near the den, not from Stonetalon)
+    local function P(x, y, label) return { mapID = 1440, x = x, y = y, label = label, keep = true, labelNear = 150 } end
+    FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1440", 0.755, 0.745)] = { reach = 4, leg = 3,
+        P(0.7590, 0.7530, IN), P(0.7626, 0.7501, IN), P(0.7648, 0.7490, IN), P(0.7699, 0.7490, IN),
+        P(0.7706, 0.7480, DOWN), P(0.7756, 0.7480, DOWN), P(0.7793, 0.7523, DOWN), P(0.7822, 0.7534, DOWN),
+        P(0.7843, 0.7501, DOWN), P(0.7843, 0.7447, DOWN), P(0.7822, 0.7415, DOWN), P(0.7807, 0.7415, DOWN),
+        P(0.7691, 0.7425, LEFT), P(0.7670, 0.7371, LEFT), P(0.7648, 0.7328, LEFT), P(0.7605, 0.7328, LEFT),
+        P(0.7590, 0.7339, LEFT), P(0.7576, 0.7371, LEFT), P(0.7569, 0.7436, LEFT), P(0.7554, 0.7458, LEFT),
+    }
+    local LINES = {
+        deDE = { "In den Grabhügel hinein", "Ganz nach unten", "Unten links, zum Buch im großen Raum" },
+        frFR = { "Entrez dans le refuge", "Descendez tout en bas", "En bas à gauche, jusqu'au livre dans la grande salle" },
+        esES = { "Entra en el túmulo", "Baja hasta el fondo", "Abajo a la izquierda, hasta el libro en la sala grande" },
+        itIT = { "Entra nel tumulo", "Scendi fino in fondo", "In fondo a sinistra, fino al libro nella sala grande" },
+        ptBR = { "Entre no túmulo", "Desça até o fundo", "Embaixo à esquerda, até o livro na sala grande" },
+        ruRU = { "Войдите в курган", "Спуститесь в самый низ", "Внизу налево, к книге в большом зале" },
+        koKR = { "굴 안으로 들어가세요", "맨 아래까지 내려가세요", "아래에서 왼쪽, 큰 방의 책으로" },
+        zhCN = { "进入巢穴", "下到最底层", "到底后向左，前往大厅里的书" },
+        zhTW = { "進入巢穴", "下到最底層", "到底後向左，前往大廳裡的書" },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for lang, lines in pairs(LINES) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for i, english in ipairs({ IN, DOWN, LEFT }) do
+            if content.places[english] == nil then content.places[english] = lines[i] end
+        end
+    end
+end
+do
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    local fr = FDJ.ContentLocales.frFR or {}
+    FDJ.ContentLocales.frFR = fr
+    fr.places = fr.places or {}
+    if fr.places["Dor'Danil Barrow Den"] == nil then fr.places["Dor'Danil Barrow Den"] = "Refuge des saisons de Dor'danil" end
+    -- (Ashenvale's own name where the zone list has none yet)
+    for lang, name in pairs({ koKR = "잿빛 골짜기", zhCN = "灰谷", zhTW = "梣谷" }) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        if content.places["Ashenvale"] == nil then content.places["Ashenvale"] = name end
+    end
+    local strings = {
+        enUS = "The book is at the bottom of the barrow den, on a stone podium",
+        deDE = "Das Buch liegt ganz unten im Grabhügel, auf einem Steinpodest",
+        frFR = "Le livre est tout en bas du refuge, sur un petit socle de pierre",
+        esES = "El libro está al fondo del túmulo, sobre un pedestal de piedra",
+        itIT = "Il libro è in fondo al tumulo, su un piedistallo di pietra",
+        ptBR = "O livro fica no fundo do túmulo, sobre um pedestal de pedra",
+        ruRU = "Книга в самом низу кургана, на каменном постаменте",
+        koKR = "책은 굴 맨 아래쪽 돌 받침대 위에 있습니다",
+        zhCN = "书在巢穴最底层的石台上",
+        zhTW = "書在巢穴最底層的石台上",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ARROW_ASPECTS_BOOK == nil then t.ARROW_ASPECTS_BOOK = text end
+    end
+end
 FDJ.QUEST_PREREQ_DETAILS[6627] = { level = 30, requires = 25, objective = "Answer Braug Dimspirit's question successfully and then speak to him again.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", warning = "ANSWER: Neltharion", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[6627] = 245
+-- keyshortcut (2.1.1, M 20 Nov 2026: "it's not true that the key unlocks
+-- the upper part of the dungeon, because you can do it even without the
+-- key ... the key allows a shortcut to the last boss"): Key Ingredients'
+-- warning (Data/Dungeons.lua) in every language
+do
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    local KEY = "The key from this quest opens a shortcut to the last boss."
+    for lang, text in pairs({
+        deDE = "Der Schl\195\188ssel aus dieser Quest \195\182ffnet eine Abk\195\188rzung zum letzten Boss.",
+        frFR = "La cl\195\169 de cette qu\195\170te ouvre un raccourci vers le dernier boss.",
+        esES = "La llave de esta misi\195\179n abre un atajo hacia el \195\186ltimo jefe.",
+        itIT = "La chiave di questa missione apre una scorciatoia verso l'ultimo boss.",
+        ptBR = "A chave desta miss\195\163o abre um atalho para o \195\186ltimo chefe.",
+        ruRU = "\208\154\208\187\209\142\209\135 \208\184\208\183 \209\141\209\130\208\190\208\179\208\190 \208\183\208\176\208\180\208\176\208\189\208\184\209\143 \208\190\209\130\208\186\209\128\209\139\208\178\208\176\208\181\209\130 \208\186\208\190\209\128\208\190\209\130\208\186\208\184\208\185 \208\191\209\131\209\130\209\140 \208\186 \208\191\208\190\209\129\208\187\208\181\208\180\208\189\208\181\208\188\209\131 \208\177\208\190\209\129\209\129\209\131.",
+        koKR = "\236\157\180 \237\128\152\236\138\164\237\138\184\236\157\152 \236\151\180\236\135\160\235\161\156 \235\167\136\236\167\128\235\167\137 \236\154\176\235\145\144\235\168\184\235\166\172\236\151\144\234\178\140 \234\176\128\235\138\148 \236\167\128\235\166\132\234\184\184\236\157\180 \236\151\180\235\166\189\235\139\136\235\139\164.",
+        zhCN = "\230\173\164\228\187\187\229\138\161\232\142\183\229\190\151\231\154\132\233\146\165\229\140\153\229\143\175\228\187\165\230\137\147\229\188\128\233\128\154\229\190\128\230\156\128\229\144\142\228\184\128\228\184\170\233\166\150\233\162\134\231\154\132\230\141\183\229\190\132\227\128\130",
+        zhTW = "\230\173\164\228\187\187\229\139\153\231\141\178\229\190\151\231\154\132\233\145\176\229\140\153\229\143\175\228\187\165\230\137\147\233\150\139\233\128\154\229\190\128\230\156\128\229\190\140\228\184\128\229\128\139\233\166\150\233\160\152\231\154\132\230\141\183\229\190\145\227\128\130",
+    }) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        if content.places[KEY] == nil then content.places[KEY] = text end
+    end
+end
+-- zalfanpin (2.1.1): Zalfan Moonshadow's own name on the dungeon map, in
+-- the game's languages (Wowhead Forever's; German and Italian keep it)
+do
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for lang, name in pairs({ frFR = "Zalfan Lunombre", esES = "Zalfan Umbraluna", ptBR = "Zalfan Umbraluna",
+        ruRU = "\208\151\208\176\208\187\209\132\208\176\208\189 \208\162\208\181\208\189\209\140 \208\155\209\131\208\189\209\139",
+        koKR = "\236\158\152\237\140\144 \235\172\184\236\132\128\235\143\132",
+        zhCN = "\230\137\142\229\176\148\229\135\161\194\183\230\156\136\229\189\177",
+        zhTW = "\232\150\169\231\136\190\229\135\161\226\128\167\230\156\136\229\189\177" }) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        if content.places["Zalfan Moonshadow"] == nil then content.places["Zalfan Moonshadow"] = name end
+    end
+end
+-- loreanswer (2.1.1, M 20 Nov 2026 at Braug Dimspirit, the last Test of Lore
+-- in his log: "make sure the arrow says to pick Neltharion as the answer"):
+-- while the question is not answered, the arrow leads to Braug with the
+-- answer in its orange line; answered, it is the usual hand-in.
+FDJ.QUEST_PREREQ_DETAILS[6627].objectiveMap = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit \226\128\148 Stonetalon Mountains", targetName = "Braug Dimspirit", noteKey = "ARROW_LORE_ANSWER", exact = true }
+do
+    local strings = {
+        enUS = "Answer: Neltharion",
+        deDE = "Antwort: Neltharion",
+        frFR = "R\195\169ponse : Neltharion",
+        esES = "Respuesta: Neltharion",
+        itIT = "Risposta: Neltharion",
+        ptBR = "Resposta: Neltharion",
+        ruRU = "\208\158\209\130\208\178\208\181\209\130: \208\157\208\181\208\187\209\130\208\176\209\128\208\184\208\190\208\189",
+        koKR = "\236\160\149\235\139\181: \235\132\172\237\131\128\235\166\172\236\152\168",
+        zhCN = "\231\173\148\230\161\136\239\188\154\229\165\136\232\144\168\233\135\140\229\165\165",
+        zhTW = "\231\173\148\230\161\136\239\188\154\229\165\136\232\150\169\233\135\140\229\165\167",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ARROW_LORE_ANSWER == nil then t.ARROW_LORE_ANSWER = text end
+    end
+end
 FDJ.QUEST_PREREQ_DETAILS[1159] = { level = 30, requires = 25, objective = "Find Parqual Fintallas in Undercity.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Parqual Fintallas, Undercity", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1159] = 1200
 -- The Library step of the chain: the book is inside Scarlet Monastery: Library.
 FDJ.QUEST_PREREQ_DETAILS[1160] = { level = 36, requires = 25, objective = "Find The Beginnings of the Undead Threat and return it to Parqual Fintallas in Undercity.", pickup = "Parqual Fintallas, Undercity", turnin = "Parqual Fintallas, Undercity", description = "The book is inside Scarlet Monastery: Library.", map = { mapID = 1458, x = 0.576, y = 0.652, label = "Parqual Fintallas — Undercity", detail = "Parqual Fintallas in Undercity" } }
+-- loreinside (2.1.1, M 20 Nov 2026 on its page: "why is it not saying
+-- dungeon step ... the book is inside"): the book is in the Library, so the
+-- step is done inside (its text names the dungeon only in its note).
+FDJ.QUEST_PREREQ_DETAILS[1160].objectiveInDungeon = true
 FDJ.FOREVER_QUEST_XP_FALLBACK[1160] = 2100
 FDJ.QUEST_PREREQ_DETAILS[6628] = { level = 30, requires = 25, objective = "Answer Parqual Fintallas' question successfully and then speak to him again.", pickup = "Parqual Fintallas, Undercity", turnin = "Parqual Fintallas, Undercity", warning = "ANSWER: Ner'zhul", map = { mapID = 1458, x = 0.576, y = 0.652, label = "Parqual Fintallas — Undercity", detail = "Parqual Fintallas in Undercity" } }
 
@@ -661,7 +820,7 @@ FDJ.QUEST_SHAREABILITY_AUDIT[99156] = true
 -- BEGIN drownedcity
 -- The Drowned City (Horde): Kin'weelay's chain to the dungeon quest, and
 -- Enemies in the Water before The Only Good Brinescale... Givers, objectives,
--- items, spawns, levels and XP: Forever client tables via Polestar forever-db;
+-- items, spawns, levels and XP: Forever client tables;
 -- names and chain order from ForeverChanges and Hearthside.
 do
     local KINWEELAY = { mapID = 1434, x = 0.323, y = 0.277, label = "Kin'weelay — Grom'gol Base Camp", targetName = "Kin'weelay", detail = "Kin'weelay at Grom'gol Base Camp, Stranglethorn Vale" }
@@ -789,7 +948,7 @@ end
 -- leads to one of his follow-ups. Chain order: a player's notes (Discord,
 -- Nov 2026). Quest texts, levels, XP and items: Wowhead Forever (quests 203,
 -- 204, 205, 207, 95786-95788, 95798, 95799; the four troll tablets); where
--- the NPCs stand: Forever client tables via Polestar forever-db (spawns of
+-- the NPCs stand: Forever client tables (spawns of
 -- 739, 2277, 2916, 252019) and Wowhead Forever (733).
 do
     local DIBBS = FDJ.QUEST_START_MAPS[95787]
@@ -930,7 +1089,7 @@ do
     --    stand at Kurzen's Compound (Jungle Fighters and Medicine Men, 28
     --    spawns around 44.7, 10.4); the Skullsplitter Mystics south of it (24
     --    spawns around 45.9, 36.4; the Witch Doctors a little further south).
-    --    Forever client tables via Polestar forever-db (spawns of 937, 940,
+    --    Forever client tables (spawns of 937, 940,
     --    780, 670). Kurzen's Mystery: its four tablets have their places
     --    already (requiredItems' maps).
     --  - Dibbs' two quests are done inside the dungeon: handed in after the
@@ -967,7 +1126,7 @@ end
 -- The Glowing Shard: first speak with Sputtervalve in Ratchet (the quest's
 -- objective; he has no ? over his head), then hand it in to Falla Sagewind on
 -- top of the mountain above Wailing Caverns (Forever client tables via
--- Polestar forever-db: end NPC 8418, Sputtervalve 3442 and their spawns). The
+-- the client's tables: end NPC 8418, Sputtervalve 3442 and their spawns). The
 -- tracker's ? shows Ratchet until he has been spoken to, then Falla.
 do
     local FALLA = { mapID = 1413, x = 0.482, y = 0.328, label = "Falla Sagewind — above Wailing Caverns", targetName = "Falla Sagewind", detail = "In a tent on top of the mountain above Wailing Caverns" }
@@ -1087,7 +1246,7 @@ end
 -- Westfall and follow the note to The Barrens, the Horde the other way round;
 -- from Stepping Stones on, the chain is the same for both. Every step starts
 -- and ends at an object. Quests, objects, spawns, levels and XP: Forever
--- client tables via Polestar forever-db; rewards and the way to each spot:
+-- client tables; rewards and the way to each spot:
 -- Wowhead (Forever).
 do
     local PAGE = "Cozy Sleeping Bag"
@@ -1109,14 +1268,14 @@ do
     local SATCHEL = Spot(1424, 0.857, 0.522, "Hastily Rolled-Up Satchel — Thoradin's Wall", "Right under the Messenger Bag")
 
     -- arrowvia: the way to a spot the straight line does not reach: points
-    -- the waypoint arrow leads to first, in order (the Polestar guide to the
+    -- the waypoint arrow leads to first, in order (a player guide to the
     -- chain: the path into the Stonetalon hills, the fallen cart at
     -- Thoradin's Wall; for the Alliance the way round Honor's Stand).
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local function Via(spot, list)
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)] = list
     end
-    -- The way to the abandoned camp, worked out on Polestar's walking maps
+    -- The way to the abandoned camp, worked out on the walking maps
     -- of Kalimdor (1.8.1): the camp sits on a shelf in the hills, reached
     -- only by the path that leaves the main road at 52.2, 53.4 (or, from
     -- the north, by the path off the Charred Vale descent); Sun Rock
@@ -1157,7 +1316,7 @@ do
     } })
     -- The Mound of Dirt: straight on from the camp, north over the ridge
     -- and down the hillside (no via point).
-    -- Thoradin's Wall round the Messenger Bag (1.8.4), from Polestar's
+    -- Thoradin's Wall round the Messenger Bag (1.8.4), from the
     -- walking maps of the Eastern Kingdoms: the fallen cart (its bed about
     -- 6 yards up, centre 88.0, 47.1), a few yards of ground, then rubble that
     -- ramps up south-west onto the wall and along it to the bag. The game
@@ -1364,7 +1523,7 @@ end
 -- Quest NPCs well below (-) or above (+) the ground around them, in yards:
 -- { continent, world x, world y, height }. The waypoint arrow says so near
 -- them (a crypt, Undercity under the ruins, a tower top). Generated by
--- floors.py from the Polestar forever-db spawn heights (SOURCES.txt).
+-- floors.py from the client's spawn heights (SOURCES.txt).
 FDJ.NPC_FLOORS = {
     ["Apothecary Zamah"] = { { 1, -996, 277, -26 }, { 1, -995.5, 278.5, -26 }, { 1, -995.5, 280.5, -26 } },
     ["Argent Outfitter"] = { { 0, 1580, 245, -122 }, { 0, 1586, 250, -122 } },
@@ -1468,6 +1627,15 @@ do
             ruRU = "Босс квеста коня паладина", koKR = "성기사 탈것 퀘스트 보스",
             zhCN = "圣骑士坐骑任务首领", zhTW = "聖騎士坐騎任務首領",
         },
+        -- isalien (2.1.1): the Dungeon Set 2 (Tier 0.5) bosses' label (Isalien,
+        -- Kormok, Mor Grayhoof, Jarien and Sothos, Theldren, Lord Valthalak)
+        ["0.5 Quest Event"] = {
+            deDE = "0.5-Questereignis", frFR = "Événement de quête 0.5",
+            esES = "Evento de misión 0.5", esMX = "Evento de misión 0.5",
+            itIT = "Evento missione 0.5", ptBR = "Evento de missão 0.5",
+            ruRU = "Событие задания 0.5", koKR = "0.5 퀘스트 이벤트",
+            zhCN = "0.5任务事件", zhTW = "0.5任務事件",
+        },
     }
     function FDJ.RareLabelText(label)
         if type(label) ~= "string" then return nil end
@@ -1546,6 +1714,7 @@ end
 -- upstairs" under the yards.
 FDJ.NPC_UPSTAIRS = {
     ["Raleigh the Devout"] = true,
+    ["Ashe Amberhall"] = true, -- upnpc (2.1.1): top floor of Farholde Keep's tower, Riverglades
 }
 do
     local strings = {
@@ -2047,14 +2216,14 @@ do
     local EITRIGG = { mapID = 1454, x = 0.344, y = 0.386, label = "Eitrigg — Grommash Hold, Orgrimmar", targetName = "Eitrigg" }
     -- nazeername (2.0.13, KILLDARK on Discord, 18 Nov 2026, "Worng NPC": the
     -- game's name is Nazeer Bloodpike, no s, so the click to target him
-    -- missed; his spot: Forever client tables via Polestar forever-db,
+    -- missed; his spot: Forever client tables,
     -- spawn of NPC 4791, 35.2, 30.7 - was 36.0, 31.0, some 40 yards off)
     local NAZEER = { mapID = 1445, x = 0.352, y = 0.307, label = "Nazeer Bloodpike — Brackenwall Village, Dustwallow Marsh", targetName = "Nazeer Bloodpike" }
     local ULKA = { mapID = 1445, x = 0.702, y = 0.188, label = "Sergeant Ulka — Alcaz Island, Dustwallow Marsh", targetName = "Sergeant Ulka" }
     -- shawspot (2.0.9, Pekins on Discord, 15 Nov 2026: "more towards the
     -- south of Old Town at 79, 71"): 75.8, 59.8 was his place on the old
     -- Stormwind map; on Forever's map he stands at 78.3, 70.7 (Forever
-    -- client tables via Polestar forever-db, spawn of NPC 332; the same
+    -- client tables, spawn of NPC 332; the same
     -- spot the journal already uses for Shaw's Report).
     local SHAW = { mapID = 1453, x = 0.783, y = 0.707, label = "Master Mathias Shaw — SI:7, Old Town, Stormwind", targetName = "Master Mathias Shaw" }
     local SULLY = { mapID = 1445, x = 0.662, y = 0.452, label = "Sully McCleary — inn, Theramore", targetName = "Sully McCleary" }
@@ -2299,7 +2468,7 @@ do
     -- its north side (47.1, 73.3), on the upper level that runs round the
     -- temple to the city in the south and to the east. From the low ground
     -- west of the temple the only way up is the long stairway north of it
-    -- (foot at 46.3, 60.9). The points: Polestar's walking maps of Kalimdor.
+    -- (foot at 46.3, 60.9). The points: the Kalimdor walking maps.
     -- The arrow takes the route whose first point is nearest.
     do
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
@@ -2337,7 +2506,7 @@ do
         }
         -- buildingexit (2.0.13, M 19 Nov 2026, from Magister Kirandis to
         -- Mithera): indoors in the temple, to a place outside it: out by the
-        -- north door first (Polestar: from the top floor every way out goes
+        -- north door first (the walking maps: from the top floor every way out goes
         -- through it, 47.5, 73.0).
         FDJ.ARROW_EXITS = FDJ.ARROW_EXITS or {}
         table.insert(FDJ.ARROW_EXITS, { mapID = M, x = 0.470, y = 0.770, radius = 60,
@@ -4060,10 +4229,20 @@ do
     -- Feardred 86777, Thinning Their Forces 86792, Later, Satyr 86796 (the
     -- databases: "one of"; M, 2.0.42): "1. Pick one of the following
     -- quests:", the three below it (pickone).
+    -- bmchain (2.1.1, Discord "Blackmaw Hold prequest incomplete", Theladron
+    -- 20 Nov 2026, tested in game): the chain starts at Ekkal with The Legashi
+    -- Threat, then Report to Rageroar and Missing Blackmaw Scouts (Korsa's
+    -- quests can't be taken before it). Return to Rageroar needs Master
+    -- Feardred AND Thinning Their Forces (confirmed), so the three are no longer
+    -- "pick one"; Later, Satyr is kept as a step (he suspects all three; the
+    -- escort alone doesn't open it). Quest IDs: Wowhead Forever's series.
     FDJ.QUEST_PREREQ_CHAINS[92065] = {
-        { id = 86777, name = "Master Feardred", choice = 1 },
-        { id = 86792, name = "Thinning Their Forces", choice = 1 },
-        { id = 86796, name = "Later, Satyr", choice = 1 },
+        { id = 86746, name = "The Legashi Threat" },
+        { id = 86752, name = "Report to Rageroar" },
+        { id = 86791, name = "Missing Blackmaw Scouts" },
+        { id = 86777, name = "Master Feardred" },
+        { id = 86792, name = "Thinning Their Forces" },
+        { id = 86796, name = "Later, Satyr" },
         { id = 86797, name = "Return to Rageroar" },
         { id = 86798, name = "Timbermaw Reinforcements" },
         { id = 87346, name = "Chieftain Bloodmaw" },
@@ -4100,11 +4279,28 @@ do
         turnin = KORSA_TEXT,
         map = GRAAL, turninMap = KORSA,
     }
-    -- Any one of the three does step 1 (Core/Journal.lua reads this table).
-    FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
-    FDJ.QUEST_DONE_BY[86777] = { 86792, 86796 }
-    FDJ.QUEST_DONE_BY[86792] = { 86777, 86796 }
-    FDJ.QUEST_DONE_BY[86796] = { 86777, 86792 }
+    -- bmchain (2.1.1): no longer "any one of the three" (all are steps now).
+    local EKKAL_TEXT = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)"
+    local EKKAL_MAP = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" }
+    FDJ.QUEST_PREREQ_DETAILS[86746] = {
+        level = 53, requires = 47,
+        objective = "Kill 5 Legashi Satyrs, 5 Legashi Rogues and 5 Legashi Hellcallers for Ekkal at the Ruins of Eldarath.",
+        pickup = EKKAL_TEXT, turnin = EKKAL_TEXT,
+        map = EKKAL_MAP, turninMap = EKKAL_MAP,
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86752] = {
+        level = 53, requires = 47,
+        objective = "Speak with Gatekeeper Rageroar at Ursolan.",
+        pickup = EKKAL_TEXT, turnin = RAGEROAR_TEXT,
+        map = EKKAL_MAP, turninMap = RAGEROAR,
+        note = "Needs Neutral reputation with Timbermaw Hold.", -- Wowhead Forever comments
+    }
+    FDJ.QUEST_PREREQ_DETAILS[86791] = {
+        level = 53, requires = 47,
+        objective = "Find the Blackmaw scouting party near the Legashi camps east of Ursolan.",
+        pickup = RAGEROAR_TEXT, turnin = KORSA_TEXT,
+        map = RAGEROAR, turninMap = KORSA,
+    }
     FDJ.QUEST_PREREQ_DETAILS[86798] = {
         level = 55, requires = 47,
         objective = "Speak to Gorn One Eye in Timbermaw Hold and ask him to provide reinforcements.",
@@ -4133,6 +4329,7 @@ do
     local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
     XP[86797] = 525; XP[86798] = 550; XP[87346] = 5650; XP[86814] = 7050
     XP[86777] = 5250; XP[86792] = 5450; XP[86796] = 5450
+    XP[86746] = 5250; XP[86752] = 530; XP[86791] = 530 -- bmchain (Wowhead Forever)
 end
 -- END blackmawaudit
 
@@ -4928,9 +5125,9 @@ end
 -- onto the mesa over Windbreak Canyon, "a place that I've never seen
 -- before. And the cave is literally down there ... there is another path
 -- that goes up the cave"): Dorn Plainstalker stands in the cave on the
--- canyon's north wall (Polestar forever-db spawn, z -7); its way in is the
+-- canyon's north wall (the client's spawn, z -7); its way in is the
 -- path up from the canyon floor at 54.7, 45.1. The walking net reached him
--- from the mesa above. The points: Polestar's walking router on the
+-- from the mesa above. The points: a walking router on the
 -- Forever client's maps, run offline to his spawn from the canyon floor
 -- (135 yards from 54.6, 45.3), from Freewind Post's side (the canyon west
 -- of the cave) and from the east. keep: the last points still lead within
@@ -4992,7 +5189,8 @@ end
 -- itself ... some people might forget about it", and a disclaimer under the
 -- objective): both factions' quests (96773 Alliance, 97196 Horde).
 do
-    local NOTE = "Amnennar doesn't drop the Eye: after killing him, click the Eye on the floor to pick it up."
+    -- (M 20 Nov 2026: "say doesn't drop the Eye from its body")
+    local NOTE = "Amnennar doesn't drop the Eye from his body: after killing him, click the Eye on the floor to pick it up."
     local SOURCE = "Click it after killing Amnennar the Coldbringer, the last boss of Razorfen Downs"
     local d = FDJ.DB and FDJ.DB["Razorfen Downs"]
     for _, q in ipairs((d and d.quests) or {}) do
@@ -5002,16 +5200,16 @@ do
         end
     end
     local LOCAL = {
-        deDE = { "Amnennar lässt das Auge nicht fallen: Klicke nach seinem Tod auf das Auge am Boden, um es aufzuheben.", "Nach dem Tod von Amnennar, dem letzten Boss, anklicken" },
-        frFR = { "Amnennar ne laisse pas tomber l'Œil : après l'avoir tué, cliquez sur l'Œil au sol pour le ramasser.", "À cliquer après avoir tué Amnennar, le dernier boss" },
-        esES = { "Amnennar no suelta el Ojo: tras matarlo, haz clic en el Ojo del suelo para recogerlo.", "Haz clic en él tras matar a Amnennar, el último jefe" },
-        esMX = { "Amnennar no suelta el Ojo: tras matarlo, haz clic en el Ojo del suelo para recogerlo.", "Haz clic en él tras matar a Amnennar, el último jefe" },
-        itIT = { "Amnennar non rilascia l'Occhio: dopo averlo ucciso, clicca sull'Occhio a terra per raccoglierlo.", "Cliccalo dopo aver ucciso Amnennar, l'ultimo boss" },
-        ptBR = { "Amnennar não deixa cair o Olho: depois de matá-lo, clique no Olho no chão para pegá-lo.", "Clique nele depois de matar Amnennar, o último chefe" },
-        ruRU = { "Глаз не выпадает с Амненнара: после его убийства щёлкните по Глазу на полу, чтобы подобрать его.", "Щёлкните по нему после убийства Амненнара, последнего босса" },
-        koKR = { "암네나르는 눈을 떨어뜨리지 않습니다: 처치한 뒤 바닥에 있는 눈을 클릭해 주우세요.", "마지막 우두머리 암네나르를 처치한 뒤 클릭하세요" },
-        zhCN = { "亚门纳尔不会掉落眼睛：击杀他之后，点击地上的眼睛将其拾取。", "击杀最后一个首领亚门纳尔后点击它" },
-        zhTW = { "亞門納爾不會掉落眼睛：擊殺他之後，點擊地上的眼睛將其拾取。", "擊殺最後一個首領亞門納爾後點擊它" },
+        deDE = { "Das Auge lässt sich nicht von Amnennars Leiche plündern: Klicke nach seinem Tod auf das Auge am Boden, um es aufzuheben.", "Nach dem Tod von Amnennar, dem letzten Boss, anklicken" },
+        frFR = { "L'Œil ne se trouve pas sur le corps d'Amnennar : après l'avoir tué, cliquez sur l'Œil au sol pour le ramasser.", "À cliquer après avoir tué Amnennar, le dernier boss" },
+        esES = { "El Ojo no está en el cuerpo de Amnennar: tras matarlo, haz clic en el Ojo del suelo para recogerlo.", "Haz clic en él tras matar a Amnennar, el último jefe" },
+        esMX = { "El Ojo no está en el cuerpo de Amnennar: tras matarlo, haz clic en el Ojo del suelo para recogerlo.", "Haz clic en él tras matar a Amnennar, el último jefe" },
+        itIT = { "L'Occhio non si trova sul corpo di Amnennar: dopo averlo ucciso, clicca sull'Occhio a terra per raccoglierlo.", "Cliccalo dopo aver ucciso Amnennar, l'ultimo boss" },
+        ptBR = { "O Olho não está no corpo de Amnennar: depois de matá-lo, clique no Olho no chão para pegá-lo.", "Clique nele depois de matar Amnennar, o último chefe" },
+        ruRU = { "Глаз нельзя забрать с тела Амненнара: после его убийства щёлкните по Глазу на полу, чтобы подобрать его.", "Щёлкните по нему после убийства Амненнара, последнего босса" },
+        koKR = { "암네나르의 시체에서는 눈을 얻을 수 없습니다: 처치한 뒤 바닥에 있는 눈을 클릭해 주우세요.", "마지막 우두머리 암네나르를 처치한 뒤 클릭하세요" },
+        zhCN = { "亚门纳尔的尸体上不会掉落眼睛：击杀他之后，点击地上的眼睛将其拾取。", "击杀最后一个首领亚门纳尔后点击它" },
+        zhTW = { "亞門納爾的屍體上不會掉落眼睛：擊殺他之後，點擊地上的眼睛將其拾取。", "擊殺最後一個首領亞門納爾後點擊它" },
     }
     FDJ.ContentLocales = FDJ.ContentLocales or {}
     for lang, pair in pairs(LOCAL) do
@@ -5043,7 +5241,7 @@ end
 -- Brave Stonetorch 214529): level 53, requires 45, 12,750 XP and 1g 67s 52c
 -- (the same 12,750 as Nurax's quest log; the 6,550 is A Newly Discovered
 -- Purpose...'s, the Symbol of Faith's quest), no item reward. The
--- infernals' spot: their spawns in Polestar's Forever database.
+-- infernals' spot: their spawns in the Forever client's data.
 do
     local function Gregory() return { mapID = 1448, x = 0.446, y = 0.520, label = "Gregory — Bloodvenom Falls, Felwood", targetName = "Gregory" } end
     local function Katherine() return { mapID = 1453, x = 0.486, y = 0.492, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } end
@@ -5247,3 +5445,47 @@ do
     end
 end
 -- END repeatonce
+
+-- insideaudit (2.1.1, M 20 Nov 2026, Test of Lore's Library step and Old
+-- Fire-Eye's page: "you need to fix every one of them ... understand where
+-- the problem is"): every dungeon quest and every step of its chain checked
+-- against where it is really done (the quest database's mobs, items and
+-- objects, the quests' own texts and notes); here at the end of the file,
+-- once every quest and step above is in place. The tint and "Dungeon Step"
+-- only where something of the quest itself is done inside a dungeon (this
+-- page's or another's): steps the text check missed ("Blackrock Spire" is
+-- not the name of either spire's page; "the Rookery"; a dungeon named only
+-- in a note) are set by hand; quests done only outside (a breadcrumb, a
+-- delivery or a wait in town, mobs outside the instance) lose the tint.
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    -- steps done inside
+    for _, id in ipairs({
+        4974, 6569, 4903, 4734, 4735, 1109, 93404, 7629, 7642, 5463, 7643, 5382,
+        5515, 5384, 4241, 3527, 3528, 78261, 78676, 79946, 79963
+    }) do
+        if D[id] then D[id].objectiveInDungeon = true end
+    end
+    -- steps started inside (an item a mob drops in there, an NPC in there)
+    for _, id in ipairs({
+        5089, 6522, 373, 4264, 79970
+    }) do
+        if D[id] then D[id].dungeonStep = true end
+    end
+    -- dungeon quests done entirely outside: no tint
+    local outside = {}
+    for _, id in ipairs({
+        3765, 1806, 6562, 4128, 4133, 4324, 7492, 7494, 5250, 98823, 98824, 2926,
+        2843, 2948, 2950, 94998, 6626, 6521, 1848, 1782, 96016, 79442, 6141, 78699,
+        78307, 168, 167, 5961, 8233, 8417, 8254, 8415, 8250, 8151, 9063, 96078,
+        95799, 95798, 704, 707, 2341, 2418, 2361, 709, 2439, 2440, 4766, 4769,
+        2861, 2769, 2864
+    }) do
+        outside[id] = true
+    end
+    for _, dungeon in pairs(FDJ.DB or {}) do
+        for _, quest in ipairs(type(dungeon) == "table" and dungeon.quests or {}) do
+            if type(quest) == "table" and outside[quest.id] then quest.dungeonStep = false end
+        end
+    end
+end

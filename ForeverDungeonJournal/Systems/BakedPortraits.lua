@@ -56,6 +56,12 @@ FDJ.BAKED_PORTRAITS = {
     [15997]=2, [16003]=2, [16018]=2, [144378]=2,
     [144188]=2, [144189]=2, [144209]=2, [144210]=2, [144224]=2, [144356]=true, [144475]=2, [144487]=2, [144511]=2, [144514]=2, [144515]=2, [145398]=true,
     [145404]=true, [145787]=2, [145808]=2, [145809]=true, [147098]=2,
+    -- bake3 (2.1.1, M 20 Nov 2026, /dj bake): Krol'dok Stronghold's quest mobs
+    -- Tunk and Zalfan Moonshadow (both sizes).
+    [144671]=2, [145448]=2,
+    -- bake4 (2.1.1, M 20 Nov 2026, /dj bake): Isalien, Dire Maul East's
+    -- Dungeon Set 2 boss (both sizes).
+    [16000]=2,
 }
 local BAKED = FDJ.BAKED_PORTRAITS
 

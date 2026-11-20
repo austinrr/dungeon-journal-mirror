@@ -142,6 +142,23 @@ local FONTS = {
         simplifiedchinese = { "Fonts\\ARKai_T.ttf", 17, "OUTLINE" },
         traditionalchinese = { "Fonts\\blei00d.TTF", 17, "OUTLINE" },
         russian = { "Fonts\\FRIZQT___CYR.TTF", 16, "OUTLINE" } },
+    -- warnfont (2.1.1, M 20 Nov 2026: the red disclaimers were "a little bit
+    -- annoying to read, especially on the steel background"; the outline
+    -- "way too hard to read"; then, picked in /dj warnstyle: "I like this
+    -- warn style. We can keep this"): the journal's fonts, three sizes up
+    -- (the small one two), no outline, no shadow; blue (FDJ.WARNING_COLOR).
+    WarningFont = { color = nil, shadow = nil,
+        roman = { "Fonts\\FRIZQT__.TTF", 15, "" },
+        korean = { "Fonts\\2002.TTF", 15, "" },
+        simplifiedchinese = { "Fonts\\ARKai_T.ttf", 18, "" },
+        traditionalchinese = { "Fonts\\blei00d.TTF", 18, "" },
+        russian = { "Fonts\\FRIZQT___CYR.TTF", 15, "" } },
+    WarningFontSmall = { color = nil, shadow = nil,
+        roman = { "Fonts\\FRIZQT__.TTF", 13, "" },
+        korean = { "Fonts\\2002.TTF", 14, "" },
+        simplifiedchinese = { "Fonts\\ARKai_T.ttf", 18, "" },
+        traditionalchinese = { "Fonts\\blei00d.TTF", 18, "" },
+        russian = { "Fonts\\FRIZQT___CYR.TTF", 13, "" } },
     Number12FontOutline = { color = nil, shadow = nil,
         roman = { "Fonts\\ARIALN.TTF", 12, "OUTLINE" },
         korean = { "Fonts\\2002.TTF", 11, "OUTLINE" },
@@ -229,6 +246,21 @@ for name, def in pairs(FONTS) do pcall(Make, name, def) end
 -- the copy could not be made).
 function FDJ.OwnFont(name)
     return FDJ.OwnFontObjects[name] or _G[name]
+end
+
+-- warnfont: a red disclaimer's font string -> the warning font (small: the
+-- small one) and the warning colour. The font strings are kept (weakly) so a
+-- change of style reaches the ones on screen.
+FDJ.WARNING_COLOR = FDJ.WARNING_COLOR or { 0, 0.129, 1 } -- #0021FF
+FDJ.WARNING_COLOR_SMALL = FDJ.WARNING_COLOR_SMALL or { 0, 0.129, 1 }
+FDJ.WarningStrings = FDJ.WarningStrings or setmetatable({}, { __mode = "k" })
+function FDJ.WarningFont(fontString, small)
+    if type(fontString) ~= "table" then return end
+    local font = FDJ.OwnFontObjects[small and "WarningFontSmall" or "WarningFont"]
+    if font and fontString.SetFontObject then pcall(fontString.SetFontObject, fontString, font) end
+    local c = small and FDJ.WARNING_COLOR_SMALL or FDJ.WARNING_COLOR
+    if fontString.SetTextColor then pcall(fontString.SetTextColor, fontString, c[1], c[2], c[3]) end
+    FDJ.WarningStrings[fontString] = small and "small" or "normal"
 end
 
 -- The game's font object -> the journal's copy.
