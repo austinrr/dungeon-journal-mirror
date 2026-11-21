@@ -182,6 +182,23 @@ FDJ.RUNLOG_ENCOUNTERS = {
     -- Scarlet Monastery: Library
     [446] = { "Scarlet Monastery: Library", "Houndmaster Loksey" },
     [447] = { "Scarlet Monastery: Library", "Arcanist Doan" },
+    -- Scholomance (scholoids, 2.1.2: Forever's own encounter IDs. The game
+    -- names two fights differently from the journal: "Kirtonos" and "Ras
+    -- Frostwhisperer"; with the ID the kill counts for the right boss.)
+    [2801] = { "Scholomance", "Darkmaster Gandling" },
+    [2802] = { "Scholomance", "Doctor Theolen Krastinov" },
+    [2803] = { "Scholomance", "Instructor Malicia" },
+    [2804] = { "Scholomance", "Jandice Barov" },
+    [2805] = { "Scholomance", "Kirtonos the Herald" },
+    [2806] = { "Scholomance", "Lady Illucia Barov" },
+    [2807] = { "Scholomance", "Lord Alexei Barov" },
+    [2808] = { "Scholomance", "Lorekeeper Polkelt" },
+    [2809] = { "Scholomance", "Marduk Blackpool" },
+    [2810] = { "Scholomance", "Ras Frostwhisper" },
+    [2811] = { "Scholomance", "Rattlegore" },
+    [2812] = { "Scholomance", "The Ravenian" },
+    [2813] = { "Scholomance", "Vectus" },
+    [3055] = { "Scholomance", "Kormok" },
     -- Shadowfang Keep
     [464] = { "Shadowfang Keep", "Rethilgore" },
     [465] = { "Shadowfang Keep", "Razorclaw the Butcher" },

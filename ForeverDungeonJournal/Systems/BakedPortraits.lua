@@ -62,6 +62,9 @@ FDJ.BAKED_PORTRAITS = {
     -- bake4 (2.1.1, M 20 Nov 2026, /dj bake): Isalien, Dire Maul East's
     -- Dungeon Set 2 boss (both sizes).
     [16000]=2,
+    -- bake5 (2.1.2, M 21 Nov 2026, /dj bake): Sabella No-Eyes, Blackmaw
+    -- Hold's rare (both sizes).
+    [6829]=2,
 }
 local BAKED = FDJ.BAKED_PORTRAITS
 

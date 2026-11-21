@@ -721,6 +721,7 @@ FDJ.STATIC_DISPLAY_IDS = {
     [10263] = 5047,     -- Burning Felguard (lbrsaudit 2.0.9: https://octowow.st/db/?npc=10263)
     [16059] = 15981,    -- Theldren (Blackrock Depths)
     [250034] = 2424,    -- Tunnelweb Matriarch (Blackmaw Hold)
+    [269151] = 6829,    -- Sabella No-Eyes (Blackmaw Hold; sabella 2.1.2: Wowhead Forever NPC 269151, model 6829)
     [261974] = 143035,  -- Cinder (Shaper's Terrace)
     [262297] = 143122,  -- Snowtalon (Shaper's Terrace)
 }

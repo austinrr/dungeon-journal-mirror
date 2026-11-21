@@ -95,6 +95,7 @@ FDJ.Locales.ruRU = {
     ["LF_ENABLE"] = "Включить",
     ["LF_DISABLE"] = "Выключить",
     ["LF_MIN_LEVEL"] = "Мин. требуемый уровень",
+    ["LF_LEVEL_RANGE"] = "Диапазон уровней",
     ["OPT_UI"] = "Общие",
     ["OPT_DISCORD_TEXT"] = "Присоединяйтесь к Discord Dungeon Journal, чтобы сообщать об ошибках, делиться новыми находками и узнавать последние новости.",
     ["OPT_DUNGEON_LIST"] = "Список подземелий",

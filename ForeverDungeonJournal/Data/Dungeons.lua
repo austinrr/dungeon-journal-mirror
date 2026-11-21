@@ -6247,6 +6247,22 @@ FDJ.DB["Blackmaw Hold"] = {
             },
         },
         {
+            -- sabella (2.1.2, M 20 Nov 2026: "add this rare boss to
+            -- blackmaw"): rare elite beast (NPC 269151, Wowhead Forever; a
+            -- player there: it appeared at the entrance of the cave inside
+            -- the dungeon and dropped the mail chest). Loot: Wowhead
+            -- Forever's drops (28 kills).
+            name = "Sabella No-Eyes",
+            npcID = 269151,
+            aliases = {"Sabella No-Eyes", "Sabella"},
+            description = "Rare spawn.",
+            rare = true,
+            loot = {
+                {280083, "Truesight Rifle", "Ranged, Gun", 3}, -- 16/28
+                {280084, "Furbolg Rib Protector", "Chest, Mail", 3}, -- 12/28
+            },
+        },
+        {
             name = "Withermaw",
             npcID = 247195,
             aliases = {"Withermaw"},
@@ -6508,12 +6524,14 @@ FDJ.DB["Blackmaw Hold"] = {
                 {287033, "Furbolg Berserker's Boots", "Feet, Plate", 3, "Blackmaw Devotee / Blackmaw Berserker / Legashi Slayer"},
                 -- Epic Leatherworking pattern (Recipes & Patterns tab).
                 {252893, "Pattern: Timbermaw Tunic", "Recipe, Leatherworking", 4, "Blackmaw Druid"},
-            },
-            -- trashaudit (2.0.14): in Blackmaw Hold's item ID block (Wowhead
-            -- Forever, OneForAll) but no drop recorded yet: "probably drops".
-            probableLoot = {
-                {287031, "Spearfisher's Waders", "Legs, Mail", 3},
-                {287035, "Demon Worshipper's Necklace", "Neck", 3},
+                -- trashconfirm (2.1.2, M 21 Nov 2026: "confirm the two trash
+                -- drops"): no longer "probably drops". Wowhead Forever's
+                -- "Dropped by": the Waders from Blackmaw Thralls and Swarming
+                -- Imps; the Necklace from most of the trash (Blackmaw
+                -- Berserker, Champion, Headhunter and Thrall, Legashi Slayer
+                -- and Subjugator, Depraved Owlbeast).
+                {287031, "Spearfisher's Waders", "Legs, Mail", 3, "Blackmaw Thrall / Swarming Imp"},
+                {287035, "Demon Worshipper's Necklace", "Neck", 3, "Blackmaw Hold trash"},
             },
         },
     },
@@ -7769,7 +7787,7 @@ FDJ.DB["Scholomance"] = {
         {
             name = "Kirtonos the Herald",
             npcID = 10506,
-            aliases = {"Kirtonos the Herald"},
+            aliases = {"Kirtonos the Herald", "Kirtonos"}, -- scholoids (2.1.2): the game's name of his fight
             description = "Summoned on the porch with the Blood of Innocents (Kirtonos the Herald).",
             loot = {
                 -- Kirtonos boss-specific drops (Forever Wowhead NPC 10506).
@@ -7845,7 +7863,7 @@ FDJ.DB["Scholomance"] = {
         {
             name = "Ras Frostwhisper",
             npcID = 10508,
-            aliases = {"Ras Frostwhisper"},
+            aliases = {"Ras Frostwhisper", "Ras Frostwhisperer"}, -- scholoids (2.1.2): the game's name of his fight
             description = "Lich in the Barov family vault. Use the Soulbound Keepsake on him for The Lich, Ras Frostwhisper.",
             loot = {
                 {16689, "Magister's Mantle", "Shoulder, Cloth", 3},
@@ -8992,6 +9010,11 @@ FDJ.DB["Dire Maul: West"] = {
             -- left off the Dungeon Tracker and not needed to complete a run.
             trackerHidden = true,
             optional = true,
+            -- warlockmount (2.1.2, M 21 Nov 2026: "the same text that we had
+            -- for the Paladin mount boss"): like Death Knight Darkreaver, his
+            -- own label in place of "Rare".
+            rare = true,
+            rareLabel = "Warlock Mount Quest Boss", -- in every language (FDJ.RareLabelText)
             aliases = {"Lord Hel'nurath"},
             description = "Summoned by warlocks in the pentagram near Immol'thar (Dreadsteed of Xoroth).",
             -- Red line under his name on the loot page.

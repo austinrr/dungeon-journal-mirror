@@ -241,6 +241,25 @@ local function ItemInfo(id)
     return name, link, quality
 end
 
+-- tierlink (2.1.2, M 20 Nov 2026: "why can't I shift click on tier 0.5"):
+-- an item's chat link from the game's C_Item.GetItemInfo (WoW Forever's
+-- client has no global GetItemInfo, so ItemInfo above gave no link and a
+-- Shift-click did nothing, on every Tier row). Not cached yet: asked for, and
+-- the next click has it (hovering the piece loads it too).
+local function ItemLink(id)
+    id = tonumber(id)
+    if not id then return nil end
+    local get = C_Item and C_Item.GetItemInfo
+    if type(get) == "function" then
+        local ok, _, link = pcall(get, id)
+        if ok and link then return link end
+    end
+    local _, link = ItemInfo(id)
+    if link then return link end
+    if C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then pcall(C_Item.RequestLoadItemDataByID, id) end
+    return nil
+end
+
 -- The set's name in the client's language: the "Lightforge Armor (0/8)"
 -- line of its chest piece's tooltip.
 local setNames, scanTip = {}, nil
@@ -456,7 +475,7 @@ local function MakeCell(parent)
     cell:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     cell:SetScript("OnClick", function(self)
         if IsModifiedClick and IsModifiedClick() and HandleModifiedItemClick then
-            local _, link = ItemInfo(self.itemID)
+            local link = ItemLink(self.itemID) -- tierlink (2.1.2)
             if link then HandleModifiedItemClick(link) end
             return
         end

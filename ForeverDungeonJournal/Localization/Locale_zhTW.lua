@@ -98,6 +98,7 @@ FDJ.Locales.zhTW = {
     ["LF_ENABLE"] = "啟用",
     ["LF_DISABLE"] = "停用",
     ["LF_MIN_LEVEL"] = "最低需要等級",
+    ["LF_LEVEL_RANGE"] = "等級範圍",
     ["OPT_UI"] = "一般",
     ["OPT_DISCORD_TEXT"] = "加入 Dungeon Journal 的 Discord，回報錯誤、分享新發現並取得最新消息。",
     ["OPT_DUNGEON_LIST"] = "地城列表",

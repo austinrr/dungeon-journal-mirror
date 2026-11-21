@@ -336,7 +336,25 @@ FDJ.DUNGEON_MAPS = {
     },
     ["Shaper's Terrace"] = {
         floors = { { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ShapersTerraceMap", texBottom = 683 / 1024 } },
-        bosses = {},
+        -- shaperpins (2.1.2, M 21 Nov 2026): the swirl by the small pond in the
+        -- south-west (his screenshot: "the entrance is on this whirlwind, not
+        -- the other one" - not the one on the west edge); its label below it
+        -- ("if you put it on top, you cover the map").
+        entrance = { floor = 1, x = 0.238, y = 0.693, angle = 0, labelPos = "bottom" },
+        -- shaperpins: where the bosses are, from Ed's numbered map on Discord
+        -- (21 Nov 2026), listed in his order 1-10.
+        bosses = {
+            { name = "Titanosaur",            floor = 1, x = 0.083, y = 0.404 }, -- 1, the Path of the Shaper
+            { name = "Cinder",                floor = 1, x = 0.138, y = 0.629 }, -- 2
+            { name = "Vitrix",                floor = 1, x = 0.510, y = 0.300 }, -- 3, Regrowth Vestibule
+            { name = "Izha'Rel and Tor'Rel",  floor = 1, x = 0.645, y = 0.387 }, -- 4
+            { name = "Direhorn Matriarch",    floor = 1, x = 0.846, y = 0.602 }, -- 5, by Isiz's Pillar
+            { name = "Thunderhoof",           floor = 1, x = 0.628, y = 0.736 }, -- 6
+            { name = "Bolt",                  floor = 1, x = 0.426, y = 0.702 }, -- 7
+            { name = "Venomridge",            floor = 1, x = 0.373, y = 0.624 }, -- 8
+            { name = "Snowtalon",             floor = 1, x = 0.107, y = 0.140 }, -- 9, Tribunal of Ages
+            { name = "Nanaya",                floor = 1, x = 0.734, y = 0.590 }, -- 10, Pillar of Assimilation
+        },
     },
 
     ["Gnomeregan"] = {
@@ -10073,6 +10091,16 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             e.label:ClearAllPoints()
             if ent.labelPos == "top" then
                 e.label:SetPoint("BOTTOM", e, "TOP", 0, 1)
+            elseif ent.labelPos == "bottom" then
+                -- shaperpins (2.1.2): under the swirl; at the map's edge it
+                -- runs inwards instead of off the map.
+                if ent.x < 0.08 then
+                    e.label:SetPoint("TOPLEFT", e, "BOTTOMLEFT", 0, -1)
+                elseif ent.x > 0.92 then
+                    e.label:SetPoint("TOPRIGHT", e, "BOTTOMRIGHT", 0, -1)
+                else
+                    e.label:SetPoint("TOP", e, "BOTTOM", 0, -1)
+                end
             elseif math.cos(rad) < -0.3 then
                 e.label:SetPoint("RIGHT", e, "LEFT", -3, 0)
             else
@@ -11719,7 +11747,11 @@ RefreshLoot = function()
             frame.bossLootNoteText:SetWordWrap(true)
         end
         frame.bossLootNoteText:SetText(L(boss.lootNote))
-        FDJ.WarningFont(frame.bossLootNoteText, true) -- warnfont: its font and colour
+        FDJ.WarningFont(frame.bossLootNoteText, true) -- warnfont: its font
+        -- bossred (2.1.2, M 21 Nov 2026: "leave the disclaimer on bosses red,
+        -- because blue here, it's hard to see"): the boss page's line keeps
+        -- its old red; the blue stays on the quest pages.
+        frame.bossLootNoteText:SetTextColor(0.69, 0.063, 0.063)
         frame.bossLootNoteText:Show()
     end
     -- rpgdone (2.0.8): under a hidden boss, "I already did this dungeon".

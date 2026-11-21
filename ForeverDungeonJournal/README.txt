@@ -1,4 +1,34 @@
-DungeonJournal 2.1.1
+DungeonJournal 2.1.2
+
+CHANGES IN 2.1.2 (the release after 2.1.1)
+- Tier Sets: Shift-click (and Ctrl-click) on a piece links it in chat (and
+  shows it on your character) again, Tier 0.5 included.
+- Blackmaw Hold: new rare, Sabella No-Eyes, with her drops (Truesight Rifle,
+  Furbolg Rib Protector).
+- Character Logs: a Zul'Farrak run with every boss down no longer stays
+  "Not finished" (Ruuzlu's death goes unseen, so the Chief's kill was not
+  counted as the last boss). Runs already saved like that are put right
+  the next time you log in.
+- Dungeon Tracker: killing Kirtonos the Herald or Ras Frostwhisper in
+  Scholomance no longer adds an extra skull (the game names their fights
+  "Kirtonos" and "Ras Frostwhisperer"). Runs already saved with those
+  skulls are put right the next time you log in.
+- Removed the "Use Amberhall's Soulstone" button (A Small Favor) that could
+  sit in the middle of the screen near the Twilight Thrall in the
+  Riverglades (reported on Discord by Syrlin).
+- Boss pages: the line under a boss's name (like Titanosaur's "Can drop 2
+  items") is red again; the blue was hard to read there.
+- Blackmaw Hold: Spearfisher's Waders and Demon Worshipper's Necklace are
+  confirmed trash drops (no longer "probably drops").
+- Dire Maul: West: Lord Hel'nurath is marked "Warlock Mount Quest Boss",
+  like Death Knight Darkreaver's "Paladin Mount Quest Boss".
+- Shaper's Terrace: its map now shows where each boss is, and the entrance
+  (on the swirl by the small pond in the south-west, its label under it).
+- Loot Filter: "Minimum required level" is now "Level range", two boxes
+  with a dash between them (from - to). Type 10 and 10 for the items of
+  level 10 only; leave a box empty for no limit on that side. Quest rewards
+  count at their quest's level ("Available from Level 40"). It also works
+  now on items the old box let through by mistake.
 
 CHANGES IN 2.1.1 (the release after 2.1.0)
 - Blackmaw Hold: Blackmaw Reclamation's chain now starts where it really

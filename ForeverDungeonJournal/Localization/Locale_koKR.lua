@@ -98,6 +98,7 @@ FDJ.Locales.koKR = {
     ["LF_ENABLE"] = "사용",
     ["LF_DISABLE"] = "사용 안 함",
     ["LF_MIN_LEVEL"] = "최소 요구 레벨",
+    ["LF_LEVEL_RANGE"] = "레벨 범위",
     ["OPT_UI"] = "일반",
     ["OPT_DISCORD_TEXT"] = "Dungeon Journal 디스코드에 참여해 버그를 제보하고, 새로운 발견을 공유하고, 최신 소식을 받아보세요.",
     ["OPT_DUNGEON_LIST"] = "던전 목록",

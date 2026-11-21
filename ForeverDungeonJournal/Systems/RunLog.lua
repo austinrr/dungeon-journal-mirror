@@ -760,8 +760,13 @@ local function EventEndsFight(run, kill, boss)
     local dungeon = run.dungeon or insideDungeon
     if kill.wb == boss.name or not kill.b then
         kill.b, kill.wb = boss.name, nil
-        if not boss.rare and IsFinal(dungeon, kill.n, kill.m, boss) then kill.f = 1 end
     end
+    -- ukorzfinal (2.1.2, a Zul'Farrak run reported "Not finished" with every
+    -- boss down, M 21 Nov 2026): the boss event of a fight whose partner died
+    -- hidden (Ruuzlu: Forever hides who died) named the kill first, so it was
+    -- never marked as the final boss's and the run could not end. The fight's
+    -- kill is its boss's, final boss included, however it was named.
+    if kill.b == boss.name and not boss.rare and IsFinal(dungeon, kill.n, kill.m or boss.name, boss) then kill.f = 1 end
     for _, partner in ipairs(boss.killWith) do
         local name, npc
         for _, v in ipairs(type(partner) == "table" and partner or { partner }) do
@@ -843,6 +848,12 @@ local function FixBossKills(run)
                 k.b = boss.name
                 k.r = boss.rare and 1 or nil
                 if not k.r and IsFinal(dungeon, k.n, k.m or boss.name, boss) then k.f = 1 end
+                changed = true
+            end
+            -- ukorzfinal (2.1.2): a final boss's kill saved without its mark
+            -- (Chief Ukorz Sandscalp's, above): marked now, so the run ends.
+            if boss and not k.f and not k.r and not boss.rare and IsFinal(dungeon, k.n, k.m or boss.name, boss) then
+                k.f = 1
                 changed = true
             end
             if not k.r then lastBoss = k end

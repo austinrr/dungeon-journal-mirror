@@ -1641,3 +1641,14 @@ zalfanpin / nargurkmove (2.1.1): Krol'dok Stronghold's map
 - Where Zalfan stands and where Nar'gurk is: the spots marked by M on the map, 20 Nov 2026
 - Zalfan Moonshadow's look (display 145448): the same Wowhead Forever page
 keyshortcut (2.1.1): Key Ingredients' note, the key opens a shortcut to the last boss (the upper side can be reached without it): M in game, 20 Nov 2026
+
+scholoids (2.1.2): Scholomance's boss events (Dungeon Tracker skulls for Kirtonos and Ras)
+- Forever's encounter IDs and names (2801-2813, 3055; "Kirtonos", "Ras Frostwhisperer"): the Forever client's DungeonEncounter table, build 1.60.1.70450 (wago.tools, as kept in Polestar, https://github.com/fitzforge/polestar)
+- The report: Zaaartan on Discord (20 Nov 2026), the two skulls came with Kirtonos and Ras
+
+trashconfirm (2.1.2): Blackmaw Hold's two "probably drops" confirmed
+- Spearfisher's Waders (Blackmaw Thrall, Swarming Imp): https://www.wowhead.com/forever/item=287031/spearfishers-waders
+- Demon Worshipper's Necklace (Legashi Slayer, Blackmaw Berserker, Depraved Owlbeast, Blackmaw Champion, Legashi Subjugator, Blackmaw Headhunter, Blackmaw Thrall): https://www.wowhead.com/forever/item=287035/demon-worshippers-necklace
+
+shaperpins (2.1.2): Shaper's Terrace map boss positions and entrance
+- Ed's numbered map and boss list on M's Discord (21 Nov 2026): 1 Titanosaur, 2 Cinder, 3 Vitrix, 4 Izha'Rel and Tor'Rel, 5 Direhorn Matriarch, 6 Thunderhoof, 7 Bolt, 8 Venomridge, 9 Snowtalon, 10 Nanaya

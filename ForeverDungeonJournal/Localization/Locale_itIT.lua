@@ -95,6 +95,7 @@ FDJ.Locales.itIT = {
     ["LF_ENABLE"] = "Attiva",
     ["LF_DISABLE"] = "Disattiva",
     ["LF_MIN_LEVEL"] = "Livello richiesto minimo",
+    ["LF_LEVEL_RANGE"] = "Intervallo di livelli",
     ["OPT_UI"] = "Generale",
     ["OPT_DISCORD_TEXT"] = "Unisciti al Discord di Dungeon Journal per segnalare bug, condividere nuove scoperte e ricevere le ultime novità.",
     ["OPT_DUNGEON_LIST"] = "Elenco spedizioni",

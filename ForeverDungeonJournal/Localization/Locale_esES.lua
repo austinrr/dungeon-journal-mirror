@@ -95,6 +95,7 @@ FDJ.Locales.esES = {
     ["LF_ENABLE"] = "Activar",
     ["LF_DISABLE"] = "Desactivar",
     ["LF_MIN_LEVEL"] = "Nivel requerido mínimo",
+    ["LF_LEVEL_RANGE"] = "Rango de niveles",
     ["OPT_UI"] = "General",
     ["OPT_DISCORD_TEXT"] = "Únete al Discord de Dungeon Journal para informar de errores, compartir nuevos descubrimientos y recibir las últimas noticias.",
     ["OPT_DUNGEON_LIST"] = "Lista de mazmorras",

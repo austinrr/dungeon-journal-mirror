@@ -95,6 +95,7 @@ FDJ.Locales.frFR = {
     ["LF_ENABLE"] = "Activer",
     ["LF_DISABLE"] = "Désactiver",
     ["LF_MIN_LEVEL"] = "Niveau requis minimum",
+    ["LF_LEVEL_RANGE"] = "Tranche de niveaux",
     ["OPT_UI"] = "Général",
     ["OPT_DISCORD_TEXT"] = "Rejoignez le Discord de Dungeon Journal pour signaler des bugs, partager de nouvelles découvertes et suivre les dernières nouvelles.",
     ["OPT_DUNGEON_LIST"] = "Liste des donjons",

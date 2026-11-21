@@ -98,6 +98,7 @@ FDJ.Locales.zhCN = {
     ["LF_ENABLE"] = "启用",
     ["LF_DISABLE"] = "停用",
     ["LF_MIN_LEVEL"] = "最低需要等级",
+    ["LF_LEVEL_RANGE"] = "等级范围",
     ["OPT_UI"] = "常规",
     ["OPT_DISCORD_TEXT"] = "加入 Dungeon Journal 的 Discord，报告错误、分享新发现并获取最新消息。",
     ["OPT_DUNGEON_LIST"] = "地下城列表",

@@ -1627,6 +1627,14 @@ do
             ruRU = "Босс квеста коня паладина", koKR = "성기사 탈것 퀘스트 보스",
             zhCN = "圣骑士坐骑任务首领", zhTW = "聖騎士坐騎任務首領",
         },
+        -- warlockmount (2.1.2): Lord Hel'nurath (Dire Maul: West)
+        ["Warlock Mount Quest Boss"] = {
+            deDE = "Hexenmeister-Reittierquest-Boss", frFR = "Boss quête monture démoniste",
+            esES = "Jefe misión montura brujo", esMX = "Jefe misión montura brujo",
+            itIT = "Boss destriero stregone", ptBR = "Chefe montaria de bruxo",
+            ruRU = "Босс квеста коня чернокнижника", koKR = "흑마법사 탈것 퀘스트 보스",
+            zhCN = "术士坐骑任务首领", zhTW = "術士坐騎任務首領",
+        },
         -- isalien (2.1.1): the Dungeon Set 2 (Tier 0.5) bosses' label (Isalien,
         -- Kormok, Mor Grayhoof, Jarien and Sothos, Theldren, Lord Valthalak)
         ["0.5 Quest Event"] = {
