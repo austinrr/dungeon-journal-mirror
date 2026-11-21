@@ -2192,7 +2192,29 @@ do
                     FDJ.StrokeIcon(b, b.icon, size)
                     b:SetFrameLevel(holder:GetFrameLevel() + 15)
                     b:ClearAllPoints()
-                    b:SetPoint("CENTER", holder, "TOPLEFT", pin.x * artW, -(pin.y * artH))
+                    -- pinclear (2.1.3, M 21 Nov 2026 on Uldaman's map: "make sure
+                    -- they don't overlap too much, but it's in the same room"):
+                    -- a quest's spot beside a boss's pin in the same room, and
+                    -- at any zoom moved just clear of the boss's ring
+                    local qx, qy = pin.x * artW, pin.y * artH
+                    local journal = _G.ForeverDungeonJournalFrame
+                    for _, m in ipairs((journal and journal.dungeonMapBossMarkers) or {}) do
+                        if m:IsShown() and m:GetParent() == holder then
+                            local okP, _, _, _, mx, my = pcall(m.GetPoint, m, 1)
+                            if okP and type(mx) == "number" and type(my) == "number" then
+                                my = -my
+                                local ring = ((m.border and m.border:GetWidth()) or (m:GetWidth() * 1.55)) * 0.42
+                                local need = ring + size * 0.36 + 2
+                                local dx, dy = qx - mx, qy - my
+                                local d = math.sqrt(dx * dx + dy * dy)
+                                if d < need then
+                                    if d < 0.5 then dx, dy, d = -1, 0, 1 end
+                                    qx, qy = mx + dx / d * need, my + dy / d * need
+                                end
+                            end
+                        end
+                    end
+                    b:SetPoint("CENTER", holder, "TOPLEFT", qx, -qy)
                     b:Show()
                 end
             end
@@ -2348,25 +2370,25 @@ do
     do
         local strings = {
             enUS = { ARROW_NEXT_SPAWN = "Not found? Next spot (%d/%d)", ARROW_USE_ITEM = "Use %s in your bags to start the quest", ARROW_DISTANCE = "%d yds", ARROW_TIP_MOVE = "Drag to move.", ARROW_TIP_HIDE = "Shift + right-click to hide the arrow.",
-                ARROW_BOAT = "Take the boat to %s", ARROW_ZEPPELIN = "Take the zeppelin to %s", ARROW_FLY = "Fly to %s" },
+                ARROW_BOAT = "Take the boat to %s", ARROW_ZEPPELIN = "Take the zeppelin to %s", ARROW_FLY = "Fly to %s", ARROW_FLY_FROM = "Fly from %s to %s" },
             deDE = { ARROW_NEXT_SPAWN = "Nicht gefunden? Nächster Ort (%d/%d)", ARROW_USE_ITEM = "Benutze %s in deinen Taschen, um die Quest anzunehmen", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Ziehen zum Verschieben.", ARROW_TIP_HIDE = "Umschalt + Rechtsklick blendet den Pfeil aus.",
-                ARROW_BOAT = "Nimm das Schiff nach %s", ARROW_ZEPPELIN = "Nimm den Zeppelin nach %s", ARROW_FLY = "Flieg nach %s" },
+                ARROW_BOAT = "Nimm das Schiff nach %s", ARROW_ZEPPELIN = "Nimm den Zeppelin nach %s", ARROW_FLY = "Flieg nach %s", ARROW_FLY_FROM = "Flieg von %s nach %s" },
             frFR = { ARROW_NEXT_SPAWN = "Introuvable ? Endroit suivant (%d/%d)", ARROW_USE_ITEM = "Utilisez %s dans vos sacs pour commencer la quête", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Faites glisser pour déplacer.", ARROW_TIP_HIDE = "Maj + clic droit pour masquer la flèche.",
-                ARROW_BOAT = "Prenez le bateau pour %s", ARROW_ZEPPELIN = "Prenez le zeppelin pour %s", ARROW_FLY = "Volez vers %s" },
+                ARROW_BOAT = "Prenez le bateau pour %s", ARROW_ZEPPELIN = "Prenez le zeppelin pour %s", ARROW_FLY = "Volez vers %s", ARROW_FLY_FROM = "Volez de %s vers %s" },
             esES = { ARROW_NEXT_SPAWN = "¿No está? Siguiente lugar (%d/%d)", ARROW_USE_ITEM = "Usa %s de tus bolsas para empezar la misión", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arrastra para mover.", ARROW_TIP_HIDE = "Mayús + clic derecho para ocultar la flecha.",
-                ARROW_BOAT = "Toma el barco a %s", ARROW_ZEPPELIN = "Toma el zepelín a %s", ARROW_FLY = "Vuela a %s" },
+                ARROW_BOAT = "Toma el barco a %s", ARROW_ZEPPELIN = "Toma el zepelín a %s", ARROW_FLY = "Vuela a %s", ARROW_FLY_FROM = "Vuela de %s a %s" },
             itIT = { ARROW_NEXT_SPAWN = "Non trovato? Prossimo punto (%d/%d)", ARROW_USE_ITEM = "Usa %s nelle borse per iniziare la missione", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Trascina per spostare.", ARROW_TIP_HIDE = "Maiusc + clic destro per nascondere la freccia.",
-                ARROW_BOAT = "Prendi la nave per %s", ARROW_ZEPPELIN = "Prendi lo zeppelin per %s", ARROW_FLY = "Vola a %s" },
+                ARROW_BOAT = "Prendi la nave per %s", ARROW_ZEPPELIN = "Prendi lo zeppelin per %s", ARROW_FLY = "Vola a %s", ARROW_FLY_FROM = "Vola da %s a %s" },
             ptBR = { ARROW_NEXT_SPAWN = "Não achou? Próximo local (%d/%d)", ARROW_USE_ITEM = "Use %s nas bolsas para começar a missão", ARROW_DISTANCE = "%d m", ARROW_TIP_MOVE = "Arraste para mover.", ARROW_TIP_HIDE = "Shift + clique com o botão direito para ocultar a seta.",
-                ARROW_BOAT = "Pegue o barco para %s", ARROW_ZEPPELIN = "Pegue o zepelim para %s", ARROW_FLY = "Voe para %s" },
+                ARROW_BOAT = "Pegue o barco para %s", ARROW_ZEPPELIN = "Pegue o zepelim para %s", ARROW_FLY = "Voe para %s", ARROW_FLY_FROM = "Voe de %s para %s" },
             ruRU = { ARROW_NEXT_SPAWN = "Не нашли? Следующее место (%d/%d)", ARROW_USE_ITEM = "Используйте %s из сумки, чтобы взять задание", ARROW_DISTANCE = "%d м", ARROW_TIP_MOVE = "Перетащите, чтобы переместить.", ARROW_TIP_HIDE = "Shift + щелчок правой кнопкой, чтобы скрыть стрелку.",
-                ARROW_BOAT = "Корабль: %s", ARROW_ZEPPELIN = "Дирижабль: %s", ARROW_FLY = "Полёт: %s" },
+                ARROW_BOAT = "Корабль: %s", ARROW_ZEPPELIN = "Дирижабль: %s", ARROW_FLY = "Полёт: %s", ARROW_FLY_FROM = "Полёт: %s → %s" },
             koKR = { ARROW_NEXT_SPAWN = "없나요? 다음 장소 (%d/%d)", ARROW_USE_ITEM = "가방의 %s|1을;를; 사용해 퀘스트를 시작하세요", ARROW_DISTANCE = "%d미터", ARROW_TIP_MOVE = "드래그하여 이동합니다.", ARROW_TIP_HIDE = "Shift + 오른쪽 클릭으로 화살표를 숨깁니다.",
-                ARROW_BOAT = "%s행 배를 타세요", ARROW_ZEPPELIN = "%s행 비행선을 타세요", ARROW_FLY = "%s(으)로 비행하세요" },
+                ARROW_BOAT = "%s행 배를 타세요", ARROW_ZEPPELIN = "%s행 비행선을 타세요", ARROW_FLY = "%s(으)로 비행하세요", ARROW_FLY_FROM = "%s에서 %s(으)로 비행하세요" },
             zhCN = { ARROW_NEXT_SPAWN = "没找到？下一个地点 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以开始任务", ARROW_DISTANCE = "%d码", ARROW_TIP_MOVE = "拖动以移动。", ARROW_TIP_HIDE = "Shift+右键点击隐藏箭头。",
-                ARROW_BOAT = "乘船前往%s", ARROW_ZEPPELIN = "乘坐飞艇前往%s", ARROW_FLY = "飞往%s" },
+                ARROW_BOAT = "乘船前往%s", ARROW_ZEPPELIN = "乘坐飞艇前往%s", ARROW_FLY = "飞往%s", ARROW_FLY_FROM = "从%s飞往%s" },
             zhTW = { ARROW_NEXT_SPAWN = "沒找到？下一個地點 (%d/%d)", ARROW_USE_ITEM = "使用背包中的%s以開始任務", ARROW_DISTANCE = "%d碼", ARROW_TIP_MOVE = "拖曳以移動。", ARROW_TIP_HIDE = "Shift+右鍵點擊隱藏箭頭。",
-                ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s" },
+                ARROW_BOAT = "搭船前往%s", ARROW_ZEPPELIN = "搭乘飛艇前往%s", ARROW_FLY = "飛往%s", ARROW_FLY_FROM = "從%s飛往%s" },
         }
         local more = {
             enUS = { ARROW_TALK_TO = "Talk to %s", ARROW_DIVE_DOWN = "Dive straight down", ARROW_PICK_UP_BOTTOM = "Pick it up at the bottom", ARROW_SWIM_UNDER = "Swim underwater", ARROW_PICK_UP = "Pick it up", ARROW_GET_TO = "Get to %s", ARROW_FLYING = "Flying to %s", ARROW_BELOW = "Below ground: find the way down", ARROW_ABOVE = "Upstairs: find the way up", ARROW_TIP_MAP = "Click to show it on the map.",
@@ -2791,13 +2813,84 @@ do
         end
         return flights[continent]
     end
+    -- fpgossip (2.1.3, M 21 Nov 2026 at Aerie Peak: the arrow said "Fly to
+    -- Menethil Harbor" and led away from Aerie Peak's gryphon master, "it
+    -- should just send me to the flight path here"): the flight map is not
+    -- the only way a flight point is found. Talking to its flight master
+    -- finds it ("New flight path discovered!"), even for a quest, and one
+    -- found that way (Gryphon Master Talonaxe, a quest giver) was not known
+    -- here until his flight map was opened. On that message, or a gossip
+    -- with a flight option: this side's flight point nearest to the player,
+    -- within 100 yards, is kept as found.
+    function FDJ.FlightPathFoundHere()
+        if not (C_TaxiMap and type(C_TaxiMap.GetTaxiNodesForMap) == "function" and C_Map and type(C_Map.GetBestMapForUnit) == "function") then return end
+        local px, py, here = PlayerWorld()
+        if not (px and here) then return end
+        local okMap, mapID = pcall(C_Map.GetBestMapForUnit, "player")
+        mapID = okMap and Number(mapID) or nil
+        local faction, best, bestYards, guard = Faction(), nil, nil, 0
+        while mapID and guard < 4 do
+            local okN, nodes = pcall(C_TaxiMap.GetTaxiNodesForMap, mapID)
+            for _, node in ipairs((okN and type(nodes) == "table") and nodes or {}) do
+                if type(node) == "table" and type(node.name) == "string" and type(node.position) == "table"
+                    and OurSide(node.faction, faction) and not Found(node) then
+                    local nx, ny = node.position.x, node.position.y
+                    if (nx == nil or ny == nil) and node.position.GetXY then nx, ny = node.position:GetXY() end
+                    local wx, wy, c = World(mapID, Number(nx), Number(ny))
+                    if wx and c == here then
+                        local d = Yards(px, py, wx, wy)
+                        if d <= 100 and (not bestYards or d < bestYards) then best, bestYards = node, d end
+                    end
+                end
+            end
+            local okI, info = pcall(C_Map.GetMapInfo, mapID)
+            mapID = okI and type(info) == "table" and Number(info.parentMapID) or nil
+            if mapID == 0 then mapID = nil end
+            guard = guard + 1
+        end
+        if not best then return end
+        FoundFlights()[string.lower(best.name)] = true
+        flights, FDJ.fpMissing = nil, nil
+        if FDJ.FollowRoutes then pcall(FDJ.FollowRoutes) end
+    end
+    -- "New flight path discovered!"
+    function FDJ.FlightPathHeard(...)
+        local text = _G.ERR_NEWTAXIPATH
+        if type(text) ~= "string" then return end
+        for i = 1, select("#", ...) do
+            if select(i, ...) == text then return FDJ.FlightPathFoundHere() end
+        end
+    end
+    -- A gossip with a flight option (the flight icon, or type "taxi")
+    function FDJ.FlightMasterGossip()
+        local taxi = false
+        if C_GossipInfo and type(C_GossipInfo.GetOptions) == "function" then
+            local ok, options = pcall(C_GossipInfo.GetOptions)
+            for _, o in ipairs((ok and type(options) == "table") and options or {}) do
+                local icon = type(o) == "table" and o.icon or nil
+                if icon == 132057 or (type(o) == "table" and o.type == "taxi")
+                    or (type(icon) == "string" and string.find(string.lower(icon), "taxi", 1, true)) then taxi = true break end
+            end
+        end
+        if not taxi and type(GetGossipOptions) == "function" then
+            local list = { pcall(GetGossipOptions) }
+            if list[1] then
+                for i = 3, #list, 2 do
+                    if list[i] == "taxi" then taxi = true break end
+                end
+            end
+        end
+        if taxi then FDJ.FlightPathFoundHere() end
+    end
     do
         -- A flight point found, or the flight map opened: read them again.
         local watch = CreateFrame("Frame")
-        for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "TAXIMAP_OPENED", "TAXIMAP_CLOSED", "TAXI_NODE_STATUS_CHANGED", "UI_INFO_MESSAGE" }) do
+        for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "TAXIMAP_OPENED", "TAXIMAP_CLOSED", "TAXI_NODE_STATUS_CHANGED", "UI_INFO_MESSAGE", "GOSSIP_SHOW" }) do
             pcall(watch.RegisterEvent, watch, event)
         end
-        watch:SetScript("OnEvent", function(_, event)
+        watch:SetScript("OnEvent", function(_, event, ...)
+            if event == "GOSSIP_SHOW" then pcall(FDJ.FlightMasterGossip) return end -- fpgossip
+            if event == "UI_INFO_MESSAGE" then pcall(FDJ.FlightPathHeard, ...) end -- fpgossip
             if event == "TAXIMAP_OPENED" then FDJ.taxiMapOpen = true end -- fpfix
             if event == "TAXIMAP_CLOSED" then FDJ.taxiMapOpen = nil end
             if event == "TAXIMAP_OPENED" or event == "TAXI_NODE_STATUS_CHANGED" then pcall(RecordFlightMap) end
@@ -3031,6 +3124,22 @@ do
         if not (C_Map and type(C_Map.GetBestMapForUnit) == "function") then return nil end
         local ok, mapID = pcall(C_Map.GetBestMapForUnit, "player")
         return ok and Number(mapID) or nil
+    end
+    -- swimstraight (2.1.3, M 21 Nov 2026 on Stranglethorn's Savage Coast,
+    -- the arrow to Enemies in the Water leading him up the coast: "it
+    -- should just point me straight into the water"): the walking net keeps
+    -- to the land, so a place out in the sea was reached round by the
+    -- shore. A spot marked swim is swum to in a straight line from its own
+    -- zone, within SWIM yards (further off, the roads are quicker).
+    -- (on Way: this scope is at Lua's limit of locals)
+    function Way.SwimStraight(entry, plan, px, py)
+        local spot = type(entry) == "table" and entry.spot or nil
+        if type(spot) ~= "table" or not spot.swim or type(plan) ~= "table" then return false end
+        if plan.via or plan.fly or plan.ride or not (plan.x and plan.y and px and py) then return false end
+        if PlayerMap() ~= tonumber(spot.mapID) then return false end
+        local goal = SpotWorld(spot)
+        if not goal or Yards(goal[1], goal[2], plan.x, plan.y) > 80 then return false end
+        return Yards(px, py, plan.x, plan.y) <= 1000
     end
     -- What a flight point costs on top when it is not on the given map
     -- (nil map, or a flight point whose maps are not known: nothing).
@@ -3574,7 +3683,7 @@ do
         end
         entry.fly = a and { a, b } or nil
         if a then
-            plan.final, plan.fly = nil, b
+            plan.final, plan.fly, plan.flyFrom = nil, b, a -- flyfrom (2.1.3)
             if Yards(px, py, a[1], a[2]) <= AT_MASTER then
                 plan.atMaster = true
                 return plan
@@ -4927,7 +5036,7 @@ do
                             if w and Yards(w[1], w[2], b[1], b[2]) <= 60 then
                                 local flown = Yards(px, py, a[1], a[2]) + Yards(a[1], a[2], b[1], b[2]) / FLY_SPEED + FLY_EXTRA + route.fdjRest[i]
                                 if flown < walk * FLY_WORTH then
-                                    direct = { here = region, fly = b }
+                                    direct = { here = region, fly = b, flyFrom = a } -- flyfrom (2.1.3)
                                     if Yards(px, py, a[1], a[2]) <= AT_MASTER then
                                         direct.atMaster = true
                                     else
@@ -4999,7 +5108,8 @@ do
             end
         end
         if not lift and not road and FDJ.WalkNetAim and plan.x and plan.y
-            and not (Way.ROADS[PlayerMap() or 0] or {}).noNet then -- tbroads
+            and not (Way.ROADS[PlayerMap() or 0] or {}).noNet -- tbroads
+            and not Way.SwimStraight(entry, plan, px, py) then -- swimstraight (2.1.3)
             road, roadRest = FDJ.WalkNetAim(entry, plan.x, plan.y, px, py, here, plan.via and Yards(px, py, plan.x, plan.y) <= 150 or false)
         end
         plan.road = road and true or nil
@@ -5173,6 +5283,12 @@ do
     -- file is at Lua's limit of 200 locals in one scope.
     local function Doing(plan)
         if not plan then return "" end
+        -- flyfrom (2.1.3, M 21 Nov 2026 at Aerie Peak, "Fly to Menethil
+        -- Harbor": "I don't know which flight path it wants me to take"):
+        -- on the way to the flight master, where the flight leaves from too.
+        if plan.fly and plan.flyFrom and not plan.atMaster and type(plan.flyFrom.name) == "string" and plan.flyFrom.name ~= "" then
+            return "|TInterface\\Cursor\\Taxi:0|t " .. FDJ.L("ARROW_FLY_FROM", plan.flyFrom.name, plan.fly.name or "")
+        end
         if plan.fly then return "|TInterface\\Cursor\\Taxi:0|t " .. FDJ.L("ARROW_FLY", plan.fly.name or "") end
         local ride = plan.ride
         if not ride then -- arrowvia: the point on the way
@@ -5387,23 +5503,9 @@ do
                 f.title:SetText((on and "" or (f.fdjMark or "")) .. (f.fdjName or ""))
                 -- npcbig (2.0.16): the picture is bigger (32, was 22), left of the
                 -- name and level with it; a short name moves it out past the
-                -- distance line under it, so the two never overlap.
-                local half = (tonumber(f.title:GetStringWidth()) or 110) / 2
-                local out = math.max(0, ((tonumber(f.distance:GetStringWidth()) or 0) / 2) - half)
-                f.npc:ClearAllPoints()
-                f.npc:SetPoint("RIGHT", f.title, "LEFT", -3 - out, 0)
-                -- The picture and the name take the click too, not only the arrow.
-                -- (The picture sits left of the name, past the frame's own
-                -- edge when the name is long: the hit area reaches out to it.)
-                if f.SetHitRectInsets and not (InCombatLockdown and InCombatLockdown()) then
-                    if on then
-                        local tall = tonumber(f.title:GetStringHeight()) or 14
-                        f:SetHitRectInsets(75 - (half + out + 39), 75 - (half + 2), 0,
-                            math.max(0, math.floor(84 - (53 + tall / 2 + 18))))
-                    else
-                        f:SetHitRectInsets(49, 49, 0, 32)
-                    end
-                end
+                -- line under it (FDJ.ArrowPlacePicture), so the two never overlap.
+                f.fdjPicKey = nil
+                FDJ.ArrowPlacePicture(f, on)
                 -- npchover (2.0.16, picture only 2.0.17): the mouse already on the
                 -- arrow when the NPC comes in reach (or goes): the next frame's
                 -- check picks the glow (on the picture) or the tooltip again,
@@ -5529,7 +5631,25 @@ do
                             f.npc:SetTexCoord(0, 1, 0, 1)
                             drawn = pcall(SetPortraitTextureFromCreatureDisplayID, f.npc, display)
                         end
-                        if not drawn then
+                        -- objectmark (2.1.3, M 21 Nov 2026 at the Battered Dwarven
+                        -- Skeleton: "when I get close to items on the floor that I have
+                        -- to click to complete the quest ... I get the raid mark. I don't
+                        -- like it. The raid mark should just be the yellow question mark
+                        -- to turn in the quest itself"): a thing to click, no NPC (none
+                        -- of that name in FDJ.ARROW_NPC_IDS; a raid mark can't go on
+                        -- it): the quest's own mark, big, in place of the picture - the
+                        -- yellow ? where it is handed in, the ! where it starts, the
+                        -- blue ? of a repeatable - and nothing where it is only clicked.
+                        if not drawn and not npcID then
+                            local art = type(f.fdjMark) == "string" and f.fdjMark:match("^|T(.-):") or nil
+                            if art then
+                                f.npc:SetTexture(art)
+                                f.npc:SetTexCoord(0, 1, 0, 1)
+                                f.npc:Show()
+                            else
+                                f.npc:Hide()
+                            end
+                        elseif not drawn then
                             local index = entry.spot.raidMarkIndex or RaidMarkIndexForTarget(entry.spot)
                             if tonumber(index) then
                                 f.npc:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. tonumber(index))
@@ -5654,6 +5774,16 @@ do
             f.hearth:SetText("")
             turn = nil
         end
+        -- swimplace (2.1.3, M 21 Nov 2026 swimming to the Drowned City's
+        -- cavern for Locating the Lost City: "It should say swim underwater,
+        -- by the way"): a place under water that is no thing to pick up
+        -- (spot.underwater): swimming within 150 yards of it, "Swim
+        -- underwater" under the yards.
+        if entry.spot.underwater and not entry.spot.pickUp and not inside
+            and not (type(entry.spot.goalLines) == "table") and distance and distance <= 150
+            and type(IsSwimming) == "function" and select(2, pcall(IsSwimming)) == true then
+            f.route:SetText("|cff8fd0ff" .. FDJ.L("ARROW_SWIM_UNDER") .. "|r")
+        end
         -- upstairs (2.0.13, M 18 Nov 2026 at Kegan Darkmar, on the upper floor
         -- of the camp's big house: "if the arrow could understand that we
         -- need to get upstairs"): the game tells an addon no height, so a
@@ -5691,6 +5821,7 @@ do
             f.distance:SetText(((f.distance:GetText() or "") ~= "" and ((f.distance:GetText() or "") .. "\n") or "")
                 .. "|cffff8040" .. FDJ.L(entry.spot.noteKey, entry.spot.noteArg) .. "|r")
         end
+        if f.fdjNpcOn then FDJ.ArrowPlacePicture(f, true) end -- picgap (2.1.3)
         if turn then
             if f.arrow.SetRotation then f.arrow:SetRotation(turn) end
             f.arrow:Show()
@@ -6162,14 +6293,19 @@ do
         -- repeaticon (2.0.44): the arrow to a repeatable quest: the blue ?
         local repeatOnly = FDJ.IsRepeatableQuest ~= nil and pick.spot.fdjAutoQuest ~= nil
             and FDJ.IsRepeatableQuest(pick.spot.fdjAutoQuest)
+        -- sharpmark (2.1.3, M 21 Nov 2026 at the Battered Dwarven Skeleton:
+        -- "the question mark is so low quality though"): the arrow's ? and !
+        -- are the journal's own drawings (Media/ArrowTurnIn, ArrowPickUp,
+        -- ArrowRepeatable, 128 x 128), sharp at the picture's size too
+        -- (objectmark), in place of the game's 16 x 16 gossip marks.
         if repeatOnly and (pick.spot.turnIn or quest) then
-            mark = "|T" .. FDJ.REPEATABLE_QUEST_TEXTURE .. ":0|t "
+            mark = "|TInterface\\AddOns\\ForeverDungeonJournal\\Media\\ArrowRepeatable:0|t "
         elseif pick.spot.goTo then
             mark = "" -- gotomark
         elseif pick.spot.turnIn then
-            mark = "|TInterface\\GossipFrame\\ActiveQuestIcon:0|t "
+            mark = "|TInterface\\AddOns\\ForeverDungeonJournal\\Media\\ArrowTurnIn:0|t "
         elseif quest then
-            mark = "|TInterface\\GossipFrame\\AvailableQuestIcon:0|t "
+            mark = "|TInterface\\AddOns\\ForeverDungeonJournal\\Media\\ArrowPickUp:0|t "
         end
         f.fdjMark, f.fdjName = mark, (quest or SpotName(pick.spot))
         f.fdjNpcOn, f.fdjNpcUnit, f.fdjNpcAt = nil, nil, nil
@@ -6260,6 +6396,48 @@ do
         copy.skipQuest = skipQuest -- skipnow (2.0.13): the Route's quest the arrow's "Skip for now" leaves off
         follows[source] = { spot = copy, source = source, key = key }
         Choose()
+    end
+    -- picgap (2.1.3, M 21 Nov 2026 at the Battered Dwarven Skeleton, "Talk to
+    -- Battered Dwarven Skeleton" running under the ?: "the little green text
+    -- should never overlap with portraits or question mark icons"): the
+    -- picture (32 high, level with the name) reaches down into the first line
+    -- under the name; it stands left of that line, measured every frame (the
+    -- yards become "Talk to <name>" once there, after the picture came).
+    -- The picture and the name take the click too, not only the arrow (the
+    -- picture sits left of the name, past the frame's own edge when the name
+    -- is long: the hit area reaches out to it; not in combat).
+    function FDJ.ArrowPlacePicture(f, on)
+        if not (f and f.npc and f.title and f.distance) then return end
+        local half = (tonumber(f.title:GetStringWidth()) or 110) / 2
+        local wide = 0
+        if on then
+            if not f.fdjMeasure then
+                f.fdjMeasure = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+                f.fdjMeasure:Hide()
+            end
+            local first = (f.distance:GetText() or ""):match("^([^\n]*)") or ""
+            if first ~= f.fdjMeasureText then
+                f.fdjMeasure:SetText(first)
+                f.fdjMeasureText, f.fdjMeasureWide = first, tonumber(f.fdjMeasure:GetStringWidth()) or 0
+            end
+            wide = f.fdjMeasureWide or 0
+        end
+        local out = math.max(0, math.floor(wide / 2 - half + 3.5))
+        local key = (on and "on" or "off") .. ":" .. math.floor(half + 0.5) .. ":" .. out
+        if key == f.fdjPicKey then return end
+        f.npc:ClearAllPoints()
+        f.npc:SetPoint("RIGHT", f.title, "LEFT", -3 - out, 0)
+        if f.SetHitRectInsets then
+            if InCombatLockdown and InCombatLockdown() then return end -- (tried again next frame)
+            if on then
+                local tall = tonumber(f.title:GetStringHeight()) or 14
+                f:SetHitRectInsets(75 - (half + out + 39), 75 - (half + 2), 0,
+                    math.max(0, math.floor(84 - (53 + tall / 2 + 18))))
+            else
+                f:SetHitRectInsets(49, 49, 0, 32)
+            end
+        end
+        f.fdjPicKey = key
     end
     function FDJ.WaypointArrowTarget()
         return shown and shown.spot or nil, shown and shown.source or nil

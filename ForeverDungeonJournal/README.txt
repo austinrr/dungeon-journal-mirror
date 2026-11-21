@@ -1,4 +1,100 @@
-DungeonJournal 2.1.2
+DungeonJournal 2.1.3
+
+CHANGES IN 2.1.3 (the release after 2.1.2)
+- Find the Gems (Restoring the Necklace chain): a warning line at the top
+  says "Complete this quest before killing the last boss." Translated into
+  all languages.
+- Run tracker: Reset asks "Reset the tracker?" in the game's popup again on
+  keyboard and mouse: it asked for a second click whenever the game's
+  controller setting was on, even with no controller there. With a
+  controller connected, the same question with Yes / No in a little window
+  of the journal's own.
+- Uldaman: Revelosh's Spaulders, Armguards, Boots and Gloves and the Ancient
+  Stone Keeper's Cragfists show <Random enchantment>, like the Archaedic
+  Stone.
+- Uldaman's map: the Obsidian Sentinel now has his pin, in Echomok Cavern
+  by the back entrance.
+- Uldaman's map: the quest marks of The Hidden Chamber, The Lost Dwarves and
+  The Lost Tablets of Will are now in their rooms, beside Ironaya, the Lost
+  Dwarves and Galgann Firehammer. On every dungeon map a quest mark is kept
+  clear of a boss's pin at any zoom.
+- Home page: "Forever Dungeons Only" is turned off once for everyone with
+  this update. Some players were seeing only WoW Forever's dungeons: an
+  older version turned it on with a click on the WoW Forever emblem, and
+  the emblem no longer turns it off. It's still in Options if you want it.
+- Home page, "Forever Dungeons Only" on: the page turns WoW Forever blue and
+  the emblem at the top left becomes the WoW Forever logo on its blue
+  background. Its tooltip says "Forever Only View", and a right click on it
+  turns the view off. Translated.
+- Run tracker, Uldaman (Alliance): the run now ends when every boss is
+  dead. The Lost Dwarves, friendly to the Alliance and not on its tracker,
+  were still counted, so the run never ended. A run left open by this
+  ends a few seconds after you log in or /reload.
+- Character Logs: Alliance characters' Uldaman runs no longer list The Lost
+  Dwarves (friendly to the Alliance).
+- Options > Quests: "Hide completed quests" leaves the quests you've handed
+  in out of a dungeon's quest list, so you only see what's left to do. The
+  dungeon list still counts them. Off by default. Translated.
+- Uldaman, Obsidian Sentinel: a red line under its name says Blizzard has
+  removed its loot for now (players found an efficient gold farm with it),
+  and its loot is greyed out. Translated.
+- Loot filter, Rogue: one-hand axes are no longer greyed out. Rogues can use
+  them in WoW Forever.
+- Stratholme: Egan's The Restless Souls now needs Caretaker Alen's The
+  Restless Souls first, as a step of its chain. It was shown as an optional
+  introduction, but Egan only offers his quest after it.
+- Opening a dungeon from a search result, the tracker or an item's tooltip
+  builds its page once, straight on the right tab and boss (it built it up
+  to three times). Faster, and it no longer stops with "script ran too
+  long" when opened in combat.
+- Stratholme: Baron Rivendare's loot now has Deathcharger's Reins, his
+  mount, at the top left with "Extremely rare drop" in its tooltip, and
+  the Runeblade of Baron Rivendare beside it at the top right. Translated.
+- Quest items: the line under an item's name that says where to find it
+  is now translated into all languages everywhere (many were still English
+  only), with the game's own names for places, enemies and objects.
+- Locating the Lost City (Horde): its map spot is now on the cavern
+  entrance, 21.8, 27.6 (it was a little to the north).
+- The Shattered Necklace (Restoring the Necklace chain): no longer marked as
+  a Dungeon Chain Step. The necklace also drops from the elite troggs and
+  Shadowforge dwarves outside Uldaman, and its page says so. Translated into
+  all languages.
+- A Sign of Hope, Amulet of Secrets and Prospect of Faith (The Lost Tablets
+  of Will chain) and Necklace Recovery (Horde) are no longer marked as
+  Dungeon Chain Steps: they are done outside Uldaman. A Sign of Hope and
+  Amulet of Secrets have a warning line at the top: "This is completed
+  OUTSIDE the instance." Translated into all languages.
+- Solution to Doom: a warning line at the top says the Tablet of Ryun'eh is
+  in the Ancient Chest outside the instance, and its Notes show a minimap
+  picture of the excavation caves with the tablet's icon on the chest's
+  place. Amulet of Secrets shows the same picture with Hammertoe's Amulet on
+  Magregan Deepshadow's place. Translated into all languages.
+- Reclaimed Treasures: a warning line at the top says the treasure is in a
+  chest outside the instance (both factions), and the Alliance quest's Notes
+  show a minimap picture with Krom Stoutarm's Treasure on the chest's place.
+  Translated into all languages.
+- Quests with a minimap picture: a note with a red arrow next to the item
+  says "Click the item to see location". Clicking the item takes you down to
+  the picture. Translated.
+- Uldaman Reagent Run (both factions): a warning line at the top says the
+  Magenta Fungus Caps can also be picked up outside the dungeon. Translated
+  into all languages.
+- Hammertoe Grez (A Sign of Hope, Amulet of Secrets): Show on Map now marks
+  where he really stands, about 160 yards into the excavation tunnel, not
+  the cave mouth.
+- Uldaman: a warning line at the top of The Shattered Necklace ("Farm the
+  elites outside Uldaman for the necklace.") and of Agmond's Fate ("This is
+  completed in the area outside the dungeon."). Translated into
+  all languages.
+- Power Stones: its note is now a warning line at the top: the power stones
+  can also drop from elite dwarves outside the dungeon. Translated into all
+  languages.
+- Mallet of Zul'Farrak page: one entry now, no quest chain. The objective
+  is killing Qiaga the Keeper for the Sacred Mallet (Show on Map), then
+  using it at the altar on top of Jintha'Alor (Show on Map). No "Pick it up",
+  no Starts at, and no In Dungeon mark on its objective. A red line at the
+  top says there is no quest to pick up, just kill and loot. Translated into
+  all languages.
 
 CHANGES IN 2.1.2 (the release after 2.1.1)
 - Tier Sets: Shift-click (and Ctrl-click) on a piece links it in chat (and

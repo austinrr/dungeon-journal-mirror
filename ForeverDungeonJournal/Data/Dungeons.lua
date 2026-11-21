@@ -4392,7 +4392,6 @@ FDJ.DB["Uldaman"] = {
         requires = 30,
         rewardChoice = true,
         rewardItems = {{9522, "Energized Stone Circle", 2}, {10358, "Duracin Bracers", 2}, {10359, "Everlast Boots", 2}, {270055, "Charged Leather Bracers", 2}},
-        note = "The power stones drop from Shadowforge dwarves in the outer cave.",
         turnin = "Rigglefuzz, Badlands",
         liveXPFallback = 3500,
     },
@@ -4583,10 +4582,10 @@ FDJ.DB["Uldaman"] = {
             aliases = {"Revelosh"},
             description = "In the cave before Ironaya's chamber. Drops The Shaft of Tsol for Staff of Prehistoria.",
             loot = {
-                {9389, "Revelosh's Spaulders", "Shoulder, Leather", 3},
-                {9388, "Revelosh's Armguards", "Wrist, Mail", 3},
-                {9387, "Revelosh's Boots", "Feet, Plate", 3},
-                {9390, "Revelosh's Gloves", "Hands, Cloth", 3},
+                {9389, "Revelosh's Spaulders", "Shoulder, Leather", 3, "", "RANDOM_ENCHANT"},
+                {9388, "Revelosh's Armguards", "Wrist, Mail", 3, "", "RANDOM_ENCHANT"},
+                {9387, "Revelosh's Boots", "Feet, Plate", 3, "", "RANDOM_ENCHANT"},
+                {9390, "Revelosh's Gloves", "Hands, Cloth", 3, "", "RANDOM_ENCHANT"},
             },
         },
         {
@@ -4627,6 +4626,12 @@ FDJ.DB["Uldaman"] = {
             name = "Obsidian Sentinel",
             npcID = 7023,
             aliases = {"Obsidian Sentinel"},
+            -- lootremoved (2.1.3, M 21 Nov 2026): Blizzard took its loot
+            -- away for now (a gold farm): the red line under its name, and
+            -- its loot greyed out like gear the Loot Filter rules out
+            -- (Systems/LootFilter.lua).
+            lootNote = "LOOT_NOTE_LOOT_REMOVED",
+            lootRemoved = true,
             description = "Level 42 mechanical guardian near the back entrance to Uldaman, after Ironaya. Drops the Obsidian Power Source for the Mage quest Power in Uldaman.",
             loot = {
                 {274430, "Rock Sentinel Slicer", "Two-Hand, Axe", 3},
@@ -4642,7 +4647,7 @@ FDJ.DB["Uldaman"] = {
             aliases = {"Ancient Stone Keeper"},
             description = "In the Temple Hall.",
             loot = {
-                {9410, "Cragfists", "Hands, Plate", 3},
+                {9410, "Cragfists", "Hands, Plate", 3, "", "RANDOM_ENCHANT"},
                 {9411, "Rockshard Pauldrons", "Shoulder, Mail", 3},
                 {274431, "Sandstorm Staff", "Two-Hand, Staff", 3}, -- Wowhead Forever: Ancient Stone Keeper 61/179
             },
@@ -9643,8 +9648,8 @@ FDJ.DB["Stratholme: Living"] = {
         turnin = "Aurius, Stratholme",
     },
     {
-        note = "Introductory step leading to The Restless Souls.",
-        warning = "OPTIONAL, not required",
+        -- restlesssouls (2.1.3): a required step of Egan's The Restless Souls
+        -- (Data/QuestUpdates.lua), no longer an optional introduction.
         objective = "Find Egan. You only know that he was last seen around Stratholme.",
         rewardSummary = "",
         id = 5281,
@@ -9666,8 +9671,6 @@ FDJ.DB["Stratholme: Living"] = {
         level = 60,
         requires = 55,
         rewardItems = {{13315, "Testament of Hope", 2}},
-        note = "Optional introductory quest:",
-        noteQuestLink = { id = 5281, name = "The Restless Souls" },
         turnin = "Egan, Terrordale, Eastern Plaguelands",
         liveXPFallback = 8300,
     },
@@ -9936,8 +9939,8 @@ FDJ.DB["Stratholme: Undead"] = {
         liveXPFallback = 6600,
     },
     {
-        note = "Introductory step leading to The Restless Souls.",
-        warning = "OPTIONAL, not required",
+        -- restlesssouls (2.1.3): a required step of Egan's The Restless Souls
+        -- (Data/QuestUpdates.lua), no longer an optional introduction.
         objective = "Find Egan. You only know that he was last seen around Stratholme.",
         rewardSummary = "",
         id = 5281,
@@ -9959,8 +9962,6 @@ FDJ.DB["Stratholme: Undead"] = {
         level = 60,
         requires = 55,
         rewardItems = {{13315, "Testament of Hope", 2}},
-        note = "Optional introductory quest:",
-        noteQuestLink = { id = 5281, name = "The Restless Souls" },
         turnin = "Egan, Terrordale, Eastern Plaguelands",
         liveXPFallback = 8300,
     },
@@ -10173,7 +10174,15 @@ FDJ.DB["Stratholme: Undead"] = {
                 {13251, "Head of Baron Rivendare", "Quest Item", 1}, -- Above and Beyond
                 -- 2.0.6: epic two-hand sword, Wowhead Forever: dropped by Baron
                 -- Rivendare (9 of 8730 kills, its Classic Era drop data).
-                {13505, "Runeblade of Baron Rivendare", "Two-Hand, Sword", 4},
+                {13505, "Runeblade of Baron Rivendare", "Two-Hand, Sword", 4, lootFirst = 2},
+                -- deathcharger (2.1.3, M 21 Nov 2026: "ADD this", Wowhead
+                -- Forever's Deathcharger's Reins page): his mount, a very rare
+                -- drop (about 1 in 5,000 in Classic, Wowhead's comments). Rare
+                -- quality; on Forever account-wide and needs Journeyman Riding.
+                -- (lootfirst, M: "put it on the top left, and then just put the
+                -- epic sword at the top right column ... and give it the
+                -- extremely rare drop disclaimer that we already use")
+                {13335, "Deathcharger's Reins", "Mount", 3, dropNote = "EXTREMELY_RARE_DROP", lootFirst = 1},
             },
         },
         {

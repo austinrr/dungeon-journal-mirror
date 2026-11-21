@@ -265,7 +265,10 @@ local ARMOR = {
     Shield = { WARRIOR = 1, PALADIN = 1, SHAMAN = 1 },
 }
 local ONE_HAND = {
-    Axe = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, SHAMAN = 1 },
+    -- rogueaxe (2.1.3): WoW Forever lets Rogues use one-handed axes; without
+    -- them here, "Only show loot my class can use" greyed out every one-hand
+    -- axe for a Rogue (Glutton's Cleaver; reported on Discord by Dom).
+    Axe = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, ROGUE = 1, SHAMAN = 1 },
     Sword = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, ROGUE = 1, MAGE = 1, WARLOCK = 1 },
     Mace = { WARRIOR = 1, PALADIN = 1, ROGUE = 1, PRIEST = 1, SHAMAN = 1, DRUID = 1 },
     Dagger = { WARRIOR = 1, HUNTER = 1, ROGUE = 1, PRIEST = 1, SHAMAN = 1, MAGE = 1, WARLOCK = 1, DRUID = 1 },
@@ -967,6 +970,7 @@ function FDJ.FilterBossLootForPage(boss)
             shown[#shown + 1] = item
             if not keep[item] then FDJ.lootFilterDimmed[item] = true end
         end
+        if boss.lootRemoved then FDJ.lootFilterDimmed[item] = true end -- lootremoved: all of it greyed out
     end
     FDJ.lootFilterHidden = 0
     if #recipes > 0 then
@@ -2851,3 +2855,28 @@ do
         return plain(boss, ...)
     end
 end
+
+-- BEGIN lootremoved
+-- lootremoved (2.1.3, M 21 Nov 2026, the Obsidian Sentinel: "Due to players
+-- finding an efficient gold farm with this boss, blizzard has for now
+-- removed its loot"): the line under the boss's name (boss.lootNote).
+do
+    local strings = {
+        enUS = "Due to players finding an efficient gold farm with this boss, Blizzard has for now removed its loot.",
+        deDE = "Weil Spieler mit diesem Boss eine effiziente Goldfarm gefunden haben, hat Blizzard seine Beute vorerst entfernt.",
+        frFR = "Des joueurs ayant trouvé une ferme d'or efficace avec ce boss, Blizzard a retiré son butin pour l'instant.",
+        esES = "Como los jugadores encontraron una forma eficaz de farmear oro con este jefe, Blizzard ha retirado su botín por ahora.",
+        itIT = "Poiché i giocatori hanno trovato un modo efficace di farmare oro con questo boss, Blizzard ha rimosso il suo bottino per ora.",
+        ptBR = "Como os jogadores encontraram um farm de ouro eficiente com este chefe, a Blizzard removeu o saque dele por enquanto.",
+        ruRU = "Игроки нашли на этом боссе эффективный фарм золота, поэтому Blizzard пока убрала его добычу.",
+        koKR = "플레이어들이 이 우두머리로 효율적인 골드 파밍 방법을 찾아내서 블리자드가 당분간 전리품을 제거했습니다.",
+        zhCN = "由于玩家发现利用这个首领能高效刷金，暴雪暂时移除了它的掉落。",
+        zhTW = "由於玩家發現利用這個首領能高效刷金，暴雪暫時移除了它的掉落。",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.LOOT_NOTE_LOOT_REMOVED == nil then t.LOOT_NOTE_LOOT_REMOVED = text end
+    end
+end
+-- END lootremoved

@@ -388,6 +388,19 @@ local OPTIONS = {
         end,
         refreshHome = true,
     },
+    {
+        -- hidedone (2.1.3, M 21 Nov 2026: "the hide completed quest ... needed
+        -- to be in the option panel under quests"): the quests handed in are
+        -- left out of a dungeon's quest list (Core/Journal.lua); the dungeon
+        -- list on the main page still counts them. Off by default.
+        label = "OPT_HIDE_DONE_QUESTS",
+        tip = "OPT_HIDE_DONE_QUESTS_TIP",
+        get = function() return Store().hideDoneQuests == true end,
+        set = function(on)
+            Store().hideDoneQuests = on or nil
+            if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+        end,
+    },
     -- lootoptions (2.0.11, M 18 Nov 2026: "add a new Loot section in the
     -- option panel, the options: Hide drop rates, Hide quest item drops").
     { header = "OPT_LOOT" },
@@ -2081,6 +2094,42 @@ do
     end
 end
 -- END hideunavailable
+
+-- BEGIN hidedone
+do
+    local strings = {
+        enUS = { OPT_HIDE_DONE_QUESTS = "Hide completed quests",
+            OPT_HIDE_DONE_QUESTS_TIP = "Leaves the quests you've handed in out of a dungeon's quest list, so you only see what's left to do. The dungeon list still counts them." },
+        deDE = { OPT_HIDE_DONE_QUESTS = "Abgeschlossene Quests ausblenden",
+            OPT_HIDE_DONE_QUESTS_TIP = "Lässt die Quests, die du abgegeben hast, aus der Questliste eines Dungeons weg, damit du nur siehst, was noch zu tun ist. Die Dungeonliste zählt sie weiterhin." },
+        frFR = { OPT_HIDE_DONE_QUESTS = "Masquer les quêtes terminées",
+            OPT_HIDE_DONE_QUESTS_TIP = "Retire de la liste des quêtes d'un donjon celles que vous avez rendues, pour ne voir que ce qu'il reste à faire. La liste des donjons les compte toujours." },
+        esES = { OPT_HIDE_DONE_QUESTS = "Ocultar misiones completadas",
+            OPT_HIDE_DONE_QUESTS_TIP = "Quita de la lista de misiones de una mazmorra las que ya entregaste, para que solo veas lo que te queda por hacer. La lista de mazmorras las sigue contando." },
+        itIT = { OPT_HIDE_DONE_QUESTS = "Nascondi missioni completate",
+            OPT_HIDE_DONE_QUESTS_TIP = "Toglie dall'elenco delle missioni di una spedizione quelle che hai già consegnato, così vedi solo cosa ti resta da fare. L'elenco delle spedizioni le conta comunque." },
+        ptBR = { OPT_HIDE_DONE_QUESTS = "Ocultar missões concluídas",
+            OPT_HIDE_DONE_QUESTS_TIP = "Tira da lista de missões de uma masmorra as que você já entregou, para você ver só o que falta fazer. A lista de masmorras continua contando-as." },
+        ruRU = { OPT_HIDE_DONE_QUESTS = "Скрывать выполненные задания",
+            OPT_HIDE_DONE_QUESTS_TIP = "Убирает из списка заданий подземелья те, что вы уже сдали, чтобы видеть только то, что осталось. Список подземелий по-прежнему их учитывает." },
+        koKR = { OPT_HIDE_DONE_QUESTS = "완료한 퀘스트 숨기기",
+            OPT_HIDE_DONE_QUESTS_TIP = "이미 완료한 퀘스트를 던전 퀘스트 목록에서 빼서 남은 것만 보이게 합니다. 던전 목록에서는 계속 집계됩니다." },
+        zhCN = { OPT_HIDE_DONE_QUESTS = "隐藏已完成的任务",
+            OPT_HIDE_DONE_QUESTS_TIP = "在副本的任务列表中不显示你已交付的任务，只显示还要做的。副本列表仍会计入它们。" },
+        zhTW = { OPT_HIDE_DONE_QUESTS = "隱藏已完成的任務",
+            OPT_HIDE_DONE_QUESTS_TIP = "在副本的任務列表中不顯示你已交付的任務，只顯示還要做的。副本列表仍會計入它們。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+-- END hidedone
 
 -- lootoptions (2.0.11): Options > Loot.
 do

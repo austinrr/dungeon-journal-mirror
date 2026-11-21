@@ -719,7 +719,6 @@ FDJ.QUEST_PREREQ_DETAILS = {
         turnin = "Hammertoe Grez, Uldaman excavation (outside the instance)",
     },
     [723] = {
-        startsInDungeon = true,
         level = 40, requires = 35,
         objective = "Take Hammertoe's Amulet to Prospector Ryedol in the Badlands.",
         pickup = "Hammertoe Grez",
@@ -756,9 +755,14 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [2198] = {
         level = 41, requires = 37,
         objective = "Search for the original creator of the shattered necklace to learn of its potential value.",
-        pickup = "Shattered Necklace (drops in Uldaman)",
+        -- necklaceout (2.1.3, M 21 Nov 2026: "it's not a dungeon chain step. It
+        -- doesn't start inside a dungeon ... The shattered necklace can drop from
+        -- mobs outside as well"): the elites at the Uldaman dig site drop it
+        -- (Wowhead Forever: Stonevault Rockchewer, Cave Hunter, Shadowforge
+        -- Ruffian, Digger, Surveyor; Stonevault Oracle inside; SOURCES.txt).
+        pickup = "Shattered Necklace (drops outside and in Uldaman)",
         turnin = "Talvash del Kissel, Ironforge",
-        startItem = {7666, "Shattered Necklace", 2, "Drops from the dwarves and troggs in Uldaman"},
+        startItem = {7666, "Shattered Necklace", 2, "Drops from the elite troggs and Shadowforge dwarves outside Uldaman (and from troggs inside)"},
     },
     [2199] = {
         level = 41, requires = 37,

@@ -617,6 +617,18 @@ local pendingXP = {}   -- { clock, amount }: XP that came before its kill
 -- the last one (a skipped boss keeps it open). Rares and bosses that need a
 -- quest or a summoning item to appear are optional. A dungeon without boss
 -- data completes on its final boss.
+-- dwarvesally (2.1.3, M 21 Nov 2026, an Alliance Uldaman run, every boss on
+-- the tracker crossed out: "run didnt end but all bosses are dead"): a boss
+-- only the other faction can fight (factionOnly: The Lost Dwarves, friendly
+-- to the Alliance) is not needed to end the run; the tracker already leaves
+-- it off (Systems/RunLogUI.lua, TrackerBossAllowed).
+local function PlayerFaction()
+    if type(UnitFactionGroup) ~= "function" then return nil end
+    local ok, faction = pcall(UnitFactionGroup, "player")
+    if not ok or type(faction) ~= "string" then return nil end
+    if type(issecretvalue) == "function" and issecretvalue(faction) then return nil end
+    return faction
+end
 local function AllBossesDown(run, kill)
     -- finalfirst (2.0.13, M 19 Nov 2026, a Stratholme: Undead run on stream
     -- shown done before Baron Rivendare died - the Black Guard Swordsmith's
@@ -634,13 +646,17 @@ local function AllBossesDown(run, kill)
     end
     local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     local needed, known, group = {}, {}, {}
+    local faction = PlayerFaction() -- dwarvesally
     for _, b in ipairs((d and d.bosses) or {}) do
         if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab then
             known[b.name] = true
             -- ringoflaw: one fight, whichever of its bosses shows up
             local key = type(b.fightGroup) == "string" and b.fightGroup or b.name
             if key ~= b.name then known[key] = true group[b.name] = key group[key] = key end
-            if not b.rare and not b.spawnQuest and not b.summonItem and not b.optional then needed[key] = true end
+            if not b.rare and not b.spawnQuest and not b.summonItem and not b.optional
+                and not (type(b.factionOnly) == "string" and faction and b.factionOnly ~= faction) then -- dwarvesally
+                needed[key] = true
+            end
         end
     end
     if not next(needed) then return kill.f and true or false end
@@ -879,6 +895,9 @@ local function FixBossKills(run)
             end
         end
     end
+    -- (dwarvesally, 2.1.3: so a run left open with every boss it needs
+    -- dead - The Lost Dwarves counted for the Alliance - ends here, at its
+    -- last boss's kill, a few seconds after logging in or /reload)
     if not run.completed and lastBoss and AllBossesDown(run, lastBoss) then
         run.completed = true
         run.finalKill = run.finalKill or lastBoss.t

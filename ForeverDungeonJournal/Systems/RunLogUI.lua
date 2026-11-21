@@ -639,8 +639,22 @@ function FDJ.RunLogFixDungeon(run)
 end
 
 local FIGHT_PLACEHOLDERS = {} -- ringoflaw: the fight's entry before its boss is known
+-- logfaction (2.1.3, M: "can we just not have the lost dwarves show in the
+-- alliance char log?"): a boss only the other faction can fight
+-- (factionOnly: The Lost Dwarves, friendly to the Alliance) isn't listed
+-- in a run's bosses. The log is the character's own, so its faction is
+-- the character's. Still listed if the log has its kill.
+local function LogFaction()
+    if type(UnitFactionGroup) ~= "function" then return nil end
+    local ok, faction = pcall(UnitFactionGroup, "player")
+    if not ok or type(faction) ~= "string" then return nil end
+    if type(issecretvalue) == "function" and issecretvalue(faction) then return nil end
+    return faction
+end
+
 local function BossList(run)
     FDJ.RunLogFixDungeon(run)
+    local faction = LogFaction() -- logfaction
     local killed = {}
     for _, k in ipairs(run.kills or {}) do
         if k.b and not killed[k.b] then killed[k.b] = k end
@@ -650,7 +664,10 @@ local function BossList(run)
     for _, b in ipairs((d and d.bosses) or {}) do
         -- altarbosses (2.0.24): a journal group and its children are not
         -- listed among a run's bosses (their kills are trash, as before).
-        if type(b) == "table" and type(b.name) == "string" and b.runLogHidden then
+        if type(b) == "table" and type(b.name) == "string" and type(b.factionOnly) == "string"
+            and faction and b.factionOnly ~= faction and not killed[b.name] then
+            shown[b.name] = true -- logfaction: the other faction's boss
+        elseif type(b) == "table" and type(b.name) == "string" and b.runLogHidden then
             -- felsteedoff (2.0.7): not one of a run's bosses (the Shadowfang
             -- Keep horses); an older run's kill of it isn't listed either.
             shown[b.name] = true
@@ -2112,6 +2129,59 @@ function FDJ.ResetTrackedRun()
     return false
 end
 
+-- padpopup (2.1.3): the reset question with the gamepad on, in a window of
+-- the journal's own (the game's popup would taint gamepad input): the same
+-- look, text and Yes / No as the game's.
+-- A controller is turned on in the game's settings and connected.
+function FDJ.ControllerConnected()
+    if not (GetCVarBool and GetCVarBool("GamePadEnable")) then return false end
+    if not (C_GamePad and type(C_GamePad.GetAllDeviceIDs) == "function") then return false end
+    local ok, ids = pcall(C_GamePad.GetAllDeviceIDs)
+    return ok and type(ids) == "table" and #ids > 0 or false
+end
+
+function FDJ.AskResetTracker()
+    local f = FDJ.resetAskFrame
+    if not f then
+        f = CreateFrame("Frame", "ForeverDungeonJournalResetAsk", UIParent, "BackdropTemplate")
+        FDJ.resetAskFrame = f
+        f:SetSize(320, 104)
+        f:SetFrameStrata("DIALOG")
+        f:SetToplevel(true)
+        f:EnableMouse(true)
+        if f.SetBackdrop then
+            f:SetBackdrop({
+                bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+                tile = true, tileSize = 32, edgeSize = 32,
+                insets = { left = 11, right = 12, top = 12, bottom = 11 },
+            })
+        end
+        f.text = f:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+        f.text:SetPoint("TOP", 0, -20)
+        f.text:SetWidth(280)
+        f.text:SetJustifyH("CENTER")
+        local yes = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+        yes:SetSize(110, 22)
+        -- (padtight, M: "so much dead space between yes, no, and the last
+        -- line": the buttons right under the text)
+        yes:SetPoint("TOPRIGHT", f.text, "BOTTOM", -6, -10)
+        yes:SetText(YES or "Yes")
+        yes:SetScript("OnClick", function() f:Hide() FDJ.ResetTrackedRun() end)
+        local no = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
+        no:SetSize(110, 22)
+        no:SetPoint("TOPLEFT", f.text, "BOTTOM", 6, -10)
+        no:SetText(NO or "No")
+        no:SetScript("OnClick", function() f:Hide() end)
+        f:Hide()
+    end
+    f.text:SetText(L("TRACKER_RESET_CONFIRM"))
+    f:SetHeight(math.floor((f.text:GetStringHeight() or 14) + 0.5) + 67) -- (20 above the text, 10 to the buttons, 22 of buttons, 15 below)
+    f:ClearAllPoints()
+    f:SetPoint("TOP", UIParent, "TOP", 0, -135)
+    f:Show()
+end
+
 if StaticPopupDialogs then
     StaticPopupDialogs["FDJ_TRACKER_RESET"] = {
         text = "%s",
@@ -2357,20 +2427,16 @@ local function BuildTracker()
         end
         GameTooltip:Hide()
         -- padfocus (2.0.12, kaanu): with the gamepad on, a StaticPopup from addon
-        -- code taints gamepad input until /reload, so confirm with a second click instead.
-        if GetCVarBool and GetCVarBool("GamePadEnable") then
-            local now = GetTime()
-            if self.resetArmedUntil and now <= self.resetArmedUntil then
-                self.resetArmedUntil = nil
-                FDJ.ResetTrackedRun()
-            else
-                self.resetArmedUntil = now + 3
-                GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                GameTooltip:SetText(L("TRACKER_RESET"), 1, 0.82, 0)
-                GameTooltip:AddLine(L("TRACKER_RESET_CONFIRM"), 1, 1, 1, true)
-                GameTooltip:AddLine(L("TRACKER_RESET_AGAIN"), 0.25, 1, 0.25, true)
-                GameTooltip:Show()
-            end
+        -- code taints gamepad input until /reload. padpopup (2.1.3, M 21 Nov
+        -- 2026, his controller setting on and the second click asked for:
+        -- "we had a pop-up. What happened?"): the same question in the
+        -- journal's own little window instead, Yes / No, not the game's popup.
+        -- padreal (2.1.3, M 21 Nov 2026 on keyboard and mouse: "I'm not
+        -- using the controller, so why did it detect?"): the game's controller
+        -- setting can be on with no controller there. Only with a controller
+        -- connected; else the game's own popup, as always.
+        if FDJ.ControllerConnected and FDJ.ControllerConnected() and FDJ.AskResetTracker then
+            FDJ.AskResetTracker()
         elseif StaticPopup_Show and StaticPopupDialogs and StaticPopupDialogs.FDJ_TRACKER_RESET then
             StaticPopup_Show("FDJ_TRACKER_RESET", L("TRACKER_RESET_CONFIRM"))
         else

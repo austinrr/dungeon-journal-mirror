@@ -1652,3 +1652,84 @@ trashconfirm (2.1.2): Blackmaw Hold's two "probably drops" confirmed
 
 shaperpins (2.1.2): Shaper's Terrace map boss positions and entrance
 - Ed's numbered map and boss list on M's Discord (21 Nov 2026): 1 Titanosaur, 2 Cinder, 3 Vitrix, 4 Izha'Rel and Tor'Rel, 5 Direhorn Matriarch, 6 Thunderhoof, 7 Bolt, 8 Venomridge, 9 Snowtalon, 10 Nanaya
+
+malletone (2.1.3): Mallet of Zul'Farrak page as one entry. Translated names
+are the game client's own, from the client's tables as Polestar ships them
+(forge data names, 1.60.1): Qiaga the Keeper (npc 7996), Morta'gya the
+Keeper (npc 8636), Gahz'rilla (npc 7273), Sacred Mallet (item 9241), Mallet
+of Zul'Farrak (item 9240). Jintha'Alor (area 354) is read from the client
+itself (C_Map.GetAreaInfo). Italian keeps the English names.
+
+drownedhorde (2.1.3): The Drowned City Route for the Horde
+- Locating the Lost City, the cavern (comment: /way 21.7, 27.1): https://www.wowhead.com/forever/quest=95770/locating-the-lost-city
+- The cavern's place to find, 21.8, 27.6: M in game, the quest's own map marker (21 Nov 2026; cavernpoint)
+- Enemies in the Water, 10 tridents, done by the dungeon's entrance (comments): https://www.wowhead.com/forever/quest=95773/enemies-in-the-water
+- The Gurubashi Legends of Old, a plain pickup at 23, 12 (comments): https://www.wowhead.com/forever/quest=95748/the-gurubashi-legends-of-old
+- The Only Good Brinescale..., needs Enemies in the Water and Locating the Lost City (comments): https://www.wowhead.com/forever/quest=95776/the-only-good-brinescale
+- A Tale Spun Around the Fire, follow-up to The Drowned City, delivery to Master Gadrin: https://www.wowhead.com/forever/quest=96078/a-tale-spun-around-the-fire
+- Ancient Gurubashi Idol, Mazu'kon's path starts at Mulgore 40.2, 17.4 (comment): https://www.wowhead.com/forever/quest=96774/ancient-gurubashi-idol
+- Brinescale Skirmisher (npc 262397) names: the client's tables as Polestar ships them (forge data names, 1.60.1)
+
+necklaceout (2.1.3): The Shattered Necklace starts outside Uldaman
+- Shattered Necklace (item 7666), dropped by Stonevault Oracle (inside), Stonevault Rockchewer, Stonevault Cave Hunter, Shadowforge Ruffian, Digger and Surveyor (Badlands); comments: drops outside from the elites before the entrance (Shadowforge Digger), and inside: https://www.wowhead.com/forever/item=7666/shattered-necklace
+- The same mobs, "in the Badlands", Stonevault Oracle in Uldaman: https://warcraft.wiki.gg/wiki/Shattered_Necklace
+- "Drops from Shadowforge Dwarves inside or outside of Uldaman" (WoW Forever guide): https://www.warcrafttavern.com/forever/guides/uldaman-quests/
+- "A drop from mobs both inside and outside the instance": https://icy-veins.com/wow-classic/uldaman-quests-guide
+- Player comments (killing the elite dwarves outside the instance for it): https://classicdb.ch/?quest=2198
+- The Route's stop to farm it: the Shadowforge dwarves in front of the entrance, 47.3, 12.0 (M in game; the Power Stones comments put the same dwarves at 45, 14 and 46, 14): https://www.wowhead.com/forever/quest=2418/power-stones
+- Where the troggs and dwarves stand (Stonevault troggs 32-38, 14-23; Shadowforge dwarves 43-51, 7-14, Badlands): the Forever client's spawn tables as Polestar ships them (forever-db spawn.jsonl); names in every language: the client's tables (Polestar, forge data names, 1.60.1)
+
+powerwarn (2.1.3): Power Stones drop outside and inside Uldaman
+- Dentrium Power Stone, dropped by Shadowforge Digger, Surveyor, Ruffian (Badlands) and Darkcaster, Ambusher, Sharpshooter, Relic Hunter, Archaeologist, Geologist (Uldaman): https://www.wowhead.com/forever/item=8009/dentrium-power-stone
+- An'Alleum Power Stone, the same dwarves outside and inside: https://www.wowhead.com/forever/item=8052/analleum-power-stone
+- Comments ("Can be obtained in or outside the instance"; Forever: very low drop rate): https://www.wowhead.com/forever/quest=2418/power-stones
+
+outsidesteps (2.1.3): A Sign of Hope, Amulet of Secrets, Prospect of Faith and Necklace Recovery are done outside Uldaman
+- Hammertoe Grez, "OUTSIDE the instance", 37.9, 10.5 Badlands (comments): https://www.wowhead.com/wotlk/cn/npc=2909
+- Hammertoe Grez, "in the outermost part of Uldaman": https://warcraft.wiki.gg/wiki/Hammertoe_Grez
+- Magregan Deepshadow, "just outside the Uldaman instance": https://warcraft.wiki.gg/wiki/Magregan_Deepshadow
+- Magregan Deepshadow "is NOT IN ULDAMAN", in the caverns outside (comments): https://classicdb.ch/?quest=722
+- Hammertoe Grez and Magregan Deepshadow just outside Uldaman (WoW Forever guide): https://www.warcrafttavern.com/forever/guides/uldaman-quests/
+- Hammertoe Grez down the tunnel before the jump to the entrance: https://wowpedia.fandom.com/wiki/A_Sign_of_Hope_(2)
+- Every quest-chain step marked as a Dungeon Chain Step checked against where its quest givers, mobs, objects and items stand: the Forever client's spawn and quest tables as Polestar ships them (forever-db spawn.jsonl, quest_start/quest_end/quest_objective.jsonl, item_source.jsonl); Hammertoe Grez, Magregan Deepshadow, Prospector Ryedol and Dran Droffers have no spawn in the instance
+
+hammertoecave (2.1.3): where Hammertoe Grez stands
+- "His regular location is 37.94, 10.53 badlands coordinates, inside uldaman, but outside the instance" (Allakhazam comment): https://www.wowhead.com/wotlk/cn/npc=2909
+- Down the tunnel before the jump to the instance entrance: https://wowpedia.fandom.com/wiki/A_Sign_of_Hope_(2)
+- His spawn, 37.9, 10.6 (world -6065, -3022): the Forever client's spawn table as Polestar ships it (forever-db spawn.jsonl)
+- M in game beside him at 37.8, 11.1; the cave mouth, 44.3 to 44.7, 12.0 (M's screenshots, 21 Nov 2026)
+
+fungusout (2.1.3): Magenta Fungus Caps outside Uldaman
+- "The fungus caps are scattered about the dig site (outside the actual instance)": https://www.tentonhammer.com/guides/guide-to-uldaman
+- Magenta Cap Clusters (objects 126049, 128293, item 8047): 17 spawns in the outer excavation caves, 33.5 to 41.0, 10.4 to 24.4, Badlands; the Forever client's spawn and item-source tables as Polestar ships them (forever-db spawn.jsonl, item_source.jsonl); the names in every language: the client's tables (Polestar, 1.60.1)
+- M in game: three caps picked at 37.9, 10.3, by Hammertoe Grez in the excavation tunnel (21 Nov 2026)
+
+ancientchest (2.1.3): Solution to Doom's Ancient Chest outside Uldaman, and the minimap picture
+- "The Tablet of Ryun'eh can be found in an Ancient Chest, outside of the dungeon, inside the cave system at around 39.5 18.6" (WoW Forever): https://www.icy-veins.com/wow-forever/uldaman-quests
+- "The Ancient Chest is located in Uldaman, outside of the instance": https://warcraft.wiki.gg/wiki/Ancient_Chest
+- In the Sealed Hall, outside the instance (comments): https://www.wowhead.com/classic/cn/item=4631
+- From the chest in the Sealed Hall outside the instance portal (WoW Forever): https://conquestcapped.com/guides/wow-forever/wow-forever-uldaman-guide/
+- The chest (object 126260) at 39.3, 18.8, Badlands; its name and the tablet's (item 4631) and Magregan Deepshadow's (NPC 2932) in every language: the Forever client's tables as Polestar ships them (forever-db spawn.jsonl, item_source.jsonl; Names, 1.60.1)
+- The picture (Media/UldamanExcavationMinimap.tga): M's own minimap at the chest, 39.4, 19.6 (21 Nov 2026), his arrow painted out and the black mark circled (later painted out: commonhall); Magregan Deepshadow at the same mark (M; his spawn 39.0, 19.7)
+
+commonhall / showlocation (2.1.3): Reclaimed Treasures outside Uldaman, its minimap picture and the Show Location button
+- "Krom's treasure can be found inside a chest in the outside area of the dungeon, at around 35.7 23.5" and the Horde's "at around 34.2 18.4" (WoW Forever): https://www.icy-veins.com/wow-forever/uldaman-quests
+- The Garrett Family Chest "is actually outside the instance of Uldaman in the tunnels": https://warcraft.wiki.gg/wiki/Garrett_Family_Chest
+- "A chest with my name on it is at the end of the North Common Hall" (the quest text): https://wowclassicdb.com/wotlk/quest/1360
+- Krom Stoutarm's Chest (object 124389) at 35.6, 23.5 and the Garrett Family Chest (object 124388) at 34.2, 18.6, Badlands; their names and the treasures' (items 8027, 8026) in every language: the Forever client's tables as Polestar ships them (forever-db spawn.jsonl, item_source.jsonl; Names, 1.60.1)
+- The picture (Media/UldamanCommonHallMinimap.tga): M's own minimap at 35.1, 19.3 (21 Nov 2026), his arrow painted out; the chest's place from the minimap's indoor scale (300 yards across), about 70 yards south at the end of the hall; the Sealed Hall picture's black mark painted out, the quests' item icons drawn in the rings in game
+
+reveloshrandom (2.1.3): Revelosh's four items have random enchantments
+- M in game, Uldaman (21 Nov 2026): Revelosh's Boots of Fire Protection dropped (a random suffix)
+- M in game, Uldaman (21 Nov 2026): Cragfists of the Knight dropped from the Ancient Stone Keeper (a random suffix, besides the Cragfists' own +5 Defense)
+
+itemnotes (2.1.3): the "where to find it" lines of quest items in every language
+- NPC, object, item and quest names: the Forever client's tables as Polestar ships them (Names, 1.60.1; forever-db npc.jsonl, object.jsonl, item.jsonl)
+- Zone and subzone names (Windshear Crag, Azurelode Mine, Lordamere Internment Camp, Kurzen's Compound, Rebel Camp, Fenris Isle, Thelgen Rock, The Charred Vale, Mannoroc Coven, Zoram'gar Outpost, The Sepulcher...): pfQuest's client tables, db/<locale>/zones.lua: https://github.com/shagu/pfQuest
+- Zone and dungeon names as the Classic Era client has them (Vorgebirge von Hillsbrad, Ashenvale, Blackrockspitze...): Questie's zone translations: https://github.com/Questie/Questie/tree/master/Localization/Translations/Zones
+- North / South Common Hall: the quests' own text in every language (Reclaimed Treasures, 1360 and 2342)
+- Forever names the game has no translation for (Twilight's Shroud, Riverglades, Sunnyglade, Overlord Kilgar, Warden's Footlocker...) stay in English
+
+deathcharger (2.1.3): Deathcharger's Reins on Baron Rivendare's loot
+- The item (Rare, account-wide on Forever, needs Journeyman Riding): https://www.wowhead.com/forever/item=13335/deathchargers-reins
+- Drops from Baron Rivendare, about 1 in 5,000 (the page's comments)

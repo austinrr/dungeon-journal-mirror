@@ -8,6 +8,37 @@ local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 local ICON = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ForeverIcon"
+-- foreverview (2.1.3, M 22 Nov 2026, players confused by the Forever-only
+-- list: "whenever you're in the forever dungeon only view, I wanted some kind
+-- of indicator ... we change the color of the journal, and we swap the logo,
+-- and we add those things"): while "Forever Dungeons Only" is on, the home
+-- page takes the blue of the WoW Forever logo, the emblem becomes the logo on
+-- its blue background (Media/ForeverOnlyIcon.tga, from M's picture), its
+-- tooltip says "Forever Only View" / "Right-click to disable", and a right
+-- click on it turns the view off.
+local ICON_ONLY = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ForeverOnlyIcon"
+do
+    local strings = {
+        enUS = { "Forever Only View", "Right-click to disable" },
+        deDE = { "Nur-Forever-Ansicht", "Rechtsklick zum Ausschalten" },
+        frFR = { "Vue Forever uniquement", "Clic droit pour désactiver" },
+        esES = { "Vista solo Forever", "Clic derecho para desactivar" },
+        itIT = { "Vista solo Forever", "Clic destro per disattivare" },
+        ptBR = { "Visão só Forever", "Clique com o botão direito para desativar" },
+        ruRU = { "Только подземелья Forever", "Щелкните правой кнопкой, чтобы отключить" },
+        koKR = { "Forever 전용 보기", "우클릭하여 끄기" },
+        zhCN = { "仅Forever视图", "右键点击关闭" },
+        zhTW = { "僅Forever檢視", "右鍵點擊關閉" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.FOREVER_ONLY_VIEW == nil then t.FOREVER_ONLY_VIEW = pair[1] end
+            if t.FOREVER_ONLY_RCLICK == nil then t.FOREVER_ONLY_RCLICK = pair[2] end
+        end
+    end
+end
 
 -- Dungeons added by WoW Forever (not in the original Classic game).
 FDJ.FOREVER_DUNGEONS = {
@@ -43,13 +74,61 @@ function FDJ.SetForeverOnly(on)
     if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
 end
 
+-- foreverreset (2.1.3, M 21 Nov 2026, players on the Discord seeing only
+-- WoW Forever's dungeons after updating, without having touched anything:
+-- "just untick it on the next update for everybody. Since if they have it
+-- toggled, they know how to untoggle"): until 2.0.10 a click on the emblem
+-- turned "Forever Dungeons Only" on, and it stayed saved; since then the
+-- emblem only opens the dungeon list, so it no longer turns it off, and the
+-- switch is only in Options. Once, on the first login with this version,
+-- it is turned off for everyone (each account once).
+do
+    local f = CreateFrame("Frame")
+    f:RegisterEvent("ADDON_LOADED")
+    f:SetScript("OnEvent", function(self, _, name)
+        if name ~= "ForeverDungeonJournal" then return end
+        self:UnregisterEvent("ADDON_LOADED")
+        ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
+        if not ForeverDungeonJournalDB.foreverOnlyReset then
+            ForeverDungeonJournalDB.foreverOnly = nil
+            ForeverDungeonJournalDB.foreverOnlyReset = 1
+        end
+    end)
+end
+
 -- Asked by the home list for every dungeon.
 function FDJ.HomeFilterHides(dungeonName)
     return Active() and not FDJ.FOREVER_DUNGEONS[dungeonName]
 end
 
+-- foreverview: the home page in the logo's blue while the view is on; back to
+-- the journal's own brown (Core/Journal.lua ApplyTheme's colours) when off.
+local function Tint(frame)
+    local home = frame and frame.homePanel
+    if not home then return end
+    if Active() then
+        home:SetBackdropColor(0.02, 0.16, 0.27, 0.96)
+        home:SetBackdropBorderColor(0.23, 0.76, 0.96, 1)
+        if frame.homeParchment then frame.homeParchment:SetVertexColor(0.70, 0.90, 1.00) end
+        frame.fdjForeverTint = true
+    elseif frame.fdjForeverTint then
+        home:SetBackdropColor(0.16, 0.12, 0.07, 0.96)
+        home:SetBackdropBorderColor(0.47, 0.34, 0.16, 1)
+        if frame.homeParchment then frame.homeParchment:SetVertexColor(1.00, 0.95, 0.84) end
+        frame.fdjForeverTint = nil
+    end
+end
+FDJ.TintForeverView = Tint
+
 local function Paint(btn)
     local on = (FDJ.ActiveHomeTab and FDJ.ActiveHomeTab() or "dungeons") == "dungeons" -- hometabs
+    local only = Active() -- foreverview: the logo on its blue background
+    if btn.fdjOnly ~= only then
+        btn.fdjOnly = only
+        btn.icon:SetTexture(only and ICON_ONLY or ICON)
+        if btn.hl then btn.hl:SetTexture(only and ICON_ONLY or ICON) end
+    end
+    Tint(_G.ForeverDungeonJournalFrame)
     btn.icon:SetAlpha(1)
     -- Always a soft golden glow (same as the LFG / Show Location buttons) so
     -- it reads as clickable; brighter with a gold ring while the filter is on.
@@ -150,17 +229,34 @@ local function Build(frame)
     hl:SetAllPoints()
     hl:SetBlendMode("ADD")
     hl:SetAlpha(0.35)
+    btn.hl = hl -- (foreverview: swapped with the icon)
 
     btn:SetScript("OnMouseDown", function() icon:SetPoint("TOPLEFT", 1, -1); icon:SetPoint("BOTTOMRIGHT", 1, -1) end)
     btn:SetScript("OnMouseUp", function() icon:ClearAllPoints(); icon:SetAllPoints() end)
-    btn:SetScript("OnClick", function(self)
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    btn:SetScript("OnClick", function(self, mouseButton)
+        -- foreverview: a right click turns the Forever-only view off
+        if mouseButton == "RightButton" then
+            if Active() then
+                FDJ.SetForeverOnly(false)
+                if FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
+                Paint(self)
+                if self:IsMouseOver() and self:GetScript("OnEnter") then self:GetScript("OnEnter")(self) end
+            end
+            return
+        end
         if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
         if FDJ.ShowDungeonsTab then FDJ.ShowDungeonsTab() end -- hometabs: the dungeon list
         Paint(self)
     end)
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText(L("DUNGEONS"), 1, 0.82, 0)
+        if Active() then -- foreverview
+            GameTooltip:SetText(L("FOREVER_ONLY_VIEW"), 0.36, 0.82, 1)
+            GameTooltip:AddLine(L("FOREVER_ONLY_RCLICK"), 1, 1, 1)
+        else
+            GameTooltip:SetText(L("DUNGEONS"), 1, 0.82, 0)
+        end
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", function() GameTooltip:Hide() end)

@@ -937,6 +937,91 @@ do
     end
 end
 -- END drownedcity
+-- BEGIN drownedhorde
+-- drownedhorde (2.1.3, M 21 Nov 2026: "build a Drowned City Horde"): what
+-- the Route needs for the Horde side (Wowhead Forever quests 95748, 95770,
+-- 95773, 95776, 96078, 96774 and their comments).
+--  - Locating the Lost City is done at the cavern just west of the Vile Reef
+--    (a comment: /way 21.7, 27.1).
+--  - Enemies in the Water: 10 Brinescale Tridents from the Brinescale
+--    Skirmishers on the sea floor (best by the dungeon's entrance, away from
+--    the elite murlocs: a comment); a place to kill at, not a thing to pick
+--    up (the trident's own spot is for the journal only: noRouteStop).
+--  - The Only Good Brinescale... needs Enemies in the Water and Locating the
+--    Lost City, neither waiting for the other (together).
+--  - A Tale Spun Around the Fire follows The Drowned City, which needs the
+--    run (its tablets are inside); the tale itself is a delivery to Master
+--    Gadrin in Sen'jin Village (no run of its own).
+--  - Mazu'kon (Ancient Gurubashi Idol) stands on a hill in north-west
+--    Mulgore: the path up starts at 40.2, 17.4 (a comment).
+do
+    local BRINESCALE = { markerType = "location", mapID = 1434, x = 0.225, y = 0.256, label = "Brinescale Skirmishers — Stranglethorn Vale", detail = "Brinescale Skirmishers on the sea floor west of Grom'gol, by the Drowned City's entrance" }
+    -- cavernpoint (2.1.3, M 21 Nov 2026 in the Vile Reef, the arrow's
+    -- crossed swords over Locating the Lost City: "Why is the arrow here
+    -- still a battle sword if I just have to find the location? ... You can
+    -- see on the cursor coordinates where it is", 21.8, 27.6; was 21.7, 27.1):
+    -- one place to find, not an area (exact): the arrow points at it.
+    local CAVERN = { markerType = "location", mapID = 1434, x = 0.218, y = 0.276, exact = true, label = "Cavern west of the Vile Reef — Stranglethorn Vale", detail = "The underwater cavern just west of the Vile Reef: the way into the Drowned City" }
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D[95770] then D[95770].objectiveMap = CAVERN end
+    if D[95773] then
+        D[95773].objectiveMap = BRINESCALE
+        for _, item in ipairs(D[95773].requiredItems or {}) do
+            if type(item) == "table" and item[1] == 270305 then item.noRouteStop = true end
+        end
+    end
+    for _, step in ipairs(FDJ.QUEST_PREREQ_CHAINS[95776] or {}) do
+        if step.id == 95770 then step.together = true end
+    end
+    for _, step in ipairs(FDJ.QUEST_PREREQ_CHAINS[96078] or {}) do
+        if step.id == 95775 then step.needsDungeon = true end
+    end
+    for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
+        if quest.id == 96078 then quest.routeNoRun = true end
+    end
+    -- Mazu'kon: the arrow to the foot of the path first
+    local MAZUKON = FDJ.QUEST_START_MAPS[96774]
+    if type(MAZUKON) == "table" then
+        FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+        FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(MAZUKON.mapID), MAZUKON.x, MAZUKON.y)] = {
+            { mapID = 1412, x = 0.402, y = 0.174, label = "Take the path up the hill", keep = true },
+        }
+    end
+end
+-- END drownedhorde
+-- BEGIN swimstraight
+-- swimstraight (2.1.3, M 21 Nov 2026 on the Savage Coast, the arrow to
+-- Enemies in the Water: "it should just point me straight into the
+-- water"): the places out in the sea west of Grom'gol are swum to in a
+-- straight line (Systems/MapMarkers.lua: Way.SwimStraight), not walked
+-- round by the shore: the Brinescale Skirmishers, the cavern of Locating
+-- the Lost City, the Drowned City's entrance and the Vile Reef's tablet.
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    local function Swim(spot) if type(spot) == "table" then spot.swim = true end end
+    if D[95773] then
+        Swim(D[95773].objectiveMap)
+        for _, item in ipairs(D[95773].requiredItems or {}) do
+            if type(item) == "table" then Swim(item.map) end
+        end
+    end
+    if D[95770] then Swim(D[95770].objectiveMap) end
+    if D[629] then
+        for _, item in ipairs(D[629].requiredItems or {}) do
+            if type(item) == "table" then Swim(item.map) end
+        end
+    end
+    Swim(FDJ.DB and FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].entrance)
+    -- swimplace (2.1.3, M 21 Nov 2026 at the cavern: "It should say swim
+    -- underwater, by the way"): the cavern and the entrance lie under water:
+    -- "Swim underwater" under the arrow's yards near them (MapMarkers.lua)
+    local cavern = D[95770] and D[95770].objectiveMap
+    if type(cavern) == "table" then cavern.underwater = true end
+    local door = FDJ.DB and FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].entrance
+    if type(door) == "table" then door.underwater = true end
+end
+-- END swimstraight
+
 
 -- BEGIN drownedalliance
 -- The Drowned City (Alliance) as chains, the last quest the list's entry and
@@ -1150,57 +1235,33 @@ end
 
 -- BEGIN malletchain
 -- The Mallet of Zul'Farrak, which summons Gahz'rilla at the gong in
--- Zul'Farrak: no quest in the game, two steps done by hand (WoW Forever is
+-- Zul'Farrak: no quest in the game, two things done by hand (WoW Forever is
 -- the same as Classic: Warcraft Tavern's Forever Zul'Farrak guide). Shown as
--- a quest chain page of its own (questChainPage, like the Cozy Sleeping
--- Bag), opened from the button on Gahz'rilla's boss page, beside his portrait.
--- The steps have made-up IDs (no quest log entry): each counts as done once
--- the character holds the item it gives (FDJ.PSEUDO_QUEST_DONE).
+-- a page of its own (questChainPage, like the Cozy Sleeping Bag), opened from
+-- the button on Gahz'rilla's boss page, beside his portrait.
+-- malletone (2.1.3, M 21 Nov 2026: "it's not really a pickup ... it's not
+-- even a chain quest ... put everything together"): one entry, no chain, no
+-- "Pick it up" and no Starts at (noPickUp): the objective is killing Qiaga
+-- the Keeper for the Sacred Mallet (Show on Map: Qiaga), then, under it,
+-- using the Sacred Mallet at the altar on top of Jintha'Alor (objectiveMore,
+-- its own Show on Map). Nothing of it is done inside Zul'Farrak
+-- (objectiveInDungeon = false); only the gong is. Done once the character
+-- holds the Mallet of Zul'Farrak (FDJ.PSEUDO_QUEST_DONE, made-up ID). The
+-- tracker's and the arrow's spot (startMap) is Qiaga until the Sacred Mallet
+-- is in the bags, then the altar.
 -- Spots: Altar of Zul (48.6, 68.0) and the altar on top of Jintha'Alor
 -- (58.5, 77.5), The Hinterlands, from player guides.
 do
     local PAGE = "Mallet of Zul'Farrak"
     FDJ.MALLET_PAGE = PAGE
-    local MAIN, STEP = -97100, -97101
+    local MAIN = -97100
     local SACRED, MALLET = 9241, 9240
-    FDJ.MALLET_QUEST, FDJ.MALLET_STEP = MAIN, STEP
+    FDJ.MALLET_QUEST = MAIN
 
     local QIAGA = { mapID = 1425, x = 0.486, y = 0.680, label = "Qiaga the Keeper — Altar of Zul, The Hinterlands", targetName = "Qiaga the Keeper", detail = "At the top of the Altar of Zul" }
     local ALTAR = { markerType = "location", mapID = 1425, x = 0.585, y = 0.775, label = "Altar of Jintha'Alor — The Hinterlands", detail = "The altar at the very top of Jintha'Alor" }
 
-    FDJ.DB[PAGE] = {
-        questChainPage = true, -- Quests, plus Bosses and Map of Zul'Farrak
-        -- Bosses and Map lead back to Zul'Farrak (Bosses at Gahz'rilla).
-        parentDungeon = "Zul'Farrak",
-        parentBoss = "Gahz'rilla",
-        level = "45+",
-        location = "The Hinterlands",
-        description = "",
-        bosses = {},
-        quests = { {
-            id = MAIN, name = "Mallet of Zul'Farrak", level = 50, requires = 1, faction = "Both",
-            objective = "Use the Sacred Mallet at the altar on the very top of Jintha'Alor: it turns into the Mallet of Zul'Farrak.",
-            pickup = "Altar at the very top of Jintha'Alor, The Hinterlands (58.5, 77.5)",
-            turnin = "The gong at Gahz'rilla's pool, inside Zul'Farrak: use the Mallet of Zul'Farrak there to summon Gahz'rilla.",
-            note = "Jintha'Alor is full of level 45-50 trolls: bring a group, or sneak up. You can use the Sacred Mallet in combat. One mallet in the group is enough, and it summons Gahz'rilla in every later run too.",
-            startMap = ALTAR,
-            rewardSummary = "",
-            rewardItems = { { MALLET, "Mallet of Zul'Farrak", 1 } },
-        } },
-    }
-    FDJ.QUEST_PREREQ_CHAINS[MAIN] = {
-        { id = STEP, name = "Sacred Mallet" },
-    }
-    FDJ.QUEST_PREREQ_DETAILS[STEP] = {
-        level = 50, requires = 1,
-        objective = "Kill Qiaga the Keeper at the top of the Altar of Zul and loot the Sacred Mallet.",
-        pickup = "Qiaga the Keeper, top of the Altar of Zul, The Hinterlands (48.6, 68.0)",
-        map = QIAGA,
-        note = "Qiaga the Keeper and Morta'gya the Keeper are level 50 elites, with casters around them. Everyone in the group can loot a Sacred Mallet.",
-        providedItem = { SACRED, "Sacred Mallet", 1 },
-    }
-
-    -- Done once the character has the item the step gives (bags or bank).
+    -- Held by the character (bags or bank)?
     local function Has(itemID)
         local count
         if C_Item and C_Item.GetItemCount then
@@ -1214,13 +1275,44 @@ do
         if type(issecretvalue) == "function" and issecretvalue(count) then return false end
         return type(count) == "number" and count > 0
     end
+
+    local quest = {
+        id = MAIN, name = "Mallet of Zul'Farrak", level = 50, requires = 1, faction = "Both",
+        noPickUp = true, objectiveInDungeon = false,
+        -- malletwarn (2.1.3, M 21 Nov 2026): the red line at the top
+        warning = "There is no quest to pick up here. Just kill and loot.",
+        objective = "Kill Qiaga the Keeper to loot the Sacred Mallet.",
+        objectiveMap = QIAGA,
+        -- %s: Jintha'Alor (area 354), the client's own name when the journal speaks its language
+        objectiveMore = { text = "Then use the Sacred Mallet at the altar on the very top of %s: it turns into the Mallet of Zul'Farrak.", area = { 354, "Jintha'Alor" }, map = ALTAR },
+        pickup = "Qiaga the Keeper, top of the Altar of Zul, The Hinterlands (48.6, 68.0)",
+        turnin = "The gong at Gahz'rilla's pool, inside Zul'Farrak: use the Mallet of Zul'Farrak there to summon Gahz'rilla.",
+        note = "Qiaga the Keeper and Morta'gya the Keeper are level 50 elites with casters around them, and the way up to the top altar is full of level 45-50 trolls: bring a group, or sneak up. Everyone in the group can loot a Sacred Mallet, and it can be used in combat. One Mallet of Zul'Farrak in the group is enough, and it summons Gahz'rilla in every later run too.",
+        rewardSummary = "",
+        rewardItems = { { MALLET, "Mallet of Zul'Farrak", 1 } },
+    }
+    -- startMap: Qiaga, then (Sacred Mallet in the bags) the altar
+    setmetatable(quest, { __index = function(_, key)
+        if key == "startMap" then return Has(SACRED) and ALTAR or QIAGA end
+    end })
+
+    FDJ.DB[PAGE] = {
+        questChainPage = true, -- Quests, plus Bosses and Map of Zul'Farrak
+        -- Bosses and Map lead back to Zul'Farrak (Bosses at Gahz'rilla).
+        parentDungeon = "Zul'Farrak",
+        parentBoss = "Gahz'rilla",
+        level = "45+",
+        location = "The Hinterlands",
+        description = "",
+        bosses = {},
+        quests = { quest },
+    }
+
     FDJ.PSEUDO_QUEST_DONE = FDJ.PSEUDO_QUEST_DONE or {}
-    FDJ.PSEUDO_QUEST_DONE[STEP] = function() return Has(SACRED) or Has(MALLET) end
     FDJ.PSEUDO_QUEST_DONE[MAIN] = function() return Has(MALLET) end
 
     -- Gahz'rilla's page: "Summon with: [Mallet of Zul'Farrak]" under his
-    -- name (Systems/BossSummon.lua); a click on the mallet opens the chain at
-    -- the step not done yet.
+    -- name (Systems/BossSummon.lua); a click on the mallet opens this page.
     local zf = FDJ.DB["Zul'Farrak"]
     for _, boss in ipairs((zf and zf.bosses) or {}) do
         if boss.name == "Gahz'rilla" then
@@ -1230,10 +1322,10 @@ do
     end
     -- summonhelp (2.0.9, M 16 Nov 2026): the quest Gahz'rilla (2770) says he
     -- has to be summoned, above its Objective, with "How to summon
-    -- Gahz'rilla" opening this chain (Core/Journal.lua, FDJ.PlaceSummonHelp).
-    for _, quest in ipairs((zf and zf.quests) or {}) do
-        if quest.id == 2770 then
-            quest.summonHelp = { boss = "Gahz'rilla", item = MALLET, itemName = "Mallet of Zul'Farrak", page = PAGE, quest = MAIN }
+    -- Gahz'rilla" opening this page (Core/Journal.lua, FDJ.PlaceSummonHelp).
+    for _, q in ipairs((zf and zf.quests) or {}) do
+        if q.id == 2770 then
+            q.summonHelp = { boss = "Gahz'rilla", item = MALLET, itemName = "Mallet of Zul'Farrak", page = PAGE, quest = MAIN }
         end
     end
 end
@@ -5497,3 +5589,196 @@ do
         end
     end
 end
+
+-- BEGIN uldwarn
+-- uldwarn (2.1.3, M 21 Nov 2026, the Uldaman pages: "we need a disclaimer
+-- that says farm elites outside of Uldaman for the necklace. We also need a
+-- disclaimer for the urn quest, saying: This is completed OUTSIDE, in the
+-- tunnel leading to the entrance"): the warning line at the top of The
+-- Shattered Necklace's step page and of Agmond's Fate's page (translated:
+-- Localization/Content_NewDungeons.lua, l10nuldwarn).
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D and D[2198] then
+        D[2198].warning = "Farm the elites outside Uldaman for the necklace."
+        D[2198].warningTop = true
+    end
+    local ud = FDJ.DB and FDJ.DB["Uldaman"]
+    for _, quest in ipairs((ud and ud.quests) or {}) do
+        if type(quest) == "table" and quest.id == 704 then
+            -- (M 21 Nov 2026: "say this is completed in the area outside the
+            -- dungeon. Don't mention the tunnel")
+            quest.warning = "This is completed in the area outside the dungeon."
+        end
+        -- (M 21 Nov 2026, Power Stones' note: "we should just delete it and
+        -- basically move it as a disclaimer ... the power stones can also drop
+        -- from elite dwarves outside the dungeon"; they drop inside too:
+        -- Wowhead Forever, SOURCES.txt)
+        if type(quest) == "table" and quest.id == 2418 then
+            quest.warning = "The power stones can also drop from elite dwarves outside the dungeon."
+        end
+    end
+end
+-- END uldwarn
+
+-- BEGIN outsidesteps
+-- outsidesteps (2.1.3, M 21 Nov 2026, A Sign of Hope's page: "It's not a
+-- dungeon chain step, it's outside ... Remove the dungeon chain step ... and
+-- put a disclaimer outside the instance at the top. And then it's the same
+-- thing for the next quest ... the quest after, Prospect of Faith is also not
+-- a dungeon chain step"): Hammertoe Grez, Magregan Deepshadow and Prospector
+-- Ryedol stand outside the instance (the quest database's spawns; Wowhead,
+-- warcraft.wiki.gg, classicdb, warcrafttavern: SOURCES.txt). The text check
+-- took "in Uldaman" in their objectives for inside. Necklace Recovery (2283,
+-- Horde's Shattered Necklace) the same: the necklace drops at the dig site
+-- outside (necklaceout). Every other step with the label was checked against
+-- where its NPCs, objects and items really are: done inside a dungeon.
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    for _, id in ipairs({ 721, 722, 723, 2283 }) do
+        if D and D[id] then
+            D[id].dungeonStep = false
+            D[id].objectiveInDungeon = false
+            D[id].startsInDungeon = nil
+        end
+    end
+    -- the warning line at the top (translated: Localization/
+    -- Content_NewDungeons.lua, l10nuldwarn)
+    for _, id in ipairs({ 721, 722 }) do
+        if D and D[id] then
+            D[id].warning = "This is completed OUTSIDE the instance."
+            D[id].warningTop = true
+        end
+    end
+end
+-- END outsidesteps
+-- BEGIN gemswarn
+-- gemswarn (2.1.3, M 21 Nov 2026, Find the Gems' page: "we need to add a
+-- disclaimer to this quest, and we say complete this quest before killing
+-- the last boss"): the warning line at the top of the Alliance's Find the
+-- Gems (the next step, Restoring the Necklace, wants the power source from
+-- Archaedas). Translated: Localization/Content_NewDungeons.lua, l10nuldwarn.
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D and D[2201] then
+        D[2201].warning = "Complete this quest before killing the last boss."
+        D[2201].warningTop = true
+    end
+end
+-- END gemswarn
+
+-- BEGIN hammertoecave
+-- hammertoecave (2.1.3, M 21 Nov 2026, standing at Hammertoe Grez with the
+-- arrow 163 yards back at the cave mouth: "It thinks that this NPC is
+-- outside the tunnel, but it's actually inside ... You need to research this
+-- NPC position better"): Hammertoe stands at 37.9, 10.6 (the Forever
+-- client's spawn; Allakhazam's 37.94, 10.53; M in game beside him at 37.8,
+-- 11.1), about 160 yards into the excavation tunnel. His spot was the cave
+-- mouth (44.3, 12.0, Data/QuestMaps.lua). From outside, the arrow leads to
+-- the cave mouth first, because the straight line goes over the ridge the
+-- tunnel runs under. Inside, anywhere nearer to him than the mouth (forward),
+-- it points straight at him.
+do
+    FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+    FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1418", 0.379, 0.106)] = { forward = true,
+        { mapID = 1418, x = 0.443, y = 0.120, label = "Into the excavation cave" },
+    }
+end
+-- END hammertoecave
+
+-- BEGIN fungusout
+-- fungusout (2.1.3, M 21 Nov 2026, Uldaman Reagent Run's page after picking
+-- three caps in the excavation tunnel by Hammertoe: "let's say these can
+-- also be picked up outside the dungeon"): the Magenta Cap Clusters grow in
+-- the outer excavation caves too (the Forever client's spawns: 17 between
+-- 33.5 and 41.0, 10.4 to 24.4, Badlands) as well as inside. The Alliance's
+-- quest (17) and the Horde's (2202) are the same. Translated: l10nuldwarn.
+do
+    local ud = FDJ.DB and FDJ.DB["Uldaman"]
+    for _, quest in ipairs((ud and ud.quests) or {}) do
+        if type(quest) == "table" and (quest.id == 17 or quest.id == 2202) then
+            quest.warning = "The Magenta Fungus Caps can also be picked up outside the dungeon."
+        end
+    end
+end
+-- END fungusout
+
+-- BEGIN ancientchest
+-- ancientchest (2.1.3, M 21 Nov 2026, standing at the Ancient Chest in the
+-- Sealed Hall with Solution to Doom: "this quest is also outside the
+-- instance ... we should put a disclaimer ... If you could somehow put this
+-- minimap ... the black dot is where the quest is made, and it's also where
+-- Amulet of Secrets is made"): the chest stands at 39.3, 18.8 in the outer
+-- caves (the Forever client's spawn; icy-veins Forever: 39.5, 18.6; M in game
+-- at 39.4, 19.6). The picture: M's minimap there (21 Nov 2026), his own arrow
+-- painted out, the black mark circled (Media/UldamanExcavationMinimap.tga).
+-- Translated: l10nuldwarn (the warning), l10nhammertoecave (the captions).
+do
+    local IMG = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\UldamanExcavationMinimap"
+    local ud = FDJ.DB and FDJ.DB["Uldaman"]
+    for _, quest in ipairs((ud and ud.quests) or {}) do
+        if type(quest) == "table" and quest.id == 709 then
+            quest.warning = "The Tablet of Ryun'eh is in the Ancient Chest outside the instance."
+            quest.noteImage = { file = IMG, size = 190, marks = { { x = 0.6246, y = 0.7275, item = 4631 } },
+                caption = "Minimap, outside Uldaman: the icon marks the Ancient Chest." }
+        end
+    end
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D and D[722] then
+        D[722].noteImage = { file = IMG, size = 190, marks = { { x = 0.6246, y = 0.7275, item = 4635 } },
+            caption = "Minimap, outside Uldaman: the icon marks Magregan Deepshadow." }
+    end
+end
+-- END ancientchest
+
+-- BEGIN commonhall
+-- commonhall (2.1.3, M 21 Nov 2026, Reclaimed Treasures' page in the North
+-- Common Hall with his minimap: "This quest is also outside the instance ...
+-- I don't want you to show the black dot ... replace the black dot with the
+-- actual icon of the quest"): Krom Stoutarm's Chest stands at 35.6, 23.5 in
+-- the outer caves (the Forever client's spawn; icy-veins Forever: 35.7,
+-- 23.5), about 70 yards south of where M stood (35.1, 19.3). The picture
+-- (Media/UldamanCommonHallMinimap.tga): M's minimap there, his arrow painted
+-- out, the chest's place from the minimap's indoor scale (300 yards across):
+-- the south end of the hall below him. The black mark on the Sealed Hall
+-- picture is painted out too: the quests' own item icons go in the gold rings
+-- (marks, Core/Journal.lua noteimage). The Horde's Reclaimed Treasures (2342):
+-- the Garrett Family Chest, 34.2, 18.6, outside too (same sources).
+do
+    local IMG = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\UldamanCommonHallMinimap"
+    local ud = FDJ.DB and FDJ.DB["Uldaman"]
+    for _, quest in ipairs((ud and ud.quests) or {}) do
+        if type(quest) == "table" and quest.id == 1360 then
+            quest.warning = "Krom Stoutarm's Treasure is in his chest outside the instance."
+            quest.noteImage = { file = IMG, size = 190, marks = { { x = 0.5379, y = 0.7112, item = 8027 } },
+                caption = "Minimap, outside Uldaman: the icon marks Krom Stoutarm's Chest." }
+        end
+        if type(quest) == "table" and quest.id == 2342 then
+            quest.warning = "The Garrett Family Treasure is in the family chest outside the instance."
+        end
+    end
+end
+-- END commonhall
+
+-- BEGIN restlesssouls
+-- The Restless Souls (Stratholme, both pages): Egan's quest (5282) can only
+-- be taken after Caretaker Alen's The Restless Souls (5281) in Light's Hope
+-- Chapel, so 5281 is a required step, not an optional introduction (kaanu
+-- on the Discord, 21 Nov 2026: at level 55 without 5281 done, Egan doesn't
+-- offer 5282; Wowhead Forever quest 5281).
+FDJ.QUEST_PREREQ_CHAINS[5282] = {
+    { id = 5281, name = "The Restless Souls" },
+}
+FDJ.QUEST_PREREQ_DETAILS[5281] = {
+    level = 60,
+    requires = 55,
+    objective = "Find Egan. You only know that he was last seen around Stratholme.",
+    -- Egan is in Terrordale, outside: the objective's "around Stratholme"
+    -- made it a step inside the dungeon (teal page, dungeon icon).
+    objectiveInDungeon = false,
+    pickup = "Caretaker Alen, Light's Hope Chapel, Eastern Plaguelands",
+    turnin = "Egan, Terrordale, Eastern Plaguelands",
+    map = FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[5281],
+}
+FDJ.FOREVER_QUEST_XP_FALLBACK[5281] = FDJ.FOREVER_QUEST_XP_FALLBACK[5281] or 6600
+-- END restlesssouls
