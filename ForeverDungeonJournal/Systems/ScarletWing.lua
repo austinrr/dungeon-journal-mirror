@@ -355,9 +355,41 @@ function FDJ.DescribeLocation()
     return table.concat(out, ", ")
 end
 
+-- tirisfalonly (2.1.4, M 23 Nov 2026, the performance check: the position
+-- was read three times a second everywhere, all session): only in Tirisfal
+-- Glades, where the monastery's doors are; out of it the last position is
+-- forgotten (no door there). Being outdoors since the last visit is told by
+-- arriving outdoors (a loading screen or a new zone), as the reads did.
+local TIRISFAL = 1420
+local function InTirisfal()
+    if not (C_Map and C_Map.GetBestMapForUnit and C_Map.GetMapInfo) then return true end -- (can't tell: read as before)
+    local ok, map = pcall(C_Map.GetBestMapForUnit, "player")
+    map = ok and Plain(map) or nil
+    for _ = 1, 6 do
+        if type(map) ~= "number" or map <= 0 then return false end
+        if map == TIRISFAL then return true end
+        local okI, info = pcall(C_Map.GetMapInfo, map)
+        if not okI or type(info) ~= "table" then return false end
+        map = Plain(info.parentMapID)
+    end
+    return false
+end
+
 local watcher = CreateFrame("Frame")
-watcher:RegisterEvent("PLAYER_ENTERING_WORLD")
-watcher:SetScript("OnEvent", function() pcall(OnArrive) end)
+watcher:Hide()
+for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS" }) do
+    pcall(watcher.RegisterEvent, watcher, event)
+end
+watcher:SetScript("OnEvent", function(self, event)
+    if event == "PLAYER_ENTERING_WORLD" then pcall(OnArrive) end
+    local inside = type(IsInInstance) == "function" and IsInInstance()
+    if inside then self:Hide() return end
+    outdoorsSinceEntry = true
+    local near = false
+    pcall(function() near = InTirisfal() end)
+    if not near then lastOutdoor = nil end
+    self:SetShown(near)
+end)
 local elapsed = 0
 watcher:SetScript("OnUpdate", function(_, dt)
     elapsed = elapsed + (dt or 0)

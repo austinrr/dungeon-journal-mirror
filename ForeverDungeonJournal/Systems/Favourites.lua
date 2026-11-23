@@ -192,11 +192,22 @@ local function ItemIcon(itemID)
     return 134400
 end
 
+-- favnames (2.1.4, M 23 Nov 2026: a French player's favourites showed the
+-- items' English names): the Forever client has no global GetItemInfo, so
+-- the game's name (in the client's language) was never read and the English
+-- name saved with the favourite showed. C_Item's, as the loot list reads it.
+local function LiveItemInfo(id)
+    local get = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+    if type(get) ~= "function" or not id then return nil end
+    local ok, name, link, quality = pcall(get, id)
+    if not ok then return nil end
+    if type(issecretvalue) == "function" and (issecretvalue(name) or issecretvalue(link) or issecretvalue(quality)) then return nil end
+    return name, link, quality
+end
+
 local function ItemName(fav)
-    if GetItemInfo then
-        local ok, name = pcall(GetItemInfo, fav.id)
-        if ok and name then return name end
-    end
+    local name = LiveItemInfo(fav.id)
+    if type(name) == "string" and name ~= "" then return name end
     return fav.name or ("Item " .. tostring(fav.id))
 end
 
@@ -206,12 +217,10 @@ local function ItemColor(fav)
     local quality = tonumber(fav.quality)
     local link
 
-    if GetItemInfo then
-        local ok, _, itemLink, q = pcall(GetItemInfo, fav.id)
-        if ok then
-            link = itemLink
-            if q ~= nil then quality = q end
-        end
+    do -- favnames
+        local _, itemLink, q = LiveItemInfo(fav.id)
+        link = itemLink
+        if q ~= nil then quality = q end
     end
 
     -- Boss loot rows already use the rendered in-game tooltip as the source
@@ -233,8 +242,8 @@ local function ShowItemTooltip(owner, itemID, hint)
     GameTooltip:SetOwner(owner, "ANCHOR_RIGHT")
     if GameTooltip.SetItemByID then
         pcall(GameTooltip.SetItemByID, GameTooltip, itemID)
-    elseif GetItemInfo then
-        local _, link = GetItemInfo(itemID)
+    else
+        local _, link = LiveItemInfo(itemID) -- favnames
         if link then GameTooltip:SetHyperlink(link) end
     end
     if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
@@ -753,11 +762,7 @@ local function RefreshWindow(win)
         -- when the item is already cached. Requesting again from RefreshWindow
         -- would recursively re-enter this function until a C stack overflow.
         if C_Item and C_Item.RequestLoadItemDataByID and not requestedItemData[fav.id] then
-            local loaded = false
-            if GetItemInfo then
-                local ok, itemName = pcall(GetItemInfo, fav.id)
-                loaded = ok and itemName ~= nil
-            end
+            local loaded = LiveItemInfo(fav.id) ~= nil -- favnames
             if not loaded then
                 requestedItemData[fav.id] = true
                 pcall(C_Item.RequestLoadItemDataByID, fav.id)

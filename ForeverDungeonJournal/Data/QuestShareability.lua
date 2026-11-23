@@ -368,7 +368,10 @@ FDJ.QUEST_SHAREABILITY_AUDIT = {
     [7644] = false,  -- Blessed Arcanite Barding
     [7646] = false,  -- The Divination Scryer
     [7668] = false,  -- The Darkreaver Menace (legacy / alternate record)
+    [8258] = false,  -- The Darkreaver Menace (Forever's, darkreaver 2.1.4)
     [7667] = false,  -- Material Assistance
+    [97169] = false, -- The Darkreaver Menace (Alliance, darkreaverally 2.1.4)
+    [97168] = false, -- Material Assistance (Alliance, darkreaverally 2.1.4)
     [4771] = false,  -- Dawn's Gambit
     -- Stratholme: Living
     [5251] = true,   -- The Archivist

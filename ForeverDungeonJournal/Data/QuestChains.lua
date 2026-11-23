@@ -555,8 +555,11 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 7644, name = "Blessed Arcanite Barding" },
         { id = 7646, name = "The Divination Scryer" },
     },
-    [7668] = {
+    [8258] = { -- darkreaver (2.1.4): Forever's The Darkreaver Menace (was 7668)
         { id = 7667, name = "Material Assistance" },
+    },
+    [97169] = { -- darkreaverally (2.1.4): the Alliance's, from Eldrun Stormbreaker
+        { id = 97168, name = "Material Assistance" },
     },
     [5262] = {
         { id = 5251, name = "The Archivist" },
@@ -1807,6 +1810,13 @@ FDJ.QUEST_PREREQ_DETAILS = {
         pickup = "Sagorne Creststrider, Orgrimmar",
         turnin = "Sagorne Creststrider, Orgrimmar",
         map = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
+    },
+    [97168] = { -- darkreaverally (2.1.4)
+        level = 60, requires = 58,
+        objective = "If you are interested in helping Eldrun Stormbreaker in Ironforge, bring him an Azerothian Diamond and a Pristine Black Diamond.",
+        pickup = "Eldrun Stormbreaker, Ironforge",
+        turnin = "Eldrun Stormbreaker, Ironforge",
+        map = { mapID = 1455, x = 0.471, y = 0.138, label = "Eldrun Stormbreaker — Ironforge", targetName = "Eldrun Stormbreaker" },
     },
     [5251] = {
         level = 60, requires = 55,

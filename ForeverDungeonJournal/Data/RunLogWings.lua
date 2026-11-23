@@ -114,6 +114,27 @@ FDJ.RunLogWingTrash = {
         [9259] = "Firebrand Grunt",
         [9261] = "Firebrand Darkweaver",
         [9264] = "Firebrand Pyromancer",
+        -- spiremobs (2.1.4, M 23 Nov 2026, a Discord report: in Lower
+        -- Blackrock Spire the tracker only started at the first boss): more
+        -- of the Lower side's own mobs, none of them in Upper Blackrock
+        -- Spire: the Bloodaxe and Firebrand orcs of Hordemar City, the
+        -- Smolderthorn trolls, the Spirestone Warlord, the Skitterweb spiders
+        -- (SOURCES.txt, spiremobs).
+        [9262] = "Firebrand Invoker",
+        [9583] = "Bloodaxe Veteran",
+        [9692] = "Bloodaxe Raider",
+        [9693] = "Bloodaxe Evoker",
+        [9696] = "Bloodaxe Worg",
+        [9716] = "Bloodaxe Warmonger",
+        [9717] = "Bloodaxe Summoner",
+        [9265] = "Smolderthorn Shadow Hunter",
+        [9266] = "Smolderthorn Witch Doctor",
+        [9267] = "Smolderthorn Axe Thrower",
+        [9268] = "Smolderthorn Berserker",
+        [9269] = "Smolderthorn Seer",
+        [9216] = "Spirestone Warlord",
+        [10374] = "Spire Spider",
+        [10375] = "Spire Spiderling",
     },
 }
 FDJ.RunLogWingGroups = {
@@ -121,6 +142,45 @@ FDJ.RunLogWingGroups = {
     [189] = { "Scarlet Monastery: Graveyard", "Scarlet Monastery: Library", "Scarlet Monastery: Armory", "Scarlet Monastery: Cathedral" },
     [229] = { "Lower Blackrock Spire", "Upper Blackrock Spire" },
     [329] = { "Stratholme: Living", "Stratholme: Undead" },
+}
+
+-- spireroom (2.1.4, M 23 Nov 2026 on a stream in Hordemar City: "why
+-- doesn't it start there directly when people kill a mob in Hordemar
+-- City?"): the rooms (the minimap's sub-zone) only one side of Blackrock
+-- Spire has. Until the run has a side, a kill in one of them starts it as
+-- that side: a first guess, which a later kill of a mob or boss only the
+-- other side has still moves (Systems/RunLog.lua). The Hall of Blackhand is
+-- left out: both sides start in it (the open ways into Lower Blackrock
+-- Spire on its south wall, Upper Blackrock Spire's door on its north wall),
+-- and Upper Blackrock Spire has an upper level of it too. English names; in
+-- another language the tracker learns the Lower side's rooms itself
+-- (FDJ.RunLogRoomLearn).
+FDJ.RunLogRoomWings = {
+    [229] = {
+        ["hordemar city"] = "Lower Blackrock Spire",
+        ["mok'doom"] = "Lower Blackrock Spire",
+        ["tazz'alaor"] = "Lower Blackrock Spire",
+        ["tazz'alor"] = "Lower Blackrock Spire",
+        ["skitterweb tunnels"] = "Lower Blackrock Spire",
+        ["the storehouse"] = "Lower Blackrock Spire",
+        ["halycon's lair"] = "Lower Blackrock Spire",
+        ["chamber of battle"] = "Lower Blackrock Spire",
+        ["dragonspire hall"] = "Upper Blackrock Spire",
+        ["hall of binding"] = "Upper Blackrock Spire",
+        ["the rookery"] = "Upper Blackrock Spire",
+        ["blackrock stadium"] = "Upper Blackrock Spire",
+        ["the furnace"] = "Upper Blackrock Spire",
+        ["spire throne"] = "Upper Blackrock Spire",
+        ["the beast's lair"] = "Upper Blackrock Spire",
+    },
+}
+-- The side whose rooms are learned in any language: the room a kill of a mob
+-- or boss only that side has happens in (a kill only the other side has in
+-- such a room marks it as both sides', so it decides nothing). Only the
+-- Lower side's: the Hall of Blackhand has none of its mobs, so it is never
+-- learned; Upper Blackrock Spire's kills on its upper level would teach it.
+FDJ.RunLogRoomLearn = {
+    [229] = "Lower Blackrock Spire",
 }
 
 -- smwing (2.0.8, M 15 Nov 2026: in the Cathedral the tracker said Graveyard

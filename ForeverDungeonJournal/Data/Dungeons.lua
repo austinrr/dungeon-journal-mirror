@@ -2523,6 +2523,10 @@ FDJ.DB["Gnomeregan"] = {
         rewardSummary = "Nogg's Gold Ring",
         id = 2950,
         requires = 28,
+        -- routebuy (2.0.10): the Route sends you to the auction house for
+        -- these while they are missing; a delivery, no run of its own
+        routeBuy = { {2842, "Silver Bar", 1}, {1206, "Moss Agate", 1} },
+        routeNoRun = true,
         name = "Nogg's Ring Redo",
         startsInDungeon = true,
         faction = "Horde",
@@ -5995,6 +5999,11 @@ FDJ.DB["Alcaz Prison"] = {
                 {287023, "Iron-Wrought Cuffs", "Wrist, Plate", 3},
                 {287024, "Mark of Captivity", "Neck", 3},
                 {287025, "Enchantresses' Spire", "Two-Hand, Staff", 3, "Strashaz Enchantress"}, -- Wowhead Forever: Strashaz Enchantress 5.78%
+                -- escapeplan (2.1.4, M 23 Nov 2026: "add this loot to alcaz
+                -- trash"): Escape Plan, gun, item level 54, needs 49, a zone
+                -- drop in Alcaz Prison (Wowhead Forever's Alcaz Prison drops;
+                -- SOURCES.txt, escapeplan)
+                {287026, "Escape Plan", "Ranged, Gun", 3},
             },
         },
     },
@@ -7354,6 +7363,7 @@ FDJ.DB["Sunken Temple"] = {
         {
             name = "Altar Bosses",
             children = { 5713, 5715, 5714, 5717, 5712, 5716 },
+            deadWith = "Atal'alarion", -- altarneeded (2.1.4, M 22 Nov 2026): with Atal'alarion dead the tracker counts the six as dead too
             portraitNpcID = 5713,
             description = "The six Atal'ai troll guardians on the balconies round the ring: Gasher, Hukku, Loro, Mijan, Zolo and Zul'Lor. All six must die before Jammal'an the Prophet comes down. They share one loot table.",
             loot = {
@@ -7569,6 +7579,7 @@ FDJ.DB["Sunken Temple"] = {
         {
             name = "Avatar of Hakkar",
             npcID = 8443,
+            optional = true, -- altarneeded (2.1.4): only there with the Filled Egg of Hakkar (The God Hakkar): a run ends without it
             aliases = {"Avatar of Hakkar"},
             description = "Summoned at the central altar with the Filled Egg of Hakkar (The God Hakkar).",
             loot = {
@@ -7776,15 +7787,44 @@ FDJ.DB["Scholomance"] = {
         classOnly = "SHAMAN",
         objective = "Use the Divination Scryer in the heart of the Great Ossuary's basement in the Scholomance. Doing so will bring forth spirits you must fight. Defeating these spirits will summon forth Death Knight Darkreaver; defeat him. Bring Darkreaver's Head to Sagorne Creststrider in the Valley of Wisdom, Orgrimmar.",
         rewardSummary = "",
-        id = 7668,
+        -- darkreaver (2.1.4, Aurheim on Discord, 23 Nov 2026: "Quest on
+        -- Forever is ID 8258 ... you pick between Skyfury Helm and Skyfury
+        -- Gauntlets. Both are epic"): Forever's quest is 8258, not the old
+        -- 7668 (Helm of Latent Power); SOURCES.txt, darkreaver. (lvl58, M 23
+        -- Nov 2026: "it's available from level 58 ... go back to showing
+        -- XP": level 58 as on Wowhead Forever, and its XP again.)
+        id = 8258,
         name = "The Darkreaver Menace",
         faction = "Horde",
         pickup = "Sagorne Creststrider, Valley of Wisdom, Orgrimmar",
         level = 60,
         requires = 58,
-        rewardItems = {{18807, "Helm of Latent Power", 3}},
+        rewardChoice = true,
+        rewardItems = {{20134, "Skyfury Helm", 4}, {20133, "Skyfury Gauntlets", 4}},
         note = "Shaman quest. Clear Rattlegore's basement, use the scryer and defeat Death Knight Darkreaver; return his head.",
         turnin = "Sagorne Creststrider, Valley of Wisdom, Orgrimmar",
+        liveXPFallback = 9950,
+    },
+    {
+        -- darkreaverally (2.1.4, M 23 Nov 2026: "alliance also has this chain,
+        -- make sure you apply accordingly to the alliance npcs"): the
+        -- Alliance's own, 97169 from Eldrun Stormbreaker in Ironforge's
+        -- Forlorn Cavern (after his Material Assistance, 97168); the same
+        -- event, level and rewards as the Horde's 8258 (SOURCES.txt,
+        -- darkreaverally).
+        classOnly = "SHAMAN",
+        objective = "Use the Divination Scryer in the heart of the Great Ossuary's basement in the Scholomance. Doing so will bring forth spirits you must fight. Defeating these spirits will summon forth Death Knight Darkreaver; defeat him. Bring Darkreaver's Head to Eldrun Stormbreaker in the Forlorn Caverns, Ironforge.",
+        rewardSummary = "",
+        id = 97169,
+        name = "The Darkreaver Menace",
+        faction = "Alliance",
+        pickup = "Eldrun Stormbreaker, Forlorn Cavern, Ironforge",
+        level = 60,
+        requires = 58,
+        rewardChoice = true,
+        rewardItems = {{20134, "Skyfury Helm", 4}, {20133, "Skyfury Gauntlets", 4}},
+        note = "Shaman quest. Clear Rattlegore's basement, use the scryer and defeat Death Knight Darkreaver; return his head.",
+        turnin = "Eldrun Stormbreaker, Forlorn Cavern, Ironforge",
         liveXPFallback = 9950,
     },
     },
@@ -8235,7 +8275,6 @@ FDJ.DB["Maraudon"] = {
         level = 48,
         requires = 39,
         rewardItems = {{17774, "Mark of the Chosen", 2}},
-        note = "Loot the Amulet of Spirits from the Nameless Prophet in the outer caves, then use it to fight the five Khans: three in the outer caves, one on the purple route and one on the orange route. Combine their gems with the amulet.",
         turnin = "Centaur Pariah, southern Desolace",
         liveXPFallback = 5450,
     },

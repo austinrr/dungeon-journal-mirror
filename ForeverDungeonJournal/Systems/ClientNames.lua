@@ -49,6 +49,7 @@ local function Saved(loc)
     if type(s) ~= "table" then s = {} db.clientNames[loc] = s end
     if type(s.bosses) ~= "table" then s.bosses = {} end
     if type(s.dungeons) ~= "table" then s.dungeons = {} end
+    if type(s.mobs) ~= "table" then s.mobs = {} end -- spiremobs: npcID -> name
     return s
 end
 
@@ -94,8 +95,30 @@ local function CreatureName(npc)
 end
 
 local function ApplyBoss(c, b, name)
-    if SingleCreature(b.name) then c.bosses[b.name] = name end
+    if not b.wingMob and SingleCreature(b.name) then c.bosses[b.name] = name end
     if FDJ.RunLog and FDJ.RunLog.AddAlias then pcall(FDJ.RunLog.AddAlias, b.npcID, name) end
+end
+
+-- spiremobs (2.1.4, M 23 Nov 2026, a Discord report: the Lower Blackrock
+-- Spire tracker only started at the first boss): the mobs that tell a
+-- shared instance's wings apart (FDJ.RunLogWingTrash, FDJ.RunLogSharedTrash)
+-- by their names in this client's language too. Inside Forever's dungeons the
+-- game often hides a mob's NPC ID, and only English names were known, so on
+-- another language's client only a boss could tell the wing.
+local function WingMobs()
+    local list, seen = {}, {}
+    local function Add(t)
+        for id, english in pairs(t or {}) do
+            id = tonumber(id)
+            if id and not seen[id] then
+                seen[id] = true
+                list[#list + 1] = { npcID = id, name = english, wingMob = true }
+            end
+        end
+    end
+    for _, mobs in pairs(FDJ.RunLogWingTrash or {}) do Add(mobs) end
+    for _, mobs in pairs(FDJ.RunLogSharedTrash or {}) do Add(mobs) end
+    return list
 end
 
 -- Dungeon names by instance ID. A client that doesn't know an ID may answer
@@ -140,6 +163,7 @@ local function Queue()
             end
         end
     end
+    for _, m in ipairs(WingMobs()) do q[#q + 1] = m end -- spiremobs
     return q
 end
 
@@ -157,11 +181,12 @@ local function Scan(c, saved, pass)
                 if FDJ.UpdateRunTracker then pcall(FDJ.UpdateRunTracker) end
                 return
             end
-            if not saved.bosses[b.npcID] or pass == 1 then
+            local store = b.wingMob and saved.mobs or saved.bosses -- spiremobs
+            if not store[b.npcID] or pass == 1 then
                 state.asked = state.asked + 1
                 local name = CreatureName(b.npcID)
                 if name then
-                    if saved.bosses[b.npcID] ~= name then saved.bosses[b.npcID] = name end
+                    if store[b.npcID] ~= name then store[b.npcID] = name end
                     ApplyBoss(c, b, name)
                 else
                     missing = missing + 1
@@ -186,6 +211,10 @@ function FDJ.LearnClientNames()
             local name = type(b) == "table" and tonumber(b.npcID) and saved.bosses[b.npcID]
             if type(name) == "string" then ApplyBoss(c, b, name) end
         end
+    end
+    for _, m in ipairs(WingMobs()) do -- spiremobs
+        local name = saved.mobs[m.npcID]
+        if type(name) == "string" then ApplyBoss(c, m, name) end
     end
     for k, name in pairs(saved.dungeons) do
         if FDJ.DB and FDJ.DB[k] and type(name) == "string" then

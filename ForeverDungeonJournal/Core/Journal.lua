@@ -448,7 +448,9 @@ FDJ.DUNGEON_MAPS = {
             { uiMapID = 242, tiles = "Interface\\WorldMap\\BlackrockDepths\\BlackrockDepths1_" },
             { uiMapID = 243, tiles = "Interface\\WorldMap\\BlackrockDepths\\BlackrockDepths2_" },
         },
-        entrance = { floor = 1, x = 0.329, y = 0.794, angle = 0 }, -- the swirl in the Dark Iron Highway
+        -- brdlabel (2.1.4, M 23 Nov 2026: "in brd move the entrance text to
+        -- the left of the dungeon icon"): angle 180, its label on the left
+        entrance = { floor = 1, x = 0.329, y = 0.794, angle = 180 }, -- the swirl in the Dark Iron Highway
         bosses = {
             { name = "High Interrogator Gerstahn", floor = 1, x = 0.474, y = 0.922 },
             { name = "Lord Roccor",                floor = 1, x = 0.556, y = 0.670 },
@@ -2635,8 +2637,11 @@ local function ParseQuestRewardExtras(quest)
         for _, list in ipairs({ quest.rewardItems, quest.additionalRewardItems, quest.noteRewardItems }) do
             for _, item in ipairs(type(list) == "table" and list or {}) do
                 if type(item[2]) == "string" then shownItems[item[2]:lower()] = true end
-                if type(item[1]) == "number" and item[1] > 0 and GetItemInfo then
-                    local ok, liveName = pcall(GetItemInfo, item[1])
+                -- favnames (2.1.4): C_Item's (the client has no global
+                -- GetItemInfo): the item's name in the client's language
+                local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+                if type(item[1]) == "number" and item[1] > 0 and type(getInfo) == "function" then
+                    local ok, liveName = pcall(getInfo, item[1])
                     if ok and type(liveName) == "string" and not IsSecret(liveName) then
                         shownItems[liveName:lower()] = true
                     end
@@ -2831,6 +2836,14 @@ local function IsQuestFinished(questID)
 
     if not inLog then
         return false
+    end
+    -- readyonpickup (2.1.4, M 23 Nov 2026, More Valuable Than Gold: "once we
+    -- get this quest, we should already have the turn-in sign, since you just
+    -- need to get the treasure"): a quest whose one objective is met where it
+    -- is handed in (FDJ.READY_ON_PICKUP, Data/QuestUpdates.lua) is ready to
+    -- hand in from the moment it is in the log: the ? and "Turn in".
+    if FDJ.READY_ON_PICKUP and FDJ.READY_ON_PICKUP[questID] then
+        return true
     end
 
     -- A quest with no objectives (talk to someone / deliver this) is reported
@@ -3509,6 +3522,180 @@ end
 FDJ.RowChainControl = function(button)
     if button.guideToggle and button.guideToggle:IsShown() then return button.guideToggle end
     return button.chainToggle
+end
+-- subwarn (2.1.4, M 22 Nov 2026 on the Mallet of Zul'Farrak's page: "below
+-- the loot that says best done together with the Ancient Egg, and I want the
+-- Ancient Egg to be clickable ... not as big as the blue one. Just write it in
+-- red, a bit smaller"): a quest's or step's subWarning, a red line under the
+-- blue warning (before Objective). questbutton (2.1.4, M 22 Nov 2026: "just
+-- the Ancient Egg ... like a quest button"; then "put the Ancient Egg quest to
+-- the right with the colon ... the same style that we use for the exclamation
+-- marks ... the ones that we use all the time for the quest pickups ... slightly
+-- bigger and give it a very subtle white stroke ... otherwise it's hard to
+-- read"): the line one size over the small warning font, with a faint white
+-- stroke (copies of it a pixel off, under it); with subWarningLink =
+-- { dungeon, quest, step, name } the quest it names is a button right of the
+-- line (under it when there is no room): the quest list's round pickup ! and
+-- the quest's name. A click opens it (the step of quest's chain on dungeon's
+-- page). Returns cursorY.
+do
+    local RED = { 0.74, 0.04, 0.04 }
+    FDJ.SUBWARN_STYLE = { size = 16, r = 0.75, g = 0.00, b = 0.00, outline = "", stroke = 0, shadow = false } -- (picked in the tuner, M 22 Nov 2026)
+    local STROKE = { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } }
+    local CARD_H, MARK = 30, 24
+    FDJ.HideSubWarning = function()
+        local line = frame and frame.questSubWarning
+        if line then
+            line:Hide()
+            for _, s in ipairs(line.strokes or {}) do s:Hide() end
+        end
+        local card = frame and frame.questSubWarningCard
+        if card then card.link = nil; card:Hide() end
+        if FDJ.SubWarnTuner then pcall(FDJ.SubWarnTuner, false) end
+    end
+    FDJ.PlaceSubWarning = function(entry, entryID, cursorY)
+        local text = type(entry) == "table" and type(entry.subWarning) == "string" and entry.subWarning ~= ""
+            and QuestField(entryID, "subWarning", entry.subWarning) or nil
+        if not text then
+            FDJ.HideSubWarning()
+            return cursorY
+        end
+        local content = frame.questDetailContent
+        local line = frame.questSubWarning
+        if not line then
+            line = content:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+            line:SetJustifyH("LEFT")
+            line.strokes = {}
+            for i = 1, #STROKE do
+                -- strokefix (M 22 Nov 2026: "it's not red with the stroke at
+                -- all. This is blurred white"): the copies drew over the red
+                -- text (one layer, the sublevel not kept); a layer lower now.
+                local s = content:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontNormal")
+                s:SetJustifyH("LEFT")
+                s:SetPoint("TOPLEFT", line, "TOPLEFT", STROKE[i][1], STROKE[i][2])
+                line.strokes[i] = s
+            end
+            frame.questSubWarning = line
+        end
+        -- subwarnstyle (M 22 Nov 2026: "it looks blurred ... when I click on
+        -- it, it's getting bigger"): the size came from the line's own font,
+        -- one up at every redraw; now from the font object each time, with
+        -- the style of FDJ.SUBWARN_STYLE (the vault's tuner: its saved one).
+        local st = FDJ.SUBWARN_STYLE
+        if FDJ.SubWarnTuner and type(ForeverDungeonJournalDB) == "table" and type(ForeverDungeonJournalDB.subWarnStyle) == "table" then
+            st = ForeverDungeonJournalDB.subWarnStyle
+        end
+        local font = FDJ.OwnFontObjects and FDJ.OwnFontObjects.WarningFontSmall
+        if font then pcall(line.SetFontObject, line, font) end
+        local okF, path, size = false, nil, nil
+        if font and font.GetFont then okF, path, size = pcall(font.GetFont, font) end
+        if okF and path and tonumber(size) then
+            pcall(line.SetFont, line, path, tonumber(st.size) or (tonumber(size) + 1), st.outline or "")
+        end
+        RED = { st.r or 0.74, st.g or 0.04, st.b or 0.04 }
+        pcall(line.SetShadowColor, line, 0, 0, 0, st.shadow and 0.9 or 0)
+        pcall(line.SetShadowOffset, line, 1, -1)
+        local width = math.max(120, (content:GetWidth() or 360) - 8)
+        line:SetWidth(width)
+        line:SetText(text)
+        line:SetTextColor(RED[1], RED[2], RED[3])
+        local link = type(entry.subWarningLink) == "table" and entry.subWarningLink or nil
+        local card = frame.questSubWarningCard
+        local top = math.max(0, cursorY - 4)
+        if link and not card then
+            card = CreateFrame("Button", nil, content, "BackdropTemplate")
+            SetBackdrop(card, "Interface\\Buttons\\WHITE8X8", "Interface\\Tooltips\\UI-Tooltip-Border", 9, 2)
+            if FDJ.CreatePickUpButton then
+                card.mark = FDJ.CreatePickUpButton(card, MARK)
+                card.mark:EnableMouse(false) -- the whole button takes the click
+            else
+                card.mark = card:CreateTexture(nil, "ARTWORK")
+                card.mark:SetSize(MARK, MARK)
+                card.mark:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon")
+            end
+            card.mark:SetPoint("LEFT", card, "LEFT", 4, 0)
+            card.name = card:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
+            card.name:SetPoint("LEFT", card.mark, "RIGHT", 4, 0)
+            card.name:SetJustifyH("LEFT")
+            card.name:SetWordWrap(false)
+            card:SetScript("OnEnter", function(self)
+                self:SetBackdropColor(0.30, 0.22, 0.10, 1)
+                if self.mark.button and self.mark.button.lit then self.mark.button.lit:Show() end
+                if GameTooltip and self.questName then
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.questName, 1, 0.82, 0)
+                    GameTooltip:Show()
+                end
+            end)
+            card:SetScript("OnLeave", function(self)
+                local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
+                self:SetBackdropColor(unpack(theme.lootRow))
+                if self.mark.button and self.mark.button.lit then self.mark.button.lit:Hide() end
+                if GameTooltip then GameTooltip:Hide() end
+            end)
+            card:SetScript("OnClick", function(self)
+                local to = self.link
+                if not to then return end
+                if GameTooltip then GameTooltip:Hide() end
+                if to.step and FDJ.OpenQuestChainStep then
+                    FDJ.OpenQuestChainStep(to.dungeon, to.quest, to.step)
+                elseif FDJ.OpenQuestPage then
+                    FDJ.OpenQuestPage(to.dungeon, to.quest)
+                end
+            end)
+            frame.questSubWarningCard = card
+        end
+        local lineH = math.max(12, line:GetStringHeight() or 14)
+        if link then
+            local name = tostring(QuestField(link.step or link.quest, "name", link.name or ""))
+            card.name:SetText(name)
+            card.name:SetTextColor(1.00, 0.82, 0.00)
+            card.questName, card.link = name, link
+            local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
+            card:SetBackdropColor(unpack(theme.lootRow))
+            card:SetBackdropBorderColor(unpack(theme.border))
+            local cardW = math.ceil(4 + MARK + 4 + (card.name:GetStringWidth() or 100) + 10)
+            local textW = math.ceil(line:GetStringWidth() or width)
+            card:SetSize(math.min(width, cardW), CARD_H)
+            card.mark:Show()
+            card:ClearAllPoints()
+            line:ClearAllPoints()
+            if textW + 8 + cardW <= width then
+                -- one row: the line, then the button right of its colon
+                line:SetWidth(textW + 2)
+                lineH = math.max(12, line:GetStringHeight() or 14)
+                line:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(top + math.floor((CARD_H - lineH) / 2)))
+                card:SetPoint("LEFT", line, "RIGHT", 6, 0)
+                cursorY = top + CARD_H + 12
+            else
+                line:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -top)
+                card:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -(top + lineH + 6))
+                cursorY = top + lineH + 6 + CARD_H + 12
+            end
+            card:Show()
+        else
+            if card then card.link = nil; card:Hide() end
+            line:ClearAllPoints()
+            line:SetPoint("TOPLEFT", content, "TOPLEFT", 0, -top)
+            cursorY = top + lineH + 12
+        end
+        line:Show()
+        local okG, sp, ss, sf = pcall(line.GetFont, line)
+        local strokeA = tonumber(st.stroke) or 0
+        for _, s in ipairs(line.strokes) do
+            if strokeA > 0 then
+                if okG and sp then pcall(s.SetFont, s, sp, ss, sf or "") end
+                s:SetWidth(line:GetWidth() or width)
+                s:SetText(text)
+                s:SetTextColor(1, 1, 1, strokeA)
+                s:Show()
+            else
+                s:Hide()
+            end
+        end
+        if FDJ.SubWarnTuner then pcall(FDJ.SubWarnTuner, entryID == FDJ.MALLET_QUEST) end
+        return cursorY
+    end
 end
 -- The How to complete button at the top of a guide quest's page (after a
 -- red warning, before Objective). Returns the new cursorY.
@@ -7637,6 +7824,17 @@ end
 FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
 function FDJ.DoneByOther(questID)
     if FDJ.doneByOff then return false end -- pickone (2.0.42): a choice's own lines
+    -- skippedstep (2.1.4, M 23 Nov 2026, CobraLeader on Discord: step 7 of
+    -- Materials of Significance's chain grey while on step 18): a lead-in the
+    -- game lets you skip (Battle at the Mannoroc Coven: the Broken Warhammer
+    -- also starts The Broken Hammer) counts as done once the quest after it
+    -- is in the quest log too (FDJ.QUEST_DONE_BY_LOG[id] = { IDs }).
+    local inLog = FDJ.QUEST_DONE_BY_LOG and FDJ.QUEST_DONE_BY_LOG[questID]
+    if type(inLog) == "table" and FDJ.IsQuestInLog then
+        for _, id in ipairs(inLog) do
+            if FDJ.IsQuestInLog(id) then return true end
+        end
+    end
     local others = FDJ.QUEST_DONE_BY[questID]
     if type(others) ~= "table" then return false end
     local check = (C_QuestLog and C_QuestLog.IsQuestFlaggedCompleted) or IsQuestFlaggedCompleted
@@ -7996,6 +8194,7 @@ FDJ.HideStepItemButtons = function()
     if frame.questProvidedItemHeader then frame.questProvidedItemHeader:Hide() end
     if frame.questChainNotice then frame.questChainNotice:Hide() end
     if frame.questWarningText then frame.questWarningText:Hide() end
+    if FDJ.HideSubWarning then FDJ.HideSubWarning() end -- subwarn
 end
 
 -- Item cards (required / provided items) two to a row, like the rewards:
@@ -8297,6 +8496,7 @@ local function RefreshPrerequisiteQuestDetail(step)
     else
         topWarning = nil
     end
+    cursorY = FDJ.PlaceSubWarning(details, questID, cursorY) -- subwarn: the small red line
     cursorY = FDJ.PlaceStepHaveItRow(inLog and not FDJ.QuestTurnedIn(questID) -- chainturnin
         and FDJ.TurnInInsideDungeon(details.turnin, selectedDungeon), questID, details, title, cursorY)
     -- dungeonstep (2.1.1): "DUNGEON STEP" over the Objective, the page in teal
@@ -8949,6 +9149,7 @@ RefreshQuestDetail = function()
     elseif frame.questWarningText then
         frame.questWarningText:Hide()
     end
+    cursorY = FDJ.PlaceSubWarning(quest, quest.id, cursorY) -- subwarn: the small red line
     cursorY = FDJ.PlaceGuideButton(quest, cursorY) -- questguide: How to complete
     cursorY = FDJ.PlaceSummonHelp(quest, cursorY) -- summonhelp: How to summon
     if FDJ.PlaceRepNeeds then cursorY = FDJ.PlaceRepNeeds(quest, cursorY) end -- repneeds: reputation needed
@@ -9265,6 +9466,14 @@ RefreshQuestDetail = function()
     -- FDJ_BREADCRUMB_LINK_FILTER: hide an optional-introduction link whose quest is for the other
     -- faction or another class (e.g. an Alliance-only referral on a quest both factions can take).
     local noteQuestLink = quest.noteQuestLink
+    -- statesecrets (2.1.4): a link per faction (noteQuestLinkSide: More
+    -- Valuable Than Gold's State Secrets, Renzik's or Nazgrel's), the one
+    -- of the faction tab browsed, else the character's.
+    if type(quest.noteQuestLinkSide) == "table" then
+        local side = (selectedQuestFaction == "Alliance" or selectedQuestFaction == "Horde") and selectedQuestFaction
+            or (UnitFactionGroup and UnitFactionGroup("player")) or nil
+        noteQuestLink = (side and quest.noteQuestLinkSide[side]) or noteQuestLink
+    end
     local noteText = quest.note
     if noteQuestLink and noteQuestLink.id then
         local linked

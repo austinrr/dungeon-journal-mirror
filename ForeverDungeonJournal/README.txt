@@ -1,4 +1,35 @@
-DungeonJournal 2.1.3
+DungeonJournal 2.1.4
+
+CHANGES IN 2.1.4 (the release after 2.1.3)
+- Arrow: the boat to Tanaris at Powderfuse Port (Riverglades) leaves from the
+  end of the pier, by Sadi and the vendors: the arrow no longer sends you back
+  to Wharfmaster Whizzbuzz where the pier begins.
+- Arrow: near a flight point you haven't learned yet (within about 300
+  yards), when flying from it is the quicker way, it now leads to its flight
+  master first ("Get the flight path at Nethergarde Keep") and flies on from
+  there once you have it. Before, it only counted the flight points you
+  already had and could send you walking to a far boat. Translated.
+- Mallet of Zul'Farrak: under "There is no quest to pick up here. Just kill
+  and loot." a red line with a faint white outline says "Best done together
+  with:" and right of it is The Ancient Egg's quest button (the quest list's
+  round ! and the quest's name). A click on the button opens The Ancient Egg
+  (in The God Hakkar's chain on the Sunken Temple page). Translated.
+- The Altar of Zul (Nekrum's Medallion): a warning at the top says "You can
+  kill Qiaga the Keeper at the top of the altar to loot the Sacred Mallet."
+  Translated.
+- Arrow: in Feralas it now knows the way past Camp Mojache. As Alliance it no
+  longer leads you along the camp's guards: from the Lower Wilds it takes the
+  trench along the water south of the camp to the road, and it never points
+  straight across the camp (for anyone: the camp's hill has cliffs).
+- Arrow: in Tanaris it now knows the open desert. It points straight across
+  where you can walk (Gadgetzan to Steamwheedle Port or to Zul'Farrak) and
+  only goes round the hills that are really in the way. Before, it could send
+  you north through Thousand Needles and back (over 5,000 yards).
+- Blackmaw Reclamation (Blackmaw Hold): its Notes are gone. The Timbermaw
+  Hold reputation it needs is already shown above the objective.
+- Loot Filter: its settings are now saved for each character, so a cloth,
+  a leather and a plate character each keep their own. Each character starts
+  from the settings you had before this update.
 
 CHANGES IN 2.1.3 (the release after 2.1.2)
 - Find the Gems (Restoring the Necklace chain): a warning line at the top

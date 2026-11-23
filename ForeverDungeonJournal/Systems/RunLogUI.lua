@@ -433,11 +433,127 @@ local function GoldText(copper)
     return c .. COPPER_ICON
 end
 FDJ.RunLogGoldText = GoldText
+-- lootvalue (2.1.4): a run's Gold: the coin looted plus its items' vendor value
+local function RunGold(run)
+    local coin = tonumber(run and run.money) or 0
+    if FDJ.TrackerOption and FDJ.TrackerOption("hideVendor") then return coin end -- lootname
+    return coin + (tonumber(run and run.itemValue) or 0)
+end
+-- lootname: the column's name, and what it counts (its tooltip)
+local function GoldName()
+    if FDJ.TrackerOption and FDJ.TrackerOption("hideVendor") then return L("RUNLOG_GOLD"), L("RUNLOG_GOLD_TIP") end
+    return L("RUNLOG_LOOT_VALUE"), L("RUNLOG_LOOT_VALUE_TIP")
+end
 
 local function MobXP(run)
     local xp = 0
     for _, k in ipairs(run.kills or {}) do xp = xp + (k.x or 0) end
     return xp
+end
+
+-- reptrack (2.1.4, M 23 Nov 2026: "The dungeon tracker for level 60s. Track
+-- reputation instead of experience. Now it's empty, but we could track rep
+-- ... if somebody reaches exalted, he stops tracking and it goes back to
+-- blank"): at the level cap the tracker's Mobs XP place shows the
+-- reputation this run gave (Systems/RunLog.lua counts it): "Rep" over
+-- "+<amount>", the faction the run gave the most (its name on hover;
+-- repshort, M 23 Nov 2026: "just call it a Rep. Don't give it the name of
+-- the rep ... way too long"). A faction the player is Exalted with
+-- (already, or reached during the run) is not shown; none left (or no
+-- reputation yet): blank, as before.
+do
+    local strings = {
+        enUS = { "This run: +%s", "Reputation from this run. Not tracked once you are Exalted with the faction.", "Rep" },
+        deDE = { "Dieser Run: +%s", "Ruf aus diesem Run. Ab Ehrfürchtig bei der Fraktion wird er nicht mehr verfolgt.", "Ruf" },
+        frFR = { "Ce run : +%s", "Réputation gagnée pendant ce run. Plus suivie une fois Exalté auprès de la faction.", "Réput." },
+        esES = { "Esta run: +%s", "Reputación de esta run. Deja de seguirse al ser Exaltado con la facción.", "Rep." },
+        itIT = { "Questa run: +%s", "Reputazione da questa run. Non più tracciata una volta Osannato con la fazione.", "Rep." },
+        ptBR = { "Esta run: +%s", "Reputação desta run. Deixa de ser rastreada quando você fica Exaltado com a facção.", "Rep." },
+        ruRU = { "Этот забег: +%s", "Репутация за этот забег. Не отслеживается, когда вы превознесены у фракции.", "Реп." },
+        koKR = { "이번 런: +%s", "이번 런에서 얻은 평판입니다. 해당 세력에 확고한 동맹이 되면 더 이상 추적하지 않습니다.", "평판" },
+        zhCN = { "本轮：+%s", "本轮获得的声望。在该阵营达到崇拜后不再追踪。", "声望" },
+        zhTW = { "本輪：+%s", "本輪獲得的聲望。在該陣營達到崇拜後不再追蹤。", "聲望" },
+    }
+    strings.esMX = strings.esES
+    local keys = { "RUNLOG_REP_RUN", "RUNLOG_REP_TIP", "RUNLOG_REP" }
+    for locale, list in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for n, key in ipairs(keys) do
+                if t[key] == nil then t[key] = list[n] end
+            end
+        end
+    end
+end
+-- The factions a dungeon run can give, by ID: found by their name in the
+-- player's language even under a folded header of the reputation list.
+local REP_FACTION_IDS = { 529, 59, 576, 609, 270, 749, 910, 809, 87, 21, 369, 470, 577, 589, 729, 730,
+    890, 889, 509, 510, 349, 92, 93, 909, 70, 72, 47, 69, 54, 76, 81, 68, 530 }
+local function RepSecret(v) return type(issecretvalue) == "function" and issecretvalue(v) end
+-- The player's standing with a faction (1-8; 8 is Exalted), and the bar:
+-- its bottom, top and value. nil: not known.
+local function RepStandingRaw(name)
+    if type(name) ~= "string" then return nil end
+    local function Data(d)
+        if type(d) == "table" and d.name == name and tonumber(d.reaction) and not RepSecret(d.reaction) then
+            return tonumber(d.reaction), tonumber(d.currentReactionThreshold) or 0,
+                tonumber(d.nextReactionThreshold) or 0, tonumber(d.currentStanding) or 0
+        end
+    end
+    local function Info(fname, standing, low, high, value)
+        if fname == name and tonumber(standing) and not RepSecret(standing) then
+            return tonumber(standing), tonumber(low) or 0, tonumber(high) or 0, tonumber(value) or 0
+        end
+    end
+    local R = C_Reputation
+    local ok, count = pcall(R and R.GetNumFactions or GetNumFactions)
+    count = ok and tonumber(count) or 0
+    for i = 1, count do
+        local a, b, c, d
+        if R and type(R.GetFactionDataByIndex) == "function" then
+            local okD, data = pcall(R.GetFactionDataByIndex, i)
+            if okD then a, b, c, d = Data(data) end
+        elseif type(GetFactionInfo) == "function" then
+            local okI, fname, _, standing, low, high, value = pcall(GetFactionInfo, i)
+            if okI then a, b, c, d = Info(fname, standing, low, high, value) end
+        end
+        if a then return a, b, c, d end
+    end
+    for _, id in ipairs(REP_FACTION_IDS) do
+        local a, b, c, d
+        if R and type(R.GetFactionDataByID) == "function" then
+            local okD, data = pcall(R.GetFactionDataByID, id)
+            if okD then a, b, c, d = Data(data) end
+        elseif type(GetFactionInfoByID) == "function" then
+            local okI, fname, _, standing, low, high, value = pcall(GetFactionInfoByID, id)
+            if okI then a, b, c, d = Info(fname, standing, low, high, value) end
+        end
+        if a then return a, b, c, d end
+    end
+    return nil
+end
+local function RepStanding(name)
+    local ok, a, b, c, d = pcall(RepStandingRaw, name)
+    if ok then return a, b, c, d end
+end
+function FDJ.RunLogRepStanding(run, name) return RepStanding(name) end
+-- The faction this run gave the most reputation, and how much (an Exalted
+-- one left out); nil when there is none.
+local function RunRep(run)
+    local best, gain
+    for name, n in pairs((run and type(run.rep) == "table" and run.rep) or {}) do
+        n = tonumber(n)
+        if type(name) == "string" and n and n > 0 and (not gain or n > gain) then
+            local standing = FDJ.RunLogRepStanding(run, name)
+            if not (standing and standing >= 8) then best, gain = name, n end
+        end
+    end
+    return best, gain
+end
+local REP_STANDING_EN = { "Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted" }
+local function RepStandingLabel(n)
+    local g = _G["FACTION_STANDING_LABEL" .. tostring(n)]
+    return (type(g) == "string" and g ~= "") and g or REP_STANDING_EN[n] or "?"
 end
 
 local function TrashText(run)
@@ -457,7 +573,7 @@ function FDJ.RunLogSummary(run)
     end
     -- at the level cap: the gold earned in place of "<n> XP"
     local text = L("RUNLOG_DONE", DungeonLabel(run), secs and Duration(secs) or "-", run.deaths or 0, trash or "-", "\001")
-    local gold = GoldText(run.money)
+    local gold = GoldText(RunGold(run))
     for _, word in ipairs({ "\001 XP", "\001 EP", "\001 PX", "\001 PE", "\001 опыта", "경험치 \001", "经验 \001", "經驗 \001" }) do
         local i, j = text:find(word, 1, true)
         if i then text = text:sub(1, i - 1) .. gold .. text:sub(j + 1) break end
@@ -920,6 +1036,7 @@ local function RefreshDetail(win)
         win.title:SetText("")
         win.sub:SetText("")
         if win.money then win.money:Hide() end
+        if win.moneyTip then win.moneyTip:Hide() end -- (rawgold)
         if win.trackButton then win.trackButton:Hide() end
         if win.partyButton then win.partyButton:Hide() end
         content:SetHeight(1)
@@ -942,12 +1059,38 @@ local function RefreshDetail(win)
     else
         win.money:SetPoint("TOPRIGHT", content, "TOPRIGHT", -4, -12)
     end
-    if run.money ~= nil then
-        win.money:SetText("|cffa59b8b" .. L("RUNLOG_MONEY") .. "|r  " .. GoldText(run.money))
+    if run.money ~= nil or run.itemValue ~= nil then
+        win.money:SetText("|cffa59b8b" .. (GoldName()) .. "|r  " .. GoldText(RunGold(run)))
         win.money:Show()
     else
         win.money:Hide()
     end
+    -- rawgold (2.1.4, M 23 Nov 2026: "when you hover the money, the loot
+    -- value, I want it to show in the tooltip how much gold, raw gold you
+    -- earned, just the gold, because people might not have the full value
+    -- because they don't sell every item"): hovering it, the gold looted
+    if not win.moneyTip then
+        local tip = CreateFrame("Frame", nil, content)
+        tip:EnableMouse(true)
+        tip:SetScript("OnEnter", function(self)
+            local shown = win.selected
+            if not shown then return end
+            local name, what = GoldName()
+            GameTooltip:SetOwner(self, "ANCHOR_BOTTOMRIGHT")
+            -- (rawgold2, M 23 Nov 2026: what it counts under the name, then
+            -- "Raw gold looted" at the bottom)
+            GameTooltip:SetText(name, 1, 0.82, 0)
+            GameTooltip:AddLine(what, 0.8, 0.8, 0.8, true)
+            GameTooltip:AddLine(L("RUNLOG_GOLD_LOOTED", GoldText(tonumber(shown.money) or 0)), 1, 1, 1)
+            GameTooltip:Show()
+        end)
+        tip:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        win.moneyTip = tip
+    end
+    win.moneyTip:ClearAllPoints()
+    win.moneyTip:SetPoint("TOPLEFT", win.money, "TOPLEFT", -4, 4)
+    win.moneyTip:SetPoint("BOTTOMRIGHT", win.money, "BOTTOMRIGHT", 4, -4)
+    win.moneyTip:SetShown(win.money:IsShown())
     if FDJ.RunLogPartyButton then FDJ.RunLogPartyButton(win, content, run) end
     local status, sr, sg, sb = Status(run)
     win.sub:SetText(FDJ.RunLogDate(run.created, true) .. "   |cff" ..
@@ -963,7 +1106,8 @@ local function RefreshDetail(win)
         { L("RUNLOG_TIME"), secs and Duration(secs) or "-", running and L("RUNLOG_RUNNING") or nil, L("RUNLOG_TIME"), { L("RUNLOG_TIME_TIP") } },
         { L("RUNLOG_DEATHS"), tostring(run.deaths or 0), nil, nil, nil },
         { L("RUNLOG_TRASH"), trashPct or "-", trashOf, L("RUNLOG_TRASH"), { L("RUNLOG_TRASH_TIP") } },
-        ShowsGold(run) and { L("RUNLOG_GOLD"), GoldText(run.money), nil, nil, nil }
+        ShowsGold(run) and { (GoldName()), GoldText(RunGold(run)), nil, GoldName(),
+            { (select(2, GoldName())), L("RUNLOG_GOLD_LOOTED", GoldText(tonumber(run.money) or 0)) } } -- (rawgold)
             or { L("RUNLOG_XP"), Thousands(MobXP(run)), nil, nil, nil },
     }
     local start = RunStart(run) or run.created
@@ -1568,6 +1712,83 @@ do
             for key, value in pairs(entries) do
                 if t[key] == nil then t[key] = value end
             end
+        end
+    end
+end
+
+-- lootname (2.1.4, M 22 Nov 2026, after trying "Gold + Vendor" and "Loot value" on
+-- the tracker: "I prefer loot value ... when you hover over the gold, and even
+-- the text loot value, it says what it is ... Also, make another tracker option
+-- ... hide vendor items value"): the Gold column is "Loot value" (the coin
+-- looted plus the items' vendor price, lootvalue); hovering its name or its
+-- number says so. Options > Dungeon Tracker > Hide items' vendor value: the
+-- coin only, and the column is "Gold" again (the log page and the chat line too).
+do
+    local strings = {
+        enUS = { "Loot value", "The gold you looted plus what the items you looted sell for at a vendor.", "The gold you looted.",
+            "Hide items' vendor value", "Count only the gold you looted, not what the items you looted sell for at a vendor (the column is called Gold then)." },
+        deDE = { "Beutewert", "Das erbeutete Gold plus der Händlerpreis aller erbeuteten Gegenstände.", "Das erbeutete Gold.",
+            "Händlerwert der Gegenstände ausblenden", "Nur das erbeutete Gold zählen, nicht den Händlerpreis der erbeuteten Gegenstände (die Spalte heißt dann Gold)." },
+        frFR = { "Valeur du butin", "L'or ramassé plus le prix de vente chez un marchand des objets ramassés.", "L'or ramassé.",
+            "Masquer la valeur marchande des objets", "Ne compter que l'or ramassé, pas le prix de vente chez un marchand des objets ramassés (la colonne s'appelle alors Or)." },
+        esES = { "Valor del botín", "El oro despojado más lo que valen en un vendedor los objetos despojados.", "El oro despojado.",
+            "Ocultar el valor de venta de los objetos", "Contar solo el oro despojado, no lo que valen en un vendedor los objetos despojados (la columna se llama entonces Oro)." },
+        itIT = { "Valore bottino", "L'oro raccolto più il prezzo di vendita al mercante degli oggetti raccolti.", "L'oro raccolto.",
+            "Nascondi il valore di vendita degli oggetti", "Conta solo l'oro raccolto, non il prezzo di vendita al mercante degli oggetti raccolti (la colonna si chiama allora Oro)." },
+        ptBR = { "Valor do saque", "O ouro saqueado mais o preço de venda no vendedor dos itens saqueados.", "O ouro saqueado.",
+            "Ocultar o valor de venda dos itens", "Contar só o ouro saqueado, não o preço de venda no vendedor dos itens saqueados (a coluna passa a se chamar Ouro)." },
+        ruRU = { "Ценность добычи", "Собранное золото плюс цена продажи торговцу всех собранных предметов.", "Собранное золото.",
+            "Скрыть цену предметов у торговца", "Учитывать только собранное золото, без цены продажи собранных предметов торговцу (столбец тогда называется «Золото»)." },
+        koKR = { "전리품 가치", "획득한 골드와 획득한 아이템을 상점에 팔 때의 가격을 합한 값입니다.", "획득한 골드입니다.",
+            "아이템 상점 가격 숨기기", "획득한 골드만 계산하고, 획득한 아이템의 상점 판매 가격은 제외합니다 (이때 항목 이름은 골드입니다)." },
+        zhCN = { "战利品价值", "拾取的金币加上拾取物品卖给商人的价格。", "拾取的金币。",
+            "隐藏物品的商人价格", "只计算拾取的金币，不计拾取物品卖给商人的价格（此时该栏名为金币）。" },
+        zhTW = { "戰利品價值", "拾取的金幣加上拾取物品賣給商人的價格。", "拾取的金幣。",
+            "隱藏物品的商人價格", "只計算拾取的金幣，不計拾取物品賣給商人的價格（此時該欄名為金幣）。" },
+    }
+    strings.esMX = strings.esES
+    local KEYS = { "RUNLOG_LOOT_VALUE", "RUNLOG_LOOT_VALUE_TIP", "RUNLOG_GOLD_TIP", "OPT_TRACK_HIDE_VENDOR", "OPT_TRACK_HIDE_VENDOR_TIP" }
+    for locale, list in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for i, key in ipairs(KEYS) do
+                if t[key] == nil then t[key] = list[i] end
+            end
+        end
+    end
+    -- rawgold (2.1.4): the gold looted alone, in the Loot value's tooltip
+    local looted = { enUS = "Raw gold looted: %s", deDE = "Reines erbeutetes Gold: %s", frFR = "Or brut ramassé : %s",
+        esES = "Oro bruto despojado: %s", itIT = "Oro grezzo raccolto: %s", ptBR = "Ouro bruto saqueado: %s",
+        ruRU = "Собрано чистого золота: %s", koKR = "획득한 순수 골드: %s", zhCN = "拾取的纯金币：%s", zhTW = "拾取的純金幣：%s" }
+    looted.esMX = looted.esES
+    for locale, text in pairs(looted) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.RUNLOG_GOLD_LOOTED == nil then t.RUNLOG_GOLD_LOOTED = text end
+    end
+end
+
+-- vendorclick (2.1.4, M 22 Nov 2026: "in the loot value, right click to disable
+-- vendor items ... once it's back to gold ... right click to enable vendor
+-- value. So it's clean"): the column's tooltip says what a right-click does.
+do
+    local strings = {
+        enUS = { "Right-click to disable vendor value", "Right-click to enable vendor value" },
+        deDE = { "Rechtsklick: Händlerwert ausschalten", "Rechtsklick: Händlerwert einschalten" },
+        frFR = { "Clic droit : désactiver la valeur marchande", "Clic droit : activer la valeur marchande" },
+        esES = { "Clic derecho: desactivar el valor de venta", "Clic derecho: activar el valor de venta" },
+        itIT = { "Clic destro: disattiva il valore di vendita", "Clic destro: attiva il valore di vendita" },
+        ptBR = { "Clique direito: desativar o valor de venda", "Clique direito: ativar o valor de venda" },
+        ruRU = { "ПКМ: не учитывать цену у торговца", "ПКМ: учитывать цену у торговца" },
+        koKR = { "우클릭: 상점 가격 끄기", "우클릭: 상점 가격 켜기" },
+        zhCN = { "右键点击：关闭商人价格", "右键点击：开启商人价格" },
+        zhTW = { "右鍵點擊：關閉商人價格", "右鍵點擊：開啟商人價格" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.RUNLOG_VENDOR_OFF_TIP == nil then t.RUNLOG_VENDOR_OFF_TIP = pair[1] end
+            if t.RUNLOG_VENDOR_ON_TIP == nil then t.RUNLOG_VENDOR_ON_TIP = pair[2] end
         end
     end
 end
@@ -2476,6 +2697,58 @@ local function BuildTracker()
     t.goldLabel:SetTextColor(MUTED[1], MUTED[2], MUTED[3])
     t.gold = t:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
     t.gold:SetPoint("TOPLEFT", t.goldLabel, "BOTTOMLEFT", 0, -3)
+    -- lootname (2.1.4): hovering the column's name or its number says what it
+    -- counts. vendorclick (2.1.4): a right-click there switches the items'
+    -- vendor value off or on (Options > Hide items' vendor value); a drag there
+    -- still moves the tracker.
+    local tip = CreateFrame("Frame", nil, t)
+    tip:SetPoint("TOPLEFT", t.goldLabel, "TOPLEFT", -3, 3)
+    tip:SetSize(80, 38)
+    tip:SetFrameLevel(handle:GetFrameLevel() + 6)
+    tip:EnableMouse(true)
+    Draggable(tip)
+    tip:SetScript("OnEnter", function(self)
+        local name, what = GoldName()
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(name, 1, 0.82, 0)
+        GameTooltip:AddLine(what, 1, 1, 1, true)
+        local off = FDJ.TrackerOption and FDJ.TrackerOption("hideVendor")
+        GameTooltip:AddLine(L(off and "RUNLOG_VENDOR_ON_TIP" or "RUNLOG_VENDOR_OFF_TIP"), 0.35, 1.00, 0.35, true)
+        GameTooltip:Show()
+    end)
+    tip:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    tip:SetScript("OnMouseUp", function(self, button)
+        if button ~= "RightButton" or not FDJ.SetTrackerOption then return end
+        FDJ.SetTrackerOption("hideVendor", not (FDJ.TrackerOption and FDJ.TrackerOption("hideVendor")))
+        if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end -- (the tooltip follows)
+    end)
+    t.goldTip = tip
+    -- reptrack (2.1.4): hovering the reputation column: the faction, the
+    -- player's standing with it, what this run gave
+    local repTip = CreateFrame("Frame", nil, t)
+    repTip:SetPoint("TOPLEFT", t.xpLabel, "TOPLEFT", -3, 3)
+    repTip:SetSize(70, 38)
+    repTip:SetFrameLevel(handle:GetFrameLevel() + 6)
+    repTip:EnableMouse(true)
+    Draggable(repTip)
+    repTip:SetScript("OnEnter", function(self)
+        local name, gain = RunRep(t.run)
+        if not name then return end
+        GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+        GameTooltip:SetText(name, 1, 0.82, 0)
+        local standing, low, high, value = FDJ.RunLogRepStanding(t.run, name)
+        if standing then
+            local line = RepStandingLabel(standing)
+            if high and low and high > low then line = line .. "  " .. Thousands(value - low) .. " / " .. Thousands(high - low) end
+            GameTooltip:AddLine(line, 1, 1, 1)
+        end
+        GameTooltip:AddLine(L("RUNLOG_REP_RUN", Thousands(gain)), 0.35, 1.00, 0.35)
+        GameTooltip:AddLine(L("RUNLOG_REP_TIP"), 0.8, 0.8, 0.8, true)
+        GameTooltip:Show()
+    end)
+    repTip:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    repTip:Hide()
+    t.repTip = repTip
 
     t.line = t:CreateTexture(nil, "ARTWORK")
     t.line:SetColorTexture(0.54, 0.39, 0.17, 0.6)
@@ -2633,6 +2906,24 @@ function FDJ.TrackerGroupEntry(run, d, group)
             e.dead = e.dead + 1
             if not last or (tonumber(k.t) or 0) > (tonumber(last.t) or 0) then last = k end
             for _, item in ipairs(k.loot or {}) do loot[#loot + 1] = item end
+        end
+    end
+    -- altarneeded (2.1.4, M 22 Nov 2026: "if atal alarion is dead then yes the
+    -- altar bosses would be considered dead too"): a group with deadWith (a
+    -- boss of the run): once that boss is dead, each of the group's bosses
+    -- with no kill of its own counts as dead with it (its time, no loot).
+    if type(group.deadWith) == "string" then
+        for _, k in ipairs(run.kills or {}) do
+            if type(k) == "table" and k.b == group.deadWith then
+                for _, c in ipairs(e.children) do
+                    if not c.kill then
+                        c.kill = { t = k.t, m = c.boss.name, n = c.boss.npcID }
+                        e.dead = e.dead + 1
+                    end
+                end
+                if not last or (tonumber(k.t) or 0) > (tonumber(last.t) or 0) then last = k end
+                break
+            end
         end
     end
     if #e.children > 0 and e.dead == #e.children then
@@ -3299,19 +3590,25 @@ function FDJ.UpdateRunTracker()
     t.title:SetWidth(math.max(1, math.min(full + 1, 236 - 30 - 26 - (canReset and t.reset and math.floor(t.reset:GetWidth() + 6.5) or 0))))
     if t.reset then t.reset:SetShown(canReset) end
     t.timeLabel:SetText(L("RUNLOG_TIME"))
-    t.xpLabel:SetText(L("RUNLOG_MOBS_XP"))
-    t.goldLabel:SetText(L("RUNLOG_GOLD"))
+    -- reptrack (2.1.4): at the level cap, the reputation in the Mobs XP place
+    local repName, repGain
+    if ShowsGold(run) then repName, repGain = RunRep(run) end
+    t.xpLabel:SetText(repName and L("RUNLOG_REP") or L("RUNLOG_MOBS_XP")) -- (repshort)
+    if t.repTip then t.repTip:SetShown(repName ~= nil) end
+    t.goldLabel:SetText((GoldName())) -- lootname
     local secs = Speed(run)
     t.time:SetText(secs and Duration(secs) or "0:00")
     if run.completed then t.time:SetTextColor(0.25, 1.0, 0.35) else t.time:SetTextColor(1, 1, 1) end
-    t.xp:SetText(Thousands(MobXP(run)))
-    t.gold:SetText(GoldText(run.money))
-    -- Time | Mobs XP | Gold (no Mobs XP at the level cap), less the ones
-    -- hidden in Options > Dungeon Tracker; none left: a slimmer tracker.
+    t.xp:SetText(repName and ("+" .. Thousands(repGain)) or Thousands(MobXP(run)))
+    t.gold:SetText(GoldText(RunGold(run)))
+    -- Time | Mobs XP | Gold (no Mobs XP at the level cap: the reputation
+    -- there, reptrack), less the ones hidden in Options > Dungeon Tracker;
+    -- none left: a slimmer tracker.
     local cols = {}
     if not FDJ.TrackerOption("hideTime") then cols[#cols + 1] = { t.timeLabel, t.time } end
-    if not ShowsGold(run) and not FDJ.TrackerOption("hideXP") then cols[#cols + 1] = { t.xpLabel, t.xp } end
+    if repName or (not ShowsGold(run) and not FDJ.TrackerOption("hideXP")) then cols[#cols + 1] = { t.xpLabel, t.xp } end
     if not FDJ.TrackerOption("hideGold") then cols[#cols + 1] = { t.goldLabel, t.gold } end
+    if t.goldTip then t.goldTip:SetShown(not FDJ.TrackerOption("hideGold")) end -- lootname
     for _, pair in ipairs({ { t.timeLabel, t.time }, { t.xpLabel, t.xp }, { t.goldLabel, t.gold } }) do
         pair[1]:Hide() pair[2]:Hide()
     end

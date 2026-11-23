@@ -11,12 +11,25 @@ local function L(key, ...)
     return key
 end
 
+-- charfilter (2.1.4, M 22 Nov 2026, Dawn on the Discord playing a cloth, a
+-- leather and a plate character and ticking the filter again on each: "the
+-- loot filter should be character locked. It should not be account locked"):
+-- the Loot Filter's ticks are saved per character
+-- (ForeverDungeonJournalCharacterDB.lootFilter). A character without its own
+-- yet starts once from what the account had, so nobody loses their setup.
+local function CopyTable(t)
+    local out = {}
+    for k, v in pairs(t) do out[k] = type(v) == "table" and CopyTable(v) or v end
+    return out
+end
 local function Settings()
-    ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
-    local db = ForeverDungeonJournalDB.lootFilter
+    ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
+    local char = ForeverDungeonJournalCharacterDB
+    local db = char.lootFilter
     if type(db) ~= "table" then
-        db = {}
-        ForeverDungeonJournalDB.lootFilter = db
+        local shared = type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.lootFilter or nil
+        db = type(shared) == "table" and CopyTable(shared) or {}
+        char.lootFilter = db
     end
     -- The "show recipes" option was removed: recipes live on the recipe tab
     -- (or under the boss-page divider), never inline in the loot list.
@@ -1973,9 +1986,12 @@ function FDJ.RefreshLootFilterResults(frame)
             row.text:SetFontObject("ForeverDJ_GameFontHighlight")
             row.text:SetPoint("LEFT", row.icon, "RIGHT", 8, 0)
             local name
-            if type(GetItemInfo) == "function" and item[1] and item[1] > 0 then
-                local ok, liveName = pcall(GetItemInfo, item[1])
-                if ok and type(liveName) == "string" then name = liveName end
+            -- favnames (2.1.4): C_Item's (the client has no global
+            -- GetItemInfo), so the item's name is in the client's language
+            local get = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+            if type(get) == "function" and item[1] and item[1] > 0 then
+                local ok, liveName = pcall(get, item[1])
+                if ok and type(liveName) == "string" and not (type(issecretvalue) == "function" and issecretvalue(liveName)) then name = liveName end
             end
             row.text:SetText(name or item[2] or "")
             row.text:SetTextColor(QualityColor(item[4]))

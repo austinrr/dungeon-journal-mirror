@@ -321,6 +321,7 @@ local FINAL = {
     ["The Deadmines"] = { 639 },               -- Edwin VanCleef
     ["Ruins of Lordaeron"] = { 250657 },       -- Rath'mael
     ["Ragefire Chasm"] = { 11519 },            -- Bazzalan
+    ["Sunken Temple"] = { 5709 },              -- Shade of Eranikus (altarneeded, 2.1.4: the page ends with the Avatar of Hakkar, summoned with the quest's egg)
 }
 
 local finalByNpc, finalNames -- npcID -> dungeon, lower-case boss name -> dungeon
@@ -2416,9 +2417,11 @@ do
 
     -- -------------------------------------------------------------- kills
     local here -- the journal dungeon the character is in (nil outside)
+    local Listen -- (insideonly, below)
     local function Where()
         here = FDJ.CurrentDungeon and FDJ.CurrentDungeon() or nil
         if here and not InOrder(here) then here = nil end
+        if Listen then Listen() end
     end
 
     local byNpc, byName, indexLang
@@ -2675,9 +2678,24 @@ do
 
     local watch = CreateFrame("Frame")
     for _, event in ipairs({ "PLAYER_ENTERING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED", "ZONE_CHANGED_INDOORS",
-        "UNIT_HEALTH", "NAME_PLATE_UNIT_REMOVED", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "LOOT_OPENED",
         "ENCOUNTER_END", "BOSS_KILL" }) do
         pcall(watch.RegisterEvent, watch, event)
+    end
+    -- insideonly (2.1.4, M 23 Nov 2026, the performance check: RPG Mode heard
+    -- every unit's health change in the game, in raids and cities too: "we
+    -- should just listen it inside Dungeons"): the events that tell a mob
+    -- died (its health, its nameplate gone, targeted, hovered, looted) are
+    -- only listened to while the character is in one of the journal's
+    -- dungeons (here); outside nothing could count anyway.
+    local KILL_EVENTS = { "UNIT_HEALTH", "NAME_PLATE_UNIT_REMOVED", "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "LOOT_OPENED" }
+    local listening = false
+    Listen = function()
+        local want = here ~= nil
+        if want == listening then return end
+        listening = want
+        for _, event in ipairs(KILL_EVENTS) do
+            if want then pcall(watch.RegisterEvent, watch, event) else pcall(watch.UnregisterEvent, watch, event) end
+        end
     end
     watch:SetScript("OnEvent", function(_, event, a, b, _, _, e)
         if event == "UNIT_HEALTH" then

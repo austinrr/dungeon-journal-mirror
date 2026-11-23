@@ -239,7 +239,8 @@ FDJ.QUEST_START_MAPS = {
     [7631] = { mapID = 1428, x = 0.126, y = 0.314, label = "Mor'zul Bloodbringer — Burning Steppes", targetName = "Mor'zul Bloodbringer" },
     [7629] = { mapID = 1428, x = 0.124, y = 0.314, label = "Gorzeeki Wildeyes — Burning Steppes", targetName = "Gorzeeki Wildeyes" },
     [7647] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
-    [7668] = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
+    [8258] = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
+    [97169] = { mapID = 1455, x = 0.471, y = 0.138, label = "Eldrun Stormbreaker — Ironforge", targetName = "Eldrun Stormbreaker" }, -- darkreaverally (2.1.4)
     [5463] = { mapID = 1423, x = 0.739, y = 0.490, label = "Leonid Barthalomew the Revered — Eastern Plaguelands", targetName = "Leonid Barthalomew the Revered" },
     [707] = { mapID = 1455, x = 0.746, y = 0.117, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
     [8415] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },

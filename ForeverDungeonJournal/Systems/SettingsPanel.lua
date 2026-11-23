@@ -462,6 +462,13 @@ local OPTIONS = {
         set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideGold", on) end end,
     },
     {
+        -- lootname (2.1.4): the coin only, without the items' vendor value
+        label = "OPT_TRACK_HIDE_VENDOR",
+        tip = "OPT_TRACK_HIDE_VENDOR_TIP",
+        get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideVendor") or false end,
+        set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideVendor", on) end end,
+    },
+    {
         label = "OPT_TRACK_HIDE_BOSSES",
         tip = "OPT_TRACK_HIDE_BOSSES_TIP",
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideBosses") or false end,

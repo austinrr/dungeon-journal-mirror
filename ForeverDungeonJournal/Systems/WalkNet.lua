@@ -122,6 +122,66 @@ do
         return math.floor(flags / bit) % 2 == 1
     end
 
+    -- mojache (2.1.4): does the straight line (px, py) -> (tx, ty) cut across a
+    -- camp (FDJ.WALKNET_AVOID, Data/WalkNet.lua) that is no shortcut for this
+    -- side (side 3: for anyone)? Then it is no shortcut, however short.
+    local avoid = {}
+    local function Crosses(c, side, px, py, tx, ty)
+        if side ~= 1 and side ~= 2 then return false end
+        local camps = avoid[c]
+        if camps == nil then
+            camps = {}
+            for _, a in ipairs(FDJ.WALKNET_AVOID and FDJ.WALKNET_AVOID[c] or {}) do
+                local list = {}
+                for x, y in string.gmatch(a.points or "", "(-?%d+) (-?%d+) ") do list[#list + 1] = { tonumber(x), tonumber(y) } end
+                camps[#camps + 1] = { side = a.side, r = tonumber(a.r) or 90, list = list }
+            end
+            avoid[c] = camps
+        end
+        local dx, dy = tx - px, ty - py
+        local len2 = dx * dx + dy * dy
+        for i = 1, #camps do
+            local camp = camps[i]
+            if camp.side == side or camp.side == 3 then
+                for j = 1, #camp.list do
+                    local q = camp.list[j]
+                    local t = 0
+                    if len2 > 0 then t = math.max(0, math.min(1, ((q[1] - px) * dx + (q[2] - py) * dy) / len2)) end
+                    if Yards(q[1], q[2], px + t * dx, py + t * dy) <= camp.r then return true end
+                end
+            end
+        end
+        return false
+    end
+
+    -- mojache (2.1.4): is the player in a way between walls (a stretch with
+    -- flag 16, the trench south of Camp Mojache)? There the straight line is
+    -- no shortcut, however short: the way is walked as it is.
+    local CORRIDOR = 30 -- yards from such a stretch
+    local function InCorridor(net, side, x, y)
+        local X, Y, A, B, F = net.X, net.Y, net.A, net.B, net.F
+        local bx0, bx1 = math.floor((x - CORRIDOR) / BUCKET), math.floor((x + CORRIDOR) / BUCKET)
+        local by0, by1 = math.floor((y - CORRIDOR) / BUCKET), math.floor((y + CORRIDOR) / BUCKET)
+        for bx = bx0, bx1 do
+            for by = by0, by1 do
+                local list = net.buckets[bx * 4096 + by]
+                for i = 1, list and #list or 0 do
+                    local e = list[i]
+                    local f = F[e]
+                    if Bit(f, 16) and (side == 3 or Bit(f, side)) then
+                        local ax, ay = X[A[e]], Y[A[e]]
+                        local dx, dy = X[B[e]] - ax, Y[B[e]] - ay
+                        local len2 = dx * dx + dy * dy
+                        local t = 0
+                        if len2 > 0 then t = math.max(0, math.min(1, ((x - ax) * dx + (y - ay) * dy) / len2)) end
+                        if Yards(x, y, ax + t * dx, ay + t * dy) <= CORRIDOR then return true end
+                    end
+                end
+            end
+        end
+        return false
+    end
+
     -- The stretches a place (x, y) can join the net at: those nearest it in
     -- its own zone (the nearest, and the ones not much further).
     -- -> { { d = yards to the stretch, e = edge, t = how far along it (0 at a, 1 at b), x, y = the point on it }, ... }
@@ -351,7 +411,10 @@ do
         -- along the net (by the yards alone, roads no cheaper) is hardly
         -- longer than the straight line, nothing stands between: the
         -- straight line, also off a way already begun.
-        if here and here == there then
+        -- mojache (2.1.4): no straight line across the other faction's camp,
+        -- nor off a way between walls
+        local crossing = Crosses(c, Side(), px, py, tx, ty) or InCorridor(net, Side(), px, py)
+        if here and here == there and not crossing then
             local side = Side()
             local plain = Field(net, c, side, tx, ty, true)
             local joins = not plain.none and Joins(net, c, side, px, py, NEAR) or nil
@@ -463,7 +526,7 @@ do
                 state.node, state.field = nil, nil
                 return nil
             end
-            if sameZone and not onRoad and way < straight * LONGER + 60 then
+            if sameZone and not onRoad and not crossing and way < straight * LONGER + 60 then
                 state.node, state.field = nil, nil
                 return nil
             end

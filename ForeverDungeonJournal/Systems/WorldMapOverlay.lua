@@ -16,6 +16,15 @@ local saved
 local wantWorld = false   -- the player switched to the world map this session
 local toggle, backdrop
 local RaiseOverlay -- mappriority (below)
+-- mapover (2.1.4, M 22 Nov 2026, Alexaroth's OpenMap report on the Discord:
+-- "no dungeon map when pressing M"): the dungeon map's layer was capped at
+-- 8000, and OpenMap draws above that: its own dungeon map at about 8800 (in
+-- Stratholme, where its name for the dungeon matches none of the journal's
+-- pages) and, in a fight, its whole map at 9200 (OpenMap v0.8.12). The map
+-- now sits at 9300 at least (also over a layer that only comes up later, a
+-- fight starting with the map open) and 9600 at most, room for its own
+-- buttons above it within the game's limit of 10000.
+local LEVEL_FLOOR, LEVEL_CAP = 9300, 9600
 -- True while the journal is open on a boss page that was opened from a boss
 -- pin on the world map: the world map keeps showing the dungeon map.
 local keepWithJournal = false
@@ -87,7 +96,7 @@ local function Attach(dungeonName)
         end
     end
     pcall(Scan, host, 1)
-    backdrop:SetFrameLevel(math.min(top + 20, 8000))
+    backdrop:SetFrameLevel(math.max(LEVEL_FLOOR, math.min(top + 20, LEVEL_CAP)))
     backdrop:Show()
 
     panel:SetParent(backdrop)
@@ -278,7 +287,7 @@ RaiseOverlay = function()
     end
     local strata = STRATA[rank] or WorldMapFrame:GetFrameStrata()
     backdrop:SetFrameStrata(strata)
-    backdrop:SetFrameLevel(math.min(top + 20, 8000))
+    backdrop:SetFrameLevel(math.max(LEVEL_FLOOR, math.min(top + 20, LEVEL_CAP)))
     if panel and panel:GetParent() == backdrop then
         panel:SetFrameStrata(strata)
         panel:SetFrameLevel(backdrop:GetFrameLevel() + 1)
