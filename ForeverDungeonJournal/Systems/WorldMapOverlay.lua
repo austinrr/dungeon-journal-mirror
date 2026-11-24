@@ -528,7 +528,7 @@ local function Safe()
         -- Say so once instead of silently leaving the world map up.
         if not reportedError then
             reportedError = true
-            print("|cffffd100Dungeon Journal|r map error: " .. tostring(err))
+            FDJ.ChatLine("|cffffd100Dungeon Journal|r map error: " .. tostring(err))
         end
     end
 end

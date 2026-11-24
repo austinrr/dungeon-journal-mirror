@@ -129,6 +129,7 @@ local POPUP_NAMES = {
     "ForeverDungeonJournalSleepingBagMenu", "ForeverDungeonJournalLFGMenu",
     "ForeverDungeonJournalModeChooser", "ForeverDungeonJournalRPGConfirm", "ForeverDungeonJournalRPGDone",
     "ForeverDungeonJournalTierMenu", "ForeverDungeonJournalPvPMenu", -- (padpages: their right-click menus)
+    "ForeverDungeonJournalViewMenu", "ForeverDungeonJournalOrderMenu", "ForeverDungeonJournalResetUIAsk", -- (editmode, 2.1.5: Edit Mode's menus and Reset)
 }
 local function Popups()
     local list = {}

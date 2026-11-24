@@ -247,7 +247,7 @@ end
 FDJ.ShowExportDialog = function()
     local ok, code, questCount, name = pcall(FDJ.BuildExportCode)
     if not ok or type(code) ~= "string" then
-        print("|cffd8a83cDungeon Journal:|r " .. ExportText("EXPORT_ERROR"))
+        FDJ.ChatLine("|cffd8a83cDungeon Journal:|r " .. ExportText("EXPORT_ERROR"))
         return
     end
     dialog = dialog or BuildDialog()

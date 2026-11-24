@@ -596,10 +596,23 @@ do
     local KIND_COST = { [1] = 1.0, [2] = 0.8, [3] = 1.3, [4] = 2.5, [5] = 1.0, [6] = 3.0 }
     local function HasBit(mask, bit) return math.floor(mask / bit) % 2 == 1 end
     local grids
+    -- azsgrid (2.1.5): a grid's cells are read the first time the player
+    -- and a place are both on it (Ready), not all grids at the first aim.
     local function Grids()
         if grids then return grids end
         grids = {}
         for _, data in ipairs(FDJ.WALKGRIDS or {}) do
+            grids[#grids + 1] = { c = data.continent, x0 = data.x0, y0 = data.y0, cell = data.cell, nx = data.nx, ny = data.ny, data = data, fields = {},
+                leave = data.leave == true, exits = type(data.exits) == "table" and data.exits or nil } -- (gridleave)
+        end
+        FDJ.WALKGRIDS = nil -- (each grid keeps its own strings until it is read)
+        return grids
+    end
+    local function Ready(g)
+        local data = g.data
+        if not data then return g end
+        g.data = nil
+        do
             local nx, ny = data.nx, data.ny
             local open, cost = {}, {}
             for i = 1, nx do
@@ -636,10 +649,9 @@ do
                     end
                 end
             end
-            grids[#grids + 1] = { c = data.continent, x0 = data.x0, y0 = data.y0, cell = data.cell, nx = nx, ny = ny, open = open, cost = cost, fields = {} }
+            g.open, g.cost = open, cost
         end
-        FDJ.WALKGRIDS = nil -- the strings are not needed again
-        return grids
+        return g
     end
     -- The cell under (x, y): its row, column (from 0); nil off the grid.
     local function CellAt(g, x, y)
@@ -670,13 +682,46 @@ do
         return g.x0 + (i + 0.5) * g.cell, g.y0 + (j + 0.5) * g.cell
     end
     -- From the place's cell: the cost and the yards of the cheapest way to every cell that reaches it.
-    local function GridField(g, goal)
+    -- gridleave (2.1.5 dev, M 24 Nov 2026 at 48.6, 29.6 in Azshara, the coursers to kill at 57.9, 23.5,
+    -- off the grid): a place off a grid that leads off itself (leave = true): goal is its key ("off:x:y"),
+    -- and the way ends at whichever open cell on the grid's edge is best, with the yards from there on in
+    -- a straight line (the ground off the grid is open).
+    local function GridField(g, goal, tx, ty)
         for i = 1, #g.fields do
             if g.fields[i].goal == goal then return g.fields[i] end
         end
         local ny, open, cost, cell = g.ny, g.open, g.cost, g.cell
-        local dist, walk = { [goal] = 0 }, { [goal] = 0 }
-        local heapCost, heapNode, size = { 0 }, { goal }, 1
+        local dist, walk, heapCost, heapNode, size
+        if type(goal) == "number" then
+            dist, walk = { [goal] = 0 }, { [goal] = 0 }
+            heapCost, heapNode, size = { 0 }, { goal }, 1
+        else
+            dist, walk, heapCost, heapNode, size = {}, {}, {}, {}, 0
+            local edge = {}
+            -- (only an edge the place lies beyond: the straight line on from it never comes back over the grid;
+            -- with g.exits, only its cells marked 1 there: the land goes on off the grid)
+            local north, south = tx >= g.x0 + g.nx * cell, tx < g.x0
+            local west, east = ty >= g.y0 + ny * cell, ty < g.y0
+            local ex = g.exits or {}
+            local function Mark(s, k) return type(s) ~= "string" or string.sub(s, k, k) == "1" end
+            local function Add(i, j)
+                local idx = i * ny + j + 1
+                local out = (i == 0 and south and Mark(ex.south, j + 1)) or (i == g.nx - 1 and north and Mark(ex.north, j + 1))
+                    or (j == 0 and east and Mark(ex.east, i + 1)) or (j == ny - 1 and west and Mark(ex.west, i + 1))
+                if out and open[idx] ~= 0 and not dist[idx] then
+                    local x, y = Centre(g, idx)
+                    local d = Yards(x, y, tx, ty)
+                    dist[idx], walk[idx] = d, d
+                    edge[#edge + 1] = idx
+                end
+            end
+            for i = 0, g.nx - 1 do Add(i, 0) Add(i, ny - 1) end
+            for j = 1, ny - 2 do Add(0, j) Add(g.nx - 1, j) end
+            -- (in order of cost: a sorted list is a heap)
+            table.sort(edge, function(a, b) return dist[a] < dist[b] end)
+            for k = 1, #edge do heapCost[k], heapNode[k] = dist[edge[k]], edge[k] end
+            size = #edge
+        end
         while size > 0 do
             local c, u = heapCost[1], heapNode[1]
             local lastCost, lastNode = heapCost[size], heapNode[size]
@@ -755,23 +800,46 @@ do
         end
         return i == ei and j == ej
     end
+    -- gridleave: where the straight line from (ax, ay) on the grid to (bx, by)
+    -- off it leaves the grid (a little inside its last cell); nil: nowhere.
+    local function Edge(g, ax, ay, bx, by)
+        local dx, dy = bx - ax, by - ay
+        local len = math.sqrt(dx * dx + dy * dy)
+        if len < 0.001 then return nil end
+        local x1, y1 = g.x0 + g.nx * g.cell, g.y0 + g.ny * g.cell
+        local t = 1
+        if dx > 0 and bx >= x1 then t = math.min(t, (x1 - ax) / dx) elseif dx < 0 and bx < g.x0 then t = math.min(t, (g.x0 - ax) / dx) end
+        if dy > 0 and by >= y1 then t = math.min(t, (y1 - ay) / dy) elseif dy < 0 and by < g.y0 then t = math.min(t, (g.y0 - ay) / dy) end
+        t = t - g.cell * 0.25 / len
+        if t <= 0 then return nil end
+        local ex, ey = ax + dx * t, ay + dy * t
+        if not CellAt(g, ex, ey) then return nil end
+        return ex, ey
+    end
     -- -> handled (the player and the place are on one grid and a way is
     -- known), then the aim { x, y } and the yards from it on; no aim: the
     -- place itself is in a straight line.
     local function GridAim(memo, tx, ty, px, py, c)
         if not (Number(tx) and Number(ty) and Number(px) and Number(py)) then return false end
-        local g
+        local g, off
         for _, grid in ipairs(Grids()) do
-            if grid.c == c and CellAt(grid, px, py) and CellAt(grid, tx, ty) then g = grid break end
+            if grid.c == c and CellAt(grid, px, py) then
+                if CellAt(grid, tx, ty) then g = grid break end
+                if grid.leave and not off then off = grid end -- gridleave: the place off it
+            end
         end
+        g = g or off
         if not g then memo.walkgrid = nil return false end
+        Ready(g)
         local state = memo.walkgrid
         if state and state.g == g and Yards(state.tx, state.ty, tx, ty) < 1 and Yards(state.px, state.py, px, py) < 2 then
             return true, state.aim, state.rest
         end
-        local goal, from = Stand(g, tx, ty), Stand(g, px, py)
+        local away = CellAt(g, tx, ty) == nil
+        local goal = away and string.format("off:%.0f:%.0f", tx, ty) or Stand(g, tx, ty)
+        local from = Stand(g, px, py)
         if not goal or not from then memo.walkgrid = nil return false end
-        local field = GridField(g, goal)
+        local field = GridField(g, goal, tx, ty)
         local dist = field.dist
         if not dist[from] then memo.walkgrid = nil return false end -- no way known from here
         state = { g = g, tx = tx, ty = ty, px = px, py = py }
@@ -798,10 +866,16 @@ do
         local sx, sy = px, py
         local si, sj = CellAt(g, px, py)
         if not si or si * ny + sj + 1 ~= from then sx, sy = Centre(g, from) end
-        if at == goal and Clear(g, sx, sy, tx, ty) then return true, nil, nil end
-        if at == goal then
-            local gx, gy = Centre(g, goal)
-            if Clear(g, sx, sy, gx, gy) then return true, nil, nil end
+        if away then
+            -- gridleave: the straight line to the place clear as far as the grid goes: straight at it
+            local ex, ey = Edge(g, sx, sy, tx, ty)
+            if ex and Clear(g, sx, sy, ex, ey) then return true, nil, nil end
+        else
+            if at == goal and Clear(g, sx, sy, tx, ty) then return true, nil, nil end
+            if at == goal then
+                local gx, gy = Centre(g, goal)
+                if Clear(g, sx, sy, gx, gy) then return true, nil, nil end
+            end
         end
         local aimCell
         for n = #way, 1, -1 do

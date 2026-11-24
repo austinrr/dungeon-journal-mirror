@@ -81,7 +81,7 @@ local function RemoveTarget(target)
     end
     GameTooltip:Hide()
     if DEFAULT_CHAT_FRAME then
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKER_REMOVED"))
+        FDJ.ChatLine("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKER_REMOVED"))
     end
 end
 
@@ -1542,7 +1542,7 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
                 local ok, info = pcall(C_Map.GetMapInfo, target.mapID)
                 if ok and info and info.name and info.name ~= "" then padText = padText .. " - " .. info.name end
             end
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_PAD_MARKED", padText))
+            FDJ.ChatLine("|cffffd36bDungeonJournal:|r " .. L("MAP_PAD_MARKED", padText))
         end
         return
     end
@@ -1587,12 +1587,12 @@ local function ShowRecordedLocationOnMap(loc, fallbackText)
             if ok and info and info.name and info.name ~= "" then mapText = mapText .. " - " .. info.name end
         end
         if opened then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKED", mapText))
+            FDJ.ChatLine("|cffffd36bDungeonJournal:|r " .. L("MAP_MARKED", mapText))
         elseif inCombat then
             local key = GetBindingKey and GetBindingKey("TOGGLEWORLDMAP")
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_COMBAT", key or "M"))
+            FDJ.ChatLine("|cffffd36bDungeonJournal:|r " .. L("MAP_COMBAT", key or "M"))
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cffffd36bDungeonJournal:|r " .. L("MAP_OPEN_FAILED"))
+            FDJ.ChatLine("|cffffd36bDungeonJournal:|r " .. L("MAP_OPEN_FAILED"))
         end
     end
 end

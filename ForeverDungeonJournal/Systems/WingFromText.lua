@@ -19,6 +19,18 @@ local ROOMS = {
     ["dragonspire hall"] = UBRS, ["the beast's lair"] = UBRS, ["spire throne"] = UBRS,
     ["elders' square"] = UNDEAD, ["the gauntlet"] = UNDEAD, ["slaughter square"] = UNDEAD, ["the slaughter house"] = UNDEAD,
 }
+-- wingnames (2.1.5): the rooms in the client's language too
+-- (FDJ.RunLogRoomNamesL10n, Data/RunLogWings.lua)
+do
+    local add = {}
+    for english, wing in pairs(ROOMS) do
+        local name = FDJ.RunLogRoomNames and FDJ.RunLogRoomNames(english)
+        if name then add[name:lower()] = wing end
+    end
+    for key, wing in pairs(add) do
+        if ROOMS[key] == nil then ROOMS[key] = wing end
+    end
+end
 
 function FDJ.WingFromText(n)
     if type(n) ~= "string" or n == "" then return nil end

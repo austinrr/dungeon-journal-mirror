@@ -7947,3 +7947,146 @@ do
     end
 end
 -- END yagyin
+-- BEGIN stally
+-- stally (2.1.5, M 23 Nov 2026: "you need to build me Sunken Temple Alliance
+-- route"): what the Route needs for the Alliance's Sunken Temple quests
+-- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). The places: SOURCES.txt, stally.
+--  - Into The Temple of Atal'Hakkar: In Search of The Temple is found by
+--    swimming out to the temple ruins in the Pool of Tears. Rhapsody's
+--    Kalimdor Kocktail: a stop at the rocs of Tanaris, the Groddoc apes and
+--    the Ironfur bears of Feralas while the bags hold too few of each.
+--  - Into the Depths and Secret of the Circle: The Stone Circle waits in
+--    Marvon's Chest in Ratchet.
+--  - The God Hakkar: The Prophecy of Mosh'aru's two tablets are from
+--    Zul'Farrak: starting the Route asks whether to include that step
+--    (routeAsk, with "Skip for now" under its arrow); with it in the log the
+--    arrow leads to Zul'Farrak's entrance. The Ancient Egg: in the cave at
+--    the top of Jintha'Alor.
+--  - Haze of Evil: Muigin and Larion's Bloodpetals, from the Bloodpetal plants.
+--  - The class quests' steps outside the dungeon: a stop where their things
+--    are while the bags hold too few (Toxic Test: the devilsaurs, any of the
+--    three kinds counts, the Devilsaur Barb's icon on the arrow); the
+--    Shaman's four elements and the Warlock's felcloth at the auction house.
+--  - An Imp's Request and Hot and Itchy: the game gives one or the other,
+--    never both: one choice in Trolls of a Feather's chain, Hot and Itchy
+--    first (Impsy gives it; the other comes from a class trainer).
+--  - Archmage Xylem's tower is reached only through Sanath Lim-yo's teleport
+--    at the foot of the cliff: the arrow to Xylem leads to Sanath first.
+do
+    local SOS, TAN, FER, RAT, HIN, UNG, AZS, WPL, FEL, BL = 1435, 1446, 1444, 1413, 1425, 1449, 1447, 1422, 1448, 1419
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    local function Spot(m, x, y, label, detail, extra)
+        local spot = { markerType = "location", mapID = m, x = x, y = y, label = label, detail = detail }
+        for k, v in pairs(extra or {}) do spot[k] = v end
+        return spot
+    end
+    local function Goals(id, list)
+        if D[id] and D[id].routeGoals == nil then D[id].routeGoals = list end
+    end
+    local function Find(id, spot)
+        if D[id] and D[id].objectiveMap == nil then D[id].objectiveMap = spot end
+    end
+    -- Into The Temple of Atal'Hakkar
+    Find(1448, Spot(SOS, 0.702, 0.529, "Temple of Atal'Hakkar — Swamp of Sorrows",
+        "Swim out to the temple ruins in the middle of the Pool of Tears"))
+    Goals(1452, {
+        { 6257, 3, spot = Spot(TAN, 0.454, 0.385, "Roc Gizzard — Tanaris", "Kill the rocs here") },
+        { 6259, 3, spot = Spot(FER, 0.585, 0.587, "Groddoc Liver — Feralas", "Kill the Groddoc apes here") },
+        { 6258, 3, spot = Spot(FER, 0.537, 0.480, "Ironfur Liver — Feralas", "Kill the Ironfur bears here") },
+    })
+    -- Into the Depths, Secret of the Circle
+    Find(3444, Spot(RAT, 0.625, 0.385, "Stone Circle — Ratchet",
+        "Open Marvon's Chest outside the small hut by the shore", { exact = true, pickUp = true }))
+    -- The God Hakkar
+    local zf = FDJ.DB and FDJ.DB["Zul'Farrak"] and FDJ.DB["Zul'Farrak"].entrance
+    if type(zf) == "table" and zf.mapID then
+        Find(3527, { markerType = "dungeon", mapID = zf.mapID, x = zf.x, y = zf.y, label = zf.label,
+            detail = "Both tablets drop from bosses inside Zul'Farrak" })
+    end
+    Find(4787, Spot(HIN, 0.576, 0.868, "Ancient Egg — The Hinterlands",
+        "In the cave behind the amphitheater at the top of Jintha'Alor: trolls patrol around the egg", { exact = true, pickUp = true }))
+    local st = FDJ.DB and FDJ.DB["Sunken Temple"]
+    for _, quest in ipairs((st and st.quests) or {}) do
+        if quest.id == 3528 and quest.routeAsk == nil then
+            quest.routeAsk = { "Zul'Farrak", 3527 }
+            quest.routeSkipNow = true -- (skipnow: "Skip for now" under the arrow at the Zul'Farrak step)
+        end
+    end
+    -- Haze of Evil
+    Goals(4141, { { 11316, 15, spot = Spot(UNG, 0.670, 0.301, "Bloodpetal — Un'Goro Crater", "Kill the Bloodpetal plants here") } })
+    -- Druid: A Better Ingredient
+    Goals(9052, {
+        { 22435, 8, spot = Spot(UNG, 0.483, 0.815, "Gorishi Sting — Un'Goro Crater", "Kill the Gorishi wasps here") },
+        { 22434, 8, spot = Spot(UNG, 0.375, 0.652, "Bloodcap — Un'Goro Crater",
+            "Pick the Bloodcaps from the Bloodpetal Sprouts on the ground around here (green bulbs)") },
+    })
+    -- (the devilsaurs walk: the nearest to Torwa first, "Not found? Next spot" to the next)
+    Find(9051, Spot(UNG, 0.573, 0.618, "Devilsaur — Un'Goro Crater", "Use the Devilsaur Barb on any devilsaur (click its icon)", {
+        clickItem = { 22432, "Devilsaur Barb" },
+        spawns = { { x = 0.573, y = 0.618 }, { x = 0.501, y = 0.607 }, { x = 0.742, y = 0.330 },
+            { x = 0.573, y = 0.237 }, { x = 0.312, y = 0.364 }, { x = 0.346, y = 0.224 } },
+    }))
+    -- courserspot (2.1.5 dev, M 24 Nov 2026 at 48.6, 29.6, the arrow's swords up with no coursers
+    -- around: "the arrow should push a little bit more towards the objective ... The objective is on my
+    -- cursor location", 57.9, 23.5): the middle of where the Mosshoof Coursers run, not its western
+    -- edge. goalNear 250: there within 250 yards as before, its subzone only within 400 (not all of Ursolan).
+    -- Hunter: The Green Drake
+    Goals(8153, { { 20017, 2, spot = Spot(AZS, 0.579, 0.235, "Perfect Courser Antler — Azshara", "Kill the Mosshoof Coursers here", { goalNear = 250 }) } })
+    Goals(8231, { { 20087, 6, spot = Spot(AZS, 0.862, 0.311, "Wavethrasher Scales — Azshara", "Kill the wavethrashers along the shore here") } })
+    -- Mage: Destroy Morphaz
+    Goals(8251, { { 20028, 10, spot = Spot(AZS, 0.567, 0.281, "Glittering Dust — Azshara", "Kill the blood elves here") } })
+    Goals(8252, { { 20029, 6, spot = Spot(AZS, 0.405, 0.521, "Enchanted Coral — Azshara", "Kill the Spitelash Sirens here") } })
+    -- Paladin: Forging the Mightstone
+    Goals(8414, { { 12840, 20, spot = Spot(WPL, 0.508, 0.805, "Minion's Scourgestone — Western Plaguelands", "Kill the Scourge here") } })
+    -- Priest: Blood of Morphaz
+    Goals(8255, { { 20027, 4, spot = Spot(AZS, 0.579, 0.235, "Healthy Courser Gland — Azshara", "Kill the Mosshoof Coursers here", { goalNear = 250 }) } }) -- (courserspot)
+    Goals(8256, { { 7972, 1, spot = Spot(AZS, 0.166, 0.694, "Ichor of Undeath — Azshara", "Kill the Highborne ghosts here") } })
+    -- Rogue: The Azure Key
+    Goals(8234, { { 19775, 1, spot = Spot(AZS, 0.442, 0.215, "Sealed Azure Bag — Azshara", "Kill the Timbermaw Shamans here") } })
+    Goals(8235, { { 20023, 10, spot = Spot(AZS, 0.692, 0.272, "Encoded Fragment — Azshara", "Kill the Forest Oozes here") } })
+    -- Shaman: Da Voodoo (the Alliance's first step, Mastering the Elements)
+    if D[8411] and D[8411].routeBuy == nil then
+        D[8411].routeBuy = { { 7069, "Elemental Air", 1 }, { 7067, "Elemental Earth", 1 }, { 7068, "Elemental Fire", 1 }, { 7070, "Elemental Water", 1 } }
+    end
+    Goals(8412, {
+        { 20610, 8, spot = Spot(WPL, 0.334, 0.614, "Bloodshot Spider Eye — Western Plaguelands", "Kill the Venom Mist Lurkers here") },
+        { 20611, 8, spot = Spot(WPL, 0.365, 0.636, "Thick Black Claw — Western Plaguelands", "Kill the diseased bears here") },
+    })
+    -- Warlock: Trolls of a Feather
+    for _, id in ipairs({ 8419, 8420 }) do
+        if D[id] and D[id].routeBuy == nil then D[id].routeBuy = { { 14256, "Felcloth", 1 } } end
+    end
+    Goals(8421, {
+        { 20613, 10, spot = Spot(FEL, 0.515, 0.217, "Rotting Wood — Felwood", "Kill the Irontree Stompers here") },
+        { 20614, 4, spot = Spot(FEL, 0.417, 0.489, "Bloodvenom Essence — Felwood", "Kill the Tainted Oozes here") },
+    })
+    local chain = FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[8422]
+    if type(chain) == "table" then
+        local imp, itchy
+        for i, step in ipairs(chain) do
+            if type(step) == "table" and step.id == 8419 then imp = i end
+            if type(step) == "table" and step.id == 8420 then itchy = i end
+        end
+        if imp and itchy and chain[imp].choice == nil then
+            local a, b = chain[imp], chain[itchy]
+            a.choice, b.choice = "felcloth", "felcloth"
+            local first = math.min(imp, itchy)
+            chain[first], chain[first + 1] = b, a
+        end
+    end
+    FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
+    FDJ.QUEST_DONE_BY[8419] = FDJ.QUEST_DONE_BY[8419] or { 8420 }
+    FDJ.QUEST_DONE_BY[8420] = FDJ.QUEST_DONE_BY[8420] or { 8419 }
+    -- Warrior: Voodoo Feathers
+    Find(8423, Spot(BL, 0.490, 0.382, "Helboar — Blasted Lands", "Kill 7 Helboar here"))
+    Find(8424, Spot(BL, 0.660, 0.317, "Shadowsworn Cultist — Blasted Lands", "Kill the Shadowsworn here"))
+    -- Archmage Xylem (the Mage's and the Rogue's quests): Sanath Lim-yo first
+    FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+    local XYLEM = string.format("%s|%.4f|%.4f", tostring(AZS), 0.292, 0.402)
+    if FDJ.ARROW_VIAS[XYLEM] == nil then
+        FDJ.ARROW_VIAS[XYLEM] = {
+            { mapID = AZS, x = 0.281, y = 0.501, label = "Talk to Sanath Lim-yo: he teleports you up to Xylem's tower" },
+        }
+    end
+end
+-- END stally

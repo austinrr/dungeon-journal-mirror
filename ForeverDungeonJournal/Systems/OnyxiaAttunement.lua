@@ -253,7 +253,7 @@ local function ShowMenu(anchor)
         item:SetScript("OnClick", function()
             menu:Hide()
             FDJ.SetOnyxiaIconShown(false)
-            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_ONYXIA") end
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_SHOW_ONYXIA") end
         end)
         menu.hide = item
         -- Closes on its own once the mouse has been away for a moment.

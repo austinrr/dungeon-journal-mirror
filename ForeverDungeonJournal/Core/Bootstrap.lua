@@ -14,6 +14,19 @@ FDJ.OwnFonts = FDJ.OwnFonts or function(object) return object end
 FDJ.Constants = FDJ.Constants or {}
 FDJ.Constants.ALBA_FAIRMOON_LOCATION = "Alba Fairmoon, Sentinel Hill inn, Westfall"
 
+-- chatlines (2.1.5, M 24 Nov 2026: "in the general tab, let's add another
+-- option, which is hide chat lines. Hide chat lines is going to hide the
+-- lines that the journal usually puts in the chat, like the version when you
+-- log in or when you need to update, whatever"): every line the journal writes
+-- in the chat by itself, or after a click, goes through here; Options >
+-- General > Hide chat lines (ForeverDungeonJournalDB.hideChatLines) stops
+-- them. Answers to the /dj commands a player types still print.
+function FDJ.ChatLine(text)
+    local db = _G.ForeverDungeonJournalDB
+    if type(db) == "table" and db.hideChatLines then return end
+    print(text)
+end
+
 ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
 -- WoW loads the saved variables after the addon's files and replaces this
 -- table with the saved one. Still this same table at login: nothing was

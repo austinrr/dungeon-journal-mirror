@@ -4630,12 +4630,10 @@ FDJ.DB["Uldaman"] = {
             name = "Obsidian Sentinel",
             npcID = 7023,
             aliases = {"Obsidian Sentinel"},
-            -- lootremoved (2.1.3, M 21 Nov 2026): Blizzard took its loot
-            -- away for now (a gold farm): the red line under its name, and
-            -- its loot greyed out like gear the Loot Filter rules out
-            -- (Systems/LootFilter.lua).
-            lootNote = "LOOT_NOTE_LOOT_REMOVED",
-            lootRemoved = true,
+            -- lootback (2.1.5, M 24 Nov 2026: "obsidian sentinel is now
+            -- dropping loot again"): the red line and the greyed-out loot of
+            -- lootremoved (2.1.3) are gone. To take its loot away again:
+            -- lootNote = "LOOT_NOTE_LOOT_REMOVED", lootRemoved = true.
             description = "Level 42 mechanical guardian near the back entrance to Uldaman, after Ironaya. Drops the Obsidian Power Source for the Mage quest Power in Uldaman.",
             loot = {
                 {274430, "Rock Sentinel Slicer", "Two-Hand, Axe", 3},

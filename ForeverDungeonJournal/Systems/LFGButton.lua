@@ -118,7 +118,7 @@ local function OpenFor(dungeonName)
         ForeverDungeonJournalDB.lfgClick = { shown = opened, err = FDJ.lfgLastError }
     end
     if not opened then
-        print("|cffffd200Dungeon Journal:|r couldn't open the Looking For Group window"
+        FDJ.ChatLine("|cffffd200Dungeon Journal:|r couldn't open the Looking For Group window"
             .. (FDJ.lfgLastError and (" (" .. FDJ.lfgLastError .. ")") or "") .. ".")
         return
     end
@@ -483,7 +483,7 @@ local MSG = {
     blocked = "the game doesn't allow addons to list you. Use the Looking For Group window instead.",
     failed = "couldn't list you (%s).",
 }
-local function Say(text) print("|cffffd200Dungeon Journal:|r " .. text) end
+local function Say(text) FDJ.ChatLine("|cffffd200Dungeon Journal:|r " .. text) end -- (chatlines)
 
 local pendingList
 local listWatch = CreateFrame("Frame")

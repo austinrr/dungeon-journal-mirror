@@ -170,6 +170,99 @@ end
 -- ---------------------------------------------------------------------------
 -- Panel
 -- ---------------------------------------------------------------------------
+-- BEGIN tabspage
+-- tabspage (2.1.5): Options > Tabs, its title and the four Show options.
+do
+    local strings = {
+        enUS = { "Tabs",
+            "Show Sleeping Bag quest", "Shows the Sleeping Bag icon on the journal's home page (next to the WoW Forever and Raids icons). Untick it to hide the icon; you can also right-click the icon and pick Hide. A tracked Sleeping Bag chain keeps its arrow.",
+            "Show Onyxia Attunement", "Shows the Onyxia icon on the journal's home page (next to the Sleeping Bag's). It ticks itself once you can start the chain (level 48 Alliance, 55 Horde); tick it to see the icon sooner. Untick it to hide the icon; you can also right-click the icon and pick Hide.",
+            "Show Tier Sets", "Shows the Tier Sets icon on the journal's home page. It stays unticked until level 50; tick it to see the icon sooner. Untick it to hide the icon; you can also right-click the icon and pick Hide.",
+            "Show Character Logs icon", "Shows the Character Logs icon (your character's portrait, left of Favourites) on the journal's home page. Untick it to hide the icon; you can also right-click the icon and pick Hide. Runs are still logged; /dj log opens the Character Logs." },
+        deDE = { "Reiter",
+            "Schlafsack-Quest anzeigen", "Zeigt das Schlafsack-Symbol auf der Startseite des Journals (neben den Symbolen für WoW Forever und Schlachtzüge). Entferne den Haken, um das Symbol auszublenden; geht auch per Rechtsklick auf das Symbol → Ausblenden. Eine verfolgte Schlafsack-Questreihe behält ihren Pfeil.",
+            "Onyxia-Einstimmung anzeigen", "Zeigt das Onyxia-Symbol auf der Startseite des Journals (neben dem des Schlafsacks). Der Haken setzt sich von selbst, sobald du die Questreihe beginnen kannst (Stufe 48 Allianz, 55 Horde); setze ihn, um das Symbol früher zu sehen. Entferne den Haken, um es auszublenden; geht auch per Rechtsklick auf das Symbol → Ausblenden.",
+            "Tier-Sets anzeigen", "Zeigt das Tier-Sets-Symbol auf der Startseite des Journals. Bis Stufe 50 ist der Haken nicht gesetzt; setze ihn, um das Symbol früher zu sehen. Entferne den Haken, um es auszublenden; geht auch per Rechtsklick auf das Symbol → Ausblenden.",
+            "Charakter-Logs-Symbol anzeigen", "Zeigt das Symbol der Charakter-Logs (das Porträt deines Charakters, links von Favoriten) auf der Startseite des Journals. Entferne den Haken, um es auszublenden; geht auch per Rechtsklick auf das Symbol → Ausblenden. Runs werden weiter aufgezeichnet; /dj log öffnet die Charakter-Logs." },
+        frFR = { "Onglets",
+            "Afficher la quête du sac de couchage", "Affiche l'icône du sac de couchage sur la page d'accueil du journal (à côté des icônes WoW Forever et Raids). Décochez pour masquer l'icône ; clic droit sur l'icône → Masquer fonctionne aussi. Une chaîne du sac de couchage suivie garde sa flèche.",
+            "Afficher l'accès à Onyxia", "Affiche l'icône d'Onyxia sur la page d'accueil du journal (à côté de celle du sac de couchage). L'option se coche d'elle-même dès que vous pouvez commencer la suite (niveau 48 Alliance, 55 Horde) ; cochez-la pour voir l'icône plus tôt. Décochez-la pour masquer l'icône ; clic droit sur l'icône → Masquer fonctionne aussi.",
+            "Afficher les ensembles de tier", "Affiche l'icône des ensembles de tier sur la page d'accueil du journal. L'option reste décochée jusqu'au niveau 50 ; cochez-la pour voir l'icône plus tôt. Décochez-la pour masquer l'icône ; clic droit sur l'icône → Masquer fonctionne aussi.",
+            "Afficher l'icône des journaux du personnage", "Affiche l'icône des journaux du personnage (le portrait de votre personnage, à gauche de Favoris) sur la page d'accueil du journal. Décochez pour masquer l'icône ; vous pouvez aussi faire un clic droit sur l'icône et choisir Masquer. Les runs sont toujours enregistrés ; /dj log ouvre les journaux." },
+        esES = { "Pestañas",
+            "Mostrar la misión del saco de dormir", "Muestra el icono del saco de dormir en la página de inicio del diario (junto a los iconos de WoW Forever y Bandas). Desmárcalo para ocultar el icono; también puedes hacer clic derecho en el icono y elegir Ocultar. Una cadena del saco de dormir seguida conserva su flecha.",
+            "Mostrar sintonización de Onyxia", "Muestra el icono de Onyxia en la página de inicio del diario (junto al del saco de dormir). Se marca sola cuando puedes empezar la cadena (nivel 48 Alianza, 55 Horda); márcala para ver el icono antes. Desmárcala para ocultar el icono; también puedes hacer clic derecho en el icono y elegir Ocultar.",
+            "Mostrar conjuntos de tier", "Muestra el icono de conjuntos de tier en la página de inicio del diario. Sigue desmarcada hasta el nivel 50; márcala para ver el icono antes. Desmárcala para ocultar el icono; también puedes hacer clic derecho en el icono y elegir Ocultar.",
+            "Mostrar el icono de registros del personaje", "Muestra el icono de los registros del personaje (el retrato de tu personaje, a la izquierda de Favoritos) en la página de inicio del diario. Desmárcalo para ocultar el icono; también puedes hacer clic derecho en el icono y elegir Ocultar. Las runs se siguen registrando; /dj log abre los registros." },
+        itIT = { "Schede",
+            "Mostra la missione del sacco a pelo", "Mostra l'icona del sacco a pelo nella pagina iniziale del diario (accanto alle icone di WoW Forever e Incursioni). Togli la spunta per nascondere l'icona; funziona anche il clic destro sull'icona → Nascondi. Una catena del sacco a pelo seguita mantiene la sua freccia.",
+            "Mostra sintonia di Onyxia", "Mostra l'icona di Onyxia nella pagina iniziale del diario (accanto a quella del sacco a pelo). Si spunta da sola quando puoi iniziare la catena (livello 48 Alleanza, 55 Orda); spuntala per vedere l'icona prima. Togli la spunta per nasconderla; funziona anche il clic destro sull'icona → Nascondi.",
+            "Mostra set tier", "Mostra l'icona dei set tier nella pagina iniziale del diario. Resta senza spunta fino al livello 50; spuntala per vedere l'icona prima. Togli la spunta per nasconderla; puoi anche fare clic destro sull'icona e scegliere Nascondi.",
+            "Mostra l'icona dei registri del personaggio", "Mostra l'icona dei registri del personaggio (il ritratto del tuo personaggio, a sinistra di Preferiti) nella pagina iniziale del diario. Togli la spunta per nascondere l'icona; puoi anche cliccare col tasto destro sull'icona e scegliere Nascondi. Le run vengono comunque registrate; /dj log apre i registri." },
+        ptBR = { "Abas",
+            "Mostrar a missão do saco de dormir", "Mostra o ícone do saco de dormir na página inicial do diário (ao lado dos ícones de WoW Forever e Raides). Desmarque para ocultar o ícone; também dá para clicar com o botão direito no ícone e escolher Ocultar. Uma cadeia do saco de dormir acompanhada mantém sua seta.",
+            "Mostrar sintonização de Onyxia", "Mostra o ícone de Onyxia na página inicial do diário (ao lado do saco de dormir). Marca-se sozinha quando você pode começar a sequência (nível 48 Aliança, 55 Horda); marque para ver o ícone antes. Desmarque para ocultar o ícone; também dá para clicar com o botão direito no ícone e escolher Ocultar.",
+            "Mostrar conjuntos de tier", "Mostra o ícone de conjuntos de tier na página inicial do diário. Fica desmarcada até o nível 50; marque para ver o ícone antes. Desmarque para ocultar o ícone; você também pode clicar com o botão direito no ícone e escolher Ocultar.",
+            "Mostrar o ícone de registros do personagem", "Mostra o ícone dos registros do personagem (o retrato do seu personagem, à esquerda de Favoritos) na página inicial do diário. Desmarque para ocultar o ícone; você também pode clicar com o botão direito no ícone e escolher Ocultar. As runs continuam sendo registradas; /dj log abre os registros." },
+        ruRU = { "Вкладки",
+            "Показывать задание спального мешка", "Показывает значок спального мешка на главной странице журнала (рядом со значками WoW Forever и рейдов). Снимите галочку, чтобы скрыть значок; можно также щёлкнуть по значку правой кнопкой и выбрать «Скрыть». Отслеживаемая цепочка спального мешка сохраняет свою стрелку.",
+            "Показывать доступ к Ониксии", "Показывает значок Ониксии на главной странице журнала (рядом со значком спального мешка). Галочка ставится сама, когда вы можете начать цепочку (48 уровень у Альянса, 55 у Орды); поставьте её, чтобы увидеть значок раньше. Снимите галочку, чтобы скрыть значок; можно также щёлкнуть по значку правой кнопкой и выбрать «Скрыть».",
+            "Показывать комплекты тиров", "Показывает значок комплектов тиров на главной странице журнала. До 50-го уровня галочка снята; поставьте её, чтобы увидеть значок раньше. Снимите галочку, чтобы скрыть значок; также можно щёлкнуть по значку правой кнопкой и выбрать «Скрыть».",
+            "Показывать значок журналов персонажа", "Показывает значок журналов персонажа (портрет вашего персонажа, слева от «Избранного») на главной странице журнала. Снимите галочку, чтобы скрыть значок; также можно щёлкнуть по значку правой кнопкой и выбрать «Скрыть». Забеги по-прежнему записываются; /dj log открывает журналы." },
+        koKR = { "탭",
+            "침낭 퀘스트 표시", "도감 첫 페이지에 침낭 아이콘을 표시합니다(WoW Forever 및 공격대 아이콘 옆). 체크를 해제하면 아이콘이 숨겨지며, 아이콘을 우클릭하고 숨기기를 선택해도 됩니다. 추적 중인 침낭 퀘스트 연계는 화살표가 계속 표시됩니다.",
+            "오닉시아 입장 퀘스트 표시", "도감 첫 페이지에 오닉시아 아이콘을 표시합니다(침낭 아이콘 옆). 연계 퀘스트를 시작할 수 있게 되면(얼라이언스 48레벨, 호드 55레벨) 저절로 체크되며, 더 일찍 보려면 체크하세요. 체크를 해제하면 아이콘이 숨겨지며, 아이콘을 우클릭하고 숨기기를 선택해도 됩니다.",
+            "티어 세트 표시", "도감 첫 페이지에 티어 세트 아이콘을 표시합니다. 50레벨까지는 체크가 해제되어 있으며, 체크하면 더 일찍 표시됩니다. 체크를 해제하면 아이콘이 숨겨지며, 아이콘을 우클릭하고 숨기기를 선택해도 됩니다.",
+            "캐릭터 기록 아이콘 표시", "도감 첫 페이지에 캐릭터 기록 아이콘(즐겨찾기 왼쪽의 캐릭터 초상화)을 표시합니다. 체크를 해제하면 아이콘이 숨겨지며, 아이콘을 우클릭하고 숨기기를 선택해도 됩니다. 기록은 계속 저장되며 /dj log 로 열 수 있습니다." },
+        zhCN = { "标签页",
+            "显示睡袋任务", "在日志首页显示睡袋图标（位于WoW Forever和团队副本图标旁）。取消勾选即可隐藏图标；也可以右键点击图标并选择隐藏。已追踪的睡袋任务链仍会显示箭头。",
+            "显示奥妮克希亚钥匙任务", "在日志首页显示奥妮克希亚图标（位于睡袋图标旁）。当你可以开始系列任务时（联盟48级，部落55级）会自动勾选；勾选可提前显示。取消勾选即可隐藏图标；也可以右键点击图标并选择隐藏。",
+            "显示套装", "在日志首页显示套装图标。50级之前保持未勾选；勾选可提前显示。取消勾选即可隐藏图标；也可以右键点击图标并选择隐藏。",
+            "显示角色记录图标", "在日志首页显示角色记录图标（收藏左边的角色头像）。取消勾选即可隐藏图标；也可以右键点击图标并选择隐藏。副本仍会被记录；/dj log 可打开角色记录。" },
+        zhTW = { "分頁",
+            "顯示睡袋任務", "在日誌首頁顯示睡袋圖示（位於WoW Forever和團隊副本圖示旁）。取消勾選即可隱藏圖示；也可以右鍵點擊圖示並選擇隱藏。已追蹤的睡袋任務鏈仍會顯示箭頭。",
+            "顯示奧妮克希亞鑰匙任務", "在日誌首頁顯示奧妮克希亞圖示（位於睡袋圖示旁）。當你可以開始系列任務時（聯盟48級，部落55級）會自動勾選；勾選可提前顯示。取消勾選即可隱藏圖示；也可以右鍵點擊圖示並選擇隱藏。",
+            "顯示套裝", "在日誌首頁顯示套裝圖示。50級之前保持未勾選；勾選可提前顯示。取消勾選即可隱藏圖示；也可以右鍵點擊圖示並選擇隱藏。",
+            "顯示角色紀錄圖示", "在日誌首頁顯示角色紀錄圖示（最愛左邊的角色頭像）。取消勾選即可隱藏圖示；也可以右鍵點擊圖示並選擇隱藏。副本仍會被紀錄；/dj log 可開啟角色紀錄。" },
+    }
+    strings.esMX = strings.esES
+    local KEYS = { "OPT_TABS", "OPT_SHOW_SLEEPING_BAG", "OPT_SHOW_SLEEPING_BAG_TIP", "OPT_SHOW_ONYXIA", "OPT_SHOW_ONYXIA_TIP",
+        "OPT_SHOW_TIER", "OPT_SHOW_TIER_TIP", "OPT_SHOW_RUNLOG", "OPT_SHOW_RUNLOG_TIP" }
+    for locale, list in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for i, key in ipairs(KEYS) do
+                if t[key] == nil then t[key] = list[i] end
+            end
+        end
+    end
+end
+-- END tabspage
+
+-- chatlines (2.1.5): Options > General > Hide chat lines
+do
+    local strings = {
+        enUS = { "Hide chat lines", "Hides the lines the journal writes in your chat: the version when you log in, the note when an update is out, the unlock and run messages and the like." },
+        deDE = { "Chatzeilen ausblenden", "Blendet die Zeilen aus, die das Journal in deinen Chat schreibt: die Version beim Einloggen, den Hinweis auf ein Update, die Freischaltungs- und Run-Meldungen und Ähnliches." },
+        frFR = { "Masquer les lignes du chat", "Masque les lignes que le journal écrit dans votre chat : la version à la connexion, l'avis de mise à jour, les messages de déblocage et de run, etc." },
+        esES = { "Ocultar líneas del chat", "Oculta las líneas que el diario escribe en tu chat: la versión al conectarte, el aviso de actualización, los mensajes de desbloqueo y de runs, etc." },
+        itIT = { "Nascondi le righe in chat", "Nasconde le righe che il diario scrive nella tua chat: la versione all'accesso, l'avviso di aggiornamento, i messaggi di sblocco e delle run e simili." },
+        ptBR = { "Ocultar linhas do chat", "Oculta as linhas que o diário escreve no seu chat: a versão ao entrar, o aviso de atualização, as mensagens de desbloqueio e de runs e afins." },
+        ruRU = { "Скрыть строки в чате", "Скрывает строки, которые журнал пишет в ваш чат: версию при входе, сообщение о новой версии, сообщения о разблокировке и забегах и т. п." },
+        koKR = { "채팅 메시지 숨기기", "도감이 채팅창에 쓰는 메시지를 숨깁니다: 접속 시 버전, 업데이트 알림, 잠금 해제 및 던전 기록 메시지 등." },
+        zhCN = { "隐藏聊天信息", "隐藏日志在聊天框中显示的信息：登录时的版本、更新提示、解锁和副本记录信息等。" },
+        zhTW = { "隱藏聊天訊息", "隱藏日誌在聊天框中顯示的訊息：登入時的版本、更新提示、解鎖和副本紀錄訊息等。" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.OPT_HIDE_CHAT == nil then t.OPT_HIDE_CHAT = pair[1] end
+            if t.OPT_HIDE_CHAT_TIP == nil then t.OPT_HIDE_CHAT_TIP = pair[2] end
+        end
+    end
+end
+
 local panel
 
 local OPTIONS = {
@@ -217,42 +310,17 @@ local OPTIONS = {
         end,
     },
     {
+        -- chatlines (2.1.5): the journal's own lines in the chat (FDJ.ChatLine, Core/Bootstrap.lua)
+        label = "OPT_HIDE_CHAT",
+        tip = "OPT_HIDE_CHAT_TIP",
+        get = function() return Store().hideChatLines == true end,
+        set = function(on) Store().hideChatLines = on and true or nil end,
+    },
+    {
         label = "OPT_HIDE_LFG",
         tip = "OPT_HIDE_LFG_TIP",
         get = function() return FDJ.IsLFGButtonHidden and FDJ.IsLFGButtonHidden() or false end,
         set = function(on) if FDJ.SetLFGButtonHidden then FDJ.SetLFGButtonHidden(on) end end,
-    },
-    {
-        label = "OPT_HIDE_SLEEPING_BAG",
-        tip = "OPT_HIDE_SLEEPING_BAG_TIP",
-        get = function() return FDJ.IsSleepingBagHidden and FDJ.IsSleepingBagHidden() or false end,
-        set = function(on) if FDJ.SetSleepingBagHidden then FDJ.SetSleepingBagHidden(on) end end,
-    },
-    {
-        -- The Onyxia Attunement icon (Systems/OnyxiaAttunement.lua).
-        -- hideonyxia (2.0.15): a Hide option like the others (it was "Show").
-        -- Ticked (hidden) by default until the character can start the chain,
-        -- then it unticks by itself; any level may untick it to see it sooner.
-        -- Ticking it again below the level goes back to that default.
-        label = "OPT_HIDE_ONYXIA",
-        tip = "OPT_HIDE_ONYXIA_TIP",
-        get = function() return not (FDJ.IsOnyxiaIconShown and FDJ.IsOnyxiaIconShown()) end,
-        set = function(on) if FDJ.SetOnyxiaIconShown then FDJ.SetOnyxiaIconShown(not on) end end,
-        refreshHome = true,
-    },
-    {
-        -- tierhide (2.0.10): the Tier Sets icon (Systems/TierSets.lua)
-        label = "OPT_HIDE_TIER",
-        tip = "OPT_HIDE_TIER_TIP",
-        get = function() return FDJ.IsTierIconHidden and FDJ.IsTierIconHidden() or false end,
-        set = function(on) if FDJ.SetTierIconHidden then FDJ.SetTierIconHidden(on) end end,
-        refreshHome = true,
-    },
-    {
-        label = "OPT_HIDE_RUNLOG",
-        tip = "OPT_HIDE_RUNLOG_TIP",
-        get = function() return FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden() or false end,
-        set = function(on) if FDJ.SetRunLogButtonHidden then FDJ.SetRunLogButtonHidden(on) end end,
     },
     {
         -- exporttitle (2.1.1): the Export button in the title bar (Systems/BugReport.lua)
@@ -271,6 +339,46 @@ local OPTIONS = {
         end,
     },
     -- (useprompt: its Hide option taken out, M 20 Nov 2026: "I don't want it")
+    -- tabspage (2.1.5, M 24 Nov 2026: "the general list is getting too long ...
+    -- another option ... tabs below general, and that's where we have the hide
+    -- sleeping bag, hide onyxia ... all the buttons that change the tabs, the
+    -- icons in our main page"; "change the wording from hide to show ... it's
+    -- easier for new players ... I also don't want to change the settings for
+    -- everybody else"): the home page's icons, each a Show option. Only the
+    -- wording and the tick turn round: what is saved stays as it was (an icon
+    -- hidden before is shown unticked).
+    { header = "OPT_TABS" },
+    {
+        label = "OPT_SHOW_SLEEPING_BAG",
+        tip = "OPT_SHOW_SLEEPING_BAG_TIP",
+        get = function() return not (FDJ.IsSleepingBagHidden and FDJ.IsSleepingBagHidden()) end,
+        set = function(on) if FDJ.SetSleepingBagHidden then FDJ.SetSleepingBagHidden(not on) end end,
+    },
+    {
+        -- The Onyxia Attunement icon (Systems/OnyxiaAttunement.lua).
+        -- Unticked (hidden) by default until the character can start the
+        -- chain, then it ticks by itself; any level may tick it to see it
+        -- sooner. Unticking it below the level goes back to that default.
+        label = "OPT_SHOW_ONYXIA",
+        tip = "OPT_SHOW_ONYXIA_TIP",
+        get = function() return FDJ.IsOnyxiaIconShown and FDJ.IsOnyxiaIconShown() or false end,
+        set = function(on) if FDJ.SetOnyxiaIconShown then FDJ.SetOnyxiaIconShown(on) end end,
+        refreshHome = true,
+    },
+    {
+        -- tierhide (2.0.10): the Tier Sets icon (Systems/TierSets.lua)
+        label = "OPT_SHOW_TIER",
+        tip = "OPT_SHOW_TIER_TIP",
+        get = function() return not (FDJ.IsTierIconHidden and FDJ.IsTierIconHidden()) end,
+        set = function(on) if FDJ.SetTierIconHidden then FDJ.SetTierIconHidden(not on) end end,
+        refreshHome = true,
+    },
+    {
+        label = "OPT_SHOW_RUNLOG",
+        tip = "OPT_SHOW_RUNLOG_TIP",
+        get = function() return not (FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden()) end,
+        set = function(on) if FDJ.SetRunLogButtonHidden then FDJ.SetRunLogButtonHidden(not on) end end,
+    },
     { header = "OPT_DUNGEON_LIST" },
     {
         label = "OPT_RPG_MODE",
@@ -545,7 +653,7 @@ local OPTIONS = {
 local BINDING = "FOREVERDUNGEONJOURNAL_TOGGLE"
 local MODIFIER_KEYS = { LSHIFT = true, RSHIFT = true, LCTRL = true, RCTRL = true, LALT = true, RALT = true, LMETA = true, RMETA = true }
 
-local function Say(text) print("|cffd8a83cDungeonJournal:|r " .. text) end
+local function Say(text) FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end -- (chatlines)
 
 -- "CTRL-SHIFT-L" -> "Ctrl-Shift-L" (the client's own abbreviation shows "c-L").
 local MODIFIER_NAMES = { CTRL = "Ctrl", SHIFT = "Shift", ALT = "Alt", META = "Cmd" }

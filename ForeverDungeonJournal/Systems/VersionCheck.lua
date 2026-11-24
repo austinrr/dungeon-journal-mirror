@@ -68,7 +68,7 @@ end
 local function Notify(newVersion)
     if notified then return end
     notified = true
-    print(CHAT_TAG .. L("UPDATE_AVAILABLE", tostring(newVersion), MyVersion() or "?"))
+    FDJ.ChatLine(CHAT_TAG .. L("UPDATE_AVAILABLE", tostring(newVersion), MyVersion() or "?"))
 end
 
 local function Send(channel)

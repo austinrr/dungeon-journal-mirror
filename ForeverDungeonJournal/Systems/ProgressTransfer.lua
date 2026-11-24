@@ -154,7 +154,7 @@ local function L(key, ...)
 end
 
 local function Say(text)
-    print("|cffd8a83cDungeon Journal:|r " .. text)
+    FDJ.ChatLine("|cffd8a83cDungeon Journal:|r " .. text) -- (chatlines)
 end
 
 local function Lib()

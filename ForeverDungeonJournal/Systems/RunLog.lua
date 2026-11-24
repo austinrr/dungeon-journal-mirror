@@ -126,6 +126,9 @@ end
 
 local function Match(p, text)
     if not p or type(text) ~= "string" then return nil end
+    -- rollnumbers (2.1.5): the loot history tag off first (no format keeps
+    -- it: LootFormat), or a line starting with a name took it in
+    text = text:gsub("|HlootHistory:[^|]*|h.-|h:?%s*", "")
     local caps = { text:match(p.pattern) }
     -- rollfix (2.0.10, M 16 Nov 2026: the Need roll showed no numbers, his
     -- or the others'): the client can put a tag before the line ("[Loot]: ")
@@ -156,6 +159,40 @@ local function Number(s)
     return tonumber((s:gsub("[^%d]", "")))
 end
 
+-- rollnumbers (2.1.5, M 24 Nov 2026: "why are need rolls showing still not
+-- working? i wanna see what i rolled"): the loot lines' own format can start
+-- with the loot history tag ("|HlootHistory:%d|h[Loot]|h: Need Roll - %d
+-- for %s by %s"); its number was taken for the roll, the roll for the item.
+-- The tag comes off the format (the line loses it in Match): the arguments
+-- are the line's own again.
+local function LootFormat(fmt)
+    if type(fmt) ~= "string" then return nil end
+    local s, e = fmt:find("|HlootHistory:.-|h.-|h:?%s*")
+    if not s then return fmt end
+    local tagPos = tonumber(fmt:sub(s, e):match("%%(%d)%$"))
+    local rest = fmt:sub(1, s - 1) .. fmt:sub(e + 1)
+    if tagPos then
+        rest = rest:gsub("%%(%d)%$", function(pos)
+            pos = tonumber(pos)
+            return "%" .. (pos > tagPos and pos - 1 or pos) .. "$"
+        end)
+    end
+    return rest
+end
+-- A roll line's item link, number and name, whatever their order in the
+-- client's language.
+local function RollArgs(args)
+    local link, n, name
+    for _, v in pairs(args or {}) do
+        if type(v) == "string" then
+            if v:find("|Hitem:", 1, true) then link = link or v
+            elseif not n and v:match("^[%d%.,]+$") then n = Number(v)
+            elseif v ~= "" then name = name or v end
+        end
+    end
+    return link, n, name
+end
+
 local patterns
 local function Patterns()
     if patterns then return patterns end
@@ -163,17 +200,17 @@ local function Patterns()
         xp = MakePattern(_G.COMBATLOG_XPGAIN_FIRSTPERSON, false),
         dies = MakePattern(_G.UNITDIESOTHER, true),
         slain = MakePattern(_G.SELFKILLOTHER, true),
-        youWon = MakePattern(_G.LOOT_ROLL_YOU_WON, true),
-        won = MakePattern(_G.LOOT_ROLL_WON, true),
-        allPassed = MakePattern(_G.LOOT_ROLL_ALL_PASSED, true),
-        needSelf = MakePattern(_G.LOOT_ROLL_NEED_SELF, true),
+        youWon = MakePattern(LootFormat(_G.LOOT_ROLL_YOU_WON), true),
+        won = MakePattern(LootFormat(_G.LOOT_ROLL_WON), true),
+        allPassed = MakePattern(LootFormat(_G.LOOT_ROLL_ALL_PASSED), true),
+        needSelf = MakePattern(LootFormat(_G.LOOT_ROLL_NEED_SELF), true),
         lootOther = MakePattern(_G.LOOT_ITEM, true),
-        greedSelf = MakePattern(_G.LOOT_ROLL_GREED_SELF, true),
-        needOther = MakePattern(_G.LOOT_ROLL_NEED, true),
-        greedOther = MakePattern(_G.LOOT_ROLL_GREED, true),
-        rolledNeed = MakePattern(_G.LOOT_ROLL_ROLLED_NEED, true),
-        rolledGreed = MakePattern(_G.LOOT_ROLL_ROLLED_GREED, true),
-        rolledNeedBonus = _G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS and MakePattern(_G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS, true) or nil,
+        greedSelf = MakePattern(LootFormat(_G.LOOT_ROLL_GREED_SELF), true),
+        needOther = MakePattern(LootFormat(_G.LOOT_ROLL_NEED), true),
+        greedOther = MakePattern(LootFormat(_G.LOOT_ROLL_GREED), true),
+        rolledNeed = MakePattern(LootFormat(_G.LOOT_ROLL_ROLLED_NEED), true),
+        rolledGreed = MakePattern(LootFormat(_G.LOOT_ROLL_ROLLED_GREED), true),
+        rolledNeedBonus = _G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS and MakePattern(LootFormat(_G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS), true) or nil,
         lootSelf = MakePattern(_G.LOOT_ITEM_SELF, true),
         lootSelfMulti = _G.LOOT_ITEM_SELF_MULTIPLE and MakePattern(_G.LOOT_ITEM_SELF_MULTIPLE, true) or nil, -- lootvalue: "You receive loot: [X]x3."
         reset = MakePattern(_G.INSTANCE_RESET_SUCCESS or "%s has been reset.", true),
@@ -181,6 +218,19 @@ local function Patterns()
         -- the end: the game can add a bonus after it)
         rep = MakePattern(_G.FACTION_STANDING_INCREASED or "Reputation with %s increased by %d.", false),
     }
+    -- rollnumbers: with the loot lines kept short (the game's default), only
+    -- the winner's line comes, with the roll in it: "[Loot]: You (Need - 87)
+    -- Won: <item>", "[Loot]: <name> (Greed - 54) Won: <item>".
+    patterns.noSpam = {}
+    for _, kind in ipairs({ "NEED", "GREED", "DE", "TRANSMOG" }) do
+        for _, who in ipairs({ "YOU_WON", "WON" }) do
+            local pat = MakePattern(LootFormat(_G["LOOT_ROLL_" .. who .. "_NO_SPAM_" .. kind]), true)
+            if pat then
+                patterns.noSpam[#patterns.noSpam + 1] = { p = pat, me = who == "YOU_WON",
+                    kind = (kind == "NEED" and "need") or (kind == "GREED" and "greed") or nil }
+            end
+        end
+    end
     return patterns
 end
 
@@ -349,6 +399,27 @@ end
 local function NameOfNpc(npc)
     if not npc then return nil end
     return Account().runLogNames[npc]
+end
+-- wingnames (2.1.5): a wing mob's names in this client's language, baked in
+-- (FDJ.RunLogMobNamesL10n, Data/RunLogWings.lua): is lname (lower case) one?
+local bakedNames
+local function BakedName(npc, lname)
+    if not npc or not lname then return false end
+    if not bakedNames then
+        bakedNames = {}
+        local loc = (type(GetLocale) == "function" and GetLocale()) or "enUS"
+        for id, row in pairs(FDJ.RunLogMobNamesL10n or {}) do
+            local v = type(row) == "table" and (row[loc] or (loc == "esMX" and row.esES)) or nil
+            local set = {}
+            for _, n in ipairs(type(v) == "table" and v or { v }) do
+                local l = Lower(n)
+                if l then set[l] = true end
+            end
+            if next(set) then bakedNames[id] = set end
+        end
+    end
+    local set = bakedNames[npc]
+    return set ~= nil and set[lname] == true
 end
 
 local FixBossKillsAll -- below: kills renamed once a boss's local name is known
@@ -704,7 +775,7 @@ SetKillTimes = function(run, kill)
         C_Timer.After(2, function()
             if FDJ.RunLogSummary then
                 local ok, text = pcall(FDJ.RunLogSummary, run)
-                if ok and text then Say(text) end
+                if ok and text then FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end -- (chatlines)
             end
         end)
     end
@@ -1063,7 +1134,7 @@ local function WingFor(npc, name)
         local matched = BossFor(wing, npc, name) ~= nil
         for id, english in pairs((FDJ.RunLogWingTrash or {})[wing] or {}) do
             if npc == id or (Lower(name) and (Lower(name) == Lower(english)
-                or Lower(name) == Lower(NameOfNpc(id)))) then matched = true break end
+                or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then matched = true break end -- (wingnames)
         end
         if matched then
             if found and found ~= wing then return nil end
@@ -1085,7 +1156,7 @@ local function SharedWing(npc, name)
     if not wings and Lower(name) then
         for id, w in pairs(list) do
             local english = FDJ.RunLogSharedTrash and FDJ.RunLogSharedTrash[insideMap] and FDJ.RunLogSharedTrash[insideMap][id]
-            if Lower(name) == Lower(english) or Lower(name) == Lower(NameOfNpc(id)) then wings = w break end
+            if Lower(name) == Lower(english) or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)) then wings = w break end -- (wingnames)
         end
     end
     if not wings then return nil end
@@ -1287,7 +1358,7 @@ local function EligibleKill(guid, npc, name, how)
     if WingFor(npc, name) or BossFor((current and current.dungeon) or insideDungeon, npc, name) then return true end
     for id, english in pairs((FDJ.RunLogSharedTrash or {})[insideMap] or {}) do
         if npc == id or (Lower(name) and (Lower(name) == Lower(english)
-            or Lower(name) == Lower(NameOfNpc(id)))) then return true end
+            or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then return true end -- (wingnames)
     end
     -- fightkill: a death line during a fight is a real kill, even with no XP
     -- (overlevelled, level cap) and the mob's type hidden by the instance.
@@ -2210,6 +2281,55 @@ local function OnRollNumber(link, name, n)
     Changed()
 end
 
+-- rollnumbers: the game's own loot history, where the client has one: every
+-- player's roll on an item, yours too when you lost and the chat only names
+-- the winner. (The newer drop list, or the older list of rolled items.)
+local function HistoryRoll(link, name, n, kind)
+    link, name, n = Plain(link), Plain(name), tonumber(Plain(n))
+    local id = ItemIDOf(link)
+    if not id or type(name) ~= "string" or name == "" or not n or n <= 0 then return end
+    if kind then SetChoice(link, name, kind) end
+    if RollOf(id, name) == n then return end -- (known already)
+    OnRollNumber(link, name, n)
+end
+local function ReadHistoryDrop(encounterID, lootListID)
+    local get = C_LootHistory and C_LootHistory.GetSortedInfoForDrop
+    if type(get) ~= "function" then return end
+    local ok, info = pcall(get, encounterID, lootListID)
+    if not ok or type(info) ~= "table" or type(info.rollInfos) ~= "table" then return end
+    local S = Enum and Enum.EncounterLootDropRollState or {}
+    for _, r in ipairs(info.rollInfos) do
+        if type(r) == "table" then
+            local state = r.state
+            local kind = (state == (S.NeedMainSpec or 0) or state == (S.NeedOffSpec or 1)) and "need"
+                or (state == (S.Greed or 3)) and "greed" or nil
+            HistoryRoll(info.itemHyperlink, Plain(r.isSelf) and PlayerName() or r.playerName, r.roll, kind)
+        end
+    end
+end
+local function ReadHistoryItem(index)
+    local H = C_LootHistory
+    if not (H and type(H.GetItem) == "function" and type(H.GetPlayerInfo) == "function") then return end
+    local ok, _, link, players = pcall(H.GetItem, index)
+    players = ok and tonumber(Plain(players)) or nil
+    if not players then return end
+    for j = 1, math.min(players, 40) do
+        local okP, name, _, rollType, roll, _, isMe = pcall(H.GetPlayerInfo, index, j)
+        if okP then
+            rollType = Plain(rollType)
+            HistoryRoll(link, Plain(isMe) and PlayerName() or name, roll,
+                (rollType == 1 and "need") or (rollType == 2 and "greed") or nil)
+        end
+    end
+end
+local function ReadHistoryAll()
+    local H = C_LootHistory
+    if not (H and type(H.GetNumItems) == "function") then return end
+    local ok, n = pcall(H.GetNumItems)
+    n = ok and tonumber(Plain(n)) or nil
+    for i = 1, math.min(n or 0, 30) do ReadHistoryItem(i) end
+end
+
 -- lootvalue (2.1.4, M 22 Nov 2026: "it also counts items that you dropped ...
 -- it calculates the vendor price of the items ... every item"): every item the
 -- player loots inside ("You receive loot", stacks counted) adds its vendor
@@ -2237,6 +2357,22 @@ local function OnLootChat(text)
     text = Plain(text)
     if type(text) ~= "string" then return end
     local p = Patterns()
+    for _, ns in ipairs(p.noSpam or {}) do -- (rollnumbers)
+        local a = Match(ns.p, text)
+        if a then
+            local link, n, name = RollArgs(a)
+            if ns.me or not name then name = PlayerName() end
+            if link then
+                if ns.kind then SetChoice(link, name, ns.kind) end
+                if n then OnRollNumber(link, name, n) end
+                AddBossLoot(link, nil, name)
+                local mine = ns.me or IsMe(name)
+                local need = PendingNeedFor(ItemIDOf(link), mine)
+                if need then SetNeedResult(need, mine and "won" or "lost") SetNeedRoll(need) end
+            end
+            return
+        end
+    end
     local args = Match(p.youWon, text)
     if args then
         AddBossLoot(args[1], nil, PlayerName())
@@ -2477,6 +2613,7 @@ for _, e in ipairs({
     "START_LOOT_ROLL", "CANCEL_LOOT_ROLL", "LOOT_OPENED", "LOOT_READY", "PLAYER_MONEY", "CHAT_MSG_SYSTEM",
     "PLAYER_REGEN_DISABLED", "PLAYER_REGEN_ENABLED", "MERCHANT_SHOW", "MERCHANT_CLOSED",
     "CHAT_MSG_COMBAT_FACTION_CHANGE", -- reptrack (2.1.4)
+    "LOOT_HISTORY_UPDATE_DROP", "LOOT_HISTORY_ROLL_CHANGED", "LOOT_HISTORY_ROLL_COMPLETE", "LOOT_HISTORY_FULL_UPDATE", -- rollnumbers (2.1.5)
 }) do
     pcall(events.RegisterEvent, events, e)
 end
@@ -2674,6 +2811,14 @@ events:SetScript("OnEvent", function(_, event, ...)
     elseif event == "CANCEL_LOOT_ROLL" then
         local rollID = ...
         if rollID then OnRollEnded(rollID) end
+    elseif event == "LOOT_HISTORY_UPDATE_DROP" then -- rollnumbers
+        local encounterID, lootListID = ...
+        pcall(ReadHistoryDrop, encounterID, lootListID)
+    elseif event == "LOOT_HISTORY_ROLL_CHANGED" then
+        local index = ...
+        if type(index) == "number" then pcall(ReadHistoryItem, index) end
+    elseif event == "LOOT_HISTORY_ROLL_COMPLETE" or event == "LOOT_HISTORY_FULL_UPDATE" then
+        pcall(ReadHistoryAll)
     end
 end)
 

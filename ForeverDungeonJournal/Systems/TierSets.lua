@@ -330,7 +330,9 @@ local function ClassLabel(token)
     local name = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[token]) or token
     local c = RAID_CLASS_COLORS and RAID_CLASS_COLORS[token]
     local color = c and Hex(c.r, c.g, c.b) or "ffffff"
-    return "|cff" .. color .. name .. "|r  |cffffd100" .. SetName(token) .. "|r"
+    -- tiertidy (2.1.5, M 24 Nov 2026: "we don't need to say vestments of the
+    -- devout next to priest"): the class's name only
+    return "|cff" .. color .. name .. "|r"
 end
 
 -- ------------------------------------------------------------- the page
@@ -382,6 +384,18 @@ end
 -- leads back to this page, scrolled where it was. Another dungeon or the
 -- home page opened: the Dungeons button again.
 local tierReturn -- { dungeon = name, scroll = offset, armed = true once the page is open }
+-- tier05button (2.1.5): another page opened from this one (the Tier 0.5
+-- quest chain's, from its button here) gets the same Back to Tiers.
+function FDJ.OpenFromTierPage(dungeon, open)
+    if type(open) ~= "function" then return end
+    local scroll = panel and panel.scroll and panel.scroll.GetVerticalScroll and panel.scroll:GetVerticalScroll() or 0
+    tierReturn = { dungeon = dungeon, scroll = scroll }
+    open()
+    if tierReturn then
+        tierReturn.armed = true
+        if FDJ.UpdateDungeonArrows then pcall(FDJ.UpdateDungeonArrows) end
+    end
+end
 local function OpenSource(cell)
     local source = cell.sources and cell.sources[1]
     if not source then return end
@@ -774,9 +788,9 @@ local function FillRow(row, token, width, compact)
         row.label:SetText(ClassLabel(token))
         row.sub:Hide()
         row.line:Show()
-        row.t05:SetPoint("RIGHT", row, "TOPRIGHT", -4, -10)
-        row.t05:SetText(set2 and L("TIER05_LABEL", SetName(token, SETS2_NAME)) or "")
-        row.t05:Show()
+        -- tiertidy: no "Tier 0.5: <set>" on the right ("we don't need that")
+        row.t05:SetText("")
+        row.t05:Hide()
     end
     if compact then
         -- the Tier 0 pieces, an arrow, the Tier 0.5 pieces: all on one line
@@ -1452,7 +1466,7 @@ local function ShowHideMenu(anchor)
         item:SetScript("OnClick", function()
             hideMenu:Hide()
             FDJ.SetTierIconHidden(true)
-            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_TIER") end
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_SHOW_TIER") end
         end)
         hideMenu.hide = item
         hideMenu:SetScript("OnUpdate", function(self, elapsed)

@@ -11282,12 +11282,14 @@ local function MakeHomeDungeonCard(parent, dungeonName)
         self.fullShade:SetColorTexture(1, 0.82, 0.18, 0.08)
         local activeDungeonName = self.dungeonName
         local dungeon = DB[activeDungeonName]
+        -- editmode (2.1.5): Reorder Dungeons says how to move the card (Systems/HomeEdit.lua)
+        if homeEditMode and FDJ.HomeEditCardEnter and FDJ.HomeEditCardEnter(self) then return end
         if not homeEditMode and FDJ.RPGLockedTooltip and FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(activeDungeonName) then
             pcall(FDJ.RPGLockedTooltip, self, activeDungeonName)
             return
         end
         -- Normal cards need no tooltip (the card already shows the name and
-        -- clicking it is obvious); only Hide Dungeons mode and preview-only
+        -- clicking it is obvious); only Edit Mode and preview-only
         -- dungeons still explain themselves.
         if not homeEditMode and not (dungeon and dungeon.previewOnly) then return end
         GameTooltip:SetOwner(self, "ANCHOR_TOP")
@@ -11324,6 +11326,8 @@ local function MakeHomeDungeonCard(parent, dungeonName)
     button:SetScript("OnClick", function(self)
         local activeDungeonName = self.dungeonName
         if not activeDungeonName then return end
+        -- editmode (2.1.5): Reorder Dungeons: a click picks the card up, the next puts it down
+        if homeEditMode and FDJ.HomeEditCardClick and FDJ.HomeEditCardClick(self) then return end
         if homeEditMode then
             -- keepshown (2.0.10): a hidden card is shown again, also when an
             -- auto-hide option hides it (it is then kept shown anyway); a shown
@@ -11377,15 +11381,55 @@ FDJ.RefreshHomeCards = function()
     if RefreshHomeDungeonCards then RefreshHomeDungeonCards() end
 end
 
+-- editmode (2.1.5, M 24 Nov 2026: "I also wanna replace hide dungeons with
+-- edit mode. In Edit mode, when we click we enter a ui kinda like hide
+-- dungeons did. In this UI, the icon tabs, char logs icons are replaced with
+-- edit mode buttons: Hide Dungeons, Re Order Dungeons, Grid Mode"): the Hide
+-- Dungeons button is now Edit Mode (Done while on). Its buttons, the order
+-- and View Mode: Systems/HomeEdit.lua.
+FDJ.IsHomeEditMode = function() return homeEditMode end
+FDJ.UpdateEditModeButton = function()
+    local b = frame and frame.hideDungeonsButton
+    local text = frame and frame.hideDungeonsButtonText
+    if not (b and text) then return end
+    b:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
+    b:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
+    text:SetTextColor(1.00, 0.82, 0.27)
+    text:SetText(homeEditMode and L("DONE") or L("EDIT_MODE"))
+    text:ClearAllPoints()
+    text:SetPoint("CENTER", homeEditMode and -8 or 0, 0)
+    if frame.hideDungeonsDoneCheck then frame.hideDungeonsDoneCheck:SetShown(homeEditMode) end
+    local extra = homeEditMode and 44 or 26
+    b:SetWidth(math.max(126, math.min(180, math.ceil((text:GetStringWidth() or 100) + extra))))
+end
+-- quiet: the journal is closing (nothing redrawn)
+FDJ.SetHomeEditMode = function(on, quiet)
+    on = on and true or false
+    local was = homeEditMode
+    homeEditMode = on
+    if on and not was then FDJ.homeEditTool = "hide" end -- Hide Dungeons first, as the old button
+    if was and not on and FDJ.HomeEditLeft then pcall(FDJ.HomeEditLeft) end
+    FDJ.UpdateEditModeButton()
+    if not quiet and frame and RefreshHomeDungeonCards then RefreshHomeDungeonCards() end
+end
+
 RefreshHomeDungeonCards = function()
     if not frame or not frame.homeCardsContent or not frame.homeScroll then return end
 
     local shownDungeons = {}
-    for _, dungeonName in ipairs(ORDER) do
+    -- editmode (2.1.5): in the player's order (Reorder Dungeons); Reorder
+    -- Dungeons lists every dungeon, locked and hidden ones too.
+    local reorder = homeEditMode and FDJ.HomeEditTool and FDJ.HomeEditTool() == "reorder"
+    -- View Mode: "default", "small" (Smaller Cards) or "list" (List Mode)
+    local view = FDJ.HomeViewMode and FDJ.HomeViewMode() or "default"
+    local grid, listView = view == "small", view == "list"
+    for _, dungeonName in ipairs(FDJ.HomeOrder and FDJ.HomeOrder() or ORDER) do
         -- RPG Mode: locked dungeons always show (as sketches) and can't be
         -- hidden, so the hide editor only lists unlocked ones.
         local rpgLocked = FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName)
-        if not homeEditMode and FDJ.HomeFilterHides and FDJ.HomeFilterHides(dungeonName) then
+        if reorder then
+            shownDungeons[#shownDungeons + 1] = dungeonName
+        elseif not homeEditMode and FDJ.HomeFilterHides and FDJ.HomeFilterHides(dungeonName) then
             -- WoW Forever emblem filter: only Forever's new dungeons.
         elseif rpgLocked then
             if not homeEditMode then shownDungeons[#shownDungeons + 1] = dungeonName end
@@ -11399,9 +11443,18 @@ RefreshHomeDungeonCards = function()
     -- each at least as wide as in the normal window (2 columns at least).
     local gap = 12
     local cols = math.max(2, math.floor(((frame.homePanel:GetWidth() or 814) - 51 + gap) / (383 + gap)))
+    -- editmode (2.1.5): View Mode: Smaller Cards, four in a row (more in a
+    -- wider window); List Mode, one slim row per dungeon
+    if grid then
+        cols = math.max(3, math.floor(((frame.homePanel:GetWidth() or 814) - 51 + gap) / (176 + gap)))
+    elseif listView then
+        cols = 1
+    end
+    local cardHeight = (grid and 100) or (listView and 32) or 126
+    local rowGap = listView and 6 or gap
     local rows = math.max(1, math.ceil(#shownDungeons / cols))
-    local rowStep = 138
-    local contentHeight = (#shownDungeons == 0) and 126 or (rows * rowStep - 12)
+    local rowStep = cardHeight + rowGap
+    local contentHeight = (#shownDungeons == 0) and cardHeight or (rows * rowStep - rowGap)
     local viewportHeight = frame.homeScroll:GetHeight() or 0
     local needsScroll = viewportHeight > 0 and contentHeight > viewportHeight + 4
 
@@ -11429,7 +11482,7 @@ RefreshHomeDungeonCards = function()
 
         -- Every dungeon tile keeps exactly the same dimensions. If the final
         -- row has an odd number of dungeons, the unused slot simply stays empty.
-        card:SetWidth(cardWidth)
+        card:SetSize(cardWidth, cardHeight) -- (editmode: View Mode)
         card:ClearAllPoints()
         card:SetPoint("TOPLEFT", frame.homeCardsContent, "TOPLEFT", col * (cardWidth + gap), -row * rowStep)
 
@@ -11486,11 +11539,14 @@ RefreshHomeDungeonCards = function()
         card.doneTick:SetShown(allDone)
         card.doneGlow:SetShown(allDone)
         local factionIcon = playerFaction == "Horde" and HORDE_ICON or ALLIANCE_ICON
+        -- editmode (2.1.5): Smaller Cards / List Mode: a smaller crest
+        -- (Smaller Cards: and the numbers only)
+        local crest = (grid or listView) and 15 or 22
         card.counts:SetText(
-            "|T" .. factionIcon .. ":22:22:0:0|t "
+            "|T" .. factionIcon .. ":" .. crest .. ":" .. crest .. ":0:0|t "
             -- "2/6 quests" once at least one is done; just "6 quests" before that.
             .. ((finishedCount > 0) and (finishedCount .. "/" .. factionQuestCount) or tostring(factionQuestCount))
-            .. " " .. (factionQuestCount == 1 and L("QUEST") or L("QUESTS_LOWER"))
+            .. (grid and "" or (" " .. (factionQuestCount == 1 and L("QUEST") or L("QUESTS_LOWER"))))
         )
         local art = DUNGEON_HOME_ART[dungeonName]
         if art then
@@ -11536,6 +11592,8 @@ RefreshHomeDungeonCards = function()
             card:SetBackdropBorderColor(0.34, 0.34, 0.34, 1)
         end
         if FDJ.ApplyRPGCard then pcall(FDJ.ApplyRPGCard, card, dungeonName, homeEditMode) end
+        -- editmode (2.1.5): View Mode's layout, the card picked up, dragging (Systems/HomeEdit.lua)
+        if FDJ.StyleHomeCard then pcall(FDJ.StyleHomeCard, card, view, cardWidth, cardHeight) end
         card:Show()
     end
 
@@ -11579,6 +11637,8 @@ RefreshHomeDungeonCards = function()
     frame.homeCardsContent:SetHeight(contentHeight)
     UpdateScrollBarVisibility(frame.homeScroll, contentHeight)
     if FDJ.UpdateRPGHeader then pcall(FDJ.UpdateRPGHeader, frame) end
+    -- editmode (2.1.5): Edit Mode's buttons in place of the row of icons (Systems/HomeEdit.lua)
+    if FDJ.ApplyHomeEditChrome then pcall(FDJ.ApplyHomeEditChrome, frame) end
 end
 
 RefreshBossList = function()
@@ -13149,20 +13209,7 @@ ApplyLocalization = function()
     if frame.homeTitle then frame.homeTitle:SetText(L("BROWSE_DUNGEONS")) end
     if frame.homeSubtitle then frame.homeSubtitle:SetText(L("HOME_SUBTITLE")) end
     if FDJ.RelocalizeLootFilter then FDJ.RelocalizeLootFilter(frame) end
-    if frame.hideDungeonsButton and frame.hideDungeonsButtonText then
-        local label = homeEditMode and L("DONE") or L("HIDE_DUNGEONS")
-        frame.hideDungeonsButtonText:SetText(label)
-        if frame.hideDungeonsButtonText then
-            frame.hideDungeonsButtonText:ClearAllPoints()
-            frame.hideDungeonsButtonText:SetPoint("CENTER", homeEditMode and -8 or 0, 0)
-        end
-        if frame.hideDungeonsDoneCheck then
-            frame.hideDungeonsDoneCheck:SetShown(homeEditMode)
-        end
-        local extra = homeEditMode and 44 or 26
-        local width = math.max(126, math.min(180, math.ceil((frame.hideDungeonsButtonText:GetStringWidth() or 100) + extra)))
-        frame.hideDungeonsButton:SetWidth(width)
-    end
+    if FDJ.UpdateEditModeButton then FDJ.UpdateEditModeButton() end -- editmode (2.1.5)
     if frame.bossesTab then frame.bossesTab:SetText(L("BOSSES")) end
     if frame.questsTab then frame.questsTab:SetText(L("QUESTS")) end
     if frame.mapTab then frame.mapTab:SetText(L("MAP")) end
@@ -13213,7 +13260,7 @@ end
 -- (not hidden, not locked by RPG Mode, not a preview without a map).
 FDJ.DungeonNavList = function()
     local list = {}
-    for _, name in ipairs(ORDER) do
+    for _, name in ipairs(FDJ.HomeOrder and FDJ.HomeOrder() or ORDER) do -- editmode (2.1.5): the player's order
         local d = DB[name]
         if d and not (FDJ.HomeFilterHides and FDJ.HomeFilterHides(name))
             and not FDJ.HiddenDungeons()[name]
@@ -14554,7 +14601,7 @@ local function CreateMainFrame()
     frame.hideDungeonsButtonText = hideDungeonsButtonText
     hideDungeonsButtonText:SetPoint("CENTER", 0, 0)
     hideDungeonsButtonText:SetTextColor(1.00, 0.82, 0.27)
-    hideDungeonsButtonText:SetText(L("HIDE_DUNGEONS"))
+    hideDungeonsButtonText:SetText(L("EDIT_MODE")) -- editmode (2.1.5): was Hide Dungeons
 
     local hideDungeonsDoneCheck = hideDungeonsButton:CreateTexture(nil, "OVERLAY")
     frame.hideDungeonsDoneCheck = hideDungeonsDoneCheck
@@ -14566,23 +14613,11 @@ local function CreateMainFrame()
 
     hideDungeonsButton:SetScript("OnClick", function()
         PlayJournalOptionSound()
-        homeEditMode = not homeEditMode
         -- Keep the action button in the normal dark/gold journal style in both
         -- modes. Edit mode is communicated by the dungeon-card treatment; the
         -- Done state gets a small green confirmation check instead of a blue button.
-        hideDungeonsButton:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
-        hideDungeonsButton:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
-        hideDungeonsButtonText:SetTextColor(1.00, 0.82, 0.27)
-        hideDungeonsButtonText:SetText(homeEditMode and L("DONE") or L("HIDE_DUNGEONS"))
-        hideDungeonsButtonText:ClearAllPoints()
-        hideDungeonsButtonText:SetPoint("CENTER", homeEditMode and -8 or 0, 0)
-        if hideDungeonsDoneCheck then
-            hideDungeonsDoneCheck:SetShown(homeEditMode)
-        end
-        local extra = homeEditMode and 44 or 26
-        local width = math.max(126, math.min(180, math.ceil((hideDungeonsButtonText:GetStringWidth() or 100) + extra)))
-        hideDungeonsButton:SetWidth(width)
-        RefreshHomeDungeonCards()
+        -- editmode (2.1.5): Edit Mode / Done (FDJ.SetHomeEditMode, above)
+        FDJ.SetHomeEditMode(not homeEditMode)
     end)
 
     FDJ.OpenBossPage = function(dungeonName, bossIndex)
@@ -16039,18 +16074,7 @@ local function CreateMainFrame()
         if frame.currentView == "dungeon" and frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown() and FDJ.GetSelectedDungeon then
             FDJ.mapOpenForDungeon = (FDJ.GetSelectedDungeon())
         end
-        homeEditMode = false
-        if frame.hideDungeonsButton then
-            frame.hideDungeonsButton:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
-            frame.hideDungeonsButton:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
-        end
-        if frame.hideDungeonsButtonText then
-            frame.hideDungeonsButtonText:SetText(L("HIDE_DUNGEONS"))
-            frame.hideDungeonsButtonText:SetTextColor(1.00, 0.82, 0.27)
-        end
-        if frame.hideDungeonsDoneCheck then
-            frame.hideDungeonsDoneCheck:Hide()
-        end
+        FDJ.SetHomeEditMode(false, true) -- editmode (2.1.5): Edit Mode ends with the journal
         if ResetPortraitResolver then ResetPortraitResolver() end
     end)
 
@@ -16109,7 +16133,7 @@ local function HideMinimapButton()
         minimapButton:Hide()
     end
 
-    print("|cffd8a83cDungeonJournal|r " .. L("MINIMAP_HIDDEN"))
+    FDJ.ChatLine("|cffd8a83cDungeonJournal|r " .. L("MINIMAP_HIDDEN")) -- (chatlines)
 end
 
 -- Right-clicking the minimap button asks first: many players hid it by accident.
@@ -16615,7 +16639,7 @@ FDJ.events:SetScript("OnEvent", function(_, event, arg1, arg2)
             addonVersion = GetAddOnMetadata("ForeverDungeonJournal", "Version")
         end
         addonVersion = (addonVersion and tostring(addonVersion)) or "2.0.9"
-        print("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r")
+        FDJ.ChatLine("|cffd8a83cDungeon Journal by Exehn|r |cffffffffv" .. addonVersion .. "|r") -- (chatlines: Hide chat lines)
         return
     end
 

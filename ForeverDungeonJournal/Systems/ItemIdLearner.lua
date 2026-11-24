@@ -111,7 +111,7 @@ local function Apply(key, id, announce)
     if FDJ.ResetItemSourceIndex then pcall(FDJ.ResetItemSourceIndex) end
     if FDJ.RefreshLootNow then pcall(FDJ.RefreshLootNow) end
     if announce then
-        Say("found the item ID of " .. tostring(name) .. ": " .. id .. "  (/dj newids)")
+        FDJ.ChatLine("|cffd8a83cDungeonJournal:|r found the item ID of " .. tostring(name) .. ": " .. id .. "  (/dj newids)") -- (chatlines)
     end
     return true
 end

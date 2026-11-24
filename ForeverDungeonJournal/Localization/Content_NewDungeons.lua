@@ -10405,3 +10405,180 @@ do
     end
 end
 -- END l10nmount
+-- BEGIN l10nstally
+-- stally (2.1.5): the Route's stops for the Alliance's Sunken Temple quests
+-- (Data/QuestUpdates.lua). The things' names as the game has them (the
+-- objective names above, FDJ.OBJECTIVE_NAMES; Italian keeps the English
+-- names, as there); the zones and the lines in each language.
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local THINGS = { "Roc Gizzard", "Groddoc Liver", "Ironfur Liver", "Stone Circle", "Ancient Egg", "Bloodpetal",
+        "Gorishi Sting", "Bloodcap", "Devilsaur", "Perfect Courser Antler", "Wavethrasher Scales", "Glittering Dust",
+        "Enchanted Coral", "Minion's Scourgestone", "Healthy Courser Gland", "Ichor of Undeath", "Sealed Azure Bag",
+        "Encoded Fragment", "Bloodshot Spider Eye", "Thick Black Claw", "Rotting Wood", "Bloodvenom Essence",
+        "Helboar", "Shadowsworn Cultist" }
+    local TEXT = {
+        ["Temple of Atal'Hakkar"] = { "Tempel von Atal'Hakkar", "Temple d'Atal'Hakkar", "Templo de Atal'Hakkar", "Tempio di Atal'Hakkar",
+            "Templo de Atal'Hakkar", "Храм Атал'Хаккара", "아탈학카르 신전", "阿塔哈卡神庙", "阿塔哈卡神廟" },
+        ["Swamp of Sorrows"] = { "Sümpfe des Elends", "Marais des Chagrins", "Pantano de las Penas", "Palude Maledetta",
+            "Pântano das Mágoas", "Болото Печали", "슬픔의 늪", "悲伤沼泽", "悲傷沼澤" },
+        ["Tanaris"] = { "Tanaris", "Tanaris", "Tanaris", "Tanaris", "Tanaris", "Танарис", "타나리스", "塔纳利斯", "塔納利斯" },
+        ["The Hinterlands"] = { "Hinterland", "Les Hinterlands", "Tierras del Interior", "Entroterre", "Terras Agrestes", "Внутренние земли", "동부 내륙지", "辛特兰", "辛特蘭" },
+        ["Un'Goro Crater"] = { "Krater von Un'Goro", "Cratère d'Un'Goro", "Cráter de Un'Goro", "Cratere di Un'Goro",
+            "Cratera Un'Goro", "Кратер Ун'Горо", "운고로 분화구", "安戈洛环形山", "安戈洛環形山" },
+        ["Azshara"] = { "Azshara", "Azshara", "Azshara", "Azshara", "Azshara", "Азшара", "아즈샤라", "艾萨拉", "艾薩拉" },
+        ["Western Plaguelands"] = { "Westliche Pestländer", "Maleterres de l'Ouest", "Tierras de la Peste del Oeste", "Terre Infette Occidentali",
+            "Terras Pestilentas Ocidentais", "Западные Чумные земли", "서부 역병지대", "西瘟疫之地", "西瘟疫之地" },
+        ["Felwood"] = { "Teufelswald", "Gangrebois", "Frondavil", "Vilbosco", "Selvavil", "Оскверненный лес", "악령의 숲", "费伍德森林", "費伍德森林" },
+        ["Blasted Lands"] = { "Verwüstete Lande", "Terres foudroyées", "Las Tierras Devastadas", "Terre Devastate",
+            "Barreira do Inferno", "Выжженные земли", "저주받은 땅", "诅咒之地", "詛咒之地" },
+        ["Swim out to the temple ruins in the middle of the Pool of Tears"] = {
+            "Schwimmt hinaus zu den Tempelruinen mitten im Tränenteich",
+            "Nagez jusqu'aux ruines du temple au milieu du bassin des Larmes",
+            "Nada hasta las ruinas del templo en medio de la Poza de las Lágrimas",
+            "Nuota fino alle rovine del tempio al centro della Pozza delle Lacrime",
+            "Nade até as ruínas do templo no meio do Poço das Lágrimas",
+            "Плывите к руинам храма посреди Озера Слез",
+            "눈물의 웅덩이 한가운데에 있는 신전 폐허까지 헤엄쳐 가세요",
+            "游到泪水之池中央的神庙废墟",
+            "游到淚水之池中央的神廟廢墟",
+        },
+        ["Kill the rocs here"] = { "Tötet hier die Rocs", "Tuez les rocs ici", "Mata a los rocs de aquí", "Uccidi i roc qui",
+            "Mate as rocas aqui", "Убивайте здесь рухов", "이곳의 로크를 처치하세요", "在这里击杀大鹏", "在這裡擊殺大鵬" },
+        ["Kill the Groddoc apes here"] = { "Tötet hier die Groddocaffen", "Tuez les singes groddocs ici", "Mata a los simios Groddoc de aquí",
+            "Uccidi le scimmie Groddoc qui", "Mate os macacos Groddoc aqui", "Убивайте здесь обезьян-гроддоков",
+            "이곳의 그로독 고릴라를 처치하세요", "在这里击杀格罗多克猩猩", "在這裡擊殺格羅多克猩猩" },
+        ["Kill the Ironfur bears here"] = { "Tötet hier die Eisenfellbären", "Tuez les ours ferpoils ici", "Mata a los osos Cueracero de aquí",
+            "Uccidi gli orsi Ironfur qui", "Mate os ursos Veloférreo aqui", "Убивайте здесь медведей-железномехов",
+            "이곳의 무쇠곰을 처치하세요", "在这里击杀铁鬃熊", "在這裡擊殺鐵鬃熊" },
+        ["Open Marvon's Chest outside the small hut by the shore"] = {
+            "Öffnet Marvons Truhe vor der kleinen Hütte am Ufer",
+            "Ouvrez le coffre de Marvon devant la petite cabane au bord de l'eau",
+            "Abre el cofre de Marvon frente a la pequeña cabaña junto a la orilla",
+            "Apri il forziere di Marvon fuori dalla piccola capanna sulla riva",
+            "Abra o baú de Marvon do lado de fora da cabana pequena perto da praia",
+            "Откройте сундук Марвона у маленькой хижины на берегу",
+            "해안가 작은 오두막 밖에 있는 마본의 상자를 여세요",
+            "打开海边小屋外的马尔文的箱子",
+            "打開海邊小屋外的馬爾文的箱子",
+        },
+        ["Both tablets drop from bosses inside Zul'Farrak"] = {
+            "Beide Tafeln lassen Bosse in Zul'Farrak fallen",
+            "Les deux tablettes sont lâchées par des boss de Zul'Farrak",
+            "Las dos tablillas las sueltan jefes dentro de Zul'Farrak",
+            "Entrambe le tavolette cadono dai boss dentro Zul'Farrak",
+            "As duas tábuas caem de chefes dentro de Zul'Farrak",
+            "Обе таблички выпадают из боссов в Зул'Фарраке",
+            "두 석판 모두 줄파락 안의 우두머리에게서 나옵니다",
+            "两块石板都由祖尔法拉克里的首领掉落",
+            "兩塊石板都由祖爾法拉克裡的首領掉落",
+        },
+        ["In the cave behind the amphitheater at the top of Jintha'Alor: trolls patrol around the egg"] = {
+            "In der Höhle hinter dem Amphitheater ganz oben in Jintha'Alor: Trolle patrouillieren um das Ei",
+            "Dans la grotte derrière l'amphithéâtre au sommet de Jintha'Alor : des trolls patrouillent autour de l'œuf",
+            "En la cueva detrás del anfiteatro en lo alto de Jintha'Alor: hay trols patrullando alrededor del huevo",
+            "Nella grotta dietro l'anfiteatro in cima a Jintha'Alor: dei troll pattugliano intorno all'uovo",
+            "Na caverna atrás do anfiteatro no topo de Jintha'Alor: trolls patrulham ao redor do ovo",
+            "В пещере за амфитеатром на вершине Джинта'Алора: вокруг яйца патрулируют тролли",
+            "진타알로 꼭대기의 원형 극장 뒤 동굴 안: 트롤들이 알 주위를 순찰합니다",
+            "在辛萨罗顶部圆形剧场后面的洞穴里：有巨魔在蛋周围巡逻",
+            "在辛薩羅頂部圓形劇場後面的洞穴裡：有食人妖在蛋周圍巡邏",
+        },
+        ["Kill the Bloodpetal plants here"] = { "Tötet hier die Blutblütenpflanzen", "Tuez les plantes pétale-de-sang ici",
+            "Mata a las plantas pétalo de sangre de aquí", "Uccidi le piante Bloodpetal qui", "Mate as plantas Pétala Sangrenta aqui",
+            "Убивайте здесь кровоцветы", "이곳의 붉은꽃잎덩굴손을 처치하세요", "在这里击杀血瓣花", "在這裡擊殺血瓣花" },
+        ["Kill the Gorishi wasps here"] = { "Tötet hier die Gorishiwespen", "Tuez les guêpes gorishis ici", "Mata a las avispas Gorishi de aquí",
+            "Uccidi le vespe Gorishi qui", "Mate as vespas Gorishi aqui", "Убивайте здесь ос гориши", "이곳의 고리쉬 말벌을 처치하세요",
+            "在这里击杀格里什黄蜂", "在這裡擊殺格里什黃蜂" },
+        ["Pick the Bloodcaps from the Bloodpetal Sprouts on the ground around here (green bulbs)"] = {
+            "Sammelt die Blutkappenpilze aus den Blutblütensprösslingen hier am Boden (grüne Knollen)",
+            "Ramassez les chapeaux de sang dans les pousses de pétale-de-sang au sol par ici (bulbes verts)",
+            "Recoge los champiñones de sangre de los brotes de pétalo de sangre del suelo por aquí (bulbos verdes)",
+            "Raccogli i Bloodcap dai germogli di Bloodpetal a terra qui intorno (bulbi verdi)",
+            "Colete os Cogumelos Vermelhos dos brotos de Pétala Sangrenta no chão por aqui (bulbos verdes)",
+            "Собирайте кровошляпочники с ростков кровоцвета на земле вокруг (зеленые луковицы)",
+            "이 주변 땅에 있는 붉은꽃잎 새싹(초록색 구근)에서 붉은갓버섯을 채집하세요",
+            "从附近地上的血瓣花苗（绿色球茎）中采集血帽",
+            "從附近地上的血瓣花苗（綠色球莖）中採集血帽",
+        },
+        ["Use the Devilsaur Barb on any devilsaur (click its icon)"] = {
+            "Benutzt den Stachel an einem beliebigen Teufelssaurier (klickt sein Symbol)",
+            "Utilisez le dard sur n'importe quel diablosaure (cliquez sur son icône)",
+            "Usa la púa en cualquier devilsaurio (haz clic en su icono)",
+            "Usa la Devilsaur Barb su un qualsiasi devilsauro (clicca la sua icona)",
+            "Use o espinho em qualquer demossauro (clique no ícone)",
+            "Используйте шип на любом девизавре (щелкните по значку)",
+            "아무 데빌사우루스에게나 가시를 사용하세요 (아이콘 클릭)",
+            "对任意一只魔暴龙使用倒刺（点击图标）",
+            "對任意一隻魔暴龍使用倒刺（點擊圖示）",
+        },
+        ["Kill the Mosshoof Coursers here"] = { "Tötet hier die Hirsche", "Tuez les cerfs ici", "Mata a los ciervos de aquí",
+            "Uccidi i cervi qui", "Mate os cervos aqui", "Убивайте здесь оленей", "이곳의 순록을 처치하세요", "在这里击杀野鹿", "在這裡擊殺野鹿" },
+        ["Kill the wavethrashers along the shore here"] = { "Tötet hier am Ufer die Wellenhauer", "Tuez les vandales des flots le long du rivage ici",
+            "Mata a los vándalos marinos de la orilla de aquí", "Uccidi le idre lungo la riva qui", "Mate os fura-ondas ao longo da praia aqui",
+            "Убивайте здесь волношлепов на берегу", "이곳 해안의 폭풍히드라를 처치하세요", "在这里的海岸边击杀碎浪多头怪", "在這裡的海岸邊擊殺碎浪多頭怪" },
+        ["Kill the blood elves here"] = { "Tötet hier die Blutelfen", "Tuez les elfes de sang ici", "Mata a los elfos de sangre de aquí",
+            "Uccidi gli elfi del sangue qui", "Mate os elfos sangrentos aqui", "Убивайте здесь эльфов крови", "이곳의 블러드 엘프를 처치하세요",
+            "在这里击杀血精灵", "在這裡擊殺血精靈" },
+        ["Kill the Spitelash Sirens here"] = { "Tötet hier die Nagasirenen", "Tuez les sirènes nagas ici", "Mata a las sirenas naga de aquí",
+            "Uccidi le sirene naga qui", "Mate as sereias naga aqui", "Убивайте здесь сирен наг", "이곳의 나가 세이렌을 처치하세요",
+            "在这里击杀纳迦海妖", "在這裡擊殺納迦海妖" },
+        ["Kill the Scourge here"] = { "Tötet hier die Geißel", "Tuez le Fléau ici", "Mata a la Plaga de aquí", "Uccidi il Flagello qui",
+            "Mate o Flagelo aqui", "Убивайте здесь нежить Плети", "이곳의 스컬지를 처치하세요", "在这里击杀天灾军团", "在這裡擊殺天譴軍團" },
+        ["Kill the Highborne ghosts here"] = { "Tötet hier die Geister der Hochgeborenen", "Tuez les fantômes bien-nés ici",
+            "Mata a los fantasmas Altonato de aquí", "Uccidi i fantasmi degli Alti Nobili qui", "Mate os fantasmas Bem-nascidos aqui",
+            "Убивайте здесь призраков высокорожденных", "이곳의 명가 유령을 처치하세요", "在这里击杀上层精灵的鬼魂", "在這裡擊殺上層精靈的鬼魂" },
+        ["Kill the Timbermaw Shamans here"] = { "Tötet hier die Furbolgschamanen", "Tuez les chamans furbolgs ici", "Mata a los chamanes fúrbolg de aquí",
+            "Uccidi gli sciamani furbolg qui", "Mate os xamãs furbolgs aqui", "Убивайте здесь фурболгов-шаманов", "이곳의 퍼볼그 주술사를 처치하세요",
+            "在这里击杀熊怪萨满", "在這裡擊殺熊怪薩滿" },
+        ["Kill the Forest Oozes here"] = { "Tötet hier die Schlammwesen", "Tuez les limons ici", "Mata a los mocos de aquí", "Uccidi le melme qui",
+            "Mate os limos aqui", "Убивайте здесь слизней", "이곳의 수액괴물을 처치하세요", "在这里击杀软泥怪", "在這裡擊殺軟泥怪" },
+        ["Kill the Tainted Oozes here"] = { "Tötet hier die Schlammwesen", "Tuez les limons ici", "Mata a los mocos de aquí", "Uccidi le melme qui",
+            "Mate os limos aqui", "Убивайте здесь слизней", "이곳의 수액괴물을 처치하세요", "在这里击杀软泥怪", "在這裡擊殺軟泥怪" },
+        ["Kill the Venom Mist Lurkers here"] = { "Tötet hier die Spinnen", "Tuez les araignées ici", "Mata a las arañas de aquí", "Uccidi i ragni qui",
+            "Mate as aranhas aqui", "Убивайте здесь пауков", "이곳의 거미를 처치하세요", "在这里击杀蜘蛛", "在這裡擊殺蜘蛛" },
+        ["Kill the diseased bears here"] = { "Tötet hier die kranken Bären", "Tuez les ours malades ici", "Mata a los osos enfermos de aquí",
+            "Uccidi gli orsi malati qui", "Mate os ursos doentes aqui", "Убивайте здесь больных медведей", "이곳의 병든 곰을 처치하세요",
+            "在这里击杀患病的熊", "在這裡擊殺患病的熊" },
+        ["Kill the Irontree Stompers here"] = { "Tötet hier die Baumwesen", "Tuez les sylvains ici", "Mata a los antárboles de aquí",
+            "Uccidi i treant qui", "Mate os entes aqui", "Убивайте здесь древней", "이곳의 나무정령을 처치하세요", "在这里击杀树人", "在這裡擊殺樹人" },
+        ["Kill 7 Helboar here"] = { "Tötet hier 7 Hölleneber", "Tuez 7 sangliers infernaux ici", "Mata a 7 jabinfernos aquí", "Uccidi 7 Helboar qui",
+            "Mate 7 javiltuscos aqui", "Убейте здесь 7 зловепрей", "이곳의 지옥멧돼지 7마리를 처치하세요", "在这里击杀7头地狱野猪", "在這裡擊殺7頭地獄野豬" },
+        ["Kill the Shadowsworn here"] = { "Tötet hier die Schattenanbeter", "Tuez les liges d'ombre ici", "Mata a los fieles Sombraída de aquí",
+            "Uccidi gli Shadowsworn qui", "Mate os Devotos da Sombra aqui", "Убивайте здесь Приверженцев Тени", "이곳의 어둠의혈맹을 처치하세요",
+            "在这里击杀魔誓者", "在這裡擊殺魔誓者" },
+        ["Talk to Sanath Lim-yo: he teleports you up to Xylem's tower"] = {
+            "Sprecht mit Sanath Lim-yo: Er teleportiert euch hinauf zu Xylems Turm",
+            "Parlez à Sanath Lim-yo : il vous téléporte en haut de la tour de Xylem",
+            "Habla con Sanath Lim-yo: te teletransporta a la torre de Xylem",
+            "Parla con Sanath Lim-yo: ti teletrasporta in cima alla torre di Xylem",
+            "Fale com Sanath Lim-yo: ele teleporta você até a torre de Xylem",
+            "Поговорите с Sanath Lim-yo: он телепортирует вас в башню Ксилема",
+            "Sanath Lim-yo와 대화하세요: 자일렘의 탑 위로 순간이동시켜 줍니다",
+            "与Sanath Lim-yo对话：他会把你传送到大法师的塔上",
+            "與Sanath Lim-yo對話：他會把你傳送到大法師的塔上",
+        },
+    }
+    -- the things: FDJ.OBJECTIVE_NAMES, in FDJ.OBJECTIVE_NAME_LOCALES' order
+    local order = {}
+    for i, lang in ipairs(FDJ.OBJECTIVE_NAME_LOCALES or {}) do order[lang] = i end
+    for _, thing in ipairs(THINGS) do
+        local names = FDJ.OBJECTIVE_NAMES and FDJ.OBJECTIVE_NAMES[thing]
+        local list = {}
+        for i, lang in ipairs(LANGS) do
+            local n = type(names) == "table" and order[lang] and names[order[lang]] or nil
+            list[i] = (type(n) == "string" and n ~= "") and n or thing
+        end
+        if TEXT[thing] == nil then TEXT[thing] = list end
+    end
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10nstally

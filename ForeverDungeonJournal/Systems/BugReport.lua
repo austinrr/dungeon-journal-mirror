@@ -274,7 +274,7 @@ function FDJ.CreateExportButton(frame, home, anchorButton)
         elseif FDJ.ShowExportDialog then FDJ.ShowExportDialog() end
     end)
     button:SetShown(not FDJ.IsExportButtonHidden())
-    if FDJ.AttachExportHint then FDJ.AttachExportHint(button) end -- exporthint
+    if FDJ.AttachExportHint then FDJ.AttachExportHint(button, frame) end -- exporthint (exportlater: the journal's openings counted)
 end
 
 -- optionscog (2.0.46): Blizzard's options cogwheel (the one on the Looking

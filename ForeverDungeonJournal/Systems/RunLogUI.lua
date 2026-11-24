@@ -1846,7 +1846,7 @@ local function ShowIconMenu(anchor)
             menu:Hide()
             -- 2.0.4: Hide opens Options at its line (highlighted); the player
             -- ticks it there, so they know where to undo it.
-            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_RUNLOG") else FDJ.SetRunLogButtonHidden(true) end
+            if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_SHOW_RUNLOG") else FDJ.SetRunLogButtonHidden(true) end
         end)
         menu.hide = item
         -- Closes on its own once the mouse has been away for a moment.
@@ -1897,10 +1897,10 @@ local function PlaceIcon(b)
     local hide = frame and frame.hideDungeonsButton
     local loot = frame and frame.lootFilterButton
     -- Same widths the buttons give themselves (Favourites.lua, LootFilter.lua,
-    -- the journal's Hide Dungeons), for the English words.
+    -- the journal's Edit Mode), for the English words.
     local favEn = fav.text and EnglishWidth(fav.text, "FAVOURITES", 44, 96, 170)
     local lootEn = loot and frame.lootFilterButtonText and EnglishWidth(frame.lootFilterButtonText, "LOOT_FILTER", 26, 110, 180)
-    local hideEn = hide and frame.hideDungeonsButtonText and EnglishWidth(frame.hideDungeonsButtonText, "HIDE_DUNGEONS", 26, 126, 180)
+    local hideEn = hide and frame.hideDungeonsButtonText and EnglishWidth(frame.hideDungeonsButtonText, "EDIT_MODE", 26, 126, 180)
     if not (favEn and lootEn and hideEn) or fav ~= frame.favouritesButton then
         b:SetPoint("RIGHT", fav, "LEFT", -ICON_GAP, ICON_Y)
         return
@@ -2344,7 +2344,7 @@ function FDJ.ResetTrackedRun()
         -- until the next kill starts the new run
         if run and FDJ.StartBlankRun then FDJ.StartBlankRun(run) end
         if FDJ.UpdateRunTracker then FDJ.UpdateRunTracker() end
-        print("|cffd8a83cDungeonJournal|r " .. L("TRACKER_NEW_RUN_DONE"))
+        FDJ.ChatLine("|cffd8a83cDungeonJournal|r " .. L("TRACKER_NEW_RUN_DONE")) -- (chatlines)
         return true
     end
     return false
@@ -2789,7 +2789,7 @@ local function BuildTracker()
         db.point = { point, rel, x, y }
     end
     local function Announce()
-        print("|cffffd100Dungeon Journal|r tracker size: " .. math.floor(t:GetScale() * 100 + 0.5) .. "%")
+        FDJ.ChatLine("|cffffd100Dungeon Journal|r tracker size: " .. math.floor(t:GetScale() * 100 + 0.5) .. "%")
     end
     grip:SetScript("OnClick", function()
         Pin(1)
@@ -4281,14 +4281,56 @@ do
         return p
     end
 
+    -- exportlater (2.1.5, M 24 Nov 2026: "on first journal open, players who
+    -- installed the addon for the first time see the Edit Mode popup, then
+    -- once they reach level 10, they will get the export popup to remind them
+    -- of the export ... If someone had the addon before, they just get the
+    -- edit mode popup one time"; "if a player is already level 10 on first
+    -- install, the export popup will appear on the 5th journal open"): only
+    -- for a new install (exportHintPending, from its first login; an update:
+    -- never). Then, on a character of level 10 or more: the journal opened
+    -- the 5th time (exportHintOpens), or the first time it opens after a
+    -- character reached level 10 (exportHintDing; not the very first open,
+    -- the Edit Mode note's). Never while the Edit Mode note is up.
+    do
+        local ev = CreateFrame("Frame")
+        ev:RegisterEvent("PLAYER_LOGIN")
+        ev:RegisterEvent("PLAYER_LEVEL_UP")
+        ev:SetScript("OnEvent", function(_, event, level)
+            local db = ForeverDungeonJournalDB
+            if type(db) ~= "table" then return end
+            if event == "PLAYER_LOGIN" then
+                if db == FDJ.bootDB then
+                    if not db.exportHintSeen then db.exportHintPending = true end
+                elseif not db.exportHintPending then
+                    db.exportHintSeen = true
+                end
+            elseif db.exportHintPending and tonumber(level) == 10 then
+                db.exportHintDing = true
+            end
+        end)
+    end
+    local function Due(db)
+        if not db.exportHintPending then return false end
+        if FDJ.EditModeNoteUp and FDJ.EditModeNoteUp() then return false end
+        local okL, level = pcall(UnitLevel, "player")
+        level = okL and tonumber(level) or nil
+        if not (level and level >= 10) then return false end
+        local opens = tonumber(db.exportHintOpens) or 0
+        return opens >= 5 or (db.exportHintDing == true and opens >= 2)
+    end
     -- force: show it even when already seen (not marked).
     function FDJ.ShowExportHint(icon, force)
         local db = ForeverDungeonJournalDB
         if type(db) ~= "table" or not icon then return end
         if db.exportHintSeen and not force then return end
+        if not force and not Due(db) then return end -- (exportlater)
         if not (icon:IsVisible() and icon:GetLeft()) then return end
         if FDJ.IsExportButtonHidden and FDJ.IsExportButtonHidden() then return end
-        if not force then db.exportHintSeen = true end
+        if not force then
+            db.exportHintSeen = true
+            db.exportHintPending, db.exportHintOpens, db.exportHintDing = nil, nil, nil
+        end
         hint = hint or Build(icon)
         hint.fdjIcon = icon
         hint.text:SetText(L("EXPORT_NOTE"))
@@ -4304,10 +4346,25 @@ do
     end
 
     -- The Export button: shown (the journal opened), after the title bar
-    -- has placed its buttons.
-    function FDJ.AttachExportHint(icon)
+    -- has placed its buttons. journal: the journal's frame, its openings
+    -- counted while a new install waits for the note (exportlater; hooked a
+    -- frame later: the journal sets its own OnShow after its title bar).
+    function FDJ.AttachExportHint(icon, journal)
         if not icon or icon.fdjExportHint then return end
         icon.fdjExportHint = true
+        if journal and journal.HookScript then
+            local function Count()
+                local db = ForeverDungeonJournalDB
+                if type(db) == "table" and db.exportHintPending and not db.exportHintSeen then
+                    db.exportHintOpens = (tonumber(db.exportHintOpens) or 0) + 1
+                end
+            end
+            local function Hook()
+                journal:HookScript("OnShow", Count)
+                if journal:IsShown() then Count() end
+            end
+            if C_Timer and C_Timer.After then C_Timer.After(0, Hook) else Hook() end
+        end
         local function Try()
             if C_Timer and C_Timer.After then
                 C_Timer.After(0.3, function() FDJ.ShowExportHint(icon) end)
