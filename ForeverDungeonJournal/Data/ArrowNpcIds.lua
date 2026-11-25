@@ -306,3 +306,112 @@ FDJ.ARROW_NPC_IDS = {
     ["Yuka Screwspigot"] = 9544,
     ["Zaruk"] = 2787,
 }
+
+-- objecticon (2.1.6): things listed above as NPCs that have no face for the
+-- game's portrait (it draws an empty disc): the arrow shows this icon instead,
+-- the one the journal gives the same thing.
+FDJ.ARROW_NPC_ICONS = {
+    ["Shen'dralar Pylon"] = "Interface\\Icons\\INV_Enchant_ShardBrilliantLarge",
+}
+
+-- citydistrict (2.1.6): the part of the city each quest NPC there stands in,
+-- by city map and the NPC's name, for the line under the arrow inside the
+-- city (Systems/MapMarkers.lua, Way.District). Names in English; the game's
+-- own name in each language: FDJ.CITY_DISTRICT_NAMES (Localization/
+-- Content_NewDungeons.lua). Places: SOURCES.txt (citydistrict). NPCs left out
+-- on purpose: those who walk around, and those whose part of town isn't sure.
+FDJ.CITY_DISTRICTS = {
+    [1458] = { -- Undercity
+        ["Andrew Brownell"] = "Magic Quarter",
+        ["Oran Snakewrithe"] = "Magic Quarter",
+        ["Owen Thadd"] = "Magic Quarter",
+        ["Apothecary Zinge"] = "The Apothecarium",
+        ["Chemist Fuely"] = "The Apothecarium",
+        ["Doctor Martin Felben"] = "The Apothecarium",
+        ["Keeper Bel'dugur"] = "The Apothecarium",
+        ["Master Apothecary Faranell"] = "The Apothecarium",
+        ["Parqual Fintallas"] = "The Apothecarium",
+        ["Theodore Griffs"] = "The Apothecarium",
+        ["Lady Sylvanas Windrunner"] = "Royal Quarter",
+        ["Morbin Lightbane"] = "Royal Quarter",
+        ["Varimathras"] = "Royal Quarter",
+        ["Patrick Garrett"] = "Trade Quarter",
+    },
+    [1453] = { -- Stormwind
+        ["Auctioneer Chilton"] = "Trade District",
+        ["Aeonas the Vindicated"] = "Cathedral of Light",
+        ["Archbishop Benedictus"] = "Cathedral of Light",
+        ["Brother Crowley"] = "Cathedral of Light",
+        ["Duthorian Rall"] = "Cathedral of Light",
+        ["Katherine the Pure"] = "Cathedral of Light",
+        ["Lord Grayson Shadowbreaker"] = "Cathedral of Light",
+        ["Baros Alexston"] = "Cathedral Square",
+        ["Orphan Matron Nightingale"] = "Cathedral Square",
+        ["Argos Nightwhisper"] = "The Park",
+        ["Shylamiir"] = "The Park",
+        ["Garion Wendell"] = "Mage Quarter",
+        ["High Sorcerer Andromath"] = "Mage Quarter",
+        ["General Marcus Jonathan"] = "Valley of Heroes",
+        ["Brohann Caskbelly"] = "Dwarven District",
+        ["Furen Longbeard"] = "Dwarven District",
+        ["Grimand Elmore"] = "Dwarven District",
+        ["Shoni the Shilent"] = "Dwarven District",
+        ["Sprite Jumpsprocket"] = "Dwarven District",
+        ["Wilder Thistlenettle"] = "Dwarven District",
+        ["Count Remington Ridgewell"] = "Stormwind Keep",
+        ["Highlord Bolvar Fordragon"] = "Stormwind Keep",
+        ["Jasper Fel"] = "Old Town",
+        ["Master Mathias Shaw"] = "Old Town",
+        ["Nikova Raskol"] = "Old Town",
+    },
+    [1455] = { -- Ironforge
+        ["Auctioneer Buckler"] = "The Commons",
+        ["Dinita Stonemantle"] = "The Commons",
+        ["Advisor Belgrum"] = "Hall of Explorers",
+        ["Curator Thorius"] = "Hall of Explorers",
+        ["High Explorer Magellas"] = "Hall of Explorers",
+        ["Historian Karnik"] = "Hall of Explorers",
+        ["Krom Stoutarm"] = "Hall of Explorers",
+        ["Librarian Mae Paledust"] = "Hall of Explorers",
+        ["Prospector Stormpike"] = "Hall of Explorers",
+        ["Gerrig Bonegrip"] = "The Forlorn Cavern",
+        ["High Priest Rohan"] = "The Mystic Ward",
+        ["Talvash del Kissel"] = "The Mystic Ward",
+        ["King Magni Bronzebeard"] = "The High Seat",
+        ["Royal Historian Archesonus"] = "The High Seat",
+        ["Gnoarn"] = "Tinker Town",
+        ["High Tinker Mekkatorque"] = "Tinker Town",
+        ["Klockmort Spannerspan"] = "Tinker Town",
+        ["Master Mechanic Castpipe"] = "Tinker Town",
+        ["Tinkmaster Overspark"] = "Tinker Town",
+    },
+    [1454] = { -- Orgrimmar
+        ["Auctioneer Wabang"] = "Valley of Strength",
+        ["Borstan"] = "The Drag",
+        ["Dran Droffers"] = "The Drag",
+        ["Eitrigg"] = "Grommash Hold",
+        ["Nazgrel"] = "Grommash Hold",
+        ["Thrall"] = "Grommash Hold",
+        ["Sagorne Creststrider"] = "Valley of Wisdom",
+        ["Searn Firewarder"] = "Valley of Wisdom",
+        ["Neeru Fireblade"] = "Cleft of Shadow",
+        ["Nogg"] = "Valley of Honor",
+        ["Sovik"] = "Valley of Honor",
+        ["Uthel'nay"] = "Valley of Spirits",
+    },
+    [1456] = { -- Thunder Bluff
+        ["Apothecary Zamah"] = "The Pools of Vision",
+        ["Beram Skychaser"] = "Spirit Rise",
+        ["Arch Druid Hamuul Runetotem"] = "Elder Rise",
+        ["Bashana Runetotem"] = "Elder Rise",
+        ["Falla Sagewind"] = "Elder Rise",
+        ["Nara Wildmane"] = "Elder Rise",
+        ["Rahauro"] = "Elder Rise",
+    },
+    [1457] = { -- Darnassus
+        ["Mathrengyl Bearwalker"] = "Cenarion Enclave",
+        ["Argent Guard Manados"] = "Craftsmen's Terrace",
+        ["Dawnwatcher Shaedlass"] = "Craftsmen's Terrace",
+    },
+}
+

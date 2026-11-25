@@ -171,7 +171,7 @@ FDJ.DUNGEON_HOME_TEXCOORD = {
     ["The Stockade"] = { 0.02, 0.98, 0.24, 0.82 },
     ["Gnomeregan"] = { 0.02, 0.98, 0.24, 0.82 },
     ["Razorfen Kraul"] = { 0.02, 0.98, 0.24, 0.82 },
-    ["Excavation Site: Wetlands"] = { 0.00, 1.00, 0.12, 0.88 },
+    ["Excavation Site: Wetlands"] = { 0.066, 0.934, 0.17, 0.83 }, -- past the picture's dark top/bottom bands (sides trimmed alike, no stretch)
     ["City of Dalaran"] = { 0.00, 1.00, 0.12, 0.88 },
     ["Scarlet Monastery: Graveyard"] = { 0.02, 0.98, 0.24, 0.82 },
 }

@@ -353,12 +353,56 @@ local function Journal() return _G.ForeverDungeonJournalFrame end
 local function ListParts(f)
     return { f.homeScroll, f.homeEmptyText, f.homeShowAllButton, f.hideDungeonsButton }
 end
+-- tiertop (2.1.6, M 24 Nov 2026: "a bug in the tier set tab. It doesn't hide
+-- the top options like the other tabs do"): the top right of the home page,
+-- the Character Logs portrait, Favourites, Loot Filter (and RPG Mode's
+-- button), goes as on the Onyxia and Sleeping Bag pages; shown again by
+-- anything while the page is up, it goes again. Back to the list: each as
+-- its own rule has it (Favourites and Loot Filter always, the portrait
+-- unless Options hides it, RPG Mode's with the home page's refresh).
+local function TopParts(f)
+    return { f.runLogButton, f.favouritesButton, f.lootFilterButton, f.rpgModeButton }
+end
+local topHooked = {}
+local function KeepAway(b)
+    if topHooked[b] then return end
+    topHooked[b] = true
+    local function Again(self)
+        local f = Journal()
+        -- toptabs (2.1.6, M 25 Nov 2026: "when I change tabs, the buttons at
+        -- the top right don't show, not even my character log ... when I go
+        -- back to dungeons"): only while the page is on screen. Left for a
+        -- dungeon page (the Onyxia or Sleeping Bag tab, a boss from a tier
+        -- piece) or with the journal closing, the page put them back as it
+        -- went but still counted as open, so they went away again for good.
+        local pvp = _G.ForeverDungeonJournalPvPPanel -- (pvpicon: its page too)
+        local up = (panel and panel:IsVisible()) or (pvp and pvp:IsVisible())
+        if up and f and f.currentView == "home" then self:Hide() end
+    end
+    hooksecurefunc(b, "Show", Again)
+    hooksecurefunc(b, "SetShown", function(self, shown) if shown then Again(self) end end)
+end
 local function HideList(f)
     local parts = ListParts(f)
     for i = 1, 4 do
         if parts[i] then parts[i]:Hide() end
     end
+    for _, b in ipairs(TopParts(f)) do
+        if b then KeepAway(b) b:Hide() end
+    end
 end
+local function ShowTop(f)
+    if f.favouritesButton then f.favouritesButton:Show() end
+    if f.lootFilterButton then f.lootFilterButton:Show() end
+    if f.runLogButton then f.runLogButton:SetShown(not (FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden())) end
+end
+-- (pvpicon: the PvP page, Systems/PvP.lua, puts them away and back the same way)
+function FDJ.HideHomeTop(f)
+    for _, b in ipairs(TopParts(f)) do
+        if b then KeepAway(b) b:Hide() end
+    end
+end
+function FDJ.ShowHomeTop(f) ShowTop(f) end
 
 -- Which of the top icons' pages is shown: "dungeons" (the home page's list),
 -- "tier", "onyxia", or nil (any other page).
@@ -390,6 +434,18 @@ function FDJ.OpenFromTierPage(dungeon, open)
     if type(open) ~= "function" then return end
     local scroll = panel and panel.scroll and panel.scroll.GetVerticalScroll and panel.scroll:GetVerticalScroll() or 0
     tierReturn = { dungeon = dungeon, scroll = scroll }
+    open()
+    if tierReturn then
+        tierReturn.armed = true
+        if FDJ.UpdateDungeonArrows then pcall(FDJ.UpdateDungeonArrows) end
+    end
+end
+-- pvpquestjournal (2.1.6): a page opened from another one (the PvP page's
+-- Quests: Systems/PvPQuests.lua) gets this button too, with that page's
+-- words (back.text()) and its way back (back.open()).
+function FDJ.OpenFromPage(dungeon, open, back)
+    if type(open) ~= "function" then return end
+    tierReturn = { dungeon = dungeon, scroll = 0, back = type(back) == "table" and back or nil }
     open()
     if tierReturn then
         tierReturn.armed = true
@@ -1122,6 +1178,7 @@ local function Build(journal)
     panel:SetScript("OnHide", function()
         if journal.homeScroll then journal.homeScroll:Show() end
         if journal.hideDungeonsButton then journal.hideDungeonsButton:Show() end
+        ShowTop(journal) -- (tiertop)
         if journal.homePanel:IsShown() and FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
         if PaintTabs then PaintTabs() end
     end)
@@ -1228,6 +1285,7 @@ function FDJ.ShowDungeonsTab()
     local f = Journal()
     if not f then return end
     if panel and panel:IsShown() then panel:Hide() end
+    if FDJ.HidePvPPage then FDJ.HidePvPPage() end -- pvpicon
     ClickBack(f)
     ApplyLayout()
 end
@@ -1262,6 +1320,7 @@ PaintTabs = function()
     Light(f.tierButton, tab == "tier")
     Light(f.onyxiaButton, tab == "onyxia")
     Light(f.sleepingBagButton, tab == "sleepingbag") -- bagtab
+    Light(f.pvpButton, tab == "pvp") -- pvpicon (Systems/PvP.lua)
     if FDJ.PaintForeverEmblem then pcall(FDJ.PaintForeverEmblem) end
 end
 FDJ.PaintHomeTabs = function() PaintTabs() end
@@ -1271,11 +1330,11 @@ FDJ.PaintHomeTabs = function() PaintTabs() end
 -- to make room). They stay where they are anchored (the home page's top);
 -- only their parent changes, so they show with the page.
 local function Icons(f)
-    return { f.foreverFilterButton, f.foreverRaidButton, f.sleepingBagButton, f.onyxiaButton, f.tierButton }
+    return { f.foreverFilterButton, f.foreverRaidButton, f.sleepingBagButton, f.onyxiaButton, f.tierButton, f.pvpButton } -- (pvpicon: Systems/PvP.lua)
 end
 local function MoveIcons(f, parent)
     local icons = Icons(f)
-    for i = 1, 5 do
+    for i = 1, 6 do
         local b = icons[i]
         if b and b:GetParent() ~= parent then
             b:SetParent(parent)
@@ -1306,6 +1365,10 @@ local function TierBackButton(f)
         local back = tierReturn
         tierReturn = nil
         b:Hide()
+        if back and back.back and type(back.back.open) == "function" then -- (pvpquestjournal)
+            pcall(back.back.open)
+            return
+        end
         FDJ.OpenTierPage()
         local offset = back and back.scroll or 0
         if offset > 0 and panel and panel.scroll and C_Timer and C_Timer.After then
@@ -1323,7 +1386,8 @@ local function UpdateTierBack(f, tabPage)
     local active = tierReturn and tierReturn.armed and not tabPage and f.currentView ~= "home"
     if active then
         local b = TierBackButton(f)
-        b:SetText(L("BACK_TO_TIERS"))
+        local words = tierReturn.back and type(tierReturn.back.text) == "function" and tierReturn.back.text() -- (pvpquestjournal)
+        b:SetText((type(words) == "string" and words ~= "") and words or L("BACK_TO_TIERS"))
         local fs = b.GetFontString and b:GetFontString()
         if fs then fs:SetTextColor(1.00, 0.82, 0.27) end
         b:SetWidth(math.max(120, math.ceil(((fs and fs:GetStringWidth()) or 90) + 30)))
@@ -1362,7 +1426,7 @@ ApplyLayout = function()
         SetContentTop(f, CONTENT_TOP)
         pcall(UpdateTierBack, f, false)
     end
-    if f.currentView == "home" and panel and panel:IsShown() then HideList(f) end
+    if f.currentView == "home" and ((panel and panel:IsShown()) or (FDJ.IsPvPPageShown and FDJ.IsPvPPageShown())) then HideList(f) end
     PaintTabs()
 end
 
@@ -1488,7 +1552,21 @@ local function ShowHideMenu(anchor)
     if GameTooltip then GameTooltip:Hide() end
 end
 
+-- toptabs: back on the dungeon list (no Tier Sets or PvP page up, not in
+-- Edit Mode), the top right is there, whatever hid it on the way.
+local function TopSafety(frame)
+    local home = frame and frame.homePanel
+    if not home or frame.fdjTopSafety then return end
+    frame.fdjTopSafety = true
+    home:HookScript("OnShow", function()
+        local pvp = _G.ForeverDungeonJournalPvPPanel
+        if (panel and panel:IsShown()) or (pvp and pvp:IsShown()) then return end
+        if FDJ.IsHomeEditMode and FDJ.IsHomeEditMode() then return end
+        ShowTop(frame)
+    end)
+end
 local function BuildButton(frame)
+    TopSafety(frame)
     local home = frame.homePanel
     local b = CreateFrame("Button", nil, home)
     frame.tierButton = b

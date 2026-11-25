@@ -65,6 +65,15 @@ FDJ.BAKED_PORTRAITS = {
     -- bake5 (2.1.2, M 21 Nov 2026, /dj bake): Sabella No-Eyes, Blackmaw
     -- Hold's rare (both sizes).
     [6829]=2,
+    -- bake6 (2.1.6, M 25 Nov 2026, /dj bake): the PvP pages' quartermasters
+    -- and honor vendors (Illiyana Moonblaze, Kelm Hargunth, Samuel Hawke,
+    -- Rutherford Twing, Bryanna Embreeze, Creeg Bothunk, Thanthaldis
+    -- Snowgleam, Jekyll Flandring, Captain Dirgehammer, Lady Palanseer,
+    -- Wizzik Dustfizz), the Alterac Valley generals on the quick icon
+    -- (Vanndar Stormpike, Drek'Thar) and two looks of NPCs 247412 and 261993
+    -- (both sizes).
+    [10747]=2, [12674]=2, [12917]=2, [13319]=2, [13438]=2, [14784]=2, [14785]=2, [15276]=2,
+    [15277]=2, [130499]=2, [143129]=2, [146067]=2, [146070]=2, [11896]=2, [11894]=2,
 }
 local BAKED = FDJ.BAKED_PORTRAITS
 

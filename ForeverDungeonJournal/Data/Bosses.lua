@@ -724,6 +724,8 @@ FDJ.STATIC_DISPLAY_IDS = {
     [269151] = 6829,    -- Sabella No-Eyes (Blackmaw Hold; sabella 2.1.2: Wowhead Forever NPC 269151, model 6829)
     [261974] = 143035,  -- Cinder (Shaper's Terrace)
     [262297] = 143122,  -- Snowtalon (Shaper's Terrace)
+    [261993] = 143129,  -- King Op (Shaper's Terrace; kingop 2.1.6: Wowhead Forever NPC 261993, model 143129)
+    [247412] = 130499,  -- Mopes (Blackmaw Hold; mopes 2.1.6: Wowhead Forever NPC 247412, model 130499)
 }
 
 -- 1.9.4: Primeval Elemental (The Drowned City) has no NPC ID of its own yet:

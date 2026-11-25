@@ -3447,6 +3447,18 @@ end
 -- have it, red when not) and a bar like the game's reputation bar with your
 -- standing and its progress. Placed above Objective; returns the new cursorY.
 ;(function()
+    do -- repshort: "Requires Exalted 999 / 1000" (REP_REQUIRES without the faction)
+        local strings = {
+            enUS = "Requires %s", deDE = "Benötigt %s", frFR = "Requiert %s", esES = "Requiere %s",
+            itIT = "Richiede %s", ptBR = "Requer %s", ruRU = "Требуется отношение «%s»",
+            koKR = "평판 필요: %s", zhCN = "需要声望：%s", zhTW = "需要聲望：%s",
+        }
+        strings.esMX = strings.esES
+        for locale, text in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.REP_REQUIRES_ONLY == nil then t.REP_REQUIRES_ONLY = text end
+        end
+    end
     local STANDING_EN = { "Hated", "Hostile", "Unfriendly", "Neutral", "Friendly", "Honored", "Revered", "Exalted" }
     local COLORS = {
         { 0.80, 0.30, 0.22 }, { 0.80, 0.30, 0.22 }, { 0.75, 0.27, 0.00 }, { 0.90, 0.70, 0.00 },
@@ -3535,10 +3547,21 @@ end
                 local row = Row(journal, i)
                 local name, have, value, size = Standing(factionID)
                 if type(name) ~= "string" or name == "" or Secret(name) then name = need.name or "?" end
-                local met = have and have >= want
+                -- steprep (2.1.6): need.value: so far into that standing too
+                local into = tonumber(need.value)
+                local met = have and (have > want or (have == want and (not into or (tonumber(value) or 0) >= into)))
+                local wanted = Label(want)
+                if into then wanted = wanted .. " " .. into .. " / " .. ((want >= 8) and 1000 or math.max(into, tonumber(size) or into)) end
                 row.text:ClearAllPoints()
                 row.text:SetPoint("TOPLEFT", journal.questDetailContent, "TOPLEFT", 0, -cursorY)
-                row.text:SetText(FDJ.L("REP_REQUIRES", Label(want), name))
+                -- repshort (2.1.6, M 25 Nov 2026: "the text clips ... just cut with the
+                -- Stormpike Guard ... it's obvious what you need to do"): with
+                -- a value ("Exalted 999 / 1000") the faction is left out
+                if into then
+                    row.text:SetText(FDJ.L("REP_REQUIRES_ONLY", wanted))
+                else
+                    row.text:SetText(FDJ.L("REP_REQUIRES", wanted, name))
+                end
                 -- warnfont (2.1.1): red (not met) in the warning font.
                 if met then
                     row.text:SetFontObject("ForeverDJ_GameFontNormal")

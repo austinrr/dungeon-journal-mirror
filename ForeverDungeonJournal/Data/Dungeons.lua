@@ -5320,10 +5320,10 @@ FDJ.DB["The Drowned City"] = {
         liveXPFallback = 8450,
         rewardSummary = "",
         requiredItems = {
-            {270308, "The First Tablet of I'lalai", 1, "Rubbing of the first tablet, inside the Drowned City"},
-            {270309, "The Second Tablet of I'lalai", 1, "Rubbing of the second tablet, inside the Drowned City"},
-            {270310, "The Third Tablet of I'lalai", 1, "Rubbing of the third tablet, inside the Drowned City"},
-            {270311, "The Fourth Tablet of I'lalai", 1, "Rubbing of the fourth tablet, inside the Drowned City"},
+            {270308, "The First Tablet of I'lalai", 1, "Down the stairs after the first boss, on the left"},
+            {270309, "The Second Tablet of I'lalai", 1, "Next to the boss Var'Taka"}, -- tabletnotes (2.1.6)
+            {270310, "The Third Tablet of I'lalai", 1, "In Captain Dreadrise's area"},
+            {270311, "The Fourth Tablet of I'lalai", 1, "Next to the last boss, Min'loth the Serpent"},
         },
     }, {
         -- Follow-up to The Drowned City (Wowhead Forever quest 96078; a
@@ -6275,6 +6275,22 @@ FDJ.DB["Blackmaw Hold"] = {
             },
         },
         {
+            -- mopes (2.1.6, M 24 Nov 2026: "add this rare to Blackmaw Hold.
+            -- Same thing with another level"): rare elite demon, level not
+            -- known. Wowhead Forever npc=247412: its two Blackmaw Hold drops
+            -- (22 loots); its Blackmaw Pouch (the furbolgs' quest item) and
+            -- Mote of Unstable Magic left out, as for Vitrix.
+            name = "Mopes",
+            npcID = 247412,
+            aliases = {"Mopes"},
+            description = "Rare spawn.",
+            rare = true,
+            loot = {
+                {280082, "Staff of Sorrow", "Two-Hand, Staff", 3}, -- 13/22
+                {280081, "Sad-Sack Sandals", "Feet, Cloth", 3}, -- 9/22
+            },
+        },
+        {
             name = "Withermaw",
             npcID = 247195,
             aliases = {"Withermaw"},
@@ -6901,6 +6917,30 @@ FDJ.DB["Shaper's Terrace"] = {
                 -- Seen dropping (a player, Nov 2026).
                 {280024, "Legplates of Reinforced Crystal", "Legs, Plate", 3},
                 {273116, "Blueprint: Arcane Forge", "Blueprint", 2}, -- bpaudit (2.0.9): Wowhead Forever: 1 drop in 30 loots
+            },
+        },
+        {
+            -- kingop (2.1.6, M 24 Nov 2026: "we need to add this rare mob in
+            -- Shaper Terrace. Unfortunately, I don't know his level"): a rare
+            -- elite beast. Wowhead Forever npc=261993: found in The Shaper's
+            -- Terrace, its two drops (11 loots: the Chestplate 6, the Grips 5).
+            -- Where he stands is not known yet (no map pin).
+            name = "King Op",
+            npcID = 261993,
+            aliases = {"King Op"},
+            rare = true,
+            loot = {
+                {280027, "Crownroar Chestplate", "Chest, Plate", 3, tip = {
+                    "Binds when picked up",
+                    {"Chest", "Plate"},
+                    "657 Armor",
+                    "+21 Spirit",
+                    "|cff1eff00Equip: Improves your chance to get a critical strike by 1.0%.|r",
+                    "|cff1eff00Equip: Increases healing done by up to 40 and damage done by up to 13 for all magical spells and effects.|r",
+                    "Requires Level 58",
+                    "Sell Price: 4|TInterface\\MoneyFrame\\UI-GoldIcon:0:0:2:0|t 7|TInterface\\MoneyFrame\\UI-SilverIcon:0:0:2:0|t 51|TInterface\\MoneyFrame\\UI-CopperIcon:0:0:2:0|t",
+                }},
+                {280026, "Albinofur Grips", "Hands, Mail", 3},
             },
         },
         {
@@ -7600,6 +7640,8 @@ FDJ.DB["Sunken Temple"] = {
                 {10844, "Spire of Hakkar", "Two-Hand, Staff", 3},
                 {10845, "Warrior's Embrace", "Chest, Plate", 3},
                 {10846, "Bloodshot Greaves", "Feet, Mail", 3},
+                -- avatarpattern (2.1.6, M 25 Nov 2026: "HE DROPped this pattern", his loot roll screenshot at the dead Avatar)
+                {252871, "Pattern: Mender's Leather Gauntlets", "Recipe, Leatherworking", 3},
                 {10663, "Essence of Hakkar", "Quest Item", 1},
             },
         },

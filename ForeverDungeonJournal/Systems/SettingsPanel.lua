@@ -239,6 +239,29 @@ do
 end
 -- END tabspage
 
+-- pvpicon (2.1.6): Options > Tabs > Show PvP (Systems/PvP.lua)
+do
+    local strings = {
+        enUS = { "Show PvP", "Shows the PvP icon on the journal's home page. It stays unticked until level 10; tick it to see the icon sooner. Untick it to hide the icon; you can also right-click the icon and pick Hide." },
+        deDE = { "PvP anzeigen", "Zeigt das PvP-Symbol auf der Startseite des Journals. Bis Stufe 10 ist der Haken nicht gesetzt; setze ihn, um das Symbol früher zu sehen. Entferne den Haken, um es auszublenden; geht auch per Rechtsklick auf das Symbol → Ausblenden." },
+        frFR = { "Afficher JcJ", "Affiche l'icône JcJ sur la page d'accueil du journal. L'option reste décochée jusqu'au niveau 10 ; cochez-la pour voir l'icône plus tôt. Décochez-la pour masquer l'icône ; clic droit sur l'icône → Masquer fonctionne aussi." },
+        esES = { "Mostrar JcJ", "Muestra el icono JcJ en la página de inicio del diario. Sigue desmarcada hasta el nivel 10; márcala para ver el icono antes. Desmárcala para ocultar el icono; también puedes hacer clic derecho en el icono y elegir Ocultar." },
+        itIT = { "Mostra PvP", "Mostra l'icona PvP nella pagina iniziale del diario. Resta senza spunta fino al livello 10; spuntala per vedere l'icona prima. Togli la spunta per nasconderla; puoi anche fare clic destro sull'icona e scegliere Nascondi." },
+        ptBR = { "Mostrar JxJ", "Mostra o ícone de JxJ na página inicial do diário. Fica desmarcada até o nível 10; marque para ver o ícone antes. Desmarque para ocultar o ícone; você também pode clicar com o botão direito no ícone e escolher Ocultar." },
+        ruRU = { "Показывать PvP", "Показывает значок PvP на главной странице журнала. До 10-го уровня галочка снята; поставьте её, чтобы увидеть значок раньше. Снимите галочку, чтобы скрыть значок; также можно щёлкнуть по значку правой кнопкой и выбрать «Скрыть»." },
+        koKR = { "PvP 표시", "도감 첫 페이지에 PvP 아이콘을 표시합니다. 10레벨까지는 체크가 해제되어 있으며, 체크하면 더 일찍 표시됩니다. 체크를 해제하면 아이콘이 숨겨지며, 아이콘을 우클릭하고 숨기기를 선택해도 됩니다." },
+        zhCN = { "显示PvP", "在日志首页显示PvP图标。10级之前保持未勾选；勾选可提前显示。取消勾选即可隐藏图标；也可以右键点击图标并选择隐藏。" },
+        zhTW = { "顯示PvP", "在日誌首頁顯示PvP圖示。10級之前保持未勾選；勾選可提前顯示。取消勾選即可隱藏圖示；也可以右鍵點擊圖示並選擇隱藏。" },
+    }
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.OPT_SHOW_PVP == nil then t.OPT_SHOW_PVP = pair[1] end
+            if t.OPT_SHOW_PVP_TIP == nil then t.OPT_SHOW_PVP_TIP = pair[2] end
+        end
+    end
+end
+
 -- chatlines (2.1.5): Options > General > Hide chat lines
 do
     local strings = {
@@ -372,6 +395,26 @@ local OPTIONS = {
         get = function() return not (FDJ.IsTierIconHidden and FDJ.IsTierIconHidden()) end,
         set = function(on) if FDJ.SetTierIconHidden then FDJ.SetTierIconHidden(not on) end end,
         refreshHome = true,
+    },
+    {
+        -- pvpicon (2.0.13): the PvP icon on the home page (Systems/PvP.lua);
+        -- tabspage: here, as a Show option (what is saved unchanged)
+        label = "OPT_SHOW_PVP",
+        tip = "OPT_SHOW_PVP_TIP",
+        get = function() return not (FDJ.IsPvPIconHidden and FDJ.IsPvPIconHidden()) end,
+        set = function(on) if FDJ.SetPvPIconHidden then FDJ.SetPvPIconHidden(not on) end end,
+        refreshHome = true,
+    },
+    {
+        -- pvpchild (2.1.6, M 25 Nov 2026: "I can't find the option to show
+        -- every battleground. Just put it ... as a children option of show
+        -- PvP, just below"): under Show PvP, indented, greyed out while the
+        -- PvP icon is not shown (was in a PvP section of its own).
+        label = "OPT_PVP_SHOW_ALL",
+        tip = "OPT_PVP_SHOW_ALL_TIP",
+        child = "OPT_SHOW_PVP",
+        get = function() return FDJ.IsPvPShowAll and FDJ.IsPvPShowAll() or false end,
+        set = function(on) if FDJ.SetPvPShowAll then FDJ.SetPvPShowAll(on) end end,
     },
     {
         label = "OPT_SHOW_RUNLOG",
@@ -521,6 +564,9 @@ local OPTIONS = {
             if FDJ.RefreshLootNow then pcall(FDJ.RefreshLootNow) end
         end,
     },
+    -- pvpicon (2.0.13, M 18 Nov 2026: "an option in the panel called PvP
+    -- that says show every battleground"): moved under Tabs > Show PvP
+    -- (pvpchild, 2.1.6); the PvP section had nothing else.
     -- The on-screen dungeon tracker (Systems/RunLogUI.lua).
     { header = "OPT_TRACKER" },
     {
@@ -1042,8 +1088,20 @@ end
 
 local function CreateOptionRow(page, option, y)
     local label = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
-    label:SetPoint("TOPLEFT", LABEL_X, y - 7)
-    label:SetWidth(BOX_X - LABEL_X - 12)
+    local indent = option.child and 22 or 0 -- pvpchild: an option under another, indented
+    label:SetPoint("TOPLEFT", LABEL_X + indent, y - 7)
+    label:SetWidth(BOX_X - LABEL_X - indent - 12)
+    if option.child then
+        -- a small elbow from the option above
+        local down = page:CreateTexture(nil, "ARTWORK")
+        down:SetColorTexture(0.57, 0.43, 0.20, 0.8)
+        down:SetSize(1, 12)
+        down:SetPoint("TOPLEFT", LABEL_X + 6, y + 1)
+        local across = page:CreateTexture(nil, "ARTWORK")
+        across:SetColorTexture(0.57, 0.43, 0.20, 0.8)
+        across:SetSize(10, 1)
+        across:SetPoint("TOPLEFT", LABEL_X + 6, y - 11)
+    end
     label:SetJustifyH("LEFT")
     label:SetText(L(option.label))
     panel.texts[#panel.texts + 1] = { label, option.label }
@@ -1053,6 +1111,7 @@ local function CreateOptionRow(page, option, y)
     check:SetSize(30, 30)
     check:SetPoint("TOPLEFT", BOX_X, y)
     check.option = option
+    check.label = label -- pvpchild: greyed with the box
     -- The label counts as part of the box: clicking or hovering it works too.
     check:SetHitRectInsets(-(BOX_X - LABEL_X), 0, 0, 0)
     check:SetScript("OnClick", function(self)
@@ -1072,9 +1131,9 @@ local function CreateOptionRow(page, option, y)
         GameTooltip:AddLine(L(self.option.tip), 1, 1, 1, true)
         GameTooltip:Show()
     end)
-    check:SetScript("OnLeave", function()
+    check:SetScript("OnLeave", function(self)
         band:Hide()
-        label:SetTextColor(1.00, 0.82, 0.00)
+        if self.fdjOff then label:SetTextColor(0.50, 0.50, 0.50) else label:SetTextColor(1.00, 0.82, 0.00) end -- pvpchild
         if GameTooltip then GameTooltip:Hide() end
     end)
     panel.checks[#panel.checks + 1] = check
@@ -2024,9 +2083,22 @@ end
 -- Forever emblem).
 function FDJ.RefreshSettingsChecks()
     if not (panel and panel.checks) then return end
+    local on = {}
     for _, check in ipairs(panel.checks) do
         local ok, value = pcall(check.option.get)
         check:SetChecked(ok and value or false)
+        on[check.option.label] = ok and value and true or false
+    end
+    -- pvpchild: an option under another works only while that one is ticked
+    for _, check in ipairs(panel.checks) do
+        local parent = check.option.child
+        if parent and on[parent] ~= nil then
+            check.fdjOff = not on[parent]
+            if check.fdjOff then check:Disable() else check:Enable() end
+            if check.label then
+                if check.fdjOff then check.label:SetTextColor(0.50, 0.50, 0.50) else check.label:SetTextColor(1.00, 0.82, 0.00) end
+            end
+        end
     end
 end
 

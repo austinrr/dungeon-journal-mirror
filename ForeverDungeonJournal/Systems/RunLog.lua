@@ -1340,6 +1340,32 @@ function FDJ.RunLogInFight()
     return false
 end
 
+-- crabkill (2.1.6): is a dead critter among the player's and the group's
+-- targets (and the mouseover)? Each fact read only where the game shows it.
+function FDJ.RunLogDeadCritter()
+    local units = { "target", "mouseover" }
+    if IsInRaid and IsInRaid() then
+        for i = 1, 40 do units[#units + 1] = "raid" .. i .. "target" end
+    else
+        for i = 1, 4 do units[#units + 1] = "party" .. i .. "target" end
+    end
+    local function Read(f, unit)
+        if type(f) ~= "function" then return nil end
+        local ok, v = pcall(f, unit)
+        return ok and Plain(v) or nil
+    end
+    for _, unit in ipairs(units) do
+        if Read(UnitExists, unit) and Read(UnitIsDead, unit) == true then
+            local name, level, hp = Lower(Read(UnitName, unit)), Read(UnitLevel, unit), Read(UnitHealthMax, unit)
+            if ExcludedType(Read(UnitCreatureType, unit)) or (name and fight.critters[name])
+                or level == 1 or (type(hp) == "number" and hp > 0 and hp <= 100) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
 function FDJ.RunLogFightKill(name)
     local n = Lower(name)
     if not n or fight.critters[n] then return false end
@@ -1420,6 +1446,21 @@ local function AddKill(guid, name, how)
         if not current and not insideDungeon then
             local roomWing = RoomWing(insideMap)
             if roomWing then ApplyWing(roomWing, false) end
+        end
+        -- dmstart (2.1.6, a player in Dire Maul: West, 25 Nov 2026: "run
+        -- doesn't start when killing mobs, only after first boss"): the
+        -- three wings share one instance and the game names no wing in the
+        -- corridors, and kills inside are nameless, so no kill told the
+        -- wing until a boss's and the run waited for it. A kill with still
+        -- no wing in Dire Maul starts the run on a guess: the wing picked
+        -- on the big map (kept), else the first; the first kill that tells
+        -- the wing (a boss) moves the run to it, its timer and kills kept.
+        if not current and not insideDungeon and insideMap == 429 and how ~= "corpse" then
+            local group = FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[429] or {}
+            local kept = type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.dmMapWing
+            local guess
+            for _, w in ipairs(group) do if w == kept then guess = w end end
+            ApplyWing(guess or group[1], false)
         end
     end
     if not EnsureRun() then return nil end
@@ -2739,7 +2780,22 @@ events:SetScript("OnEvent", function(_, event, ...)
         local sig = FDJ.RunLogSignals
         if Plain(target) == nil then
             sig.hidden = sig.hidden + 1
-            AddKill(nil, nil, "party")
+            -- crabkill (2.1.6, M 24 Nov 2026 in the Drowned City, a party
+            -- member killing a Crab (level 1, a critter) at the entrance:
+            -- "Why does the timer start with this? It should not start on
+            -- critters"): the hidden kill told nothing of what died, so any
+            -- kill started the run. Before a run, a moment later (the
+            -- corpse is dead by then), the group's targets: a dead critter
+            -- among them (its type, a critter's name, level 1, or 100 health
+            -- or less) was this kill, and starts nothing.
+            if not current and C_Timer and C_Timer.After then
+                C_Timer.After(0.3, function()
+                    if FDJ.RunLogDeadCritter and FDJ.RunLogDeadCritter() then return end
+                    AddKill(nil, nil, "party")
+                end)
+            else
+                AddKill(nil, nil, "party")
+            end
         else
             sig.plain = sig.plain + 1
             AddKill(target, nil)

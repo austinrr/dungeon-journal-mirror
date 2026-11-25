@@ -29,6 +29,13 @@ end
 -- Index: item ID -> where the journal lists it
 -- ---------------------------------------------------------------------------
 local index
+-- wingdrop (2.1.6, M 24 Nov 2026 in the Cathedral, a Windweaver Staff off
+-- its trash, the line saying "Trash Drops - Scarlet Monastery: Library"):
+-- every boss and Trash Drops page that lists an item, so the line can name
+-- the one in the dungeon the player is in (the staff is on all three
+-- Scarlet wings' Trash Drops; the first listed, the Library's, was named
+-- everywhere).
+local places
 
 local function PlayerFaction()
     if type(UnitFactionGroup) ~= "function" then return nil end
@@ -38,6 +45,7 @@ end
 
 local function BuildIndex()
     index = {}
+    places = {}
     local DB = FDJ.DB or {}
     local faction = PlayerFaction()
 
@@ -74,6 +82,18 @@ local function BuildIndex()
                             bossName = boss.name,
                             trash = boss.trash and true or nil,
                         }, boss.trash and 2 or 1)
+                        local itemID = tonumber(item[1])
+                        if itemID and itemID > 0 then -- (wingdrop)
+                            places[itemID] = places[itemID] or {}
+                            table.insert(places[itemID], {
+                                mode = "bosses", kind = "item", itemID = itemID,
+                                dungeonName = dungeonName,
+                                bossIndex = bossIndex,
+                                bossName = boss.name,
+                                trash = boss.trash and true or nil,
+                                rank = boss.trash and 2 or 1,
+                            })
+                        end
                     end
                 end
             end
@@ -107,7 +127,7 @@ local function BuildIndex()
     end
 end
 
-function FDJ.ResetItemSourceIndex() index = nil end
+function FDJ.ResetItemSourceIndex() index = nil places = nil end
 
 function FDJ.GetItemSource(itemID)
     itemID = tonumber(itemID)
@@ -117,6 +137,20 @@ function FDJ.GetItemSource(itemID)
         if not ok then index = {} end
     end
     return index[itemID]
+end
+
+-- (wingdrop) The source to name on a tooltip: in a dungeon whose boss or
+-- Trash Drops page lists the item too, that page; elsewhere the usual one.
+local function SourceHere(itemID)
+    local source = FDJ.GetItemSource(itemID)
+    if not (source and source.mode == "bosses" and places and FDJ.CurrentDungeon) then return source end
+    local ok, here = pcall(FDJ.CurrentDungeon)
+    if not ok or type(here) ~= "string" or here == source.dungeonName then return source end
+    local best
+    for _, place in ipairs(places[tonumber(itemID)] or {}) do
+        if place.dungeonName == here and (not best or place.rank < best.rank) then best = place end
+    end
+    return best or source
 end
 
 -- Titles for a source: line 1 (boss or quest), line 2 (dungeon).
@@ -205,7 +239,7 @@ function FDJ.JumpToBossDrop(itemID)
 end
 
 function FDJ.OpenItemSource(itemID)
-    local source = FDJ.GetItemSource(itemID)
+    local source = SourceHere(itemID) -- (wingdrop: the page the line names)
     if not source or not FDJ.OpenSearchResult then return false end
     local journal = _G.ForeverDungeonJournalFrame
     if not journal then return false end
@@ -293,7 +327,7 @@ local function UpdateTooltip(tooltip, data)
     if not Enabled() or OwnedByJournal(tooltip) then return end
 
     local itemID = TooltipItemID(tooltip, data)
-    local source = itemID and FDJ.GetItemSource(itemID)
+    local source = itemID and SourceHere(itemID) -- (wingdrop)
     if not source then return end
     -- The client can announce the same item twice for one tooltip.
     if shownItem[tooltip] == itemID then return end

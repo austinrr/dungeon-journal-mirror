@@ -594,7 +594,19 @@ do
     -- line: the arrow points at it as always.
     local DIRS = { { 1, 1, 0 }, { 2, -1, 0 }, { 4, 0, 1 }, { 8, 0, -1 }, { 16, 1, 1 }, { 32, 1, -1 }, { 64, -1, 1 }, { 128, -1, -1 } }
     local KIND_COST = { [1] = 1.0, [2] = 0.8, [3] = 1.3, [4] = 2.5, [5] = 1.0, [6] = 3.0 }
-    local function HasBit(mask, bit) return math.floor(mask / bit) % 2 == 1 end
+    -- (gridbound: a cell's steps looked up, not divided out: the bytes 0-255)
+    local BITT = {}
+    for k = 0, 7 do
+        local bit, t = 2 ^ k, {}
+        for m = 0, 255 do t[m] = math.floor(m / bit) % 2 == 1 end
+        BITT[bit] = t
+    end
+    local function HasBit(mask, bit)
+        local t = BITT[bit]
+        local v = t and t[mask]
+        if v ~= nil then return v end
+        return math.floor(mask / bit) % 2 == 1
+    end
     local grids
     -- azsgrid (2.1.5): a grid's cells are read the first time the player
     -- and a place are both on it (Ready), not all grids at the first aim.
@@ -615,13 +627,25 @@ do
         do
             local nx, ny = data.nx, data.ny
             local open, cost = {}, {}
+            -- (gridbound: read byte by byte, the hex digits by a table: twice as quick)
+            local HEX = {}
+            for k = 0, 9 do HEX[48 + k] = k end
+            for k = 0, 5 do HEX[65 + k], HEX[97 + k] = 10 + k, 10 + k end
+            local byte = string.byte
             for i = 1, nx do
                 local row, kinds = data.open[i] or "", data.kind[i] or ""
+                local ob = { byte(row, 1, 2 * ny) }
+                local kb = { byte(kinds, 1, ny) }
+                local base = (i - 1) * ny
                 for j = 1, ny do
-                    local idx = (i - 1) * ny + j
-                    open[idx] = tonumber(string.sub(row, 2 * j - 1, 2 * j), 16) or 0
-                    cost[idx] = KIND_COST[tonumber(string.sub(kinds, j, j)) or 0]
-                    if not cost[idx] then open[idx] = 0 end
+                    local idx = base + j
+                    local hi, lo = HEX[ob[2 * j - 1] or 48], HEX[ob[2 * j] or 48]
+                    local c = KIND_COST[(kb[j] or 48) - 48]
+                    if c and hi and lo then
+                        open[idx], cost[idx] = hi * 16 + lo, c
+                    else
+                        open[idx] = 0
+                    end
                 end
             end
             -- no step leads off the grid, or onto a cell that cannot be stood on
@@ -632,7 +656,7 @@ do
                     if mask ~= 0 then
                         for d = 1, 8 do
                             local dir = DIRS[d]
-                            if math.floor(mask / dir[1]) % 2 == 1 then
+                            if BITT[dir[1]][mask] then
                                 local a, b = i + dir[2], j + dir[3]
                                 if a < 1 or b < 1 or a > nx or b > ny or open[(a - 1) * ny + b] == 0 then
                                     mask = mask - dir[1]
@@ -686,10 +710,21 @@ do
     -- off the grid): a place off a grid that leads off itself (leave = true): goal is its key ("off:x:y"),
     -- and the way ends at whichever open cell on the grid's edge is best, with the yards from there on in
     -- a straight line (the ground off the grid is open).
-    local function GridField(g, goal, tx, ty)
+    -- gridbound (2.1.6, rgcoast: a bigger grid, about 0.2 s for each new
+    -- place): the way is worked out from the place until a little past the
+    -- player's cell (from), 1.3 times its cost and 150 more; a cell within
+    -- that is known exactly (all cells under the stop are settled). Walked
+    -- off further: worked out again from there.
+    local function GridField(g, goal, tx, ty, from)
         for i = 1, #g.fields do
-            if g.fields[i].goal == goal then return g.fields[i] end
+            local f = g.fields[i]
+            if f.goal == goal then
+                if not f.limit or not from or (f.dist[from] and f.dist[from] <= f.limit) then return f end
+                table.remove(g.fields, i)
+                break
+            end
         end
+        local limit
         local ny, open, cost, cell = g.ny, g.open, g.cost, g.cell
         local dist, walk, heapCost, heapNode, size
         if type(goal) == "number" then
@@ -739,6 +774,8 @@ do
                 end
                 heapCost[i], heapNode[i] = lastCost, lastNode
             end
+            if limit and c > limit then break end
+            if u == from then limit = c * 1.3 + 150 end
             if c <= dist[u] then
                 for d = 1, 8 do
                     local dir = DIRS[d]
@@ -764,7 +801,7 @@ do
                 end
             end
         end
-        local field = { goal = goal, dist = dist, walk = walk }
+        local field = { goal = goal, dist = dist, walk = walk, limit = (size > 0) and limit or nil }
         if #g.fields >= 4 then table.remove(g.fields, 1) end
         g.fields[#g.fields + 1] = field
         return field
@@ -839,7 +876,7 @@ do
         local goal = away and string.format("off:%.0f:%.0f", tx, ty) or Stand(g, tx, ty)
         local from = Stand(g, px, py)
         if not goal or not from then memo.walkgrid = nil return false end
-        local field = GridField(g, goal, tx, ty)
+        local field = GridField(g, goal, tx, ty, from)
         local dist = field.dist
         if not dist[from] then memo.walkgrid = nil return false end -- no way known from here
         state = { g = g, tx = tx, ty = ty, px = px, py = py }

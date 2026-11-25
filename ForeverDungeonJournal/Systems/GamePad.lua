@@ -47,16 +47,16 @@ local handedOff      -- in combat, B passed the controller to the game
 -- padlang (2.1.1): the hints in the journal's language.
 do
     local strings = {
-        enUS = { PAD_OPEN = "Open", PAD_BACK = "Back", PAD_TABS = "Map · Bosses · Quests", PAD_SCROLL = "Scroll", PAD_FAV = "Favourite", PAD_CLOSE = "Close", MAP_PAD_MARKED = "marked %s on the map. Open your map to see it." },
-        deDE = { PAD_OPEN = "Öffnen", PAD_BACK = "Zurück", PAD_TABS = "Karte · Bosse · Quests", PAD_SCROLL = "Scrollen", PAD_FAV = "Favorit", PAD_CLOSE = "Schließen", MAP_PAD_MARKED = "%s auf der Karte markiert. Öffne deine Karte, um es zu sehen." },
-        frFR = { PAD_OPEN = "Ouvrir", PAD_BACK = "Retour", PAD_TABS = "Carte · Boss · Quêtes", PAD_SCROLL = "Défiler", PAD_FAV = "Favori", PAD_CLOSE = "Fermer", MAP_PAD_MARKED = "%s marqué sur la carte. Ouvrez votre carte pour le voir." },
-        esES = { PAD_OPEN = "Abrir", PAD_BACK = "Atrás", PAD_TABS = "Mapa · Jefes · Misiones", PAD_SCROLL = "Desplazar", PAD_FAV = "Favorito", PAD_CLOSE = "Cerrar", MAP_PAD_MARKED = "%s marcado en el mapa. Abre tu mapa para verlo." },
-        itIT = { PAD_OPEN = "Apri", PAD_BACK = "Indietro", PAD_TABS = "Mappa · Boss · Missioni", PAD_SCROLL = "Scorri", PAD_FAV = "Preferito", PAD_CLOSE = "Chiudi", MAP_PAD_MARKED = "%s segnato sulla mappa. Apri la mappa per vederlo." },
-        ptBR = { PAD_OPEN = "Abrir", PAD_BACK = "Voltar", PAD_TABS = "Mapa · Chefes · Missões", PAD_SCROLL = "Rolar", PAD_FAV = "Favorito", PAD_CLOSE = "Fechar", MAP_PAD_MARKED = "%s marcado no mapa. Abra o seu mapa para ver." },
-        ruRU = { PAD_OPEN = "Открыть", PAD_BACK = "Назад", PAD_TABS = "Карта · Боссы · Задания", PAD_SCROLL = "Прокрутка", PAD_FAV = "Избранное", PAD_CLOSE = "Закрыть", MAP_PAD_MARKED = "%s отмечено на карте. Откройте карту, чтобы увидеть." },
-        koKR = { PAD_OPEN = "열기", PAD_BACK = "뒤로", PAD_TABS = "지도 · 우두머리 · 퀘스트", PAD_SCROLL = "스크롤", PAD_FAV = "즐겨찾기", PAD_CLOSE = "닫기", MAP_PAD_MARKED = "%s 위치를 지도에 표시했습니다. 지도를 열어 확인하세요." },
-        zhCN = { PAD_OPEN = "打开", PAD_BACK = "返回", PAD_TABS = "地图 · 首领 · 任务", PAD_SCROLL = "滚动", PAD_FAV = "收藏", PAD_CLOSE = "关闭", MAP_PAD_MARKED = "已在地图上标记%s。打开地图即可查看。" },
-        zhTW = { PAD_OPEN = "開啟", PAD_BACK = "返回", PAD_TABS = "地圖 · 首領 · 任務", PAD_SCROLL = "捲動", PAD_FAV = "收藏", PAD_CLOSE = "關閉", MAP_PAD_MARKED = "已在地圖上標記%s。打開地圖即可查看。" },
+        enUS = { PAD_OPEN = "Open", PAD_BACK = "Back", PAD_TABS = "Map · Bosses · Quests", PAD_SCROLL = "Scroll", PAD_FAV = "Favourite", PAD_CLOSE = "Close", MAP_PAD_MARKED = "marked %s on the map. Open your map to see it.", MAP_PAD_ELSEWHERE = "marked %s on the map. The map shows the zone you are in: go to that zone on the map to see it." },
+        deDE = { PAD_OPEN = "Öffnen", PAD_BACK = "Zurück", PAD_TABS = "Karte · Bosse · Quests", PAD_SCROLL = "Scrollen", PAD_FAV = "Favorit", PAD_CLOSE = "Schließen", MAP_PAD_MARKED = "%s auf der Karte markiert. Öffne deine Karte, um es zu sehen.", MAP_PAD_ELSEWHERE = "%s auf der Karte markiert. Die Karte zeigt die Zone, in der du bist: Wechsle auf der Karte zu dieser Zone, um es zu sehen." },
+        frFR = { PAD_OPEN = "Ouvrir", PAD_BACK = "Retour", PAD_TABS = "Carte · Boss · Quêtes", PAD_SCROLL = "Défiler", PAD_FAV = "Favori", PAD_CLOSE = "Fermer", MAP_PAD_MARKED = "%s marqué sur la carte. Ouvrez votre carte pour le voir.", MAP_PAD_ELSEWHERE = "%s marqué sur la carte. La carte montre la zone où vous êtes : allez sur cette zone dans la carte pour le voir." },
+        esES = { PAD_OPEN = "Abrir", PAD_BACK = "Atrás", PAD_TABS = "Mapa · Jefes · Misiones", PAD_SCROLL = "Desplazar", PAD_FAV = "Favorito", PAD_CLOSE = "Cerrar", MAP_PAD_MARKED = "%s marcado en el mapa. Abre tu mapa para verlo.", MAP_PAD_ELSEWHERE = "%s marcado en el mapa. El mapa muestra la zona en la que estás: ve a esa zona en el mapa para verlo." },
+        itIT = { PAD_OPEN = "Apri", PAD_BACK = "Indietro", PAD_TABS = "Mappa · Boss · Missioni", PAD_SCROLL = "Scorri", PAD_FAV = "Preferito", PAD_CLOSE = "Chiudi", MAP_PAD_MARKED = "%s segnato sulla mappa. Apri la mappa per vederlo.", MAP_PAD_ELSEWHERE = "%s segnato sulla mappa. La mappa mostra la zona in cui ti trovi: passa a quella zona sulla mappa per vederlo." },
+        ptBR = { PAD_OPEN = "Abrir", PAD_BACK = "Voltar", PAD_TABS = "Mapa · Chefes · Missões", PAD_SCROLL = "Rolar", PAD_FAV = "Favorito", PAD_CLOSE = "Fechar", MAP_PAD_MARKED = "%s marcado no mapa. Abra o seu mapa para ver.", MAP_PAD_ELSEWHERE = "%s marcado no mapa. O mapa mostra a zona em que você está: vá até essa zona no mapa para ver." },
+        ruRU = { PAD_OPEN = "Открыть", PAD_BACK = "Назад", PAD_TABS = "Карта · Боссы · Задания", PAD_SCROLL = "Прокрутка", PAD_FAV = "Избранное", PAD_CLOSE = "Закрыть", MAP_PAD_MARKED = "%s отмечено на карте. Откройте карту, чтобы увидеть.", MAP_PAD_ELSEWHERE = "%s отмечено на карте. Карта показывает зону, где вы находитесь: перейдите на карте к этой зоне, чтобы увидеть." },
+        koKR = { PAD_OPEN = "열기", PAD_BACK = "뒤로", PAD_TABS = "지도 · 우두머리 · 퀘스트", PAD_SCROLL = "스크롤", PAD_FAV = "즐겨찾기", PAD_CLOSE = "닫기", MAP_PAD_MARKED = "%s 위치를 지도에 표시했습니다. 지도를 열어 확인하세요.", MAP_PAD_ELSEWHERE = "%s 위치를 지도에 표시했습니다. 지도에는 지금 있는 지역이 나옵니다. 지도에서 그 지역으로 이동하면 볼 수 있습니다." },
+        zhCN = { PAD_OPEN = "打开", PAD_BACK = "返回", PAD_TABS = "地图 · 首领 · 任务", PAD_SCROLL = "滚动", PAD_FAV = "收藏", PAD_CLOSE = "关闭", MAP_PAD_MARKED = "已在地图上标记%s。打开地图即可查看。", MAP_PAD_ELSEWHERE = "已在地图上标记%s。地图显示的是你所在的区域：在地图上切换到该区域即可查看。" },
+        zhTW = { PAD_OPEN = "開啟", PAD_BACK = "返回", PAD_TABS = "地圖 · 首領 · 任務", PAD_SCROLL = "捲動", PAD_FAV = "收藏", PAD_CLOSE = "關閉", MAP_PAD_MARKED = "已在地圖上標記%s。打開地圖即可查看。", MAP_PAD_ELSEWHERE = "已在地圖上標記%s。地圖顯示的是你所在的區域：在地圖上切換到該區域即可查看。" },
     }
     strings.esMX = strings.esES
     for locale, values in pairs(strings) do
@@ -520,6 +520,7 @@ end
 
 -- One controller button (real, or the fake controller's key).
 local function Press(button)
+    FDJ.padMapWanted = nil -- (padmapopen: set by Show on Map during this press)
     if padTest then Print("controller: " .. (NAMES[button] or tostring(button))) end
     if not View() then return false end
     padActive = true
@@ -579,6 +580,39 @@ local FAKE = {
     INSERT = "PADLTRIGGER", DELETE = "PADRTRIGGER",
 }
 
+-- ------------------------------------------------------------ the map
+-- padmapopen (2.1.6): A on Show Location (or anything else that marks a spot)
+-- marks it as before (Systems/MapMarkers.lua), then this same press goes on
+-- to the game as its Toggle World Map key: for this one press the journal
+-- lets the button through and binds it to the game's own map command, so the
+-- game opens the map itself, as when the player presses M (opened by the
+-- addon, the map broke the game's controller mode). The binding is taken off
+-- again on the next frame, and before combat starts (bindings can't change
+-- in combat; there the spot is only marked, as before). The map already open:
+-- nothing to do (the key would close it).
+local mapKeyArmed
+local function ReleaseMapKey()
+    if not mapKeyArmed or not catcher or InCombatLockdown() then return end
+    mapKeyArmed = nil
+    pcall(ClearOverrideBindings, catcher)
+    pcall(catcher.SetPropagateKeyboardInput, catcher, false)
+end
+local function PassPressToMap(key)
+    local wanted = FDJ.padMapWanted
+    FDJ.padMapWanted = nil
+    if not (wanted and key and catcher) or InCombatLockdown() then return end
+    if WorldMapFrame and WorldMapFrame:IsShown() then return end
+    if not (SetOverrideBinding and ClearOverrideBindings and catcher.SetPropagateKeyboardInput) then return end
+    if not pcall(SetOverrideBinding, catcher, true, key, "TOGGLEWORLDMAP") then return end
+    mapKeyArmed = true
+    if not pcall(catcher.SetPropagateKeyboardInput, catcher, true) then
+        ReleaseMapKey()
+        return
+    end
+    if padTest then Print("map: " .. tostring(key) .. " goes on to the game's Toggle World Map key") end
+    if C_Timer and C_Timer.After then C_Timer.After(0, ReleaseMapKey) end
+end
+
 local function Capture(on)
     if not catcher then return end
     local padOn = on and (not GetCVarBool or GetCVarBool("GamePadEnable"))
@@ -609,12 +643,13 @@ local function Setup()
     catcher = CreateFrame("Frame", nil, frame)
     catcher:SetAllPoints(frame)
     catcher:EnableMouse(false)
-    catcher:SetScript("OnGamePadButtonDown", function(_, button) Press(button) end)
+    catcher:SetScript("OnGamePadButtonDown", function(_, button) Press(button) PassPressToMap(button) end)
     catcher:SetScript("OnKeyDown", function(self, key)
         local pad = FDJ.fakePad and FAKE[key]
         if pad and not (IsModifierKeyDown and IsModifierKeyDown()) then
             pcall(self.SetPropagateKeyboardInput, self, false)
             Press(pad)
+            PassPressToMap(key)
         else
             pcall(self.SetPropagateKeyboardInput, self, true)
         end
@@ -648,6 +683,7 @@ local function Setup()
         RegisterWithGame()
     end)
     frame:HookScript("OnHide", function()
+        ReleaseMapKey()
         SetFocus(nil)
         padActive = false
         ShowHint(false)
@@ -663,6 +699,7 @@ watcher:RegisterEvent("PLAYER_LOGIN")
 watcher:RegisterEvent("PLAYER_REGEN_DISABLED")
 watcher:RegisterEvent("PLAYER_REGEN_ENABLED")
 watcher:SetScript("OnEvent", function(_, event)
+    if event == "PLAYER_REGEN_DISABLED" then ReleaseMapKey() end
     if event == "PLAYER_LOGIN" then
         pcall(Setup)
         return

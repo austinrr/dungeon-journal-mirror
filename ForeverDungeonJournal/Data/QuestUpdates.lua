@@ -872,7 +872,9 @@ do
     -- player, Nov 2026). Like the Alliance side, the follow-up is the
     -- list's entry and The Drowned City a step inside its chain.
     local GADRIN = { mapID = 1411, x = 0.558, y = 0.744, label = "Master Gadrin — Sen'jin Village", targetName = "Master Gadrin", detail = "Master Gadrin in Sen'jin Village, Durotar" }
-    local INSIDE = "A rubbing of the tablet inside the Drowned City"
+    local TABLET_VARTAKA, TABLET_MINLOTH = "Next to the boss Var'Taka", "Next to the last boss, Min'loth the Serpent"
+    local TABLET_DREADRISE = "In Captain Dreadrise's area"
+    local TABLET_FIRST = "Down the stairs after the first boss, on the left"
     FDJ.QUEST_START_MAPS[96078] = KINWEELAY
     FDJ.QUEST_PREREQ_CHAINS[96078] = {
         { id = 629, name = "The Vile Reef" },
@@ -886,10 +888,13 @@ do
         pickup = GROMGOL, turnin = GROMGOL,
         map = KINWEELAY, turninMap = KINWEELAY,
         requiredItems = {
-            {270308, "The First Tablet of I'lalai", 1, INSIDE},
-            {270309, "The Second Tablet of I'lalai", 1, INSIDE},
-            {270310, "The Third Tablet of I'lalai", 1, INSIDE},
-            {270311, "The Fourth Tablet of I'lalai", 1, INSIDE},
+            -- tabletnotes (2.1.6, M 24 Nov 2026 in the Drowned City: "We are
+            -- gonna start putting real comments"): where each one is, as
+            -- found.
+            {270308, "The First Tablet of I'lalai", 1, TABLET_FIRST},
+            {270309, "The Second Tablet of I'lalai", 1, TABLET_VARTAKA},
+            {270310, "The Third Tablet of I'lalai", 1, TABLET_DREADRISE},
+            {270311, "The Fourth Tablet of I'lalai", 1, TABLET_MINLOTH},
         },
     }
     for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
@@ -1044,7 +1049,9 @@ do
     local AT_DIBBS = "Loremaster Dibbs, Southshore, Hillsbrad Foothills"
     local AT_YOHWA = "Sergeant Yohwa, Rebel Camp, Stranglethorn Vale"
     local AT_NIMETZ = "Brother Nimetz, Rebel Camp, Stranglethorn Vale"
-    local INSIDE = "A rubbing of the tablet inside the Drowned City"
+    local TABLET_VARTAKA, TABLET_MINLOTH = "Next to the boss Var'Taka", "Next to the last boss, Min'loth the Serpent"
+    local TABLET_DREADRISE = "In Captain Dreadrise's area"
+    local TABLET_FIRST = "Down the stairs after the first boss, on the left"
     local BOTH = "Done together with the other of Sergeant Yohwa's two quests (The Second Rebellion and Bad Medicine); Brother Nimetz offers Kurzen's Mystery once both are handed in."
 
     -- Objects, not NPCs: nothing to target from the map.
@@ -1123,10 +1130,13 @@ do
         pickup = AT_DIBBS, turnin = AT_DIBBS,
         map = DIBBS,
         requiredItems = {
-            {270308, "The First Tablet of I'lalai", 1, INSIDE},
-            {270309, "The Second Tablet of I'lalai", 1, INSIDE},
-            {270310, "The Third Tablet of I'lalai", 1, INSIDE},
-            {270311, "The Fourth Tablet of I'lalai", 1, INSIDE},
+            -- tabletnotes (2.1.6, M 24 Nov 2026 in the Drowned City: "We are
+            -- gonna start putting real comments"): where each one is, as
+            -- found.
+            {270308, "The First Tablet of I'lalai", 1, TABLET_FIRST},
+            {270309, "The Second Tablet of I'lalai", 1, TABLET_VARTAKA},
+            {270310, "The Third Tablet of I'lalai", 1, TABLET_DREADRISE},
+            {270311, "The Fourth Tablet of I'lalai", 1, TABLET_MINLOTH},
         },
     }
     FDJ.QUEST_PREREQ_DETAILS[95788] = {
@@ -3229,7 +3239,7 @@ do
                 q.requiredItem = { 258296, "Vial of Earth Song Water", 1, 1, "From the small geyser in the pools Rotgrip swims around in, Maraudon" }
                 q.rewards = "Choose: Overgrown Cuffs or Thornplated Cord\n11,100 XP"
                 q.rewardSummary = "" -- rewardline (2.0.13): the buttons and XP box show it; no text line under them
-                q.note = "Back at the Forlorn Gardens, use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself. Afterwards Woodwyrd sends you to the Bristleback Retreat (Passing the Blame), which leads to Agamaggan's Blood in Razorfen Downs."
+                q.note = "Back at the Forlorn Gardens, use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself. Afterwards Woodwyrd sends you to the Bristleback Retreat (Passing the Blame), which leads to Agamaggan's Blood." -- rfdshelf (2.1.6, M 25 Nov 2026): "in Razorfen Downs" dropped, the quest is no longer listed there
             end
         end
     end
@@ -3284,12 +3294,20 @@ do
     }
     XP[93404] = 11100; XP[93601] = 390
 
+    -- rfdshelf (2.1.6, M 25 Nov 2026: "remove this quest from RFD and we
+    -- just keep it in the files in case people complain and we have to pull
+    -- it back"): Agamaggan's Blood is no longer listed on Razorfen Downs. Its
+    -- blood is got outside the dungeon now and its chain has a Maraudon step,
+    -- so it is soloed after Maraudon. The quest's page stays below, kept in
+    -- FDJ.SHELVED_QUESTS[93604]: set SHOW_AGAMAGGAN to true to list it again
+    -- (its warning, XP, chain and Route ask come back with it).
+    local SHOW_AGAMAGGAN = false
     if db then
         db.quests = db.quests or {}
         local have = false
         for _, q in ipairs(db.quests) do if q.id == 93604 then have = true end end
         if not have then
-            table.insert(db.quests, {
+            local agamaggan = {
                 id = 93604,
                 name = "Agamaggan's Blood",
                 faction = "Both",
@@ -3305,8 +3323,13 @@ do
                 rewards = "10,200 XP • 65s",
                 rewardItems = {},
                 requiredItem = { 260237, "Virulent Blood of Agamaggan", 1, 1, "From the Virulent Blood of Agamaggan, which a Cauldron of Agamaggan's Blood summons in Razorfen Downs" },
-                note = "Click a Cauldron of Agamaggan's Blood to summon the Virulent Blood of Agamaggan and kill it for the blood. One cauldron is in the tent nearest the last boss (it may also be in other tents). Blood from Razorfen Kraul doesn't count.",
-            })
+            }
+            if SHOW_AGAMAGGAN then
+                table.insert(db.quests, agamaggan)
+            else
+                FDJ.SHELVED_QUESTS = FDJ.SHELVED_QUESTS or {}
+                FDJ.SHELVED_QUESTS[93604] = { dungeon = "Razorfen Downs", quest = agamaggan }
+            end
         end
         local FOREVER_XP = {
             [3525] = 10100, [6626] = 8200, [3341] = 9050, [3636] = 10200, [6521] = 7350,
@@ -6061,6 +6084,47 @@ do
 end
 -- END rfdally
 
+-- BEGIN rfdhorde
+-- rfdhorde (2.1.6, M 24 Nov 2026: "build rfd horde route"): what the Route
+-- needs to know for the Horde's Razorfen Downs quests (Systems/QuestText.lua:
+-- FDJ.ROUTE_DUNGEONS). Givers and hand-ins as in the journal (Andrew
+-- Brownell and Varimathras in Undercity, Sutara Plainstalker in Mulgore:
+-- their spawns in the Forever client tables agree); A Host of Evil,
+-- Extinguishing the Idol and Agamaggan's Blood as for the Alliance (rfdally).
+--  - An Unholy Alliance (6521) follows the Small Scroll from Charlga
+--    Razorflank in Razorfen Kraul (6522): starting the Route asks whether to
+--    include the Razorfen Kraul step (routeask). Included: the arrow leads to
+--    Razorfen Kraul's door for the scroll (dropMap), says to accept it once
+--    it drops, then to Varimathras.
+--  - Ambassador Malcin is outside, in the thorn maze before Razorfen Downs'
+--    door (NPC 12865: his five spawns in the Forever client tables, Barrens
+--    48.5, 95.6 to 46.2, 90.2): with the quest in the log, a stop at him
+--    before the run (objectiveMap; "Not found? Next spot" through the others).
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    local VARIMATHRAS = { mapID = 1458, x = 0.562, y = 0.926, label = "Varimathras — Royal Quarter, Undercity", targetName = "Varimathras" }
+    if type(D[6522]) == "table" then
+        D[6522].dropMap = { markerType = "dungeon", mapID = 1413, x = 0.429, y = 0.902, label = "Razorfen Kraul Entrance",
+            detail = "Kill Charlga Razorflank inside Razorfen Kraul: she drops the Small Scroll" }
+        if D[6522].turninMap == nil then D[6522].turninMap = VARIMATHRAS end
+    end
+    local rfd = FDJ.DB and FDJ.DB["Razorfen Downs"]
+    for _, quest in ipairs((rfd and rfd.quests) or {}) do
+        if quest.id == 6521 then
+            quest.routeAsk = { "Razorfen Kraul", 6522 }
+            if quest.turninMap == nil then quest.turninMap = VARIMATHRAS end
+            quest.objectiveMap = { markerType = "location", mapID = 1413, x = 0.485, y = 0.956, label = "Ambassador Malcin — The Barrens",
+                detail = "Ambassador Malcin is in the thorn maze before the door: kill him for his head",
+                targetName = "Ambassador Malcin", kill = true,
+                spawns = { { x = 0.485, y = 0.956 }, { x = 0.484, y = 0.954 }, { x = 0.480, y = 0.924 }, { x = 0.478, y = 0.906 }, { x = 0.462, y = 0.902 } } }
+            -- runin (2.1.6, M 25 Nov 2026): Malcin is done on the way in with
+            -- the group: his stop says so and is left for last (Systems/QuestText.lua)
+            quest.routeRunIn = true
+        end
+    end
+end
+-- END rfdhorde
+
 -- BEGIN shamanvoodoo
 -- 2.0.11 (M 18 Nov 2026: "add this shaman sunken temple quest for alliance
 -- shamans ... alliance starts with Mastering the Elements, then goes on to
@@ -7990,7 +8054,7 @@ do
     Find(1448, Spot(SOS, 0.702, 0.529, "Temple of Atal'Hakkar — Swamp of Sorrows",
         "Swim out to the temple ruins in the middle of the Pool of Tears"))
     Goals(1452, {
-        { 6257, 3, spot = Spot(TAN, 0.454, 0.385, "Roc Gizzard — Tanaris", "Kill the rocs here") },
+        { 6257, 3, spot = Spot(TAN, 0.454, 0.385, "Roc Gizzard — Tanaris", "Kill the birds here") },
         { 6259, 3, spot = Spot(FER, 0.585, 0.587, "Groddoc Liver — Feralas", "Kill the Groddoc apes here") },
         { 6258, 3, spot = Spot(FER, 0.537, 0.480, "Ironfur Liver — Feralas", "Kill the Ironfur bears here") },
     })
@@ -8003,8 +8067,67 @@ do
         Find(3527, { markerType = "dungeon", mapID = zf.mapID, x = zf.x, y = zf.y, label = zf.label,
             detail = "Both tablets drop from bosses inside Zul'Farrak" })
     end
+    -- eggnote (2.1.6, M 24 Nov 2026 at Shadra'Alor, the arrow to The Ancient
+    -- Egg: "add a little disclaimer to the arrow when doing this quest ...
+    -- climb to the top of Jintha'Alor. Find a group"): its line under the
+    -- yards, all the way there (Systems/MapMarkers.lua: spot.noteKey).
     Find(4787, Spot(HIN, 0.576, 0.868, "Ancient Egg — The Hinterlands",
-        "In the cave behind the amphitheater at the top of Jintha'Alor: trolls patrol around the egg", { exact = true, pickUp = true }))
+        "In the cave behind the amphitheater at the top of Jintha'Alor: trolls patrol around the egg",
+        { exact = true, pickUp = true, noteKey = "ROUTE_EGG_CLIMB" }))
+    do
+        local strings = {
+            enUS = "Climb to the top of Jintha'Alor. Find a group.",
+            deDE = "Klettere ganz nach oben auf Jintha'Alor. Such dir eine Gruppe.",
+            frFR = "Grimpez au sommet de Jintha'Alor. Trouvez un groupe.",
+            esES = "Sube a lo alto de Jintha'Alor. Busca un grupo.",
+            itIT = "Sali in cima a Jintha'Alor. Trova un gruppo.",
+            ptBR = "Suba até o topo de Jintha'Alor. Encontre um grupo.",
+            ruRU = "Поднимитесь на вершину Джинта'Алора. Найдите группу.",
+            koKR = "진타알로 꼭대기로 올라가세요. 파티를 구하세요.",
+            zhCN = "爬到辛萨罗的顶部。请找队伍。",
+            zhTW = "爬到辛薩羅的頂部。請找隊伍。",
+        }
+        strings.esMX = strings.esES
+        for locale, text in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ROUTE_EGG_CLIMB == nil then t.ROUTE_EGG_CLIMB = text end
+        end
+    end
+    -- eggcave (2.1.6, M 24 Nov 2026 in the cave at 57.9, 79.7, the egg at
+    -- 57.6, 87.1 and the arrow 1,100 yards back out: "the arrow is telling me
+    -- to go back ... I should go to the end of the cave"): the cave's way,
+    -- from the altar at the top through the mouth (58.5, 79.4) and down west
+    -- round to the egg's room, worked out on the walking maps (the cave's
+    -- floor, about 70 yards under the ground above the egg; 24 corners, none
+    -- more than 2 yards off the way). Nearest: led on from wherever in it;
+    -- byNet, indoors: only in the cave, outside the walking net leads (the
+    -- slopes outside pass within yards of the cave's west end, the rock
+    -- between); keep: along it to the end, not straight through the rock
+    -- once near the egg.
+    do
+        FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+        local CAVE = "Follow the cave to its end"
+        local function P(x, y) return { mapID = HIN, x = x, y = y, label = CAVE, keep = true, labelNear = 150 } end
+        FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(HIN), 0.576, 0.868)] = {
+            forward = true, nearest = true, reach = 4, leg = 3, byNet = true, indoors = true, -- (only in the cave)
+            P(0.5850, 0.7752), P(0.5850, 0.7833), P(0.5871, 0.7865), P(0.5871, 0.7881), P(0.5785, 0.8011),
+            P(0.5774, 0.8157), P(0.5752, 0.8190), P(0.5741, 0.8190), P(0.5741, 0.8206), P(0.5731, 0.8206),
+            P(0.5720, 0.8239), P(0.5720, 0.8271), P(0.5676, 0.8336), P(0.5514, 0.8336), P(0.5503, 0.8352),
+            P(0.5471, 0.8352), P(0.5460, 0.8369), P(0.5460, 0.8417), P(0.5482, 0.8450), P(0.5503, 0.8466),
+            P(0.5601, 0.8466), P(0.5676, 0.8580), P(0.5698, 0.8580), P(0.5763, 0.8677),
+        }
+        local LINES = { deDE = "Der Höhle bis zum Ende folgen", frFR = "Suivez la grotte jusqu'au bout",
+            esES = "Sigue la cueva hasta el final", itIT = "Segui la grotta fino in fondo",
+            ptBR = "Siga a caverna até o fim", ruRU = "Пройдите пещеру до конца", koKR = "동굴 끝까지 따라가세요",
+            zhCN = "沿着洞穴走到尽头", zhTW = "沿著洞穴走到盡頭" }
+        FDJ.ContentLocales = FDJ.ContentLocales or {}
+        for lang, line in pairs(LINES) do
+            local content = FDJ.ContentLocales[lang] or {}
+            FDJ.ContentLocales[lang] = content
+            content.places = content.places or {}
+            if content.places[CAVE] == nil then content.places[CAVE] = line end
+        end
+    end
     local st = FDJ.DB and FDJ.DB["Sunken Temple"]
     for _, quest in ipairs((st and st.quests) or {}) do
         if quest.id == 3528 and quest.routeAsk == nil then
@@ -8013,7 +8136,7 @@ do
         end
     end
     -- Haze of Evil
-    Goals(4141, { { 11316, 15, spot = Spot(UNG, 0.670, 0.301, "Bloodpetal — Un'Goro Crater", "Kill the Bloodpetal plants here") } })
+    Goals(4141, { { 11316, 15, spot = Spot(UNG, 0.670, 0.301, "Bloodpetal — Un'Goro Crater", "Kill the Bloodpetal plants in the zone") } })
     -- Druid: A Better Ingredient
     Goals(9052, {
         { 22435, 8, spot = Spot(UNG, 0.483, 0.815, "Gorishi Sting — Un'Goro Crater", "Kill the Gorishi wasps here") },

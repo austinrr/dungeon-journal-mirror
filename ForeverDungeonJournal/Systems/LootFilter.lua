@@ -450,6 +450,7 @@ local function TooltipText(itemID, cacheOnly)
     for i = 1, count do
         local line = _G["ForeverDungeonJournalScanTooltipTextLeft" .. i]
         local text = line and line.GetText and line:GetText()
+        if type(issecretvalue) == "function" and issecretvalue(text) then text = nil end -- secrettip (2.1.6)
         if type(text) == "string" and text ~= "" then
             if PendingLine(text) then return nil end -- equipdim: not loaded yet
             -- Stop at the item-set block ("Rotmender's Raiment (0/5)"): set
@@ -1824,6 +1825,7 @@ local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
     for i = 1, lineCount do
         local left = _G[tipName .. "TextLeft" .. i]
         local lineText = left and left:GetText()
+        if type(issecretvalue) == "function" and issecretvalue(lineText) then lineText = nil end -- secrettip (2.1.6)
         if type(lineText) == "string" and requiredNeedle ~= "" and lineText:find(requiredNeedle, 1, true) then
             requiredIndex = i
             break
@@ -1838,12 +1840,12 @@ local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
         local dstL = _G[tipName .. "TextLeft" .. (i + 1)]
         local dstR = _G[tipName .. "TextRight" .. (i + 1)]
         if srcL and dstL then
-            dstL:SetText(srcL:GetText() or "")
+            if FDJ.TipCopyText then FDJ.TipCopyText(srcL, dstL) else dstL:SetText(srcL:GetText() or "") end -- secrettip (2.1.6)
             local cr, cg, cb, ca = srcL:GetTextColor()
             dstL:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
         end
         if srcR and dstR then
-            dstR:SetText(srcR:GetText() or "")
+            if FDJ.TipCopyText then FDJ.TipCopyText(srcR, dstR) else dstR:SetText(srcR:GetText() or "") end -- secrettip (2.1.6)
             local cr, cg, cb, ca = srcR:GetTextColor()
             dstR:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
         end

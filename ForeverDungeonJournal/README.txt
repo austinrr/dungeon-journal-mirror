@@ -1,4 +1,4 @@
-DungeonJournal 2.1.5
+DungeonJournal 2.1.6
 
 CHANGES IN 2.1.4 (the release after 2.1.3)
 - Arrow: the boat to Tanaris at Powderfuse Port (Riverglades) leaves from the

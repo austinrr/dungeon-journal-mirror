@@ -726,11 +726,12 @@ local function PlaceButton(panel)
     if done then w = w + 19 end
     b:SetWidth(math.ceil(w))
     -- level with Tier Sets (the Compact view button's line), centred under
-    -- the Character Logs icon (without it: over the first row's bracers)
+    -- the Character Logs icon (without it: over the first row's bracers).
+    -- tiertop (2.1.6): the icon is put away on this page; its place still counts.
     b:ClearAllPoints()
     local f = _G.ForeverDungeonJournalFrame
     local icon = f and f.runLogButton
-    local over = (icon and icon:IsVisible() and icon) or nil
+    local over = (icon and icon:GetParent() and icon:GetParent():IsVisible() and icon:GetCenter() and icon) or nil
     if not over then
         local row = panel.rows and panel.rows[1]
         local cell = row and row:IsShown() and row.cells and row.cells[4]
