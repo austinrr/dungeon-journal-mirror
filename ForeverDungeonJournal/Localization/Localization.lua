@@ -1121,5 +1121,6 @@ function FDJ.LocalizeMapLocation(loc)
         detail = FDJ.LocalizeFreeText(loc.detail),
         noteKey = loc.noteKey, noteArg = loc.noteArg, -- (loreaspects: the arrow's note line, translated by its key)
         pickUp = loc.pickUp, exact = loc.exact, -- (bookexact: a thing to pick up at one place, in every language)
+        equipItem = loc.equipItem, -- (equipline, 2.1.7: "Equip <item>" on the arrow, in every language)
     }
 end

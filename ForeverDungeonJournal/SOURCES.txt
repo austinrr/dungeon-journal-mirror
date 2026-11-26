@@ -2016,3 +2016,194 @@ jumpall, jumplit, jumpring (2.1.6, the PvP pages' quick icons: all five on every
 
 questsunder (2.1.6, the PvP pages' Quests button under the row of quick icons)
 - Exehn (25 Nov 2026, screenshot of the Alterac Valley page, the icons over the Quests button): "they'll go over the quest tab really bad. Put the quest tab under the icons"
+
+brdally (2.1.7, the Route for the Alliance's Blackrock Depths quests, with its question about the Onyxia Attunement chain)
+- Exehn's request (25 Nov 2026): "build BRD route for Alliance. Make sure there's a pop-up that says, do you want to include [the] Onyxia [Attunement] chain?"
+- Which steps of Jail Break!'s and The Fate of the Kingdom's chains are found or done inside (Marshal Windsor, A Crumpled Up Note, A Shred of Hope; Kharan Mighthammer, Kharan's Tale) and where each one is handed in: the journal's own chain data and the game's quest data in QuestieDB (WoW Forever)
+- Set Them Ablaze!'s objectives in their order (Western, Southern, Eastern, Northern Tower Ablaze): https://www.wowhead.com/forever/quest=3463 ; the towers' places (Western 35.7, 60.7, Southern 44.0, 60.9, Eastern 50.1, 54.8, Northern 33.3, 54.5): the sentry braziers' spawns (objects 149025, 149030, 149031, 149032) in the game's data for WoW Forever, as most of the page's comments give them; that the Torch of Retribution is equipped, then the small brazier on the tower clicked: the same page, comments
+- The Thaurissan Relics' place in the Ruins of Thaurissan (61.5, 41.2, among their 24 spawns, object 153556): the game's data for WoW Forever; https://www.wowhead.com/forever/quest=3701
+- Nagmara's Vial filled at the crater on top of the hill in Golakka Hot Springs (31, 50): https://www.wowhead.com/forever/quest=4201 , comments
+- The Giant Silver Veins' place in Azshara (54.0, 81.5): the spawns of the Cliff Breakers, Cliff Thunderers and Cliff Walkers in the game's data for WoW Forever, the densest group of them
+- The zones' names in each language: the game's own names for the zones
+
+darkmode (2.1.7, Options > General > Dark mode: the quest pages dark with light text, the journal's colours darker)
+- Exehn's request (25 Nov 2026): "Can we have a dark mode toggle for the journal? Especially for reading quests and stuff ... Just give me a toggle that goes dark mode"
+- The colours: the journal's own (UI/ThemeData.lua, the quest page's parchment and ink in Core/Journal.lua), made dark and light here; no outside source
+
+malcinbox (2.1.7, the Horde's Razorfen Downs Route in the thorn maze: the crossed swords with "Kill Ambassador Malcin" and A Host of Evil's objectives)
+- Exehn (25 Nov 2026, screenshot in the thorn maze, the arrow on one of Malcin's spots): "pull up the sword thingy and just say kill Ambassador Malcin. It can spawn in different locations ... and then the host of evil quest objective as well"
+- The maze's extent and middle (45.7-48.9, 87.5-95.6; 47.7, 92.0): the spawns of Ambassador Malcin (12865), the Razorfen Battleguards (7873), Razorfen Thornweavers (7874) and Death's Head Cultists (7872) in the game's data for WoW Forever
+
+darkgrey (2.1.7, dark mode grey instead of near black: everything made from one grey, the quest page's)
+- Exehn (25 Nov 2026): "Can we try making dark mode slightly more gray instead of black?"
+
+raresig (2.1.7, the Dungeon Tracker finding Ragglesnout: the game shows him as an elite, not a rare)
+- Exehn (25 Nov 2026, screenshots in Razorfen Downs, Ragglesnout targeted, the tracker showing "Ragglesnout not found"): "Raggle's note is not getting tracked by the tracker"
+- His level (40), the gold elite dragon and his type: the game's own target frame in the screenshots; the other level 39-41 elites of the Downs and their types (Skeletal Summoner, Splinterbone Captain, Freezing Spirit: undead; Tuten'kash, Plaguemaw, Glutton, Lady Falther'ess: bosses or not humanoid): the game's creature data as pfQuest's database has it
+- His fight's encounter ID (2783): Data/RunLogEncounters.lua (encounterids above)
+- Ragglesnout's level 40 (was 37 in the journal): Exehn (25 Nov 2026), "you should definitely put this level to 40 ... Always trust the screenshots"; https://www.wowhead.com/forever/npc=7354 (level 40, Elite, Humanoid)
+- Tsu'zee left without a signature for now: https://www.wowhead.com/forever/npc=11467 gives her as a level 59 elite undead, as the Eldreth ghosts round her in the Capital Gardens are (58-59, elite, undead)
+
+arrowsafe, hintfinal (2.1.7, the arrow: drawn again if a drawing fails part way, not left faded out; a spot's line only near the spot itself)
+- Exehn (25 Nov 2026, screenshot at Morgan's Vigil, Marshal Windsor taken, no arrow): "Well, the arrow is just not there at all"
+
+tofstart (2.1.7, A Taste of Flame's chain starts with Velarok Windblade's six steps)
+- Exehn (25 Nov 2026, screenshot of the A Taste of Flame page and his step list, with https://www.wowhead.com/forever/quest=3441/divine-retribution): "The real Taste of Flame quest starts from a divine retribution and then follows this particular order until we get to Squire"
+- Order, levels, required levels, objectives, items, XP, money, the torch (3454 ends at the Torch of Retribution, object 149047) and 3452 being elite: Wowhead Forever quest pages 3441, 3442, 3443, 3452, 3453, 3454; the order also matches pfQuest's prerequisites (3441 > 3442 > 3443 > 3452 > 3453 > 3454 > 3462)
+- Who drops the Hearts of Flame, Golem Oil, Thorium Plated Daggers and Symbols of Ragnaros, the farming spots and the torch's spot: forever-db (Polestar) drops and spawns
+- Names and objectives in German, French and Spanish, and 3441's in Russian: Wowhead Forever's localized quest pages; the other languages: the game's quest texts (pfQuest's locale files) with Velarok's name as Forever has it
+- The drop places (Exehn, 25 Nov 2026, the Heart of Flame tooltip): "I don't like how you say it's in the middle of the gorge. You should just say in the area, like in the whole zone, because they can be everywhere"
+
+capitalpill (2.1.7, Ever After's reputation in the green reputation box)
+- Exehn (25 Nov 2026, screenshot of the Ever After page, "+300 with your faction's capitals" as plain text under the rewards): "We want the green one ... plus 300 alliance capitals"
+- The amount: Wowhead Forever's Ever After page (82062), as before; the box names the capitals of the faction the quest list is showing
+
+routefirst (2.1.7, a Route that is on leads the arrow before a tracked chain page)
+- Exehn (25 Nov 2026, Morgan's Vigil, the Onyxia page tracked, then the Blackrock Depths Route started, the arrow at Marshal Windsor with "Find a group and enter Blackrock Depths"): "You can combine routings, but obviously if I track BRD and I'm on the jailbreak step, it doesn't make sense for the [arrow] to send me directly inside BRD, right? You should start with the BRD chain"
+
+donecount (2.1.7, the quest list's header: the quests handed in out of all of them)
+- Vakos on Discord (25 Nov 2026, screenshot of "Quests | 7" on Blackmaw Hold): "So instead of the image just saying '7', make it say '7/7' if you completed all of the dungeon's quests for example, or however many quests you've done so far out of 7"; Exehn: "we should do this"
+
+nocorefrag (2.1.7, the Core Fragment's pin taken off the Blackrock Depths map)
+- Exehn (25 Nov 2026, screenshot of the Blackrock Depths map with the Core Fragment pin, Attunement to the Core): "remove core fragment from the map"
+
+pyroninside (2.1.7, the BRD Route: Overmaster Pyron handed in after the run)
+- Exehn (25 Nov 2026, at Jalinda Sprig, Overmaster Pyron just taken, the arrow back to her): "i talked to her got the quest but it still wants me to talk to her"
+- Pyron is killed inside Blackrock Depths, in the quarry: the quest's own objective ("You recall Jalinda talking about Pyron guarding the quarry"), Wowhead Forever quest 4262
+
+kroldokhorde (2.1.7, a Route for Krol'dok Stronghold's Horde quests)
+- Exehn (25 Nov 2026): "create Riverglade horde route"
+- The chain and its givers: as on the journal's pages (kroldokchains2, muggchain). Where each step is done: forever-db (Polestar) spawns of the mobs (Meadowsbrook Farmhands, Farholde Priests and Scouts, the Sunnyglade cultists, Empowered Brutes, Twilight Ritualists, Chogg'Zac, Twilight Maulers and Firecallers, Klunk, the Twilight's Shroud cultists, Rog'mar Scouts, the Ogre Miner, Overlord Kilgar)
+- The Feed Satchels west of Wheeler's Grange (46.6, 81.3) and A Message in Blood taken with Food for the Taking ("I could take both at once"): Wowhead Forever comments on quest 93787, https://www.wowhead.com/forever/quest=93787
+- Digging for Answers' miner is Clubtoe ("Twilight miner convinced" at Clubtoe), the stairs down to the cave at 50, 46: Wowhead Forever quest 94727 and its comments, https://www.wowhead.com/forever/quest=94727
+- Undercity's auction house for the Route's purchases (Auctioneer Leeka, Trade Quarter): forever-db spawn
+
+ragnarkharanos (2.1.7, Ragnar Thunderbrew's spot names Kharanos)
+- Exehn (25 Nov 2026, the arrow to Ragnar Thunderbrew for Hurley Blackbreath, taken in Ironforge): "This quest should say where the guy is. So it should say Kharanos. Because I got it in Ironforge and I got confused where it was"
+
+relicloot (2.1.7, the arrow's loot bag at things to click: the Thaurissan Relics, the Feed Satchels, the Twilight Ritual Circles)
+- Exehn (25 Nov 2026, the arrow's crossed swords at the Ruins of Thaurissan, The Smoldering Ruins of Thaurissan 0/12 Information Recovered): "This is a pickup quest, not a kill quest. You need to fix the tracker icon"
+
+tomestart (2.1.7, the Paladin chain for The Test of Righteousness starts with The Tome of Valor 1649 and 1650)
+- Exehn (25 Nov 2026, screenshot of https://www.wowhead.com/forever/quest=1649/the-tome-of-valor): "add this quest real quick. We forgot it. It's the first step for the Paladin quest in Shadowfang Keep"
+- 1649 (level 20, 390 XP, ends at Duthorian Rall) and 1650 (level 23, 1,850 XP, Duthorian Rall to Daphne Stilwell): Wowhead Forever quest pages 1649 and 1650; the Tome of Valor (item 6776) starts 1649: https://www.wowhead.com/forever/item=6776 ; 1650 needs 1649 and 1651 needs 1650: pfQuest's prerequisites
+- Names and objectives in each language: the game's quest texts (pfQuest's locale files)
+
+chainwall, legacylast (2.1.7, the Route: a too-high quest's chain is done up to the first step too high; Dark Iron Legacy right before going in)
+- Exehn (25 Nov 2026, level 51 on the Blackrock Depths Route, A Taste of Flame (52) greyed and the arrow to Dark Iron Legacy): "even if the main quest is higher level, the tracker should still [let] me do the whole chain, if I can do it ... the whole chain starts from level 40 ... just keeps going until you hit the wall. And then it should tell me to do that quest instead of going to Dark Iron Legacy, because that's one of the last quests, since you need to die basically near BRD, and you want to do that when you enter the dungeon"
+
+npcids217 (2.1.7, the arrow's picture for the NPCs added in 2.1.7: Velarok Windblade, Squire Maltrake, Clubtoe, the Twilight Brute, Klunk, Overlord Kilgar, Auctioneer Leeka)
+- Exehn (25 Nov 2026, the arrow to Velarok Windblade for Divine Retribution with a big ! beside the name): "Why did you randomly change the question mark of the route? ... It was fine before"
+- Their NPC IDs: forever-db (Polestar) npc table
+
+underground (2.1.7, the arrow in the Slag Pit: "leave The Slag Pit first" in place of the yards to a person above ground)
+- Exehn (25 Nov 2026, in the Slag Pit under Velarok Windblade, the arrow "Forging the Shaft, 30 yds"): "If I'm in the Slag Pit, it needs to understand that I'm not able to turn in the quest because I'm underground"
+- The Slag Pit, an underground mine in the Cauldron: https://warcraft.wiki.gg/wiki/Slag_Pit ; the game's subzone text there: his screenshot ("The Slag Pit")
+- Exehn (25 Nov 2026): "There are many exits though. You can just remove the arrow for this part and say you're [under]ground, leave the Slag Pit ... Once you leave, the arrow is gonna come back": no arrow while down there
+
+velarokfield (2.1.7, no "Get to Thorium Point" on the arrow to Velarok Windblade, Squire Maltrake, the hoard and the torch)
+- Exehn (25 Nov 2026, the map's ? for Forging the Shaft at 39.2, 38.9): "Why does this say to Thorium Point? I have to turn in this quest. It's not in Thorium Point"
+
+openfield (2.1.7, the arrow walks straight to Velarok Windblade, Squire Maltrake, the hoard and the torch from the open ground west and south of them, Searing Gorge 27-42, 35-46; before, the walking net led round by Thorium Point)
+- Exehn (25 Nov 2026, screenshots on Firewatch Ridge at 28.3, 41.1 and 29.1, 41.3, the arrow pointing north, 456 and 466 yards; the map's ? at 39.3, 39.3): "look at where I'm standing, and look at where it's pointing. And look at where the question mark is"
+
+twolines / goalscale (2.1.7, the arrow's black box at a place to kill or collect: a long "what to do here" line on two lines; a grip in the box's bottom right corner sets the size of its text, 0.6 to 1.6, the arrow itself not)
+- Exehn (25 Nov 2026, The Flame's Casing at the Twilight's Hammer camp): "It's just way too big ... we should have it in 2 lines. And maybe give it a resizer ... on the bottom right that you can use to rescale it. It's not gonna rescale the arrow itself, but it's gonna rescale these messages"
+- Grip art: the game's own chat window size grabber (Interface\ChatFrame\UI-ChatIM-SizeGrabber)
+
+gripfollow (2.1.7, the box's resize grip stays under the cursor: the size follows the cursor's distance from the box's middle, without steps)
+- Exehn (25 Nov 2026): "The rescheduler is not working. It's really bad. It's dragging extremely awkwardly"
+
+gripgrow (2.1.7, the box's text size is always set from the journal's own font at size 1, never from the text's current size, so a drag no longer grows it again every frame; steps of 0.02)
+- Exehn (25 Nov 2026, the box's text past the edges of the screen): "I cannot resize ... It's either not working when I drag, or it jumps to insanely big really fast"
+
+ladderquiet (2.1.7, the dungeon maps' ladders show no text on the map; "Level 2", "Jump down", "Shark exit" and the rest only on hover, in their own colour)
+- Exehn (25 Nov 2026, Shadowfang Keep's map, "Level 2" over the ladder): "remove the level 2's text on top of the ladder and everything else that's on top of the ladder. Just leave it as a tooltip ... The map looks bad"
+
+equipline / equiptorch (2.1.7, written to the PC copy outside this vault on 25 Nov 2026 at 23:41 and taken in: "Equip Torch of Retribution" under the arrow at the four towers of Set Them Ablaze! until the torch is worn; in every language)
+- Exehn (25 Nov 2026, on the Northern Tower, as quoted in the code): "remind the player to equip the staff ... equip torch of retribution. And if you have it equipped, then the message disappears"
+
+slitherrock (2.1.7, the arrow walks straight to Cyrus Therepentous from the ground around Morgan's Vigil and up the valley east of Dreadmaul Rock, Burning Steppes 78-97, 48-72 and 84-99, 25-48; before, the walking net led west round the main road, 1,425 yards for 694; spot.direct may now hold several boxes)
+- Exehn (25 Nov 2026, screenshots at 80.9, 60.4, cursor on Cyrus's X at 94.4, 31.8): "the arrow has no idea where I'm going right now ... It's not understanding burning steps that well, at least this quest"
+- Wowhead (quest 4022 comments): "it's the cave to the NE along the Mountains"; (quest 4023): "Its in the top right corner"
+
+sfkfresh (2.1.7, Shadowfang Keep Level 1: his fresh copy of the map in place of the game's tiles with the faded parchment patches; Commander Springvale's pin on the printed skull in the green room (27.9, 60.0), the Fel Steed / Shadow Charger moved to 32.2, 59.5, the Level 2 ladder to the curved stair at 35.8, 67.5)
+- Exehn (25 Nov 2026, his Level 1 screenshot marked with a green and a red dot, and the map image dungeon-310.jpg): "where the skull is a bit faded ... put the Commander Springvale there ... the level 2 ladder ... put it on the red dot ... the Felstead, a little bit more in the middle to the green dot ... this is the map you can use and replace all the pins in the right position now"
+- Map image: Wowhead's map of Shadowfang Keep (uiMap 310, dungeon-310.jpg), the game's own art; given by Exehn
+
+openline / openhoard (2.1.7, the arrow to Cyrus Therepentous for A Taste of Flame (4022) says "Open Hoard of the Black Dragonflight" while the hoard (10569) is in the bags and its Black Dragonflight Molt (10575) is not; in every language)
+- Exehn (26 Nov 2026, at Cyrus with the hoard unopened): "remind the player that it has to open the hoard of the dragonflight. Because without that, you cannot keep going ... You cannot present proof without that"
+- Item IDs: forever-db (10569 is the reward of Trinkets..., 3481)
+
+ghosttalk (2.1.7, the arrow to Franclorn Forgewright for Dark Iron Legacy: alive and within 150 yards, "Die in the lava near the chain"; dead or a ghost, "Talk to Franclorn Forgewright as a ghost"; at his spot in place of "Talk to"; in every language)
+- Exehn (26 Nov 2026, on the Molten Span 95 yards from him): "once I'm close, it should say, die in the lava near the chain. And then once I'm a ghost, it's gonna say, talk to this NPC as a ghost"
+
+sfktower (2.1.7, Shadowfang Keep: the tower's round room is Level 3, Arugal's Chamber Level 4; Fenrus the Devourer on the round room's printed skull (54.3, 53.8), Arugal's Voidwalker beside him (59.3, 53.8), the ladder to Level 4 at 43.2, 74.4; Wolf Master Nandos, Archmage Arugal and The Book of Ur moved with Arugal's Chamber to Level 4)
+- Exehn (26 Nov 2026, the map image dungeon-313.jpg and the same map marked with a green dot): "We want to use this map as level 3 of Shadowfang Keep. And the current level 3 is going to be level 4 ... Fenrus the Devourer and the Void Walker. On the skull and right next to the skull ... the ladder on the green dot to level 4"
+- Map image: Wowhead's map of Shadowfang Keep (uiMap 313, dungeon-313.jpg), the game's own art; given by Exehn
+
+ghostfirst (2.1.7, a ghost within 250 yards of Franclorn Forgewright (spot.ghostTalk) is led to him, not to the corpse; further off, the corpse as before)
+- Exehn (26 Nov 2026, a ghost on the Molten Span, the arrow to "Your corpse"): "As soon as I enter the molten span, the arrow should guide me to the NPC. We should not guide me to the corpse. I need to get to the NPC first"
+
+sfkclean (2.1.7, Shadowfang Keep Level 4: the journal's own copy of the map with the two printed skulls painted over with the floor around them, in place of the faded patches; Archmage Arugal's pin moved to 62.5, 19.1)
+- Exehn (26 Nov 2026, his Level 4 screenshot marked with a green dot): "Can we move Arugula? To the green dot. And I don't like that the skull is faded on this page ... paint over it the same terrain that's around it so it's completely concealed"
+- Map: the journal's own copy of the game's art (Media\Maps\ShadowfangKeep6), retouched
+
+sfkladder2 (2.1.7, Shadowfang Keep Level 2: the ladder to Level 3 moved from 51.5, 91.5 to 43.0, 35.7, the foot of the stairs in the north-west building)
+- Exehn (26 Nov 2026, his zoomed Level 2 screenshot marked with a green dot): "We need to move the level 3 ladder ... very far away from the where it is now ... put it on the green dot"
+
+bmhpins (2.1.7, Blackmaw Hold Level 1: Impaan the Imprisoner at 42.4, 70.0, Moontouched Wanderer at 58.9, 84.2, Bonesnout the Unbroken at 71.1, 77.3, and the ladder to Level 2 at 71.0, 32.8)
+- Exehn (26 Nov 2026, his Level 1 map marked with a green, red, yellow and purple dot): "The green is Impaan. The red dot is Moontouched. The yellow dot is going to be Bonesnout. The purple dot is where you put the ladder to level 2"
+
+bmhpins2 (2.1.7, Blackmaw Hold Level 2, the Festering Grotto: Withermaw at 71.5, 26.9, the ladder to Level 3 at 57.8, 79.1)
+- Exehn (26 Nov 2026, his Level 2 map marked with a purple and a yellow dot): "for the level 2, purple dot is gonna be withermaw. yellow dot is ladder to lv 3"
+
+bmhpins3 (2.1.7, Blackmaw Hold Level 3, Depths of the Fallen Grove: the Unbound Spirit at 58.5, 35.0, the ladder to Level 4 at 31.3, 29.8)
+- Exehn (26 Nov 2026, his Level 3 map marked with a black and an orange dot): "the black dot is the unbound spirit. And the orange dot is going to be level 4"
+
+bmhpins4 (2.1.7, Blackmaw Hold Level 4, Depths of the Elders: Elder Shaman Bloodmane at 44.7, 36.3, the ladder to Level 5 at 65.4, 67.5)
+- Exehn (26 Nov 2026, his Level 4 map marked with a yellow and a red dot): "the yellow dot is going to be Elder Shaman ... the red dot is going to be to level 5"
+
+bmhpins5 (2.1.7, Blackmaw Hold Level 5, Depths of the Burrow: Blackmaw Behemoth at 55.8, 34.7, the ladder to Level 6 at 65.1, 32.9, and The Twin Bears' Totem of Ursoc as a quest spot at 47.4, 51.3, its name in every language)
+- Exehn (26 Nov 2026, his Level 5 map marked with a red, a yellow and a green dot): "the red dot is black behemot, and the yellow dot is to level 6. green dot is totem of ursoc quest piece"
+- Totem of Ursoc: item 249694 (forever-db); its names: Wowhead Forever's item page in each language
+
+bmhpins6 (2.1.7, Blackmaw Hold Level 6, Depths of Forbidden Magic: Varrox Bleakhoof at 63.8, 58.6)
+- Exehn (26 Nov 2026, his Level 6 map marked with a red dot): "the red dot is the final boss Varrox"
+
+bmhursol (2.1.7, Blackmaw Hold Level 4: The Twin Bears' Totem of Ursol as a quest spot at 43.1, 44.5, just below Elder Shaman Bloodmane; its name in every language)
+- Exehn (26 Nov 2026, his Level 4 map with a red dot below Bloodmane): "you can place like the other part of the totem ... totem of Ursol. It's in this room as well, so you can place it near the boss here"
+- Totem of Ursol: item 249693 (forever-db); its names: Wowhead Forever's item page in each language
+
+bmhlevels / bmharrive (2.1.7, Blackmaw Hold: a new Level 3, Blackmaw Grove's map again, entered from the cave by the Festering Grotto's name, with its ladder to the Depths of the Fallen Grove at 78.7, 51.2; the depths are now Levels 4 to 7 with their pins, ladders and totems; and on Levels 2 to 6 a green arrow, in the style of Upper Blackrock Spire's, where the level is entered, pointing the way he drew)
+- Exehn (26 Nov 2026, five maps marked with orange arrows and one with a green dot): "use the same style arrows that we're using in UBRS ... to tell the player which side, where they're spawning when they enter a level ... We should add a level 3, which is the same as my last screenshot, because we actually reappear from that cave at the top"; "the level is on the green dot. So you gotta adjust the levels now"
+
+gillpatrol (2.1.7, The Drowned City: Gill's pin walks round the courtyard in the middle of Level 1, a lap about every 33 seconds, standing still while the pointer is on it; on the journal's map and on the M map inside the dungeon, which draws the same pins)
+- Exehn (26 Nov 2026, his map with a red loop round the courtyard): "I just wanna make one boss move. And if you hover the boss, it's gonna stop moving ... in the drowned city, we're gonna add the Gill portrait. And it's gonna follow basically around the circle here ... confirm that this also works when they press M on the dungeon"
+
+walkstop (2.1.7, a walking boss pin's tooltip says "Right-click to stop it moving"; a right-click stops every walking pin, another sets them going again, kept for all characters; in every language)
+- Exehn (26 Nov 2026): "give it just a tooltip that says right click to stop moving. It might be annoying for some people to see them moving all the time"
+
+rfcsatchel (2.1.7, Ragefire Chasm: Maur Grimtotem's ! / ? for the Lost Satchel quests moved into Oggleflint's room, set against the top right of his pin like a badge)
+- Exehn (26 Nov 2026, the pin out east of the room): "It should be in the same spot as the boss ... Try to put a pin in the same boss room, but make it clean"
+
+hotattendant (2.1.7, Hall of Thanes: An Ancient Grudge's ! / ? at the Ghostly Attendant, 42.7, 64.7, left of Faldrim Anvilmar; the Attendant's name in every language, German corrected to the game's "Geisterhafte Bedienstete")
+- Exehn (26 Nov 2026, his Hall of Thanes map with a black dot): "The quest that starts at the ghostly attendant on the black dot"
+- Ghostly Attendant: Wowhead Forever NPC 265002 (from quest 96395's page), its name in each language
+
+urbook (2.1.7, Shadowfang Keep: The Book of Ur's quest spot moved from Arugal's Chamber to Level 3, the round room, just inside its west wall left of Fenrus, 45.1, 53.8)
+- Exehn (26 Nov 2026): "The book of Ur quest is in the wrong room. It should be in the level 3, to the left of Fenrus, against the wall"
+
+gnomepins (2.1.7, Gnomeregan: the Sparklematic 5200's pin just left of the Dormitory's way down to Level 2, 45.2, 87.7; Kernobee's escort, A Fine Mess, in the Dormitory on Level 2, 77.6, 79.7; Kernobee's name in every language)
+- Exehn (26 Nov 2026): "this quest should basically be kind of where the stairs are, where the ladder is to level 2, to the left of the ladder. Also, we can add the escort quest ... on the green dot in the dormitory"
+- Kernobee: Wowhead Forever NPC 7850 (from quest 2904's page), his name in each language
+
+smlibentrance (2.1.7, Scarlet Monastery: Library: the entrance on the swirl at the top left, 13.0, 24.5, its name under it to the left)
+- Exehn (26 Nov 2026): "Scarlet Monastery Library does not have our entrance. You should put the entrance on the whirlwind, and the entrance text should be below it. Below it to the left. Make sure it doesn't go over things on the map"
+
+bossgroup / imperialgap (2.1.7, Blackrock Depths: the Ring of Law's six challengers in one skull pin; a click lists them under it, each to its boss page; the Ring of Law's name in every language; Emperor Dagran Thaurissan and Princess Moira side by side, no longer on top of each other)
+- Exehn (26 Nov 2026): "In BRD, the ring of law is a complete mess. With all those boss pins together, I think we should just have a skull icon, and then you can click on it and it's gonna show you below all the ring bosses ... And make sure that Emperor and Princess pins do not overlap"
+- The Ring of Law's names: Dark Iron Legacy's text in each language (pfQuest's game texts; Traditional Chinese: Wowhead Forever's quest 3802)
+
+groupup (2.1.7, Blackrock Depths: the Ring of Law's list opens above its skull pin, not under it where the map's edge cut it off; Emperor and Princess a ring's width apart)
+- Exehn (26 Nov 2026, the list showing only Gorosh at the map's bottom edge): "it's not working because it doesn't show all the bosses. They should just appear ... at the top of the ring of law icon"

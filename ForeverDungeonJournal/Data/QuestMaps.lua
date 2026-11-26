@@ -139,12 +139,16 @@ FDJ.QUEST_START_MAPS = {
     [3907] = { mapID = 1418, x = 0.034, y = 0.482, label = "Thunderheart — Badlands", targetName = "Thunderheart" },
     [3981] = { mapID = 1418, x = 0.058, y = 0.474, label = "Galamav the Marksman — Badlands", targetName = "Galamav the Marksman" },
     [4003] = { mapID = 1454, x = 0.320, y = 0.378, label = "Thrall — Orgrimmar", targetName = "Thrall" },
-    [4024] = { mapID = 1428, x = 0.948, y = 0.316, label = "Cyrus Therepentous — Burning Steppes", targetName = "Cyrus Therepentous" },
+    -- (slitherrock, 2.1.7: the straight line up Terror Wing Path, Data/QuestUpdates.lua)
+    [4024] = { mapID = 1428, x = 0.948, y = 0.316, label = "Cyrus Therepentous — Burning Steppes", targetName = "Cyrus Therepentous", direct = { { 0.78, 0.48, 0.97, 0.72 }, { 0.84, 0.25, 0.99, 0.48 } } },
     [4063] = { mapID = 1418, x = 0.258, y = 0.450, label = "Lotwil Veriatus — Badlands", targetName = "Lotwil Veriatus" },
     [4081] = { mapID = 1418, x = 0.038, y = 0.475, label = "WANTED poster — Kargath, Badlands", targetName = "WANTED" },
     [4082] = { mapID = 1418, x = 0.040, y = 0.468, label = "KILL ON SIGHT poster — Kargath, Badlands", targetName = "KILL ON SIGHT" },
     [4123] = { mapID = 1428, x = 0.652, y = 0.238, label = "Maxwort Uberglint — Burning Steppes", targetName = "Maxwort Uberglint" },
-    [4126] = { mapID = 1426, x = 0.468, y = 0.524, label = "Ragnar Thunderbrew — Dun Morogh", targetName = "Ragnar Thunderbrew" },
+    -- ragnarkharanos (2.1.7, M 25 Nov 2026, Hurley Blackbreath taken in
+    -- Ironforge: "This quest should say where the guy is. So it should say
+    -- Kharanos"): the town in the label, so the arrow says "Get to Kharanos".
+    [4126] = { mapID = 1426, x = 0.468, y = 0.524, label = "Ragnar Thunderbrew — Kharanos, Dun Morogh", targetName = "Ragnar Thunderbrew" },
     [4132] = { mapID = 1418, x = 0.058, y = 0.474, label = "Warlord Goretooth — Badlands", targetName = "Warlord Goretooth" },
     [4134] = { mapID = 1418, x = 0.030, y = 0.476, label = "Shadowmage Vivian Lagrave — Badlands", targetName = "Shadowmage Vivian Lagrave" },
     [4136] = { mapID = 1428, x = 0.660, y = 0.220, label = "Yuka Screwspigot — Burning Steppes", targetName = "Yuka Screwspigot" },
@@ -349,11 +353,8 @@ FDJ.MAP_QUEST_PINS = {
                 { id = 4083, name = "The Spectral Chalice", dungeon = "Blackrock Depths", acts = { "start", "end" } },
             } },
         } },
-        { floor = 2, x = 0.693, y = 0.370, spots = {
-            { name = "Core Fragment", quests = {
-                { id = 7848, name = "Attunement to the Core", dungeon = "Blackrock Depths", acts = { "loot" }, item = 18412, itemName = "Core Fragment" },
-            } },
-        } },
+        -- nocorefrag (2.1.7, M 25 Nov 2026: "remove core fragment from the
+        -- map"): the Core Fragment's pin (Attunement to the Core) is gone.
         { floor = 2, x = 0.514, y = 0.591, spots = {
             { name = "Mistress Nagmara", quests = {
                 { id = 4201, name = "The Love Potion", dungeon = "Blackrock Depths", acts = { "start", "end" } },
@@ -449,12 +450,22 @@ FDJ.MAP_QUEST_PINS = {
         } },
     },
     ["Gnomeregan"] = {
-        { floor = 1, x = 0.427, y = 0.660, spots = {
+        -- gnomepins (2.1.7, M 26 Nov 2026: "this quest should basically be
+        -- kind of where the stairs are, where the ladder is to level 2, to the
+        -- left of the ladder. Also ... the escort quest ... on the green dot
+        -- in the dormitory"): the Sparklematic 5200 just left of the Dormitory's
+        -- way down; Kernobee (A Fine Mess) in the Dormitory on Level 2.
+        { floor = 1, x = 0.452, y = 0.877, spots = {
             { name = "The Sparklematic 5200", quests = {
                 { id = 2951, name = "The Sparklematic 5200!", dungeon = "Gnomeregan", acts = { "start", "end" } },
                 { id = 2945, name = "Grime-Encrusted Ring", dungeon = "Gnomeregan", main = 2948, acts = { "end" } },
                 { id = 2947, name = "Return of the Ring", dungeon = "Gnomeregan", main = 2948, acts = { "start" } },
                 { id = 2949, name = "Return of the Ring", dungeon = "Gnomeregan", main = 2950, acts = { "start" } },
+            } },
+        } },
+        { floor = 2, x = 0.776, y = 0.797, spots = {
+            { name = "Kernobee", quests = {
+                { id = 2904, name = "A Fine Mess", dungeon = "Gnomeregan", acts = { "start" } },
             } },
         } },
         { floor = 4, x = 0.354, y = 0.177, spots = {
@@ -463,8 +474,24 @@ FDJ.MAP_QUEST_PINS = {
             } },
         } },
     },
+    -- hotattendant (2.1.7, M 26 Nov 2026, his Hall of Thanes map with a black
+    -- dot left of Faldrim Anvilmar: "the quest that starts at the ghostly
+    -- attendant on the black dot"): An Ancient Grudge, taken and handed in
+    -- there (Ghostly Attendant, NPC 265002, Wowhead Forever).
+    ["Hall of Thanes"] = {
+        { floor = 1, x = 0.427, y = 0.647, spots = {
+            { name = "Ghostly Attendant", quests = {
+                { id = 96395, name = "An Ancient Grudge", dungeon = "Hall of Thanes", acts = { "start", "end" } },
+            } },
+        } },
+    },
     ["Ragefire Chasm"] = {
-        { floor = 1, x = 0.618, y = 0.387, spots = {
+        -- rfcsatchel (2.1.7, M 26 Nov 2026, the ! / ? out east of Oggleflint's
+        -- room: "It should be in the same spot as the boss ... Try to put a pin
+        -- in the same boss room, but make it clean"): on Oggleflint's spot, a
+        -- touch up and right, so pinclear (Systems/MapMarkers.lua) sets it
+        -- against the top right of his ring at any zoom, like a badge.
+        { floor = 1, x = 0.571, y = 0.363, spots = {
             { name = "Maur Grimtotem", quests = {
                 { id = 5724, name = "Returning the Lost Satchel", dungeon = "Ragefire Chasm", acts = { "start" } },
                 { id = 5722, name = "Searching for the Lost Satchel", dungeon = "Ragefire Chasm", main = 5724, acts = { "end" } },
@@ -536,9 +563,31 @@ FDJ.MAP_QUEST_PINS = {
                 { id = 1098, name = "Deathstalkers in Shadowfang", dungeon = "Shadowfang Keep", acts = { "end" } },
             } },
         } },
-        { floor = 3, x = 0.472, y = 0.793, spots = {
+        -- urbook (2.1.7, M 26 Nov 2026: "The book of Ur quest is in the wrong
+        -- room. It should be in the level 3, to the left of Fenrus, against the
+        -- wall"): in the round room, just inside its west wall at Fenrus's height.
+        { floor = 3, x = 0.451, y = 0.538, spots = {
             { name = "The Book of Ur", quests = {
                 { id = 1013, name = "The Book of Ur", dungeon = "Shadowfang Keep", acts = { "loot" }, item = 6283, itemName = "The Book of Ur" },
+            } },
+        } },
+    },
+    -- bmhpins5 (2.1.7, M 26 Nov 2026, his Level 5 map of Blackmaw Hold: "green
+    -- dot is totem of ursoc quest piece"): The Twin Bears' Totem of Ursoc
+    -- (item 249694, forever-db), in the Depths of the Burrow.
+    -- bmhursol (same night, his Level 4 map with a red dot just below
+    -- Elder Shaman Bloodmane: "the other part of the totem ... totem of
+    -- Ursol. It's in this room as well ... near the boss"): the Totem of
+    -- Ursol (item 249693, forever-db), in the Depths of the Elders.
+    ["Blackmaw Hold"] = {
+        { floor = 5, x = 0.431, y = 0.445, spots = { -- (bmhlevels: the Depths of the Elders are Level 5 now)
+            { name = "Totem of Ursol", quests = {
+                { id = 92066, name = "The Twin Bears", dungeon = "Blackmaw Hold", acts = { "loot" }, item = 249693, itemName = "Totem of Ursol" },
+            } },
+        } },
+        { floor = 6, x = 0.474, y = 0.513, spots = { -- (bmhlevels: the Depths of the Burrow are Level 6 now)
+            { name = "Totem of Ursoc", quests = {
+                { id = 92066, name = "The Twin Bears", dungeon = "Blackmaw Hold", acts = { "loot" }, item = 249694, itemName = "Totem of Ursoc" },
             } },
         } },
     },

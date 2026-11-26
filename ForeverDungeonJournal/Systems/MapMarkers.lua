@@ -4063,6 +4063,82 @@ do
     -- him up to the ruins' gate. The game names the quarter one stands in
     -- (the minimap's "Magic Quarter"): standing in one of them is down in
     -- the city, whatever else says.
+    -- underground (2.1.7): places under the ground the game names by subzone
+    -- (English names; the game's own text is shown).
+    Way.UNDER = { ["The Slag Pit"] = true }
+    function Way.UnderHere()
+        if type(GetSubZoneText) ~= "function" then return nil end
+        local ok, sub = pcall(GetSubZoneText)
+        if not ok or type(sub) ~= "string" or sub == "" or (type(issecretvalue) == "function" and issecretvalue(sub)) then return nil end
+        return Way.UNDER[sub] and sub or nil
+    end
+    do
+        local strings = {
+            enUS = "You're underground: leave %s first", deDE = "Ihr seid unter der Erde: Verlasst zuerst %s",
+            frFR = "Vous êtes sous terre : quittez d'abord %s", esES = "Estás bajo tierra: sal primero de %s",
+            itIT = "Sei sottoterra: esci prima da %s", ptBR = "Você está no subsolo: saia primeiro de %s",
+            ruRU = "Вы под землёй: сначала выйдите из %s", koKR = "지하에 있습니다. 먼저 %s에서 나가세요",
+            zhCN = "你在地下：请先离开%s", zhTW = "你在地下：請先離開%s",
+        }
+        strings.esMX = strings.esES
+        for locale, value in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_UNDERGROUND == nil then t.ARROW_UNDERGROUND = value end
+        end
+    end
+    -- ghosttalk (2.1.7): "Die in the lava near the chain" / "Talk to <NPC> as a ghost"
+    do
+        local strings = {
+            enUS = { "Die in the lava near the chain", "Talk to %s as a ghost" },
+            deDE = { "Stirb in der Lava bei der Kette", "Sprich als Geist mit %s" },
+            frFR = { "Mourez dans la lave près de la chaîne", "Parlez à %s sous forme de fantôme" },
+            esES = { "Muere en la lava cerca de la cadena", "Habla con %s como fantasma" },
+            itIT = { "Muori nella lava vicino alla catena", "Parla con %s come fantasma" },
+            ptBR = { "Morra na lava perto da corrente", "Fale com %s como fantasma" },
+            ruRU = { "Умрите в лаве у цепи", "Поговорите в облике призрака: %s" },
+            koKR = { "사슬 근처 용암에서 죽으세요", "유령 상태로 %s|1과;와; 대화하세요" },
+            zhCN = { "在锁链附近的熔岩中死亡", "以灵魂状态与%s交谈" },
+            zhTW = { "在鎖鏈附近的熔岩中死亡", "以靈魂狀態與%s交談" },
+        }
+        strings.esMX = strings.esES
+        for locale, value in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t then
+                if t.ARROW_DIE_LAVA == nil then t.ARROW_DIE_LAVA = value[1] end
+                if t.ARROW_TALK_GHOST == nil then t.ARROW_TALK_GHOST = value[2] end
+            end
+        end
+    end
+    -- openline (2.1.7): "Open <item>" (see the line itself, further down)
+    do
+        local strings = {
+            enUS = "Open %s", deDE = "Öffne %s",
+            frFR = "Ouvrez %s", esES = "Abre %s",
+            itIT = "Apri %s", ptBR = "Abra %s",
+            ruRU = "Откройте: %s", koKR = "%s|1을;를; 여세요",
+            zhCN = "打开%s", zhTW = "打開%s",
+        }
+        strings.esMX = strings.esES
+        for locale, value in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_OPEN == nil then t.ARROW_OPEN = value end
+        end
+    end
+    -- equipline (2.1.7): "Equip <item>" (see the line itself, further down)
+    do
+        local strings = {
+            enUS = "Equip %s", deDE = "Lege %s an",
+            frFR = "Équipez %s", esES = "Equipa %s",
+            itIT = "Equipaggia %s", ptBR = "Equipe %s",
+            ruRU = "Наденьте: %s", koKR = "%s|1을;를; 착용하세요",
+            zhCN = "装备%s", zhTW = "裝備%s",
+        }
+        strings.esMX = strings.esES
+        for locale, value in pairs(strings) do
+            local t = FDJ.Locales and FDJ.Locales[locale]
+            if t and t.ARROW_EQUIP == nil then t.ARROW_EQUIP = value end
+        end
+    end
     Way.UC.quarters = { "Magic Quarter", "War Quarter", "Rogues' Quarter", "The Apothecarium", "Trade Quarter", "Royal Quarter" }
     function Way.UCQuarterHere()
         if type(GetSubZoneText) ~= "function" then return false end
@@ -5390,6 +5466,30 @@ do
     function Way.InDirectBox(entry, px, py, here)
         local vias = FDJ.ARROW_VIAS and entry and entry.spot and FDJ.ARROW_VIAS[SpotKey(entry.spot)]
         local box = type(vias) == "table" and vias.direct
+        -- openfield (2.1.7, M 25 Nov 2026 on Firewatch Ridge at 28.3, 41.1,
+        -- the arrow to Velarok Windblade at 39, 39 pointing north, 456 yards:
+        -- "look at where I'm standing, and look at where it's pointing"; the
+        -- net knows Searing Gorge's roads only and led round by Thorium
+        -- Point): a place can name its own open ground (spot.direct =
+        -- { x0, y0, x1, y1 } on its map): from inside it, the straight line.
+        -- (slitherrock, the same night: several boxes, { { x0, y0, x1, y1 }, ... },
+        -- for open ground that is no rectangle: Terror Wing Path's valley)
+        if type(box) ~= "table" and entry and type(entry.spot) == "table" and type(entry.spot.direct) == "table" then
+            local d = entry.spot.direct
+            if type(d[1]) == "table" then
+                for _, one in ipairs(d) do
+                    local a = SpotWorld({ mapID = entry.spot.mapID, x = one[1], y = one[2] })
+                    local b = SpotWorld({ mapID = entry.spot.mapID, x = one[3], y = one[4] })
+                    if a and b and a[3] == here and b[3] == here
+                        and px >= math.min(a[1], b[1]) and px <= math.max(a[1], b[1])
+                        and py >= math.min(a[2], b[2]) and py <= math.max(a[2], b[2]) then
+                        return true
+                    end
+                end
+                return false
+            end
+            box = { mapID = entry.spot.mapID, x0 = d[1], y0 = d[2], x1 = d[3], y1 = d[4] }
+        end
         if type(box) ~= "table" then return false end
         local a = SpotWorld({ mapID = box.mapID, x = box.x0, y = box.y0 })
         local b = SpotWorld({ mapID = box.mapID, x = box.x1, y = box.y1 })
@@ -5921,8 +6021,7 @@ do
         -- box (FDJ.ArrowGoalBox).
         if (type(entry.spot.goalLines) == "table" and not inside) ~= (f.fdjGoalBig == true) then
             f.fdjGoalBig = (type(entry.spot.goalLines) == "table" and not inside) or nil
-            f.distance:SetFontObject(f.fdjGoalBig and "ForeverDJ_GameFontHighlightMedium" or "ForeverDJ_GameFontHighlightSmall")
-            f.fdjMeasureText = nil -- (picgap: measured again)
+            FDJ.ArrowGoalFont(f) -- (goalscale, 2.1.7: the box's own size)
             if not f.fdjGoalBig then FDJ.ArrowGoalBox(f, false) end
         end
         if not inside and OnTaxi() then
@@ -6278,11 +6377,12 @@ do
         -- yards (as the tracker shows it), nothing about the way; the arrow
         -- keeps pointing into the area (not while standing on its spot).
         if type(entry.spot.goalLines) == "table" then
-            f.distance:SetText(#entry.spot.goalLines > 0 and table.concat(entry.spot.goalLines, "\n") or (FreeText(entry.spot.detail) or ""))
+            f.distance:SetText(#entry.spot.goalLines > 0 and table.concat(entry.spot.goalLines, "\n") or Way.TwoLines(FreeText(entry.spot.detail) or ""))
             -- goalitems (2.1.3): what to do here ("Kill the crag coyotes
             -- here"), then every material of the step with its count
+            -- (twolines, 2.1.7: a long one on two lines)
             if entry.spot.goalLines.detail and #entry.spot.goalLines > 0 and (FreeText(entry.spot.detail) or "") ~= "" then
-                f.distance:SetText("|cff59ff59" .. FreeText(entry.spot.detail) .. "|r\n" .. (f.distance:GetText() or ""))
+                f.distance:SetText("|cff59ff59" .. Way.TwoLines(FreeText(entry.spot.detail)):gsub("\n", "|r\n|cff59ff59") .. "|r\n" .. (f.distance:GetText() or ""))
             end
             f.route:SetText("")
             f.hearth:SetText("")
@@ -6338,6 +6438,29 @@ do
             f.hearth:SetText("")
             turn = nil
         end
+        -- ghosttalk (2.1.7, M 26 Nov 2026 on the Molten Span, 95 yards from
+        -- Franclorn Forgewright for Dark Iron Legacy: "once I'm close, it
+        -- should say, die in the lava near the chain. And then once I'm a
+        -- ghost, it's gonna say, talk to this NPC as a ghost"): a spot with
+        -- ghostTalk = true: alive and within 150 yards, "Die in the lava near
+        -- the chain"; dead or a ghost, at any distance, "Talk to <NPC> as a
+        -- ghost". At the spot it takes the place of "Talk to <NPC>".
+        if entry.spot.ghostTalk and not inside then
+            local okD, dead = pcall(UnitIsDeadOrGhost, "player")
+            local text
+            if okD and dead then
+                text = FDJ.L("ARROW_TALK_GHOST", FreeText(NPC(entry.spot)) or NPC(entry.spot) or tostring(entry.spot.targetName or ""))
+            elseif distance and distance <= 150 then
+                text = FDJ.L("ARROW_DIE_LAVA")
+            end
+            if text and near then
+                f.distance:SetText("|cff59ff59" .. text .. "|r")
+                f.route:SetText("")
+                f.hearth:SetText("")
+            elseif text then
+                f.route:SetText("|cff8fd0ff" .. text .. "|r")
+            end
+        end
         -- swimplace (2.1.3, M 21 Nov 2026 swimming to the Drowned City's
         -- cavern for Locating the Lost City: "It should say swim underwater,
         -- by the way"): a place under water that is no thing to pick up
@@ -6374,21 +6497,104 @@ do
         -- at the spot itself.
         -- grouphint (2.0.13): a line shown at any distance (spot.hintAlways), over the yards
         -- (plankjump, 2.0.13: spot.hintKey, the line in the player's language)
-        if (type(entry.spot.hint) == "string" or entry.spot.hintKey) and not inside and distance and (distance <= 60 or entry.spot.hintAlways)
-            and not (entry.spot.useAtGoal and type(entry.spot.goalLines) ~= "table") then -- (useatgoal)
+        -- (hintfinal, 2.1.7: within 60 yards of the spot itself, not of a
+        -- flight master on the way: at Morgan's Vigil's gryphon the line about
+        -- Blackrock Depths' prison took the place of "Fly to ...")
+        if (type(entry.spot.hint) == "string" or entry.spot.hintKey) and not inside and distance and ((distance <= 60 and final) or entry.spot.hintAlways)
+            and not (entry.spot.useAtGoal and type(entry.spot.goalLines) ~= "table") -- (useatgoal)
+            and not (entry.spot.runIn and type(entry.spot.goalLines) == "table") then -- malcinbox (2.1.7): there, the box alone
             if near or entry.spot.hintAlways or (entry.spot.useAtGoal and type(entry.spot.goalLines) == "table") then -- (goalbox)
                 f.distance:SetText("|cff8fd0ff" .. FDJ.WrapHint(entry.spot.hintKey and FDJ.L(entry.spot.hintKey) or entry.spot.hint) .. "|r\n" .. (f.distance:GetText() or ""))
             else
                 f.route:SetText("|cff8fd0ff" .. FDJ.WrapHint(entry.spot.hintKey and FDJ.L(entry.spot.hintKey) or entry.spot.hint) .. "|r")
             end
         end
+        -- equipline (2.1.7, M 25 Nov 2026 on the Northern Tower for Set Them
+        -- Ablaze!, the Torch of Retribution in his bags: "remind the player to
+        -- equip the staff ... equip torch of retribution. And if you have it
+        -- equipped, then the message disappears"): a spot's equipItem = {
+        -- itemID, name }: until it is worn, "Equip <item>" under the yards, at
+        -- any distance; gone the moment it is put on.
+        do
+        local wear = entry.spot.equipItem
+        if type(wear) == "table" and wear[1] and not inside then
+            local worn
+            local isOn = (C_Item and type(C_Item.IsEquippedItem) == "function" and C_Item.IsEquippedItem) or IsEquippedItem
+            if type(isOn) == "function" then
+                local okW, w = pcall(isOn, wear[1])
+                if okW then worn = w and true or false end
+            end
+            if worn == nil and type(GetInventoryItemID) == "function" then
+                worn = false
+                for _, slot in ipairs({ 16, 17, 18 }) do
+                    local okS, id = pcall(GetInventoryItemID, "player", slot)
+                    if okS and id == wear[1] then worn = true end
+                end
+            end
+            if worn == false then
+                local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+                local okN, itemName = pcall(getInfo, wear[1])
+                itemName = (okN and type(itemName) == "string" and itemName ~= "") and itemName or tostring(wear[2] or "")
+                local text = "|cff8fd0ff" .. FDJ.L("ARROW_EQUIP", itemName) .. "|r"
+                local now = f.route:GetText() or ""
+                if not now:find(text, 1, true) then
+                    f.route:SetText(now ~= "" and (now .. "\n" .. text) or text)
+                end
+            end
+        end
+        end
+        -- openline (2.1.7, M 26 Nov 2026 at Cyrus Therepentous for A Taste of
+        -- Flame, the Hoard of the Black Dragonflight unopened in his bags:
+        -- "remind the player that it has to open the hoard of the
+        -- dragonflight ... You cannot present proof without that"): a spot's
+        -- openItem = { containerID, name, insideID }: while the container is
+        -- in the bags and what is inside it is not, "Open <container>" under
+        -- the yards, at any distance; gone once it is opened.
+        do
+        local open = entry.spot.openItem
+        if type(open) == "table" and open[1] and open[3] and not inside then
+            local count = (C_Item and type(C_Item.GetItemCount) == "function" and C_Item.GetItemCount) or GetItemCount
+            local okA, have = pcall(count, open[1])
+            local okB, got = pcall(count, open[3])
+            if okA and okB and (tonumber(have) or 0) > 0 and (tonumber(got) or 0) == 0 then
+                local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
+                local okN, itemName = pcall(getInfo, open[1])
+                itemName = (okN and type(itemName) == "string" and itemName ~= "") and itemName or tostring(open[2] or "")
+                local text = "|cff8fd0ff" .. FDJ.L("ARROW_OPEN", itemName) .. "|r"
+                local now = f.route:GetText() or ""
+                if not now:find(text, 1, true) then
+                    f.route:SetText(now ~= "" and (now .. "\n" .. text) or text)
+                end
+            end
+        end
+        end
         -- elitenote (2.1.1, M 20 Nov 2026, Bring Me His Head: "under the usual
         -- yards stuff, you should put level 46 elite quest, find the group"): a
         -- spot's noteKey (Systems/QuestText.lua: FDJ.RouteNoted), a line of its
         -- own under the yards (or under what to kill there), at any distance.
-        if entry.spot.noteKey and not (f.distance:GetText() or ""):find(FDJ.L(entry.spot.noteKey, entry.spot.noteArg), 1, true) then
+        -- (enterdungeon, 2.1.7: noteArgDungeon, the arg a dungeon's name: in the journal's language)
+        local noteArg = entry.spot.noteArg
+        if entry.spot.noteArgDungeon and FDJ.LocalizeDungeonName then noteArg = FDJ.LocalizeDungeonName(noteArg) or noteArg end
+        if entry.spot.noteKey and not (f.distance:GetText() or ""):find(FDJ.L(entry.spot.noteKey, noteArg), 1, true) then
             f.distance:SetText(((f.distance:GetText() or "") ~= "" and ((f.distance:GetText() or "") .. "\n") or "")
-                .. "|cffff8040" .. FDJ.L(entry.spot.noteKey, entry.spot.noteArg) .. "|r")
+                .. "|cffff8040" .. FDJ.L(entry.spot.noteKey, noteArg) .. "|r")
+        end
+        -- underground (2.1.7, M 25 Nov 2026 in the Slag Pit, right under Velarok
+        -- Windblade, the arrow saying 30 yards to the hand-in: "it needs to
+        -- understand that I'm not able to turn in the quest because I'm
+        -- underground"): the game naming an underground place (Way.UNDER) as
+        -- where one stands, and the stop being a person to see, not a place to
+        -- kill or collect at (those are down there): the yards mean nothing, the
+        -- line says to get out first.
+        if not entry.spot.goTo and type(entry.spot.goalLines) ~= "table" and Way.UnderHere then
+            local under = Way.UnderHere()
+            -- (M: "There are many exits ... remove the arrow for this part ...
+            -- Once you leave, the arrow is gonna come back": no arrow down
+            -- there, the line alone)
+            if under then
+                f.distance:SetText("|cffff8040" .. FDJ.L("ARROW_UNDERGROUND", under) .. "|r")
+                turn = nil
+            end
         end
         if FDJ.ArrowBuyLines then FDJ.ArrowBuyLines(f, entry.spot, inside) end -- buylines (2.0.10)
         if f.fdjNpcOn or (f.fdjItem and f.fdjItem:IsShown()) then FDJ.ArrowPlacePicture(f, f.fdjNpcOn and true or false) end -- picgap (2.1.3); itemgap (2.1.4)
@@ -6739,7 +6945,21 @@ do
             self.fdjWait = (self.fdjWait or 0) - (elapsed or 0)
             if self.fdjWait > 0 then return end
             self.fdjWait = STEP
-            Redraw(self)
+            -- arrowsafe (2.1.7, M 25 Nov 2026 at Morgan's Vigil, Marshal
+            -- Windsor taken: "the arrow is just not there at all"): a
+            -- drawing that fails part way no longer leaves the arrow faded
+            -- out (as it is inside a dungeon, the last place it was drawn
+            -- whole); the error kept (FDJ.arrowError, FDJ.ArrowDebugInfo)
+            local okR, errR = pcall(Redraw, self)
+            if not okR then
+                FDJ.arrowError = tostring(errR)
+                if self.fdjHidden and not InInstance() then
+                    self.fdjHidden = false
+                    self:SetAlpha(1)
+                    self:EnableMouse(true)
+                end
+                if FDJ.OnArrowError then pcall(FDJ.OnArrowError, FDJ.arrowError) end
+            end
         end)
         f:Hide()
         return f
@@ -6833,10 +7053,27 @@ do
     end)
     -- corpsefallback: a ghost whose corpse was not known yet when the arrow
     -- was chosen: asked again every second until it is.
+    -- ghostfirst (2.1.7, M 26 Nov 2026, a ghost on the Molten Span for Dark
+    -- Iron Legacy, the arrow to "Your corpse": "As soon as I enter the molten
+    -- span, the arrow should guide me to the NPC. We should not guide me to
+    -- the corpse. I need to get to the NPC first"): a ghost within 250 yards
+    -- of a spot to be reached as a ghost (spot.ghostTalk: Franclorn
+    -- Forgewright) is led to it, not to the corpse; further off, the corpse
+    -- as before.
+    function Way.GhostNear(entry)
+        local spot = type(entry) == "table" and entry.spot
+        if type(spot) ~= "table" or not spot.ghostTalk or type(UnitIsDeadOrGhost) ~= "function" then return false end
+        local okD, dead = pcall(UnitIsDeadOrGhost, "player")
+        if not okD or (type(issecretvalue) == "function" and issecretvalue(dead)) or dead ~= true then return false end
+        local okY, yards = pcall(FDJ.YardsToSpot, spot)
+        return (okY and type(yards) == "number" and yards <= 250) and true or false
+    end
     Way.corpseWatch:SetScript("OnUpdate", function(self, elapsed)
         self.fdjWait = (self.fdjWait or 0) - (elapsed or 0)
         if self.fdjWait > 0 then return end
         self.fdjWait = 1
+        -- (ghostfirst: chosen again when the ghost comes within reach of it, or leaves)
+        if Way.lastPick and Way.GhostNear(Way.lastPick) ~= (Way.ghostNearShown or false) and Choose then pcall(Choose) return end
         if Way.corpse or Way.corpseOff or not shown or shown.source == "corpse" then return end
         if Way.Corpse() and Choose then pcall(Choose) end
     end)
@@ -6845,12 +7082,29 @@ do
     Choose = function()
         local pick = manual
         if not pick then
+            -- routefirst (2.1.7, M 25 Nov 2026, the Onyxia page tracked, then the
+            -- Blackrock Depths Route started at Morgan's Vigil, the arrow
+            -- straight to Marshal Windsor in BRD: "You can combine routings,
+            -- but ... if I track BRD ... it doesn't make sense for the arrow
+            -- to send me directly inside BRD ... You should start with the BRD
+            -- chain"): a Route that is on leads; a tracked chain page's arrow
+            -- waits behind it (it was whichever came out of the table first).
+            -- Otherwise the one that moved on last.
             local done = Done()
+            local bestRank, bestSeq
             for source, entry in pairs(follows) do
-                if done[source] ~= entry.key then pick = entry break end
+                if done[source] ~= entry.key then
+                    local rank = (FDJ.IsRouteOn and FDJ.IsRouteOn(source)) and 1 or 2
+                    local seq = entry.seq or 0
+                    if not pick or rank < bestRank or (rank == bestRank and seq > bestSeq) then
+                        pick, bestRank, bestSeq = entry, rank, seq
+                    end
+                end
             end
         end
-        if pick then pick = Way.Corpse() or pick end -- corpserun (only while the arrow is in use)
+        Way.lastPick = pick -- (ghostfirst)
+        Way.ghostNearShown = pick and Way.GhostNear(pick) or false
+        if pick and not Way.ghostNearShown then pick = Way.Corpse() or pick end -- corpserun (only while the arrow is in use)
         shown = pick
         if not pick then
             if frame then frame:Hide() end
@@ -6951,6 +7205,7 @@ do
             old.spot.goalLines = type(goalLines) == "table" and goalLines or nil
             old.spot.onWayLines = type(onWay) == "table" and onWay or nil -- (onway)
             old.spot.noteKey, old.spot.noteArg = spot.noteKey, spot.noteArg -- elitenote (2.1.1)
+            old.spot.noteArgDungeon = spot.noteArgDungeon -- enterdungeon (2.1.7)
             old.spot.buyLines = spot.buyLines -- buylines (2.0.10)
             old.spot.skipQuest = skipQuest -- skipnow (2.0.13)
             old.spot.crumbQuest = spot.crumbQuest -- crumbpass (2.1.3)
@@ -6975,7 +7230,8 @@ do
         copy.goalLines = type(goalLines) == "table" and goalLines or nil
         copy.onWayLines = type(onWay) == "table" and onWay or nil -- (onway)
         copy.skipQuest = skipQuest -- skipnow (2.0.13): the Route's quest the arrow's "Skip for now" leaves off
-        follows[source] = { spot = copy, source = source, key = key }
+        Way.followSeq = (Way.followSeq or 0) + 1 -- (routefirst)
+        follows[source] = { spot = copy, source = source, key = key, seq = Way.followSeq }
         Choose()
     end
     -- picgap (2.1.3, M 21 Nov 2026 at the Battered Dwarven Skeleton, "Talk to
@@ -7035,6 +7291,10 @@ do
             local font = f.distance:GetFontObject()
             if first ~= f.fdjMeasureText or font ~= f.fdjMeasureFont then
                 if font then f.fdjMeasure:SetFontObject(font) end
+                if f.fdjGoalBig and FDJ.ArrowGoalScale and FDJ.ArrowGoalScale() ~= 1 then -- (goalscale)
+                    local path, size, flags = f.distance:GetFont()
+                    if path and tonumber(size) then f.fdjMeasure:SetFont(path, size, flags) end
+                end
                 f.fdjMeasure:SetText(first)
                 f.fdjMeasureText, f.fdjMeasureFont, f.fdjMeasureWide = first, font, tonumber(f.fdjMeasure:GetStringWidth()) or 0
             end
@@ -7074,6 +7334,105 @@ do
     -- against the background to see"): behind the name and the lines under
     -- it at a place to kill / collect, as wide as the widest line; the done
     -- lines' grey made lighter for it (FDJ.RouteGoalLines).
+    -- twolines (2.1.7, M 25 Nov 2026 at the Twilight's Hammer camp, the
+    -- box's "Dropped by the Twilight's Hammer elites in their camp to the
+    -- northwest" one line 520 wide: "It's just way too big ... we should
+    -- have it in 2 lines"): what to do here, when longer than 40 letters,
+    -- on two lines, broken at the space nearest its middle.
+    function Way.TwoLines(text)
+        if type(text) ~= "string" or #text <= 40 or text:find("[|\n]") then return text end
+        local mid, best = #text / 2, nil
+        local at = text:find(" ", 1, true)
+        while at do
+            if not best or math.abs(at - mid) < math.abs(best - mid) then best = at end
+            at = text:find(" ", at + 1, true)
+        end
+        if not best then return text end
+        return text:sub(1, best - 1) .. "\n" .. text:sub(best + 1)
+    end
+    -- goalscale (2.1.7, the same message: "give it a resizer ... on the
+    -- bottom right that you can use to rescale it. It's not gonna rescale
+    -- the arrow itself, but it's gonna rescale these messages"): the box's
+    -- name and lines at the player's own size (0.6 to 1.6 of 14 and 12,
+    -- kept in the arrow's settings), set by dragging the grip in the box's
+    -- bottom right corner.
+    function FDJ.ArrowGoalScale(set)
+        local db = type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.arrow
+        if set and type(db) ~= "table" then
+            if type(ForeverDungeonJournalDB) ~= "table" then ForeverDungeonJournalDB = {} end
+            ForeverDungeonJournalDB.arrow = {}
+            db = ForeverDungeonJournalDB.arrow
+        end
+        if set then db.goalScale = math.max(0.6, math.min(1.6, set)) end
+        local scale = type(db) == "table" and tonumber(db.goalScale) or 1
+        return math.max(0.6, math.min(1.6, scale))
+    end
+    -- gripgrow (2.1.7, M the same evening, the box's text past the edges of
+    -- the screen: "It's either not working when I drag, or it jumps to
+    -- insanely big really fast"): the size was taken from the text as it
+    -- stood, which after a size of its own is already the bigger one (the
+    -- game keeps it through SetFontObject), so every frame of a drag grew it
+    -- again. The size now always comes from the journal's own font (its
+    -- size at 1), set on the text whole.
+    function Way.SetSized(fs, objectName, scale) -- (no new local: this scope is at Lua's limit)
+        fs:SetFontObject(objectName)
+        local object = _G[objectName]
+        local path, size, flags
+        if object and object.GetFont then path, size, flags = object:GetFont() end
+        if path and tonumber(size) then fs:SetFont(path, size * scale, flags or "") end
+    end
+    function FDJ.ArrowGoalFont(f)
+        if not (f and f.title and f.distance) then return end
+        local scale = f.fdjGoalBig and FDJ.ArrowGoalScale() or 1
+        Way.SetSized(f.distance, f.fdjGoalBig and "ForeverDJ_GameFontHighlightMedium" or "ForeverDJ_GameFontHighlightSmall", scale)
+        Way.SetSized(f.title, "ForeverDJ_GameFontNormal", scale)
+        f.fdjMeasureText = nil -- (picgap: measured again)
+        f.fdjBoxText = nil
+    end
+    function FDJ.ArrowGoalGrip(f)
+        if f.goalGrip or type(CreateFrame) ~= "function" then return end
+        local grip = CreateFrame("Button", nil, f)
+        f.goalGrip = grip
+        grip:EnableMouse(true)
+        grip:SetSize(16, 16)
+        grip:SetPoint("BOTTOMRIGHT", f.goalBox, "BOTTOMRIGHT", 0, 0)
+        if grip.SetFrameLevel and f.GetFrameLevel then grip:SetFrameLevel((f:GetFrameLevel() or 1) + 5) end
+        grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+        grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+        grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+        -- gripfollow (2.1.7, M the same evening: "It's dragging extremely
+        -- awkwardly" - the size went by the yards the cursor moved, in
+        -- steps, while the box grows both ways from its middle, so the grip
+        -- ran away from the cursor): the size is the cursor's distance from
+        -- the box's middle against where the drag began, so the corner
+        -- stays under the cursor, without steps.
+        local function Cursor()
+            local x = type(GetCursorPosition) == "function" and GetCursorPosition() or nil
+            local ui = f.GetEffectiveScale and f:GetEffectiveScale() or 1
+            local mid = f.goalBox and f.goalBox.GetCenter and f.goalBox:GetCenter() or nil
+            if not (tonumber(x) and tonumber(mid)) then return nil end
+            return x / (ui > 0 and ui or 1) - mid
+        end
+        grip:SetScript("OnMouseDown", function(self)
+            local from = Cursor()
+            if from and from > 4 then self.fdjFromX, self.fdjFromScale = from, FDJ.ArrowGoalScale() end
+        end)
+        grip:SetScript("OnMouseUp", function(self) self.fdjFromX = nil end)
+        grip:SetScript("OnHide", function(self) self.fdjFromX = nil end)
+        grip:SetScript("OnUpdate", function(self)
+            if not self.fdjFromX then return end
+            if type(IsMouseButtonDown) == "function" and not IsMouseButtonDown("LeftButton") then self.fdjFromX = nil return end
+            local x = Cursor()
+            if not x then return end
+            local scale = math.max(0.6, math.min(1.6, self.fdjFromScale * math.max(x, 1) / self.fdjFromX))
+            scale = math.floor(scale * 50 + 0.5) / 50 -- (gripgrow: 0.02 at a time, no flicker)
+            if scale ~= FDJ.ArrowGoalScale() then
+                FDJ.ArrowGoalScale(scale)
+                FDJ.ArrowGoalFont(f)
+                if f.fdjGoalBig then FDJ.ArrowGoalBox(f, true) end
+            end
+        end)
+    end
     function FDJ.ArrowGoalBox(f, show)
         if not (f and f.title and f.distance) then return end
         if not f.goalBox then
@@ -7090,9 +7449,12 @@ do
         end
         if not show then
             f.goalBox:Hide()
+            if f.goalGrip then f.goalGrip:Hide() end
             f.fdjBoxText = nil
             return
         end
+        pcall(FDJ.ArrowGoalGrip, f) -- goalscale (2.1.7)
+        if f.goalGrip then f.goalGrip:Show() end
         local text = (f.title:GetText() or "") .. "\001" .. (f.distance:GetText() or "")
         if text ~= f.fdjBoxText then
             f.fdjBoxText = text
@@ -7100,7 +7462,11 @@ do
                 f.fdjBoxMeasure = f:CreateFontString(nil, "OVERLAY")
                 f.fdjBoxMeasure:Hide()
             end
-            f.fdjBoxMeasure:SetFontObject(f.distance:GetFontObject() or "ForeverDJ_GameFontHighlightMedium")
+            f.fdjBoxMeasure:SetFontObject("ForeverDJ_GameFontHighlightMedium")
+            do -- (goalscale: the lines' own font, at their size)
+                local path, size, flags = f.distance:GetFont()
+                if path and tonumber(size) then f.fdjBoxMeasure:SetFont(path, size, flags) end
+            end
             local wide = tonumber(f.title:GetStringWidth()) or 0
             for line in ((f.distance:GetText() or "") .. "\n"):gmatch("(.-)\n") do
                 f.fdjBoxMeasure:SetText(line)
@@ -7233,6 +7599,21 @@ do
     -- A route switched on again: its arrow comes back if it was hidden.
     function FDJ.ResetWaypointDone(source)
         if source ~= nil then Done()[source] = nil end
+    end
+    -- arrowsafe (2.1.7): what the arrow has to show, and why not (for /dj
+    -- arrowinfo, the vault's): lines of text.
+    function FDJ.ArrowDebugInfo()
+        local out, done = {}, Done()
+        local f = _G.ForeverDungeonJournalArrow
+        out[#out + 1] = "frame=" .. tostring(f ~= nil) .. " shown=" .. tostring(f and f:IsShown()) .. " faded=" .. tostring(f and f.fdjHidden)
+            .. " inside=" .. tostring(InInstance()) .. " showing=" .. tostring(shown and (shown.spot.questTitle or shown.spot.label) or "nothing")
+        for source, entry in pairs(follows) do
+            out[#out + 1] = "follows " .. tostring(source) .. ": " .. tostring(entry.spot.questTitle or entry.spot.label) .. " key=" .. tostring(entry.key)
+                .. (done[source] == entry.key and " (HIDDEN: shift+right-clicked away)" or "")
+        end
+        if manual then out[#out + 1] = "manual: " .. tostring(manual.spot.label) end
+        out[#out + 1] = "last error: " .. tostring(FDJ.arrowError or "none")
+        return out
     end
 end
 -- END arrow

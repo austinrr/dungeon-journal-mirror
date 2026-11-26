@@ -4177,6 +4177,11 @@ FDJ.DB["Razorfen Downs"] = {
             name = "Ragglesnout",
             npcID = 7354,
             rare = true,
+            -- raresig (2.1.7, M 25 Nov 2026, his frame in the game: level 40, the
+            -- gold elite dragon, not the silver rare one): told apart where names
+            -- and IDs are hidden (Systems/RunLog.lua); the only level 40 elite
+            -- humanoid of the Downs that isn't a boss
+            rareSig = { level = 40, type = "Humanoid", cls = "elite" },
             aliases = {"Ragglesnout"},
             description = "Rare spawn, near the top of the Downs.",
             -- Wowhead Forever's drop table (Nov 2026).

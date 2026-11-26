@@ -1774,7 +1774,36 @@ end
 function FDJ.RunLogRareCandidates(unit, dungeon, test)
     local okC, cls = pcall(UnitClassification, unit)
     cls = okC and Plain(cls)
-    if cls ~= "rare" and cls ~= "rareelite" then return {} end
+    if cls ~= "rare" and cls ~= "rareelite" then
+        -- raresig (2.1.7, M 25 Nov 2026 at Ragglesnout in Razorfen Downs, the
+        -- tracker showing him "not found" while he stood there: "why is he not
+        -- silver"): a rare the game doesn't call rare (Forever has Ragglesnout
+        -- as a plain elite) is told by its own signature (data: rareSig = {
+        -- level, type, cls }), as a fight's bosses are (fightSig): no boss
+        -- mob where it says so (notBoss), that classification, that level and
+        -- creature type, and no other rare of the dungeon fitting too.
+        local okB, isBoss = pcall(UnitIsBossMob, unit)
+        isBoss = okB and Plain(isBoss) == true
+        local okL, lvl = pcall(UnitLevel, unit)
+        lvl = okL and Plain(lvl) or nil
+        local okT, typeName, typeID = pcall(UnitCreatureType, unit)
+        typeName, typeID = okT and Plain(typeName) or nil, okT and Plain(typeID) or nil
+        if type(lvl) ~= "number" or (type(typeName) ~= "string" and type(typeID) ~= "number") then return {} end
+        local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
+        local pick
+        for _, b in ipairs((d and d.bosses) or {}) do
+            local sig = type(b) == "table" and b.rare and not b.trackerHidden and b.rareSig
+            if type(sig) == "table" and sig.level == lvl and (sig.cls == nil or sig.cls == cls) and TypeIs(typeName, typeID, sig.type)
+                and not (sig.notBoss and isBoss) then
+                if pick then return {} end
+                pick = b
+            end
+        end
+        for _, k in ipairs((current and current.kills) or {}) do
+            if pick and k.b == pick.name then return {} end -- (killed already)
+        end
+        return pick and { pick } or {}
+    end
     local okL, lvl = pcall(UnitLevel, unit)
     lvl = okL and Plain(lvl)
     local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
@@ -1796,6 +1825,26 @@ function FDJ.RunLogRareCandidates(unit, dungeon, test)
     if #all <= 1 then return all end
     if #byLevel > 0 then return byLevel end
     return all
+end
+
+-- raresig (2.1.7): a rare's own fight begun (ENCOUNTER_START, its encounter
+-- ID: Data/RunLogEncounters.lua): it was found, whatever the game lets an
+-- addon read of it.
+function FDJ.RunLogEncounterStart(id)
+    id = tonumber(Plain(id))
+    local e = id and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[id]
+    if type(e) ~= "table" or not inside then return end
+    local dungeon = (current and current.dungeon) or insideDungeon
+    if dungeon ~= e[1] then return end
+    local boss = BossFor(dungeon, nil, e[2])
+    if not (boss and boss.rare and not boss.trackerHidden) then return end
+    local run = current or EnsureRun()
+    if not run then return end
+    run.rareSeen = run.rareSeen or {}
+    if run.rareSeen[boss.name] then return end
+    run.rareSeen[boss.name] = Now()
+    if FDJ.RunLogRareSpotted then pcall(FDJ.RunLogRareSpotted, run, boss) end
+    Changed()
 end
 
 local function OnUnit(unit)
@@ -2650,6 +2699,7 @@ for _, e in ipairs({
     "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "PLAYER_DEAD", "QUEST_TURNED_IN",
     "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED",
     "ENCOUNTER_END", "BOSS_KILL", "PARTY_KILL", "UNIT_DIED", "GOSSIP_SHOW", "UNIT_TARGET",
+    "ENCOUNTER_START", -- raresig (2.1.7)
     "CHAT_MSG_COMBAT_XP_GAIN", "CHAT_MSG_COMBAT_HOSTILE_DEATH", "CHAT_MSG_LOOT",
     "START_LOOT_ROLL", "CANCEL_LOOT_ROLL", "LOOT_OPENED", "LOOT_READY", "PLAYER_MONEY", "CHAT_MSG_SYSTEM",
     "PLAYER_REGEN_DISABLED", "PLAYER_REGEN_ENABLED", "MERCHANT_SHOW", "MERCHANT_CLOSED",
@@ -2719,6 +2769,10 @@ local function OnRepChat(text)
 end
 
 events:SetScript("OnEvent", function(_, event, ...)
+    if event == "ENCOUNTER_START" then -- raresig (2.1.7)
+        if FDJ.RunLogEncounterStart then pcall(FDJ.RunLogEncounterStart, (...)) end
+        return
+    end
     if event == "PLAYER_MONEY" then
         OnMoney()
         return
@@ -2899,6 +2953,10 @@ function FDJ.RunLogDebug()
     Say("class=" .. try(UnitClassification, "target") .. " level=" .. try(UnitLevel, "target")
         .. " hpmax=" .. try(UnitHealthMax, "target") .. " type=" .. try(UnitCreatureType, "target")
         .. " dead=" .. try(UnitIsDead, "target"))
+    -- raresig (2.1.7): more of what could tell a rare apart where names are
+    -- hidden (its class and sex, a boss or not, its power)
+    Say("npcclass=" .. try(UnitClass, "target") .. " sex=" .. try(UnitSex, "target")
+        .. " bossmob=" .. try(UnitIsBossMob, "target") .. " powermax=" .. try(UnitPowerMax, "target"))
     local cands = {}
     for _, b in ipairs(FDJ.RunLogRareCandidates("target", dungeon, FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon])) do cands[#cands + 1] = b.name end
     Say("could be: " .. (#cands > 0 and table.concat(cands, ", ") or "nothing"))

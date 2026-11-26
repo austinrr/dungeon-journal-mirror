@@ -7017,6 +7017,8 @@ FDJ.OBJECTIVE_NAMES = {
     ["Scarlet Archive"] = { "Scharlachrotes Archiv", "Archivo Escarlata", "Archives écarlates", "붉은십자군 기록", "Arquivo Escarlate", "Архив Алых", "血色十字军档案", "血色十字軍檔案" },
     ["Scarlet Commander Mograine"] = { "Scharlachroter Kommandant Mograine", "Comandante Escarlata Mograine", "Commandant écarlate Mograine", "붉은십자군 사령관 모그레인", "Comandante Escarlate Mograine", "Командир Могрейн из Алого ордена", "血色十字军指挥官莫格莱尼", "血色十字軍指揮官莫格萊尼" },
     ["Scooty"] = { false, "Pedrito", false, "스쿠티", false, "Скути", "斯库提", "斯庫提" },
+    ["Totem of Ursoc"] = { "Totem von Ursoc", "Tótem de Ursoc", "Totem d'Ursoc", "우르속의 토템", "Totem de Ursoc", "Тотем Урсока", "乌索克的图腾", "厄索克圖騰" }, -- (bmhpins5: Wowhead Forever item 249694 in each language)
+    ["Totem of Ursol"] = { "Totem von Ursol", "Tótem de Ursol", "Totem d'Ursol", "우르솔의 토템", "Totem de Ursol", "Тотем Урсола", "乌索尔的图腾", "厄索爾圖騰" }, -- (bmhursol: Wowhead Forever item 249693 in each language)
     ["Scourge Data"] = { "Geißeldaten", "Datos de la Plaga", "Donnée du Fléau", "스컬지 자료", "Dados do Flagelo", "Сведения о Плети", "天灾军团档案", "天譴軍團檔案" },
     ["Screecher Spirit"] = { "Kreischergeist", "Espíritu estridador", "Esprit d'Hurleur", "계곡천둥매의 영혼", "Espírito Guinchador", "Дух крикуна", "尖啸者的灵魂", "尖嘯者的靈魂" },
     ["Sealed Azure Bag"] = { "Versiegelte azurblaue Tasche", "Bolsa azur sellada", "Sac azur scellé", "봉인된 하늘색 자루", "Saco Lazúli Lacrado", "Запечатанная лазурная сумка", "密封的蓝袋子", "密封的藍袋子" },
@@ -8112,6 +8114,170 @@ do
     end
 end
 -- END l10nkroldokally
+-- BEGIN l10nkroldokhorde
+-- kroldokhorde (2.1.7): the Route's stops for the Horde's Krol'dok
+-- Stronghold chain (Data/QuestUpdates.lua). Riverglades' place and people
+-- names stay as the rest of the zone's data has them.
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["The farm west of Wheeler's Grange: the farmhands, and the Feed Satchels (tan grain bags)"] = {
+            "Der Hof westlich von Wheeler's Grange: die Knechte und die Futtersäcke (hellbraune Getreidesäcke)",
+            "La ferme à l'ouest de Wheeler's Grange : les ouvriers agricoles et les sacs de fourrage (sacs de grain beiges)",
+            "La granja al oeste de Wheeler's Grange: los peones y los sacos de pienso (sacos de grano de color tostado)",
+            "La fattoria a ovest di Wheeler's Grange: i braccianti e i sacchi di mangime (sacchi di grano color sabbia)",
+            "A fazenda a oeste de Wheeler's Grange: os peões e os sacos de ração (sacos de grãos bege)",
+            "Ферма к западу от Wheeler's Grange: батраки и мешки с кормом (светло-коричневые мешки с зерном)",
+            "Wheeler's Grange 서쪽 농장: 농장 일꾼들과 사료 자루(황갈색 곡물 자루)",
+            "Wheeler's Grange 以西的农场：农工，以及饲料袋（棕褐色的粮袋）",
+            "Wheeler's Grange 以西的農場：農工，以及飼料袋（棕褐色的糧袋）",
+        },
+        ["South of the river"] = {
+            "Südlich des Flusses",
+            "Au sud de la rivière",
+            "Al sur del río",
+            "A sud del fiume",
+            "Ao sul do rio",
+            "К югу от реки",
+            "강 남쪽",
+            "河流以南",
+            "河流以南",
+        },
+        ["The Farholde Priests and Scouts south of the river"] = {
+            "Die Priester und Späher von Farholde südlich des Flusses",
+            "Les prêtres et éclaireurs de Farholde au sud de la rivière",
+            "Los sacerdotes y exploradores de Farholde al sur del río",
+            "I sacerdoti e gli esploratori di Farholde a sud del fiume",
+            "Os sacerdotes e batedores de Farholde ao sul do rio",
+            "Жрецы и разведчики Farholde к югу от реки",
+            "강 남쪽의 Farholde 사제와 정찰병",
+            "河流以南的 Farholde 牧师和斥候",
+            "河流以南的 Farholde 牧師和斥候",
+        },
+        ["Sunnyglade cave"] = {
+            "Höhle von Sunnyglade",
+            "Grotte de Sunnyglade",
+            "Cueva de Sunnyglade",
+            "Grotta di Sunnyglade",
+            "Caverna de Sunnyglade",
+            "Пещера Sunnyglade",
+            "Sunnyglade 동굴",
+            "Sunnyglade 洞穴",
+            "Sunnyglade 洞穴",
+        },
+        ["In the caves under Sunnyglade: the stairs down are near 50, 46"] = {
+            "In den Höhlen unter Sunnyglade: Die Treppe hinunter ist bei 50, 46",
+            "Dans les grottes sous Sunnyglade : l'escalier qui descend est vers 50, 46",
+            "En las cuevas bajo Sunnyglade: las escaleras de bajada están cerca de 50, 46",
+            "Nelle grotte sotto Sunnyglade: le scale per scendere sono vicino a 50, 46",
+            "Nas cavernas sob Sunnyglade: a escada para descer fica perto de 50, 46",
+            "В пещерах под Sunnyglade: лестница вниз около 50, 46",
+            "Sunnyglade 아래 동굴: 내려가는 계단은 50, 46 근처에 있습니다",
+            "在 Sunnyglade 下方的洞穴里：向下的楼梯在 50, 46 附近",
+            "在 Sunnyglade 下方的洞穴裡：向下的樓梯在 50, 46 附近",
+        },
+        ["Southeast of Bolder'ok"] = {
+            "Südöstlich von Bolder'ok",
+            "Au sud-est de Bolder'ok",
+            "Al sureste de Bolder'ok",
+            "A sud-est di Bolder'ok",
+            "A sudeste de Bolder'ok",
+            "К юго-востоку от Bolder'ok",
+            "Bolder'ok 남동쪽",
+            "Bolder'ok 东南方",
+            "Bolder'ok 東南方",
+        },
+        ["The Twilight's Hammer camp southeast of Bolder'ok"] = {
+            "Das Lager des Schattenhammers südöstlich von Bolder'ok",
+            "Le camp du Marteau du crépuscule au sud-est de Bolder'ok",
+            "El campamento del Martillo Crepuscular al sureste de Bolder'ok",
+            "L'accampamento del Martello del Crepuscolo a sud-est di Bolder'ok",
+            "O acampamento do Martelo do Crepúsculo a sudeste de Bolder'ok",
+            "Лагерь Сумеречного Молота к юго-востоку от Bolder'ok",
+            "Bolder'ok 남동쪽의 황혼의 망치단 야영지",
+            "Bolder'ok 东南方的暮光之锤营地",
+            "Bolder'ok 東南方的暮光之錘營地",
+        },
+        ["Kill him: he drops what Clugfist wants"] = {
+            "Tötet ihn: Er lässt fallen, was Clugfist haben will",
+            "Tuez-le : il laisse tomber ce que veut Clugfist",
+            "Mátalo: suelta lo que Clugfist quiere",
+            "Uccidilo: rilascia ciò che vuole Clugfist",
+            "Mate-o: ele deixa cair o que Clugfist quer",
+            "Убейте его: с него падает то, что нужно Clugfist",
+            "처치하세요: Clugfist가 원하는 것을 떨어뜨립니다",
+            "击杀他：他会掉落 Clugfist 想要的东西",
+            "擊殺他：他會掉落 Clugfist 想要的東西",
+        },
+        ["The Twilight camps: the cultists, and the captive Rog'mar Scouts"] = {
+            "Die Schattenhammerlager: die Kultisten und die gefangenen Späher von Rog'mar",
+            "Les camps du Crépuscule : les sectateurs et les éclaireurs de Rog'mar captifs",
+            "Los campamentos Crepusculares: los cultores y los exploradores de Rog'mar cautivos",
+            "Gli accampamenti del Crepuscolo: i cultisti e gli esploratori di Rog'mar prigionieri",
+            "Os acampamentos do Crepúsculo: os cultistas e os batedores de Rog'mar cativos",
+            "Сумеречные лагеря: сектанты и пленные разведчики Rog'mar",
+            "황혼의 야영지: 이교도들과 사로잡힌 Rog'mar 정찰병",
+            "暮光营地：教徒和被俘的 Rog'mar 斥候",
+            "暮光營地：教徒和被俘的 Rog'mar 斥候",
+        },
+        ["Crag'rog's cave"] = {
+            "Crag'rogs Höhle",
+            "Grotte de Crag'rog",
+            "Cueva de Crag'rog",
+            "Grotta di Crag'rog",
+            "Caverna de Crag'rog",
+            "Пещера Crag'rog",
+            "Crag'rog의 동굴",
+            "Crag'rog 的洞穴",
+            "Crag'rog 的洞穴",
+        },
+        ["The ogre miners in the cave beside Crag'rog"] = {
+            "Die Ogerminenarbeiter in der Höhle neben Crag'rog",
+            "Les ogres mineurs dans la grotte à côté de Crag'rog",
+            "Los ogros mineros en la cueva junto a Crag'rog",
+            "Gli ogre minatori nella grotta accanto a Crag'rog",
+            "Os ogros mineiros na caverna ao lado de Crag'rog",
+            "Огры-рудокопы в пещере рядом с Crag'rog",
+            "Crag'rog 옆 동굴의 오우거 광부들",
+            "Crag'rog 旁边洞穴里的食人魔矿工",
+            "Crag'rog 旁邊洞穴裡的食人魔礦工",
+        },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10nkroldokhorde
+-- BEGIN l10nbmhtotem
+-- bmhpins5, bmhursol, hotattendant, gnomepins (2.1.7): the Totems of Ursoc and Ursol (Blackmaw Hold), the Ghostly Attendant (Hall of Thanes) and Kernobee (Gnomeregan) as quest spots
+-- (Data/QuestMaps.lua): its name as the game has it in each language
+-- (Wowhead Forever, item 249694; Italian keeps the English name, as the
+-- other things' names do).
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["Totem of Ursoc"] = { "Totem von Ursoc", "Totem d'Ursoc", "Tótem de Ursoc", "Totem of Ursoc", "Totem de Ursoc", "Тотем Урсока", "우르속의 토템", "乌索克的图腾", "厄索克圖騰" },
+        ["Kernobee"] = { "Kernobee", "Kernobee", "Kernobee", "Kernobee", "Kernobill", "Керноби", "케르노비", "克努比", "克努比" }, -- (gnomepins: Wowhead Forever NPC 7850 in each language)
+        ["Ghostly Attendant"] = { "Geisterhafte Bedienstete", "Domestique fantomatique", "Auxiliar fantasmal", "Ghostly Attendant", "Atendente Fantasmagórica", "Призрачная слуга", "유령 수행원", "鬼魅随从", "鬼魅侍者" }, -- (hotattendant: Wowhead Forever NPC 265002 in each language)
+        ["Totem of Ursol"] = { "Totem von Ursol", "Totem d'Ursol", "Tótem de Ursol", "Totem of Ursol", "Totem de Ursol", "Тотем Урсола", "우르솔의 토템", "乌索尔的图腾", "厄索爾圖騰" }, -- (bmhursol: item 249693)
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10nbmhtotem
 -- BEGIN l10nzfuldally
 -- zfally / uldally (2.1.2): the Route's stops for the Alliance's Zul'Farrak and
 -- Uldaman quests (Data/QuestUpdates.lua). Names as the game has them (the
@@ -10593,6 +10759,302 @@ do
     end
 end
 -- END l10nstally
+-- BEGIN l10nbrdally
+-- brdally (2.1.7): the Route's stops for the Alliance's Blackrock Depths
+-- quests (Data/QuestUpdates.lua). The things' names as the game has them
+-- (FDJ.OBJECTIVE_NAMES; Italian keeps the English names, as there); the
+-- towers as Set Them Ablaze!'s objectives name them, the zones and the
+-- Torch of Retribution as Wowhead Forever has them (Italian: Wowhead's
+-- Italian zone names); the lines in each language.
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local THINGS = { "Thaurissan Relic", "Nagmara's Filled Vial", "Giant Silver Vein" }
+    local TEXT = {
+        ["Burning Steppes"] = { "Brennende Steppe", "Steppes ardentes", "Las Estepas Ardientes", "Steppe Ardenti",
+            "Estepes Ardentes", "Пылающие степи", "불타는 평원", "燃烧平原", "燃燒平原" },
+        ["Searing Gorge"] = { "Sengende Schlucht", "Gorge des Vents brûlants", "La Garganta de Fuego", "Gorgia Rovente",
+            "Garganta Abrasadora", "Тлеющее ущелье", "이글거리는 협곡", "灼热峡谷", "灼熱峽谷" },
+        ["Western Tower"] = { "Westturm", "Tour ouest", "Torre Oeste", "Western Tower", "Torre Ocidental", "Западная башня", "서쪽 감시탑", "西部哨塔", "西部哨塔" },
+        ["Southern Tower"] = { "Südturm", "Tour sud", "Torre Sur", "Southern Tower", "Torre Meridional", "Южная башня", "남쪽 감시탑", "南部哨塔", "南部哨塔" },
+        ["Eastern Tower"] = { "Ostturm", "Tour est", "Torre Este", "Eastern Tower", "Torre Oriental", "Восточная башня", "동쪽 감시탑", "东部哨塔", "東部哨塔" },
+        ["Northern Tower"] = { "Nordturm", "Tour nord", "Torre Norte", "Northern Tower", "Torre Setentrional", "Северная башня", "북쪽 감시탑", "北部哨塔", "北部哨塔" },
+        ["Click the relics all around the ruins here"] = {
+            "Klickt hier überall in den Ruinen auf die Relikte",
+            "Cliquez sur les reliques tout autour des ruines ici",
+            "Haz clic en las reliquias por todas las ruinas aquí",
+            "Clicca le reliquie tutt'intorno alle rovine qui",
+            "Clique nas relíquias espalhadas pelas ruínas aqui",
+            "Щелкайте по реликвиям по всем руинам здесь",
+            "이곳 폐허 곳곳에 있는 유물을 클릭하세요",
+            "点击这里废墟各处的遗物",
+            "點擊這裡廢墟各處的遺物",
+        },
+        ["Climb the tower, equip the Torch of Retribution and click the small brazier there"] = {
+            "Steigt auf den Turm, legt die Fackel der Vergeltung an und klickt dort auf das kleine Kohlenbecken",
+            "Montez dans la tour, équipez la Torche de vindicte et cliquez sur le petit brasero",
+            "Sube a la torre, equípate la Antorcha de Retribución y haz clic en el pequeño brasero",
+            "Sali sulla torre, equipaggia la Torch of Retribution e clicca il piccolo braciere",
+            "Suba na torre, equipe a Tocha da Retribuição e clique no pequeno braseiro",
+            "Поднимитесь на башню, возьмите в руки факел воздаяния и щелкните по маленькой жаровне",
+            "감시탑 위로 올라가 응보의 횃불을 장착하고 작은 화로를 클릭하세요",
+            "爬上哨塔，装备惩戒火炬，然后点击那里的小火盆",
+            "爬上哨塔，裝備懲戒火炬，然後點擊那裡的小火盆",
+        },
+        ["Use the vial in the crater on top of the hill (click its icon)"] = {
+            "Benutzt die Phiole im Krater oben auf dem Hügel (klickt ihr Symbol)",
+            "Utilisez la fiole dans le cratère au sommet de la colline (cliquez sur son icône)",
+            "Usa el vial en el cráter de la cima de la colina (haz clic en su icono)",
+            "Usa la fiala nel cratere in cima alla collina (clicca la sua icona)",
+            "Use a ampola na cratera no alto da colina (clique no ícone)",
+            "Используйте сосуд в кратере на вершине холма (щелкните по значку)",
+            "언덕 꼭대기의 분화구에서 약병을 사용하세요 (아이콘 클릭)",
+            "在山顶的火山口里使用瓶子（点击图标）",
+            "在山頂的火山口裡使用瓶子（點擊圖示）",
+        },
+        ["Kill the giants around here"] = { "Tötet hier die Riesen", "Tuez les géants ici", "Mata a los gigantes por aquí",
+            "Uccidi i giganti qui intorno", "Mate os gigantes por aqui", "Убивайте великанов здесь", "이 근처의 거인을 처치하세요",
+            "在这附近击杀巨人", "在這附近擊殺巨人" },
+    }
+    -- the things: FDJ.OBJECTIVE_NAMES, in FDJ.OBJECTIVE_NAME_LOCALES' order
+    local order = {}
+    for i, lang in ipairs(FDJ.OBJECTIVE_NAME_LOCALES or {}) do order[lang] = i end
+    for _, thing in ipairs(THINGS) do
+        local names = FDJ.OBJECTIVE_NAMES and FDJ.OBJECTIVE_NAMES[thing]
+        local list = {}
+        for i, lang in ipairs(LANGS) do
+            local n = type(names) == "table" and order[lang] and names[order[lang]] or nil
+            list[i] = (type(n) == "string" and n ~= "") and n or thing
+        end
+        if TEXT[thing] == nil then TEXT[thing] = list end
+    end
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10nbrdally
+
+-- BEGIN l10ntofstart
+-- tofstart (2.1.7): Velarok Windblade's six steps at the start of A Taste of
+-- Flame's chain (Data/QuestUpdates.lua). Names and objectives: Wowhead
+-- Forever (German, French, Spanish, Russian 3441); the others: the game's
+-- own texts with Velarok's name as Forever has it (his family name is the
+-- same in every language Wowhead shows; Korean and Chinese: the family name
+-- only, as Forever's spelling of "Velarok" there is not known). Italian
+-- keeps the English texts, as Wowhead's Italian pages do.
+do
+    local Q = {
+        deDE = {
+            [3441] = { "Göttliche Vergeltung", "Lasst Velarok Windblade seine Geschichte erzählen." },
+            [3442] = { "Die fehlerlose Flamme", "Sammelt 4 Herzen der Flamme und 4 Kugeln Golemöl und bringt die Gegenstände zu Velarok Windblade." },
+            [3443] = { "Das Schmieden des Schafts", "Bringt 8 mit Thorium beschichtete Dolche zu Velarok Windblade." },
+            [3452] = { "Die Ummantelung der Flamme", "Bringt ein Symbol von Ragnaros zu Velarok Windblade." },
+            [3453] = { "Die Fackel der Vergeltung", "Wartet bis Velarok Windblade die Fackel der Vergeltung vollendet hat." },
+            [3454] = { "Die Fackel der Vergeltung", "Nehmt die Fackel der Vergeltung." },
+        },
+        frFR = {
+            [3441] = { "Châtiment divin", "Écouter le récit de Velarok Lamevent." },
+            [3442] = { "La flamme parfaite", "Réunir 4 Cœurs des flammes et 4 globes d’Huile de golem puis rapporter ces objets à Velarok Lamevent." },
+            [3443] = { "Forger le manche", "Apporter 8 Dagues plaquées en thorium à Velarok Lamevent." },
+            [3452] = { "L'enveloppe de la flamme", "Trouver et apporter un Symbole de Ragnaros à Velarok Lamevent." },
+            [3453] = { "La Torche de vindicte", "Attendre que Velarok Lamevent termine la Torche de vindicte." },
+            [3454] = { "La Torche de vindicte", "Prendre la Torche de vindicte." },
+        },
+        esES = {
+            [3441] = { "Castigo divino", "Escucha a Velarok Espada del Viento." },
+            [3442] = { "La llama pura", "Lleva 4 corazones de llama y 4 globos de aceite gólem a Velarok Espada del Viento." },
+            [3443] = { "Forjar el mango", "Lleva 8 dagas chapadas en torio a Velarok Espada del Viento." },
+            [3452] = { "El soporte para la llama", "Lleva un Símbolo de Ragnaros a Velarok Espada del Viento." },
+            [3453] = { "La Antorcha de Reprensión", "Espera a que Velarok Espada del Viento termine la Antorcha de Reprensión." },
+            [3454] = { "La Antorcha de Reprensión", "Coge la Antorcha de Reprensión." },
+        },
+        ptBR = {
+            [3441] = { "Castigo divino", "Ouça Velarok Finalâmina contar a história dele." },
+            [3442] = { "A chama perfeita", "Colete 4 Corações das Chamas e 4 globos de Óleo de Golem, e leve-os para Velarok Finalâmina." },
+            [3443] = { "Forjando o bastão", "Leve 8 Punhais de Placas de Tório para Velarok Finalâmina." },
+            [3452] = { "O invólucro da chama", "Encontre e leve um Símbolo de Ragnaros para Velarok Finalâmina." },
+            [3453] = { "A Tocha da Retribuição", "Espere enquanto Velarok Finalâmina termina de preparar a Tocha da Retribuição." },
+            [3454] = { "A Tocha da Retribuição", "Pegue a Tocha da Retribuição." },
+        },
+        ruRU = {
+            [3441] = { "Божественное воздаяние", "Выслушайте Веларока Ветрореза." },
+            [3442] = { "Неугасимое пламя", "Принести 4 сердца пламени и 4 меры масла големов Велароку Ветрорезу." },
+            [3443] = { "Древко факела", "Принесите 8 окованных торием кинжалов Велароку Ветрорезу." },
+            [3452] = { "Защита пламени", "Найдите знак Рагнароса и принесите его Велароку Ветрорезу." },
+            [3453] = { "Факел воздаяния", "Подождите, пока Веларок Ветрорез закончит факел Воздаяния." },
+            [3454] = { "Факел воздаяния", "Возьмите факел воздаяния." },
+        },
+        koKR = {
+            [3441] = { "성스러운 복수", "윈드블레이드가 하는 이야기를 들으십시오." },
+            [3442] = { "완전무결한 불꽃", "화염의 심장 4개와 골렘 기름 4개를 모아 윈드블레이드에게 가져가야 합니다." },
+            [3443] = { "횃불 자루 만들기", "윈드블레이드에게 토륨 도금 단검 8개를 가져가야 합니다." },
+            [3452] = { "불꽃의 테두리", "윈드블레이드에게 라그나로스의 상징 1개를 찾아 가져가야 합니다." },
+            [3453] = { "응보의 횃불", "윈드블레이드가 응보의 횃불을 완성할 동안 기다려야 합니다." },
+            [3454] = { "응보의 횃불", "응보의 횃불을 집어 드십시오." },
+        },
+        zhCN = {
+            [3441] = { "神圣的惩戒", "听温布雷讲述他的故事。" },
+            [3442] = { "无瑕之焰", "收集4份烈焰之心和4份傀儡之油，然后把这些东西交给温布雷。" },
+            [3443] = { "铸造火炬杆", "给温布雷带去8把瑟银匕首。" },
+            [3452] = { "烈焰之盒", "找到一个拉格纳罗斯符记，把它交给温布雷。" },
+            [3453] = { "惩戒火炬", "等待温布雷完成惩戒火炬。" },
+            [3454] = { "惩戒火炬", "拿起惩戒火炬。" },
+        },
+        zhTW = {
+            [3441] = { "神聖的懲戒", "聽溫布雷講述他的故事。" },
+            [3442] = { "無瑕之焰", "收集4份烈焰之心和4份傀儡之油，然後把這些東西交給溫布雷。" },
+            [3443] = { "鑄造火炬桿", "帶8把瑟銀匕首給溫布雷。" },
+            [3452] = { "烈焰之盒", "找到一個拉格納羅斯符記，把它交給溫布雷。" },
+            [3453] = { "懲戒火炬", "等待溫布雷完成懲戒火炬。" },
+            [3454] = { "懲戒火炬", "拿起懲戒火炬。" },
+        },
+    }
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["Velarok Windblade"] = { "Velarok Windblade", "Velarok Lamevent", "Velarok Espada del Viento", "Velarok Windblade",
+            "Velarok Finalâmina", "Веларок Ветрорез", "Velarok Windblade", "Velarok Windblade", "Velarok Windblade" },
+        ["Torch of Retribution"] = { "Fackel der Vergeltung", "Torche de vindicte", "Antorcha de Reprensión", "Torch of Retribution",
+            "Tocha da Retribuição", "Факел воздаяния", "응보의 횃불", "惩戒火炬", "懲戒火炬" },
+        ["Fire elementals and war golems"] = { "Feuerelementare und Kriegsgolems", "Élémentaires de feu et golems de guerre",
+            "Elementales de fuego y gólems de guerra", "Elementali del fuoco e golem da guerra", "Elementais do fogo e golens de guerra",
+            "Огненные элементали и боевые големы", "불의 정령과 전투 골렘", "火元素和战争傀儡", "火元素和戰爭傀儡" },
+        ["Dark Iron dwarves"] = { "Dunkeleisenzwerge", "Nains Sombrefer", "Enanos Hierro Negro", "Nani Ferroscuro", "Anões Ferro Negro",
+            "Дворфы Черного Железа", "검은무쇠 드워프", "黑铁矮人", "黑鐵矮人" },
+        ["Twilight's Hammer camp"] = { "Lager des Schattenhammers", "Camp du Marteau du crépuscule", "Campamento del Martillo Crepuscular",
+            "Accampamento del Martello del Crepuscolo", "Acampamento do Martelo do Crepúsculo", "Лагерь Сумеречного Молота",
+            "황혼의 망치단 야영지", "暮光之锤营地", "暮光之錘營地" },
+        ["Dropped by the fire elementals in the area"] = {
+            "Von den Feuerelementaren in der Gegend",
+            "Sur les élémentaires de feu de la zone",
+            "Lo sueltan los elementales de fuego de la zona",
+            "Lo rilasciano gli elementali del fuoco della zona",
+            "Derrubado pelos elementais do fogo da área",
+            "Добывается с огненных элементалей в этой местности",
+            "이 지역의 불의 정령이 떨어뜨립니다",
+            "这一带的火元素掉落",
+            "這一帶的火元素掉落",
+        },
+        ["Dropped by the war golems and the magma elementals in the area"] = {
+            "Von den Kriegsgolems und Magmaelementaren in der Gegend",
+            "Sur les golems de guerre et les élémentaires de magma de la zone",
+            "Lo sueltan los gólems de guerra y los elementales de magma de la zona",
+            "Lo rilasciano i golem da guerra e gli elementali di magma della zona",
+            "Derrubado pelos golens de guerra e elementais de magma da área",
+            "Добывается с боевых големов и элементалей магмы в этой местности",
+            "이 지역의 전투 골렘과 용암 정령이 떨어뜨립니다",
+            "这一带的战争傀儡和熔岩元素掉落",
+            "這一帶的戰爭傀儡和熔岩元素掉落",
+        },
+        ["Dropped by the Dark Iron dwarves and their slaves all over the gorge"] = {
+            "Von den Dunkeleisenzwergen und ihren Sklaven überall in der Schlucht",
+            "Sur les nains Sombrefer et leurs esclaves partout dans la gorge",
+            "Lo sueltan los enanos Hierro Negro y sus esclavos por toda la garganta",
+            "Lo rilasciano i nani Ferroscuro e i loro schiavi in tutta la gola",
+            "Derrubado pelos anões Ferro Negro e seus escravos por toda a garganta",
+            "Добывается с дворфов Черного Железа и их рабов по всему ущелью",
+            "협곡 곳곳의 검은무쇠 드워프와 그 노예들이 떨어뜨립니다",
+            "峡谷各处的黑铁矮人及其奴隶掉落",
+            "峽谷各處的黑鐵矮人及其奴隸掉落",
+        },
+        ["Dropped by the Twilight's Hammer elites in their camp to the northwest"] = {
+            "Von den Elitegegnern des Schattenhammers in ihrem Lager im Nordwesten",
+            "Sur les élites du Marteau du crépuscule dans leur camp au nord-ouest",
+            "Lo sueltan los élites del Martillo Crepuscular en su campamento al noroeste",
+            "Lo rilasciano gli élite del Martello del Crepuscolo nel loro accampamento a nord-ovest",
+            "Derrubado pelos elites do Martelo do Crepúsculo no acampamento deles a noroeste",
+            "Добывается с элитных бойцов Сумеречного Молота в их лагере на северо-западе",
+            "북서쪽 야영지의 황혼의 망치단 정예들이 떨어뜨립니다",
+            "西北方营地里的暮光之锤精英掉落",
+            "西北方營地裡的暮光之錘精英掉落",
+        },
+        ["Elite quest."] = { "Elitequest.", "Quête élite.", "Misión de élite.", "Missione élite.", "Missão de elite.",
+            "Элитное задание.", "정예 퀘스트.", "精英任务。", "精英任務。" },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        for id, entry in pairs(Q[lang] or {}) do
+            if content.quests[id] == nil then content.quests[id] = { name = entry[1], objective = entry[2] } end
+        end
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10ntofstart
+
+-- BEGIN l10ncapitalpill
+-- capitalpill (2.1.7): Ever After's reputation box, the capitals of the
+-- faction the quest list is showing (Core/Journal.lua).
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["Alliance capitals"] = { "Hauptstädte der Allianz", "Capitales de l'Alliance", "Capitales de la Alianza", "Capitali dell'Alleanza",
+            "Capitais da Aliança", "Столицы Альянса", "얼라이언스 수도", "联盟主城", "聯盟主城" },
+        ["Horde capitals"] = { "Hauptstädte der Horde", "Capitales de la Horde", "Capitales de la Horda", "Capitali dell'Orda",
+            "Capitais da Horda", "Столицы Орды", "호드 수도", "部落主城", "部落主城" },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10ncapitalpill
+
+-- BEGIN l10ntomestart
+-- tomestart (2.1.7): the Paladin chain's first two steps (1649, 1650). Names
+-- and 1650's objective: the game's quest texts; 1649's objective is 1652's
+-- (the same sentence); the book's and the line's words in each language.
+do
+    local FIND = {
+        deDE = "Sucht Daphne Stilwell in Westfall.", frFR = "Trouver Daphne Stilwell dans la marche de l'Ouest.",
+        esES = "Encuentra a Daphne Fontana en Páramos del Poniente.", ptBR = "Encontre Dafne Calmafonte no Cerro Oeste.",
+        ruRU = "Найдите Дафну Стилвелл в Западном Крае.", koKR = "서부 몰락지대에 있는 대프니 스틸웰을 찾아야 합니다.",
+        zhCN = "在西部荒野找到达芙妮·斯迪威尔。", zhTW = "在西部荒野找到達芙妮·斯迪威爾。",
+    }
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["Tome of Valor"] = { "Foliant der Ehre", "Tome de la bravoure", "Libro del valor", "Tome of Valor", "Tomo da Bravura",
+            "Фолиант Отваги", "용맹의 고서", "勇气之书", "勇氣之書" },
+        ["Read the book to start the quest"] = { "Lest das Buch, um die Quest zu starten", "Lisez le livre pour commencer la quête",
+            "Lee el libro para empezar la misión", "Leggi il libro per iniziare la missione", "Leia o livro para iniciar a missão",
+            "Прочтите книгу, чтобы начать задание", "책을 읽어 퀘스트를 시작하세요", "阅读此书以开始任务", "閱讀此書以開始任務" },
+        ["Tome of Valor: read the book to start the quest"] = { "Foliant der Ehre: Lest das Buch, um die Quest zu starten",
+            "Tome de la bravoure : lisez le livre pour commencer la quête", "Libro del valor: lee el libro para empezar la misión",
+            "Tome of Valor: leggi il libro per iniziare la missione", "Tomo da Bravura: leia o livro para iniciar a missão",
+            "Фолиант Отваги: прочтите книгу, чтобы начать задание", "용맹의 고서: 책을 읽어 퀘스트를 시작하세요",
+            "勇气之书：阅读此书以开始任务", "勇氣之書：閱讀此書以開始任務" },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.quests = content.quests or {}
+        content.places = content.places or {}
+        local like = content.quests[1652] or content.quests[1651]
+        if type(like) == "table" and like.name then
+            if content.quests[1649] == nil then content.quests[1649] = { name = like.name, objective = (content.quests[1652] or {}).objective } end
+            if content.quests[1650] == nil then content.quests[1650] = { name = like.name, objective = FIND[lang] } end
+        end
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+-- END l10ntomestart
 
 -- BEGIN citydistrict
 -- The parts of the capital cities the arrow names inside them (Data/ArrowNpcIds.lua,

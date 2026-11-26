@@ -116,6 +116,7 @@ local function Tint(frame)
         home:SetBackdropBorderColor(0.47, 0.34, 0.16, 1)
         if frame.homeParchment then frame.homeParchment:SetVertexColor(1.00, 0.95, 0.84) end
         frame.fdjForeverTint = nil
+        if FDJ.ApplyDarkHome then FDJ.ApplyDarkHome(frame) end -- darkmode (2.1.7): dark again
     end
 end
 FDJ.TintForeverView = Tint

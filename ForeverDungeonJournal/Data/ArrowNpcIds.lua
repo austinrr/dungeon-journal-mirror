@@ -4,6 +4,17 @@
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.ARROW_NPC_IDS = {
+    -- npcids217 (2.1.7, M 25 Nov 2026 at Velarok Windblade, the big ! where
+    -- his picture should be: "Why did you randomly change the question mark"):
+    -- the NPCs of 2.1.7's new chain steps and stops had no ID here, so the
+    -- arrow took them for things to click (forever-db's npc table).
+    ["Velarok Windblade"] = 8479,
+    ["Squire Maltrake"] = 8509,
+    ["Clubtoe"] = 260931,
+    ["Twilight Brute"] = 261208,
+    ["Klunk"] = 260973,
+    ["Overlord Kilgar"] = 256881,
+    ["Auctioneer Leeka"] = 8672,
     ["Abra Cadabra"] = 252019,
     ["Advisor Belgrum"] = 2918,
     ["Afadra Dunwall"] = 264943,

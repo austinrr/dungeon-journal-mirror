@@ -270,7 +270,7 @@ FDJ.BOSS_LEVELS = {
         ["Tuten'kash"] = "40",
         ["Mordresh Fire Eye"] = "39",
         ["Glutton"] = "40",
-        ["Ragglesnout"] = "37",
+        ["Ragglesnout"] = "40", -- (2.1.7, M 25 Nov 2026: his frame in the game; Wowhead Forever: 40)
         ["Plaguemaw the Rotting"] = "40",
         ["Amnennar the Coldbringer"] = "41",
     },

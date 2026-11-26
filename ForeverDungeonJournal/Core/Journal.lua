@@ -262,14 +262,26 @@ FDJ.DUNGEON_MAPS = {
             { name = "Captain Dreadrise",   floor = 1, x = 0.546, y = 0.344 }, -- he paths around there
             { name = "Deathless Marrow",    floor = 1, x = 0.349, y = 0.536 },
             { name = "Min'loth the Serpent", floor = 1, x = 0.196, y = 0.539 },
+            -- gillpatrol (2.1.7, M 26 Nov 2026, his map with a red loop round
+            -- the courtyard in the middle: "add the Gill portrait. And it's
+            -- gonna follow basically around the circle here ... if you hover
+            -- the boss, it's gonna stop moving"): the rare goes round it.
+            { name = "Gill",                floor = 1, x = 0.4463, y = 0.5131, walk = { 0.4463, 0.5131, 0.4461, 0.4842, 0.4484, 0.4525, 0.4643, 0.4325, 0.4819, 0.4188, 0.5021, 0.4192, 0.5191, 0.4194, 0.5353, 0.4194, 0.5523, 0.4190, 0.5701, 0.4243, 0.5865, 0.4379, 0.6000, 0.4582, 0.6061, 0.4854, 0.6086, 0.5130, 0.6091, 0.5406, 0.6078, 0.5690, 0.6045, 0.5995, 0.5916, 0.6233, 0.5733, 0.6369, 0.5529, 0.6369, 0.5355, 0.6367, 0.5191, 0.6343, 0.5029, 0.6310, 0.4848, 0.6279, 0.4678, 0.6158, 0.4551, 0.5946, 0.4475, 0.5685, 0.4463, 0.5404 } },
         },
     },
     -- Blackmaw Hold: six levels from Santiago Reyes' Forever dungeon maps.
     -- Floor names are visible on hover; do not guess boss positions from art.
     ["Blackmaw Hold"] = {
+        -- bmhlevels (2.1.7, M 26 Nov 2026, five marked maps: "We should add a
+        -- level 3, which is the same as my last screenshot, because we
+        -- actually reappear from that cave at the top ... the level is on the
+        -- green dot"): out of the Festering Grotto the way goes back up into
+        -- Blackmaw Grove, out of the cave by the grotto's name; Level 3 is the
+        -- Grove's map again, and the depths below it are Levels 4 to 7.
         floors = {
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldGroveMap",          texBottom = 683 / 1024, label = "Blackmaw Grove" },
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldFesteringGrottoMap", texBottom = 683 / 1024, label = "Festering Grotto" },
+            { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldGroveMap",          texBottom = 683 / 1024, label = "Blackmaw Grove" }, -- (bmhlevels: back out of the grotto)
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldFallenGroveMap",    texBottom = 683 / 1024, label = "Depths of the Fallen Grove" },
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldEldersMap",         texBottom = 683 / 1024, label = "Depths of the Elders" },
             { texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\BlackmawHoldBurrowMap",         texBottom = 683 / 1024, label = "Depths of the Burrow" },
@@ -277,7 +289,51 @@ FDJ.DUNGEON_MAPS = {
         },
         -- Entrance swirl visible west of Blackmaw Grove on the original map.
         entrance = { floor = 1, x = 0.183, y = 0.740, angle = 90 },
-        bosses = {}, -- Locations unverified; no fabricated boss markers.
+        -- bmhpins (2.1.7, M 26 Nov 2026, his Level 1 map marked with four
+        -- dots: "The green is Impaan. The red dot is Moontouched. The yellow
+        -- dot is going to be Bonesnout. The purple dot is where you put the
+        -- ladder to level 2"), and the levels below the same night.
+        transitions = {
+            { floor = 1, to = 2, x = 0.710, y = 0.328 }, -- (his purple dot)
+            { floor = 2, to = 3, x = 0.578, y = 0.791 }, -- (bmhpins2: his yellow dot, the south end of the grotto)
+            { floor = 3, to = 4, x = 0.787, y = 0.512 }, -- (bmhlevels: his green dot, the bear's head in Bonesnout's Thicket)
+            { floor = 4, to = 5, x = 0.313, y = 0.298 }, -- (bmhpins3: his orange dot, the north-west end of the path)
+            { floor = 5, to = 6, x = 0.654, y = 0.675 }, -- (bmhpins4: his red dot, the end of the south-east tunnel)
+            { floor = 6, to = 7, x = 0.651, y = 0.329 }, -- (bmhpins5: his yellow dot, past the Behemoth's den)
+        },
+        -- bmharrive (2.1.7, M 26 Nov 2026, his orange arrows on each level: "use
+        -- the same style arrows that we're using in UBRS ... to tell the player
+        -- which side, where they're spawning when they enter a level ... I give
+        -- you the right direction as well with my drawing"): where a level is
+        -- entered, pointing the way he drew (angle: 0 = right, 90 = up).
+        links = {
+            { floor = 2, x = 0.791, y = 0.614, angle = 107 }, -- out of the rocks at the grotto's east end, north
+            { floor = 3, x = 0.493, y = 0.335, angle = 207 }, -- out of the cave by the grotto's name, south-west
+            { floor = 4, x = 0.320, y = 0.906, angle = 85 },  -- out of the rocks at the bottom, north
+            { floor = 5, x = 0.849, y = 0.301, angle = 127 }, -- the north-east end of the tunnel, into it
+            { floor = 6, x = 0.363, y = 0.765, angle = 357 }, -- the west end of the tunnel, east
+        },
+        bosses = {
+            { name = "Impaan the Imprisoner",  floor = 1, x = 0.424, y = 0.700 }, -- (his green dot)
+            { name = "Moontouched Wanderer",   floor = 1, x = 0.589, y = 0.842 }, -- (his red dot)
+            { name = "Bonesnout the Unbroken", floor = 1, x = 0.711, y = 0.773 }, -- (his yellow dot)
+            -- bmhpins2 (same night, his Level 2 map: "purple dot is gonna be
+            -- withermaw. yellow dot is ladder to lv 3")
+            { name = "Withermaw",              floor = 2, x = 0.715, y = 0.269 }, -- (his purple dot, the grotto's north-east room)
+            -- bmhpins3 (same night, the Fallen Grove: "the black dot is the
+            -- unbound spirit. And the orange dot is going to be level 4")
+            { name = "Unbound Spirit",         floor = 4, x = 0.585, y = 0.350 }, -- (his black dot, by the great tree)
+            -- bmhpins4 (same night, the Depths of the Elders: "the yellow dot
+            -- is going to be Elder Shaman ... the red dot is going to be to level 5")
+            { name = "Elder Shaman Bloodmane", floor = 5, x = 0.447, y = 0.363 }, -- (his yellow dot, the green-lit chamber)
+            -- bmhpins5 (same night, the Depths of the Burrow: "the red dot is
+            -- black behemoth, and the yellow dot is to level 6. green dot is
+            -- totem of ursoc quest piece": the totem in Data/QuestMaps.lua)
+            { name = "Blackmaw Behemoth",      floor = 6, x = 0.558, y = 0.347 }, -- (his red dot, the den in the north)
+            -- bmhpins6 (same night, the Depths of Forbidden Magic: "the red
+            -- dot is the final boss Varrox")
+            { name = "Varrox Bleakhoof",       floor = 7, x = 0.638, y = 0.586 }, -- (his red dot, the purple-lit floor by the great tree)
+        },
     },
     -- Boss positions: falling/Ekiroth's numbered map on Discord ("Bastion
     -- Krol'dok", 12 Nov 2026), bosses 1-6 in the order they are fought.
@@ -405,6 +461,12 @@ FDJ.DUNGEON_MAPS = {
     -- Loksey from Wowhead (zone 796 floor 2). Arcanist Doan has no published coordinates yet.
     ["Scarlet Monastery: Library"] = {
         floors = { { uiMapID = 303, tiles = "Interface\\WorldMap\\ScarletMonastery\\ScarletMonastery2_" } },
+        -- smlibentrance (2.1.7, M 26 Nov 2026: "Scarlet Monastery Library does
+        -- not have our entrance. You should put the entrance on the whirlwind,
+        -- and the entrance text should be below it. Below it to the left"):
+        -- the swirl at the top left; its name under it, to the left, on the
+        -- bare parchment beside the corridor.
+        entrance = { floor = 1, x = 0.130, y = 0.245, angle = 180, labelPos = "bottomleft" },
         bosses = {
             { name = "Houndmaster Loksey", x = 0.302, y = 0.846 },
             { name = "Arcanist Doan",      x = 0.835, y = 0.740 },
@@ -458,12 +520,14 @@ FDJ.DUNGEON_MAPS = {
             { name = "Bael'Gar",                   floor = 1, x = 0.251, y = 0.534 },
             { name = "Lord Incendius",             floor = 1, x = 0.564, y = 0.311 },
             { name = "Fineous Darkvire",           floor = 1, x = 0.635, y = 0.211 },
-            { name = "Gorosh the Dervish",         floor = 2, x = 0.530, y = 0.868 },
-            { name = "Grizzle",                    floor = 2, x = 0.547, y = 0.883 },
-            { name = "Eviscerator",                floor = 2, x = 0.547, y = 0.913 },
-            { name = "Ok'thor the Breaker",        floor = 2, x = 0.530, y = 0.928 },
-            { name = "Anub'shiah",                 floor = 2, x = 0.513, y = 0.913 },
-            { name = "Hedrum the Creeper",         floor = 2, x = 0.513, y = 0.883 },
+            -- bossgroup (2.1.7): the Ring of Law's six challengers in one
+            -- skull pin (groups.ring below), their list on a click
+            { name = "Gorosh the Dervish",         floor = 2, x = 0.530, y = 0.868, group = "ring" },
+            { name = "Grizzle",                    floor = 2, x = 0.547, y = 0.883, group = "ring" },
+            { name = "Eviscerator",                floor = 2, x = 0.547, y = 0.913, group = "ring" },
+            { name = "Ok'thor the Breaker",        floor = 2, x = 0.530, y = 0.928, group = "ring" },
+            { name = "Anub'shiah",                 floor = 2, x = 0.513, y = 0.913, group = "ring" },
+            { name = "Hedrum the Creeper",         floor = 2, x = 0.513, y = 0.883, group = "ring" },
             { name = "Pyromancer Loregrain",       floor = 2, x = 0.549, y = 0.948 },
             { name = "Warder Stilgiss",            floor = 2, x = 0.602, y = 0.659 },
             { name = "General Angerforge",         floor = 2, x = 0.363, y = 0.823 },
@@ -474,8 +538,13 @@ FDJ.DUNGEON_MAPS = {
             { name = "Ambassador Flamelash",       floor = 2, x = 0.538, y = 0.485 },
             { name = "The Seven",                  floor = 2, x = 0.538, y = 0.247 },
             { name = "Magmus",                     floor = 2, x = 0.796, y = 0.118 },
-            { name = "Princess Moira Bronzebeard", floor = 2, x = 0.920, y = 0.110 },
-            { name = "Emperor Dagran Thaurissan",  floor = 2, x = 0.909, y = 0.118 },
+            -- (imperialgap, 2.1.7, M 26 Nov 2026: "make sure that Emperor and
+            -- Princess pins do not overlap": side by side in the Imperial Seat)
+            { name = "Princess Moira Bronzebeard", floor = 2, x = 0.948, y = 0.118 }, -- (a ring's width apart at 80%: they still touched)
+            { name = "Emperor Dagran Thaurissan",  floor = 2, x = 0.880, y = 0.118 },
+        },
+        groups = {
+            ring = { floor = 2, x = 0.527, y = 0.886, nameKey = "MAP_RING_OF_LAW" }, -- (bossgroup: the middle of the ring, a touch up: clear of Pyromancer Loregrain below)
         },
     },
     ["Uldaman"] = {
@@ -617,17 +686,42 @@ FDJ.DUNGEON_MAPS = {
         },
     },
     ["Shadowfang Keep"] = {
-        -- Three levels are shown: The Courtyard, The Wall Walk and Arugal's Chamber
+        -- Four levels are shown: The Courtyard, The Wall Walk, the tower's round room (sfktower) and Arugal's Chamber
         -- (map tiles 1, 7, 6). The Dining Hall page was removed at the author's request.
         -- Ladder positions are approximate.
+        -- sfkfresh (2.1.7, M 25 Nov 2026, his marked Level 1: "where the skull
+        -- is a bit faded ... put the Commander Springvale there", the ladder
+        -- "on the red dot", the Fel Steed "a little bit more in the middle to
+        -- the green dot", and the faded patch gone: "this is the map you can
+        -- use and replace all the pins in the right position"): Level 1 is
+        -- his fresh copy of the map (Media\Maps\ShadowfangKeep1Fresh, 1002x668
+        -- in a 1024x1024 texture; the printed skulls under Springvale and
+        -- Rethilgore, no parchment patches), the ladder on the curved stair
+        -- right of the green room.
+        -- sfktower (2.1.7, M 26 Nov 2026, the map of the round room he sent,
+        -- dungeon-313: "We want to use this map as level 3 ... the current
+        -- level 3 is going to be level 4 ... Fenrus the Devourer and the Void
+        -- Walker. On the skull and right next to the skull ... the ladder on
+        -- the green dot to level 4"): Level 3 is that map
+        -- (Media\Maps\ShadowfangKeep313Fresh), Arugal's Chamber Level 4.
         transitions = {
-            { floor = 1, to = 2, x = 0.145, y = 0.864, dir = "up" }, -- stairs behind Baron Silverlaine, up to the wall walk
-            { floor = 2, to = 3, x = 0.515, y = 0.915, dir = "up" }, -- from the terrace into the tower
+            { floor = 1, to = 2, x = 0.358, y = 0.675, dir = "up" }, -- the curved stair right of the green room, up to the wall walk
+            { floor = 2, to = 3, x = 0.430, y = 0.357, dir = "up" }, -- (sfkladder2, M 26 Nov 2026: "very far away from the where it is now ... put it on the green dot": the foot of the stairs in the north-west building; was 51.5, 91.5)
+            { floor = 3, to = 4, x = 0.432, y = 0.744, dir = "up" }, -- (sfktower: his green dot, where the inner ring meets the stair)
         },
         floors = {
-            { uiMapID = 310, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep1_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s1", x0 = 0.2525, y0 = 0.5554, x1 = 0.2864, y1 = 0.6063 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep1_s2", x0 = 0.6497, y0 = 0.6961, x1 = 0.6836, y1 = 0.7470 } } },
+            { uiMapID = 310, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep1_",
+                texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\Maps\\ShadowfangKeep1Fresh", texRight = 1002 / 1024, texBottom = 668 / 1024 }, -- (sfkfresh)
             { uiMapID = 316, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep7_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep7_s1", x0 = 0.5659, y0 = 0.8024, x1 = 0.5998, y1 = 0.8533 } } },
-            { uiMapID = 315, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep6_", patches = { { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s1", x0 = 0.6677, y0 = 0.3084, x1 = 0.7016, y1 = 0.3593 }, { tex = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MapPatches\\ShadowfangKeep6_s2", x0 = 0.5289, y0 = 0.6018, x1 = 0.5629, y1 = 0.6527 } } },
+            { uiMapID = 313, texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\Maps\\ShadowfangKeep313Fresh", texRight = 1002 / 1024, texBottom = 668 / 1024 }, -- (sfktower)
+            -- sfkclean (2.1.7, M 26 Nov 2026 on Level 4: "I don't like that the
+            -- skull is faded on this page ... paint over it the same terrain
+            -- that's around it so it's completely concealed"): the journal's
+            -- own copy of this map with the two printed skulls painted over
+            -- with the floor around them (Media\\Maps\\ShadowfangKeep6Fresh),
+            -- in place of the game's tiles and the two parchment patches.
+            { uiMapID = 315, tiles = "Interface\\WorldMap\\ShadowfangKeep\\ShadowfangKeep6_",
+                texture = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\Maps\\ShadowfangKeep6Fresh", texRight = 1002 / 1024, texBottom = 668 / 1024 },
         },
         entrance = { floor = 1, x = 0.705, y = 0.605, angle = 0 },
         -- Deathstalkers in Shadowfang is handed in to Deathstalker Vincent,
@@ -640,15 +734,16 @@ FDJ.DUNGEON_MAPS = {
         -- boss positions published for the Forever client.
         bosses = {
             { name = "Rethilgore",                 floor = 1, x = 0.670, y = 0.715 },
-            { name = "Fel Steed / Shadow Charger", floor = 1, x = 0.345, y = 0.635 },
+            { name = "Fel Steed / Shadow Charger", floor = 1, x = 0.322, y = 0.595 }, -- (sfkfresh: his green dot)
+            { name = "Commander Springvale",       floor = 1, x = 0.279, y = 0.600 }, -- (sfkfresh: on the printed skull)
             { name = "Razorclaw the Butcher",      floor = 1, x = 0.327, y = 0.447 },
             { name = "Baron Silverlaine",          floor = 1, x = 0.162, y = 0.807 },
             { name = "Deathsworn Captain",         floor = 2, x = 0.630, y = 0.525 },
             { name = "Odo the Blindwatcher",       floor = 2, x = 0.583, y = 0.828 },
-            { name = "Fenrus the Devourer",        floor = 3, x = 0.546, y = 0.627 },
-            { name = "Arugal's Voidwalker",        floor = 3, x = 0.492, y = 0.710 },
-            { name = "Wolf Master Nandos",         floor = 3, x = 0.590, y = 0.533 },
-            { name = "Archmage Arugal",            floor = 3, x = 0.685, y = 0.334 },
+            { name = "Fenrus the Devourer",        floor = 3, x = 0.543, y = 0.538 }, -- (sfktower: on the printed skull)
+            { name = "Arugal's Voidwalker",        floor = 3, x = 0.593, y = 0.538 }, -- (sfktower: right next to it)
+            { name = "Wolf Master Nandos",         floor = 4, x = 0.590, y = 0.533 },
+            { name = "Archmage Arugal",            floor = 4, x = 0.625, y = 0.191 }, -- (sfkclean: his green dot, the room's top corner)
         },
     },
     ["The Stockade"] = {
@@ -982,6 +1077,108 @@ FDJ.RenderMapLinks = function(holder, data, floorIndex, artW, artH, baseH)
     end
     frame.dungeonMapLinkByIndex = byIndex
     for i = shown + 1, #arrows do arrows[i]:Hide() end
+end
+-- gillpatrol (2.1.7, M 26 Nov 2026: "I just wanna make one boss move. And if
+-- you hover the boss, it's gonna stop moving ... confirm that this also
+-- works when they press M ... in the dungeon"): a boss pin with a walk
+-- (mapBoss.walk = { x1, y1, x2, y2, ... }, a loop on the map) goes round it
+-- at a walk, a lap about every 40 seconds; while the pointer is on it, it
+-- stands still. It moves only while its map is shown (the journal's or the
+-- M map's, which draws the same pins), and goes on from where it was when
+-- the map is drawn again. Any other pin: still.
+FDJ.WALK_SPEED = 0.016 -- of the map's width a second
+-- walkstop (same night: "give it just a tooltip that says right click to
+-- stop moving. It might be annoying for some people to see them moving all
+-- the time"): a right-click on a walking pin stops all of them, another sets
+-- them going again (kept for every character: ForeverDungeonJournalDB.mapWalkOff).
+do
+    local strings = {
+        enUS = { "Right-click to stop it moving", "Right-click to let it move again" },
+        deDE = { "Rechtsklick: anhalten", "Rechtsklick: wieder laufen lassen" },
+        frFR = { "Clic droit pour l'arrêter", "Clic droit pour le refaire bouger" },
+        esES = { "Clic derecho para detenerlo", "Clic derecho para que vuelva a moverse" },
+        itIT = { "Clic destro per fermarlo", "Clic destro per farlo muovere di nuovo" },
+        ptBR = { "Clique com o botão direito para pará-lo", "Clique com o botão direito para movê-lo de novo" },
+        ruRU = { "ПКМ: остановить", "ПКМ: снова двигаться" },
+        koKR = { "오른쪽 클릭: 멈추기", "오른쪽 클릭: 다시 움직이기" },
+        zhCN = { "右键点击：停止移动", "右键点击：恢复移动" },
+        zhTW = { "右鍵點擊：停止移動", "右鍵點擊：恢復移動" },
+    }
+    strings.esMX = strings.esES
+    for locale, pair in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.MAP_WALK_STOP == nil then t.MAP_WALK_STOP = pair[1] end
+            if t.MAP_WALK_GO == nil then t.MAP_WALK_GO = pair[2] end
+        end
+    end
+end
+FDJ.MapWalkOff = function()
+    return type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.mapWalkOff == true
+end
+FDJ.WalkMapPin = function(marker, mapBoss, artW, artH)
+    local walk = mapBoss and mapBoss.walk
+    if type(walk) ~= "table" or #walk < 6 then
+        if marker.fdjWalk then marker:SetScript("OnUpdate", nil) marker.fdjWalk = nil end
+        return
+    end
+    -- the loop's stretches, in the map's own measure (a unit across = 1)
+    local legs, total = {}, 0
+    local n = math.floor(#walk / 2)
+    for i = 1, n do
+        local j = (i % n) + 1
+        local x0, y0, x1, y1 = walk[2 * i - 1], walk[2 * i], walk[2 * j - 1], walk[2 * j]
+        local len = math.sqrt((x1 - x0) ^ 2 + ((y1 - y0) * 683 / 1024) ^ 2)
+        legs[#legs + 1] = { x0, y0, x1, y1, len }
+        total = total + len
+    end
+    if total <= 0 then return end
+    if not marker.fdjWalkHooked then
+        marker.fdjWalkHooked = true
+        marker:HookScript("OnEnter", function(self)
+            if not self.fdjWalk then return end
+            GameTooltip:AddLine(L(FDJ.MapWalkOff() and "MAP_WALK_GO" or "MAP_WALK_STOP"), 0.55, 0.80, 1.00)
+            GameTooltip:Show()
+        end)
+        marker:HookScript("OnMouseUp", function(self, button)
+            if button ~= "RightButton" or not self.fdjWalk then return end
+            if type(ForeverDungeonJournalDB) ~= "table" then ForeverDungeonJournalDB = {} end
+            ForeverDungeonJournalDB.mapWalkOff = (not FDJ.MapWalkOff()) or nil
+            if GameTooltip:IsOwned(self) then -- (the tooltip again, with the other line)
+                if type(ExecuteFrameScript) == "function" and pcall(ExecuteFrameScript, self, "OnEnter") then return end
+                local onEnter = self:GetScript("OnEnter")
+                if onEnter then pcall(onEnter, self) end
+                GameTooltip:AddLine(L(FDJ.MapWalkOff() and "MAP_WALK_GO" or "MAP_WALK_STOP"), 0.55, 0.80, 1.00)
+                GameTooltip:Show()
+            end
+        end)
+    end
+    local state = marker.fdjWalk
+    if not state or state.walk ~= walk then
+        state = { walk = walk, at = 0 }
+        marker.fdjWalk = state
+    end
+    state.legs, state.total, state.w, state.h = legs, total, artW, artH
+    local function Place(self)
+        local at, legsNow = state.at % state.total, state.legs
+        for _, leg in ipairs(legsNow) do
+            if at <= leg[5] then
+                local t = leg[5] > 0 and at / leg[5] or 0
+                local x, y = leg[1] + (leg[3] - leg[1]) * t, leg[2] + (leg[4] - leg[2]) * t
+                self:ClearAllPoints()
+                self:SetPoint("CENTER", self:GetParent(), "TOPLEFT", x * state.w, -(y * state.h))
+                self.fdjPX, self.fdjPY = x * state.w, y * state.h
+                return
+            end
+            at = at - leg[5]
+        end
+    end
+    Place(marker)
+    marker:SetScript("OnUpdate", function(self, elapsed)
+        if self:IsMouseOver() or FDJ.MapWalkOff() then return end -- (hovered, or stopped by a right-click: it stands still)
+        state.at = (state.at + FDJ.WALK_SPEED * (elapsed or 0)) % state.total
+        Place(self)
+    end)
 end
 -- Three gold flashes over about two and a half seconds.
 FDJ.PulseMapLink = function(a)
@@ -2677,6 +2874,11 @@ local function ParseQuestRewardExtras(quest)
                 local repName, repAmount = token:match("^(.-)%s+([%+%-]%d+)$")
                 if repName and repAmount then
                     repName = repName:gsub("^%s+", ""):gsub("%s+$", "")
+                    -- capitalpill (2.1.7): "Faction capitals" (Ever After): the
+                    -- capitals of the faction the quest list is showing
+                    if repName == "Faction capitals" then
+                        repName = (selectedQuestFaction == "Horde") and "Horde capitals" or "Alliance capitals"
+                    end
                     if FDJ.LocalizeReputationName then
                         repName = FDJ.LocalizeReputationName(repName) or repName
                     else
@@ -6808,10 +7010,21 @@ RefreshQuestList = function()
 
     do -- lostquest: lost quests aren't counted
         local shownCount = FDJ.questMainCount or #visibleQuestIndexes
-        for i = 1, shownCount do
-            if quests[visibleQuestIndexes[i]] and FDJ.IsQuestLost(quests[visibleQuestIndexes[i]]) then shownCount = shownCount - 1 end
+        -- donecount (2.1.7, Vakos on Discord, 25 Nov 2026, with M: "instead of
+        -- ... just saying '7', make it say '7/7' if you completed all of the
+        -- dungeon's quests ... or however many quests you've done so far out
+        -- of 7"): the quests handed in out of every quest counted
+        local done = FDJ.questDoneHidden or 0
+        for i = 1, (FDJ.questMainCount or #visibleQuestIndexes) do
+            local quest = quests[visibleQuestIndexes[i]]
+            if quest and FDJ.IsQuestLost(quest) then
+                shownCount = shownCount - 1
+            elseif quest and FDJ.QuestTurnedIn(quest.id) then
+                done = done + 1
+            end
         end
-        frame.questListTitle:SetText(L("QUESTS") .. "  |  " .. (shownCount + (FDJ.questDoneHidden or 0))) -- (hidedone: still every quest)
+        local total = shownCount + (FDJ.questDoneHidden or 0) -- (hidedone: still every quest)
+        frame.questListTitle:SetText(L("QUESTS") .. "  |  " .. math.min(done, total) .. "/" .. total)
         if FDJ.UpdateQuestPostButton then FDJ.UpdateQuestPostButton(shownCount) end -- postquests (2.1.3)
     end
     if FDJ.UpdateQuestsTBD then FDJ.UpdateQuestsTBD() end
@@ -10464,6 +10677,146 @@ function FDJ.SpreadMapPins(markers, count, size)
     end
 end
 
+-- bossgroup (2.1.7, M 26 Nov 2026 on Blackrock Depths' map: "the ring of law
+-- is a complete mess. With all those boss pins together, I think we should
+-- just have a skull icon, and then you can click on it and it's gonna show
+-- you below all the ring bosses"; groupup: above it): a map's data.groups = { key = { floor, x,
+-- y, nameKey } }, its bosses marked group = key: one skull pin in their
+-- place; a click opens the list of them over it (portrait and name, each
+-- to its boss page), another click closes it.
+do
+    local strings = {
+        enUS = { "Ring of Law", "Click to show its bosses", "Click to hide them" },
+        deDE = { "Ring des Gesetzes", "Klicken: die Bosse zeigen", "Klicken: ausblenden" },
+        frFR = { "Cercle de Loi", "Cliquez pour voir ses boss", "Cliquez pour les masquer" },
+        esES = { "Círculo de la Ley", "Haz clic para ver sus jefes", "Haz clic para ocultarlos" },
+        itIT = { "Ring of Law", "Clicca per vedere i suoi boss", "Clicca per nasconderli" },
+        ptBR = { "Círculo da Lei", "Clique para ver os chefes", "Clique para ocultá-los" },
+        ruRU = { "Кольцо Закона", "Щелкните, чтобы увидеть боссов", "Щелкните, чтобы скрыть" },
+        koKR = { "법의 심판장", "클릭하면 우두머리 목록을 봅니다", "클릭하면 숨깁니다" },
+        zhCN = { "律法之环", "点击显示首领", "点击隐藏" },
+        zhTW = { "秩序競技場", "點擊顯示首領", "點擊隱藏" },
+    }
+    strings.esMX = strings.esES
+    for locale, t3 in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            if t.MAP_RING_OF_LAW == nil then t.MAP_RING_OF_LAW = t3[1] end
+            if t.MAP_GROUP_SHOW == nil then t.MAP_GROUP_SHOW = t3[2] end
+            if t.MAP_GROUP_HIDE == nil then t.MAP_GROUP_HIDE = t3[3] end
+        end
+    end
+end
+FDJ.RenderMapBossGroups = function(holder, data, floorIndex, artW, artH, size, dungeonName)
+    if not frame then return end
+    frame.dungeonMapGroups = frame.dungeonMapGroups or {}
+    local pool, used = frame.dungeonMapGroups, 0
+    local dungeon = DB[dungeonName]
+    for key, grp in pairs((data and data.groups) or {}) do
+        if (grp.floor or 1) == floorIndex then
+            used = used + 1
+            local g = pool[used]
+            if not g then
+                g = CreateFrame("Button", nil, holder)
+                g.portrait = g:CreateTexture(nil, "ARTWORK")
+                g.portrait:SetAllPoints()
+                g.border = g:CreateTexture(nil, "OVERLAY")
+                g.border:SetPoint("CENTER")
+                g.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+                g.border:SetTexCoord(0, 0.6, 0, 0.6)
+                g.list = CreateFrame("Frame", nil, g, BackdropTemplateMixin and "BackdropTemplate" or nil)
+                if g.list.SetBackdrop then
+                    g.list:SetBackdrop({ bgFile = "Interface\\Buttons\\WHITE8X8", edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+                        edgeSize = 10, insets = { left = 2, right = 2, top = 2, bottom = 2 } })
+                    g.list:SetBackdropColor(0, 0, 0, 0.85)
+                    g.list:SetBackdropBorderColor(0.60, 0.50, 0.30, 1)
+                end
+                g.list:Hide()
+                g.rows = {}
+                g:SetScript("OnEnter", function(self)
+                    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+                    GameTooltip:SetText(self.title or "")
+                    GameTooltip:AddLine(L(self.list:IsShown() and "MAP_GROUP_HIDE" or "MAP_GROUP_SHOW"), 0.55, 0.80, 1.00)
+                    GameTooltip:Show()
+                end)
+                g:SetScript("OnLeave", function() GameTooltip:Hide() end)
+                g:SetScript("OnClick", function(self)
+                    self.list:SetShown(not self.list:IsShown())
+                    if GameTooltip:IsOwned(self) then self:GetScript("OnEnter")(self) end
+                end)
+                pool[used] = g
+            end
+            if g:GetParent() ~= holder then g:SetParent(holder) end
+            g:SetSize(size, size)
+            g.border:SetSize(size * 1.55, size * 1.55)
+            g:SetFrameLevel(holder:GetFrameLevel() + 11)
+            g.portrait:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Skull")
+            g.portrait:SetTexCoord(0, 1, 0, 1)
+            g.title = grp.nameKey and L(grp.nameKey) or key
+            g:ClearAllPoints()
+            g:SetPoint("CENTER", holder, "TOPLEFT", grp.x * artW, -(grp.y * artH))
+            g:SetShown(size > 0)
+            -- the list: its bosses in the journal's order
+            local rowH = math.max(18, math.floor(size * 0.75))
+            local n, widest = 0, 0
+            for idx, b in ipairs((dungeon and dungeon.bosses) or {}) do
+                local inGroup = false
+                for _, mb in ipairs(data.bosses or {}) do
+                    if mb.group == key and mb.name == b.name then inGroup = true break end
+                end
+                if inGroup then
+                    n = n + 1
+                    local row = g.rows[n]
+                    if not row then
+                        row = CreateFrame("Button", nil, g.list)
+                        row.pic = row:CreateTexture(nil, "ARTWORK")
+                        row.pic:SetPoint("LEFT", 4, 0)
+                        row.text = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
+                        row.text:SetPoint("LEFT", row.pic, "RIGHT", 5, 0)
+                        row.hl = row:CreateTexture(nil, "HIGHLIGHT")
+                        row.hl:SetAllPoints()
+                        row.hl:SetColorTexture(1, 0.82, 0, 0.18)
+                        g.rows[n] = row
+                    end
+                    row:SetHeight(rowH)
+                    row.pic:SetSize(rowH - 2, rowH - 2)
+                    row.pic:SetTexCoord(0, 1, 0, 1)
+                    if not SetBossPortrait(row.pic, dungeonName, b) then
+                        row.pic:SetTexture("Interface\\Icons\\INV_Misc_QuestionMark")
+                        row.pic:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+                    end
+                    row.text:SetText(BossName(b.name))
+                    widest = math.max(widest, (row.text:GetStringWidth() or 60) + rowH + 14)
+                    local bossIndex, rowDungeon = idx, dungeonName
+                    row:SetScript("OnClick", function()
+                        if FDJ.IsWorldMapOverlayAttached and FDJ.IsWorldMapOverlayAttached() and FDJ.OpenBossFromWorldMap then
+                            FDJ.OpenBossFromWorldMap(rowDungeon, bossIndex)
+                            return
+                        end
+                        if SetMode and SelectBoss then
+                            SetMode("bosses")
+                            SelectBoss(bossIndex)
+                        end
+                    end)
+                    row:ClearAllPoints()
+                    row:SetPoint("TOPLEFT", g.list, "TOPLEFT", 3, -3 - (n - 1) * rowH)
+                    row:SetPoint("RIGHT", g.list, "RIGHT", -3, 0)
+                    row:Show()
+                end
+            end
+            for i = n + 1, #g.rows do g.rows[i]:Hide() end
+            g.list:SetSize(math.max(120, widest + 6), n * rowH + 6)
+            g.list:ClearAllPoints()
+            -- (groupup, M 26 Nov 2026, the list cut off by the map's bottom
+            -- edge: "They should just appear ... at the top of the ring of law
+            -- icon"): above the skull
+            g.list:SetPoint("BOTTOM", g, "TOP", 0, size * 0.35)
+            g.list:SetFrameLevel(holder:GetFrameLevel() + 40) -- over every pin
+            g.list:Hide() -- (closed on each drawing of the map)
+        end
+    end
+    for i = used + 1, #pool do pool[i]:Hide() end
+end
 FDJ.RenderCustomDungeonMap = function(data, floorIndex)
     if not frame or not frame.dungeonMapArtHolder or not data then return end
     ClearDungeonMapArt()
@@ -10709,7 +11062,7 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             or (FDJ.MapQuestsHidden and FDJ.MapQuestsHidden(selectedDungeon))
             or (FDJ.QuestMatchesFaction and selectedQuestFaction and not FDJ.QuestMatchesFaction(questEntry, selectedQuestFaction))
             or (FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(selectedDungeon, questEntry)))
-        if (mapBoss.floor or 1) == floorIndex and not questHidden then
+        if (mapBoss.floor or 1) == floorIndex and not questHidden and not mapBoss.group then -- (bossgroup: a group's bosses in its own pin)
             shown = shown + 1
             local marker = frame.dungeonMapBossMarkers[shown]
             if not marker then
@@ -10810,12 +11163,14 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             if mapBoss.alt then marker:SetFrameLevel(holder:GetFrameLevel() + 8) end
             marker:SetShown(size > 0) -- boss icon size 0% hides them
             marker.fdjPX, marker.fdjPY = mapBoss.x * artW, mapBoss.y * artH -- pinspread
+            if FDJ.WalkMapPin then FDJ.WalkMapPin(marker, mapBoss, artW, artH) end -- gillpatrol
         end
     end
     for i = shown + 1, #frame.dungeonMapBossMarkers do
         frame.dungeonMapBossMarkers[i]:Hide()
     end
     if data.spreadPins and FDJ.SpreadMapPins then FDJ.SpreadMapPins(frame.dungeonMapBossMarkers, shown, size) end
+    if FDJ.RenderMapBossGroups then pcall(FDJ.RenderMapBossGroups, holder, data, floorIndex, artW, artH, size, selectedDungeon) end -- bossgroup
 
     -- Entrance: the usual instance-portal icon with a yellow, black-outlined
     -- "Entrance" label next to it.
@@ -10861,6 +11216,8 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             e.label:ClearAllPoints()
             if ent.labelPos == "top" then
                 e.label:SetPoint("BOTTOM", e, "TOP", 0, 1)
+            elseif ent.labelPos == "bottomleft" then -- (smlibentrance: under the swirl, to its left)
+                e.label:SetPoint("TOPRIGHT", e, "BOTTOM", 4, -1)
             elseif ent.labelPos == "bottom" then
                 -- shaperpins (2.1.2): under the swirl; at the map's edge it
                 -- runs inwards instead of off the map.
@@ -10911,7 +11268,8 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
                 end)
                 t:SetScript("OnEnter", function(self)
                     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                    GameTooltip:SetText(self.tipText or (self.toFloor and L("MAP_FLOOR", self.toFloor)) or self.noteText or "", 0.35, 1, 0.35)
+                    local c = self.tipColor
+                    GameTooltip:SetText(self.tipText or (self.toFloor and L("MAP_FLOOR", self.toFloor)) or self.noteText or "", c and c[1] or 0.35, c and c[2] or 1, c and c[3] or 0.35)
                     GameTooltip:Show()
                 end)
                 t:SetScript("OnLeave", function() GameTooltip:Hide() end)
@@ -10928,11 +11286,16 @@ FDJ.RenderCustomDungeonMap = function(data, floorIndex)
             t.noteText = tr.note and L(tr.labelKey) or nil
             -- tipKey (2.0.9, M 16 Nov 2026 at The Drowned City's swim down): the
             -- ladder alone, its text only on hover
-            t.tipText = tr.tipKey and L(tr.tipKey, tr.to) or nil
-            t.label:SetText((tr.note or tr.tipKey) and "" or L(tr.labelKey or "MAP_FLOOR", tr.to))
+            -- ladderquiet (2.1.7, M 25 Nov 2026 on Shadowfang Keep's map,
+            -- "Level 2" over the ladder: "remove the level 2's text on top of
+            -- the ladder and everything else that's on top of the ladder.
+            -- Just leave it as a tooltip ... The map looks bad"): every
+            -- ladder alone; what it said (Level 2, Jump down, Shark exit ...)
+            -- on hover, in its own colour.
+            t.tipText = tr.tipKey and L(tr.tipKey, tr.to) or (not tr.note and L(tr.labelKey or "MAP_FLOOR", tr.to)) or nil
+            t.label:SetText("")
             -- (a transition's own colour: The Drowned City's red Shark exit)
-            local c = type(tr.color) == "table" and tr.color or nil
-            t.label:SetTextColor(c and c[1] or 0.35, c and c[2] or 1.00, c and c[3] or 0.35)
+            t.tipColor = type(tr.color) == "table" and tr.color or nil
             t:Show()
         end
     end
@@ -13257,6 +13620,7 @@ end
 
 local function ApplyTheme()
     if not frame then return end
+    if FDJ.DarkModeThemes then FDJ.DarkModeThemes() end -- darkmode (2.1.7): the colours as the setting wants them
 
     local theme = THEMES[selectedDungeon] or THEMES["Hall of Thanes"]
 
@@ -13362,6 +13726,7 @@ local function ApplyTheme()
             tab:SetBackdropBorderColor(unpack(theme.border))
         end
     end
+    if FDJ.ApplyDarkMode then FDJ.ApplyDarkMode(frame) end -- darkmode (2.1.7): Systems/DarkMode.lua
 
     UpdateModeTabs()
     UpdateFactionButtons()
@@ -16773,6 +17138,29 @@ function FDJ.ScheduleQuestRefresh()
         end
     end)
     FDJ.questRefreshWorker:Show()
+end
+
+-- darkmode (2.1.7): dark mode switched (Systems/DarkMode.lua): the open
+-- page drawn again in its colours (as a change of language does: the map or
+-- the route guide stays open).
+function FDJ.RefreshLook()
+    if not frame then return end
+    ApplyTheme()
+    if frame.currentView == "home" then
+        RefreshHomeDungeonCards()
+        return
+    end
+    if not selectedDungeon or not DB[selectedDungeon] then return end
+    local wasRouteOpen = frame.routePanel and frame.routePanel:IsShown()
+    local wasMapOpen = frame.dungeonMapPanel and frame.dungeonMapPanel:IsShown()
+    FDJ.keepQuestState = true
+    pcall(RefreshAll)
+    FDJ.keepQuestState = nil
+    if wasRouteOpen and ShowRouteGuide then
+        ShowRouteGuide()
+    elseif wasMapOpen and ShowDungeonMap and FDJ.DUNGEON_MAPS[selectedDungeon] then
+        ShowDungeonMap()
+    end
 end
 
 -- rpgpartial: something revealed (RPG Mode): redraw the open page.
