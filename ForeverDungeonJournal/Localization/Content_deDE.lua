@@ -1,8 +1,8 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- German content localization. Internal database keys stay English so saved
--- selections, themes and lookup tables remain stable; only display text changes.
+
+
 FDJ.ContentLocales = FDJ.ContentLocales or {}
 FDJ.ContentLocales.deDE = FDJ.ContentLocales.deDE or {}
 
@@ -426,12 +426,12 @@ FDJ.ContentLocales.deDE.quests = {
 
 FDJ.ContentLocales.deDE.bosses = {
     ["Trash Drops"] = "Trashbeute",
-    -- 2.0.3: bosses with no encounter event (Wowhead Forever, German).
+
     ["Obsidian Sentinel"] = "Obsidianschildwache",
     ["Spirestone Battle Lord"] = "Kampflord der Felsspitzoger",
     ["Spirestone Lord Magus"] = "Maguslord der Felsspitzoger",
     ["Lordaeron Captain"] = "Hauptmann von Lordaeron",
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Plunder"] = "Schleppweg",
     ["Lord Cobrahn"] = "Lord Kobrahn",
     ["Verdan the Everliving"] = "Verdan der Ewiglebende",
@@ -462,7 +462,7 @@ FDJ.ContentLocales.deDE.bosses = {
     ["Relic Guardian"] = "Reliktwächter",
     ["Lyn the Ignored"] = "Lyn der Ignorierte",
     ["Shade of the Archmage"] = "Schemen des Erzmagiers",
-    -- Forever dungeon bosses (Wowhead Forever, German, Nov 2026).
+
     ["Atrexis the Grave Knight"] = "Atrexis der Grabritter",
     ["Arcane Anomaly"] = "Arkananomalie",
     ["Fel Ancient"] = "Teufelsurtum",
@@ -482,7 +482,7 @@ FDJ.ContentLocales.deDE.bosses = {
     ["Moontouched Wanderer"] = "Mondbestrahlter Wanderer",
     ["Gortek the Apprentice"] = "Gortek der Lehrling",
     ["Tunnelweb Matriarch"] = "Tunnelnetzmatriarchin",
-    ["Sabella No-Eyes"] = "Sabella Ohne-Augen", -- sabella (2.1.2)
+    ["Sabella No-Eyes"] = "Sabella Ohne-Augen",
     ["Viscous Fallout"] = "Verflüssigte Ablagerung",
     ["Electrocutioner 6000"] = "Elektrokutionator 6000",
     ["Crowd Pummeler 9-60"] = "Meute-Verprügler 9-60",
@@ -502,7 +502,7 @@ FDJ.ContentLocales.deDE.bosses = {
 }
 
 FDJ.ContentLocales.deDE.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "Relikt",
     ["Libram"] = "Buchband",
     ["Totem"] = "Totem",
@@ -567,7 +567,7 @@ FDJ.ContentLocales.deDE.replacements = {
     {"Tinker Town", "Tüftlerstadt"},
     {"Darnassus", "Darnassus"},
     {"Apothecarium", "Apothecarium"},
-    -- Direction/location phrases used by Starts at / Turn in / map tooltips.
+
     {"by the bridge / vault entrance in", "an der Brücke / am Eingang zum Gewölbe in"},
     {"near the dungeon entrance", "nahe dem Dungeoneingang"},
     {"after the first room", "nach dem ersten Raum"},
@@ -614,7 +614,7 @@ FDJ.ContentLocales.deDE.replacements = {
     {"City Hall", "Rathaus"},
     {"the Dwarven District", "den Zwergendistrikt"},
     {"the dungeon entrance", "dem Dungeoneingang"},
-    -- Common NPC/title names that are otherwise hard-coded English.
+
     {"Ghostly Attendant", "Geisterhafter Diener"},
     {"Earthseer Farsen", "Erdenseher Farsen"},
     {"King Magni Bronzebeard", "König Magni Bronzebart"},

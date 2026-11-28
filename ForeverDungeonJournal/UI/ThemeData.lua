@@ -62,7 +62,7 @@ FDJ.THEMES = {
         muted = {0.82, 0.74, 0.60},
     },
 
-    -- Black / grey prison stone.
+
     ["The Stockade"] = {
         frame = {0.018, 0.018, 0.020, 0.99},
         content = {0.13, 0.13, 0.14, 0.90},
@@ -78,7 +78,7 @@ FDJ.THEMES = {
         muted = {0.66, 0.66, 0.69},
     },
 
-    -- Arcane violet of the Dalaran loading screen.
+
     ["City of Dalaran"] = {
         frame = {0.024, 0.016, 0.040, 0.99},
         content = {0.17, 0.10, 0.27, 0.90},
@@ -94,7 +94,7 @@ FDJ.THEMES = {
         muted = {0.74, 0.67, 0.84},
     },
 
-    -- Sickly leper-gnome green.
+
     ["Gnomeregan"] = {
         frame = {0.016, 0.026, 0.018, 0.99},
         content = {0.11, 0.19, 0.12, 0.90},
@@ -141,7 +141,7 @@ FDJ.THEMES = {
     },
 }
 
--- Scarlet Monastery: Graveyard shares the Ruins of Lordaeron palette.
+
 FDJ.THEMES["Scarlet Monastery: Graveyard"] = FDJ.THEMES["Ruins of Lordaeron"]
 
 FDJ.DUNGEON_HOME_ART = {
@@ -152,11 +152,11 @@ FDJ.DUNGEON_HOME_ART = {
     ["Shadowfang Keep"] = "Interface\\Glues\\LoadingScreens\\LoadScreenShadowFangKeep",
     ["The Deadmines"] = "Interface\\Glues\\LoadingScreens\\LoadScreenDeadmines",
     ["Blackfathom Deeps"] = "Interface\\Glues\\LoadingScreens\\LoadScreenBlackFathomDeeps",
-    ["The Stockade"] = 131870, -- Classic Stormwind Stockade loading screen
+    ["The Stockade"] = 131870,
     ["Gnomeregan"] = "Interface\\Glues\\LoadingScreens\\LoadScreenGnomeregan",
-    ["Razorfen Kraul"] = 131865, -- Classic Razorfen Kraul loading screen
-    ["Excavation Site: Wetlands"] = 7963777, -- Forever beta loading screen
-    ["City of Dalaran"] = 7963775, -- Forever beta loading screen
+    ["Razorfen Kraul"] = 131865,
+    ["Excavation Site: Wetlands"] = 7963777,
+    ["City of Dalaran"] = 7963775,
     ["Scarlet Monastery: Graveyard"] = "Interface\\Glues\\LoadingScreens\\LoadScreenScarletMonastery2",
 }
 
@@ -171,7 +171,7 @@ FDJ.DUNGEON_HOME_TEXCOORD = {
     ["The Stockade"] = { 0.02, 0.98, 0.24, 0.82 },
     ["Gnomeregan"] = { 0.02, 0.98, 0.24, 0.82 },
     ["Razorfen Kraul"] = { 0.02, 0.98, 0.24, 0.82 },
-    ["Excavation Site: Wetlands"] = { 0.066, 0.934, 0.17, 0.83 }, -- past the picture's dark top/bottom bands (sides trimmed alike, no stretch)
+    ["Excavation Site: Wetlands"] = { 0.066, 0.934, 0.17, 0.83 },
     ["City of Dalaran"] = { 0.00, 1.00, 0.12, 0.88 },
     ["Scarlet Monastery: Graveyard"] = { 0.02, 0.98, 0.24, 0.82 },
 }
@@ -196,13 +196,13 @@ FDJ.DUNGEON_PAGE_TEXCOORD = {
     ["Blackfathom Deeps"] = { 0.02, 0.98, 0.25, 0.82 },
 }
 
--- The Library keeps the stock loading-screen art; the Graveyard uses its own bundled image.
+
 FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Library"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryLibraryHome"
 FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Library"] = { 0, 1, 0.06, 0.94 }
 FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Graveyard"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryGraveyardHome"
 FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Graveyard"] = { 0, 1, 0.06, 0.94 }
 
--- Scarlet Monastery: Library reuses the Graveyard look.
+
 for _, tableName in ipairs({ "THEMES", "DUNGEON_HOME_ART", "DUNGEON_HOME_TEXCOORD", "DUNGEON_PAGE_ART", "DUNGEON_PAGE_TEXCOORD" }) do
     local t = FDJ[tableName]
     if type(t) == "table" and t["Scarlet Monastery: Graveyard"] ~= nil and t["Scarlet Monastery: Library"] == nil then
@@ -210,8 +210,8 @@ for _, tableName in ipairs({ "THEMES", "DUNGEON_HOME_ART", "DUNGEON_HOME_TEXCOOR
     end
 end
 
--- Armory and Cathedral share the Graveyard look; Razorfen Downs the Kraul one.
--- Home-card art: the first loading screen this client actually has.
+
+
 do
     local function Pick(candidates)
         if not GetFileIDFromPath then return nil end
@@ -244,14 +244,14 @@ do
     end
 end
 
--- The Cathedral has its own bundled card art (its loading screen, logo cut off).
+
 FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Cathedral"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryCathedralHome"
 FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Cathedral"] = { 0, 1, 0.06, 0.94 }
 
 FDJ.DUNGEON_HOME_ART["Scarlet Monastery: Armory"] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ScarletMonasteryArmoryHome"
 FDJ.DUNGEON_HOME_TEXCOORD["Scarlet Monastery: Armory"] = { 0, 1, 0.06, 0.94 }
 
--- Uldaman and Zul'Farrak: the client's own loading screens when it has them.
+
 do
     local function Has(path)
         if not GetFileIDFromPath then return false end
@@ -272,27 +272,27 @@ do
     end
 end
 
--- Bundled card art (the client may not ship these loading screens yet).
+
 for name, file in pairs({ ["Uldaman"] = "UldamanHome", ["Zul'Farrak"] = "ZulFarrakHome", ["Razorfen Downs"] = "RazorfenDownsHome",
     ["Sunken Temple"] = "SunkenTempleHome", ["Scholomance"] = "ScholomanceHome", ["Maraudon"] = "MaraudonHome",
     ["Blackrock Depths"] = "BlackrockDepthsHome", ["Upper Blackrock Spire"] = "UpperBlackrockSpireHome", ["Lower Blackrock Spire"] = "BlackrockSpireHome",
     ["Dire Maul: East"] = "DireMaulHome", ["Dire Maul: West"] = "DireMaulWestHome", ["Dire Maul: North"] = "DireMaulNorthHome",
     ["Stratholme: Living"] = "StratholmeHome", ["Stratholme: Undead"] = "StratholmeUndeadHome",
-    -- WoW Forever dungeons announced but not out yet ("Coming Soon" cards).
+
     ["The Drowned City"] = "DrownedCityHome", ["Krol'dok Stronghold"] = "KroldokHome", ["Alcaz Prison"] = "AlcazPrisonHome",
     ["Blackmaw Hold"] = "BlackmawHoldHome", ["Shaper's Terrace"] = "ShapersTerraceHome" }) do
     FDJ.DUNGEON_HOME_ART[name] = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\" .. file
     FDJ.DUNGEON_HOME_TEXCOORD[name] = { 0, 1, 0.06, 0.94 }
 end
 
--- Cards whose art ends in a dark strip get a coloured band over the bottom
--- edge, tinted to match the art: { r, g, b, height }.
+
+
 FDJ.DUNGEON_HOME_BOTTOM_BAND = {
     ["City of Dalaran"] = { 0.36, 0.26, 0.42, 4 },
 }
 
--- dungeoncolors (2.1.1, M 20 Nov 2026): these dungeon pages take another
--- dungeon's colours.
+
+
 for name, like in pairs({
     ["The Drowned City"] = "Blackfathom Deeps",
     ["Krol'dok Stronghold"] = "The Stockade",

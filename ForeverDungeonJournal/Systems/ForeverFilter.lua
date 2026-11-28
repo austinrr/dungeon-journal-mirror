@@ -1,21 +1,21 @@
--- WoW Forever emblem at the top left of the home page: click it to show only the
--- dungeons that are new in WoW Forever, click again to show every dungeon.
--- hometabs (2.0.10, M 17 Nov 2026: "we are also gonna change that icon to just
--- show the dungeon page"): the emblem is now the dungeon list's tab in the row
--- of icons (Systems/TierSets.lua): a click shows the dungeon list, and it is
--- lit while the list is shown. "Forever dungeons only" stays in Options.
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 local ICON = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ForeverIcon"
--- foreverview (2.1.3, M 22 Nov 2026, players confused by the Forever-only
--- list: "whenever you're in the forever dungeon only view, I wanted some kind
--- of indicator ... we change the color of the journal, and we swap the logo,
--- and we add those things"): while "Forever Dungeons Only" is on, the home
--- page takes the blue of the WoW Forever logo, the emblem becomes the logo on
--- its blue background (Media/ForeverOnlyIcon.tga, from M's picture), its
--- tooltip says "Forever Only View" / "Right-click to disable", and a right
--- click on it turns the view off.
+
+
+
+
+
+
+
+
 local ICON_ONLY = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\ForeverOnlyIcon"
 do
     local strings = {
@@ -40,7 +40,7 @@ do
     end
 end
 
--- Dungeons added by WoW Forever (not in the original Classic game).
+
 FDJ.FOREVER_DUNGEONS = {
     ["Hall of Thanes"] = true,
     ["Ruins of Lordaeron"] = true,
@@ -62,8 +62,8 @@ local function Active()
     return ForeverDungeonJournalDB and ForeverDungeonJournalDB.foreverOnly and true or false
 end
 
--- The emblem and the "Forever Dungeons Only" option (Systems/SettingsPanel.lua)
--- are the same switch: either one turns it on and off.
+
+
 function FDJ.IsForeverOnly()
     return Active()
 end
@@ -74,14 +74,14 @@ function FDJ.SetForeverOnly(on)
     if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
 end
 
--- foreverreset (2.1.3, M 21 Nov 2026, players on the Discord seeing only
--- WoW Forever's dungeons after updating, without having touched anything:
--- "just untick it on the next update for everybody. Since if they have it
--- toggled, they know how to untoggle"): until 2.0.10 a click on the emblem
--- turned "Forever Dungeons Only" on, and it stayed saved; since then the
--- emblem only opens the dungeon list, so it no longer turns it off, and the
--- switch is only in Options. Once, on the first login with this version,
--- it is turned off for everyone (each account once).
+
+
+
+
+
+
+
+
 do
     local f = CreateFrame("Frame")
     f:RegisterEvent("ADDON_LOADED")
@@ -96,13 +96,13 @@ do
     end)
 end
 
--- Asked by the home list for every dungeon.
+
 function FDJ.HomeFilterHides(dungeonName)
     return Active() and not FDJ.FOREVER_DUNGEONS[dungeonName]
 end
 
--- foreverview: the home page in the logo's blue while the view is on; back to
--- the journal's own brown (Core/Journal.lua ApplyTheme's colours) when off.
+
+
 local function Tint(frame)
     local home = frame and frame.homePanel
     if not home then return end
@@ -116,14 +116,14 @@ local function Tint(frame)
         home:SetBackdropBorderColor(0.47, 0.34, 0.16, 1)
         if frame.homeParchment then frame.homeParchment:SetVertexColor(1.00, 0.95, 0.84) end
         frame.fdjForeverTint = nil
-        if FDJ.ApplyDarkHome then FDJ.ApplyDarkHome(frame) end -- darkmode (2.1.7): dark again
+        if FDJ.ApplyDarkHome then FDJ.ApplyDarkHome(frame) end
     end
 end
 FDJ.TintForeverView = Tint
 
 local function Paint(btn)
-    local on = (FDJ.ActiveHomeTab and FDJ.ActiveHomeTab() or "dungeons") == "dungeons" -- hometabs
-    local only = Active() -- foreverview: the logo on its blue background
+    local on = (FDJ.ActiveHomeTab and FDJ.ActiveHomeTab() or "dungeons") == "dungeons"
+    local only = Active()
     if btn.fdjOnly ~= only then
         btn.fdjOnly = only
         btn.icon:SetTexture(only and ICON_ONLY or ICON)
@@ -131,8 +131,8 @@ local function Paint(btn)
     end
     Tint(_G.ForeverDungeonJournalFrame)
     btn.icon:SetAlpha(1)
-    -- Always a soft golden glow (same as the LFG / Show Location buttons) so
-    -- it reads as clickable; brighter with a gold ring while the filter is on.
+
+
     btn.halo:SetAlpha(on and 1 or 0.75)
     local w = btn:GetWidth() or 26
     if w < 1 then w = 26 end
@@ -142,10 +142,10 @@ local function Paint(btn)
     btn.glow:SetShown(on)
 end
 
--- The first time ever the emblem is clicked (the list now shows only WoW
--- Forever dungeons), a note with a red arrow, fading in and out like the
--- Group Browser one, points at the emblem from its left: Switch back to full
--- view. It goes away once the full list is back (or the page is left).
+
+
+
+
 local HINT = {
     enUS = "Switch back to full view", deDE = "Zurück zur vollen Ansicht",
     frFR = "Revenir à la vue complète", esES = "Volver a la vista completa", esMX = "Volver a la vista completa",
@@ -183,7 +183,7 @@ local function ShowFullViewHint(btn)
         h.text:SetShadowOffset(1, -1)
         h:SetScript("OnUpdate", function(self, elapsed)
             self.t = (self.t or 0) + elapsed
-            -- Fade in and out, and nudge the arrow toward the emblem.
+
             self:SetAlpha(0.55 + 0.45 * math.sin(self.t * 4))
             self.arrow:SetPoint("RIGHT", -6 + 3 * math.abs(math.sin(self.t * 4)), 0)
             if not Active() or not (self.fdjTarget and self.fdjTarget:IsVisible()) then self:Hide() end
@@ -213,7 +213,7 @@ local function Build(frame)
     btn.halo = halo
 
     local glow = btn:CreateTexture(nil, "BACKGROUND")
-    glow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TabRing") -- roundtab (2.0.10): round, not square
+    glow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TabRing")
     glow:SetBlendMode("ADD")
     glow:SetVertexColor(1, 0.82, 0.3, 0.95)
     glow:SetPoint("CENTER")
@@ -230,13 +230,13 @@ local function Build(frame)
     hl:SetAllPoints()
     hl:SetBlendMode("ADD")
     hl:SetAlpha(0.35)
-    btn.hl = hl -- (foreverview: swapped with the icon)
+    btn.hl = hl
 
     btn:SetScript("OnMouseDown", function() icon:SetPoint("TOPLEFT", 1, -1); icon:SetPoint("BOTTOMRIGHT", 1, -1) end)
     btn:SetScript("OnMouseUp", function() icon:ClearAllPoints(); icon:SetAllPoints() end)
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:SetScript("OnClick", function(self, mouseButton)
-        -- foreverview: a right click turns the Forever-only view off
+
         if mouseButton == "RightButton" then
             if Active() then
                 FDJ.SetForeverOnly(false)
@@ -246,13 +246,13 @@ local function Build(frame)
             end
             return
         end
-        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
-        if FDJ.ShowDungeonsTab then FDJ.ShowDungeonsTab() end -- hometabs: the dungeon list
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end
+        if FDJ.ShowDungeonsTab then FDJ.ShowDungeonsTab() end
         Paint(self)
     end)
     btn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if Active() then -- foreverview
+        if Active() then
             GameTooltip:SetText(L("FOREVER_ONLY_VIEW"), 0.36, 0.82, 1)
             GameTooltip:AddLine(L("FOREVER_ONLY_RCLICK"), 1, 1, 1)
         else
@@ -265,13 +265,13 @@ local function Build(frame)
     return btn
 end
 
--- hometabs: lit or not as the shown page changes (Systems/TierSets.lua).
+
 function FDJ.PaintForeverEmblem()
     local frame = _G.ForeverDungeonJournalFrame
     if frame and frame.foreverFilterButton then Paint(frame.foreverFilterButton) end
 end
 
--- Raids medallion next to the Forever emblem: greyed out until raids are added.
+
 local RAID_ICON = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\RaidExpansionIcon"
 local function BuildRaid(frame)
     local home = frame.homePanel
@@ -315,19 +315,19 @@ local function Place(frame)
     local rpg = FDJ.IsRPGMode and FDJ.IsRPGMode()
     local emblemSize = 40
     if rpg and frame.rpgBar and frame.rpgBar:IsShown() then
-        -- RPG Mode: sits above the left end of the progress bar. The bar is
-        -- under the header's row of buttons (RPG Mode, Favourites...), so the
-        -- emblem lines up with them.
+
+
+
         frame.rpgBar:ClearAllPoints()
         frame.rpgBar:SetPoint("TOPLEFT", home, "TOPLEFT", 26, -(FDJ.RPG_BAR_Y or 37))
-        -- rpgicons (1.9.8): 32, was 22 (too small).
+
         btn:SetSize(32, 32)
         emblemSize = 32
         btn:SetPoint("BOTTOMLEFT", frame.rpgBar, "TOPLEFT", 2, 2)
     else
-        -- Gamer Mode: no "Browse Dungeons" heading; the emblem sits alone at the
-        -- left of the header row, level with the Favourites / Loot Filter buttons
-        -- (same layout as the TBC journal's round expansion icons).
+
+
+
         if frame.homeTitle then frame.homeTitle:Hide() end
         if frame.homeSubtitle then frame.homeSubtitle:Hide() end
         btn:SetSize(40, 40)
@@ -336,14 +336,14 @@ local function Place(frame)
     Paint(btn)
     btn:Show()
     PlaceRaid(frame, btn, emblemSize)
-    -- The Cozy Sleeping Bag's medallion, right of the Raids one (Systems/QuestText.lua).
+
     if FDJ.PlaceSleepingBagButton and frame.foreverRaidButton then
         pcall(FDJ.PlaceSleepingBagButton, frame, frame.foreverRaidButton, emblemSize)
     end
 end
 
--- The home list calls UpdateRPGHeader after every refresh; place the emblem
--- there too so it follows the title (Gamer Mode) or the bar (RPG Mode).
+
+
 local orig = FDJ.UpdateRPGHeader
 FDJ.UpdateRPGHeader = function(frame, ...)
     if orig then pcall(orig, frame, ...) end

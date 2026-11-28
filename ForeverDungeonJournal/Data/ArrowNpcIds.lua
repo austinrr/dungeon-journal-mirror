@@ -1,13 +1,13 @@
--- ForeverDungeonJournal: NPC IDs of the quest NPCs the waypoint arrow leads to (2.0.14),
--- for their portrait on the arrow. By name as the journal's map spots give it; the NPC
--- of that name standing nearest the spot (the client's npc and spawn tables).
+
+
+
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.ARROW_NPC_IDS = {
-    -- npcids217 (2.1.7, M 25 Nov 2026 at Velarok Windblade, the big ! where
-    -- his picture should be: "Why did you randomly change the question mark"):
-    -- the NPCs of 2.1.7's new chain steps and stops had no ID here, so the
-    -- arrow took them for things to click (forever-db's npc table).
+
+
+
+
     ["Velarok Windblade"] = 8479,
     ["Squire Maltrake"] = 8509,
     ["Clubtoe"] = 260931,
@@ -63,7 +63,7 @@ FDJ.ARROW_NPC_IDS = {
     ["Clugfist"] = 255829,
     ["Commander Aggro'gosh"] = 2464,
     ["Commander Ashlam Valorfist"] = 10838,
-    ["Commander Truesong"] = 239822, -- 2.0.39 (Blackmaw Hold quests)
+    ["Commander Truesong"] = 239822,
     ["Councilman Millstipe"] = 270,
     ["Count Remington Ridgewell"] = 2285,
     ["Crag'rog"] = 260993,
@@ -88,8 +88,8 @@ FDJ.ARROW_NPC_IDS = {
     ["Doctor Martin Felben"] = 11044,
     ["Dorin Songblade"] = 956,
     ["Dorn Plainstalker"] = 2986,
-    ["Grenka Bloodscreech"] = 4490, -- grenkaway (2.0.13)
-    ["Rok'Alim the Pounder"] = 4499, -- patrolline (2.0.13)
+    ["Grenka Bloodscreech"] = 4490,
+    ["Rok'Alim the Pounder"] = 4499,
     ["Dran Droffers"] = 6986,
     ["Duke Nicholas Zverenhoff"] = 11039,
     ["Duthorian Rall"] = 6171,
@@ -112,15 +112,15 @@ FDJ.ARROW_NPC_IDS = {
     ["Franclorn Forgewright"] = 8888,
     ["Furen Longbeard"] = 5413,
     ["Galamav the Marksman"] = 9081,
-    ["Gatekeeper Rageroar"] = 236573, -- 2.0.39 (Blackmaw Hold quests)
+    ["Gatekeeper Rageroar"] = 236573,
     ["General Marcus Jonathan"] = 466,
     ["Gerrig Bonegrip"] = 2786,
     ["Gershala Nightwhisper"] = 8997,
     ["Ghak Healtouch"] = 1470,
     ["Gnoarn"] = 6569,
-    ["Gorn One Eye"] = 11555, -- 2.0.43 (Blackmaw Reclamation chain)
+    ["Gorn One Eye"] = 11555,
     ["Gorzeeki Wildeyes"] = 14437,
-    ["Graal"] = 237007, -- 2.0.39 (Blackmaw Hold quests)
+    ["Graal"] = 237007,
     ["Grark Lorkrub"] = 9520,
     ["Gregan Brewspewer"] = 7775,
     ["Greta Mosshoof"] = 10922,
@@ -159,7 +159,7 @@ FDJ.ARROW_NPC_IDS = {
     ["King Magni Bronzebeard"] = 2784,
     ["Klockmort Spannerspan"] = 6169,
     ["Kog'thug the Brave"] = 253527,
-    ["Korsa"] = 236770, -- 2.0.39 (Blackmaw Hold quests)
+    ["Korsa"] = 236770,
     ["Krazek"] = 773,
     ["Kreza Darkthorn"] = 256657,
     ["Krom Stoutarm"] = 6294,
@@ -176,7 +176,7 @@ FDJ.ARROW_NPC_IDS = {
     ["Lord Banehollow"] = 9516,
     ["Lord Grayson Shadowbreaker"] = 928,
     ["Lord Jorach Ravenholdt"] = 6768,
-    ["Lorekeeper Nok"] = 249853, -- 2.0.39 (Blackmaw Hold quests)
+    ["Lorekeeper Nok"] = 249853,
     ["Loremaster Dibbs"] = 2277,
     ["Lothos Riftwaker"] = 14387,
     ["Lotwil Veriatus"] = 2921,
@@ -296,7 +296,7 @@ FDJ.ARROW_NPC_IDS = {
     ["Treshala Fallowbrook"] = 4521,
     ["Trevan Rol"] = 248840,
     ["Tsunaman"] = 11862,
-    ["Unele"] = 249855, -- 2.0.39 (Blackmaw Hold quests)
+    ["Unele"] = 249855,
     ["Uthel'nay"] = 7311,
     ["Varimathras"] = 2425,
     ["Vark Battlescar"] = 11823,
@@ -318,21 +318,21 @@ FDJ.ARROW_NPC_IDS = {
     ["Zaruk"] = 2787,
 }
 
--- objecticon (2.1.6): things listed above as NPCs that have no face for the
--- game's portrait (it draws an empty disc): the arrow shows this icon instead,
--- the one the journal gives the same thing.
+
+
+
 FDJ.ARROW_NPC_ICONS = {
     ["Shen'dralar Pylon"] = "Interface\\Icons\\INV_Enchant_ShardBrilliantLarge",
 }
 
--- citydistrict (2.1.6): the part of the city each quest NPC there stands in,
--- by city map and the NPC's name, for the line under the arrow inside the
--- city (Systems/MapMarkers.lua, Way.District). Names in English; the game's
--- own name in each language: FDJ.CITY_DISTRICT_NAMES (Localization/
--- Content_NewDungeons.lua). Places: SOURCES.txt (citydistrict). NPCs left out
--- on purpose: those who walk around, and those whose part of town isn't sure.
+
+
+
+
+
+
 FDJ.CITY_DISTRICTS = {
-    [1458] = { -- Undercity
+    [1458] = {
         ["Andrew Brownell"] = "Magic Quarter",
         ["Oran Snakewrithe"] = "Magic Quarter",
         ["Owen Thadd"] = "Magic Quarter",
@@ -348,7 +348,7 @@ FDJ.CITY_DISTRICTS = {
         ["Varimathras"] = "Royal Quarter",
         ["Patrick Garrett"] = "Trade Quarter",
     },
-    [1453] = { -- Stormwind
+    [1453] = {
         ["Auctioneer Chilton"] = "Trade District",
         ["Aeonas the Vindicated"] = "Cathedral of Light",
         ["Archbishop Benedictus"] = "Cathedral of Light",
@@ -375,7 +375,7 @@ FDJ.CITY_DISTRICTS = {
         ["Master Mathias Shaw"] = "Old Town",
         ["Nikova Raskol"] = "Old Town",
     },
-    [1455] = { -- Ironforge
+    [1455] = {
         ["Auctioneer Buckler"] = "The Commons",
         ["Dinita Stonemantle"] = "The Commons",
         ["Advisor Belgrum"] = "Hall of Explorers",
@@ -396,7 +396,7 @@ FDJ.CITY_DISTRICTS = {
         ["Master Mechanic Castpipe"] = "Tinker Town",
         ["Tinkmaster Overspark"] = "Tinker Town",
     },
-    [1454] = { -- Orgrimmar
+    [1454] = {
         ["Auctioneer Wabang"] = "Valley of Strength",
         ["Borstan"] = "The Drag",
         ["Dran Droffers"] = "The Drag",
@@ -410,7 +410,7 @@ FDJ.CITY_DISTRICTS = {
         ["Sovik"] = "Valley of Honor",
         ["Uthel'nay"] = "Valley of Spirits",
     },
-    [1456] = { -- Thunder Bluff
+    [1456] = {
         ["Apothecary Zamah"] = "The Pools of Vision",
         ["Beram Skychaser"] = "Spirit Rise",
         ["Arch Druid Hamuul Runetotem"] = "Elder Rise",
@@ -419,7 +419,7 @@ FDJ.CITY_DISTRICTS = {
         ["Nara Wildmane"] = "Elder Rise",
         ["Rahauro"] = "Elder Rise",
     },
-    [1457] = { -- Darnassus
+    [1457] = {
         ["Mathrengyl Bearwalker"] = "Cenarion Enclave",
         ["Argent Guard Manados"] = "Craftsmen's Terrace",
         ["Dawnwatcher Shaedlass"] = "Craftsmen's Terrace",

@@ -1,9 +1,9 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.Locales = FDJ.Locales or {}
--- Simplified Chinese UI strings. Missing keys
--- fall back to English. Text is always drawn with Blizzard font objects, so
--- Chinese glyphs render on every client without breaking other languages.
+
+
+
 FDJ.Locales.zhCN = {
     ["RANDOM_ENCHANT"] = "<随机附魔>",
     ["ALSO_RECEIVE"] = "你还将得到：",
@@ -215,7 +215,7 @@ FDJ.Locales.zhCN = {
     ["RPG_CONFIRM_TEXT"] = "在此模式下，地下城会一直锁定，直到你击杀最终首领。你随时可以在设置面板中更改模式。",
     ["RPG_CONFIRM_OK"] = "确定",
     ["RPG_CONFIRM_BACK"] = "重新选择",
-    ["RPG_INTRO_TEXT"] = "在你击杀最终首领之前，地下城会一直锁定。\n你仍可以在选项面板中选择显示任务。", -- introline (2.0.17, text 2.0.18)
+    ["RPG_INTRO_TEXT"] = "在你击杀最终首领之前，地下城会一直锁定。\n你仍可以在选项面板中选择显示任务。",
     ["RPG_INTRO_KEEP"] = "保持 RPG 模式",
     ["RPG_INTRO_OPTIONS"] = "在设置中关闭",
     ["MODE_RPG_ENABLE"] = "在设置中开启",

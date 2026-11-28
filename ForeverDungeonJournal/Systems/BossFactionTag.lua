@@ -1,5 +1,5 @@
--- "HORDE ONLY" / "ALLIANCE ONLY" tag with the faction crest on the right of a
--- boss row, for bosses that only one faction can fight (boss.factionOnly).
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 

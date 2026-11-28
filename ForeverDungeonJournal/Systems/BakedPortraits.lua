@@ -1,9 +1,9 @@
--- Pre-rendered boss portraits.
--- Every creature portrait the journal shows was photographed once in-game
--- (black + white backgrounds, so the round edge keeps its exact alpha) and is
--- bundled here as Media\\Portraits\\<displayID>.tga. Bundled portraits appear
--- instantly instead of being rendered from the 3D model on first open.
--- Any display ID not in the list still goes through the live renderer.
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -27,15 +27,15 @@ FDJ.BAKED_PORTRAITS = {
     [11429]=true, [11492]=true, [11537]=true, [11538]=true, [11545]=true, [11561]=true, [11564]=true, [11565]=true, [11574]=true, [11576]=true, [11578]=true, [11583]=true,
     [11611]=true, [11809]=true, [11835]=true, [12073]=true, [12162]=true, [12292]=true, [12293]=true, [12334]=true, [12350]=true, [12389]=true, [12818]=true, [12822]=true,
     [13589]=true, [14173]=true, [14308]=true, [14378]=true, [14383]=true, [14384]=true, [14403]=true, [14416]=true, [14556]=true,
-    -- (144378, Grubbis: the picture cut by hand from a screenshot in 2.0.6 is
-    -- out, M 16 Nov 2026, "looks really bad"; baked again below, bake2.)
-    -- bakeall (2.0.9, M 15 Nov 2026: "find a solution to these portraits...
-    -- they look nice, but they are heavy"): every look the journal still had
-    -- the game draw, photographed in M's game with /dj bake (15 Nov 2026,
-    -- 1920 x 1080; lossless screenshots, on black and on white), so no
-    -- portrait of a known creature is a render target any more. 2: there is
-    -- a 128-pixel picture too (Media\\Portraits\\128), for where the portrait
-    -- is shown large (the boss looks).
+
+
+
+
+
+
+
+
+
     [110]=2, [200]=true, [487]=true, [519]=true, [545]=true, [612]=true, [807]=true, [960]=true, [1035]=true, [1045]=true, [1088]=true, [1337]=true,
     [1339]=true, [2021]=true, [2317]=2, [2424]=2, [2426]=true, [2460]=true, [2462]=true, [2463]=true, [2476]=true, [2497]=true, [2499]=true, [2501]=true,
     [2507]=true, [2511]=true, [2514]=true, [2522]=true, [2603]=true, [2875]=true, [3024]=true, [3942]=true, [4065]=true, [4764]=true, [4973]=2, [4975]=true,
@@ -50,38 +50,38 @@ FDJ.BAKED_PORTRAITS = {
     [130436]=2, [130440]=2, [130447]=2, [131644]=2, [138667]=2, [138722]=true, [138843]=true, [139455]=2, [140001]=true, [140092]=2, [140708]=2, [141215]=2,
     [141217]=2, [141218]=2, [141219]=2, [141443]=2, [142144]=2, [142245]=2, [142322]=2, [142457]=2, [142826]=2, [142837]=2, [142840]=2, [142989]=2,
     [143035]=2, [143039]=2, [143040]=2, [143063]=2, [143122]=2, [143142]=true, [143673]=2, [143832]=2, [144022]=2, [144023]=2, [144170]=2, [144175]=2,
-    -- bake2 (2.0.9, M 16 Nov 2026, /dj bake again): the looks added since,
-    -- Grubbis's new picture among them (both sizes).
+
+
     [2078]=2, [4972]=2, [5047]=2, [6350]=2, [10315]=2, [10751]=2, [11345]=2, [12929]=2, [13109]=2, [13489]=2, [14253]=2, [14254]=2,
     [15997]=2, [16003]=2, [16018]=2, [144378]=2,
     [144188]=2, [144189]=2, [144209]=2, [144210]=2, [144224]=2, [144356]=true, [144475]=2, [144487]=2, [144511]=2, [144514]=2, [144515]=2, [145398]=true,
     [145404]=true, [145787]=2, [145808]=2, [145809]=true, [147098]=2,
-    -- bake3 (2.1.1, M 20 Nov 2026, /dj bake): Krol'dok Stronghold's quest mobs
-    -- Tunk and Zalfan Moonshadow (both sizes).
+
+
     [144671]=2, [145448]=2,
-    -- bake4 (2.1.1, M 20 Nov 2026, /dj bake): Isalien, Dire Maul East's
-    -- Dungeon Set 2 boss (both sizes).
+
+
     [16000]=2,
-    -- bake5 (2.1.2, M 21 Nov 2026, /dj bake): Sabella No-Eyes, Blackmaw
-    -- Hold's rare (both sizes).
+
+
     [6829]=2,
-    -- bake6 (2.1.6, M 25 Nov 2026, /dj bake): the PvP pages' quartermasters
-    -- and honor vendors (Illiyana Moonblaze, Kelm Hargunth, Samuel Hawke,
-    -- Rutherford Twing, Bryanna Embreeze, Creeg Bothunk, Thanthaldis
-    -- Snowgleam, Jekyll Flandring, Captain Dirgehammer, Lady Palanseer,
-    -- Wizzik Dustfizz), the Alterac Valley generals on the quick icon
-    -- (Vanndar Stormpike, Drek'Thar) and two looks of NPCs 247412 and 261993
-    -- (both sizes).
+
+
+
+
+
+
+
     [10747]=2, [12674]=2, [12917]=2, [13319]=2, [13438]=2, [14784]=2, [14785]=2, [15276]=2,
     [15277]=2, [130499]=2, [143129]=2, [146067]=2, [146070]=2, [11896]=2, [11894]=2,
 }
 local BAKED = FDJ.BAKED_PORTRAITS
 
--- bakeall (2.0.9): the game draws a portrait as large as it is shown, so a
--- 64-pixel picture is soft where the portrait is larger than that on screen
--- (the selected boss's, a large journal, a high resolution). There the
--- 128-pixel picture is used, where there is one; smaller ones keep the
--- 64-pixel picture (a 128 one shrunk that far would shimmer).
+
+
+
+
+
 local function ShownLarge(texture)
     local width = texture:GetWidth() or 0
     local parent = texture:GetParent()

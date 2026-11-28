@@ -1,16 +1,16 @@
--- ForeverDungeonJournal: boss and dungeon names from the game client (2.0.3).
---
--- The game client knows every creature's and every instance's name in its own
--- language. On a non-English client, at login, the journal asks it:
---   * bosses:   the creature tooltip of the boss's NPC ID
---               (C_TooltipInfo.GetHyperlink "unit:Creature-...-<npcID>-...")
---   * dungeons: GetRealZoneText(<instance ID>)
--- and uses those names in the journal and the Dungeon Tracker, so they are
--- exactly what the player sees in the game (also for dungeons and bosses with
--- no translation in the addon). Names the client doesn't have cached yet are
--- asked again a little later. What it learned is kept for the next login.
--- Entries that aren't one creature ("The Seven", "Morphaz & Hazzas") keep the
--- addon's own translation.
+
+
+
+
+
+
+
+
+
+
+
+
+
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
@@ -19,8 +19,8 @@ local LOCALE_KEY = {
     itIT = "itIT", ptBR = "ptBR", koKR = "koKR", zhCN = "zhCN", zhTW = "zhTW",
 }
 local GROUP_ENTRIES = { ["The Seven"] = true, ["The Lost Dwarves"] = true }
-local BATCH, STEP = 20, 0.1          -- tooltips per step, seconds between steps
-local RETRY = { 30, 120 }            -- seconds after login: ask again for the rest
+local BATCH, STEP = 20, 0.1
+local RETRY = { 30, 120 }
 
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
@@ -49,11 +49,11 @@ local function Saved(loc)
     if type(s) ~= "table" then s = {} db.clientNames[loc] = s end
     if type(s.bosses) ~= "table" then s.bosses = {} end
     if type(s.dungeons) ~= "table" then s.dungeons = {} end
-    if type(s.mobs) ~= "table" then s.mobs = {} end -- spiremobs: npcID -> name
+    if type(s.mobs) ~= "table" then s.mobs = {} end
     return s
 end
 
--- A journal boss named after one creature.
+
 local function SingleCreature(name)
     return type(name) == "string" and not GROUP_ENTRIES[name]
         and not name:find(" & ", 1, true) and not name:find(" and ", 1, true) and not name:find("/", 1, true)
@@ -66,7 +66,7 @@ local function GoodName(name)
     return name
 end
 
--- The creature's name from its tooltip; nil until the client has it cached.
+
 local scanTip
 local function CreatureName(npc)
     local link = ("unit:Creature-0-0-0-0-%d-0000000000"):format(npc)
@@ -99,12 +99,12 @@ local function ApplyBoss(c, b, name)
     if FDJ.RunLog and FDJ.RunLog.AddAlias then pcall(FDJ.RunLog.AddAlias, b.npcID, name) end
 end
 
--- spiremobs (2.1.4, M 23 Nov 2026, a Discord report: the Lower Blackrock
--- Spire tracker only started at the first boss): the mobs that tell a
--- shared instance's wings apart (FDJ.RunLogWingTrash, FDJ.RunLogSharedTrash)
--- by their names in this client's language too. Inside Forever's dungeons the
--- game often hides a mob's NPC ID, and only English names were known, so on
--- another language's client only a boss could tell the wing.
+
+
+
+
+
+
 local function WingMobs()
     local list, seen = {}, {}
     local function Add(t)
@@ -121,9 +121,9 @@ local function WingMobs()
     return list
 end
 
--- Dungeon names by instance ID. A client that doesn't know an ID may answer
--- with the current zone instead: such answers, and names two IDs share, are
--- not used.
+
+
+
 local function LearnDungeons(c, saved)
     if type(GetRealZoneText) ~= "function" then return 0 end
     local here = Plain(select(2, pcall(GetRealZoneText)))
@@ -163,7 +163,7 @@ local function Queue()
             end
         end
     end
-    for _, m in ipairs(WingMobs()) do q[#q + 1] = m end -- spiremobs
+    for _, m in ipairs(WingMobs()) do q[#q + 1] = m end
     return q
 end
 
@@ -181,7 +181,7 @@ local function Scan(c, saved, pass)
                 if FDJ.UpdateRunTracker then pcall(FDJ.UpdateRunTracker) end
                 return
             end
-            local store = b.wingMob and saved.mobs or saved.bosses -- spiremobs
+            local store = b.wingMob and saved.mobs or saved.bosses
             if not store[b.npcID] or pass == 1 then
                 state.asked = state.asked + 1
                 local name = CreatureName(b.npcID)
@@ -202,17 +202,17 @@ local function Count(t) local n = 0 for _ in pairs(t or {}) do n = n + 1 end ret
 
 function FDJ.LearnClientNames()
     local key, loc = ClientKey()
-    if not key then return false end      -- English client: the journal's own names
+    if not key then return false end
     state.locale = loc
     local c, saved = Content(key), Saved(loc)
-    -- Last login's names first, so the journal has them right away.
+
     for _, d in pairs(FDJ.DB or {}) do
         for _, b in ipairs((type(d) == "table" and d.bosses) or {}) do
             local name = type(b) == "table" and tonumber(b.npcID) and saved.bosses[b.npcID]
             if type(name) == "string" then ApplyBoss(c, b, name) end
         end
     end
-    for _, m in ipairs(WingMobs()) do -- spiremobs
+    for _, m in ipairs(WingMobs()) do
         local name = saved.mobs[m.npcID]
         if type(name) == "string" then ApplyBoss(c, m, name) end
     end
@@ -228,7 +228,7 @@ function FDJ.LearnClientNames()
     return true
 end
 
--- /dj names: what was learned (for testers).
+
 function FDJ.ClientNamesReport()
     local key, loc = ClientKey()
     if not key then return "English client: the journal uses its own names." end

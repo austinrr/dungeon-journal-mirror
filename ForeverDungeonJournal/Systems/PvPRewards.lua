@@ -1,40 +1,40 @@
--- pvprewards (2.1.6, M 25 Nov 2026, with his "WoW Forever / PvP Rewards"
--- sheet: "ADD these"; then picked: a battleground card opens its own page,
--- and a fifth card, Honor & Ranks, for what belongs to no one battleground).
---
--- A battleground's page: its faction for the character's side (both sides
--- with Options > Show both factions' quests), the player's standing, the
--- quartermaster with Show on Map; then the rewards by the standing they need
--- (Friendly, Honored, Revered, Exalted) as item rows two to a line, one row
--- per item with its level versions under its name (the one for the
--- character's level lit, and shown in the tooltip); then Alterac Valley's
--- quest rewards, the mounts, the supplies; the quests on a page of their own
--- (the Quests button, pvpquestpage).
--- Honor & Ranks: the Premier gear for a class (the character's own first),
--- each rare piece beside the epic its Emboldened Seal makes of it; what each
--- PvP rank unlocks; the Marks of Honor; Field of Honor; Legacy Points; the
--- Gurubashi Arena trinkets. Data: Data/PvPRewards.lua.
--- pvppolish (2.1.6, M 25 Nov 2026: "when I click on a BG, I want to see my
--- reputation, my official in-game reputation ... If I don't have it ...
--- neutral 0 ... I'd like to have a Alliance and Horde crest, so people can
--- choose ... I don't want to have the show on map ... I want to have the
--- show map as an NPC portrait that when you hover it, it says show
--- location ... Instead of back to battlegrounds button, I want a little back
--- arrow to the left of Warsong Gulch"): the page's top: a back arrow left of
--- the name; the Alliance and Horde crests to switch sides (the quest list's
--- own, top right); the quartermaster's portrait (click: on the map); the
--- faction and the character's reputation with it as the game's bar (never
--- met: Neutral 0 / 3000, where everyone starts).
--- pvplevels (2.1.6, M 25 Nov 2026: "we need to add a compact view to the
--- PVP pages ... when it says like level 18, 28 ... it should be gray if it's
--- below me ... If I am in that bracket, it should be green ... above my
--- level ... red ... once you click on these items, it kind of uses the same
--- style as when you click on a tier item, and it pops up the other levels
--- for the item"): Compact view (left of the crests; the journal's own
--- button, ForeverDungeonJournalDB.pvpCompact); each level coloured (below
--- the character's: gray, its own bracket: green, above: red); a click shows
--- the item's versions in the set row (Core/Journal.lua, setstrip), each
--- with its level under it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -56,11 +56,11 @@ do
             PVP_LEGACY_TEXT = "12 PvP Legacy Points: 5 from reaching ranks 3, 7, 10, 13 and 14, 4 from Exalted with all four battleground factions of your side, and 3 from %s.",
             PVP_ARENA_TEXT = "Stranglethorn Vale: loot %s from the arena chest. Hand in 12 of them for %s.",
             PVP_ARENA = "Gurubashi Arena", PVP_HALL_A = "Champions' Hall", PVP_HALL_H = "Hall of Legends",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Click to show every level", PVP_STRIP_HIDE = "Click to hide the levels",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Back to the rewards",
-            PVP_CLICK_QUEST = "Click to see the quest", PVP_SEARCH_BG = "Battleground", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Click to see the quest", PVP_SEARCH_BG = "Battleground",
             PVP_Q_INSIGNIA = "Hand in your %s to %s to receive the next rank's insignia.",
             PVP_Q_HERO = "Talk to %s and choose one of the rewards.", PVP_Q_XP = "%s XP",
             PVP_ZONE_1416 = "Alterac Mountains", PVP_ZONE_1459 = "Alterac Valley", PVP_ZONE_1453 = "Stormwind City",
@@ -81,11 +81,11 @@ do
             PVP_LEGACY_TEXT = "12 PvP-Vermächtnispunkte: 5 für die Ränge 3, 7, 10, 13 und 14, 4 für Ehrfürchtig bei allen vier Schlachtfeldfraktionen deiner Seite und 3 aus %s.",
             PVP_ARENA_TEXT = "Schlingendorntal: Plündere %s aus der Truhe der Arena. Gib 12 davon für %s ab.",
             PVP_ARENA = "Arena der Gurubashi", PVP_HALL_A = "Halle der Champions", PVP_HALL_H = "Halle der Legenden",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Klicken, um alle Stufen anzuzeigen", PVP_STRIP_HIDE = "Klicken, um die Stufen auszublenden",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Zurück zu den Belohnungen",
-            PVP_CLICK_QUEST = "Klicken, um die Quest anzuzeigen", PVP_SEARCH_BG = "Schlachtfeld", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Klicken, um die Quest anzuzeigen", PVP_SEARCH_BG = "Schlachtfeld",
             PVP_Q_INSIGNIA = "Gib dein %s bei %s ab, um das Abzeichen des nächsten Rangs zu erhalten.",
             PVP_Q_HERO = "Sprich mit %s und wähle eine der Belohnungen.", PVP_Q_XP = "%s EP",
             PVP_ZONE_1416 = "Alteracgebirge", PVP_ZONE_1459 = "Alteractal", PVP_ZONE_1453 = "Sturmwind",
@@ -106,11 +106,11 @@ do
             PVP_LEGACY_TEXT = "12 points d'héritage JcJ : 5 en atteignant les rangs 3, 7, 10, 13 et 14, 4 en étant Exalté auprès des quatre factions de champ de bataille de votre camp, et 3 grâce à %s.",
             PVP_ARENA_TEXT = "Vallée de Strangleronce : récupérez %s dans le coffre de l'arène. Rendez-en 12 pour obtenir %s.",
             PVP_ARENA = "Arène des Gurubashi", PVP_HALL_A = "Hall des Champions", PVP_HALL_H = "Hall des Légendes",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Cliquez pour afficher tous les niveaux", PVP_STRIP_HIDE = "Cliquez pour masquer les niveaux",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Retour aux récompenses",
-            PVP_CLICK_QUEST = "Cliquez pour voir la quête", PVP_SEARCH_BG = "Champ de bataille", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Cliquez pour voir la quête", PVP_SEARCH_BG = "Champ de bataille",
             PVP_Q_INSIGNIA = "Remettez votre %s à %s pour recevoir l'insigne du rang suivant.",
             PVP_Q_HERO = "Parlez à %s et choisissez l'une des récompenses.", PVP_Q_XP = "%s PX",
             PVP_ZONE_1416 = "Montagnes d'Alterac", PVP_ZONE_1459 = "Vallée d'Alterac", PVP_ZONE_1453 = "Hurlevent",
@@ -131,11 +131,11 @@ do
             PVP_LEGACY_TEXT = "12 puntos de legado JcJ: 5 al alcanzar los rangos 3, 7, 10, 13 y 14, 4 por Exaltado con las cuatro facciones de campo de batalla de tu bando y 3 de %s.",
             PVP_ARENA_TEXT = "Vega de Tuercespina: consigue %s del cofre de la arena. Entrega 12 para obtener %s.",
             PVP_ARENA = "Arena Gurubashi", PVP_HALL_A = "Sala de los Campeones", PVP_HALL_H = "Sala de las Leyendas",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Haz clic para ver todos los niveles", PVP_STRIP_HIDE = "Haz clic para ocultar los niveles",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Volver a las recompensas",
-            PVP_CLICK_QUEST = "Haz clic para ver la misión", PVP_SEARCH_BG = "Campo de batalla", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Haz clic para ver la misión", PVP_SEARCH_BG = "Campo de batalla",
             PVP_Q_INSIGNIA = "Entrega tu %s a %s para recibir la insignia del siguiente rango.",
             PVP_Q_HERO = "Habla con %s y elige una de las recompensas.", PVP_Q_XP = "%s PX",
             PVP_ZONE_1416 = "Montañas de Alterac", PVP_ZONE_1459 = "Valle de Alterac", PVP_ZONE_1453 = "Ventormenta",
@@ -156,11 +156,11 @@ do
             PVP_LEGACY_TEXT = "12 punti eredità PvP: 5 raggiungendo i gradi 3, 7, 10, 13 e 14, 4 per Osannato con tutte e quattro le fazioni dei campi di battaglia della tua parte e 3 da %s.",
             PVP_ARENA_TEXT = "Rovotorto: prendi %s dal forziere dell'arena. Consegnane 12 per ottenere %s.",
             PVP_ARENA = "Arena dei Gurubashi", PVP_HALL_A = "Sala dei Campioni", PVP_HALL_H = "Sala delle Leggende",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Clicca per mostrare tutti i livelli", PVP_STRIP_HIDE = "Clicca per nascondere i livelli",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Torna alle ricompense",
-            PVP_CLICK_QUEST = "Clicca per vedere la missione", PVP_SEARCH_BG = "Campo di battaglia", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Clicca per vedere la missione", PVP_SEARCH_BG = "Campo di battaglia",
             PVP_Q_INSIGNIA = "Consegna il tuo %s a %s per ricevere l'insegna del grado successivo.",
             PVP_Q_HERO = "Parla con %s e scegli una delle ricompense.", PVP_Q_XP = "%s PE",
             PVP_ZONE_1416 = "Montagne di Alterac", PVP_ZONE_1459 = "Valle d'Alterac", PVP_ZONE_1453 = "Roccavento",
@@ -181,11 +181,11 @@ do
             PVP_LEGACY_TEXT = "12 pontos de legado JxJ: 5 ao alcançar as patentes 3, 7, 10, 13 e 14, 4 por Exaltado com as quatro facções de campo de batalha do seu lado e 3 de %s.",
             PVP_ARENA_TEXT = "Selva do Espinhaço: pegue %s no baú da arena. Entregue 12 deles para obter %s.",
             PVP_ARENA = "Arena de Gurubashi", PVP_HALL_A = "Salão dos Campeões", PVP_HALL_H = "Salão dos Lendários",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Clique para mostrar todos os níveis", PVP_STRIP_HIDE = "Clique para ocultar os níveis",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Voltar às recompensas",
-            PVP_CLICK_QUEST = "Clique para ver a missão", PVP_SEARCH_BG = "Campo de batalha", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Clique para ver a missão", PVP_SEARCH_BG = "Campo de batalha",
             PVP_Q_INSIGNIA = "Entregue seu %s a %s para receber a insígnia da próxima patente.",
             PVP_Q_HERO = "Fale com %s e escolha uma das recompensas.", PVP_Q_XP = "%s XP",
             PVP_ZONE_1416 = "Montanhas de Alterac", PVP_ZONE_1459 = "Vale Alterac", PVP_ZONE_1453 = "Ventobravo",
@@ -206,11 +206,11 @@ do
             PVP_LEGACY_TEXT = "12 очков наследия PvP: 5 за звания 3, 7, 10, 13 и 14, 4 за превознесение у всех четырех фракций полей боя вашей стороны и 3 за %s.",
             PVP_ARENA_TEXT = "Тернистая долина: заберите %s из сундука арены. Сдайте 12 штук, чтобы получить %s.",
             PVP_ARENA = "Арена Гурубаши", PVP_HALL_A = "Зал Защитников", PVP_HALL_H = "Зал Легенд",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "Щелкните, чтобы показать все уровни", PVP_STRIP_HIDE = "Щелкните, чтобы скрыть уровни",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "Назад к наградам",
-            PVP_CLICK_QUEST = "Щелкните, чтобы увидеть задание", PVP_SEARCH_BG = "Поле боя", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "Щелкните, чтобы увидеть задание", PVP_SEARCH_BG = "Поле боя",
             PVP_Q_INSIGNIA = "Сдайте «%s» (%s), чтобы получить знак следующего ранга.",
             PVP_Q_HERO = "Поговорите: %s — и выберите одну из наград.", PVP_Q_XP = "%s опыта",
             PVP_ZONE_1416 = "Альтеракские горы", PVP_ZONE_1459 = "Альтеракская долина", PVP_ZONE_1453 = "Штормград",
@@ -231,11 +231,11 @@ do
             PVP_LEGACY_TEXT = "PvP 유산 점수 12점: 3, 7, 10, 13, 14계급 달성으로 5점, 내 진영 전장 세력 넷 모두와 확고한 동맹으로 4점, %s에서 3점.",
             PVP_ARENA_TEXT = "가시덤불 골짜기: 투기장 상자에서 %s 아이템을 얻으세요. 12개를 반납하면 %s 아이템을 받습니다.",
             PVP_ARENA = "구루바시 투기장", PVP_HALL_A = "용사의 전당", PVP_HALL_H = "전설의 전당",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "클릭하여 모든 레벨 보기", PVP_STRIP_HIDE = "클릭하여 레벨 숨기기",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "보상으로 돌아가기",
-            PVP_CLICK_QUEST = "클릭하여 퀘스트 보기", PVP_SEARCH_BG = "전장", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "클릭하여 퀘스트 보기", PVP_SEARCH_BG = "전장",
             PVP_Q_INSIGNIA = "%s|1을;를; %s에게 건네고 다음 계급의 휘장을 받으세요.",
             PVP_Q_HERO = "%s|1과;와; 대화하고 보상 하나를 고르세요.", PVP_Q_XP = "경험치 %s",
             PVP_ZONE_1416 = "알터랙 산맥", PVP_ZONE_1459 = "알터랙 계곡", PVP_ZONE_1453 = "스톰윈드",
@@ -256,11 +256,11 @@ do
             PVP_LEGACY_TEXT = "12点PvP传承点数：达到军衔3、7、10、13和14共5点，与你阵营全部四个战场阵营达到崇拜共4点，%s共3点。",
             PVP_ARENA_TEXT = "荆棘谷：从竞技场宝箱中拾取%s。上交12个可换取%s。",
             PVP_ARENA = "古拉巴什竞技场", PVP_HALL_A = "勇士大厅", PVP_HALL_H = "传说大厅",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "点击显示所有等级", PVP_STRIP_HIDE = "点击隐藏等级",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "返回奖励",
-            PVP_CLICK_QUEST = "点击查看任务", PVP_SEARCH_BG = "战场", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "点击查看任务", PVP_SEARCH_BG = "战场",
             PVP_Q_INSIGNIA = "把你的%s交给%s，领取下一级的徽章。",
             PVP_Q_HERO = "与%s交谈，选择一件奖励。", PVP_Q_XP = "%s点经验值",
             PVP_ZONE_1416 = "奥特兰克山脉", PVP_ZONE_1459 = "奥特兰克山谷", PVP_ZONE_1453 = "暴风城",
@@ -281,11 +281,11 @@ do
             PVP_LEGACY_TEXT = "12點PvP傳承點數：達到軍階3、7、10、13和14共5點，與你陣營全部四個戰場陣營達到崇拜共4點，%s共3點。",
             PVP_ARENA_TEXT = "荊棘谷：從競技場寶箱拾取%s。繳交12個可換取%s。",
             PVP_ARENA = "古拉巴什競技場", PVP_HALL_A = "勇士大廳", PVP_HALL_H = "傳說大廳",
-            -- pvpstrip (2.1.6)
+
             PVP_STRIP_SHOW = "點擊顯示所有等級", PVP_STRIP_HIDE = "點擊隱藏等級",
-            -- pvpquests (2.1.6)
+
             PVP_BACK_REWARDS = "返回獎勵",
-            PVP_CLICK_QUEST = "點擊查看任務", PVP_SEARCH_BG = "戰場", -- pvpquestjump, pvpsearch
+            PVP_CLICK_QUEST = "點擊查看任務", PVP_SEARCH_BG = "戰場",
             PVP_Q_INSIGNIA = "把你的%s交給%s，領取下一級的徽章。",
             PVP_Q_HERO = "與%s交談，選擇一件獎勵。", PVP_Q_XP = "%s點經驗值",
             PVP_ZONE_1416 = "奧特蘭克山脈", PVP_ZONE_1459 = "奧特蘭克山谷", PVP_ZONE_1453 = "暴風城",
@@ -326,14 +326,14 @@ local DONE_TICK = "Interface\\RaidFrame\\ReadyCheck-Ready"
 local CLASS_ICONS = "Interface\\GLUES\\CHARACTERCREATE\\UI-CharacterCreate-Classes"
 local CLASS_ORDER = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "SHAMAN", "MAGE", "WARLOCK", "DRUID" }
 local ROW_H, ROW_GAP, COL_GAP = 46, 6, 10
-local ROW_H_C = 28 -- pvplevels: Compact view
-local page -- (the page shown: Build)
--- pvpcompactfirst (2.1.6, M 25 Nov 2026: "the compact view looks better on
--- first glance. So I want that in battlegrounds, in BGs, compact view is the
--- standard, and then they can switch to detail if they want"): a
--- battleground's page opens in Compact view (ForeverDungeonJournalDB.
--- pvpBGDetailed: Detailed view picked there); Honor & Ranks keeps its own
--- choice (pvpCompact), Detailed view first.
+local ROW_H_C = 28
+local page
+
+
+
+
+
+
 local function Compact()
     local db = type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB or nil
     if page and page.key == "HONOR" then return db ~= nil and db.pvpCompact == true end
@@ -346,7 +346,7 @@ local function Theme()
         title = { 1.00, 0.80, 0.34 }, text = { 0.93, 0.84, 0.66 }, muted = { 0.82, 0.74, 0.60 } }
 end
 
--- ---------------------------------------------------------------- the game
+
 local function ItemData(id)
     local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
     if type(getInfo) ~= "function" then return nil end
@@ -420,8 +420,8 @@ local function StandingLabel(n)
     local g = _G["FACTION_STANDING_LABEL" .. n]
     return (type(g) == "string" and g ~= "") and g or STANDING_EN[n] or "?"
 end
--- The faction's name (the game's) and the player's standing with it (1-8),
--- the reputation into that standing and the standing's size.
+
+
 local function Reputation(factionID, english)
     if C_Reputation and type(C_Reputation.GetFactionDataByID) == "function" then
         local ok, d = pcall(C_Reputation.GetFactionDataByID, factionID)
@@ -446,7 +446,7 @@ local function QuestTitle(id, english)
         local ok, t = pcall(C_QuestLog.GetTitleForQuestID, id)
         if ok and type(t) == "string" and t ~= "" and not Secret(t) then return t end
     end
-    -- pvpquestpage: the AV quests' names in the journal's language (Polestar's names)
+
     local own = FDJ.PVP_QUEST_NAMES and FDJ.PVP_QUEST_NAMES[id]
     if type(own) == "table" and FDJ.GetLanguage then
         local lang = FDJ.GetLanguage()
@@ -467,7 +467,7 @@ local function QuestDone(id)
     end
     return false
 end
--- Field of Honor, as the game names its quests ("Field of Honor: Week 1").
+
 local function FieldName()
     local t = QuestTitle(96912, "Field of Honor: Week 1")
     return (t:match("^(.-)%s*[:：]") or t)
@@ -480,14 +480,14 @@ local function ZoneName(mapID, english)
     return english
 end
 
--- --------------------------------------------------------------- the rows
+
 local pools = { rows = {}, heads = {}, texts = {}, buttons = {}, classes = {}, icons = {}, seals = {}, arrows = {} }
 local used = { rows = 0, heads = 0, texts = 0, buttons = 0, classes = 0, icons = 0, seals = 0, arrows = 0 }
 
--- pvpfav (2.1.6, M 25 Nov 2026: "I want to be able to set to right-click to
--- favorites on PvP items too"): right-click: Add to / Remove from Favourites
--- (Systems/Favourites.lua), under the battleground's name (Honor & Ranks for
--- that page; a quest's reward: under its quest too).
+
+
+
+
 local function SourceName()
     if not page then return "PvP" end
     if page.key == "HONOR" then return L("PVP_HONOR_TITLE") end
@@ -509,10 +509,10 @@ FDJ.PvPFavouriteMenu = FavMenu
 local function RowClick(self, button)
     local id = self.fdjItemID
     if not id then return end
-    if button == "RightButton" then FavMenu(self) return end -- pvpfav
-    -- pvpquestjump (2.1.6, M 25 Nov 2026: "on quest rewards item that when I
-    -- click on them, it's gonna redirect me to the quest that has them"): an
-    -- item a quest gives opens that quest (Systems/PvPQuests.lua)
+    if button == "RightButton" then FavMenu(self) return end
+
+
+
     if self.fdjQuestJump and page and FDJ.OpenPvPQuests
         and not (IsModifiedClick and (IsModifiedClick("CHATLINK") or IsModifiedClick("DRESSUP"))) then
         if FDJ.CloseSetStrip then FDJ.CloseSetStrip(nil, true) end
@@ -521,7 +521,7 @@ local function RowClick(self, button)
         FDJ.OpenPvPQuests(page.key, page.side, self.fdjQuestJump)
         return
     end
-    -- pvplevels: a plain click shows / hides the item's level versions
+
     if not (IsModifiedClick and (IsModifiedClick("CHATLINK") or IsModifiedClick("DRESSUP")))
         and FDJ.ToggleSetStrip and FDJ.ToggleSetStrip(self) then
         return
@@ -549,10 +549,10 @@ end
 local function RowLeave(self)
     local t = Theme()
     self:SetBackdropColor(t.lootRow[1], t.lootRow[2], t.lootRow[3], t.lootRow[4] or 1)
-    -- pvplevels: an open levels row stays while the mouse goes onto it
-    -- stripkeep (2.1.6, M 25 Nov 2026: "when I go over that gap, it closes"):
-    -- and so does the tooltip (the item's tooltip is the game's GameTooltip:
-    -- hiding it first closed the row before it was kept)
+
+
+
+
     if not (FDJ.SetStripKeep and FDJ.SetStripKeep(self)) then
         if FDJ.CloseSetStrip then FDJ.CloseSetStrip(self) end
         if FDJ.HideJournalItemTooltip then FDJ.HideJournalItemTooltip() end
@@ -563,7 +563,7 @@ end
 local function MakeRow(parent)
     local row = CreateFrame("Button", nil, parent, "BackdropTemplate")
     row:SetHeight(ROW_H)
-    row:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- pvpfav
+    row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     row:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 10,
         insets = { left = 2, right = 2, top = 2, bottom = 2 } })
     row.icon = row:CreateTexture(nil, "ARTWORK")
@@ -600,7 +600,7 @@ local function Take(kind, make)
     return o
 end
 
--- A section's heading, a line under it.
+
 local function MakeHead(parent)
     local h = CreateFrame("Frame", nil, parent)
     h:SetHeight(24)
@@ -650,8 +650,8 @@ local function MakeClass(parent)
     return b
 end
 
--- An NPC's portrait that shows where they stand (pvppolish): hovered, their
--- name and "Show Location"; clicked, the spot on the map.
+
+
 local function MakePortrait(parent, size)
     local b = CreateFrame("Button", nil, parent)
     b:SetSize(size, size)
@@ -696,10 +696,10 @@ local function SetPortrait(b, loc)
     b:Show()
 end
 
--- ------------------------------------------------------------ the writing
-local W, Y -- content width and the cursor
+
+local W, Y
 local function Head(text, met)
-    if page.firstLine == nil then page.firstLine, page.firstKind = Y, "head" end -- pvpcompactline
+    if page.firstLine == nil then page.firstLine, page.firstKind = Y, "head" end
     local h = Take("heads", MakeHead)
     local t = Theme()
     h:ClearAllPoints()
@@ -737,9 +737,9 @@ local function MapButton(loc)
     b.text:SetText(FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(loc.label) or loc.label)
     Y = Y + 44
 end
--- One row: spec = { id = itemID (or quest = questID), name, quality, sub,
--- source (the tooltip's extra line), done }.
--- pvpquestjump: the quest that gives it (on this page's side), its tooltip saying so
+
+
+
 local function QuestJump(owner, id)
     local quest = page and page.key ~= "HONOR" and id and FDJ.PvPQuestForItem and FDJ.PvPQuestForItem(page.key, page.side, id) or nil
     owner.fdjQuestJump = quest
@@ -752,12 +752,12 @@ local function FillRow(row, spec)
     row.fdjItemID, row.fdjQuest = spec.id, spec.quest
     row.fdjName, row.fdjQuality, row.fdjSub = spec.name, spec.quality, spec.sub
     row.fdjSourceText = spec.source
-    -- pvplevels: the level versions' row on a click (Core/Journal.lua)
+
     row.fdjStrip = (not spec.quest) and spec.strip or nil
     row.fdjSetClick = row.fdjStrip ~= nil or nil
     row.item = spec.id and { spec.id, spec.name, nil, spec.quality } or nil
-    QuestJump(row, (not spec.quest) and spec.id or nil) -- pvpquestjump
-    -- pvplevels: Compact view: a smaller icon, the name alone
+    QuestJump(row, (not spec.quest) and spec.id or nil)
+
     local compact = Compact()
     row:SetHeight(compact and ROW_H_C or ROW_H)
     row.icon:SetSize(compact and 20 or 34, compact and 20 or 34)
@@ -786,7 +786,7 @@ local function FillRow(row, spec)
         row.name:SetText(name)
         row.name:SetTextColor(QualityRGB(q or spec.quality))
     end
-    -- pvpfav: the favourite's star
+
     if spec.id and FDJ.UpdateFavouriteIndicator then FDJ.UpdateFavouriteIndicator(row, spec.id)
     elseif row.fdjFavouriteStar then row.fdjFavouriteItemID = nil row.fdjFavouriteStar:Hide() end
     row.sub:SetText(spec.sub or "")
@@ -795,7 +795,7 @@ local function FillRow(row, spec)
 end
 local function Rows(list)
     local colW = math.floor((W - COL_GAP) / 2)
-    local rowH = Compact() and ROW_H_C or ROW_H -- pvplevels
+    local rowH = Compact() and ROW_H_C or ROW_H
     local gap = Compact() and 4 or ROW_GAP
     for i, spec in ipairs(list) do
         if spec then
@@ -812,13 +812,13 @@ local function Rows(list)
     Y = Y + lines * (rowH + gap) + (lines > 0 and 8 or 0)
 end
 
--- pvpcompact (2.1.6, M 25 Nov 2026: "I want the compact view to be a little
--- bit more compact. I would like to see everything in one page ... friendly,
--- honored, revered ... And then on one line to the right, you show every
--- item on one line"): Compact view: each part's name on the left, its items
--- as icons on one line to the right (more lines, lined up, when they don't
--- fit), each with its tooltip (its level line and where it comes from in
--- it), its levels row on a click, Shift-click to link.
+
+
+
+
+
+
+
 local ICON_C, ICON_GAP_C, LABEL_W_C = 34, 4, 132
 local function IconEnter(self)
     self:SetBackdropBorderColor(1.00, 0.82, 0.10, 1)
@@ -829,7 +829,7 @@ end
 local function IconLeave(self)
     local r, g, b = QualityRGB(self.fdjQ or 1)
     self:SetBackdropBorderColor(r, g, b, 1)
-    -- stripkeep: the row (and the tooltip over it) kept first, else both go
+
     if not (FDJ.SetStripKeep and FDJ.SetStripKeep(self)) then
         if FDJ.CloseSetStrip then FDJ.CloseSetStrip(self) end
         if FDJ.HideJournalItemTooltip then FDJ.HideJournalItemTooltip() end
@@ -839,7 +839,7 @@ end
 local function MakeIcon(parent)
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetSize(ICON_C, ICON_C)
-    b:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- pvpfav
+    b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 8,
         insets = { left = 2, right = 2, top = 2, bottom = 2 } })
     b.icon = b:CreateTexture(nil, "ARTWORK")
@@ -847,8 +847,8 @@ local function MakeIcon(parent)
     b.icon:SetPoint("BOTTOMRIGHT", -3, 3)
     b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
-    -- pvpglow (2.1.6, M 25 Nov 2026: "I wish the items had the glow of their
-    -- rarity"): the item's quality as a glow round the icon
+
+
     b.glow = b:CreateTexture(nil, "OVERLAY")
     b.glow:SetTexture("Interface\\Buttons\\UI-ActionButton-Border")
     b.glow:SetBlendMode("ADD")
@@ -857,11 +857,11 @@ local function MakeIcon(parent)
     b:SetScript("OnEnter", IconEnter)
     b:SetScript("OnLeave", IconLeave)
     b:SetScript("OnClick", RowClick)
-    b.fdjStripAbove = true -- stripabove: its levels row straight over it
+    b.fdjStripAbove = true
     return b
 end
--- One icon of a line: spec at x, y of the page (its tooltip, its levels
--- row on a click, its quest, its favourite's star).
+
+
 local function PutIcon(spec, x, y)
     local b = Take("icons", MakeIcon)
     b:ClearAllPoints()
@@ -876,12 +876,12 @@ local function PutIcon(spec, x, y)
     b.fdjStrip = spec.strip
     b.fdjSetClick = spec.strip ~= nil or nil
     b.item = { spec.id, b.fdjName, nil, spec.quality }
-    QuestJump(b, spec.id) -- pvpquestjump
+    QuestJump(b, spec.id)
     b.icon:SetTexture(ItemIcon(spec.id))
     local r, g, bl = QualityRGB(b.fdjQ or 1)
     b:SetBackdropColor(0, 0, 0, 0.75)
     b:SetBackdropBorderColor(r, g, bl, 1)
-    -- pvpglow: uncommon and better glow in their colour
+
     local quality = tonumber(b.fdjQ) or 1
     b.glow:SetVertexColor(r, g, bl)
     b.glow:SetAlpha(quality >= 4 and 0.95 or 0.8)
@@ -898,7 +898,7 @@ local function PutIcon(spec, x, y)
     return b
 end
 local function LineLabel(label, met)
-    if page.firstLine == nil then page.firstLine, page.firstKind = Y, "icons" end -- pvpcompactline
+    if page.firstLine == nil then page.firstLine, page.firstKind = Y, "icons" end
     local t = Theme()
     local fs = Take("texts", MakeText)
     fs:SetFontObject("ForeverDJ_GameFontNormal")
@@ -926,18 +926,18 @@ local function IconLine(label, list, met)
     Y = Y + math.max(lines * step, math.ceil(fs:GetStringHeight() or 14) + 12) + 6
 end
 
--- pvpsetpairs (2.1.6, M 25 Nov 2026, Honor & Ranks in Compact view: "It
--- shows blue gear next to epic gear ... I don't like how it's all together
--- on the same row ... You have the first row, which is blues, and then on
--- the second row, it's gonna be the epics with an arrow from top to bottom,
--- and in this arrow there is the required emboldened seal icon to upgrade
--- that item. That you can just hover and see exactly what you need"): a
--- Premier set in Compact view: its rare pieces on one line, each piece's
--- epic version under it, and between them an arrow down with the Premier
--- Emboldened Seal that turns one into the other (its tooltip: the seal, the
--- rank it needs and what it costs).
-local SEAL_C, ARROW_H = 22, 50 -- (pvphonorroom: "I need these arrows to be longer")
-local ARROW_TEX = "Interface\\TalentFrame\\TalentFrame-Parts" -- (the game's help-plate arrow)
+
+
+
+
+
+
+
+
+
+
+local SEAL_C, ARROW_H = 22, 50
+local ARROW_TEX = "Interface\\TalentFrame\\TalentFrame-Parts"
 local function MakeArrow(parent)
     local f = CreateFrame("Frame", nil, parent)
     f:SetSize(ICON_C, ARROW_H)
@@ -956,7 +956,7 @@ end
 local function MakeSeal(parent)
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
     b:SetSize(SEAL_C, SEAL_C)
-    b:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- (pvpfav)
+    b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 8,
         insets = { left = 2, right = 2, top = 2, bottom = 2 } })
     b.icon = b:CreateTexture(nil, "ARTWORK")
@@ -969,7 +969,7 @@ local function MakeSeal(parent)
     b:SetScript("OnClick", RowClick)
     return b
 end
--- pairs: { { rare = spec, epic = spec, seal = spec or nil }, ... }
+
 local function PairLines(label, list)
     local fs = LineLabel(label)
     local step = ICON_C + ICON_GAP_C
@@ -1006,7 +1006,7 @@ local function PairLines(label, list)
     local lines = math.max(1, math.ceil(#list / per))
     Y = Y + math.max(lines * block - 10, math.ceil(fs:GetStringHeight() or 14) + 12) + 6
 end
--- A part: its heading and its rows, or in Compact view its line of icons.
+
 local function Section(label, list, met)
     if Compact() then
         IconLine(label, list, met)
@@ -1016,11 +1016,11 @@ local function Section(label, list, met)
     end
 end
 
--- An entry { name, quality, id, level, id, level, ... }: the version for the
--- character's level (the highest it can wear, else the lowest), and the
--- levels line with that one lit.
--- pvplevels: each level's colour: under the character's own bracket gray,
--- its own bracket (the version it can wear) green, above its level red.
+
+
+
+
+
 local LEVEL_GRAY, LEVEL_GREEN, LEVEL_RED = { 0.62, 0.62, 0.62 }, { 0.25, 1.00, 0.25 }, { 1.00, 0.27, 0.27 }
 local function Hex(c) return string.format("|cff%02x%02x%02x", math.floor(c[1] * 255), math.floor(c[2] * 255), math.floor(c[3] * 255)) end
 local function Pick(entry)
@@ -1046,7 +1046,7 @@ local function Pick(entry)
     end
     return best, line, strip
 end
--- extra = { sub = text after the level line, source = the tooltip's line }
+
 local function EntrySpecs(list, extra)
     local out = {}
     for _, entry in ipairs(list or {}) do
@@ -1065,13 +1065,13 @@ local function CostText(honor, mark, marks)
     return L("PVP_COST_HONOR", Big(honor))
 end
 
--- ---------------------------------------------------------- the quests
--- pvpquestjournal (2.1.6, M 25 Nov 2026: "I would like the quest to be the
--- same graphic as my dungeon quest"): the Quests button opens the journal's
--- own quest page for the battleground (Systems/PvPQuests.lua); the page of
--- the quests drawn here before is gone.
 
--- ------------------------------------------------------- a battleground
+
+
+
+
+
+
 local function FillBattleground(key)
     local bg = FDJ.PVP_REWARDS and FDJ.PVP_REWARDS[key]
     local side = bg and bg[page.side]
@@ -1080,10 +1080,10 @@ local function FillBattleground(key)
     page.info:SetText(name)
     page.mapLoc = side.vendor
     page.where:SetText(L("PVP_QUARTERMASTER", FDJ.LocalizeFreeText and FDJ.LocalizeFreeText(side.vendor.label) or side.vendor.label))
-    -- the character's own reputation, as the game's bar; the other side's
-    -- faction is not theirs to have
+
+
     if page.side == OwnSide() then
-        if not standing then standing, value, size = 4, 0, 3000 end -- never met: Neutral 0 / 3000, where everyone starts
+        if not standing then standing, value, size = 4, 0, 3000 end
         page.ShowRep(standing, value, size)
     else
         page.repBar:Hide()
@@ -1097,20 +1097,20 @@ local function FillBattleground(key)
     if side.questRewards then Section(L("PVP_QUEST_REWARDS"), EntrySpecs(side.questRewards)) end
     if side.mounts and #side.mounts > 0 then Section(L("PVP_MOUNTS"), EntrySpecs(side.mounts)) end
     if side.supplies and #side.supplies > 0 then Section(L("PVP_SUPPLIES"), EntrySpecs(side.supplies)) end
-    -- (the quests: their own page, the Quests button: pvpquestpage)
+
 end
 
--- -------------------------------------------------------- honor & ranks
--- pvpspecs (2.1.6, M 25 Nov 2026: "for classes that have more specs, let's
--- just have like a spec that you can choose. Like for example, if I'm a
--- Shadow Priest, I don't care about Holy ... a couple of spec buttons below
--- detailed view ... they have the spec icon. If you toggle that, you are
--- gonna see that spec. If you untoggle, you are not gonna see it ... toggle
--- both, sure, you can see both"): which spec each Premier set is for (its
--- pieces' stats, Wowhead Forever: healing = the healer's, Strength and
--- Attack Power = the melee one's, spell damage = the caster's), the spec's
--- id (its name and icon from the game) and its talent-tab icon if the game
--- gives none. A set switched off is remembered per character and class.
+
+
+
+
+
+
+
+
+
+
+
 local SET_SPEC = {
     Chevalier = "PALADIN_RET", Scaled = "PALADIN_RET", Luminous = "PALADIN_HOLY", Lamellar = "PALADIN_HOLY",
     Mooncloth = "PRIEST_HOLY", Silken = "PRIEST_HOLY", Voidcloth = "PRIEST_SHADOW", Satin = "PRIEST_SHADOW",
@@ -1125,7 +1125,7 @@ local SPECS = {
     DRUID_BALANCE = { 102, "Interface\\Icons\\Spell_Nature_StarFall" }, DRUID_FERAL = { 103, "Interface\\Icons\\Ability_Racial_BearForm" },
     DRUID_RESTO = { 105, "Interface\\Icons\\Spell_Nature_HealingTouch" },
 }
--- the spec's name and icon (the game's when it has them)
+
 local function SpecLook(key)
     local spec = SPECS[key]
     if not spec then return nil, nil end
@@ -1135,15 +1135,15 @@ local function SpecLook(key)
     end
     return nil, spec[2]
 end
--- pvpspecauto (2.1.6, M 25 Nov 2026: "I don't want all the specs to be
--- shown directly ... I want the add-on to detect the spec of the player and
--- just show him in spec. And then, of course, the other specs are available.
--- They're just grayed out at first"): until the player clicks a spec button
--- (per character and class), only the set of the character's own spec shows;
--- after a click, what the player picked (ForeverDungeonJournalCharacterDB.
--- pvpSpecPick[class][set] = shown). Another class's page, a spec no set is
--- for (a Protection Paladin) or no spec found: every set.
-local SPEC_ALSO = { [104] = 103 } -- (a Guardian Druid: the Feral sets, the bear's)
+
+
+
+
+
+
+
+
+local SPEC_ALSO = { [104] = 103 }
 local function PlayerSpecID()
     local csi = C_SpecializationInfo
     local index
@@ -1160,11 +1160,11 @@ local function SpecOf(set) local spec = SPECS[SET_SPEC[set] or ""] return spec a
 local function PickStore()
     if type(ForeverDungeonJournalCharacterDB) ~= "table" then ForeverDungeonJournalCharacterDB = {} end
     local db = ForeverDungeonJournalCharacterDB
-    db.pvpSpecsOff = nil -- (the first try's switches: dev tests only, never released)
+    db.pvpSpecsOff = nil
     db.pvpSpecPick = type(db.pvpSpecPick) == "table" and db.pvpSpecPick or {}
     return db.pvpSpecPick
 end
--- The sets of `all` (a class's set names) not shown: { [set] = true }.
+
 local function SpecsOff(token, all)
     local off = {}
     all = all or {}
@@ -1182,15 +1182,15 @@ local function SpecsOff(token, all)
     end
     local shown = false
     for _, set in ipairs(all) do if not off[set] then shown = true end end
-    if not shown then off = {} end -- (one at least: else all)
+    if not shown then off = {} end
     return off
 end
 local SPEC_C, SPEC_GAP = 26, 6
 local function MakeSpec(parent)
     local b = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    -- pvpspecauto ("a little glow in our style ... on the specs that are
-    -- turned on"): a spec that is on gets the journal's soft golden glow and
-    -- the gold glow round the icon, as a picked recipe profession's icon
+
+
+
     b:SetSize(SPEC_C, SPEC_C)
     b:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 8,
         insets = { left = 2, right = 2, top = 2, bottom = 2 } })
@@ -1221,12 +1221,12 @@ local function MakeSpec(parent)
         local all = self.fdjAll or {}
         local off = SpecsOff(self.fdjClass, all)
         if not off[self.fdjSet] then
-            -- (one at least stays shown)
+
             local shown = 0
             for _, set in ipairs(all) do if not off[set] then shown = shown + 1 end end
             if shown <= 1 then return end
         end
-        -- pvpspecauto: from now on the player's pick for this class
+
         local pick = {}
         for _, set in ipairs(all) do pick[set] = not off[set] end
         pick[self.fdjSet] = off[self.fdjSet] and true or false
@@ -1238,7 +1238,7 @@ local function MakeSpec(parent)
     end)
     return b
 end
--- the spec buttons of a class with more than one set, under Compact view
+
 local function PlaceSpecs(lines)
     page.specs = page.specs or {}
     local n = 0
@@ -1261,7 +1261,7 @@ local function PlaceSpecs(lines)
             local on = not off[line[1]]
             b.icon:SetDesaturated(not on)
             b.icon:SetAlpha(on and 1 or 0.45)
-            b.halo:SetShown(on) -- pvpspecauto
+            b.halo:SetShown(on)
             b.glow:SetShown(on)
             if on then
                 b:SetBackdropColor(0.45, 0.32, 0.08, 1)
@@ -1278,7 +1278,7 @@ local function PlaceSpecs(lines)
     end
     for i = n + 1, #page.specs do page.specs[i]:Hide() end
 end
-local function Gap() Y = Y + 16 end -- pvpspecs: room between the parts
+local function Gap() Y = Y + 16 end
 
 local function FillHonor()
     local H = FDJ.PVP_HONOR
@@ -1290,12 +1290,12 @@ local function FillHonor()
     page.where:SetText(hall.targetName or "")
     page.repBar:Hide()
 
-    -- Premier gear, a class at a time (the character's own first)
-    -- pvphonorroom (2.1.6, M 25 Nov 2026: "We need more space for this page.
-    -- Get rid of Premier Gear explanation ... Let's have the classes be ...
-    -- at the right above detailed view, and it's going to be a drop down
-    -- like the one we have for the tier"): no explanation under the heading,
-    -- the class picked in the Class menu over the Compact view button (Build)
+
+
+
+
+
+
     Head(L("PVP_PREMIER"))
     local sets = H.sets[side] or {}
     if not page.cls or not sets[page.cls] then
@@ -1326,12 +1326,12 @@ local function FillHonor()
         end
     end
     if x > 0 then Y = Y + 44 end
-    page.fdjSpecLines = sets[page.cls] -- (pvpspecs: placed with the Compact view button, Refresh)
+    page.fdjSpecLines = sets[page.cls]
     local allSets = {}
     for _, line in ipairs(sets[page.cls] or {}) do allSets[#allSets + 1] = line[1] end
     local off = SpecsOff(page.cls, allSets)
     for _, line in ipairs(sets[page.cls] or {}) do
-      if not off[line[1]] then -- pvpspecs: a set switched off is not shown
+      if not off[line[1]] then
         local chest
         for i = 2, #line do if line[i][1] == 5 then chest = line[i][2] end end
         local setName = ClassName(page.cls) .. "  \194\183  " .. ItemName(chest or line[2][2])
@@ -1356,7 +1356,7 @@ local function FillHonor()
                 source = seal and L("PVP_UPGRADE_WITH", ItemName(seal[1])) or nil }
             list[#list + 1] = rareSpec
             list[#list + 1] = epicSpec
-            -- pvpsetpairs: the seal between them (the rank it needs, its Honor)
+
             twins[#twins + 1] = { rare = rareSpec, epic = epicSpec,
                 seal = seal and { id = seal[1], quality = 3, sub = L("PVP_RANK", seal[2]) .. "  \194\183  " .. CostText(seal[3]) } or nil }
         end
@@ -1364,7 +1364,7 @@ local function FillHonor()
       end
     end
 
-    -- what each rank unlocks
+
     local byRank = {}
     for rank, items in pairs(H.ranks[side] or {}) do
         for _, it in ipairs(items) do byRank[#byRank + 1] = { rank, it[1], it[2], it[3], it[4] } end
@@ -1381,10 +1381,10 @@ local function FillHonor()
         if r[3] then sub = sub .. "  \194\183  " .. CostText(r[3], r[4], r[5]) end
         list[#list + 1] = { id = r[2], sub = sub }
     end
-    if Compact() then Gap() end -- pvpspecs ("some space between the premier set gear and the rank rewards")
+    if Compact() then Gap() end
     Section(L("PVP_RANK_REWARDS"), list)
 
-    -- Marks of Honor
+
     if not Compact() then
         Head(L("PVP_MARKS"))
         Text(L("PVP_MARKS_TEXT"))
@@ -1394,65 +1394,65 @@ local function FillHonor()
         marks[#marks + 1] = { id = id, quality = 1, sub = FDJ.PvPBattlegroundName and FDJ.PvPBattlegroundName(keys[id]) or nil }
     end
     if Compact() then
-        Gap() -- (pvpspecs: "between the marks of honor too")
+        Gap()
         IconLine(L("PVP_MARKS"), marks)
         Text(L("PVP_MARKS_TEXT"), true)
     else
         Rows(marks)
     end
 
-    -- Field of Honor
+
     Head(FieldName())
     Text(L("PVP_FIELD_TEXT"))
     MapButton(H.fieldOfHonor)
 
-    -- Legacy Points
+
     Head(L("PVP_LEGACY"))
     Text(L("PVP_LEGACY_TEXT", FieldName()))
-    -- (pvpspecs, M 25 Nov 2026: "Is the Gurubashi arena relevant? I don't
-    -- think we should care about that ... Just remove that part": no
-    -- Gurubashi Arena part)
+
+
+
 end
 
--- ------------------------------------------------------------ the page
+
 local function HideAll()
     for kind, list in pairs(pools) do
         for i = 1, #list do
             list[i]:Hide()
-            if list[i].fdjFound then list[i].fdjFound:Hide() end -- (pvpsearch)
+            if list[i].fdjFound then list[i].fdjFound:Hide() end
         end
         used[kind] = 0
     end
 end
 
--- pvpjump (2.1.6, M 25 Nov 2026: "there's a lot of space right at the top
--- right ... four icons that redirect you directly instantly to the other BGs
--- or honor point system ... middle-ish right ... If you are in Warsong Gulch,
--- you're gonna have AV, AB, Darkspear, and Honor ranks ... I would like to
--- see some icons, not text"): round icons, middle right of the page's top,
--- to the other battlegrounds on the cards and to Honor & Ranks, on the same
--- side: each battleground's Mark of Honor, Honor & Ranks the faction's Honor
--- crest (the Player vs. Player tab's); the name on hover.
+
+
+
+
+
+
+
+
 local MARKS = { WSG = 20558, AB = 20559, DI = 274895, AV = 20560 }
--- pvpjumpart (2.1.6, M 25 Nov 2026: "for the honor and ranks, let's use the
--- banner that we are already using in the honor and ranks card ... one for
--- Alliance and the other one for Horde ... Darkspear Islands ... maybe a
--- troll. For Warsong Gulch ... the Warsong Gulch flag ... once somebody gets
--- the Warsong Gulch flag, you can see it pop up at the top ... For Alterac
--- Valley, we should use Drek'Thar['s] face for Horde, and Stormpike for
--- Alliance"): Honor & Ranks the card's badge (the faction's disc and crest);
--- Warsong Gulch the battleground's flag icon (the one shown up top when a
--- flag is taken), the side's own; Darkspear Islands a troll; Arathi Basin
--- the game's Arathi Basin icon; Alterac Valley the general's face (Drek'Thar
--- for the Horde, Vanndar Stormpike for the Alliance; their portraits:
--- /dj bake); each one the Mark of Honor when the game has no such picture.
--- avface (2.1.6, M 25 Nov 2026: "the Alterac Valley portrait is not
--- working"): the game would not draw the generals' looks live (11894,
--- 11896: a client that has not met them yet). Their pictures are baked now
--- (bake6, Systems/BakedPortraits.lua); the looks were confirmed by /dj bake
--- from the NPCs themselves. Kept as NPC IDs: a look not known is asked of the
--- game (a hidden model, FDJ.ResolveMobDisplays), the Mark of Honor meanwhile.
-local GENERALS = { Horde = 11946, Alliance = 11948 } -- (NPC IDs: Drek'Thar, Vanndar Stormpike)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+local GENERALS = { Horde = 11946, Alliance = 11948 }
 FDJ.PVP_PORTRAIT_NPCS = { ["Drek'Thar"] = 11946, ["Vanndar Stormpike"] = 11948 }
 if FDJ.STATIC_DISPLAY_IDS then
     FDJ.STATIC_DISPLAY_IDS[11946] = FDJ.STATIC_DISPLAY_IDS[11946] or 11894
@@ -1475,8 +1475,8 @@ local function TryAtlas(tex, name)
     local ok, done = pcall(tex.SetAtlas, tex, name)
     return ok and done ~= false
 end
--- A creature's portrait on the icon itself (so it stays round): its baked
--- picture, else drawn by the game. -> drawn
+
+
 local function DrawFace(b, display)
     display = tonumber(display)
     if not display then return false end
@@ -1494,7 +1494,7 @@ JumpIcon = function(b, key)
     for _, part in ipairs({ b.icon, b.crest, b.flag, b.face, b.badge }) do part:Hide() end
     b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     if key == "HONOR" then
-        -- the Honor & Ranks card's badge: the faction's disc, its crest on it
+
         if TryAtlas(b.badge, "UI-Character-Info-Honor-Bar-BG-" .. side) and TryAtlas(b.crest, "UI-Character-Info-Honor-Icon-" .. side) then
             b.badge:Show()
             b.crest:Show()
@@ -1507,10 +1507,10 @@ JumpIcon = function(b, key)
         b.flag:Show()
         return
     end
-    -- abquartermaster (2.1.6, M 25 Nov 2026: "the portrait for Arathi Basin.
-    -- I just want the quartermaster portrait ... each faction gets its own"):
-    -- the side's Arathi Basin quartermaster, as on the page's own header
-    -- (Samuel Hawke, Rutherford Twing); else the Arathi Basin icon.
+
+
+
+
     if key == "AB" then
         local bg = FDJ.PVP_REWARDS and FDJ.PVP_REWARDS.AB
         local vendor = bg and bg[side] and bg[side].vendor
@@ -1519,7 +1519,7 @@ JumpIcon = function(b, key)
             return
         end
     end
-    if key == "AV" then -- avface
+    if key == "AV" then
         local npc = GENERALS[side]
         local display = (FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[npc]) or (FDJ.MobDisplay and FDJ.MobDisplay(npc))
         if display then
@@ -1528,7 +1528,7 @@ JumpIcon = function(b, key)
                 return
             end
         elseif FDJ.ResolveMobDisplays and not b.fdjFaceWait then
-            -- asked of the game; the icon is drawn again once it answers
+
             pcall(FDJ.ResolveMobDisplays, { npc })
             b.fdjFaceWait = true
             local tries = 0
@@ -1566,17 +1566,17 @@ local function MakeJump(parent)
             tex:AddMaskTexture(mask)
         end
     end
-    -- jumpring (M 25 Nov 2026: "a weird yellowish line in the portraits"):
-    -- the honor reward ring under the pictures showed only in bits round
-    -- them; now a thin gold rim, a gold disc just behind the picture, as the
-    -- quartermaster's portrait has.
+
+
+
+
     b.ring = b:CreateTexture(nil, "ARTWORK", nil, 0)
     b.ring:SetTexture(MASK_FILE)
     b.ring:SetSize(JUMP_C + 4, JUMP_C + 4)
     b.ring:SetPoint("CENTER")
     b.ring:SetVertexColor(0.62, 0.46, 0.16, 1)
-    -- jumplit: the page shown has its icon lit as the home page's tabs are
-    -- (the soft golden glow, larger, and the gold ring)
+
+
     b.halo = b:CreateTexture(nil, "BACKGROUND", nil, -1)
     b.halo:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
     b.halo:SetBlendMode("ADD")
@@ -1619,7 +1619,7 @@ local function MakeJump(parent)
     b.hl:SetAlpha(0.25)
     b.hl:SetAllPoints()
     b:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_TOP") -- (jumptip, M 25 Nov 2026: above the icon, not below)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
         local name = self.fdjKey == "HONOR" and L("PVP_HONOR_TITLE")
             or (FDJ.PvPBattlegroundName and FDJ.PvPBattlegroundName(self.fdjKey)) or tostring(self.fdjKey)
         GameTooltip:SetText(name, 1, 0.82, 0)
@@ -1636,18 +1636,18 @@ local function MakeJump(parent)
 end
 local function PlaceJumps()
     page.jumps = page.jumps or {}
-    -- jumpall (M 25 Nov 2026: "every battleground page have all the 5
-    -- buttons, move them to the top ... in line of the [page's name], and have
-    -- them be highlighted once somebody is in that page ... I hate when you
-    -- click on them, it changes the portrait"): every one, the page shown's
-    -- too (lit), always in the cards' order, so none moves on a click; on the
-    -- line of the page's name.
+
+
+
+
+
+
     local keys, have = {}, {}
     for _, key in ipairs(FDJ.PvPShownKeys and FDJ.PvPShownKeys() or {}) do
         if MARKS[key] then keys[#keys + 1] = key have[key] = true end
     end
     if page.key ~= "HONOR" and MARKS[page.key] and not have[page.key] then
-        -- (a battleground not on the cards yet, opened from the search: in its place)
+
         local all = FDJ.PvPBattlegroundKeys and FDJ.PvPBattlegroundKeys() or {}
         local order = {}
         for i, key in ipairs(all) do order[key] = i end
@@ -1675,9 +1675,9 @@ local function PlaceJumps()
         b:Show()
     end
     for i = #keys + 1, #page.jumps do page.jumps[i]:Hide() end
-    -- questsunder (M 25 Nov 2026: "they'll go over the quest tab really bad.
-    -- Put the quest tab under the icons"): the Quests button, centred under
-    -- the row of icons
+
+
+
     if page.quests then
         page.quests:ClearAllPoints()
         page.quests:SetPoint("TOP", page, "TOPLEFT", center, -2 - JUMP_C - 8)
@@ -1687,9 +1687,9 @@ end
 local function Refresh()
     if not (page and page:IsShown()) then return end
     HideAll()
-    page.firstLine, page.firstKind = nil, nil -- pvpcompactline
-    -- pvpquestpage: the battleground's quests for the side shown (none: no
-    -- Quests button); pvpquestjournal: a quest page of the journal's for them
+    page.firstLine, page.firstKind = nil, nil
+
+
     local bgData = page.key ~= "HONOR" and FDJ.PVP_REWARDS and FDJ.PVP_REWARDS[page.key]
     local sideData = bgData and bgData[page.side]
     local hasQuests = type(sideData) == "table" and type(sideData.quests) == "table" and #sideData.quests > 0
@@ -1704,7 +1704,7 @@ local function Refresh()
         page.title:SetText(FDJ.PvPBattlegroundName and FDJ.PvPBattlegroundName(page.key) or page.key)
         FillBattleground(page.key)
     end
-    -- pvppolish: the crests (the side shown lit), the quartermaster's portrait
+
     local t = Theme()
     for faction, b in pairs(page.crests) do
         if faction == page.side then
@@ -1718,8 +1718,8 @@ local function Refresh()
         end
     end
     SetPortrait(page.portrait, page.mapLoc)
-    pcall(PlaceJumps) -- pvpjump
-    -- pvphonorroom: the Class menu, over the Compact view button
+    pcall(PlaceJumps)
+
     local menuButton = page.classMenu
     if menuButton then
         local H = FDJ.PVP_HONOR
@@ -1750,17 +1750,17 @@ local function Refresh()
             menuButton:Hide()
         end
     end
-    page.compact.text:SetText(L(Compact() and "LOOT_DETAILED" or "LOOT_COMPACT")) -- pvplevels
+    page.compact.text:SetText(L(Compact() and "LOOT_DETAILED" or "LOOT_COMPACT"))
     page.compact:SetWidth(math.max(104, math.ceil((page.compact.text:GetStringWidth() or 80) + 20)))
-    -- pvpquestpage: the Quests button
+
     page.quests:SetShown(hasQuests)
     page.quests.text:SetText(L("QUESTS"))
     page.quests:SetWidth(math.max(110, math.ceil((page.quests.text:GetStringWidth() or 60) + 46)))
     page.quests:SetBackdropColor(0.12, 0.10, 0.08, 0.95)
     page.quests:SetBackdropBorderColor(0.52, 0.33, 0.11, 1)
-    -- pvpcompactline (2.1.6, M 25 Nov 2026: "the compact view button needs
-    -- to be ... on the friendly line, right before the scrolling"): at the
-    -- right end of the page's first line (it scrolls with it)
+
+
+
     if page.compact:GetParent() ~= page.content then
         page.compact:SetParent(page.content)
         page.compact:SetFrameLevel((page.content:GetFrameLevel() or 1) + 20)
@@ -1769,7 +1769,7 @@ local function Refresh()
     page.compact:SetPoint("TOPRIGHT", page.content, "TOPRIGHT", -2, -((page.firstLine or 4) + (page.firstKind == "icons" and 7 or 2)))
     page.compact:Show()
     page.scroll:Show()
-    pcall(PlaceSpecs, page.key == "HONOR" and page.fdjSpecLines or nil) -- pvpspecs
+    pcall(PlaceSpecs, page.key == "HONOR" and page.fdjSpecLines or nil)
     page.content:SetHeight(math.max(1, Y))
     local bar = rawget(page.scroll, "ScrollBar") or _G["ForeverDungeonJournalPvPRewardsScrollScrollBar"]
     if type(bar) == "table" and bar.SetShown then bar:SetShown(Y > (page.scroll:GetHeight() or 0) + 1) end
@@ -1790,7 +1790,7 @@ local function Build(panel)
     page:SetAllPoints(panel)
     page:SetFrameLevel((tonumber(panel:GetFrameLevel()) or 1) + 4)
     page:EnableMouse(true)
-    -- the back arrow, left of the name (the language selector's page arrow)
+
     page.arrow = CreateFrame("Button", nil, page)
     page.arrow:SetSize(26, 26)
     page.arrow:SetPoint("TOPLEFT", 0, 0)
@@ -1807,7 +1807,7 @@ local function Build(panel)
     page.title = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     page.title:SetPoint("LEFT", page.arrow, "RIGHT", 4, 1)
     page.title:SetTextColor(1.00, 0.82, 0.27)
-    -- the crests: which side's rewards (the quest list's own buttons)
+
     page.crests = {}
     for i, faction in ipairs({ "Horde", "Alliance" }) do
         local b = CreateFrame("Button", nil, page, "BackdropTemplate")
@@ -1836,7 +1836,7 @@ local function Build(panel)
         b:SetScript("OnLeave", function() GameTooltip:Hide() end)
         page.crests[faction] = b
     end
-    -- pvplevels: Compact view / Detailed view (the journal's own button)
+
     page.compact = CreateFrame("Button", nil, page, "BackdropTemplate")
     page.compact:SetSize(104, 20)
     page.compact:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 9,
@@ -1846,8 +1846,8 @@ local function Build(panel)
     page.compact.text = page.compact:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
     page.compact.text:SetPoint("CENTER")
     page.compact:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    -- pvpquestpage: the Quests button, where Compact view was;
-    -- pvpquestjournal: it opens the journal's quest page for the battleground
+
+
     page.quests = CreateFrame("Button", nil, page, "BackdropTemplate")
     page.quests:SetSize(118, 28)
     page.quests:SetBackdrop({ bgFile = WHITE, edgeFile = EDGE, tile = true, tileSize = 16, edgeSize = 10,
@@ -1862,7 +1862,7 @@ local function Build(panel)
     page.quests:SetPoint("RIGHT", page.crests.Alliance, "LEFT", -12, 0)
     page.quests:SetScript("OnClick", function()
         if FDJ.CloseSetStrip then FDJ.CloseSetStrip(nil, true) end
-        -- (the journal's page-turn sound, as its Quests tab and the Tier 0.5 button)
+
         if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end
         GameTooltip:Hide()
         if FDJ.OpenPvPQuests then FDJ.OpenPvPQuests(page.key, page.side) end
@@ -1871,16 +1871,16 @@ local function Build(panel)
         if type(ForeverDungeonJournalDB) ~= "table" then ForeverDungeonJournalDB = {} end
         if page.key == "HONOR" then
             ForeverDungeonJournalDB.pvpCompact = not Compact() or nil
-        else -- (pvpcompactfirst)
+        else
             ForeverDungeonJournalDB.pvpBGDetailed = Compact() or nil
         end
         if FDJ.CloseSetStrip then FDJ.CloseSetStrip(nil, true) end
         if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) or 856) end
         Refresh()
     end)
-    -- pvphonorroom: the Class menu (Honor & Ranks): the class shown, its
-    -- icon, a list of the classes to pick from (the Tier Sets page's Show
-    -- Classes menu, one class at a time)
+
+
+
     do
         local b = CreateFrame("Button", nil, page, "UIPanelButtonTemplate")
         if FDJ.OwnFonts then FDJ.OwnFonts(b) end
@@ -1946,7 +1946,7 @@ local function Build(panel)
         b:SetScript("OnHide", function() menu:Hide() end)
         b:Hide()
     end
-    -- the quartermaster: the portrait, the faction, the bar, the name
+
     page.portrait = MakePortrait(page, 44)
     page.portrait:SetPoint("TOPLEFT", page, "TOPLEFT", 8, -34)
     page.info = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
@@ -2007,9 +2007,9 @@ local function Build(panel)
         ShowCards(true)
         if FDJ.PvPLayout then pcall(FDJ.PvPLayout) end
     end)
-    -- the PvP page closed (another tab, a dungeon page): back to the cards next time
+
     panel:HookScript("OnHide", function() page:Hide() end)
-    -- item names come in with the item data; standings and quests as they change
+
     local pending
     for _, event in ipairs({ "GET_ITEM_INFO_RECEIVED", "UPDATE_FACTION", "QUEST_TURNED_IN", "QUEST_DATA_LOAD_RESULT", "PLAYER_LEVEL_UP", "QUEST_ACCEPTED", "QUEST_REMOVED", "QUEST_LOG_UPDATE" }) do
         pcall(page.RegisterEvent, page, event)
@@ -2027,8 +2027,8 @@ local function Build(panel)
     return page
 end
 
--- A card clicked: its page ("HONOR": Honor & Ranks); side: the side to show
--- (pvpquestjournal: back from its quests, the one shown before).
+
+
 function FDJ.OpenPvPRewards(key, side)
     local panel = _G.ForeverDungeonJournalPvPPanel
     if not (panel and key) then return end
@@ -2045,19 +2045,19 @@ end
 function FDJ.IsPvPRewardsShown()
     return page ~= nil and page:IsShown()
 end
--- pvptabagain (2.1.6): the PvP tab clicked again on a battleground's page:
--- back to the cards
+
+
 function FDJ.ClosePvPRewards()
     if page and page:IsShown() then page:Hide() end
 end
 
--- ------------------------------------------------------ the search bar
--- pvpsearch (2.1.6, M 25 Nov 2026: "make battlegrounds and battlegrounds
--- items searchable in the search bar"): the journal's search bar finds the
--- battlegrounds (their page) and the rewards on their pages (the page, on the
--- side that has it, scrolled to the item, which lights up a moment), each
--- side's with its crest (Core/Journal.lua: FDJ.SEARCH_PROVIDERS). Not while
--- the PvP page is hidden (Options).
+
+
+
+
+
+
+
 local function ShownItem(id)
     for _, kind in ipairs({ "icons", "rows" }) do
         for i = 1, used[kind] or 0 do
@@ -2110,9 +2110,9 @@ table.insert(FDJ.SEARCH_PROVIDERS, function(query, Score, DisplayName)
     for _, key in ipairs(FDJ.PvPBattlegroundKeys()) do
         local name = FDJ.PvPBattlegroundName and FDJ.PvPBattlegroundName(key) or key
         local english, art, crop = FDJ.PvPBattlegroundInfo(key)
-        -- pvpshort (2.1.6, M 25 Nov 2026: "when I write something like AV or
-        -- WSG or AB, these all come to the right BGs ... It's very
-        -- important"): the battlegrounds' short names find them too
+
+
+
         local short = SHORT[key] or {}
         local score = Score(query, name, english, short[1], short[2])
         if score then

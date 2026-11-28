@@ -1,26 +1,26 @@
 local ADDON_NAME, FDJ = ...
 
--- Shared namespace for the addon. Each file receives the same addon table.
+
 if type(FDJ) ~= "table" then
     FDJ = _G.ForeverDungeonJournal_NS or {}
 end
 _G.ForeverDungeonJournal_NS = FDJ
 
 FDJ.ADDON_NAME = ADDON_NAME
--- ownfonts (2.0.8): Core/Fonts.lua (next in the .toc) replaces this with the
--- real one, which moves a Blizzard-template button over to the journal's own
--- fonts. Until then, or if that file ever failed to load, it does nothing.
+
+
+
 FDJ.OwnFonts = FDJ.OwnFonts or function(object) return object end
 FDJ.Constants = FDJ.Constants or {}
 FDJ.Constants.ALBA_FAIRMOON_LOCATION = "Alba Fairmoon, Sentinel Hill inn, Westfall"
 
--- chatlines (2.1.5, M 24 Nov 2026: "in the general tab, let's add another
--- option, which is hide chat lines. Hide chat lines is going to hide the
--- lines that the journal usually puts in the chat, like the version when you
--- log in or when you need to update, whatever"): every line the journal writes
--- in the chat by itself, or after a click, goes through here; Options >
--- General > Hide chat lines (ForeverDungeonJournalDB.hideChatLines) stops
--- them. Answers to the /dj commands a player types still print.
+
+
+
+
+
+
+
 function FDJ.ChatLine(text)
     local db = _G.ForeverDungeonJournalDB
     if type(db) == "table" and db.hideChatLines then return end
@@ -28,12 +28,12 @@ function FDJ.ChatLine(text)
 end
 
 ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
--- WoW loads the saved variables after the addon's files and replaces this
--- table with the saved one. Still this same table at login: nothing was
--- saved yet, so the addon was just installed (used by the tracker's note).
+
+
+
 FDJ.bootDB = ForeverDungeonJournalDB
 
--- Native WoW keybinding entry (Options > Keybindings > AddOns).
+
 
 local bindingLocale = GetLocale and GetLocale() or "enUS"
 local bindingNames = {
@@ -51,11 +51,11 @@ local bindingNames = {
 BINDING_NAME_FOREVERDUNGEONJOURNAL_TOGGLE = bindingNames[bindingLocale] or "Open/Close Dungeon Journal"
 
 
--- ============================================================
--- One-time notice. Shown once after the first login/reload with this
--- version installed; pressing OK stores a flag in SavedVariables so it never
--- appears again. Bump NOTICE_ID to show a new message in a later update.
--- ============================================================
+
+
+
+
+
 local NOTICE_ID = "dj-command-v1"
 
 local function ShowUpdateNotice(force)
@@ -89,7 +89,7 @@ local function ShowUpdateNotice(force)
         })
     end
 
-    -- Title row: "Dungeon Journal" with the journal's icon.
+
     local icon = f:CreateTexture(nil, "ARTWORK")
     icon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
     icon:SetSize(30, 30)
@@ -98,7 +98,7 @@ local function ShowUpdateNotice(force)
     local title = f:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontNormalLarge")
     title:SetText(L("DUNGEON_JOURNAL"))
 
-    -- Centre icon + title together.
+
     local titleWidth = (title:GetStringWidth() or 150) + 30 + 8
     icon:SetPoint("TOPLEFT", f, "TOP", -titleWidth / 2, -22)
     title:SetPoint("LEFT", icon, "RIGHT", 8, 0)
@@ -112,7 +112,7 @@ local function ShowUpdateNotice(force)
     body:SetText(L("NOTICE_RESIZE"))
 
     local ok = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(ok) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(ok)
     ok:SetSize(110, 24)
     ok:SetPoint("BOTTOM", f, "BOTTOM", 0, 20)
     ok:SetText(OKAY or "OK")
@@ -121,7 +121,7 @@ local function ShowUpdateNotice(force)
         f:Hide()
     end)
 
-    -- Fit the box to the text so the button sits right under it.
+
     f:SetHeight(64 + (body:GetStringHeight() or 30) + 14 + 24 + 20)
 
     if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN then
@@ -132,19 +132,19 @@ end
 
 FDJ.ShowUpdateNotice = ShowUpdateNotice
 
--- No notice is shown at login right now (the /dj command notice was retired
--- in 1.6.1). To announce something in a later update: write the new text,
--- bump NOTICE_ID, and re-enable this block.
---[[
-local noticeEvents = CreateFrame("Frame")
-noticeEvents:RegisterEvent("PLAYER_ENTERING_WORLD")
-noticeEvents:SetScript("OnEvent", function(self)
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-    -- Small delay so it appears after the loading screen and other addons.
-    if C_Timer and C_Timer.After then
-        C_Timer.After(3, ShowUpdateNotice)
-    else
-        ShowUpdateNotice()
-    end
-end)
---]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

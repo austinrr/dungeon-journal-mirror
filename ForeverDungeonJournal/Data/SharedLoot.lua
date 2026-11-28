@@ -2,10 +2,10 @@ local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 if not FDJ or not FDJ.DB then return end
 
--- Shared boss loot: items with a small chance to drop from many bosses across
--- several dungeons. They are kept out of the bosses' own loot lists; a boss
--- that can drop any of them gets a folded "Show Shared Loot (N)" divider below
--- its loot (see RefreshLoot in Core/Journal.lua).
+
+
+
+
 local BFD, STOCKS, RFK, SMGY = "Blackfathom Deeps", "The Stockade", "Razorfen Kraul", "Scarlet Monastery: Graveyard"
 local DROWNED = "The Drowned City"
 
@@ -45,10 +45,10 @@ local SHARED = {
         [STOCKS] = { "Kam Deepfury", "Bazil Thredd", "Dextren Ward" },
         [RFK] = { "Death Speaker Jargba", "Overlord Ramtusk", "Charlga Razorflank" },
     } },
-    -- Wowhead Forever: every Drowned City boss (Zul'Alai 8/936, Var'Taka 1/546,
-    -- Captain Dreadrise 5/809, Deathless Marrow 4/586, Min'loth 8/594, Primeval
-    -- Elemental 6/350, the rare Gill 1/46). Primeval Elemental's page is made
-    -- in Data/QuestUpdates.lua, which adds it there.
+
+
+
+
     { 271718, "Linken's Boots of Iron", {
         [DROWNED] = { "Zul'Alai", "Var'Taka", "Captain Dreadrise", "Deathless Marrow", "Min'loth the Serpent", "Gill" },
     }, "Feet, Mail" },
@@ -56,8 +56,8 @@ local SHARED = {
 }
 
 FDJ.SHARED_LOOT_IDS = FDJ.SHARED_LOOT_IDS or {}
-FDJ.SHARED_BY_BOSS = FDJ.SHARED_BY_BOSS or {} -- [dungeon][boss name] = { items }
-FDJ.sharedLootMissing = {} -- "Dungeon / Boss" entries that were not found
+FDJ.SHARED_BY_BOSS = FDJ.SHARED_BY_BOSS or {}
+FDJ.sharedLootMissing = {}
 
 local function FindBoss(dungeon, bossName)
     for _, boss in ipairs(dungeon.bosses or {}) do
@@ -81,7 +81,7 @@ for _, entry in ipairs(SHARED) do
     FDJ.SHARED_LOOT_IDS[entry[1]] = true
 end
 
--- Shared items already written into a boss's own loot move to its shared list.
+
 for dungeonName, dungeon in pairs(FDJ.DB) do
     for _, boss in ipairs(dungeon.bosses or {}) do
         if type(boss) == "table" and type(boss.loot) == "table" and not boss.trash and not boss.recipeTab then
@@ -110,7 +110,7 @@ for _, entry in ipairs(SHARED) do
     end
 end
 
--- Shared loot of a boss on its page (nil when it has none).
+
 function FDJ.GetBossSharedLoot(dungeonName, boss)
     if type(boss) ~= "table" or boss.trash or boss.recipeTab or boss.fdjDungeon then return nil end
     local byBoss = FDJ.SHARED_BY_BOSS[dungeonName]

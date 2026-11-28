@@ -1,12 +1,12 @@
--- Older dungeon maps use artwork from the game client. Some localized clients
--- (for example ruRU) do not have it; the journal then shows its own copy of
--- the map. A map without a copy shows a plain parchment with the boss pins,
--- and this note explains why.
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
--- Note under the dungeon map when this game client has no artwork for it
--- (some localized clients lack the old dungeon maps). Pins still work.
+
+
 local MISSING = {
     enUS = "Your game client has no artwork for this map. Boss pins and the entrance are still shown.",
     deDE = "Dein Spielclient hat keine Grafik für diese Karte. Bosse und Eingang werden trotzdem angezeigt.",
@@ -20,18 +20,20 @@ local MISSING = {
     zhTW = "你的遊戲用戶端缺少這張地圖的圖片。首領和入口仍會顯示。",
 }
 
--- BEGIN mapcopies
--- The journal's own copies of the old dungeon maps (Media\Maps\<Name><floor>,
--- the journal's parchment patches already on them), for game clients without
--- the game's map files.
+
+
+
+
+
+
 local COPIES = {}
 for name in ([[
     BlackFathomDeeps1 BlackFathomDeeps2 BlackFathomDeeps3 BlackrockDepths1
     BlackrockDepths2 DireMaul1 DireMaul2 DireMaul3 DireMaul4 DireMaul5
     DireMaul6 Gnomeregan1 Gnomeregan2 Gnomeregan3 Gnomeregan4 Maraudon1
     Maraudon2 Ragefire1 RazorfenDowns1 RazorfenKraul1 ScarletMonastery1
-    ScarletMonastery2 ScarletMonastery3 ScarletMonastery4 ShadowfangKeep1
-    ShadowfangKeep6 ShadowfangKeep7 Stratholme1 Stratholme2 TheDeadmines1
+    ScarletMonastery2 ScarletMonastery3 ScarletMonastery4
+    ShadowfangKeep7 Stratholme1 Stratholme2 TheDeadmines1
     TheDeadmines2 TheStockade1 Uldaman1 Uldaman2
     WailingCaverns1
 ]]):gmatch("%S+") do COPIES[name] = true end
@@ -44,7 +46,7 @@ function FDJ.MapArtCopy(floor)
     end
     return nil
 end
--- END mapcopies
+
 
 function FDJ.CheckMapTiles(panel, tiles, count, floor, apiTextures, apiLayer, artMissing)
     if not panel then return end

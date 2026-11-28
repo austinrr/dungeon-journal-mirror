@@ -1,5 +1,5 @@
--- Dire Maul and Stratholme: which wing a (lower-case) instance, zone or room
--- name belongs to. Used by the journal's dungeon detection.
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -19,8 +19,8 @@ local ROOMS = {
     ["dragonspire hall"] = UBRS, ["the beast's lair"] = UBRS, ["spire throne"] = UBRS,
     ["elders' square"] = UNDEAD, ["the gauntlet"] = UNDEAD, ["slaughter square"] = UNDEAD, ["the slaughter house"] = UNDEAD,
 }
--- wingnames (2.1.5): the rooms in the client's language too
--- (FDJ.RunLogRoomNamesL10n, Data/RunLogWings.lua)
+
+
 do
     local add = {}
     for english, wing in pairs(ROOMS) do

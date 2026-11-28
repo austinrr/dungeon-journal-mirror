@@ -1,28 +1,28 @@
--- pvpicon (2.0.13, M 18 Nov 2026: "I'm not really that convinced about the
--- extra card on the left of the journal. Let's just add PvP as an extra
--- button ... that's our style, we add buttons. The PvP button appears once
--- the player reaches level 10, because that's when they can start entering
--- battlegrounds. And it will show Warsong Gulch first. And then once you get
--- to level 20, it's gonna show Arathi Basin. And then once you get to level
--- 51, it's gonna add Alterac Valley. And then we're gonna have an option in
--- the panel called PvP that says show every battleground").
--- (pvptab, the first try the same day: a strip of tabs on the journal's left
--- side, PvP under the Dungeon Journal; gone.)
---
--- The home page gets a round icon, crossed swords, right of the Tier Sets
--- icon (of the Onyxia icon, the Sleeping Bag's or the Raids medallion when
--- those are hidden), the same size and soft golden glow; it is a tab like
--- them (lit with the gold ring while its page shows; clicked again: the
--- dungeon list). Its page is the home page's own, in place of the dungeon
--- list: the battlegrounds the character's level can enter, as cards like the
--- dungeons' (the loading screen with the logo cut off, the name, the level
--- range, the team size): Warsong Gulch at 10, Arathi Basin at 20, Darkspear
--- Islands at 30, Alterac Valley at 51. Options > Tabs > Show every
--- battleground shows them all at any level. A card clicked opens its page
--- (pvprewards, Systems/PvPRewards.lua), as does the Honor & Ranks card after
--- them.
--- Below level 10 the icon is hidden (Options > Hide PvP shows ticked;
--- unticking it shows it sooner). Right-click the icon: Hide.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -30,50 +30,50 @@ local WHITE = "Interface\\Buttons\\WHITE8X8"
 local EDGE = "Interface\\Tooltips\\UI-Tooltip-Border"
 local MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local GLOW = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow"
--- The crossed swords: the game's Battle Master icon (the minimap tracking
--- one) on a dark red disc; the dual-wield ability icon if this client has
--- no such file.
+
+
+
 local PVP_ICON = "Interface\\Minimap\\Tracking\\BattleMaster"
 local PVP_ICON_FALLBACK = "Interface\\Icons\\Ability_DualWield"
--- pvpsidetab (2.1.6, M 25 Nov 2026, the character window's PvP tab, the
--- gold fist on blue: "i want our pvp tab to use the real in game pvp tab ...
--- thats the alliance one"): the game's own icon for that tab, by faction, as
--- the Forever client sets it (Blizzard_UIPanels_Game/Camelot/CharacterFrame.lua,
--- SetupModeTabs), filling the round button; the swords above if the client
--- has neither.
+
+
+
+
+
+
 local PVP_TAB_ICONS = {
     Alliance = "Interface\\ICONS\\INV_SideTab_Honor_Alliance_c60",
     Horde = "Interface\\ICONS\\INV_SideTab_Honor_Horde_c60",
 }
 local PVP_LEVEL = 10
 
--- The battlegrounds, by the level they open at (min). Loading screens by file
--- ID (the classic three: LoadScreenWarsongGulch, LoadScreenArathiBasin,
--- LoadScreenPvPBattleground = Alterac Valley; Darkspear Islands: Forever's
--- expansion0/main/loadscreen_darkspearislands), cut like the dungeon cards'
--- (the classic ones lose the logo at the top; the Forever one also loses the
--- dark letterbox bands its picture has at the top and bottom, and the same
--- share of each side so it isn't stretched). Level ranges and team sizes:
--- SOURCES.txt (pvptab).
+
+
+
+
+
+
+
+
 local BGS = {
     { key = "WSG", min = 10, uiMap = 1460, art = 131883, crop = { 0.02, 0.98, 0.24, 0.82 }, level = "10-60", size = "10v10" },
-    -- abfaces (2.1.6, M 25 Nov 2026: "the Arathi Basin loading screen shows
-    -- the face of the characters ... push everything a little bit down so
-    -- that the faces are seen"): cut higher, up to just under the game's logo
-    -- between them (higher, the logo shows)
-    -- abnologo (2.1.6, M 25 Nov 2026: "edit the Arathi Basin card and ...
-    -- artificially get rid of" the piece of the logo): a little higher still,
-    -- the logo's last bit covered with the parchment just under it (patch:
-    -- that strip of the same picture, the pattern a little lower, its lower
-    -- edge fading out)
+
+
+
+
+
+
+
+
+
     { key = "AB", min = 20, uiMap = 1461, art = 131820, crop = { 0.02, 0.98, 0.19, 0.77 }, level = "20-60", size = "15v15",
-        patch = { 0.30, 0.70, 0.247, 0.06, 0.015 } }, -- (u from, u to, v down to, how much lower it is taken from, the fade)
+        patch = { 0.30, 0.70, 0.247, 0.06, 0.015 } },
     { key = "DI", min = 30, art = 8423398, crop = { 0.066, 0.934, 0.17, 0.83 }, level = "30-60", size = "15v15" },
     { key = "AV", min = 51, uiMap = 1459, art = 131861, crop = { 0.02, 0.98, 0.24, 0.82 }, level = "51-60", size = "40v40" },
 }
 
--- The game's own names (C_Map) when the journal shows the client's language;
--- else these (the official names). Darkspear Islands: English only for now.
+
+
 local NAMES = {
     enUS = { WSG = "Warsong Gulch", AB = "Arathi Basin", AV = "Alterac Valley", DI = "Darkspear Islands" },
     deDE = { WSG = "Kriegshymnenschlucht", AB = "Arathibecken", AV = "Alteractal" },
@@ -171,7 +171,7 @@ end
 
 local function Journal() return _G.ForeverDungeonJournalFrame end
 
-local levelNow -- PLAYER_LEVEL_UP's new level (UnitLevel can still say the old one)
+local levelNow
 local function Level()
     if levelNow then return levelNow end
     if type(UnitLevel) ~= "function" then return 0 end
@@ -183,19 +183,19 @@ function FDJ.IsPvPShowAll()
     return ForeverDungeonJournalDB and ForeverDungeonJournalDB.pvpShowAll == true or false
 end
 
--- ------------------------------------------------------------------ the page
-local panel, cards = nil, {}
-local HONOR_CARD = { key = "HONOR" } -- pvprewards (2.1.6): the Honor & Ranks card
 
--- pvprewards: the battleground's name by its key, for its page
+local panel, cards = nil, {}
+local HONOR_CARD = { key = "HONOR" }
+
+
 function FDJ.PvPBattlegroundName(key)
     for _, bg in ipairs(BGS) do
         if bg.key == key then return BGName(bg) end
     end
     return key
 end
--- pvpsearch (2.1.6): a battleground's English name, its card's picture and
--- how it is cut, for the search bar's results (Systems/PvPRewards.lua)
+
+
 function FDJ.PvPBattlegroundInfo(key)
     for _, bg in ipairs(BGS) do
         if bg.key == key then return NAMES.enUS[bg.key], bg.art, bg.crop end
@@ -218,7 +218,7 @@ local function MakeCard(parent)
     c.art = c:CreateTexture(nil, "ARTWORK", nil, 1)
     c.art:SetPoint("TOPLEFT", 4, -4)
     c.art:SetPoint("BOTTOMRIGHT", -4, 4)
-    -- (abnologo: the patch over the picture at 2, under the dark band)
+
     c.patch = c:CreateTexture(nil, "ARTWORK", nil, 2)
     c.patch:Hide()
     c.patchFade = c:CreateTexture(nil, "ARTWORK", nil, 2)
@@ -268,7 +268,7 @@ local function MakeCard(parent)
         self:SetBackdropBorderColor(0.34, 0.34, 0.34, 1)
         self.fullShade:SetColorTexture(0.02, 0.02, 0.02, 0.10)
     end)
-    -- pvprewards (2.1.6): the card opens its page
+
     c.emblem = c:CreateTexture(nil, "ARTWORK", nil, 2)
     c.emblem:SetSize(78, 78)
     c.emblem:SetPoint("RIGHT", -22, -6)
@@ -279,17 +279,17 @@ local function MakeCard(parent)
     return c
 end
 
--- pvprankcard (2.1.6, M 25 Nov 2026: "Can you somehow fit the official page
--- of the player in the honor and ranks? Like as an image for honor and
--- ranks, we can use what the player has. And that's gonna change always if
--- the player improves or not"): the Honor & Ranks card shows the character's
--- own rank as the Character pane's Player vs. Player tab does (the game's
--- PVPRankFrame, Blizzard_UIPanels_Game/Camelot/PVPRankFrame.lua and .xml):
--- the ring that fills with the Rank Points, the faction's crest (the rank's
--- insignia once ranked) in it, the rank number under it; beside it the
--- season, the rank and the Rank Points, in the game's own words. Its art and
--- data: the game's (C_MajorFactions, the Rank Points faction 2800); kept up
--- to date while the page is open. Without them: the PvP icon as before.
+
+
+
+
+
+
+
+
+
+
+
 local RANK_FACTION = 2800
 local function RankInfo()
     if not (C_MajorFactions and type(C_MajorFactions.GetMajorFactionProgressionInfo) == "function") then return nil end
@@ -300,7 +300,7 @@ local function RankInfo()
     return level, tonumber(Plain(info.renownReputationEarned)) or 0, tonumber(Plain(info.renownLevelThreshold)) or 0
 end
 local function Global(name) local v = _G[name] return (type(v) == "string" and v ~= "") and v or nil end
--- "Civilian", "Rank 3: Sergeant" (the game's GetPVPRankText)
+
 local function RankText(level)
     if not level or level <= 0 then return Global("PVP_RANK_0_NAME") or "Civilian" end
     local base = Enum and Enum.PvPRanks and tonumber(Enum.PvPRanks.Rank_1)
@@ -318,7 +318,7 @@ local function RankText(level)
         if ok then return text end
     end
     if title then return title end
-    local num = Global("PVP_RANK_NUMBER") -- ("Rank 3")
+    local num = Global("PVP_RANK_NUMBER")
     local ok, text = false, nil
     if num then ok, text = pcall(string.format, num, level) end
     return ok and text or tostring(level)
@@ -340,7 +340,7 @@ local function Atlas(tex, name, useSize)
 end
 local function BuildRankBadge(c)
     if c.rankBadge then return c.rankBadge end
-    -- (as wide as the card's right end; the glow kept inside the card)
+
     local holder = CreateFrame("Frame", nil, c)
     holder:SetPoint("TOPRIGHT", c, "TOPRIGHT", -6, -5)
     holder:SetPoint("BOTTOMRIGHT", c, "BOTTOMRIGHT", -6, 5)
@@ -348,11 +348,11 @@ local function BuildRankBadge(c)
     if holder.SetClipsChildren then holder:SetClipsChildren(true) end
     local d = CreateFrame("Cooldown", nil, holder)
     d:SetSize(154, 154)
-    -- pvprankband (M 25 Nov 2026: "move the faction crest rank a little bit
-    -- below the red line as well"): under the dark top band too (about 12
-    -- of the card's pixels down, in the half-size frame's own units)
+
+
+
     d:SetPoint("CENTER", holder, "CENTER", 0, -23)
-    d:SetScale(0.52) -- (the game's page at about half its size)
+    d:SetScale(0.52)
     if d.SetReverse then d:SetReverse(true) end
     if d.SetHideCountdownNumbers then d:SetHideCountdownNumbers(true) end
     if d.SetRotation then pcall(d.SetRotation, d, math.pi) end
@@ -373,7 +373,7 @@ local function BuildRankBadge(c)
     d.badge = d:CreateTexture(nil, "ARTWORK")
     d.badge:SetSize(72, 84)
     d.badge:SetPoint("CENTER")
-    -- the rank number in its gold ring, at the bottom
+
     local n = CreateFrame("Frame", nil, d)
     n:SetSize(36, 36)
     n:SetPoint("BOTTOM", d, "BOTTOM", 0, -1)
@@ -398,8 +398,8 @@ local function BuildRankBadge(c)
     n.label:SetJustifyH("CENTER")
     d.number = n
     holder.display = d
-    -- the season, the rank and the Rank Points under the card's name
-    -- (one under the other, as on the game's page: season, rank, points)
+
+
     local function Line(font)
         local fs = c:CreateFontString(nil, "OVERLAY", font)
         fs:SetJustifyH("LEFT")
@@ -411,7 +411,7 @@ local function BuildRankBadge(c)
     c.rankSeason = Line("ForeverDJ_GameFontNormal")
     c.rankName = Line("ForeverDJ_GameFontHighlight")
     c.rankPoints = Line("ForeverDJ_GameFontNormal")
-    -- kept up to date while it is shown
+
     for _, event in ipairs({ "UPDATE_FACTION", "MAJOR_FACTION_RENOWN_LEVEL_CHANGED", "PLAYER_ENTERING_WORLD" }) do
         pcall(holder.RegisterEvent, holder, event)
     end
@@ -426,7 +426,7 @@ local function ShowRankParts(c, show)
         if part then part:SetShown(show) end
     end
 end
--- the card's rank, now; false when the game gives none
+
 local function UpdateRankCard(c)
     local level, points, need = RankInfo()
     if not level then
@@ -442,7 +442,7 @@ local function UpdateRankCard(c)
     if level <= 0 or not Atlas(d.badge, "UI-Character-Info-Honor-Icon-" .. level, true) then
         Atlas(d.badge, "UI-Character-Info-Honor-Icon-" .. side, true)
     end
-    -- the ring filled as far as the Rank Points go towards the next rank
+
     local pct = 1
     if need > 0 then pct = math.max(0, math.min(1, points / need)) end
     if type(CooldownFrame_SetDisplayAsPercentage) == "function" then
@@ -454,9 +454,9 @@ local function UpdateRankCard(c)
     d.number.label:SetText(level)
     local season = SeasonText()
     local width = math.max(120, math.floor((c:GetWidth() or 352) - 16 - 160))
-    -- pvprankband (2.1.6, M 25 Nov 2026: "make it so that the season one
-    -- text and below starts from below the black line ... only honor and
-    -- ranks should be on the black line"): under the card's dark top band
+
+
+
     c.rankSeason:SetText(season or "")
     c.rankSeason:ClearAllPoints()
     c.rankSeason:SetPoint("TOPLEFT", c.topShade, "BOTTOMLEFT", 12, -6)
@@ -478,8 +478,8 @@ local function UpdateRankCard(c)
     return true
 end
 
--- The battlegrounds this character's level can enter (all of them with
--- Show every battleground).
+
+
 local function Shown()
     local all, level, out = FDJ.IsPvPShowAll(), Level(), {}
     for _, bg in ipairs(BGS) do
@@ -487,7 +487,7 @@ local function Shown()
     end
     return out
 end
--- pvpjump (2.1.6): the keys of the battlegrounds on the cards, in their order
+
 function FDJ.PvPShownKeys()
     local out = {}
     for _, bg in ipairs(Shown()) do out[#out + 1] = bg.key end
@@ -496,19 +496,19 @@ end
 
 local function Layout()
     if not panel then return end
-    -- pvpnotitle (2.1.6, M 25 Nov 2026: "get rid of battlegrounds text in
-    -- this page ... It's obvious already"): no heading; the cards go up
+
+
     panel.title:SetText("")
     panel.title:Hide()
     local list = Shown()
-    -- As the home page's cards: two columns, more in a wider window.
+
     local f = Journal()
     local gap, rowStep = 12, 138
     local homeW = Num(f and f.homePanel and f.homePanel:GetWidth(), 814)
     local cols = math.max(2, math.floor((homeW - 51 + gap) / (383 + gap)))
     local width = Num(panel.cards:GetWidth(), homeW - 33)
     local cardW = math.floor((width - gap * (cols - 1)) / cols)
-    -- pvprewards (2.1.6): Honor & Ranks after the battlegrounds
+
     local shown = {}
     for _, bg in ipairs(list) do shown[#shown + 1] = bg end
     if FDJ.PVP_HONOR then shown[#shown + 1] = HONOR_CARD end
@@ -521,13 +521,13 @@ local function Layout()
         c:SetPoint("TOPLEFT", panel.cards, "TOPLEFT", col * (cardW + gap), -row * rowStep)
         c.fdjKey = bg.key
         c.emblem:Hide()
-        ShowRankParts(c, false) -- (pvprankcard: the Honor & Ranks card's only)
+        ShowRankParts(c, false)
         c.fdjUpdateRank = nil
         if bg == HONOR_CARD then
             c.art:SetTexture("Interface\\FrameGeneral\\UI-Background-Rock")
             c.art:SetTexCoord(0, 1, 0, 1)
             c.art:SetVertexColor(0.42, 0.33, 0.22, 1)
-            -- pvprankcard: the character's own rank; without it, the PvP icon
+
             local okR, ranked = pcall(UpdateRankCard, c)
             if okR and ranked then
                 c.fdjUpdateRank = function() UpdateRankCard(c) end
@@ -550,7 +550,7 @@ local function Layout()
             c.art:SetTexCoord(bg.crop[1], bg.crop[2], bg.crop[3], bg.crop[4])
             c.art:SetVertexColor(1, 1, 1, 1)
         end
-        -- abnologo: the logo's bit covered (the card's picture is 8 narrower and lower)
+
         local patch = bg ~= HONOR_CARD and bg.patch
         if patch then
             local u0, u1, v1, shift, fade = patch[1], patch[2], patch[3], patch[4], patch[5]
@@ -568,7 +568,7 @@ local function Layout()
             c.patchFade:ClearAllPoints()
             c.patchFade:SetPoint("TOPLEFT", c.patch, "BOTTOMLEFT", 0, 0)
             c.patchFade:SetSize(X(u1) - X(u0), math.max(1, Yv(v1 + fade) - Yv(v1)))
-            -- (its lower edge fades into the picture)
+
             local faded = false
             if c.patchFade.SetGradient and type(CreateColor) == "function" then
                 faded = pcall(c.patchFade.SetGradient, c.patchFade, "VERTICAL", CreateColor(1, 1, 1, 0), CreateColor(1, 1, 1, 1))
@@ -593,15 +593,15 @@ local function Layout()
     panel.empty:SetShown(#list == 0)
 end
 
--- The home page's dungeon list (and what goes with it), hidden while the
--- PvP page is shown in its place (as the Tier Sets page does).
-FDJ.PvPLayout = function() Layout() end -- pvprewards: the cards again, back from a page
+
+
+FDJ.PvPLayout = function() Layout() end
 
 local function HideList(f)
     for _, part in ipairs({ f.homeScroll, f.homeEmptyText, f.homeShowAllButton, f.hideDungeonsButton }) do
         if part then part:Hide() end
     end
-    -- tiertop (2.1.6): the top right (Character Logs, Favourites, Loot Filter) goes too, as on the other tabs
+
     if FDJ.HideHomeTop then pcall(FDJ.HideHomeTop, f) end
 end
 
@@ -616,9 +616,9 @@ local function Build(f)
     panel.title = panel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalLarge")
     panel.title:SetPoint("TOPLEFT", 6, -4)
     panel.title:SetTextColor(1.00, 0.82, 0.27)
-    -- the cards line up with the dungeon list's
+
     panel.cards = CreateFrame("Frame", nil, panel)
-    panel.cards:SetPoint("TOPLEFT", 4, -6) -- (pvpnotitle)
+    panel.cards:SetPoint("TOPLEFT", 4, -6)
     panel.cards:SetPoint("BOTTOMRIGHT", -1, 0)
     panel.empty = panel:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightLarge")
     panel.empty:SetPoint("CENTER", 0, 10)
@@ -631,15 +631,15 @@ local function Build(f)
         HideList(f)
         if FDJ.PaintHomeTabs then pcall(FDJ.PaintHomeTabs) end
     end)
-    -- Back to the dungeon list: the list as it was.
+
     panel:SetScript("OnHide", function()
         if f.homeScroll then f.homeScroll:Show() end
         if f.hideDungeonsButton then f.hideDungeonsButton:Show() end
-        if FDJ.ShowHomeTop then pcall(FDJ.ShowHomeTop, f) end -- (tiertop)
+        if FDJ.ShowHomeTop then pcall(FDJ.ShowHomeTop, f) end
         if home:IsShown() and FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
         if FDJ.PaintHomeTabs then pcall(FDJ.PaintHomeTabs) end
     end)
-    -- Leaving the home page (a dungeon page, a search...) closes it.
+
     home:HookScript("OnHide", function() panel:Hide() end)
     panel:Hide()
     return panel
@@ -676,14 +676,14 @@ function FDJ.OpenPvPPage()
     if FDJ.PaintHomeTabs then pcall(FDJ.PaintHomeTabs) end
 end
 
--- The home page's tabs (Systems/TierSets.lua): "pvp" while this page shows.
+
 local activeBefore = FDJ.ActiveHomeTab
 FDJ.ActiveHomeTab = function(...)
     if FDJ.IsPvPPageShown() then return "pvp" end
     if activeBefore then return activeBefore(...) end
     return "dungeons"
 end
--- The Tier Sets page opened: this one closes first.
+
 local tierBefore = FDJ.OpenTierPage
 if tierBefore then
     FDJ.OpenTierPage = function(...)
@@ -692,7 +692,7 @@ if tierBefore then
     end
 end
 
--- -------------------------------------------------------------- the icon
+
 function FDJ.IsPvPIconHidden()
     local choice = ForeverDungeonJournalDB and ForeverDungeonJournalDB.hidePvP
     if choice == true then return true end
@@ -700,7 +700,7 @@ function FDJ.IsPvPIconHidden()
     return Level() < PVP_LEVEL
 end
 
-local placed -- frame, raids medallion, size: the last placement
+local placed
 local Place
 local function Replace()
     if placed then pcall(Place, placed[1], placed[2], placed[3]) end
@@ -721,7 +721,7 @@ function FDJ.SetPvPShowAll(on)
     if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
 end
 
--- Hide (right-click), as the other icons.
+
 local menu
 local function ShowHideMenu(anchor)
     if not menu then
@@ -779,14 +779,14 @@ local function BuildButton(frame)
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetSize(36, 36)
     b:SetFrameLevel((tonumber(home:GetFrameLevel()) or 1) + 5)
-    -- the same soft golden glow as the Tier Sets icon's
+
     b.halo = b:CreateTexture(nil, "BACKGROUND", nil, -1)
     b.halo:SetTexture(GLOW)
     b.halo:SetBlendMode("ADD")
     b.halo:SetVertexColor(1, 0.82, 0.35)
     b.halo:SetAlpha(0.75)
     b.halo:SetPoint("CENTER")
-    -- a dark red disc, the crossed swords on it
+
     b.disc = b:CreateTexture(nil, "ARTWORK", nil, 0)
     b.disc:SetPoint("CENTER")
     b.disc:SetColorTexture(0.17, 0.04, 0.03, 1)
@@ -794,7 +794,7 @@ local function BuildButton(frame)
     b.icon = b:CreateTexture(nil, "ARTWORK", nil, 1)
     b.icon:SetPoint("CENTER")
     local okF, faction = pcall(UnitFactionGroup, "player")
-    local tabIcon = okF and PVP_TAB_ICONS[faction] or nil -- (pvpsidetab)
+    local tabIcon = okF and PVP_TAB_ICONS[faction] or nil
     if tabIcon and b.icon:SetTexture(tabIcon) ~= false then
         b.icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
         Masked(b, b.icon)
@@ -822,14 +822,14 @@ local function BuildButton(frame)
     b:SetScript("OnClick", function(self, button)
         if button == "RightButton" then ShowHideMenu(self) return end
         if GameTooltip then GameTooltip:Hide() end
-        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- (tabsound: the journal's page sound)
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end
         if FDJ.ActiveHomeTab() ~= "pvp" then
             FDJ.OpenPvPPage()
         elseif FDJ.ClosePvPRewards then
-            -- pvptabagain (2.1.6, M 25 Nov 2026: "if I click on the PVP tab
-            -- again ... I'm on Alterac Valley and I'm watching items ... I
-            -- should go back to the PVP tab, showing everything"): from a
-            -- battleground's page, back to the cards (on the cards: stays)
+
+
+
+
             FDJ.ClosePvPRewards()
         end
     end)
@@ -844,8 +844,8 @@ local function BuildButton(frame)
     return b
 end
 
--- Right of the Tier Sets icon when it shows, else of the Onyxia icon, the
--- Sleeping Bag's or the Raids medallion; the same size as theirs.
+
+
 Place = function(frame, raid, size)
     if not frame or not frame.homePanel or not raid then return end
     placed = { frame, raid, size }
@@ -868,7 +868,7 @@ Place = function(frame, raid, size)
     b:ClearAllPoints()
     b:SetPoint("LEFT", anchor, "RIGHT", size >= 40 and 12 or (size >= 30 and 10 or 8), 0)
     b:SetShown(not FDJ.IsPvPIconHidden())
-    -- The icons before it shown or hidden later: move along.
+
     for _, other in ipairs({ frame.tierButton or false, frame.onyxiaButton or false, frame.sleepingBagButton or false }) do
         if other and not other.fdjPvPHooked then
             other.fdjPvPHooked = true
@@ -878,10 +878,10 @@ Place = function(frame, raid, size)
     end
 end
 
--- Systems/ForeverFilter.lua places the Sleeping Bag's icon after the Raids
--- medallion on every refresh of the home page, and the Onyxia and Tier Sets
--- icons follow it (Systems/OnyxiaAttunement.lua, Systems/TierSets.lua); the
--- PvP icon comes last.
+
+
+
+
 local PlaceBefore = FDJ.PlaceSleepingBagButton
 FDJ.PlaceSleepingBagButton = function(frame, raid, size, ...)
     if PlaceBefore then pcall(PlaceBefore, frame, raid, size, ...) end
@@ -889,7 +889,7 @@ FDJ.PlaceSleepingBagButton = function(frame, raid, size, ...)
     if FDJ.PaintHomeTabs then pcall(FDJ.PaintHomeTabs) end
 end
 
--- Level 10: the icon comes; 20, 30, 51: the page gets the next battleground.
+
 do
     local events = CreateFrame("Frame")
     events:RegisterEvent("PLAYER_LEVEL_UP")

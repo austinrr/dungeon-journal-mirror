@@ -1,50 +1,50 @@
--- padfocus (2.0.12, from kaanu's patch on M's Discord, tested by him in
--- game): the journal works with the game's own controller UI. It tells the
--- game when it opens and closes (GamepadMode.FrameControlsManager, out of
--- combat), so B no longer leaves the controller dead; B hides the frame
--- instead of clicking the X (HideUIPanel from addon code tainted it); the X
--- is named, so in combat the first B hands the controller to the game and
--- the next B closes the journal; the game's pointer follows the pick
--- (SmartNavigation); the sticks stay with the game (the left one walks, the
--- right one scrolls the list shown); another game window taking the
--- controller makes the journal step aside (FocusGamepad / UnfocusGamepad).
--- gamepad (2.0.10, M 16 Nov 2026: "I want to add gamepad control. Many
--- people have asked me"): the journal driven by a controller. A test feature
--- for now: when M says so it goes into the vault with the other features
--- held back from a release. Shipped in 2.1.1 (M 20 Nov 2026, kaanu's reports fixed).
---
--- While the journal is open it takes the controller's buttons (WoW gives a
--- frame the buttons once it asks for them with EnableGamePadButton; only the
--- top-most such frame gets them). Closed, the controller plays the game as
--- usual. Nothing shows until a controller button is used: then a gold frame
--- marks the thing picked, and a line of hints sits under the journal.
---   D-pad                move between cards, bosses, items, quests
---   A                    open / select (a mouse click)
---   B                    back to the dungeon list; there, close the journal
---   LB / RB              Map / Bosses / Quests
---   LT / RT, right stick scroll (on the quest page: the quest text; the right
---                        stick through the game's own controller UI)
---   left stick           walks, as usual (the journal leaves the sticks to the game)
---   Y                    an item's favourite menu (its right-click)
--- Up from the cards reaches the journal's own buttons (Favourites, Loot
--- Filter, Character Logs, Onyxia, Sleeping Bag, search, Report, options,
--- language). An open window or menu (Loot Filter, Favourites, Character
--- Logs, Options, the language list...) takes the controller until B closes it.
---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
-local frame          -- the journal
-local catcher        -- takes the controller (and the fake controller's keys)
-local cursor         -- the gold frame on the thing picked
-local hint           -- the button hints under the journal
-local focus          -- the thing picked
-local padActive      -- a controller button was used since the journal opened
-local padTest        -- (dev builds: print every button)
-local registered     -- the game's gamepad UI has the journal as an open window
-local pausedByGame   -- the game's gamepad UI moved the controller elsewhere
-local handedOff      -- in combat, B passed the controller to the game
--- padlang (2.1.1): the hints in the journal's language.
+local frame
+local catcher
+local cursor
+local hint
+local focus
+local padActive
+local padTest
+local registered
+local pausedByGame
+local handedOff
+
 do
     local strings = {
         enUS = { PAD_OPEN = "Open", PAD_BACK = "Back", PAD_TABS = "Map · Bosses · Quests", PAD_SCROLL = "Scroll", PAD_FAV = "Favourite", PAD_CLOSE = "Close", MAP_PAD_MARKED = "marked %s on the map. Open your map to see it.", MAP_PAD_ELSEWHERE = "marked %s on the map. The map shows the zone you are in: go to that zone on the map to see it." },
@@ -80,7 +80,7 @@ local NAMES = {
 }
 local DIRS = { PADDUP = "up", PADDDOWN = "down", PADDLEFT = "left", PADDRIGHT = "right" }
 
--- ------------------------------------------------------------ what is shown
+
 local function View()
     if not frame or not frame:IsShown() then return nil end
     if frame.homePanel and frame.homePanel:IsVisible() then return "home" end
@@ -101,7 +101,7 @@ local function Pickable(w)
         and w ~= frame.resizeGrip
 end
 
--- The buttons right under a frame (not deeper).
+
 local function AddButtons(list, parent)
     if not parent then return end
     for _, child in ipairs({ parent:GetChildren() }) do
@@ -109,7 +109,7 @@ local function AddButtons(list, parent)
     end
 end
 
--- Every button inside a window, however deep (its menus too).
+
 local function AddAll(list, parent, depth)
     if not parent or depth > 10 or #list > 400 then return end
     for _, child in ipairs({ parent:GetChildren() }) do
@@ -120,7 +120,7 @@ local function AddAll(list, parent, depth)
     end
 end
 
--- The journal's windows and menus that open over it.
+
 local POPUP_NAMES = {
     "ForeverDungeonJournalLootFilter", "ForeverDungeonJournalLootFilterResults",
     "ForeverDungeonJournalFavourites", "ForeverDungeonJournalFavouriteContextMenu",
@@ -128,8 +128,8 @@ local POPUP_NAMES = {
     "ForeverDungeonJournalSettings", "ForeverDungeonJournalOnyxiaMenu",
     "ForeverDungeonJournalSleepingBagMenu", "ForeverDungeonJournalLFGMenu",
     "ForeverDungeonJournalModeChooser", "ForeverDungeonJournalRPGConfirm", "ForeverDungeonJournalRPGDone",
-    "ForeverDungeonJournalTierMenu", "ForeverDungeonJournalPvPMenu", -- (padpages: their right-click menus)
-    "ForeverDungeonJournalViewMenu", "ForeverDungeonJournalOrderMenu", "ForeverDungeonJournalResetUIAsk", -- (editmode, 2.1.5: Edit Mode's menus and Reset)
+    "ForeverDungeonJournalTierMenu", "ForeverDungeonJournalPvPMenu",
+    "ForeverDungeonJournalViewMenu", "ForeverDungeonJournalOrderMenu", "ForeverDungeonJournalResetUIAsk",
 }
 local function Popups()
     local list = {}
@@ -141,7 +141,7 @@ local function Popups()
     return list
 end
 
--- Only what sits on the top layer (an open dropdown over its window).
+
 local STRATA = { BACKGROUND = 1, LOW = 2, MEDIUM = 3, HIGH = 4, DIALOG = 5, FULLSCREEN = 6, FULLSCREEN_DIALOG = 7, TOOLTIP = 8 }
 local function TopLayer(list)
     local top = 0
@@ -156,9 +156,9 @@ local function TopLayer(list)
     return out
 end
 
--- The things the controller moves between: an open window's or menu's
--- buttons, else the page's (cards, bosses, items, quests) and the journal's
--- own (header, search, Report, options, language, Favourites...).
+
+
+
 local function Candidates()
     local view = View()
     local popups = Popups()
@@ -169,8 +169,8 @@ local function Candidates()
     end
     local list = {}
     if view == "home" then
-        -- padpages (2.1.1, kaanu: "focus/navigation does not work in the new
-        -- sets area"): the Tier Sets page (and the PvP one) in place of the cards.
+
+
         local tier, pvp = _G.ForeverDungeonJournalTierPanel, _G.ForeverDungeonJournalPvPPanel
         if tier and tier:IsVisible() then
             AddAll(list, tier, 1)
@@ -184,25 +184,25 @@ local function Candidates()
         AddButtons(list, frame.bossContent)
         AddButtons(list, frame.lootContent)
     elseif view == "quests" then
-        -- padchain (2.1.1, kaanu: "can't focus the inner quest chains"): a
-        -- quest's open chain, its steps under it.
+
+
         for _, child in ipairs({ frame.questContent:GetChildren() }) do
             if Pickable(child) then list[#list + 1] = child end
             if child.chainPanel and child.chainPanel:IsVisible() then AddButtons(list, child.chainPanel) end
         end
         AddButtons(list, frame.questDetailContent)
-        AddButtons(list, frame.questTextInset) -- (padchain: Share and the ? beside the quest's name)
+        AddButtons(list, frame.questTextInset)
     elseif view == "map" then
         AddButtons(list, frame.dungeonMapPanel)
     end
-    local pageCount = #list -- (the page's own things come first: the first pick is one of them)
-    if view == "bosses" and Usable(frame.bossCompactButton) then list[#list + 1] = frame.bossCompactButton end -- bosscompact
+    local pageCount = #list
+    if view == "bosses" and Usable(frame.bossCompactButton) then list[#list + 1] = frame.bossCompactButton end
     AddButtons(list, frame)
-    AddButtons(list, frame.backButton) -- (the < > beside Dungeons)
+    AddButtons(list, frame.backButton)
     if view == "home" then AddButtons(list, frame.homePanel) else AddButtons(list, frame.headerPanel) end
-    -- padtabs (2.1.1, kaanu: "unable to go from the sleeping bag line back to
-    -- the other top levels, it jumps to the search"): on the Onyxia and
-    -- Sleeping Bag pages the row of icons sits on a bar of its own.
+
+
+
     if view ~= "home" and frame.fdjTabBar and frame.fdjTabBar:IsVisible() then AddButtons(list, frame.fdjTabBar) end
     return list, view, pageCount
 end
@@ -226,7 +226,7 @@ local function ScrollFrameOf(w)
     end
 end
 
--- In view inside its list (scrolled there if not).
+
 local function ScrollIntoView(w)
     local sf = ScrollFrameOf(w)
     if not sf then return end
@@ -249,8 +249,8 @@ local function InView(w)
     return top and bottom and sTop and sBottom and top <= sTop + 2 and bottom >= sBottom - 2
 end
 
--- The first thing on a page: the top-left one in view (of the page's own
--- things when there are any: a card, not the language button).
+
+
 local function First(list, pageCount)
     if pageCount and pageCount > 0 and pageCount < #list then
         local page = {}
@@ -269,7 +269,7 @@ local function First(list, pageCount)
     end
 end
 
--- ------------------------------------------------------------ the gold frame
+
 local function MakeCursor()
     cursor = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     cursor:SetBackdrop({ edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border", edgeSize = 14,
@@ -304,8 +304,8 @@ local function SetFocus(w)
     ScrollIntoView(w)
     if not cursor then MakeCursor() end
     cursor:SetParent(w)
-    -- padmenu (2.1.1, kaanu: menus open "but can't focus"): the gold frame on
-    -- the pick's own layer (a menu above its window), not under it.
+
+
     if w.GetFrameStrata then cursor:SetFrameStrata(w:GetFrameStrata()) end
     cursor:ClearAllPoints()
     cursor:SetPoint("TOPLEFT", w, "TOPLEFT", -3, 3)
@@ -315,13 +315,13 @@ local function SetFocus(w)
     cursor.pulse:Play()
     local enter = w:GetScript("OnEnter")
     if enter then pcall(enter, w) end
-    -- Moves the game's gamepad pointer to the pick.
+
     if registered and not InCombatLockdown() and SmartNavigation and SmartNavigation.SetTargetButtonForFrame then
         pcall(SmartNavigation.SetTargetButtonForFrame, SmartNavigation, frame, w)
     end
 end
 
--- After a click the page may have changed: the pick moves to the new page.
+
 local function Refresh()
     local list, _, pageCount = Candidates()
     if not Has(list, focus) then SetFocus(First(list, pageCount)) end
@@ -330,8 +330,8 @@ local function RefreshSoon()
     if C_Timer and C_Timer.After then C_Timer.After(0.1, Refresh) else Refresh() end
 end
 
--- ------------------------------------------------------------ the buttons
--- The nearest one of `list` in direction `dir` from the pick.
+
+
 local function Nearest(list, dir)
     local fx, fy = Center(focus)
     local best, bestScore
@@ -353,11 +353,11 @@ local function Nearest(list, dir)
     return best
 end
 
--- padgrid (M 16 Nov 2026: on Ragefire Chasm left went to Favourites, right to
--- Loot Filter): on the page, left and right stay on the page; on the dungeon
--- cards they follow the list (Ragefire Chasm: left Hall of Thanes, right
--- Ruins of Lordaeron). Only up from the top of the page reaches the
--- journal's own buttons.
+
+
+
+
+
 local function ReadingOrder(page)
     local sorted = {}
     for i, w in ipairs(page) do sorted[i] = w end
@@ -408,16 +408,16 @@ local function Activate(mouseButton)
     if not Has(list, focus) then SetFocus(First(list, pageCount)) return end
     local w = focus
     if w:IsObjectType("EditBox") then
-        if mouseButton ~= "RightButton" then w:SetFocus() end -- (the search box: type)
+        if mouseButton ~= "RightButton" then w:SetFocus() end
         return
     end
-    if mouseButton == "RightButton" and not w.item then return end -- Y: items only
+    if mouseButton == "RightButton" and not w.item then return end
     if w.Click then pcall(w.Click, w, mouseButton or "LeftButton") end
     RefreshSoon()
 end
 
--- The window or menu a button belongs to: up its parents to the first one
--- set on a layer of its own.
+
+
 local function LayerRoot(w)
     local p = w
     while p and p.GetParent do
@@ -440,7 +440,7 @@ end
 local function Back()
     local view = View()
     if not view then return end
-    -- An open menu or window closes first (the innermost).
+
     local list, kind = Candidates()
     if kind == "popup" then
         local root = (focus and Has(list, focus)) and LayerRoot(focus) or nil
@@ -458,18 +458,18 @@ local function Back()
         frame.backButton:Click()
         RefreshSoon()
     elseif registered and InCombatLockdown() then
-        -- Addon code can't close a game-tracked window in combat, so the next B
-        -- goes to the game, which clicks the named close button.
+
+
         handedOff = true
         catcher:Hide()
         if hint then hint:SetText("|cffffd100B|r " .. PL("PAD_CLOSE")) hint:Show() end
     else
-        -- Not closeButton:Click(): that runs HideUIPanel from addon code and taints gamepad focus.
+
         frame:Hide()
     end
 end
 
--- Ends a combat hand-off.
+
 local function TakeBack()
     if not handedOff then return end
     handedOff = false
@@ -477,7 +477,7 @@ local function TakeBack()
     if hint then hint:SetText(HintText()) end
 end
 
--- Map, Bosses, Quests in the order they stand (Map only where there is one).
+
 local function Tab(step)
     local view = View()
     if view == "home" or not view then return end
@@ -502,7 +502,7 @@ local function ScrollTarget()
     if not view then return nil end
     if view == "quests" then return frame.questDetailScroll end
     local tier = _G.ForeverDungeonJournalTierPanel
-    if view == "home" and tier and tier:IsVisible() and tier.scroll then return (focus and ScrollFrameOf(focus)) or tier.scroll end -- (padpages)
+    if view == "home" and tier and tier:IsVisible() and tier.scroll then return (focus and ScrollFrameOf(focus)) or tier.scroll end
     return (focus and ScrollFrameOf(focus)) or (view == "home" and frame.homeScroll) or frame.lootScroll
 end
 
@@ -518,13 +518,13 @@ local function ShowHint(on)
     hint:SetShown(on and true or false)
 end
 
--- One controller button (real, or the fake controller's key).
+
 local function Press(button)
-    FDJ.padMapWanted = nil -- (padmapopen: set by Show on Map during this press)
+    FDJ.padMapWanted = nil
     if padTest then Print("controller: " .. (NAMES[button] or tostring(button))) end
     if not View() then return false end
     padActive = true
-    if hint and not handedOff then hint:SetText(HintText()) end -- (padlang: the language picked now)
+    if hint and not handedOff then hint:SetText(HintText()) end
     ShowHint(true)
     if DIRS[button] then
         Move(DIRS[button])
@@ -548,22 +548,22 @@ local function Press(button)
     return true
 end
 FDJ.GamePadPress = Press
--- padmap (2.1.1): the controller is in use (a button pressed since the journal
--- opened, or the game's own controller mode on): Show on Map marks the spot
--- without opening the map (Systems/MapMarkers.lua).
+
+
+
 FDJ.GamePadMode = function()
     if padActive and frame and frame:IsShown() then return true end
     return InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled() and true or false
 end
 
--- ------------------------------------------------------------ sticks
--- padfocus: the sticks stay with the game (the left one walks); the game's right-stick
--- scrolling is pointed at the list shown.
+
+
+
 local scrollTickWait = 0
 local function ScrollTargetTick(_, elapsed)
     scrollTickWait = scrollTickWait - (elapsed or 0)
     if scrollTickWait > 0 then return end
-    scrollTickWait = 0.2 -- (a few times a second is plenty)
+    scrollTickWait = 0.2
     if not registered or InCombatLockdown() or not (SmartNavigation and SmartNavigation.SetScrollFrameForFrame) then return end
     local sf = ScrollTarget()
     local ok, info = pcall(SmartNavigation.GetPanelInfo, SmartNavigation, frame, true)
@@ -572,7 +572,7 @@ local function ScrollTargetTick(_, elapsed)
     end
 end
 
--- ------------------------------------------------------------ the fake controller
+
 local FAKE = {
     UP = "PADDUP", DOWN = "PADDDOWN", LEFT = "PADDLEFT", RIGHT = "PADDRIGHT",
     ENTER = "PAD1", BACKSPACE = "PAD2", HOME = "PAD4",
@@ -580,16 +580,16 @@ local FAKE = {
     INSERT = "PADLTRIGGER", DELETE = "PADRTRIGGER",
 }
 
--- ------------------------------------------------------------ the map
--- padmapopen (2.1.6): A on Show Location (or anything else that marks a spot)
--- marks it as before (Systems/MapMarkers.lua), then this same press goes on
--- to the game as its Toggle World Map key: for this one press the journal
--- lets the button through and binds it to the game's own map command, so the
--- game opens the map itself, as when the player presses M (opened by the
--- addon, the map broke the game's controller mode). The binding is taken off
--- again on the next frame, and before combat starts (bindings can't change
--- in combat; there the spot is only marked, as before). The map already open:
--- nothing to do (the key would close it).
+
+
+
+
+
+
+
+
+
+
 local mapKeyArmed
 local function ReleaseMapKey()
     if not mapKeyArmed or not catcher or InCombatLockdown() then return end
@@ -621,7 +621,7 @@ local function Capture(on)
     pcall(catcher.EnableKeyboard, catcher, keys and true or false)
 end
 
--- Tells the game's gamepad UI the journal opened or closed (allowed out of combat only).
+
 local function RegisterWithGame()
     if registered or InCombatLockdown() then return end
     if not (InputUtil and InputUtil.IsGamepadUIEnabled and InputUtil.IsGamepadUIEnabled()) then return end
@@ -661,7 +661,7 @@ local function Setup()
     hint:SetText(HintText())
     hint:Hide()
 
-    -- Called by the game's gamepad UI when the journal gets or loses the controller.
+
     frame.FocusGamepad = function()
         pausedByGame = false
         if frame:IsShown() then Capture(true) end
@@ -672,7 +672,7 @@ local function Setup()
         ShowHint(false)
         Capture(false)
     end
-    -- The game's pointer moved (its right-stick scroll picks the nearest button): the pick follows.
+
     frame.SmartNavigationOnSelect = function(_, w)
         if padActive and w and w ~= focus and frame:IsShown() and not pausedByGame then SetFocus(w) end
     end
@@ -710,7 +710,7 @@ watcher:SetScript("OnEvent", function(_, event)
         if frame:IsShown() then RegisterWithGame() else UnregisterWithGame() end
     end
     if frame:IsShown() and not pausedByGame then
-        -- (the fake controller's keys are let go in combat)
+
         Capture(true)
     end
 end)

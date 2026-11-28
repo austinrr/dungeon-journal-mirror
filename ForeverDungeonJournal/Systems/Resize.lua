@@ -1,19 +1,19 @@
--- The journal's size and scale.
--- Rescale (the grip in the bottom-right corner): drag to scale the whole
--- window, right-click to reset. The scale is saved between sessions.
--- resizemode (2.0.10, M 17 Nov 2026: "put the scale back and add resize as an
--- option in the option panel under General called Resize; when clicked it
--- opens the journal and lets the user pull the 4 corners and resize as he
--- pleases; a little popup in our usual style pointing at the corners: Drag
--- the corners to resize"): Options > General > Resize opens the journal with
--- a handle on its corners (not the top right, where the close button is).
--- Dragging one makes the window itself bigger (more room for bosses, loot,
--- cards and maps; not smaller than the normal 850 x 590, not past the
--- screen); right-click on a handle resets the size. A note at each corner
--- (black box, yellow arrow pointing into it, OK; it bounces and flashes)
--- says so; OK closes the notes, the corners stay draggable until the
--- journal is closed, then the corner grip is Rescale again. The size is
--- saved between sessions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -33,8 +33,8 @@ local function Clamp(v)
     return v
 end
 
--- Popups that are not children of the journal (the Favourites window lives on
--- UIParent so it can stay open on its own) follow the journal's size here.
+
+
 function FDJ.SyncPopupScale()
     local frame = _G.ForeverDungeonJournalFrame
     local fav = _G.ForeverDungeonJournalFavourites
@@ -52,8 +52,8 @@ function FDJ.SetJournalScale(scale)
     return scale
 end
 
--- ------------------------------------------------------------------ size
--- The biggest the window can be: the screen, in the window's own units.
+
+
 local function MaxSize(frame)
     local s = frame:GetScale() or 1
     local w = (UIParent and UIParent:GetWidth() or 1920) / s
@@ -70,8 +70,8 @@ end
 
 local function SetBounds(frame)
     local maxW, maxH = MaxSize(frame)
-    -- nojump: never below the size it has now (a window made big and then
-    -- Rescaled up would otherwise snap smaller the moment a corner is held)
+
+
     maxW = math.max(maxW, math.ceil(frame:GetWidth() or 0))
     maxH = math.max(maxH, math.ceil(frame:GetHeight() or 0))
     if frame.SetResizeBounds then
@@ -82,12 +82,12 @@ local function SetBounds(frame)
     end
 end
 
--- nojump (M 17 Nov 2026: "sometimes when I click on the corner the window
--- jumps like crazy before me dragging"): the window is normally held by its
--- centre (or wherever it was last dragged to), so taking a corner made it
--- grow from that point and leap. Before a corner is taken, the window is
--- pinned at the opposite corner, where it is on screen now; then only the
--- corner being dragged moves.
+
+
+
+
+
+
 local OPPOSITE_CORNER = { TOPLEFT = "BOTTOMRIGHT", TOPRIGHT = "BOTTOMLEFT", BOTTOMLEFT = "TOPRIGHT", BOTTOMRIGHT = "TOPLEFT" }
 local function PinOpposite(frame, point)
     local fixed = OPPOSITE_CORNER[point]
@@ -99,13 +99,13 @@ local function PinOpposite(frame, point)
     frame:SetPoint(fixed, UIParent, "BOTTOMLEFT", x, y)
 end
 
--- smoothsize (M 17 Nov 2026: "I still got jumpy window when clicking the
--- corners to resize"): the game's own corner dragging (StartSizing) could
--- still make the window leap the moment a corner was taken (a rescaled
--- window above all). The journal sizes itself now: the window grows or
--- shrinks by exactly how far the mouse has moved since the corner was
--- taken, the opposite corner stays where it is, and the dragged corner
--- stops at the screen's edge. Dragging the window itself is off meanwhile.
+
+
+
+
+
+
+
 local function CursorIn(frame)
     local x, y = GetCursorPosition()
     local s = frame:GetEffectiveScale() or 1
@@ -143,7 +143,7 @@ local function UpdateSizing(frame, handle)
     end
 end
 
--- Done resizing: keep the size and lay the shown page out for it.
+
 local function FinishSizing(frame)
     FDJ.journalSizing = false
     frame:StopMovingOrSizing()
@@ -165,8 +165,8 @@ local function ResetSize(frame)
     if FDJ.RelayoutForSize then pcall(FDJ.RelayoutForSize) end
 end
 
--- resetsize (M 17 Nov 2026: Options > General > Reset Size): the journal
--- back to its normal size and scale.
+
+
 function FDJ.ResetJournalSize()
     local frame = _G.ForeverDungeonJournalFrame
     if not frame then return end
@@ -175,12 +175,12 @@ function FDJ.ResetJournalSize()
     ResetSize(frame)
 end
 
--- ------------------------------------------------------- resize mode
--- The corners that can be dragged (not the top right: the close button is
--- there; M 17 Nov 2026, "useless"). coords: turn the bottom-right grabber
--- to face the corner; turn: the arrow's (radians, counter-clockwise from
--- pointing right); dx, dy: from the corner into the window; left: the note's
--- arrow is on its left (else its right).
+
+
+
+
+
+
 local CORNERS = {
     { point = "TOPLEFT",     coords = { 1, 0, 1, 0 }, turn = 3 * math.pi / 4,  dx = 1,  dy = -1, left = true },
     { point = "BOTTOMLEFT",  coords = { 1, 0, 0, 1 }, turn = -3 * math.pi / 4, dx = 1,  dy = 1,  left = true },
@@ -209,9 +209,9 @@ function FDJ.StopResizeMode()
     FDJ.resizeMode = nil
 end
 
--- A note in the journal's usual note style (the tracker's: black box, grey
--- edge, white text, yellow arrow, OK), set at a corner, its arrow pointing
--- into that corner.
+
+
+
 local function MakeNote(frame, handle, c, level)
     local n = CreateFrame("Frame", nil, frame, "BackdropTemplate")
     n:SetFrameLevel(level + 2)
@@ -238,17 +238,17 @@ local function MakeNote(frame, handle, c, level)
     n.ok:SetNormalFontObject("ForeverDJ_GameFontNormalSmall")
     n.ok:SetHighlightFontObject("ForeverDJ_GameFontHighlightSmall")
     n.ok:SetText(OKAY or "OK")
-    -- OK closes the notes only: the corners stay draggable until the
-    -- journal is closed (M 17 Nov 2026)
+
+
     n.ok:SetScript("OnClick", function() FDJ.HideResizeNotes() end)
-    if c.left then -- [arrow] text [OK]
+    if c.left then
         n.text:SetPoint("LEFT", 30, 0)
         n.ok:SetPoint("LEFT", n.text, "RIGHT", 8, 0)
-    else           -- text [OK] [arrow]
+    else
         n.text:SetPoint("LEFT", 10, 0)
         n.ok:SetPoint("LEFT", n.text, "RIGHT", 8, 0)
     end
-    -- a soft golden glow round the box (flashes with the edge)
+
     n.glow = n:CreateTexture(nil, "BACKGROUND", nil, -8)
     n.glow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
     n.glow:SetBlendMode("ADD")
@@ -257,12 +257,12 @@ local function MakeNote(frame, handle, c, level)
     n.glow:SetPoint("BOTTOMRIGHT", 16, -14)
     n.corner = c
     n.handle = handle
-    -- right next to its corner's handle, inside the window
+
     n:SetPoint(c.point, handle, OPPOSITE[c.point], c.dx * 2, c.dy * 2)
-    -- noticebounce (M 17 Nov 2026: "I want the popups to flash and bounce a
-    -- bit, they are barely noticeable"): the box bounces toward its corner
-    -- (bigger hops for the first second), its edge and glow flash gold, and
-    -- the arrow breathes and nudges toward the corner.
+
+
+
+
     n:SetScript("OnUpdate", function(self, elapsed)
         self.t = (self.t or 0) + elapsed
         local t = self.t
@@ -308,7 +308,7 @@ local function Build(frame)
             if button ~= "LeftButton" then return end
             SetGrabberArt(self.art, "Down", c.coords)
             SetBounds(frame)
-            BeginSizing(frame, self, c.point) -- smoothsize
+            BeginSizing(frame, self, c.point)
         end)
         h:SetScript("OnMouseUp", function(self, button)
             SetGrabberArt(self.art, "Up", c.coords)
@@ -325,7 +325,7 @@ local function Build(frame)
                 SetGrabberArt(self.art, "Up", c.coords)
                 FinishSizing(frame)
             else
-                UpdateSizing(frame, self) -- smoothsize
+                UpdateSizing(frame, self)
             end
         end)
         h:SetScript("OnEnter", function(self)
@@ -338,7 +338,7 @@ local function Build(frame)
         h:Hide()
         notes[i] = MakeNote(frame, h, c, level)
     end
-    -- closing the journal ends it
+
     frame:HookScript("OnHide", function() if FDJ.resizeMode then FDJ.StopResizeMode() end end)
 end
 
@@ -346,12 +346,12 @@ function FDJ.StartResizeMode()
     local frame = _G.ForeverDungeonJournalFrame
     if not frame then return end
     if not frame:IsShown() and FDJ.ToggleJournal then pcall(FDJ.ToggleJournal) end
-    -- the options window out of the way, so the whole journal can be seen
+
     local settings = _G.ForeverDungeonJournalSettings
     if settings and settings:IsShown() then settings:Hide() end
     Build(frame)
     FDJ.resizeMode = true
-    if frame.resizeGrip then frame.resizeGrip:Hide() end -- (the Rescale grip sits in that corner)
+    if frame.resizeGrip then frame.resizeGrip:Hide() end
     for _, h in ipairs(handles) do h:Show() end
     for _, n in ipairs(notes) do
         n.text:SetText(L("RESIZE_HINT"))
@@ -363,7 +363,7 @@ function FDJ.StartResizeMode()
     end
 end
 
--- ------------------------------------------------------------- setup
+
 local function Setup()
     local frame = _G.ForeverDungeonJournalFrame
     if not frame or frame.resizeGrip then return end
@@ -374,7 +374,7 @@ local function Setup()
     if type(saved) == "table" then
         frame:SetSize(ClampSize(frame, saved[1], saved[2]))
     end
-    -- smoothsize: no dragging the window while a corner is being dragged
+
     local dragStart = frame:GetScript("OnDragStart")
     if dragStart then
         frame:SetScript("OnDragStart", function(self, ...)
@@ -383,7 +383,7 @@ local function Setup()
         end)
     end
 
-    -- Rescale: the grip in the bottom-right corner scales the whole window.
+
     local grip = CreateFrame("Button", nil, frame)
     frame.resizeGrip = grip
     grip:SetSize(18, 18)
@@ -416,7 +416,7 @@ local function Setup()
             return
         end
         local x = GetCursorPosition()
-        -- The window grows from its centre, so the corner moves half as far as it grows.
+
         local scale = Clamp(self.startScale + 2 * (x - self.startX) / self.unit)
         frame:SetScale(scale)
         FDJ.SyncPopupScale()

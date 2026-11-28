@@ -2,8 +2,8 @@ local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 local DB = FDJ.DB or {}
 
--- Exterior / approach locations used by the journal's dungeon-location button.
--- Coordinates are normalized map coordinates for the Classic/Forever map IDs.
+
+
 local entrances = {
     ["City of Dalaran"] = {
         mapID = 1416, x = 0.085, y = 0.593,
@@ -17,7 +17,7 @@ local entrances = {
         detail = "Underwater west of the Vile Reef: swim to Sunken Hollow by the island with the water elementals; the cave has a large tablet beside it",
         markerType = "dungeon",
     },
-    -- Forever's new dungeons (entrance guides, Nov 2026).
+
     ["Krol'dok Stronghold"] = {
         mapID = 2548, x = 0.375, y = 0.373,
         label = "Krol'dok Stronghold Entrance",
@@ -55,9 +55,9 @@ local entrances = {
         markerType = "dungeon",
     },
     ["Scarlet Monastery: Library"] = {
-        -- smlibrary (2.0.16): the Library's own door inside the Monastery
-        -- (measured in the game: Systems/ScarletWing.lua), where its route's
-        -- walked way ends.
+
+
+
         mapID = 1420, x = 0.8535, y = 0.3239,
         label = "Scarlet Monastery Entrance",
         detail = "Inside the Scarlet Monastery; the Library has its own portal door",
@@ -160,8 +160,8 @@ local entrances = {
         markerType = "dungeon",
     },
     ["Scarlet Monastery: Graveyard"] = {
-        -- smhorde (2.0.12): the Graveyard's own door (measured in the game:
-        -- Systems/ScarletWing.lua), where its route's walked way ends.
+
+
         mapID = 1420, x = 0.8480, y = 0.3037,
         label = "Scarlet Monastery Entrance",
         detail = "Inside the Scarlet Monastery courtyard; the Graveyard is the portal on the right",

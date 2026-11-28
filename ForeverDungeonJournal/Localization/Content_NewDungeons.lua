@@ -1,10 +1,10 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Translations for the dungeons added in 1.3.8+ (Gnomeregan, Razorfen Kraul,
--- Scarlet Monastery: Graveyard, City of Dalaran, Excavation Site) and their
--- quests, plus whole place names used in quest giver / turn-in lines.
--- Merged into each language table without overwriting existing entries.
+
+
+
+
 
 FDJ.ContentLocales = FDJ.ContentLocales or {}
 local DATA = {}
@@ -15,7 +15,7 @@ DATA.deDE = {
         ["Scarlet Monastery: Graveyard"] = { name = "Scharlachrotes Kloster - Friedhof", location = "Tirisfal", description = "Der Friedhofsflügel des Scharlachroten Klosters, heimgesucht von ruhelosen Toten und scharlachroten Verteidigern." },
         ["City of Dalaran"] = { name = "Dalaran", location = "Alteracgebirge", description = "Die wiederhergestellte Magierstadt Dalaran ist in WoW Forever ein neuer Dungeon für fünf Spieler. Betretet sie durch die Kanalisation und die Schattenseite und kämpft euch durch die Straßen bis zur Violetten Zitadelle." },
         ["Excavation Site: Wetlands"] = { name = "Ausgrabungsstätte: Sumpfland", location = "Sumpfland", description = "Eine in der Zeit gefangene Titanen-Ausgrabungsstätte oberhalb von Whelgars Ausgrabungsstätte, deren Titanenkonstrukte niemandem mehr gehorchen. Bereiche: Verlorene Marsch, Pirscherdickicht, Stätte des Wächters und Verlorene Grabungsstätte." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "Die Versunkene Stadt" },
         ["Krol'dok Stronghold"] = { name = "Feste Krol'dok" },
         ["Alcaz Prison"] = { name = "Gefängnis von Alcaz" },
@@ -83,7 +83,7 @@ DATA.frFR = {
         ["Scarlet Monastery: Graveyard"] = { name = "Monastère Écarlate - cimetière", location = "Clairières de Tirisfal", description = "L'aile du cimetière du Monastère écarlate, hantée par des morts sans repos et des défenseurs écarlates." },
         ["City of Dalaran"] = { name = "Cité de Dalaran", location = "Montagnes d'Alterac", description = "La cité des mages restaurée de Dalaran est devenue un nouveau donjon à cinq joueurs dans WoW Forever. Entrez par les égouts et les Entrailles, puis frayez-vous un chemin dans les rues jusqu'à la Citadelle pourpre." },
         ["Excavation Site: Wetlands"] = { name = "Excavations : les Paluns", location = "Les Paluns", description = "Un site de fouilles titan figé dans le temps au-dessus du site de Whelgar, où des assemblages titans n'obéissent plus à personne. Zones : Marais perdu, Fourré des traqueurs, Site du gardien et Site de fouilles perdu." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "La cité Submergée" },
         ["Krol'dok Stronghold"] = { name = "Bastion Krol’dok" },
         ["Alcaz Prison"] = { name = "Prison d’Alcaz" },
@@ -151,7 +151,7 @@ DATA.esES = {
         ["Scarlet Monastery: Graveyard"] = { name = "Monasterio Escarlata: Cementerio", location = "Claros de Tirisfal", description = "El ala del cementerio del Monasterio Escarlata, embrujada por muertos inquietos y defensores escarlata." },
         ["City of Dalaran"] = { name = "Ciudad de Dalaran", location = "Montañas de Alterac", description = "La restaurada ciudad de los magos, Dalaran, es una nueva mazmorra para cinco jugadores en WoW Forever. Entra por las cloacas y la Ciénaga, y abre paso por las calles hasta la Ciudadela Violeta." },
         ["Excavation Site: Wetlands"] = { name = "Excavación: Los Humedales", location = "Los Humedales", description = "Una excavación titánica atrapada en el tiempo sobre la Excavación de Whelgar, donde los ensamblajes titánicos ya no obedecen a nadie. Zonas: Marjal Perdido, Espesura del Acechador, Lugar del Guardián y Excavación Perdida." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "La Ciudad Sumergida" },
         ["Krol'dok Stronghold"] = { name = "Bastión Krol'dok" },
         ["Alcaz Prison"] = { name = "Prisión de Alcaz" },
@@ -281,7 +281,7 @@ DATA.ptBR = {
         ["Scarlet Monastery: Graveyard"] = { name = "Monastério Escarlate - Cemitério", location = "Clareiras de Tirisfal", description = "A ala do cemitério do Monastério Escarlate, assombrada por mortos inquietos e defensores escarlates." },
         ["City of Dalaran"] = { name = "Dalaran", location = "Montanhas de Alterac", description = "A restaurada cidade dos magos, Dalaran, tornou-se uma nova masmorra para cinco jogadores no WoW Forever. Entre pelos esgotos e pelo Ventre, depois abra caminho pelas ruas até a Cidadela Violeta." },
         ["Excavation Site: Wetlands"] = { name = "Sítio de Escavação: Pantanal", location = "Pantanal", description = "Um sítio de escavação titânico preso no tempo acima da Escavação de Whelgar, onde os constructos titânicos não obedecem mais a ninguém. Áreas: Pântano Perdido, Mata dos Espreitadores, Local do Guardião e Escavação Perdida." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "A Cidade Afogada" },
         ["Krol'dok Stronghold"] = { name = "Fortaleza de Krol'Dok" },
         ["Alcaz Prison"] = { name = "Prisão de Alcaz" },
@@ -349,7 +349,7 @@ DATA.ruRU = {
         ["Scarlet Monastery: Graveyard"] = { name = "Монастырь Алого ордена: кладбище", location = "Тирисфальские леса", description = "Кладбище Монастыря Алого ордена, где бродят неупокоенные мертвецы и защитники Алого ордена." },
         ["City of Dalaran"] = { name = "Даларан", location = "Альтеракские горы", description = "Восстановленный город магов Даларан стал новым подземельем для пяти игроков в WoW Forever. Войдите через канализацию и Клоаку, затем пробейтесь по улицам к Аметистовой цитадели." },
         ["Excavation Site: Wetlands"] = { name = "Раскопки: Болотина", location = "Болотина", description = "Застывшие во времени раскопки титанов над раскопками Вельгара, где конструкты титанов больше никому не подчиняются. Области: Затерянная топь, Чаща охотников, Место стража и Затерянные раскопки." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "Затонувший город" },
         ["Krol'dok Stronghold"] = { name = "Крепость Крол'док" },
         ["Alcaz Prison"] = { name = "Тюрьма Алькац" },
@@ -417,7 +417,7 @@ DATA.koKR = {
         ["Scarlet Monastery: Graveyard"] = { name = "붉은십자군 수도원 - 묘지", location = "티리스팔 숲", description = "안식을 얻지 못한 망자와 붉은십자군 수호병이 출몰하는 붉은십자군 수도원의 묘지 구역입니다." },
         ["City of Dalaran"] = { name = "달라란", location = "알터랙 산맥", description = "복원된 마법사의 도시 달라란이 WoW Forever의 새로운 5인 던전이 되었습니다. 하수도와 마법의 지하실을 통해 들어가 거리를 뚫고 보랏빛 성채까지 가세요." },
         ["Excavation Site: Wetlands"] = { name = "발굴 현장: 저습지", location = "저습지", description = "웰가르 발굴지 위에 시간 속에 갇힌 티탄 발굴지로, 티탄 피조물이 더 이상 누구에게도 복종하지 않습니다. 구역: 잃어버린 늪, 추적자의 덤불, 수호자의 터, 잃어버린 발굴지." },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "가라앉은 도시" },
         ["Krol'dok Stronghold"] = { name = "크롤도크 보루" },
         ["Alcaz Prison"] = { name = "알카즈 감옥" },
@@ -485,7 +485,7 @@ DATA.zhCN = {
         ["Scarlet Monastery: Graveyard"] = { name = "血色修道院 - 墓地", location = "提瑞斯法林地", description = "血色修道院的墓地区，游荡着不得安息的亡者和血色十字军的守卫。" },
         ["City of Dalaran"] = { name = "达拉然城", location = "奥特兰克山脉", description = "重建的法师之城达拉然成为了 WoW Forever 中新的五人地下城。从下水道和达拉然下水道进入，然后沿街道一路杀到紫罗兰城堡。" },
         ["Excavation Site: Wetlands"] = { name = "挖掘场：湿地", location = "湿地", description = "惠尔格挖掘场上方一处被困在时间中的泰坦挖掘场，那里的泰坦造物已不再服从任何人。区域：失落沼泽、潜伏者灌木林、守护者之地和失落挖掘场。" },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "沉没之城" },
         ["Krol'dok Stronghold"] = { name = "克罗多克要塞" },
         ["Alcaz Prison"] = { name = "奥卡兹监狱" },
@@ -553,7 +553,7 @@ DATA.zhTW = {
         ["Scarlet Monastery: Graveyard"] = { name = "血色修道院 - 墓園", location = "提里斯法林地", description = "血色修道院的墓地區，遊蕩著不得安息的亡者和血色十字軍的守衛。" },
         ["City of Dalaran"] = { name = "達拉然城", location = "奧特蘭克山脈", description = "重建的法師之城達拉然成為了 WoW Forever 中新的五人地城。從下水道和達拉然下水道進入，然後沿街道一路殺到紫羅蘭城堡。" },
         ["Excavation Site: Wetlands"] = { name = "挖掘場", location = "濕地", description = "惠爾格挖掘場上方一處被困在時間中的泰坦挖掘場，那裡的泰坦造物已不再服從任何人。區域：失落沼澤、潛伏者灌木林、守護者之地和失落挖掘場。" },
-        -- 2.0.4: the Forever dungeons added later (Wowhead Forever localized zone names)
+
         ["The Drowned City"] = { name = "沉沒之城" },
         ["Krol'dok Stronghold"] = { name = "克羅多克要塞" },
         ["Alcaz Prison"] = { name = "奧卡茲監獄" },
@@ -626,8 +626,8 @@ for lang, data in pairs(DATA) do
     end
 end
 
--- Excavation Site: Wetlands quests: whole-string translations (names,
--- objectives, notes, NPC/place lines). Merged without overwriting.
+
+
 local EXC = {}
 EXC.deDE = {
     ["Open the Maw"] = "Das Maul öffnen",
@@ -944,8 +944,8 @@ for lang, strings in pairs(EXC) do
     end
 end
 
--- Excavation Site / City of Dalaran quest strings added later: whole-string
--- translations (names, objectives, notes, place parts). Merged without overwriting.
+
+
 local EXC2 = {}
 EXC2.deDE = {
     ["Defeat 2 Dragonmaw Saboteurs and 4 Dragonmaw Warders, recover the Dragonmaw Dispatch, and report to the Deathstalker Agent outside the dungeon."] = "Besiegt 2 Dragonmaw Saboteurs und 4 Dragonmaw Warders, beschafft die Dragonmaw Dispatch und meldet euch beim Deathstalker Agent außerhalb des Dungeons.",
@@ -1280,11 +1280,11 @@ for lang, strings in pairs(EXC2) do
     end
 end
 
--- Item source lines shown at the bottom of item tooltips (quest start items,
--- required and provided items). Whole-string translations.
+
+
 local ITEM_SOURCES = {}
 ITEM_SOURCES.deDE = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Erbeutet von Satyrn und Wichteln in der Schwarzschlundfeste", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Erbeutet von Satyrn und Wichteln in der Schwarzschlundfeste",
     ["Dropped by: Dark Iron Agents"] = "Fallen gelassen von: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Fallen gelassen von: Dark Iron Spies in Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Fallen gelassen von: Goblin Woodcarver, Die Todesminen",
@@ -1309,7 +1309,7 @@ ITEM_SOURCES.deDE = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Belohnung der Quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Dunkelküste. Den verlangten Corrupted Kor Gem lassen Blackfathom Tide Priestesses und Oracles am Eingang der Tiefschwarzen Grotten sowie Blackfathom Sea Witches im Inneren fallen.",
 }
 ITEM_SOURCES.frFR = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Ramassé sur les satyres et les diablotins du Repaire des Noiregueules", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Ramassé sur les satyres et les diablotins du Repaire des Noiregueules",
     ["Dropped by: Dark Iron Agents"] = "Butin de : Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Butin de : Dark Iron Spies à Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Butin de : Goblin Woodcarver, Les Mortemines",
@@ -1334,7 +1334,7 @@ ITEM_SOURCES.frFR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Récompense de la quête Seeking the Kor Gem : Thundris Windweaver, Auberdine, Sombrivage. La Corrupted Kor Gem demandée tombe sur les Blackfathom Tide Priestesses et Oracles à l'entrée des Profondeurs de Brassenoire et sur les Blackfathom Sea Witches à l'intérieur.",
 }
 ITEM_SOURCES.esES = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Se despoja de sátiros y diablillos en el Bastión Faucenegra", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Se despoja de sátiros y diablillos en el Bastión Faucenegra",
     ["Dropped by: Dark Iron Agents"] = "Lo suelta: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Lo suelta: Dark Iron Spies en Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Lo suelta: Goblin Woodcarver, Las Minas de la Muerte",
@@ -1359,7 +1359,7 @@ ITEM_SOURCES.esES = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa de la misión Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Oscura. La Corrupted Kor Gem que pide la sueltan las Blackfathom Tide Priestesses y Oracles en la entrada de las Cavernas de Brazanegra y las Blackfathom Sea Witches en el interior.",
 }
 ITEM_SOURCES.itIT = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saccheggiato da satiri e folletti a Blackmaw Hold", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saccheggiato da satiri e folletti a Blackmaw Hold",
     ["Dropped by: Dark Iron Agents"] = "Bottino di: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Bottino di: Dark Iron Spies a Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Bottino di: Goblin Woodcarver, Miniere della Morte",
@@ -1384,7 +1384,7 @@ ITEM_SOURCES.itIT = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Ricompensa della missione Seeking the Kor Gem: Thundris Windweaver, Auberdine, Rivafosca. La Corrupted Kor Gem richiesta è bottino di Blackfathom Tide Priestess e Oracle all'ingresso degli Abissi di Fondocupo e di Blackfathom Sea Witch all'interno.",
 }
 ITEM_SOURCES.ptBR = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saqueado de sátiros e diabretes na Gruta Bocanera", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Saqueado de sátiros e diabretes na Gruta Bocanera",
     ["Dropped by: Dark Iron Agents"] = "Saqueado de: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Saqueado de: Dark Iron Spies em Dun Morogh",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Saqueado de: Goblin Woodcarver, Minas Mortas",
@@ -1409,7 +1409,7 @@ ITEM_SOURCES.ptBR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Recompensa da missão Seeking the Kor Gem: Thundris Windweaver, Auberdine, Costa Negra. A Corrupted Kor Gem pedida cai de Blackfathom Tide Priestesses e Oracles na entrada das Profundezas Negras e de Blackfathom Sea Witches lá dentro.",
 }
 ITEM_SOURCES.ruRU = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "Добывается с сатиров и бесов в Крепости Черночревов", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "Добывается с сатиров и бесов в Крепости Черночревов",
     ["Dropped by: Dark Iron Agents"] = "Добывается с: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "Добывается с: Dark Iron Spies в Дун Мороге",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "Добывается с: Goblin Woodcarver, Мертвые копи",
@@ -1434,7 +1434,7 @@ ITEM_SOURCES.ruRU = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "Награда за задание Seeking the Kor Gem: Thundris Windweaver, Аубердин, Темные берега. Нужный Corrupted Kor Gem падает с Blackfathom Tide Priestess и Oracle у входа в Непроглядную Пучину и с Blackfathom Sea Witch внутри.",
 }
 ITEM_SOURCES.koKR = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "검은아귀 요새의 사티로스와 임프에게서 획득", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "검은아귀 요새의 사티로스와 임프에게서 획득",
     ["Dropped by: Dark Iron Agents"] = "드롭: Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "드롭: 던 모로의 Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "드롭: Goblin Woodcarver, 죽음의 폐광",
@@ -1459,7 +1459,7 @@ ITEM_SOURCES.koKR = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "퀘스트 Seeking the Kor Gem 보상: Thundris Windweaver, 아우버다인, 어둠의 해안. 필요한 Corrupted Kor Gem은 검은심연 나락 입구의 Blackfathom Tide Priestess와 Oracle, 내부의 Blackfathom Sea Witch가 드롭합니다.",
 }
 ITEM_SOURCES.zhCN = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "从黑喉要塞的萨特和小鬼身上拾取", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "从黑喉要塞的萨特和小鬼身上拾取",
     ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫罗的Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡矿井",
@@ -1484,7 +1484,7 @@ ITEM_SOURCES.zhCN = {
     ["Reward from the quest Seeking the Kor Gem: Thundris Windweaver, Auberdine, Darkshore. The Corrupted Kor Gem he asks for drops from Blackfathom Tide Priestesses and Oracles at the Blackfathom Deeps entrance and from Blackfathom Sea Witches inside."] = "任务Seeking the Kor Gem的奖励：Thundris Windweaver，奥伯丁，黑海岸。所需的Corrupted Kor Gem由黑暗深渊入口处的Blackfathom Tide Priestess和Oracle以及副本内的Blackfathom Sea Witch掉落。",
 }
 ITEM_SOURCES.zhTW = {
-    ["Looted from satyrs and imps in Blackmaw Hold"] = "從黑喉要塞的薩特和小鬼身上拾取", -- 2.0.38
+    ["Looted from satyrs and imps in Blackmaw Hold"] = "從黑喉要塞的薩特和小鬼身上拾取",
     ["Dropped by: Dark Iron Agents"] = "掉落自：Dark Iron Agents",
     ["Dropped by: Dark Iron Spies in Dun Morogh"] = "掉落自：丹莫洛的Dark Iron Spies",
     ["Dropped by: Goblin Woodcarver, The Deadmines"] = "掉落自：Goblin Woodcarver，死亡礦坑",
@@ -1515,8 +1515,8 @@ for lang, strings in pairs(ITEM_SOURCES) do
     for key, value in pairs(strings) do target.places[key] = value end
 end
 
--- The Test of Righteousness chain: official quest names, objectives and NPC
--- names from the Wowhead Forever tooltips (Italian has no official text).
+
+
 local PALADIN = {}
 PALADIN.koKR = { quests = {
     [1651] = { name = "용맹의 고서", objective = "데피아즈단의 공격으로부터 대프니 스틸웰을 보호하십시오. 둘 중 하나라도 죽으면 실패하게 됩니다. 성공한 후에 대프니 스틸웰과 다시 대화해야 합니다." },
@@ -1608,8 +1608,8 @@ for lang, data in pairs(PALADIN) do
     for key, value in pairs(data.places) do target.places[key] = value end
 end
 
--- An Unholy Alliance: the final step (6521) is the journal entry; it shares
--- its name with part 1 (6522).
+
+
 local UNHOLY = {
     deDE = { "Bringt Botschafter Malcins Kopf zu Varimathras in Unterstadt.", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
     frFR = { "Apportez la tête de l'ambassadeur Malcin à Varimathras à Fossoyeuse.", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
@@ -1621,8 +1621,8 @@ local UNHOLY = {
     zhCN = { "把大使玛尔金的头颅交给幽暗城的瓦里玛萨斯。", "此任务在剃刀高地外部区域完成。" },
     zhTW = { "把大使瑪爾金的頭顱交給幽暗城的瓦里瑪薩斯。", "此任務在剃刀高地外部區域完成。" },
 }
--- unholywarn (2.0.8): Razorfen Downs' disclaimer for it, "This quest is done
--- OUTSIDE Razorfen Downs, do it before entering the dungeon."
+
+
 local UNHOLY_WARN = {
     deDE = "Diese Quest wird AUSSERHALB der Hügel der Klingenhauer erledigt. Erledige sie, bevor du den Dungeon betrittst.",
     frFR = "Cette quête se fait À L’EXTÉRIEUR de Souilles de Tranchebauge : faites-la avant d’entrer dans le donjon.",
@@ -1646,7 +1646,7 @@ for lang, data in pairs(UNHOLY) do
     end
 end
 
--- Scarlet Monastery: Library: name per language; location reused from the Graveyard.
+
 local LIBRARY_NAMES = {
     deDE = "Scharlachrotes Kloster - Bibliothek",
     frFR = "Monastère Écarlate - bibliothèque",
@@ -1666,10 +1666,10 @@ for lang, name in pairs(LIBRARY_NAMES) do
     end
 end
 
--- Scarlet Monastery (Graveyard additions + Library): quest names, objectives
--- and NPC names are the official texts from the Wowhead Forever tooltips.
--- Italian, "Past Due" (new in Forever, no official text yet) and the journal's
--- own notes are translated by hand.
+
+
+
+
 local SM = {}
 SM.deDE = {
   q = {
@@ -1886,7 +1886,7 @@ for lang, data in pairs(SM) do
         return (q and q.name) or english
     end
     local t = data.t
-    -- Lua 5.1 has no positional format arguments, so swap them by hand.
+
     local where = t[1]
     if where:find("%1$s", 1, true) then
         where = where:gsub("%%1%$s", (data.npc[6]:gsub("%%", "%%%%"))):gsub("%%2%$s", (data.zone[1]:gsub("%%", "%%%%")))
@@ -1910,7 +1910,7 @@ for lang, data in pairs(SM) do
     if library and not library.description then library.description = t[15] end
 end
 
--- Test of Lore answer hint used only on step 6 (quest 6627).
+
 local TEST_OF_LORE_ANSWER = {
     deDE = "ANTWORT: Neltharion",
     frFR = "RÉPONSE : Neltharion",
@@ -1929,7 +1929,7 @@ for lang, warning in pairs(TEST_OF_LORE_ANSWER) do
     end
 end
 
--- Test of Lore answer hint for the Undercity step (quest 6628).
+
 for lang, warning in pairs({
     deDE = "ANTWORT: Ner'zhul",
     frFR = "RÉPONSE : Ner'zhul",
@@ -1947,8 +1947,8 @@ for lang, warning in pairs({
     end
 end
 
--- Final Passage (1394): the Test of Lore chain ends here; official texts from
--- the Wowhead Forever tooltips (Italian and the journal notes by hand).
+
+
 local FINAL_PASSAGE = {
     deDE = { "Letzte Überfahrt", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
     frFR = { "Le dernier voyage", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
@@ -1974,8 +1974,8 @@ for lang, t in pairs(FINAL_PASSAGE) do
     end
 end
 
--- Quest-chain/local warning translations added in 1.5.0.
--- These are needed when the journal language is forced independently of the WoW client locale.
+
+
 local QUEST_CHAIN_150 = {
     deDE = {
         [95663] = { name = "Gerüchte über den Drachenmalclan", objective = "Reist ins Sumpfland und trefft den Todespirscher-Agenten in den Hügeln oberhalb des Drachenmal-Lagers.", pickup = "Zaruk, Hammerfall, Arathihochland", turnin = "Todespirscher-Agent, Hügel oberhalb des Drachenmal-Lagers, Sumpfland", description = "Erforderlich vor Das Maul öffnen." },
@@ -2078,7 +2078,7 @@ for lang, data in pairs(QUEST_CHAIN_150) do
 end
 
 
--- Horrors in the Highland prerequisite chain localization (1.5.0).
+
 local HIGHLAND_CHAIN_150 = {
     deDE = {
         [463] = { name = "Der grüne Wächter", objective = "Findet Rethiel den Grünen Wächter im Sumpfland.", pickup = "Erster Maat Fitzsimmons, Hafen von Menethil, Sumpfland", turnin = "Rethiel der Grüne Wächter, Der Grüne Gürtel, Sumpfland", description = "Erster erforderlicher Schritt vor Schrecken im Hochland." },
@@ -2155,8 +2155,8 @@ for lang, data in pairs(HIGHLAND_CHAIN_150) do
             content.quests[id] = target
             for field, value in pairs(data[id]) do target[field] = value end
         end
-        -- 2.0.38: The Greenwarden is no longer a required step (a breadcrumb):
-        -- Tramping Paws is the first, Fire Taboo the second.
+
+
         if data[463] and data[276] and data[463].description and data[276].description then
             content.quests[277].description = data[276].description
             content.quests[276].description = data[463].description
@@ -2168,7 +2168,7 @@ for lang, data in pairs(HIGHLAND_CHAIN_150) do
     end
 end
 
--- Highland Hides prerequisite added for 1.5.0: Young Crocolisk Skins.
+
 local HIGHLAND_HIDES_PREREQ_150 = {
     deDE = { "Junge Krokiliskenhäute", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
     frFR = { "Peaux de jeunes crocilisques", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
@@ -2198,8 +2198,8 @@ for lang, data in pairs(HIGHLAND_HIDES_PREREQ_150) do
 end
 
 
--- In Search of Thaelrid breadcrumb warning (1.7.4): %s is Blackfathom
--- Villainy's title in the client's language.
+
+
 do
     local TEMPLATE_EN = "Warning: if not completed before accepting %s, this quest becomes unavailable."
     local TEMPLATES = {
@@ -2220,7 +2220,7 @@ do
             content.places[TEMPLATE_EN] = template
         end
     end
-    -- Blackfathom Villainy's side: %s is In Search of Thaelrid's title.
+
     local BV_EN = "Warning: Accept after completing %s, or you will lose that quest."
     local BV = {
         deDE = "Achtung: Erst annehmen, nachdem %s abgeschlossen ist, sonst verlierst du diese Quest.",
@@ -2242,7 +2242,7 @@ do
     end
 end
 
--- Rig Wars pickup-order warning (1.5.2).
+
 local RIG_WARS_WARNING_EN = "Accept Rig Wars before Chief Engineer Scooty. If Rig Wars disappears, abandon Chief Engineer Scooty and it will reappear."
 local RIG_WARS_WARNING_TEMPLATE_EN = "Accept %s before %s. If %s disappears, abandon %s and it will reappear."
 local RIG_WARS_WARNING_TEMPLATES_151 = {
@@ -2280,8 +2280,8 @@ for lang, translated in pairs(RIG_WARS_WARNING_151) do
 end
 
 
--- Blackfathom Deeps: Baron Aquanis (6922), added in 1.5.2.
--- This is an item-start quest inside BFD, not a formal quest-chain entry.
+
+
 local BARON_AQUANIS_6922 = {
     deDE = {
         name = "Baron Aquanis",
@@ -2374,9 +2374,9 @@ for lang, data in pairs(BARON_AQUANIS_6922) do
 end
 
 
--- Blackfathom Deeps optional breadcrumb presentation (1.5.2).
--- Trouble in the Deeps stays available as a hidden detail page, opened from
--- The Essence of Aku'Mai Notes, but is not presented as a required chain step.
+
+
+
 local BFD_TROUBLE_OPTIONAL_151 = {
     deDE = { "OPTIONAL, nicht erforderlich", "Diese Quest wird im Gebiet AUSSERHALB der Hügel der Klingenhauer abgeschlossen." },
     frFR = { "FACULTATIF, non requis", "Cette quête se termine dans la zone À L’EXTÉRIEUR de Souilles de Tranchebauge." },
@@ -2403,8 +2403,8 @@ for lang, data in pairs(BFD_TROUBLE_OPTIONAL_151) do
 end
 
 
--- City of Dalaran quest additions (1.5.2): Alliance Heart of Disruption chain
--- and the both-factions Starving Arcane quest.
+
+
 local DALARAN_QUESTS_92432_92457_92458 = {
     deDE = {
         [92432] = { name = "Eine alarmierende Bitte", objective = "Meldet Euch beim Abbild von Erzmagierin Modera in der Nähe von Dalaran.", turnin = "Abbild von Erzmagierin Modera, Lordameresee nahe Dalaran", description = "Einführungsquest, die zu 'Das Herz der Störung' führt." },
@@ -2466,10 +2466,10 @@ for lang, quests in pairs(DALARAN_QUESTS_92432_92457_92458) do
 end
 
 
--- City of Dalaran Horde attunement chain (1.5.2).
--- The Forever beta does not currently expose localized text for every new
--- attunement quest through Wowhead, so these addon-language strings keep the
--- Journal consistent when its language selector differs from the game client.
+
+
+
+
 FDJ.ContentLocales.deDE.quests[544] = { name = "Einbruch ins Gefängnis", objective = "Findet die vier abtrünnigen Verlassenen im Internierungslager von Lordamere, holt ihre Blutsteinartefakte zurück und kehrt zu Magus Wordeen Voidglare zurück.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", note = "Nehmt gleichzeitig 'Schlüssel zur Stadt' bei Magus Wordeen Voidglare an." }
 FDJ.ContentLocales.deDE.quests[93680] = { name = "Schlüssel zur Stadt", objective = "Beschafft den schmutzigen Schlüssel für Magus Wordeen Voidglare in Tarrens Mühle.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", note = "Diese Quest kann gleichzeitig mit 'Einbruch ins Gefängnis' angenommen werden." }
 FDJ.ContentLocales.deDE.quests[545] = { name = "Patrouillen von Dalaran", objective = "Tötet 6 Beschwörer von Dalaran und 12 Elementarsklaven und kehrt zu Magus Wordeen Voidglare in Tarrens Mühle zurück.", pickup = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", turnin = "Magus Wordeen Voidglare, Tarrens Mühle, Vorgebirge von Hillsbrad", description = "Verfügbar nach Abschluss von 'Einbruch ins Gefängnis'." }
@@ -2524,10 +2524,10 @@ FDJ.ContentLocales.zhTW.quests[545] = { name = "達拉然巡邏隊", objective =
 FDJ.ContentLocales.zhTW.quests[92434] = { name = "街頭之血", objective = "沿羅德米爾湖尋找進入達拉然的方法。", pickup = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", turnin = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", note = "需要完成法師沃迪恩·虛空之眼的達拉然任務。Keeper Bel'varil的石質徽記和束縛護腕為可選任務，不是入場前置。" }
 FDJ.ContentLocales.zhTW.quests[96984] = { name = "擾亂之心", objective = "在達拉然收集秘法微粒並交給塔倫米爾的法師沃迪恩·虛空之眼。", pickup = "大法師莫德拉的影像，達拉然附近的羅德米爾湖", turnin = "法師沃迪恩·虛空之眼，塔倫米爾，希爾斯布萊德丘陵", note = "部落達拉然入場任務鏈。石質徽記和束縛護腕可以順路完成，但並非必需。" }
 
--- Scarlet Monastery: Armory and Cathedral, Razorfen Downs (added 1.6.5).
--- Names, quest titles and objectives are the official texts from the Wowhead
--- Forever tooltips; Italian has none published yet, so it keeps English except
--- the dungeon names.
+
+
+
+
 local NEW_WINGS = {
   deDE = {
     dungeons = { "Scharlachrotes Kloster - Waffenkammer", "Scharlachrotes Kloster - Kathedrale", "Hügel der Klingenhauer" },
@@ -2668,8 +2668,8 @@ for lang, data in pairs(NEW_WINGS) do
     end
 end
 
--- Uldaman and Zul'Farrak (added 1.6.5): official names and quest texts from
--- the Wowhead Forever tooltips (none published for Italian yet).
+
+
 local ULD_ZF = {
   deDE = {
     dungeons = { "Uldaman", "Zul'Farrak", "Ödland", "Tanaris" },
@@ -2977,8 +2977,8 @@ for lang, data in pairs(ULD_ZF) do
     end
 end
 
--- Sunken Temple, Scholomance and Maraudon (added 1.6.5): official names and
--- quest texts from the Wowhead Forever tooltips (none published for Italian yet).
+
+
 local STSM = {
   deDE = {
     dungeons = { "Der Tempel von Atal'Hakkar", "Scholomance", "Maraudon", "Sümpfe des Elends", "Westliche Pestländer", "Desolace" },
@@ -3270,7 +3270,7 @@ for lang, data in pairs(STSM) do
     end
 end
 
--- Combined Sunken Temple encounters reuse the existing localized NPC names.
+
 for _, content in pairs(FDJ.ContentLocales) do
     local bosses = content.bosses
     if bosses then
@@ -3279,8 +3279,8 @@ for _, content in pairs(FDJ.ContentLocales) do
     end
 end
 
--- Dire Maul (East, West, North) and Stratholme (Living, Undead), added 1.6.5:
--- official names and quest texts from the Wowhead Forever tooltips.
+
+
 local DMST = {
   deDE = {
     dungeons = { "Düsterbruch - Ost", "Düsterbruch - West", "Düsterbruch - Nord", "Stratholme - Haupttor", "Stratholme - Dienstboteneingang", "Feralas", "Östliche Pestländer" },
@@ -3540,7 +3540,7 @@ for lang, data in pairs(DMST) do
     end
 end
 
--- Blackrock Depths
+
 local BRD_LOC = {
   deDE = {
     dungeon = "Schwarzfelstiefen", location = "Blackrock",
@@ -3798,7 +3798,7 @@ for lang, data in pairs(BRD_LOC) do
     end
 end
 
--- Upper Blackrock Spire
+
 local UBRS_LOC = {
   deDE = {
     dungeon = "Obere Schwarzfelsspitze", location = "Blackrock",
@@ -3952,7 +3952,7 @@ for lang, data in pairs(UBRS_LOC) do
     end
 end
 
--- Lower Blackrock Spire
+
 local LBRS_LOC = {
   deDE = {
     dungeon = "Untere Schwarzfelsspitze", location = "Blackrock",
@@ -4098,7 +4098,7 @@ for lang, data in pairs(LBRS_LOC) do
     end
 end
 
--- Quests added from the Classic Era quest compendium.
+
 local PDF_QUESTS = {
   deDE = {
     [1113] = { name = "Herzen des Eifers", objective = "Apothekermeister Faranell in Undercity möchte 20 Herzen des Eifers." },
@@ -5758,7 +5758,7 @@ for lang, list in pairs(PDF_QUESTS) do
     end
 end
 
--- Quests added in the second compendium pass.
+
 local AUDIT2_QUESTS = {
     deDE = {
         [4295] = { name = "Rocknots Bier" },
@@ -5837,7 +5837,7 @@ for lang, list in pairs(AUDIT2_QUESTS) do
     end
 end
 
--- Optional breadcrumb quests (shown through the "Optional introductory quest" link).
+
 local BREADCRUMB_QUESTS = {
     deDE = {
         [2398] = { name = "Die verschollenen Zwerge", objective = "Sucht in Uldaman nach Baelog." },
@@ -6051,9 +6051,9 @@ for lang, list in pairs(BREADCRUMB_QUESTS) do
         q.objective = q.objective or entry.objective
     end
 end
--- BEGIN roguejobs
--- Rogue jobs from C (The Horn of Xelthos, The Eye of Bhossca): quest names, texts and
--- the Dead Drop place strings. Official names where the client has them.
+
+
+
 local ROGUEJOBS = {}
 ROGUEJOBS.deDE = { quests = {
     [78261] = { name = "Das Horn von Xelthos", objective = "Findet das Horn von Xelthos in Burg Schattenfang. Bringt es anschließend zu Cs totem Briefkasten bei Lohenscheit. Ihr müsst den Auftrag allein erledigen.", warning = "Solo-Auftrag: Ihr müsst ihn allein erledigen, ohne Gruppe." },
@@ -6242,11 +6242,11 @@ for lang, data in pairs(ROGUEJOBS) do
         if target.places[key] == nil then target.places[key] = value end
     end
 end
--- END roguejobs
 
--- BEGIN recipechain
--- A Recipe For Death chain (prerequisite of The New Plague): official quest names and
--- objectives from the Forever client (Italian: own wording), plus the step texts.
+
+
+
+
 local RECIPECHAIN = {}
 RECIPECHAIN.deDE = { quests = {
     [447] = { name = "Rezept für den Tod", objective = "Sammelt 6 Herzen von ergrauten Bären und 6 Proben Huschendes Blut und bringt diese zu Meisterapotheker Faranell nach Undercity.", pickup = "Apotheker Renferrel, Das Grabmal, Silberwald", turnin = "Apothekermeister Faranell, Unterstadt" },
@@ -6433,11 +6433,11 @@ for lang, data in pairs(RECIPECHAIN) do
         if target.places[key] == nil then target.places[key] = value end
     end
 end
--- END recipechain
 
--- BEGIN rearguard
--- Rear Guard Patrol chain (prerequisite of The Wrath of Rath'mael): official quest and NPC
--- names from the Forever client (Italian: own wording), plus the step texts.
+
+
+
+
 local REARGUARD = {}
 REARGUARD.deDE = { quests = {
     [356] = { name = "Patrouille zur Rückendeckung", objective = "Tötet 8 blutende Schrecken und 8 wandernde Geister und meldet Euch dann wieder bei Linnea in ihrem Lager.", description = "Beide findet Ihr auf dem Bauernhof östlich von Linneas Lager.", pickup = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal", turnin = "Todeswache Linnea, Lager südöstlich von Brill, Tirisfal" },
@@ -6525,11 +6525,11 @@ for lang, data in pairs(REARGUARD) do
         if target.places[key] == nil then target.places[key] = value end
     end
 end
--- END rearguard
 
--- BEGIN palawarn
--- Paladin class quests (The Test of Righteousness, Old Fire-Eye): "a step in
--- this dungeon" disclaimer on each dungeon's page.
+
+
+
+
 local PALA_WARNINGS = {
     ["This is a chain quest with a step in The Deadmines"] = {
         deDE = "Dies ist eine Questreihe mit einem Schritt in den Todesminen",
@@ -6574,10 +6574,10 @@ for english, byLang in pairs(PALA_WARNINGS) do
         end
     end
 end
--- END palawarn
 
--- BEGIN turninplaces
--- Places in the quest tracker's turn-in pins (Data/QuestMaps.lua, TURNIN_SPOTS).
+
+
+
 local TURNIN_PLACES = {
     ["Valley of Heroes"] = {
         deDE = "Tal der Helden",
@@ -6633,15 +6633,15 @@ for english, byLang in pairs(TURNIN_PLACES) do
         end
     end
 end
--- END turninplaces
 
--- BEGIN objectivenames
--- Quest objective names (the items, creatures and objects the journal's quests
--- ask for) in the game's other languages, so the quest tracker and quest pages
--- can show "12/20 Deviate Hide" in the journal's language when it is not the
--- game's. Generated from the Forever client's tables (quest
--- objectives and their names in each language). English name -> one name per language
--- in FDJ.OBJECTIVE_NAME_LOCALES order (false: not known).
+
+
+
+
+
+
+
+
 FDJ.OBJECTIVE_NAME_LOCALES = { "deDE", "esES", "frFR", "koKR", "ptBR", "ruRU", "zhCN", "zhTW" }
 FDJ.OBJECTIVE_NAMES = {
     ["99-Year-Old Port"] = { "99 Jahre alter Portwein", "Puerto con 99 años de antigüedad", "Porto vieux de 99 ans", "99년 숙성된 포트 와인", "Xerez de 99 Anos", "Портвейн 99-летней выдержки", "99年波尔多陈酿", "99年波爾多陳釀" },
@@ -7017,8 +7017,8 @@ FDJ.OBJECTIVE_NAMES = {
     ["Scarlet Archive"] = { "Scharlachrotes Archiv", "Archivo Escarlata", "Archives écarlates", "붉은십자군 기록", "Arquivo Escarlate", "Архив Алых", "血色十字军档案", "血色十字軍檔案" },
     ["Scarlet Commander Mograine"] = { "Scharlachroter Kommandant Mograine", "Comandante Escarlata Mograine", "Commandant écarlate Mograine", "붉은십자군 사령관 모그레인", "Comandante Escarlate Mograine", "Командир Могрейн из Алого ордена", "血色十字军指挥官莫格莱尼", "血色十字軍指揮官莫格萊尼" },
     ["Scooty"] = { false, "Pedrito", false, "스쿠티", false, "Скути", "斯库提", "斯庫提" },
-    ["Totem of Ursoc"] = { "Totem von Ursoc", "Tótem de Ursoc", "Totem d'Ursoc", "우르속의 토템", "Totem de Ursoc", "Тотем Урсока", "乌索克的图腾", "厄索克圖騰" }, -- (bmhpins5: Wowhead Forever item 249694 in each language)
-    ["Totem of Ursol"] = { "Totem von Ursol", "Tótem de Ursol", "Totem d'Ursol", "우르솔의 토템", "Totem de Ursol", "Тотем Урсола", "乌索尔的图腾", "厄索爾圖騰" }, -- (bmhursol: Wowhead Forever item 249693 in each language)
+    ["Totem of Ursoc"] = { "Totem von Ursoc", "Tótem de Ursoc", "Totem d'Ursoc", "우르속의 토템", "Totem de Ursoc", "Тотем Урсока", "乌索克的图腾", "厄索克圖騰" },
+    ["Totem of Ursol"] = { "Totem von Ursol", "Tótem de Ursol", "Totem d'Ursol", "우르솔의 토템", "Totem de Ursol", "Тотем Урсола", "乌索尔的图腾", "厄索爾圖騰" },
     ["Scourge Data"] = { "Geißeldaten", "Datos de la Plaga", "Donnée du Fléau", "스컬지 자료", "Dados do Flagelo", "Сведения о Плети", "天灾军团档案", "天譴軍團檔案" },
     ["Screecher Spirit"] = { "Kreischergeist", "Espíritu estridador", "Esprit d'Hurleur", "계곡천둥매의 영혼", "Espírito Guinchador", "Дух крикуна", "尖啸者的灵魂", "尖嘯者的靈魂" },
     ["Sealed Azure Bag"] = { "Versiegelte azurblaue Tasche", "Bolsa azur sellada", "Sac azur scellé", "봉인된 하늘색 자루", "Saco Lazúli Lacrado", "Запечатанная лазурная сумка", "密封的蓝袋子", "密封的藍袋子" },
@@ -7148,9 +7148,9 @@ FDJ.OBJECTIVE_NAMES = {
     ["[DNT] Kill Credit: Finale"] = { false, false, false, false, false, false, false, false },
     ["[DNT] Kill Credit: Place Explosives"] = { false, false, false, false, false, false, false, false },
 }
--- END objectivenames
 
--- greenglow (2.0.10): The Only Cure is More Green Glow's warning.
+
+
 do
     local GREEN_GLOW_WARNING = {
         deDE = "Es kann mehrere Versuche dauern: Benutze die Phiole so lange an einem lebenden Schleim, bis es klappt.",
@@ -7174,7 +7174,7 @@ do
     end
 end
 
--- captainhorde (2.0.11): the Lordaeron Captain's description.
+
 do
     local CAPTAIN = {
         deDE = "Seltener Spawn. Der Allianz freundlich gesinnt: Nur die Horde kann ihn töten.",
@@ -7197,7 +7197,7 @@ do
     end
 end
 
--- dalaranvias (2.0.12): the arrow's lines on the way round Dalaran.
+
 do
     local WEST = "Round Dalaran's west wall, along the lake"
     local NORTH = "Round Dalaran's north side, along the lake shore"
@@ -7223,7 +7223,7 @@ do
 end
 
 
--- liftgate (2.0.28): the arrow's lines at the Great Lift.
+
 do
     local UP = "Take the Great Lift up to the Barrens"
     local DOWN = "Take the Great Lift down to Thousand Needles"
@@ -7248,11 +7248,11 @@ do
     end
 end
 
--- Blueleaf Tubers (1221), 2.0.50: the reminder to take the three quest
--- items from beside Mebok Mizzyrix. Item names as each client names them
--- (Wowhead's localized item pages 5880, 6684, 5897). Italian has no
--- translation of these items (the quest left the game before Italian came),
--- and Traditional Chinese could not be read yet: both keep the English names.
+
+
+
+
+
 for lang, warning in pairs({
     deDE = "Bevor du hineingehst, nimm die Kiste mit Löchern, den Schnüffelnasenleitstecken und die Schnüffelnasenbesitzeranleitung mit. Sie liegen direkt neben dem Questgeber Mebok Mizzyrix in Ratschet.",
     frFR = "Avant d'entrer, prenez la Caisse percée, le Bâton de commandement de Sniffetarin et le Manuel d'utilisateur de Sniffetarin. Ils se trouvent juste à côté du donneur de quête, Mebok Mizzyrix, à Cabestan.",
@@ -7271,8 +7271,8 @@ for lang, warning in pairs({
     end
 end
 
--- altarbosses (2.0.24): the Sunken Temple's group entry for its six troll
--- guardians. The trolls keep their English names.
+
+
 do
     local ALTAR = {
         deDE = "Altarbosse", frFR = "Boss de l'autel", esES = "Jefes del altar", esMX = "Jefes del altar",
@@ -7288,9 +7288,9 @@ do
     end
 end
 
--- rfdstep (2.0.32): the two Maraudon disclaimers of Razorfen Downs'
--- Agamaggan's Blood chain, in every language (dungeon names as the journal
--- shows them). 93404: the chain's Rot and Regret step; 93604: the quest.
+
+
+
 do
     local WARN = {
         deDE = { "Ja, dieser Schritt ist in MARAUDON. Er wird benötigt, um diese Quest für den Hügel der Klingenhauer freizuschalten.",
@@ -7326,10 +7326,10 @@ do
     end
 end
 
--- blackmawaudit (2.0.36, 2.0.37, 2.0.39, 2.0.41): the Blackmaw Hold quest texts changed or
--- added (givers, hand-ins, notes, the Blackmaw Reclamation chain), in every
--- language. NPC, quest and item names stay English; places as the clients
--- name them where known.
+
+
+
+
 do
     local T = {
         TIMEAR_P = {
@@ -7429,16 +7429,16 @@ do
             zhTW = "Ekkal，埃達拉斯廢墟，艾薩拉 (42.0, 38.9)",
         },
         KORSA = {
-            deDE = "Korsa, vor Legashi Stronghold, Azshara (63.0, 23.3)",
-            frFR = "Korsa, devant Legashi Stronghold, Azshara (63.0, 23.3)",
-            esES = "Korsa, a las afueras de Legashi Stronghold, Azshara (63.0, 23.3)",
-            esMX = "Korsa, a las afueras de Legashi Stronghold, Azshara (63.0, 23.3)",
-            itIT = "Korsa, fuori da Legashi Stronghold, Azshara (63.0, 23.3)",
-            ptBR = "Korsa, do lado de fora de Legashi Stronghold, Azshara (63.0, 23.3)",
-            ruRU = "Korsa, у Legashi Stronghold, Азшара (63.0, 23.3)",
-            koKR = "Korsa, Legashi Stronghold 밖, 아즈샤라 (63.0, 23.3)",
-            zhCN = "Korsa，Legashi Stronghold外，艾萨拉 (63.0, 23.3)",
-            zhTW = "Korsa，Legashi Stronghold外，艾薩拉 (63.0, 23.3)",
+            deDE = "Korsa, vor Legashi Stronghold, Azshara (62.9, 21.1)",
+            frFR = "Korsa, devant Legashi Stronghold, Azshara (62.9, 21.1)",
+            esES = "Korsa, a las afueras de Legashi Stronghold, Azshara (62.9, 21.1)",
+            esMX = "Korsa, a las afueras de Legashi Stronghold, Azshara (62.9, 21.1)",
+            itIT = "Korsa, fuori da Legashi Stronghold, Azshara (62.9, 21.1)",
+            ptBR = "Korsa, do lado de fora de Legashi Stronghold, Azshara (62.9, 21.1)",
+            ruRU = "Korsa, у Legashi Stronghold, Азшара (62.9, 21.1)",
+            koKR = "Korsa, Legashi Stronghold 밖, 아즈샤라 (62.9, 21.1)",
+            zhCN = "Korsa，Legashi Stronghold外，艾萨拉 (62.9, 21.1)",
+            zhTW = "Korsa，Legashi Stronghold外，艾薩拉 (62.9, 21.1)",
         },
         GRAAL_P = {
             deDE = "Graal, in einem Käfig in Legashi Stronghold, Azshara (65.9, 14.4)",
@@ -7584,7 +7584,7 @@ do
             zhCN = "精英任务：请组队对付Prince Halanox。",
             zhTW = "精英任務：請組隊對付Prince Halanox。",
         },
-        -- bmchain (2.1.1): the three quests at the start of the chain.
+
         LEGASHI_O = {
             deDE = "Tötet 5 Legashi Satyrs, 5 Legashi Rogues und 5 Legashi Hellcallers für Ekkal in den Ruinen von Eldarath.",
             frFR = "Tuez 5 Legashi Satyrs, 5 Legashi Rogues et 5 Legashi Hellcallers pour Ekkal aux Ruines d'Eldarath.",
@@ -7654,7 +7654,7 @@ do
         [97327] = { pickup = "EKKAL", turnin = "EKKAL" },
         [96246] = { pickup = "EKKAL", turnin = "EKKAL" },
         [92065] = { pickup = "RAGEROAR", turnin = "RAGEROAR", note = "RECLAIM_N" },
-        [86746] = { objective = "LEGASHI_O", pickup = "EKKAL", turnin = "EKKAL" }, -- bmchain (2.1.1)
+        [86746] = { objective = "LEGASHI_O", pickup = "EKKAL", turnin = "EKKAL" },
         [86752] = { objective = "REPORT_O", pickup = "EKKAL", turnin = "RAGEROAR", note = "REPORT_N" },
         [86791] = { objective = "SCOUTS_O", pickup = "RAGEROAR", turnin = "KORSA" },
         [86777] = { objective = "FEARDRED_O", pickup = "KORSA", turnin = "KORSA" },
@@ -7683,9 +7683,9 @@ do
     end
 end
 
--- marshstep (2.0.13, M 19 Nov 2026: "this starts at line is not getting
--- translated"): Journey to the Marsh (1947), step 1 of Rituals of Power:
--- objective, start and hand-in (the quest's name comes from the game).
+
+
+
 local JOURNEY_MARSH = {
     deDE = { "Sprecht mit Tabetha.", "Euer Magierlehrer in einer Hauptstadt: Jennea Cannon (Sturmwind), Bink (Eisenschmiede), Deino (Orgrimmar), Ursyn Ghull (Donnerfels) oder Anastasia Hartwell (Unterstadt)", "Tabetha, Düstermarschen" },
     frFR = { "Parlez à Tabetha.", "Votre maître des mages dans une capitale : Jennea Cannon (Hurlevent), Bink (Forgefer), Deino (Orgrimmar), Ursyn Ghull (Les Pitons-du-Tonnerre) ou Anastasia Hartwell (Fossoyeuse)", "Tabetha, marécage d'Âprefange" },
@@ -7697,7 +7697,7 @@ local JOURNEY_MARSH = {
     zhCN = { "与塔贝萨谈话。", "主城里的法师训练师：詹妮亚·卡农（暴风城）、宾克（铁炉堡）、戴诺（奥格瑞玛）、乌尔辛·古尔（雷霆崖）或安娜丝塔西娅·哈特维尔（幽暗城）", "塔贝萨，尘泥沼泽" },
     zhTW = { "與塔貝薩談話。", "主城裡的法師訓練師：詹妮亞·卡農（暴風城）、賓克（鐵爐堡）、戴諾（奧格瑪）、烏爾辛·古爾（雷霆崖）或安娜絲塔西婭·哈特維爾（幽暗城）", "塔貝薩，塵泥沼澤" },
 }
--- sidepickup: the start per faction (the quest list's faction)
+
 local JOURNEY_MARSH_SIDE = {
     deDE = { "Euer Magierlehrer in einer Hauptstadt: Jennea Cannon (Sturmwind) oder Bink (Eisenschmiede)", "Euer Magierlehrer in einer Hauptstadt: Deino (Orgrimmar), Ursyn Ghull (Donnerfels) oder Anastasia Hartwell (Unterstadt)" },
     frFR = { "Votre maître des mages dans une capitale : Jennea Cannon (Hurlevent) ou Bink (Forgefer)", "Votre maître des mages dans une capitale : Deino (Orgrimmar), Ursyn Ghull (Les Pitons-du-Tonnerre) ou Anastasia Hartwell (Fossoyeuse)" },
@@ -7722,17 +7722,17 @@ for lang, t in pairs(JOURNEY_MARSH) do
     end
 end
 
--- BEGIN l10n210
--- (2.1.0, M 19 Nov 2026: "why don't you just translate it to all the other
--- languages that we have?"): The Talisman of Kazdor and its chain, Materials of
--- Significance and its chain, and the other quest-page lines new in 2.1.0 (the
--- pylon crystals, the Mana Sieve, the vial's entrance, Woodwyrd's new spot,
--- Nazeer Bloodpike, "Leave the temple", Journey to the Marsh's name). Official
--- names where known: Wowhead Forever's German pages (the six new quests' names
--- and objectives) and the Forever client's own names (The Manor, Ravenholdt,
--- Journey to the Marsh, Katherine the Pure, Mathias Shaw, Brave Stonetorch, the
--- infernals, Elegant Letter); the rest translated by hand. The game's own quest
--- title still comes first when the journal's language is the client's.
+
+
+
+
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local QUESTS = {
@@ -7820,7 +7820,7 @@ do
                 if q[field] == nil then q[field] = list[i] end
             end
         end
-        -- The Talisman's solo line: the same words as C's jobs (roguejobs).
+
         local rogue = content.quests[78261]
         if rogue and rogue.warning and content.quests[80411].warning == nil then
             content.quests[80411].warning = rogue.warning
@@ -7830,17 +7830,17 @@ do
         end
     end
 end
--- END l10n210
 
--- BEGIN l10n210b
--- (2.1.0, M 19 Nov 2026): the whole Alliance Paladin storyline now shown in
--- Materials of Significance's chain (the Strange Orb quests, A Brother In
--- Need, By The Light's Grace, Aeonas the Vindicated, Some Good News, The
--- Mysterious Merchant, Elrick, Paladin of the Silver Hand), their starts,
--- hand-ins and map spots, and The Medallion of Faith's note and repeatable
--- entry, in every language. Official names where known (the Forever client's own
--- name packs: Delgren the Purifier, Katherine the Pure, Innkeeper Janene,
--- Elrick, Aurius; Il faut le détruire); the rest translated by hand.
+
+
+
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local QUESTS = {
@@ -7966,12 +7966,12 @@ do
         end
     end
 end
--- END l10n210b
 
--- BEGIN l10n210c
--- (2.1.0): The Medallion of Faith's start and hand-in, and the name and
--- objective the journal had in English only (Italian; Portuguese and Chinese
--- objectives). The repeatable entry copies these at login.
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local AURIUS = { "Aurius, Stratholme", "Aurius, Stratholme", "Aurius, Stratholme", "Aurius, Stratholme", "Aurius, Stratholme",
@@ -7997,11 +7997,11 @@ do
         end
     end
 end
--- END l10n210c
 
--- BEGIN l10n210d
--- (2.1.0): Nostro's Compendium (Dire Maul: North, warriors and paladins): its
--- note, start and hand-in, which the journal had in English only.
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local FIELDS = {
@@ -8021,10 +8021,10 @@ do
         end
     end
 end
--- END l10n210d
 
--- BEGIN l10n210e
--- (2.1.0): Extinguishing the Idol (Razorfen Downs): the warning at the top.
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local WARNING = {
@@ -8048,12 +8048,12 @@ do
         if q.warning == nil then q.warning = WARNING[i] end
     end
 end
--- END l10n210e
 
--- BEGIN l10nkroldokally
--- kroldokally (2.1.1): the Route's stops for the Alliance's Krol'dok
--- Stronghold chains (Data/QuestUpdates.lua). Riverglades' place names stay
--- as the rest of the zone's data has them.
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8113,11 +8113,11 @@ do
         end
     end
 end
--- END l10nkroldokally
--- BEGIN l10nkroldokhorde
--- kroldokhorde (2.1.7): the Route's stops for the Horde's Krol'dok
--- Stronghold chain (Data/QuestUpdates.lua). Riverglades' place and people
--- names stay as the rest of the zone's data has them.
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8253,19 +8253,19 @@ do
         end
     end
 end
--- END l10nkroldokhorde
--- BEGIN l10nbmhtotem
--- bmhpins5, bmhursol, hotattendant, gnomepins (2.1.7): the Totems of Ursoc and Ursol (Blackmaw Hold), the Ghostly Attendant (Hall of Thanes) and Kernobee (Gnomeregan) as quest spots
--- (Data/QuestMaps.lua): its name as the game has it in each language
--- (Wowhead Forever, item 249694; Italian keeps the English name, as the
--- other things' names do).
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
         ["Totem of Ursoc"] = { "Totem von Ursoc", "Totem d'Ursoc", "Tótem de Ursoc", "Totem of Ursoc", "Totem de Ursoc", "Тотем Урсока", "우르속의 토템", "乌索克的图腾", "厄索克圖騰" },
-        ["Kernobee"] = { "Kernobee", "Kernobee", "Kernobee", "Kernobee", "Kernobill", "Керноби", "케르노비", "克努比", "克努比" }, -- (gnomepins: Wowhead Forever NPC 7850 in each language)
-        ["Ghostly Attendant"] = { "Geisterhafte Bedienstete", "Domestique fantomatique", "Auxiliar fantasmal", "Ghostly Attendant", "Atendente Fantasmagórica", "Призрачная слуга", "유령 수행원", "鬼魅随从", "鬼魅侍者" }, -- (hotattendant: Wowhead Forever NPC 265002 in each language)
-        ["Totem of Ursol"] = { "Totem von Ursol", "Totem d'Ursol", "Tótem de Ursol", "Totem of Ursol", "Totem de Ursol", "Тотем Урсола", "우르솔의 토템", "乌索尔的图腾", "厄索爾圖騰" }, -- (bmhursol: item 249693)
+        ["Kernobee"] = { "Kernobee", "Kernobee", "Kernobee", "Kernobee", "Kernobill", "Керноби", "케르노비", "克努比", "克努比" },
+        ["Ghostly Attendant"] = { "Geisterhafte Bedienstete", "Domestique fantomatique", "Auxiliar fantasmal", "Ghostly Attendant", "Atendente Fantasmagórica", "Призрачная слуга", "유령 수행원", "鬼魅随从", "鬼魅侍者" },
+        ["Totem of Ursol"] = { "Totem von Ursol", "Totem d'Ursol", "Tótem de Ursol", "Totem of Ursol", "Totem de Ursol", "Тотем Урсола", "우르솔의 토템", "乌索尔的图腾", "厄索爾圖騰" },
     }
     FDJ.ContentLocales = FDJ.ContentLocales or {}
     for i, lang in ipairs(LANGS) do
@@ -8277,12 +8277,12 @@ do
         end
     end
 end
--- END l10nbmhtotem
--- BEGIN l10nzfuldally
--- zfally / uldally (2.1.2): the Route's stops for the Alliance's Zul'Farrak and
--- Uldaman quests (Data/QuestUpdates.lua). Names as the game has them (the
--- objective names above, the quests' own texts; Magregan Deepshadow: Wowhead
--- Classic's page in each language); Italian keeps the English names.
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8342,9 +8342,9 @@ do
             "干掉杀害阿戈莫德的凶手：莫达洛克。顺便杀掉12个石窟断骨者。",
             "幹掉殺害阿戈莫德的兇手：莫達洛克。順便殺掉12個石窟斷骨者。",
         },
-        -- infernus (2.1.3): An Ambassador of Evil's kill (Data/QuestUpdates.lua);
-        -- his and his bracer's names as the game has them (Polestar's client
-        -- tables, NPC 2745)
+
+
+
         ["Ambassador Infernus"] = { "Botschafter Infernus", "Ambassadeur Infernus", "Embajador Infernus", "Ambassador Infernus", "Embaixador Infernus", "Посол Инфернос", "사자 인페르누스", "因弗努斯大使", "因弗努斯大使" },
         ["He drops Ambassador Infernus' Bracer: a level 42 elite at the bottom of Angor Fortress, with stone golems"] = {
             "Er lässt die Armschiene von Botschafter Infernus fallen: ein Elitegegner der Stufe 42 ganz unten in der Feste Angor, mit Steingolems",
@@ -8357,7 +8357,7 @@ do
             "他掉落因弗努斯大使的护腕：42级精英，在安格尔要塞的最底层，有石头傀儡护卫",
             "他掉落因弗努斯大使的護腕：42級菁英，在安格爾要塞的最底層，有石頭魔像護衛",
         },
-        -- angorway (2.1.3): the arrow's line on the way to him (Data/QuestUpdates.lua)
+
         ["Up the ramp into Angor Fortress"] = {
             "Die Rampe hinauf in die Feste Angor",
             "Montez la rampe jusqu'à la forteresse d'Angor",
@@ -8369,7 +8369,7 @@ do
             "沿坡道上到安格尔要塞",
             "沿坡道上到安格爾要塞",
         },
-        -- bottomline (2.1.3): indoors in the fortress, under the yards
+
         ["Get to the bottom of the fortress"] = {
             "Geh ganz nach unten in die Feste",
             "Descendez tout en bas de la forteresse",
@@ -8417,19 +8417,19 @@ do
         end
     end
 end
--- END l10nzfuldally
 
--- BEGIN l10nmallet
--- malletone (2.1.3): the Mallet of Zul'Farrak's page (made-up quest -97100,
--- Data/QuestUpdates.lua), which had its texts in English only. Names: the
--- client's own (Polestar's tables from the client: Qiaga the Keeper 7996,
--- Morta'gya the Keeper 8636, Sacred Mallet 9241, Mallet of Zul'Farrak 9240,
--- Gahz'rilla 7273); Italian keeps the English names. objectiveMore's %s is
--- Jintha'Alor, filled in from the client (C_Map.GetAreaInfo(354)).
+
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local FIELDS = {
-        warning = { -- malletwarn
+        warning = {
             "Hier gibt es keine Quest zum Annehmen. Einfach töten und plündern.",
             "Il n'y a pas de quête à prendre ici. Tuez et ramassez le butin, tout simplement.",
             "Aquí no hay ninguna misión que recoger. Solo mata y despoja.",
@@ -8499,14 +8499,14 @@ do
         end
     end
 end
--- END l10nmallet
 
--- BEGIN l10nmallethint
--- subwarn / mallethint (2.1.4): the small red line on the Mallet of
--- Zul'Farrak's page (the Ancient Egg's quest button comes under it) and The
--- Altar of Zul's (2989) warning. Names as on the Mallet page (the client's
--- own: Qiaga the Keeper 7996, Sacred Mallet 9241); Italian keeps the English
--- names.
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8545,14 +8545,14 @@ do
         end
     end
 end
--- END l10nmallethint
 
--- BEGIN l10ndrownedhorde
--- drownedhorde (2.1.3): the places and the arrow's line for the Horde side
--- of the Drowned City (Data/QuestUpdates.lua). Names: the game's own
--- (Brinescale Skirmisher 262397 from Polestar's client tables, none in
--- Spanish, Portuguese or Korean there: English; The Vile Reef, Grom'gol and
--- the Drowned City as the journal already has them); Italian keeps English.
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8596,13 +8596,13 @@ do
         end
     end
 end
--- END l10ndrownedhorde
 
--- BEGIN l10nnecklace
--- necklaceout (2.1.3): where the Shattered Necklace drops (Data/QuestChains.lua)
--- and the Route's line at the troggs. Names: the game's own (Shattered
--- Necklace 7666, Stonevault, Shadowforge, Uldaman: Polestar's client tables
--- and the journal's own); Italian keeps English.
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -8628,7 +8628,7 @@ do
             "破碎的项链（奥达曼外面和里面都会掉落）",
             "破碎的項鏈（奧達曼外面和裡面都會掉落）",
         },
-        -- (acceptnow, 2.1.3: the Route's stop once the necklace is in the bags)
+
         ["Click the icon to accept the quest"] = {
             "Klickt auf das Symbol, um die Quest anzunehmen",
             "Cliquez sur l'icône pour accepter la quête",
@@ -8640,7 +8640,7 @@ do
             "点击图标接受任务",
             "點擊圖示接受任務",
         },
-        -- (dwarfspot, 2.1.3: the Route's stop moved to the Shadowforge dwarves)
+
         ["Kill the elite Shadowforge dwarves here until the Shattered Necklace drops"] = {
             "Tötet hier die Elite-Zwerge der Schattenschmiede, bis die Zerrissene Halskette droppt",
             "Tuez les nains Ombreforge élites ici jusqu'à ce que le Collier brisé tombe",
@@ -8686,12 +8686,12 @@ do
         end
     end
 end
--- END l10nnecklace
 
--- BEGIN l10nuldwarn
--- uldwarn (2.1.3): the warning lines of The Shattered Necklace (2198) and
--- Agmond's Fate (704), Data/QuestUpdates.lua. Names: the client's own
--- (Uldaman); Italian keeps English names.
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local WARN = {
@@ -8717,9 +8717,9 @@ do
             "能量石也会从副本外面的精英矮人身上掉落。",
             "能量石也會從副本外面的菁英矮人身上掉落。",
         },
-        -- commonhall (2.1.3): Reclaimed Treasures, the Alliance's (1360) and
-        -- the Horde's (2342). Names as the game has them (Polestar's client
-        -- tables, items 8027 and 8026, objects 124389 and 124388).
+
+
+
         [1360] = {
             "Krom Stoutarms Schatz liegt in Krom Stoutarms Truhe außerhalb der Instanz.",
             "Le Trésor de Krom Stoutarm se trouve dans le Coffre de Krom Stoutarm, à l'extérieur de l'instance.",
@@ -8742,9 +8742,9 @@ do
             "加勒特的家族宝藏在副本外面的加勒特的宝箱里。",
             "加勒特的家族寶藏在副本外面的加勒特的寶箱裡。",
         },
-        -- ancientchest (2.1.3): Solution to Doom (709). The item's and the
-        -- chest's names as the game has them (Polestar's client tables, item
-        -- 4631, object 126260); Italian keeps the English names.
+
+
+
         [709] = {
             "Die Schrifttafel von Ryun'eh liegt in der Uralten Truhe außerhalb der Instanz.",
             "La Tablette de Ryun'eh se trouve dans le Coffre ancien, à l'extérieur de l'instance.",
@@ -8756,9 +8756,9 @@ do
             "雷乌纳石板在副本外面的古代储物箱里。",
             "雷烏納石板在副本外面的古代儲物箱裡。",
         },
-        -- fungusout (2.1.3): Uldaman Reagent Run (17; the Horde's 2202 below).
-        -- The item's name as the game has it (Polestar's client tables, item
-        -- 8047); Italian keeps the English name.
+
+
+
         [17] = {
             "Die Magenta Funguskappen können auch außerhalb des Dungeons aufgesammelt werden.",
             "Les Champignons magenta peuvent aussi être ramassés à l'extérieur du donjon.",
@@ -8770,7 +8770,7 @@ do
             "紫色蘑菇也可以在副本外面采集。",
             "紫色蘑菇也可以在副本外面採集。",
         },
-        -- outsidesteps (2.1.3): A Sign of Hope (721), Amulet of Secrets (722)
+
         [721] = {
             "Das wird DRAUSSEN erledigt, außerhalb der Instanz.",
             "Cela se fait à l'EXTÉRIEUR de l'instance.",
@@ -8796,10 +8796,22 @@ do
     }
     WARN[722] = WARN[721]
     WARN[2202] = WARN[17]
-    WARN[6626] = WARN[704] -- hostwarn (2.1.4): A Host of Evil, Razorfen Downs
-    WARN[7070] = WARN[704] -- shardwarn (2.1.4): Shadowshard Fragments, Maraudon (Alliance)
-    WARN[7068] = WARN[704] -- (and the Horde's)
-    -- gemswarn (2.1.3): Find the Gems (2201)
+    WARN[6626] = WARN[704]
+    WARN[7070] = WARN[704]
+    WARN[7068] = WARN[704]
+
+    WARN[4262] = {
+        "Das wird direkt vor dem Eingang des Dungeons erledigt.",
+        "Cela se fait juste devant l'entrée du donjon.",
+        "Esto se completa justo fuera de la entrada de la mazmorra.",
+        "Si completa appena fuori dall'ingresso della spedizione.",
+        "Isto é feito logo do lado de fora da entrada da masmorra.",
+        "Это выполняется снаружи, прямо у входа в подземелье.",
+        "이 퀘스트는 던전 입구 바로 바깥에서 완료합니다.",
+        "此任务在副本入口外面完成。",
+        "此任務在副本入口外面完成。",
+    }
+
     WARN[2201] = {
         "Schließt diese Quest ab, bevor ihr den letzten Boss tötet.",
         "Terminez cette quête avant de tuer le dernier boss.",
@@ -8811,7 +8823,7 @@ do
         "在击杀最后一个首领之前完成这个任务。",
         "在擊殺最後一個首領之前完成這個任務。",
     }
-    -- pariahwarn (2.1.4): The Pariah's Instructions (7067)
+
     WARN[7067] = {
         "Drei der fünf Edelsteine stammen von den Khanen AUSSERHALB der Instanz, in den äußeren Höhlen.",
         "Trois des cinq gemmes viennent des khans À L'EXTÉRIEUR de l'instance, dans les grottes extérieures.",
@@ -8835,17 +8847,17 @@ do
         end
     end
 end
--- END l10nuldwarn
--- BEGIN l10nhammertoecave
--- hammertoecave (2.1.3): the arrow's line on the way to Hammertoe Grez
--- (Data/QuestUpdates.lua).
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
-        -- ancientchest / commonhall (2.1.3): the captions under the minimap
-        -- pictures (Solution to Doom, Amulet of Secrets, Reclaimed Treasures);
-        -- names as the game has them (Polestar's client tables; French has no
-        -- Magregan, so English).
+
+
+
+
         ["Minimap, outside Uldaman: the icon marks the Ancient Chest."] = {
             "Minikarte, außerhalb von Uldaman: Das Symbol zeigt die Uralte Truhe.",
             "Minicarte, à l'extérieur d'Uldaman : l'icône indique le Coffre ancien.",
@@ -8901,14 +8913,14 @@ do
         end
     end
 end
--- END l10nhammertoecave
--- BEGIN l10nitemnotes
--- itemnotes (2.1.3, M 21 Nov 2026: "I want you to translate all the missing
--- tool tips. They're very important because they say where the items are"):
--- the "where to find it" line under quest items (requiredItems, startItem,
--- noteItem, providedItem notes) in every language. Names as the game has them: Polestar's
--- client tables (Forever), pfQuest and Questie for the zones and subzones;
--- a Forever name the game has no translation for stays in English.
+
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -10375,12 +10387,12 @@ do
         end
     end
 end
--- END l10nitemnotes
--- BEGIN l10npariahgems
--- pariahgems (2.1.4): where The Pariah's Instructions' amulet and gems come
--- from (Data/QuestUpdates.lua, maraudonally). The NPCs are described, not
--- named (their names in each client language are not known here); boss
--- names as the journal has them; Italian keeps the English names.
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -10505,12 +10517,12 @@ do
         end
     end
 end
--- END l10npariahgems
--- BEGIN l10nchestpickups
--- chestpickups (2.1.3): the Route's stops at the chests outside Uldaman
--- (Data/QuestUpdates.lua). The chests' names as the game has them (the
--- Forever client's tables, Polestar); the halls as the quests' own texts
--- name them; Italian keeps the English names.
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -10566,10 +10578,10 @@ do
         end
     end
 end
--- END l10nchestpickups
--- BEGIN l10nmount
--- deathcharger (2.1.3): the "Mount" label of Deathcharger's Reins on Baron
--- Rivendare's loot, as the game names the item type.
+
+
+
+
 do
     local SLOT = { deDE = "Reittier", frFR = "Monture", esES = "Montura", itIT = "Cavalcatura", ptBR = "Montaria",
         ruRU = "Верховое животное", koKR = "탈것", zhCN = "坐骑", zhTW = "坐騎" }
@@ -10581,12 +10593,28 @@ do
         if content.slotParts["Mount"] == nil then content.slotParts["Mount"] = text end
     end
 end
--- END l10nmount
--- BEGIN l10nstally
--- stally (2.1.5): the Route's stops for the Alliance's Sunken Temple quests
--- (Data/QuestUpdates.lua). The things' names as the game has them (the
--- objective names above, FDJ.OBJECTIVE_NAMES; Italian keeps the English
--- names, as there); the zones and the lines in each language.
+
+
+
+
+do
+    local SLOT = { deDE = "Handwerksreagenz", frFR = "Composant d'artisanat", esES = "Componente de fabricación",
+        esMX = "Componente de fabricación", itIT = "Reagente da creazione", ptBR = "Reagente de criação",
+        ruRU = "Реагент для ремесла", koKR = "제작 재료", zhCN = "制造材料", zhTW = "製造材料" }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for lang, text in pairs(SLOT) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.slotParts = content.slotParts or {}
+        if content.slotParts["Crafting Reagent"] == nil then content.slotParts["Crafting Reagent"] = text end
+    end
+end
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local THINGS = { "Roc Gizzard", "Groddoc Liver", "Ironfur Liver", "Stone Circle", "Ancient Egg", "Bloodpetal",
@@ -10736,7 +10764,7 @@ do
             "與Sanath Lim-yo對話：他會把你傳送到大法師的塔上",
         },
     }
-    -- the things: FDJ.OBJECTIVE_NAMES, in FDJ.OBJECTIVE_NAME_LOCALES' order
+
     local order = {}
     for i, lang in ipairs(FDJ.OBJECTIVE_NAME_LOCALES or {}) do order[lang] = i end
     for _, thing in ipairs(THINGS) do
@@ -10758,14 +10786,14 @@ do
         end
     end
 end
--- END l10nstally
--- BEGIN l10nbrdally
--- brdally (2.1.7): the Route's stops for the Alliance's Blackrock Depths
--- quests (Data/QuestUpdates.lua). The things' names as the game has them
--- (FDJ.OBJECTIVE_NAMES; Italian keeps the English names, as there); the
--- towers as Set Them Ablaze!'s objectives name them, the zones and the
--- Torch of Retribution as Wowhead Forever has them (Italian: Wowhead's
--- Italian zone names); the lines in each language.
+
+
+
+
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local THINGS = { "Thaurissan Relic", "Nagmara's Filled Vial", "Giant Silver Vein" }
@@ -10815,7 +10843,7 @@ do
             "Uccidi i giganti qui intorno", "Mate os gigantes por aqui", "Убивайте великанов здесь", "이 근처의 거인을 처치하세요",
             "在这附近击杀巨人", "在這附近擊殺巨人" },
     }
-    -- the things: FDJ.OBJECTIVE_NAMES, in FDJ.OBJECTIVE_NAME_LOCALES' order
+
     local order = {}
     for i, lang in ipairs(FDJ.OBJECTIVE_NAME_LOCALES or {}) do order[lang] = i end
     for _, thing in ipairs(THINGS) do
@@ -10837,16 +10865,16 @@ do
         end
     end
 end
--- END l10nbrdally
 
--- BEGIN l10ntofstart
--- tofstart (2.1.7): Velarok Windblade's six steps at the start of A Taste of
--- Flame's chain (Data/QuestUpdates.lua). Names and objectives: Wowhead
--- Forever (German, French, Spanish, Russian 3441); the others: the game's
--- own texts with Velarok's name as Forever has it (his family name is the
--- same in every language Wowhead shows; Korean and Chinese: the family name
--- only, as Forever's spelling of "Velarok" there is not known). Italian
--- keeps the English texts, as Wowhead's Italian pages do.
+
+
+
+
+
+
+
+
+
 do
     local Q = {
         deDE = {
@@ -10989,11 +11017,11 @@ do
         end
     end
 end
--- END l10ntofstart
 
--- BEGIN l10ncapitalpill
--- capitalpill (2.1.7): Ever After's reputation box, the capitals of the
--- faction the quest list is showing (Core/Journal.lua).
+
+
+
+
 do
     local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
     local TEXT = {
@@ -11012,12 +11040,12 @@ do
         end
     end
 end
--- END l10ncapitalpill
 
--- BEGIN l10ntomestart
--- tomestart (2.1.7): the Paladin chain's first two steps (1649, 1650). Names
--- and 1650's objective: the game's quest texts; 1649's objective is 1652's
--- (the same sentence); the book's and the line's words in each language.
+
+
+
+
+
 do
     local FIND = {
         deDE = "Sucht Daphne Stilwell in Westfall.", frFR = "Trouver Daphne Stilwell dans la marche de l'Ouest.",
@@ -11054,11 +11082,11 @@ do
         end
     end
 end
--- END l10ntomestart
 
--- BEGIN citydistrict
--- The parts of the capital cities the arrow names inside them (Data/ArrowNpcIds.lua,
--- FDJ.CITY_DISTRICTS), as the game calls them in each language.
+
+
+
+
 FDJ.CITY_DISTRICT_NAMES = {
     ["Magic Quarter"] = {
         deDE = "Magieviertel",
@@ -11379,7 +11407,7 @@ FDJ.CITY_DISTRICT_NAMES = {
         zhCN = "长者高地",
         zhTW = "長者高地",
     },
-    -- ucquarter (2.1.6): Undercity's other two quarters, for the arrow (in a quarter: down in the city)
+
     ["War Quarter"] = {
         deDE = "Kriegsviertel",
         frFR = "Quartier de la Guerre",
@@ -11425,4 +11453,145 @@ FDJ.CITY_DISTRICT_NAMES = {
         zhTW = "工匠區",
     },
 }
--- END citydistrict
+
+
+
+
+
+
+do
+    local LINES = {
+        deDE = { "Eure Gruppe braucht 12 Relic Coffer Keys, um alle Relic-Coffer-Türen im Gewölbe zu öffnen. Sobald alle offen sind, erscheint Watchman Doomgrip: Er lässt den Schlüssel für diese Quest fallen.",
+                 "Droppt bei den Dunkeleisenzwergen in den Schwarzfelstiefen, oder im Auktionshaus kaufen." },
+        frFR = { "Votre groupe a besoin de 12 Relic Coffer Keys pour ouvrir toutes les portes des Relic Coffers de la chambre forte. Une fois toutes ouvertes, Watchman Doomgrip apparaît : il laisse tomber la clé de cette quête.",
+                 "Sur les nains Sombrefer dans les Profondeurs de Rochenoire, ou à acheter à l'hôtel des ventes." },
+        esES = { "Tu grupo necesita 12 Relic Coffer Keys para abrir todas las puertas de los Relic Coffers de la cámara. Cuando estén todas abiertas, aparece Watchman Doomgrip: suelta la llave de esta misión.",
+                 "Lo sueltan los enanos Hierro Negro en las Profundidades de Roca Negra, o cómpralo en la casa de subastas." },
+        itIT = { "Il tuo gruppo ha bisogno di 12 Relic Coffer Key per aprire tutte le porte dei Relic Coffer nella camera blindata. Quando sono tutte aperte, compare Watchman Doomgrip: lascia cadere la chiave per questa missione.",
+                 "Lo rilasciano i nani Ferroscuro nelle Profondità di Roccianera, oppure compralo alla casa d'aste." },
+        ptBR = { "Seu grupo precisa de 12 Relic Coffer Keys para abrir todas as portas dos Relic Coffers do cofre. Quando todas estiverem abertas, Watchman Doomgrip aparece: ele deixa cair a chave desta missão.",
+                 "Cai dos anões Ferro Negro no Abismo Rocha Negra, ou compre na casa de leilões." },
+        ruRU = { "Вашей группе нужно 12 ключей Relic Coffer Key, чтобы открыть все двери Relic Coffer в хранилище. Когда все будут открыты, появится Watchman Doomgrip: с него падает ключ для этого задания.",
+                 "Падает с дворфов Черного Железа в Глубинах Черной горы; также можно купить на аукционе." },
+        koKR = { "금고의 Relic Coffer 문을 모두 열려면 파티에 Relic Coffer Key 12개가 필요합니다. 모두 열면 Watchman Doomgrip이 나타나며, 이 퀘스트에 필요한 열쇠를 떨어뜨립니다.",
+                 "검은바위 나락의 검은무쇠 드워프에게서 떨어지며, 경매장에서 살 수도 있습니다." },
+        zhCN = { "你的队伍需要12把Relic Coffer Key才能打开宝库里所有的Relic Coffer门。全部打开后，Watchman Doomgrip会出现，他会掉落这个任务需要的钥匙。",
+                 "由黑石深渊里的黑铁矮人掉落，也可以在拍卖行购买。" },
+        zhTW = { "你的隊伍需要12把Relic Coffer Key才能打開寶庫裡所有的Relic Coffer門。全部打開後，Watchman Doomgrip會出現，他會掉落這個任務需要的鑰匙。",
+                 "由黑石深淵裡的黑鐵矮人掉落，也可以在拍賣場購買。" },
+    }
+    LINES.esMX = LINES.esES
+    for lang, text in pairs(LINES) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.quests = content.quests or {}
+            content.quests[4123] = content.quests[4123] or {}
+            if content.quests[4123].warning == nil then content.quests[4123].warning = text[1] end
+            content.places = content.places or {}
+            if content.places["Drops from the Dark Iron dwarves inside Blackrock Depths, or buy it from the auction house."] == nil then
+                content.places["Drops from the Dark Iron dwarves inside Blackrock Depths, or buy it from the auction house."] = text[2]
+            end
+        end
+    end
+end
+
+
+
+
+
+
+do
+    local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
+    local TEXT = {
+        ["Legashi camp \226\128\148 Azshara"] = { "Lager der Legashi \226\128\148 Azshara", "Camp des Legashi \226\128\148 Azshara",
+            "Campamento Legashi \226\128\148 Azshara", "Accampamento Legashi \226\128\148 Azshara", "Acampamento Legashi \226\128\148 Azshara",
+            "Лагерь Legashi \226\128\148 Азшара", "Legashi 야영지 \226\128\148 아즈샤라", "Legashi营地 \226\128\148 艾萨拉", "Legashi營地 \226\128\148 艾薩拉" },
+        ["Master Feardred \226\128\148 Azshara"] = { "Master Feardred \226\128\148 Azshara", "Master Feardred \226\128\148 Azshara",
+            "Master Feardred \226\128\148 Azshara", "Master Feardred \226\128\148 Azshara", "Master Feardred \226\128\148 Azshara",
+            "Master Feardred \226\128\148 Азшара", "Master Feardred \226\128\148 아즈샤라", "Master Feardred \226\128\148 艾萨拉", "Master Feardred \226\128\148 艾薩拉" },
+        ["Legashi Stronghold \226\128\148 Azshara"] = { "Legashi Stronghold \226\128\148 Azshara", "Legashi Stronghold \226\128\148 Azshara",
+            "Legashi Stronghold \226\128\148 Azshara", "Legashi Stronghold \226\128\148 Azshara", "Legashi Stronghold \226\128\148 Azshara",
+            "Legashi Stronghold \226\128\148 Азшара", "Legashi Stronghold \226\128\148 아즈샤라", "Legashi Stronghold \226\128\148 艾萨拉", "Legashi Stronghold \226\128\148 艾薩拉" },
+        ["Graal \226\128\148 Legashi Stronghold, Azshara"] = { "Graal \226\128\148 Legashi Stronghold, Azshara", "Graal \226\128\148 Legashi Stronghold, Azshara",
+            "Graal \226\128\148 Legashi Stronghold, Azshara", "Graal \226\128\148 Legashi Stronghold, Azshara", "Graal \226\128\148 Legashi Stronghold, Azshara",
+            "Graal \226\128\148 Legashi Stronghold, Азшара", "Graal \226\128\148 Legashi Stronghold, 아즈샤라", "Graal \226\128\148 Legashi Stronghold，艾萨拉", "Graal \226\128\148 Legashi Stronghold，艾薩拉" },
+        ["Chieftain Bloodmaw \226\128\148 Felwood"] = { "Chieftain Bloodmaw \226\128\148 Teufelswald", "Chieftain Bloodmaw \226\128\148 Gangrebois",
+            "Chieftain Bloodmaw \226\128\148 Frondavil", "Chieftain Bloodmaw \226\128\148 Boscovile", "Chieftain Bloodmaw \226\128\148 Selva Maleva",
+            "Chieftain Bloodmaw \226\128\148 Оскверненный лес", "Chieftain Bloodmaw \226\128\148 악령의 숲", "Chieftain Bloodmaw \226\128\148 费伍德森林", "Chieftain Bloodmaw \226\128\148 費伍德森林" },
+        ["Prince Halanox \226\128\148 Legashi Stronghold, Azshara"] = { "Prince Halanox \226\128\148 Legashi Stronghold, Azshara",
+            "Prince Halanox \226\128\148 Legashi Stronghold, Azshara", "Prince Halanox \226\128\148 Legashi Stronghold, Azshara",
+            "Prince Halanox \226\128\148 Legashi Stronghold, Azshara", "Prince Halanox \226\128\148 Legashi Stronghold, Azshara",
+            "Prince Halanox \226\128\148 Legashi Stronghold, Азшара", "Prince Halanox \226\128\148 Legashi Stronghold, 아즈샤라",
+            "Prince Halanox \226\128\148 Legashi Stronghold，艾萨拉", "Prince Halanox \226\128\148 Legashi Stronghold，艾薩拉" },
+        ["South of the Legashi Stronghold: the Legashi Satyrs, Rogues and Hellcallers"] = {
+            "Südlich von Legashi Stronghold: die Legashi Satyrs, Rogues und Hellcallers",
+            "Au sud de Legashi Stronghold : les Legashi Satyrs, Rogues et Hellcallers",
+            "Al sur de Legashi Stronghold: los Legashi Satyrs, Rogues y Hellcallers",
+            "A sud di Legashi Stronghold: i Legashi Satyrs, Rogues e Hellcallers",
+            "Ao sul de Legashi Stronghold: os Legashi Satyrs, Rogues e Hellcallers",
+            "К югу от Legashi Stronghold: Legashi Satyrs, Rogues и Hellcallers",
+            "Legashi Stronghold 남쪽: Legashi Satyr, Rogue, Hellcaller",
+            "Legashi Stronghold南边：Legashi Satyr、Rogue和Hellcaller",
+            "Legashi Stronghold南邊：Legashi Satyr、Rogue和Hellcaller" },
+        ["In the satyrs' camp south of the Legashi Stronghold: kill him for his amulet"] = {
+            "Im Satyrlager südlich von Legashi Stronghold: Tötet ihn für sein Amulett",
+            "Dans le camp des satyres au sud de Legashi Stronghold : tuez-le pour son amulette",
+            "En el campamento de los sátiros al sur de Legashi Stronghold: mátalo para conseguir su amuleto",
+            "Nell'accampamento dei satiri a sud di Legashi Stronghold: uccidilo per il suo amuleto",
+            "No acampamento dos sátiros ao sul de Legashi Stronghold: mate-o para pegar o amuleto",
+            "В лагере сатиров к югу от Legashi Stronghold: убейте его ради амулета",
+            "Legashi Stronghold 남쪽의 사티로스 야영지: 처치하고 목걸이를 얻으세요",
+            "在Legashi Stronghold南边的萨特营地：杀死他获得护符",
+            "在Legashi Stronghold南邊的薩特營地：殺死他獲得護符" },
+        ["The Legashi Hellraisers, Soulstealers and Blackguards in the stronghold"] = {
+            "Die Legashi Hellraisers, Soulstealers und Blackguards in der Festung",
+            "Les Legashi Hellraisers, Soulstealers et Blackguards dans la forteresse",
+            "Los Legashi Hellraisers, Soulstealers y Blackguards en la fortaleza",
+            "I Legashi Hellraisers, Soulstealers e Blackguards nella fortezza",
+            "Os Legashi Hellraisers, Soulstealers e Blackguards na fortaleza",
+            "Legashi Hellraisers, Soulstealers и Blackguards в крепости",
+            "요새 안의 Legashi Hellraiser, Soulstealer, Blackguard",
+            "要塞中的Legashi Hellraiser、Soulstealer和Blackguard",
+            "要塞中的Legashi Hellraiser、Soulstealer和Blackguard" },
+        ["Escort Graal out of the stronghold: stay close to him"] = {
+            "Begleitet Graal aus der Festung: Bleibt dicht bei ihm",
+            "Escortez Graal hors de la forteresse : restez près de lui",
+            "Escolta a Graal fuera de la fortaleza: quédate cerca de él",
+            "Scorta Graal fuori dalla fortezza: restagli vicino",
+            "Escolte Graal para fora da fortaleza: fique perto dele",
+            "Сопроводите Graal из крепости: держитесь рядом с ним",
+            "Graal을 요새 밖으로 호위하세요: 가까이 붙어 있으세요",
+            "护送Graal离开要塞：跟紧他",
+            "護送Graal離開要塞：跟緊他" },
+        ["South of Timbermaw Hold: kill him for Bloodmaw's Basher"] = {
+            "Südlich der Holzschlundfeste: Tötet ihn für Bloodmaw's Basher",
+            "Au sud du repaire des Grumegueules : tuez-le pour Bloodmaw's Basher",
+            "Al sur del Bastión Fauces de Madera: mátalo para conseguir Bloodmaw's Basher",
+            "A sud del Rifugio dei Mordilegno: uccidilo per Bloodmaw's Basher",
+            "Ao sul do Bastião Presamadeira: mate-o para pegar Bloodmaw's Basher",
+            "К югу от крепости Древобрюхов: убейте его ради Bloodmaw's Basher",
+            "나무구렁 요새 남쪽: 처치하고 Bloodmaw's Basher를 얻으세요",
+            "木喉要塞南边：杀死他获得Bloodmaw's Basher",
+            "木喉要塞南邊：殺死他獲得Bloodmaw's Basher" },
+        ["Plant the Timbermaw War Banner in his summoning circle (use it from your bags), then kill him"] = {
+            "Pflanzt das Timbermaw War Banner in seinen Beschwörungskreis (aus den Taschen benutzen) und tötet ihn",
+            "Plantez la Timbermaw War Banner dans son cercle d'invocation (utilisez-la depuis vos sacs), puis tuez-le",
+            "Planta el Timbermaw War Banner en su círculo de invocación (úsalo desde tus bolsas) y luego mátalo",
+            "Pianta il Timbermaw War Banner nel suo cerchio di evocazione (usalo dalle borse), poi uccidilo",
+            "Finque o Timbermaw War Banner no círculo de invocação dele (use-o pelas bolsas) e depois mate-o",
+            "Установите Timbermaw War Banner в его круге призыва (используйте из сумки), затем убейте его",
+            "그의 소환진에 Timbermaw War Banner를 세우고(가방에서 사용) 처치하세요",
+            "在他的召唤法阵中插上Timbermaw War Banner（从背包中使用），然后杀死他",
+            "在他的召喚法陣中插上Timbermaw War Banner（從背包中使用），然後殺死他" },
+    }
+    FDJ.ContentLocales = FDJ.ContentLocales or {}
+    for i, lang in ipairs(LANGS) do
+        local content = FDJ.ContentLocales[lang] or {}
+        FDJ.ContentLocales[lang] = content
+        content.places = content.places or {}
+        for english, list in pairs(TEXT) do
+            if content.places[english] == nil then content.places[english] = list[i] end
+        end
+    end
+end
+

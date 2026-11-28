@@ -1,6 +1,6 @@
--- Bosses that have to be summoned with an item (boss.summonItem = itemID).
--- The boss page shows "Summon with: [item]" under the boss name, in the
--- quest list's font; hovering it shows the item and how to get it.
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -9,16 +9,16 @@ local LABEL = {
     esES = "Invocar con:", itIT = "Evoca con:", ptBR = "Invocar com:",
     ruRU = "Призвать с помощью:", koKR = "소환 아이템:", zhCN = "召唤物品：", zhTW = "召喚物品：",
 }
--- Bosses that come during a quest (boss.spawnQuest = { quest = id, page =
--- dungeon }): "Spawns at the end of ? <quest>", the quest clickable.
+
+
 local SPAWN_LABEL = {
     enUS = "Spawns at the end of", deDE = "Erscheint am Ende von", frFR = "Apparaît à la fin de",
     esES = "Aparece al final de", itIT = "Compare alla fine di", ptBR = "Aparece no fim de",
     ruRU = "Появляется в конце задания", koKR = "등장 시점: 퀘스트 끝", zhCN = "出现于任务结尾：", zhTW = "出現於任務結尾：",
 }
 local QUEST_ICON = "Interface\\GossipFrame\\ActiveQuestIcon"
--- An item whose quest chain the journal has (boss.summonChain): the extra
--- line under its tooltip.
+
+
 local CLICK_QUEST = {
     enUS = "Click to show quest", deDE = "Klicken, um die Quest anzuzeigen", frFR = "Cliquez pour afficher la quête",
     esES = "Haz clic para ver la misión", itIT = "Clicca per mostrare la missione", ptBR = "Clique para ver a missão",
@@ -30,9 +30,9 @@ local HOWTO_TITLE = {
     ruRU = "Как получить", koKR = "획득 방법", zhCN = "获取方法", zhTW = "取得方法",
 }
 
--- How to get each summoning item, per language.
+
 local HOWTO = {
-    [275989] = { -- Tome of Dalaran
+    [275989] = {
         enUS = {
             "1. Loot the Black Tome from the table behind Archmage Arugal at the end of Shadowfang Keep.",
             "2. Use the Black Tome next to the Ambermill Leyline Focus (the floating blue crystal in the Ambermill town hall, Silverpine Forest 63.4, 64.3). It turns into the Tome of Dalaran.",
@@ -116,8 +116,8 @@ end
 
 local button
 
--- The quest list's look: QuestFont, the font of a quest's name in the list
--- (and of its "Available from Level" line), in the dungeon theme's colours.
+
+
 local function QuestListStyle(fs, color)
     local font = _G.ForeverDJ_QuestFont or _G.ForeverDJ_GameFontNormal
     if font and fs.SetFontObject then fs:SetFontObject(font) end
@@ -126,11 +126,11 @@ local function QuestListStyle(fs, color)
     end
 end
 
--- The lines under the item tooltip. An item the client has not cached yet
--- (the Tome of Dalaran on the first hover) shows "Retrieving item
--- information" and is rebuilt once its data arrives, which wiped the lines
--- added after SetHyperlink. They are now put back every time the tooltip
--- is built while the summon button owns it.
+
+
+
+
+
 local function Marker(self)
     if HOWTO[self.itemID] then return Pick(HOWTO_TITLE) end
     if self.chain then return Pick(CLICK_QUEST) end
@@ -196,7 +196,7 @@ local function InstallHooks()
     if not viaProcessor and GameTooltip.HookScript then
         pcall(GameTooltip.HookScript, GameTooltip, "OnTooltipSetItem", function(tooltip) pcall(OnItemTooltip, tooltip) end)
     end
-    -- And once the item's data has arrived, show the whole tooltip again.
+
     local watcher = CreateFrame("Frame")
     for _, event in ipairs({ "GET_ITEM_INFO_RECEIVED", "ITEM_DATA_LOAD_RESULT" }) do
         pcall(watcher.RegisterEvent, watcher, event)
@@ -220,7 +220,7 @@ local function Create(frame)
     InstallHooks()
     local b = CreateFrame("Button", nil, parent)
     b:SetHeight(18)
-    -- "Summon with:" and the item name in the quest list's font.
+
     b.label = b:CreateFontString(nil, "OVERLAY")
     QuestListStyle(b.label)
     b.label:SetPoint("LEFT", b, "LEFT", 0, 0)
@@ -243,7 +243,7 @@ local function Create(frame)
         local _, link = ItemData(self.itemID)
         local ok = pcall(GameTooltip.SetHyperlink, GameTooltip, link or ("item:" .. self.itemID))
         if not ok then GameTooltip:AddLine(ItemData(self.itemID), 0, 0.44, 0.87) end
-        -- The item hook may already have added them (HasLine skips them then).
+
         AddSummonLines(GameTooltip, self)
         GameTooltip:Show()
     end)
@@ -254,14 +254,14 @@ local function Create(frame)
             if FDJ.OpenQuestPage then FDJ.OpenQuestPage(self.questPage, self.questID) end
             return
         end
-        -- Shift-click links the item in chat, like any item button.
+
         if IsModifiedClick and IsModifiedClick("CHATLINK") and self.itemID then
             local _, link = ItemData(self.itemID)
             if link and ChatEdit_InsertLink then ChatEdit_InsertLink(link) end
             return
         end
-        -- The item's quest chain (the Mallet of Zul'Farrak), at the step not
-        -- done yet.
+
+
         local chain = self.chain
         if chain and FDJ.OpenQuestChain then
             local stepID
@@ -319,8 +319,8 @@ function FDJ.UpdateBossSummon(frame, boss, theme)
     button.label:SetText(Pick(LABEL))
     button.icon:SetTexture(icon)
     button.name:SetText(name)
-    -- Like a quest in the list: "Summon with:" in the colour of its
-    -- "Available from Level" line, the item in the selected quest's gold.
+
+
     theme = type(theme) == "table" and theme or {}
     QuestListStyle(button.label, theme.muted or { 0.80, 0.72, 0.56 })
     QuestListStyle(button.name, theme.title or { 1.00, 0.82, 0.00 })

@@ -3,26 +3,26 @@ FDJ = FDJ or _G.ForeverDungeonJournal_NS
 local ALBA_FAIRMOON_LOCATION = FDJ.Constants.ALBA_FAIRMOON_LOCATION
 
 FDJ.QUEST_PREREQ_CHAINS = {
-    -- These lists are intentionally "required to unlock" lists, not merely
-    -- Wowhead storyline/series lists. Optional breadcrumbs are excluded.
 
-    -- Hall of Thanes.
-    -- Underground Map is the actual prerequisite for Old Ironforge Incursion.
+
+
+
+
     [96393] = {
         { id = 96391, name = "Underground Map" },
     },
 
-    -- Wailing Caverns.
-    -- Smart Drinks is only offered after completing Raptor Horns.
+
+
     [1491] = {
         { id = 865, name = "Raptor Horns" },
     },
 
-    -- Required path to unlock Leaders of the Fang:
-    -- Forgotten Pools -> Stagnant Oasis -> Altered Beings ->
-    -- Hamuul Runetotem -> Nara Wildmane -> Leaders of the Fang.
-    -- "The Barrens Oases" is an optional breadcrumb/alternate entry into the
-    -- oasis chain, so it is deliberately not shown as required.
+
+
+
+
+
     [914] = {
         { id = 870, name = "The Forgotten Pools" },
         { id = 877, name = "The Stagnant Oasis" },
@@ -31,10 +31,10 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 1490, name = "Nara Wildmane" },
     },
 
-    -- Deadmines.
-    -- Red Silk Bandanas has two gates: Red Leather Bandanas and progression
-    -- through the Defias Brotherhood chain far enough to unlock the final
-    -- VanCleef stage.
+
+
+
+
     [214] = {
         { id = 65, name = "The Defias Brotherhood" },
         { id = 132, name = "The Defias Brotherhood" },
@@ -44,10 +44,10 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 155, name = "The Defias Brotherhood" },
     },
 
-    -- Speak with Shoni is a breadcrumb into Underground Assault, not a hard
-    -- prerequisite; Shoni offers Underground Assault directly.
 
-    -- Final VanCleef quest: all earlier Defias Brotherhood steps are required.
+
+
+
     [166] = {
         { id = 65, name = "The Defias Brotherhood" },
         { id = 132, name = "The Defias Brotherhood" },
@@ -57,8 +57,8 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 155, name = "The Defias Brotherhood" },
     },
 
-    -- Forever's Toxic Soil storyline is sequential; every prior step below is
-    -- required before the dungeon step Destruction in Deadmines (92753).
+
+
     [92753] = {
         { id = 92742, name = "Testing the Wells" },
         { id = 92744, name = "Murloc Gills" },
@@ -73,20 +73,20 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 92819, name = "Destruction in Deadmines" },
     },
 
-    -- The Stockade.
-    -- The Fury Runs Deep is only offered after completing The Dark Iron War.
+
+
     [378] = {
         { id = 303, name = "The Dark Iron War" },
     },
 
-    -- The Stockade Riots is the dungeon step of the chain that begins with
-    -- The Unsent Letter from Edwin VanCleef, followed by Bazil Thredd.
+
+
     [391] = {
         { id = 373, name = "The Unsent Letter" },
         { id = 389, name = "Bazil Thredd" },
     },
 
-    -- Ragefire Chasm.
+
     [5728] = {
         { id = 5726, name = "Hidden Enemies" },
         { id = 5727, name = "Hidden Enemies" },
@@ -94,35 +94,35 @@ FDJ.QUEST_PREREQ_CHAINS = {
 
 
 
-    -- Gnomeregan ring chain. The faction-specific upgrade quest is the
-    -- journal entry; Grime-Encrusted Ring and Return of the Ring are the
-    -- required steps that unlock it.
+
+
+
     [2948] = {
         { id = 2945, name = "Grime-Encrusted Ring" },
         { id = 2947, name = "Return of the Ring" },
     },
     [2950] = {
-        -- gnomerhorde (2.0.9): for the route: the ring drops inside, and it
-        -- is cleaned at the Sparklematic inside, so both come after the run
+
+
         { id = 2945, name = "Grime-Encrusted Ring", startsInDungeon = true },
         { id = 2949, name = "Return of the Ring", needsDungeon = true },
     },
 
-    -- Gnomeregan. Optional breadcrumb quests are intentionally excluded.
-    -- Tinkmaster Overspark -> Save Techbot's Brain!, The Day After -> Gnogaine,
-    -- and Castpipe's Task -> Data Rescue are storyline/breadcrumb links, not
-    -- hard requirements in Forever. Gnogaine itself IS required before
-    -- The Only Cure is More Green Glow.
+
+
+
+
+
     [2962] = {
         { id = 2926, name = "Gnogaine" },
     },
-    -- rigwarsfix (2.0.9, M 16 Nov 2026): fixed in Forever, Rig Wars no longer
-    -- has to be in the log for Chief Engineer Scooty; it is its own quest only.
+
+
     [2843] = {
         { id = 2842, name = "Chief Engineer Scooty" },
     },
 
-    -- Razorfen Kraul / Scarlet Monastery: Graveyard.
+
     [1101] = {
         { id = 1100, name = "Lonebrow's Journal" },
     },
@@ -130,17 +130,17 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 1109, name = "Going, Going, Guano!" },
     },
 
-    -- Blackfathom Deeps.
-    -- Researching the Corruption intentionally has NO prerequisite entry here.
-    -- The Corruption Abroad is an optional breadcrumb; Gershala offers it directly.
-    -- The Essence of Aku'Mai intentionally has NO prerequisite entry here.
-    -- Trouble in the Deeps is a breadcrumb and is not required to accept it.
 
-    -- Gnomeregan: Data Rescue needs the Prismatic Punch Card, built up card
-    -- by card through four Matrix Punchograph terminals. These are item
-    -- steps (placeholder IDs), shown so players know the whole route.
-    -- NOT a prerequisite: Data Rescue is picked up straight away. These
-    -- are shown as a How to complete guide (QUEST_GUIDE_CHAINS below).
+
+
+
+
+
+
+
+
+
+
     [2930] = {
         { id = 2930001, name = "White Punch Card", itemStep = true },
         { id = 2930002, name = "Yellow Punch Card (Punchograph 3005-A)", itemStep = true },
@@ -153,39 +153,39 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 6564, name = "Allegiance to the Old Gods" },
     },
 
-    -- Excavation Site: Wetlands (Alliance): Horrors in the Highland only
-    -- becomes available after completing Rethiel the Greenwarden's Wetlands
-    -- chain. 2.0.38: The Greenwarden (463, First Mate Fitzsimmons in Menethil
-    -- Harbor) is only a breadcrumb to Rethiel and no longer a required step:
-    -- the chain starts with Tramping Paws at Rethiel himself.
+
+
+
+
+
     [95646] = {
         { id = 276, name = "Tramping Paws" },
         { id = 277, name = "Fire Taboo" },
         { id = 275, name = "Blisters on The Land" },
     },
 
-    -- Excavation Site: Wetlands (Alliance): Highland Hides requires
-    -- Young Crocolisk Skins. Daily Delivery is only a breadcrumb in Forever
-    -- and is not required for Highland Hides.
+
+
+
     [98815] = {
         { id = 484, name = "Young Crocolisk Skins" },
     },
 
-    -- Excavation Site: Wetlands (Horde): Dragonmaw Rumors is the
-    -- required lead-in to Open the Maw.
+
+
     [95682] = {
         { id = 95663, name = "Dragonmaw Rumors" },
     },
 
-    -- Excavation Site: Wetlands (Alliance): Heartwoven follows
-    -- Lost in the Thicket Things.
+
+
     [95809] = {
         { id = 95647, name = "Lost in the Thicket Things" },
     },
 
-    -- Dungeons added in 1.6.5.
 
-    -- brotherinneed (2.0.8): Scarlet Monastery: Cathedral, Alliance Paladins.
+
+
     [79946] = {
         { id = 78088, name = "A Strange Artifact" },
         { id = 78089, name = "Advice From Stormwind" },
@@ -347,10 +347,10 @@ FDJ.QUEST_PREREQ_CHAINS = {
     [7046] = {
         { id = 7044, name = "Legends of Maraudon" },
     },
-    -- Forever Maraudon: Word of the Woods (93594) is the direct prerequisite
-    -- for Rot and Regret (93404), as listed in the Forever quest series.
-    -- Hub-unlock prerequisites are not yet independently verified; use the
-    -- temporary map placeholder on the Word of the Woods chain step.
+
+
+
+
     [93404] = {
         { id = 93594, name = "Word of the Woods", level = 43, requires = 35 },
     },
@@ -555,10 +555,10 @@ FDJ.QUEST_PREREQ_CHAINS = {
         { id = 7644, name = "Blessed Arcanite Barding" },
         { id = 7646, name = "The Divination Scryer" },
     },
-    [8258] = { -- darkreaver (2.1.4): Forever's The Darkreaver Menace (was 7668)
+    [8258] = {
         { id = 7667, name = "Material Assistance" },
     },
-    [97169] = { -- darkreaverally (2.1.4): the Alliance's, from Eldrun Stormbreaker
+    [97169] = {
         { id = 97168, name = "Material Assistance" },
     },
     [5262] = {
@@ -600,17 +600,17 @@ FDJ.QUEST_PREREQ_CHAINS = {
 }
 
 FDJ.QUEST_PREREQ_DETAILS = {
-    -- Maraudon (Forever): temporary, offline-safe first-step page while
-    -- the Shen'dralas quest-hub unlock requirements are being researched.
+
+
     [93594] = {
         level = 43,
         requires = 35,
-        -- Temporary instruction page until the complete hub-unlock chain is verified.
+
         hubPlaceholder = true,
         objective = "Need to unlock |cffffd36bShen'dralas|r quest hub.\nUpdating soon with full details",
-        -- Evenshade's Overlook: documented location of Mordent Evenshade.
-        -- This marks a known Shen'dralas questing landmark, not a verified
-        -- exact pickup NPC for Word of the Woods.
+
+
+
         hubMap = {
             mapID = 2652, x = 0.350, y = 0.466,
             label = "Shen'dralas quest hub - Evenshade's Overlook",
@@ -618,7 +618,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         },
     },
 
-    -- brotherinneed (2.0.8): M's audit, 15 Nov 2026. Places as players give them.
+
     [78088] = { objective = "Loot the Strange Orb on top of the Tower of Althalaxx in Darkshore and bring it to Delgren the Purifier in Ashenvale.",
         pickup = "Strange Orb, top of the Tower of Althalaxx, Darkshore", turnin = "Delgren the Purifier, Maestra's Post, Ashenvale",
         startObject = {"Strange Orb", "Interface\\Icons\\INV_Misc_Orb_05", "On top of the Tower of Althalaxx, Darkshore (about 56.2, 26.4)"},
@@ -655,7 +655,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         pickup = "Orders, looted from the assassin at Aeonas's hut, Wetlands coast", turnin = "Katherine the Pure, Cathedral of Light, Stormwind",
         turninMap = { mapID = 1453, x = 0.485, y = 0.491, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } },
 
-    -- Pre-quests for the dungeons added in 1.6.5.
+
 
     [261] = {
         level = 39, requires = 34,
@@ -663,7 +663,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         pickup = "Brother Anton, Desolace",
         turnin = "Brother Anton, Desolace",
         map = { mapID = 1443, x = 0.664, y = 0.078, label = "Brother Anton — Desolace", targetName = "Brother Anton" },
-        -- stepgoal (2.0.8): where it is done, until it is done
+
         objectiveMap = { mapID = 1443, x = 0.640, y = 0.820, label = "Undead Ravagers — Valley of Bones, Desolace", detail = "Through the arch with the red banners, south of the centaur village with the ponds" },
     },
     [1052] = {
@@ -758,11 +758,11 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [2198] = {
         level = 41, requires = 37,
         objective = "Search for the original creator of the shattered necklace to learn of its potential value.",
-        -- necklaceout (2.1.3, M 21 Nov 2026: "it's not a dungeon chain step. It
-        -- doesn't start inside a dungeon ... The shattered necklace can drop from
-        -- mobs outside as well"): the elites at the Uldaman dig site drop it
-        -- (Wowhead Forever: Stonevault Rockchewer, Cave Hunter, Shadowforge
-        -- Ruffian, Digger, Surveyor; Stonevault Oracle inside; SOURCES.txt).
+
+
+
+
+
         pickup = "Shattered Necklace (drops outside and in Uldaman)",
         turnin = "Talvash del Kissel, Ironforge",
         startItem = {7666, "Shattered Necklace", 2, "Drops from the elite troggs and Shadowforge dwarves outside Uldaman (and from troggs inside)"},
@@ -1496,9 +1496,12 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [6403] = {
         level = 60, requires = 50,
         objective = "Follow Reginald Windsor through Stormwind. Protect him from harm!",
-        pickup = "Reginald Windsor, Elwynn Forest",
+
+
+
+        pickup = "Squire Rowe, Stormwind",
         turnin = "Highlord Bolvar Fordragon, Stormwind",
-        map = { mapID = 1429, x = 0.320, y = 0.492, label = "Reginald Windsor — Elwynn Forest", targetName = "Reginald Windsor" },
+        map = { mapID = 1453, x = 0.742, y = 0.903, label = "Squire Rowe — Stormwind's gates", targetName = "Squire Rowe" },
     },
     [6501] = {
         level = 60, requires = 50,
@@ -1811,7 +1814,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
         turnin = "Sagorne Creststrider, Orgrimmar",
         map = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
     },
-    [97168] = { -- darkreaverally (2.1.4)
+    [97168] = {
         level = 60, requires = 58,
         objective = "If you are interested in helping Eldrun Stormbreaker in Ironforge, bring him an Azerothian Diamond and a Pristine Black Diamond.",
         pickup = "Eldrun Stormbreaker, Ironforge",
@@ -1976,7 +1979,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [95647] = { level = 31, requires = 24, objective = "Find Ardin Grassman in the Excavation Sites. Learn what happened to Ardin Grassman.", pickup = "Caitlin Grassman, Menethil Harbor, Wetlands", turnin = "Ardin Grassman, inside Excavation Site: Wetlands", description = "Required before Heartwoven.", map = { mapID = 1437, x = 0.119, y = 0.588, label = "Caitlin Grassman — Menethil Harbor", detail = "Start Lost in the Thicket Things here" } },
 
 
-    -- Gnomeregan ring-chain prerequisite steps.
+
     [2945] = {
         level = 34,
         requires = 28,
@@ -2002,19 +2005,19 @@ FDJ.QUEST_PREREQ_DETAILS = {
         description = "Horde step required before Nogg's Ring Redo.",
     },
 
-    -- Gnomeregan prerequisite steps.
+
     [2926] = { level = 27, requires = 20, objective = "Use the Empty Leaden Collection Phial on a living Irradiated Invader or Irradiated Pillager, then return the full phial to Ozzie Togglevolt.", pickup = "Ozzie Togglevolt, Kharanos, Dun Morogh", turnin = "Ozzie Togglevolt, Kharanos, Dun Morogh", description = "Required before The Only Cure is More Green Glow.", map = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", detail = "Start Gnogaine here" }, requiredItems = { {9284, "Full Leaden Collection Phial", 1, "Use the Vial on an Irradiated Invader just outside the instance", map = { mapID = 1426, x = 0.243, y = 0.398, label = "Irradiated Invaders — outside Gnomeregan", detail = "Use the Vial on an Irradiated Invader just outside the instance" }} } },
     [2841] = { level = 35, requires = 25, objective = "Retrieve the Rig Blueprints and Thermaplugg's Safe Combination and bring them to Nogg in Orgrimmar.", pickup = "Nogg, Valley of Honor, Orgrimmar", turnin = "Nogg, Orgrimmar", map = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", detail = "Accept Rig Wars here" } },
     [2842] = { level = 35, requires = 20, objective = "Speak with Scooty in Booty Bay.", pickup = "Sovik, Valley of Honor, Orgrimmar", turnin = "Scooty, Booty Bay, Stranglethorn Vale", description = "Required before Gnomer-gooooone!", map = { mapID = 1454, x = 0.756, y = 0.252, label = "Sovik — Valley of Honor, Orgrimmar", detail = "Start Chief Engineer Scooty here" } },
 
-    -- Razorfen Kraul / Scarlet Monastery prerequisite steps.
+
     [1100] = { level = 27, requires = 23, objective = "Read Henrig Lonebrow's Journal and take it to Falfindel Waywarder in Thalanaar.", pickup = "Henrig Lonebrow's Journal beside his corpse at the bottom of the Great Lift", turnin = "Falfindel Waywarder, Thalanaar, Feralas", description = "Required before The Crone of the Kraul.", map = { mapID = 1441, x = 0.307, y = 0.244, label = "Henrig Lonebrow — bottom of the Great Lift", detail = "Loot Lonebrow's Journal here",
-        -- spawns (2.0.36): the journal has two spots (Wowhead Forever comments,
-        -- Nov 2026): by his body at the lift's foot, and by a second body about
-        -- 110 yards down the road (31.3, 28.1). The arrow tries the nearest first.
+
+
+
         spawns = { { x = 0.307, y = 0.244 }, { x = 0.313, y = 0.281 } } },
-        -- The book gives Henrig Lonebrow's Journal (item 5791), which starts the
-        -- quest: in the bags, the route goes on (and says to use it).
+
+
         lootItem = { 5791, "Henrig Lonebrow's Journal" } },
     [1109] = { level = 33, requires = 30, objective = "Bring 1 pile of Kraul Guano to Master Apothecary Faranell in the Undercity.", pickup = "Master Apothecary Faranell, Apothecarium, Undercity", turnin = "Master Apothecary Faranell, Apothecarium, Undercity", description = "Required before Hearts of Zeal.", map = { mapID = 1458, x = 0.480, y = 0.690, label = "Master Apothecary Faranell — Apothecarium", detail = "Start Going, Going, Guano! here" } },
     [96391] = { level = 15, requires = 9, objective = "Deliver the Dark Iron Map to Earthseer Farsen in Dun Morogh.", pickup = "Dark Iron Map, dropped by Dark Iron Spies at Ironband's Compound, Dun Morogh", turnin = "Earthseer Farsen, Dun Morogh", description = "The Dark Iron Map starts this quest and leads directly into Old Ironforge Incursion.", map = { mapID = 1426, x = 0.770, y = 0.600, label = "Dark Iron Spies — Ironband's Compound", detail = "Farm Dark Iron Spies here for the Dark Iron Map" } },
@@ -2049,7 +2052,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [92753] = { level = 18, requires = 9, objective = "Find the forge in the Deadmines and plant the Extra-Destructive Explosives beside it.", pickup = "Extra-Destructive Explosives quest-start item", startItem = {254553, "Extra-Destructive Explosives", 1, "Supplied by Sprite Jumpsprocket during Explosive Consultation; plant it at the Deadmines forge"}, turnin = ALBA_FAIRMOON_LOCATION, description = "Plant the explosives at the forge, then return to Alba Fairmoon." },
     [92819] = { level = 18, requires = 9, objective = "Use the detonator.", pickup = ALBA_FAIRMOON_LOCATION, turnin = ALBA_FAIRMOON_LOCATION, description = "Final step of the Toxic Soil chain.", map = { mapID = 1436, x = 0.530, y = 0.533, label = "Alba Fairmoon — Sentinel Hill inn", detail = "Alba Fairmoon is inside the Sentinel Hill inn" }},
 
-    -- The Stockade prerequisite chains.
+
     [303] = { level = 30, requires = 25, objective = "Kill 10 Dark Iron Dwarves, 5 Dark Iron Tunnelers, 5 Dark Iron Saboteurs and 5 Dark Iron Demolitionists at Dun Modr.", pickup = "Motley Garmason, Dun Modr, Wetlands", turnin = "Motley Garmason, Dun Modr, Wetlands", description = "Complete The Dark Iron War to unlock The Fury Runs Deep.", map = { mapID = 1437, x = 0.496, y = 0.182, label = "Motley Garmason — Dun Modr", detail = "Start The Dark Iron War here" } },
     [373] = { level = 22, requires = 16, objective = "Take An Unsent Letter from Edwin VanCleef to Baros Alexston in Stormwind.", pickup = "Use An Unsent Letter, looted from Edwin VanCleef in The Deadmines", turnin = "Baros Alexston, City Hall, Cathedral Square, Stormwind", description = "First required step leading to The Stockade Riots.", startItem = {2874, "An Unsent Letter", 1, "Looted from Edwin VanCleef"} },
     [389] = { level = 22, requires = 16, objective = "Speak with Warden Thelwater outside The Stockade.", pickup = "Baros Alexston, City Hall, Cathedral Square, Stormwind", turnin = "Warden Thelwater, outside The Stockade, Stormwind", description = "Second required step leading to The Stockade Riots.", map = { mapID = 1453, x = 0.577, y = 0.479, label = "Baros Alexston — Stormwind", detail = "Continue the chain with Bazil Thredd here" } },
@@ -2060,7 +2063,7 @@ FDJ.QUEST_PREREQ_DETAILS = {
     [3765] = { level = 24, requires = 18, objective = "Travel to Gershala Nightwhisper in Auberdine, Darkshore.", pickup = "Argos Nightwhisper, The Park, Stormwind", turnin = "Gershala Nightwhisper, Auberdine, Darkshore", description = "Optional Alliance breadcrumb leading to Researching the Corruption.", map = { mapID = 1453, x = 0.363, y = 0.674, label = "Argos Nightwhisper — The Park", detail = "Argos Nightwhisper is in The Park, beside the moonwell area." } },
     [1198] = { level = 24, requires = 18, objective = "Seek out Argent Guard Thaelrid inside Blackfathom Deeps.", pickup = "Dawnwatcher Shaedlass, Darnassus", turnin = "Argent Guard Thaelrid, inside Blackfathom Deeps", description = "Optional lead-in to the Alliance version of Blackfathom Villainy: hand it in before accepting Blackfathom Villainy, or it can no longer be completed.", map = { mapID = 1457, x = 0.550, y = 0.240, label = "Dawnwatcher Shaedlass — Darnassus", detail = "Start In Search of Thaelrid here" } },
     [6564] = { level = 22, requires = 17, objective = "Bring the Damp Note to Je'neu Sancrea in Ashenvale.", pickup = "Damp Note", startItem = {16790, "Damp Note", 1, "Drops from Blackfathom Tide Priestess in the entrance tunnels leading to Blackfathom Deeps."}, turnin = "Je'neu Sancrea, Zoram'gar Outpost, Ashenvale" },
-    -- Data Rescue punch card steps (item steps, not quests).
+
     [2930001] = { level = 30, requires = 25, objective = "Kill mobs in the outer Gnomeregan area until a White Punch Card drops.", pickup = "Caverndeep Pillagers, Caverndeep Invaders, Irradiated Invaders and Addled Lepers, outside the instance", turnin = "Keep the card for Matrix Punchograph 3005-A", description = "Random drop; you usually get it during your first clear of the outer area.", startItem = {9279, "White Punch Card", 1, "Random drop from mobs outside the Gnomeregan instance"}, map = { mapID = 1426, x = 0.243, y = 0.393, label = "Gnomeregan — outer area", detail = "White Punch Cards drop from the mobs here" } },
     [2930002] = { level = 30, requires = 25, objective = "Use Matrix Punchograph 3005-A with the White Punch Card to get a Yellow Punch Card.", pickup = "Matrix Punchograph 3005-A, Workshop area of the Train Depot, outside the instance", turnin = "You receive a Yellow Punch Card", description = "The only punchographs outside the instance: on the raised platform in the Train Depot and by the Workshop (back door) entrance.", startItem = {9280, "Yellow Punch Card", 1, "From Matrix Punchograph 3005-A"} },
     [2930003] = { level = 30, requires = 25, objective = "Use Matrix Punchograph 3005-B with the Yellow Punch Card to get a Blue Punch Card.", pickup = "Matrix Punchograph 3005-B, The Dormitory (just past the Clean Zone), inside the instance", turnin = "You receive a Blue Punch Card", description = "Inside the instance, in the Dormitory.", startItem = {9282, "Blue Punch Card", 1, "From Matrix Punchograph 3005-B"} },
@@ -2069,24 +2072,24 @@ FDJ.QUEST_PREREQ_DETAILS = {
 
 }
 
--- questguide: chains that are HOW to complete the quest, not quests needed
--- before it. The journal shows them behind a red Guide button (quest list)
--- and a How to complete button (quest page) instead of the chain icon and
--- "Requires a quest chain first.".
-FDJ.QUEST_GUIDE_CHAINS = FDJ.QUEST_GUIDE_CHAINS or {}
-FDJ.QUEST_GUIDE_CHAINS[2930] = true -- Data Rescue: the punch cards
 
--- Pre-quests that also start a dungeon quest elsewhere in the journal reuse
--- that quest's giver location for their Show on Map button.
+
+
+
+FDJ.QUEST_GUIDE_CHAINS = FDJ.QUEST_GUIDE_CHAINS or {}
+FDJ.QUEST_GUIDE_CHAINS[2930] = true
+
+
+
 for id, details in pairs(FDJ.QUEST_PREREQ_DETAILS) do
     if not details.map and FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[id] then
         details.map = FDJ.QUEST_START_MAPS[id]
     end
 end
 
--- Pre-quests are only listed inside their chain: a quest that is a required
--- step of another quest in the same dungeon is hidden from the main quest
--- list (it stays reachable from the chain).
+
+
+
 for _, dungeon in pairs(FDJ.DB or {}) do
     if type(dungeon) == "table" and type(dungeon.quests) == "table" then
         local steps = {}
@@ -2094,7 +2097,7 @@ for _, dungeon in pairs(FDJ.DB or {}) do
             local chain = quest.id and FDJ.QUEST_PREREQ_CHAINS[quest.id]
             if chain then
                 for _, step in ipairs(chain) do
-                    -- standalone: a step also listed on its own (Rig Wars)
+
                     if step.id and step.id ~= quest.id and not step.standalone then steps[step.id] = true end
                 end
             end

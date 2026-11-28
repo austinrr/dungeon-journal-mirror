@@ -1,8 +1,8 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Interface localization plus a separate content-localization layer. Internal
--- database keys remain stable; localized display text is resolved at render time.
+
+
 FDJ.Locales = FDJ.Locales or {}
 
 FDJ.Locales.enUS = {
@@ -116,7 +116,7 @@ FDJ.Locales.enUS = {
     LF_ENABLE = "Enable",
     LF_DISABLE = "Disable",
     LF_MIN_LEVEL = "Minimum required level",
-    LF_LEVEL_RANGE = "Level range", -- levelrange (2.1.2)
+    LF_LEVEL_RANGE = "Level range",
     OPT_UI = "General",
     OPT_DISCORD_TEXT = "Join the Dungeon Journal Discord to report bugs, share new discoveries and get the latest news.",
     OPT_DUNGEON_LIST = "Dungeon list",
@@ -227,7 +227,7 @@ FDJ.Locales.enUS = {
     RPG_CONFIRM_TEXT = "In this mode dungeons will be locked until you kill the final boss. You can always change mode in the options panel.",
     RPG_CONFIRM_OK = "Ok",
     RPG_CONFIRM_BACK = "Choose again",
-    RPG_INTRO_TEXT = "Dungeons stay locked until you kill their final boss.\nYou can still choose to show quests in the Options panel.", -- introline (2.0.17, text 2.0.18)
+    RPG_INTRO_TEXT = "Dungeons stay locked until you kill their final boss.\nYou can still choose to show quests in the Options panel.",
     RPG_INTRO_KEEP = "Keep RPG Mode",
     RPG_INTRO_OPTIONS = "Disable in Options",
     MODE_RPG_ENABLE = "Enable in Options",
@@ -306,7 +306,7 @@ FDJ.Locales.enUS = {
     AUTO_HIDDEN_BY = "Hidden by: %s",
     CLICK_SHOW_ANYWAY = "Click to show it anyway.",
     ALL_DUNGEONS_HIDDEN = "All dungeons are hidden. Click Edit Mode, then Hide Dungeons, to bring them back.",
-    -- editmode (2.1.5): Edit Mode on the home page (Systems/HomeEdit.lua)
+
     EDIT_MODE = "Edit Mode",
     EDIT_MODE_TIP = "Hide dungeons, change their order, or change how the list looks.",
     EDIT_MODE_NEW = "You can now change how you view your dungeons",
@@ -590,7 +590,7 @@ FDJ.Locales.deDE = {
     RPG_CONFIRM_TEXT = "In diesem Modus bleiben Dungeons gesperrt, bis du den Endboss besiegst. Du kannst den Modus jederzeit in den Optionen ändern.",
     RPG_CONFIRM_OK = "Ok",
     RPG_CONFIRM_BACK = "Erneut wählen",
-    RPG_INTRO_TEXT = "Dungeons bleiben gesperrt, bis du ihren Endboss besiegst.\nDu kannst die Quests trotzdem in den Optionen anzeigen lassen.", -- introline (2.0.17, text 2.0.18)
+    RPG_INTRO_TEXT = "Dungeons bleiben gesperrt, bis du ihren Endboss besiegst.\nDu kannst die Quests trotzdem in den Optionen anzeigen lassen.",
     RPG_INTRO_KEEP = "RPG-Modus behalten",
     RPG_INTRO_OPTIONS = "In den Optionen deaktivieren",
     MODE_RPG_ENABLE = "In den Optionen aktivieren",
@@ -664,7 +664,7 @@ FDJ.Locales.deDE = {
     AUTO_HIDDEN_BY = "Ausgeblendet durch: %s",
     CLICK_SHOW_ANYWAY = "Klicken, um ihn trotzdem anzuzeigen.",
     ALL_DUNGEONS_HIDDEN = "Alle Dungeons sind ausgeblendet. Klicke auf Bearbeitungsmodus und dann auf Dungeons ausblenden, um sie zurückzuholen.",
-    -- editmode (2.1.5): Edit Mode on the home page (Systems/HomeEdit.lua)
+
     EDIT_MODE = "Bearbeitungsmodus",
     EDIT_MODE_TIP = "Dungeons ausblenden, ihre Reihenfolge ändern oder das Aussehen der Liste ändern.",
     EDIT_MODE_NEW = "Du kannst jetzt ändern, wie deine Dungeons angezeigt werden",
@@ -788,9 +788,9 @@ function FDJ.GetClientLanguage()
     return "enUS"
 end
 
--- Client-provided quest/item strings are already localized, but only to the
--- actual WoW client language. When /dj lang forces a different language for
--- testing, use our content table instead of mixing English client text into it.
+
+
+
 function FDJ.CanUseClientLocalizedText()
     return FDJ.GetLanguage() == FDJ.GetClientLanguage()
 end
@@ -800,10 +800,10 @@ local function ContentTable()
     return all[FDJ.GetLanguage()]
 end
 
--- Free text is only ever translated as a WHOLE string or as whole
--- comma-separated parts ("Tinkmaster Overspark, Ironforge" -> the place part).
--- Words are never swapped inside a sentence: a sentence without a full
--- translation stays in English instead of becoming a half-translated mix.
+
+
+
+
 local plainMapCache = {}
 local function PlainText(pattern)
     return (pattern:gsub("%%(%p)", "%1"))
@@ -828,7 +828,7 @@ function FDJ.LocalizeFreeText(value)
     local map = FreeTextMap(content, FDJ.GetLanguage())
     if map[value] then return map[value] end
 
-    -- Whole parts separated by " — " (label lines) or commas (NPC, place).
+
     local function TranslateCommaList(text)
         if map[text] then return map[text], true end
         if not text:find(",", 1, true) then return text, false end
@@ -842,7 +842,7 @@ function FDJ.LocalizeFreeText(value)
         return table.concat(parts, ", "), changed
     end
 
-    local dash = " \226\128\148 " -- " — "
+    local dash = " \226\128\148 "
     if value:find(dash, 1, true) then
         local out, changed, rest = {}, false, value
         while true do
@@ -864,13 +864,13 @@ function FDJ.LocalizeFreeText(value)
 end
 
 
--- Reputation reward names need their own localization pass because reward
--- summaries store them together with the amount (for example
--- "Ironforge +100").  Localize the faction name before rebuilding that token
--- instead of requiring a translation entry for every possible amount.
+
+
+
+
 local REPUTATION_NAMES = {
     deDE = {
-        ["Alliance"] = "Allianz", -- repfix (2.0.8)
+        ["Alliance"] = "Allianz",
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Gnomeregangnome",
@@ -885,7 +885,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Unterstadt",
     },
     frFR = {
-        ["Alliance"] = "Alliance", -- repfix (2.0.8)
+        ["Alliance"] = "Alliance",
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilés de Gnomeregan",
@@ -900,7 +900,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Fossoyeuse",
     },
     esES = {
-        ["Alliance"] = "Alianza", -- repfix (2.0.8)
+        ["Alliance"] = "Alianza",
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exiliados de Gnomeregan",
@@ -915,7 +915,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Entrañas",
     },
     itIT = {
-        ["Alliance"] = "Alleanza", -- repfix (2.0.8)
+        ["Alliance"] = "Alleanza",
         ["Gadgetzan"] = "Gadgetzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Esuli di Gnomeregan",
@@ -930,7 +930,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Sepulcra",
     },
     ptBR = {
-        ["Alliance"] = "Aliança", -- repfix (2.0.8)
+        ["Alliance"] = "Aliança",
         ["Gadgetzan"] = "Geringontzan",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Exilados de Gnomeregan",
@@ -945,7 +945,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Cidade Baixa",
     },
     ruRU = {
-        ["Alliance"] = "Альянс", -- repfix (2.0.8)
+        ["Alliance"] = "Альянс",
         ["Gadgetzan"] = "Прибамбасск",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "Изгнанники Гномрегана",
@@ -960,7 +960,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "Подгород",
     },
     koKR = {
-        ["Alliance"] = "얼라이언스", -- repfix (2.0.8)
+        ["Alliance"] = "얼라이언스",
         ["Gadgetzan"] = "가젯잔",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "놈리건 추방자",
@@ -975,7 +975,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "언더시티",
     },
     zhCN = {
-        ["Alliance"] = "联盟", -- repfix (2.0.8)
+        ["Alliance"] = "联盟",
         ["Gadgetzan"] = "加基森",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "诺莫瑞根流亡者",
@@ -990,7 +990,7 @@ local REPUTATION_NAMES = {
         ["Undercity"] = "幽暗城",
     },
     zhTW = {
-        ["Alliance"] = "聯盟", -- repfix (2.0.8)
+        ["Alliance"] = "聯盟",
         ["Gadgetzan"] = "加基森",
         ["Kirin Tor"] = "Kirin Tor",
         ["Gnomeregan Exiles"] = "諾姆瑞根流亡者",
@@ -1010,8 +1010,8 @@ function FDJ.LocalizeReputationName(name)
     if type(name) ~= "string" or name == "" then return name end
     local names = REPUTATION_NAMES[FDJ.GetLanguage()]
     if names and names[name] then return names[name] end
-    -- Keep this fallback so any future reputation name already present in the
-    -- general content tables still localizes without another code change.
+
+
     return FDJ.LocalizeFreeText(name)
 end
 
@@ -1030,9 +1030,9 @@ function FDJ.LocalizeDungeonField(internalName, field, fallback)
 end
 
 function FDJ.LocalizeQuestField(questID, field, fallback)
-    -- Quest lists, trackers and prerequisite pages must use the same title as
-    -- the player's client. Only query it for the matching journal language;
-    -- another language still uses the verified static translations below.
+
+
+
     if field == "name" and FDJ.GetLanguage() ~= "itIT"
         and FDJ.CanUseClientLocalizedText() and type(questID) == "number"
         and questID > 0 and questID < 1000000 and C_QuestLog then
@@ -1054,7 +1054,7 @@ end
 
 function FDJ.LocalizeBossName(name)
     if name == "Recipes & Patterns" then
-        -- Reuse the translated divider text ("Recipes & Patterns (%d)") without its count.
+
         local text = FDJ.L("RECIPES_SECTION", 0):gsub("%s*%(0%)%s*", "")
         return text
     end
@@ -1063,11 +1063,11 @@ function FDJ.LocalizeBossName(name)
     return value or FDJ.LocalizeFreeText(name)
 end
 
--- sourcetipl10n (2.0.9, M 16 Nov 2026: the trash portrait tooltip "like
--- all trees, all satyrs ... doesn't get translated to other languages"):
--- the family a trash item's portraits stand for (sourceTip, Data/Dungeons.lua).
--- Eldreth spirits and Verek: the game's own names (Wowhead tooltips of npc
--- 11472 and 9042, per language); zhTW written from zhCN.
+
+
+
+
+
 local SOURCE_TIPS = {
     deDE = { ["All trees"] = "Alle Bäume", ["All satyrs"] = "Alle Satyrn", ["All Eldreth spirits"] = "Alle Geister der Eldreth", ["Verek"] = "Verek" },
     frFR = { ["All trees"] = "Tous les arbres", ["All satyrs"] = "Tous les satyres", ["All Eldreth spirits"] = "Tous les esprits Eldreth", ["Verek"] = "Verek" },
@@ -1090,11 +1090,11 @@ function FDJ.LocalizeItemSlot(slotText)
     local content = ContentTable()
     if not content or not content.slotParts then return slotText end
 
-    -- Item categories in the database are comma-separated canonical tokens
-    -- (for example "Shoulder, Leather" or "One-Hand, Dagger"). Translate
-    -- each complete token instead of doing substring replacements. This avoids
-    -- partial/ordering edge cases and guarantees mixed strings are fully
-    -- localized.
+
+
+
+
+
     local translated = {}
     for token in slotText:gmatch("([^,]+)") do
         local clean = token:gsub("^%s+", ""):gsub("%s+$", "")
@@ -1112,15 +1112,15 @@ end
 function FDJ.LocalizeMapLocation(loc)
     if type(loc) ~= "table" then return loc end
     if FDJ.GetLanguage() == "enUS" then return loc end
-    -- Do not mutate the database table; MapMarkers may retain it after a click.
+
     return {
         mapID = loc.mapID,
         x = loc.x,
         y = loc.y,
         label = FDJ.LocalizeFreeText(loc.label),
         detail = FDJ.LocalizeFreeText(loc.detail),
-        noteKey = loc.noteKey, noteArg = loc.noteArg, -- (loreaspects: the arrow's note line, translated by its key)
-        pickUp = loc.pickUp, exact = loc.exact, -- (bookexact: a thing to pick up at one place, in every language)
-        equipItem = loc.equipItem, -- (equipline, 2.1.7: "Equip <item>" on the arrow, in every language)
+        noteKey = loc.noteKey, noteArg = loc.noteArg,
+        pickUp = loc.pickUp, exact = loc.exact,
+        equipItem = loc.equipItem,
     }
 end

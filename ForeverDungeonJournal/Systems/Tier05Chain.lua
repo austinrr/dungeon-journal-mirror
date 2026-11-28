@@ -1,19 +1,19 @@
--- tier05chain (2.1.5 dev, M 24 Nov 2026: "add it in the tier, a button that
--- gets to the chain", with his "WoW Forever Tier 0.5 Full Questline" guide).
--- The whole Dungeon Set 2 questline as a quest chain page of its own
--- (questChainPage, like the Onyxia Attunement's), opened from a button on the
--- Tier Sets page, left of Compact view; its page has Back to Tiers in the
--- Dungeons button's place (FDJ.OpenFromTierPage, Systems/TierSets.lua). The
--- page lists Saving the Best for Last for the character's class and faction
--- (the other classes' with Options > Show all class quests), its chain the
--- 28 steps before it, from An Earnest Proposition on; the button opens it at
--- the first step not handed in yet.
--- Bodley's relic and summon are the quest he gives (no fixed class mapping
--- known): those steps are "one of the following".
--- Three Kings of Flame: WoW Forever's Ash of Asharell (Executor Asharell, a
--- cave in the Burning Steppes), not the Cinder of Cynders.
--- Kept in the vault (the Tier 0.5 chain stays private until M calls it out);
--- its step texts are English so far.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not (FDJ and FDJ.DB and FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_DETAILS) then return end
 local C, D = FDJ.QUEST_PREREQ_CHAINS, FDJ.QUEST_PREREQ_DETAILS
@@ -48,7 +48,7 @@ do
     end
 end
 
--- ------------------------------------------------------------- the spots
+
 local function Spot(mapID, x, y, label, target, detail)
     return { mapID = mapID, x = x, y = y, label = label, targetName = target, detail = detail }
 end
@@ -79,14 +79,14 @@ local AT_BODLEY = "Bodley, inside Blackrock Mountain by the Blackrock Spire entr
 local AT_YSIDA = "Ysida Harmon, Baron Rivendare's room, Stratholme"
 local AT_VALTHALAK = "The Spirit of Lord Valthalak, in The Beast's room, Upper Blackrock Spire"
 
--- ---------------------------------------------------------- the quests
+
 local CLASSES = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "SHAMAN", "MAGE", "WARLOCK", "DRUID" }
--- The four armor exchanges, each class's and faction's quest. t05rewards
--- (2.1.5, M 24 Nov 2026: "Forever's class quests offer a choice ... any
--- chance we could properly assign the rewards"): Forever's own versions
--- of them (84147-84210, and 97411-97414 / 97447-97450 for the Undead
--- Paladin and the Dwarf Shaman), the ones with the role choices; the old
--- ones (8905-9022, Classic's rewards) still count as the same step.
+
+
+
+
+
+
 local EP = {
     Alliance = { DRUID = 84147, HUNTER = 84148, MAGE = 84149, PALADIN = 84150, PRIEST = 84151, ROGUE = 84152, WARLOCK = 84153, WARRIOR = 84154, SHAMAN = 97447 },
     Horde = { DRUID = 84155, HUNTER = 84156, MAGE = 84157, PRIEST = 84158, ROGUE = 84159, SHAMAN = 84160, WARLOCK = 84161, WARRIOR = 84162, PALADIN = 97411 },
@@ -103,7 +103,7 @@ local SB = {
     Alliance = { DRUID = 84195, HUNTER = 84196, MAGE = 84197, PALADIN = 84198, PRIEST = 84199, ROGUE = 84200, WARLOCK = 84201, WARRIOR = 84202, SHAMAN = 97450 },
     Horde = { DRUID = 84203, HUNTER = 84204, MAGE = 84205, PRIEST = 84206, ROGUE = 84207, SHAMAN = 84208, WARLOCK = 84209, WARRIOR = 84210, PALADIN = 97414 },
 }
-local OLD = { -- (Classic's: done counts for the step too)
+local OLD = {
     { Alliance = { DRUID = 8905, HUNTER = 8906, MAGE = 8907, PALADIN = 8908, PRIEST = 8909, ROGUE = 8910, WARLOCK = 8911, WARRIOR = 8912 },
       Horde = { DRUID = 8913, HUNTER = 8914, MAGE = 8915, PRIEST = 8916, ROGUE = 8917, SHAMAN = 8918, WARLOCK = 8919, WARRIOR = 8920 } },
     { Alliance = { DRUID = 8926, HUNTER = 8931, MAGE = 8932, PALADIN = 8933, PRIEST = 8934, ROGUE = 8935, WARLOCK = 8936, WARRIOR = 8937 },
@@ -123,11 +123,11 @@ for n, new in ipairs({ EP, JC, PW, SB }) do
     end
 end
 
--- What each exchange gives (the same for both factions). The bracers: one
--- piece per version, to pick from; the rest: a box per version, to pick
--- from, the pieces inside. Hunters, Mages, Rogues and Warlocks: one
--- version, the pieces themselves.
-local VERSIONS = { -- (Head, Shoulder, Chest, Wrist, Hands, Waist, Legs, Feet: Systems/TierSets.lua's Tier 0.5 versions)
+
+
+
+
+local VERSIONS = {
     WARRIOR = { MELEE = { 226860, 226858, 226862, 226863, 226861, 226864, 226859, 226857 }, TANK = { 226869, 226867, 226872, 226865, 226870, 226866, 226868, 226871 } },
     PALADIN = { MELEE = { 226976, 226969, 226973, 226970, 226975, 226971, 226972, 226974 }, HEALER = { 226981, 226979, 226984, 226977, 226982, 226978, 226980, 226983 }, TANK = { 226989, 226987, 226992, 226985, 226990, 226986, 226988, 226991 } },
     PRIEST = { HEALER = { 226947, 226951, 226945, 226949, 226950, 226948, 226946, 226952 }, CASTER = { 226957, 226955, 226960, 226953, 226958, 226954, 226956, 226959 } },
@@ -141,12 +141,12 @@ local WRIST_NAMES = {
     [227001] = "Bindings of The Five Thunders", [227009] = "Bracers of The Five Thunders", [227017] = "Bands of The Five Thunders",
     [226863] = "Bracers of Heroism", [226865] = "Wristguards of Heroism",
 }
--- t05boxes (2.1.5, M 24 Nov 2026: "when clicking on the boxes, it shows the
--- pieces"): what's in each box (its version's pieces, head to feet), shown
--- in the row a set piece opens when clicked (FDJ.ToggleSetStrip).
+
+
+
 FDJ.BOX_CONTENTS = FDJ.BOX_CONTENTS or {}
--- names: the boxes' own (the game's order); roles: the version each one
--- holds, as its tooltip says (Holy, Retribution, Protection ...)
+
+
 local function Boxes(class, names, roles, gb, bls, hc)
     local t, bracers = { {}, {}, {} }, {}
     for i, name in ipairs(names) do
@@ -157,7 +157,7 @@ local function Boxes(class, names, roles, gb, bls, hc)
         FDJ.BOX_CONTENTS[gb[i]] = { v[5], v[6] }
         FDJ.BOX_CONTENTS[bls[i]] = { v[2], v[7], v[8] }
         FDJ.BOX_CONTENTS[hc[i]] = { v[1], v[3] }
-        bracers[i] = { v[4], WRIST_NAMES[v[4]] or ("item " .. v[4]), 3 } -- (in the boxes' order)
+        bracers[i] = { v[4], WRIST_NAMES[v[4]] or ("item " .. v[4]), 3 }
     end
     return { bracers = bracers, boxes = t }
 end
@@ -172,14 +172,14 @@ local REWARDS = {
         { 227350, 227351, 227352 }, { 227375, 227376, 227377 }, { 227397, 227398, 227399 }),
     WARRIOR = Boxes("WARRIOR", { "Immoveable", "Unstoppable" }, { "TANK", "MELEE" },
         { 227356, 227357 }, { 227381, 227382 }, { 227403, 227404 }),
-    -- one version: Head, Shoulder, Chest, Wrist, Hands, Waist, Legs, Feet
+
     HUNTER = { pieces = { { 226887, "Beastmaster's Cap" }, { 226884, "Beastmaster's Mantle" }, { 226886, "Beastmaster's Tunic" }, { 226885, "Beastmaster's Bindings" }, { 226883, "Beastmaster's Gauntlets" }, { 226888, "Beastmaster's Belt" }, { 226882, "Beastmaster's Pants" }, { 226881, "Beastmaster's Treads" } } },
     MAGE = { pieces = { { 226935, "Sorcerer's Crown" }, { 226936, "Sorcerer's Mantle" }, { 226932, "Sorcerer's Robes" }, { 226929, "Sorcerer's Bindings" }, { 226930, "Sorcerer's Gauntlets" }, { 226934, "Sorcerer's Belt" }, { 226933, "Sorcerer's Leggings" }, { 226931, "Sorcerer's Sandals" } } },
     ROGUE = { pieces = { { 226829, "Darkmantle Cap" }, { 226826, "Darkmantle Spaulders" }, { 226825, "Darkmantle Tunic" }, { 226830, "Darkmantle Bracers" }, { 226828, "Darkmantle Grips" }, { 226832, "Darkmantle Belt" }, { 226827, "Darkmantle Pants" }, { 226831, "Darkmantle Footpads" } } },
     WARLOCK = { pieces = { { 226909, "Deathmist Mask" }, { 226912, "Deathmist Mantle" }, { 226906, "Deathmist Robe" }, { 226907, "Deathmist Bracers" }, { 226911, "Deathmist Wraps" }, { 226905, "Deathmist Belt" }, { 226910, "Deathmist Leggings" }, { 226908, "Deathmist Sandals" } } },
 }
--- step: 1 An Earnest Proposition, 2 Just Compensation, 3 Anthion's Parting
--- Words, 4 Saving the Best for Last. Returns the items and whether to pick one.
+
+
 local STEP_SLOTS = { { 4 }, { 5, 6 }, { 8, 7, 2 }, { 1, 3 } }
 local function Rewards(class, step)
     local r = REWARDS[class]
@@ -206,14 +206,14 @@ for n, new in ipairs({ EP, JC, PW }) do
     end
 end
 FDJ.TIER05_LAST = SB
--- The faction's own steps.
+
 local SUPERNATURAL = { Alliance = 8922, Horde = 8923 }
 local RETURN = { Alliance = { 8977, "Return to Deliana" }, Horde = { 8978, "Return to Mokvar" } }
 local SEARCH = { Alliance = 8929, Horde = 8930 }
 local BODLEYS = { Alliance = 8960, Horde = 9032 }
 local BACK = { Alliance = 8997, Horde = 8998 }
 
--- Tier 0, Head .. Feet (Head, Shoulder, Chest, Wrist, Hands, Waist, Legs, Feet).
+
 local T0 = {
     WARRIOR = { { 16731, "Helm of Valor" }, { 16733, "Spaulders of Valor" }, { 16730, "Breastplate of Valor" }, { 16735, "Bracers of Valor" }, { 16737, "Gauntlets of Valor" }, { 16736, "Belt of Valor" }, { 16732, "Legplates of Valor" }, { 16734, "Boots of Valor" } },
     PALADIN = { { 16727, "Lightforge Helm" }, { 16729, "Lightforge Spaulders" }, { 16726, "Lightforge Breastplate" }, { 16722, "Lightforge Bracers" }, { 16724, "Lightforge Gauntlets" }, { 16723, "Lightforge Belt" }, { 16728, "Lightforge Legplates" }, { 16725, "Lightforge Boots" } },
@@ -234,14 +234,14 @@ local function T0Items(class, slots)
     return list
 end
 
--- --------------------------------------------------------- the steps
+
 local function Step(id, t)
-    if D[id] ~= nil then return end -- (steps the journal has already: kept as they are)
+    if D[id] ~= nil then return end
     t.level, t.requires = t.level or 60, t.requires or 58
     D[id] = t
 end
 
--- 1, 8, 17: the armor exchanges (29, Saving the Best for Last, is the page's quest)
+
 for faction, list in pairs(EP) do
     local at, spot = faction == "Horde" and AT_MOKVAR or AT_DELIANA, faction == "Horde" and MOKVAR or DELIANA
     local samples = faction == "Horde"
@@ -254,7 +254,7 @@ for faction, list in pairs(EP) do
             objective = (faction == "Horde" and "Bring 15 Silithus Venom Samples, 20 gold and your Tier 0 bracers to Mokvar in Orgrimmar."
                 or "Bring 15 Winterspring Blood Samples, 20 gold and your Tier 0 bracers to Deliana in Ironforge."),
             pickup = at, turnin = at, map = spot, turninMap = spot,
-            objectiveInDungeon = false, dungeonStep = false, -- (t05rewards: the Tier 0 pieces can be bought, M: no Dungeon Chain Step)
+            objectiveInDungeon = false, dungeonStep = false,
             requiredItems = items,
             note = (REWARDS[class] and REWARDS[class].pieces and "" or "Your Tier 0.5 bracers: pick the version for your role when you hand it in. ")
                 .. "Later steps need the other seven Tier 0 pieces. Gold before Bodley: allow 100 gold for steps 1, 3 and 6, plus the materials and fuel; the Hallowed Brazier is bought later.",
@@ -284,7 +284,7 @@ for faction, list in pairs(PW) do
     end
 end
 
--- 2 - 7: Mux Manascrambler's distiller
+
 for faction, id in pairs(SUPERNATURAL) do
     Step(id, {
         objective = faction == "Horde" and "Take the Sealed Venom Container to Mux Manascrambler in Gadgetzan."
@@ -332,7 +332,7 @@ for faction, r in pairs(RETURN) do
     })
 end
 
--- 9 - 16: Anthion Harmon
+
 for faction, id in pairs(SEARCH) do
     Step(id, {
         objective = "Use the Extra-Dimensional Ghost Revealer at the entrance to Stratholme and speak with the ghost of Anthion Harmon.",
@@ -359,15 +359,15 @@ Step(8947, {
         { 15407, "Cured Rugged Hide", 2, "Leatherworking (4 needed)" },
     },
 })
--- (13 - 15: Anthion's Old Friend, Falrin's Vendetta and The Instigator's
--- Enchantment are Blackrock Depths' own steps already)
+
+
 Step(9015, {
     objective = "Plant the Banner of Provocation in the center of the Ring of Law in Blackrock Depths as High Justice Grimstone starts the event, defeat Theldren and his gladiators, and bring the Top Piece of Lord Valthalak's Amulet to Anthion Harmon.",
     pickup = "Falrin Treeshaper, the Athenaeum, Dire Maul (West)", turnin = AT_ANTHION, turninMap = ANTHION,
     requiredItems = { { 22047, "Top Piece of Lord Valthalak's Amulet", 1, "Dropped by Theldren in the Ring of Law, Blackrock Depths" } },
 })
 
--- 18 - 28: Bodley and Lord Valthalak
+
 for faction, id in pairs(BODLEYS) do
     Step(id, {
         objective = "Travel to Blackrock Mountain and use the Extra-Dimensional Ghost Revealer to find Bodley near the Blackrock Spire entrance.",
@@ -447,9 +447,9 @@ for faction, id in pairs(BACK) do
     })
 end
 
--- Each of Bodley's four quests of one name says which it is: "Components of
--- Importance (Druidical Remains)", "... Amulet (Kormok)" (the relic's name
--- as the game has it, the spirit's as the journal's boss pages).
+
+
+
 do
     local base = FDJ.LocalizeQuestField
     local function ItemName(id, fallback)
@@ -480,7 +480,7 @@ do
     end
 end
 
--- Bodley's four branches: one quest of each, the others counted as done with it.
+
 FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
 for _, group in ipairs({ { 8962, 8963, 8964, 8965 }, { 8966, 8967, 8968, 8969 }, { 8985, 8986, 8987, 8988 }, { 8989, 8990, 8991, 8992 } }) do
     for _, id in ipairs(group) do
@@ -490,7 +490,7 @@ for _, group in ipairs({ { 8962, 8963, 8964, 8965 }, { 8966, 8967, 8968, 8969 },
     end
 end
 
--- -------------------------------------------------------------- the page
+
 local function Chain(faction, class)
     local function S(id, name, choice) return { id = id, name = name, choice = choice } end
     local chain = {
@@ -551,8 +551,8 @@ for _, faction in ipairs({ "Alliance", "Horde" }) do
     end
 end
 FDJ.DB[PAGE] = {
-    questChainPage = true, -- Quests is its only tab
-    noArrow = true,        -- no waypoint arrow when tracked (the Sleeping Bag's chain only)
+    questChainPage = true,
+    noArrow = true,
     level = "58+",
     location = "",
     description = "",
@@ -567,7 +567,7 @@ FDJ.LocalizeDungeonName = function(name, ...)
     return name
 end
 
--- -------------------------------------------------- opening the chain
+
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
     return v
@@ -586,7 +586,7 @@ local function Character()
     return faction, class
 end
 
--- The character's chain, at the first step not handed in yet.
+
 function FDJ.OpenTier05Chain()
     if not FDJ.OpenQuestChain then return end
     local faction, class = Character()
@@ -607,14 +607,14 @@ function FDJ.OpenTier05Chain()
     if FDJ.OpenFromTierPage then FDJ.OpenFromTierPage(PAGE, open) else open() end
 end
 
--- ------------------------------------------------ the Tier Sets button
--- t05button (2.1.5, M 24 Nov 2026: "more centered ... exactly below the
--- character [logs icon], in between Devout Bracers and the character logs
--- icon ... a bit bigger ... the question mark that we use in the dungeon
--- quest pages ... say what step the player is at"): under the Character
--- Logs icon, level with Tier Sets; the Quests tab's big ! in front; the
--- step the character is on once the chain is started ("1/29"), all of it
--- with a tick once Saving the Best for Last is handed in.
+
+
+
+
+
+
+
+
 local function InLog(id)
     if FDJ.IsQuestInLog and FDJ.IsQuestInLog(id) then return true end
     for _, other in ipairs(FDJ.QUEST_DONE_BY[id] or {}) do
@@ -622,7 +622,7 @@ local function InLog(id)
     end
     return false
 end
--- The character's step: current, total, all done, started at all.
+
 function FDJ.Tier05Progress()
     local faction, class = Character()
     local quest = SB[faction] and SB[faction][class]
@@ -636,7 +636,7 @@ function FDJ.Tier05Progress()
         if type(step) == "table" and step.id and not turned(step.id) then
             if i > 1 then started = true end
             if not started then
-                -- (a choice: any of its quests taken)
+
                 local first, last = i, (FDJ.ChainChoiceEnd and FDJ.ChainChoiceEnd(chain, i)) or i
                 for j = first, last do
                     if type(chain[j]) == "table" and InLog(chain[j].id) then started = true end
@@ -665,7 +665,7 @@ local function Button(panel)
     b.icon = b:CreateTexture(nil, "OVERLAY")
     b.icon:SetSize(24, 24)
     b.icon:SetPoint("LEFT", 5, 0)
-    -- (the dungeon pages' Quests tab: the game's quest-giver !)
+
     local ok, set = false, nil
     if b.icon.SetAtlas then ok, set = pcall(b.icon.SetAtlas, b.icon, "QuestNormal", false) end
     if not ok or set == false then b.icon:SetTexture("Interface\\GossipFrame\\AvailableQuestIcon") end
@@ -692,7 +692,7 @@ local function Button(panel)
         GameTooltip:Show()
     end)
     b:SetScript("OnLeave", function() GameTooltip:Hide() end)
-    -- the step follows the quest log while the page is open
+
     local pending
     b:SetScript("OnEvent", function(self)
         if pending or not self:IsVisible() then return end
@@ -725,9 +725,9 @@ local function PlaceButton(panel)
     if b.count:IsShown() then w = w + 8 + (b.count:GetStringWidth() or 30) end
     if done then w = w + 19 end
     b:SetWidth(math.ceil(w))
-    -- level with Tier Sets (the Compact view button's line), centred under
-    -- the Character Logs icon (without it: over the first row's bracers).
-    -- tiertop (2.1.6): the icon is put away on this page; its place still counts.
+
+
+
     b:ClearAllPoints()
     local f = _G.ForeverDungeonJournalFrame
     local icon = f and f.runLogButton
@@ -762,7 +762,7 @@ if baseOpen then
             Place()
             local b = panel.fdjT05
             if b then b.fdjUpdate = Place end
-            -- (placed again once the page is laid out, and with the journal's size)
+
             if C_Timer and C_Timer.After then C_Timer.After(0, Place) end
             if not panel.fdjT05Hooked and panel.HookScript then
                 panel.fdjT05Hooked = true
@@ -773,9 +773,9 @@ if baseOpen then
     end
 end
 
--- ------------------------------------------------ what's in the boxes
--- t05boxes: a box (a quest reward) clicked opens the row of its pieces, the
--- row a set piece opens (Core/Journal.lua, setstrip), its tooltip saying so.
+
+
+
 do
     local strings = {
         enUS = { "Click to see the pieces inside", "Click to hide the pieces" },

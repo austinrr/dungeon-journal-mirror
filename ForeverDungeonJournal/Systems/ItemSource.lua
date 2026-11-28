@@ -1,11 +1,11 @@
--- Item source line.
--- When an item tooltip is shown (hovering gear while inspecting, bags, loot
--- rolls, or the window that opens when an item link in chat is clicked) and
--- the item is in the journal, one line is added at the bottom of the tooltip:
---   [journal icon] Boss name - Dungeon      (or  ! Quest name - Dungeon)
--- On the chat-link window that line can be clicked to open the journal there.
--- Hover tooltips vanish when the mouse leaves the item, so those are opened
--- with the "Open hovered item in Dungeon Journal" key binding instead.
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -25,16 +25,16 @@ local function Plain(v)
     return v
 end
 
--- ---------------------------------------------------------------------------
--- Index: item ID -> where the journal lists it
--- ---------------------------------------------------------------------------
+
+
+
 local index
--- wingdrop (2.1.6, M 24 Nov 2026 in the Cathedral, a Windweaver Staff off
--- its trash, the line saying "Trash Drops - Scarlet Monastery: Library"):
--- every boss and Trash Drops page that lists an item, so the line can name
--- the one in the dungeon the player is in (the staff is on all three
--- Scarlet wings' Trash Drops; the first listed, the Library's, was named
--- everywhere).
+
+
+
+
+
+
 local places
 
 local function PlayerFaction()
@@ -49,7 +49,7 @@ local function BuildIndex()
     local DB = FDJ.DB or {}
     local faction = PlayerFaction()
 
-    -- rank: lower wins when an item is listed in several places
+
     local function offer(itemID, source, rank)
         itemID = tonumber(itemID)
         if not itemID or itemID <= 0 then return end
@@ -66,9 +66,9 @@ local function BuildIndex()
         local dungeon = DB[dungeonName]
         if dungeon then
             for bossIndex, boss in ipairs(dungeon.bosses or {}) do
-                -- The "Recipes & Patterns" row only repeats items that are
-                -- already listed under the boss or trash that drops them.
-                -- altarbosses (2.0.24): children's loot is told under their group.
+
+
+
                 if type(boss) == "table" and not boss.recipeTab and not boss.childOf then
                     local items = {}
                     for _, item in ipairs(boss.loot or {}) do items[#items + 1] = item end
@@ -83,7 +83,7 @@ local function BuildIndex()
                             trash = boss.trash and true or nil,
                         }, boss.trash and 2 or 1)
                         local itemID = tonumber(item[1])
-                        if itemID and itemID > 0 then -- (wingdrop)
+                        if itemID and itemID > 0 then
                             places[itemID] = places[itemID] or {}
                             table.insert(places[itemID], {
                                 mode = "bosses", kind = "item", itemID = itemID,
@@ -108,7 +108,7 @@ local function BuildIndex()
                 for _, item in ipairs(quest.noteRewardItems or {}) do add(item) end
                 add(quest.requiredItem) add(quest.startItem) add(quest.noteItem)
 
-                -- Prefer the player's own faction when both sides have the quest.
+
                 local rank = 4
                 if quest.faction and faction and quest.faction == faction then rank = 3 end
                 if not quest.faction or quest.faction == "Both" or quest.faction == "Neutral" then rank = 3 end
@@ -139,8 +139,8 @@ function FDJ.GetItemSource(itemID)
     return index[itemID]
 end
 
--- (wingdrop) The source to name on a tooltip: in a dungeon whose boss or
--- Trash Drops page lists the item too, that page; elsewhere the usual one.
+
+
 local function SourceHere(itemID)
     local source = FDJ.GetItemSource(itemID)
     if not (source and source.mode == "bosses" and places and FDJ.CurrentDungeon) then return source end
@@ -153,7 +153,7 @@ local function SourceHere(itemID)
     return best or source
 end
 
--- Titles for a source: line 1 (boss or quest), line 2 (dungeon).
+
 local function SourceText(source)
     local dungeon = source.dungeonName
     if FDJ.LocalizeDungeonName then
@@ -167,11 +167,11 @@ local function SourceText(source)
             local ok, localized = pcall(FDJ.LocalizeQuestField, source.questID, "name", name)
             if ok and type(localized) == "string" and localized ~= "" then name = localized end
         end
-        -- repeaticon (2.0.44): the blue ? for a repeatable quest
+
         return ((FDJ.QuestIconMarkup and source.questID) and FDJ.QuestIconMarkup(source.questID, 14) or QUEST_ICON) .. name, dungeon
     end
 
-    -- Shared boss loot drops from many bosses; naming one would mislead.
+
     if FDJ.SHARED_LOOT_IDS and FDJ.SHARED_LOOT_IDS[source.itemID] then
         local L = FDJ.L or function(key) return key end
         return L("SHARED_LOOT"), L("SEVERAL_DUNGEONS")
@@ -185,9 +185,9 @@ local function SourceText(source)
     return boss, dungeon
 end
 
--- Quest items a boss drops (An Unsent Letter from Edwin VanCleef): the quest
--- page's item says "Looted from <boss>, <dungeon>", and clicking it opens
--- that boss's loot with the item glowing (3 seconds, or until hovered).
+
+
+
 do
     local strings = {
         enUS = { LOOTED_FROM = "Looted from %s, %s", ITEM_CLICK_BOSS = "Click to show" },
@@ -239,7 +239,7 @@ function FDJ.JumpToBossDrop(itemID)
 end
 
 function FDJ.OpenItemSource(itemID)
-    local source = SourceHere(itemID) -- (wingdrop: the page the line names)
+    local source = SourceHere(itemID)
     if not source or not FDJ.OpenSearchResult then return false end
     local journal = _G.ForeverDungeonJournalFrame
     if not journal then return false end
@@ -250,9 +250,9 @@ function FDJ.OpenItemSource(itemID)
     return ok
 end
 
--- ---------------------------------------------------------------------------
--- Reading the item out of a tooltip
--- ---------------------------------------------------------------------------
+
+
+
 local function TooltipItemID(tooltip, data)
     if type(data) == "table" then
         local id = Plain(data.id)
@@ -269,7 +269,7 @@ local function TooltipItemID(tooltip, data)
     return nil
 end
 
--- Tooltips raised by the journal's own windows already show the source.
+
 local function OwnedByJournal(tooltip)
     if not tooltip or not tooltip.GetOwner then return false end
     local ok, owner = pcall(tooltip.GetOwner, tooltip)
@@ -283,11 +283,11 @@ local function OwnedByJournal(tooltip)
     return false
 end
 
--- ---------------------------------------------------------------------------
--- The line
--- ---------------------------------------------------------------------------
-local shownItem = {}   -- tooltip -> item ID whose source line is on it
-local clickers = {}    -- tooltip -> invisible button over that line
+
+
+
+local shownItem = {}
+local clickers = {}
 
 local function ClearTooltip(tooltip)
     shownItem[tooltip] = nil
@@ -295,7 +295,7 @@ local function ClearTooltip(tooltip)
     if clicker then clicker:Hide() end
 end
 
--- Chat-link window only: make the added line clickable.
+
 local function PlaceClicker(tooltip, itemID)
     if tooltip ~= ItemRefTooltip then return end
     local name = tooltip.GetName and tooltip:GetName()
@@ -327,9 +327,9 @@ local function UpdateTooltip(tooltip, data)
     if not Enabled() or OwnedByJournal(tooltip) then return end
 
     local itemID = TooltipItemID(tooltip, data)
-    local source = itemID and SourceHere(itemID) -- (wingdrop)
+    local source = itemID and SourceHere(itemID)
     if not source then return end
-    -- The client can announce the same item twice for one tooltip.
+
     if shownItem[tooltip] == itemID then return end
     shownItem[tooltip] = itemID
 
@@ -347,8 +347,8 @@ local function InstallHooks()
     if hooked then return end
     hooked = true
 
-    -- Newer clients announce tooltip items through TooltipDataProcessor;
-    -- classic-style clients fire OnTooltipSetItem. Use whichever exists.
+
+
     local viaProcessor = false
     if TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall
         and Enum and Enum.TooltipDataType and Enum.TooltipDataType.Item then
@@ -366,7 +366,7 @@ local function InstallHooks()
     end
 end
 
--- Key binding: open the journal for the item under the mouse.
+
 function ForeverDungeonJournal_OpenHoveredItem()
     local itemID
     if GameTooltip and GameTooltip:IsShown() then
@@ -378,7 +378,7 @@ function ForeverDungeonJournal_OpenHoveredItem()
     if itemID then FDJ.OpenItemSource(itemID) end
 end
 
--- /dj itemtip turns the line on or off.
+
 function FDJ.ToggleItemSourceStrip()
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
     ForeverDungeonJournalDB.itemSourceStrip = not Enabled()

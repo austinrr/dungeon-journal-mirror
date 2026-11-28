@@ -1,39 +1,39 @@
--- tierpage (2.0.10, M 17 Nov 2026: "add a tier set page: an icon next to
--- Onyxia in the same glowing style, showing the tier dungeon chest piece of
--- the player's class; once clicked, a page with a horizontal row of all the
--- pieces of their set, and an option at the top called Show all classes").
--- Tier Sets (M 17 Nov 2026: "the tier icon should just be called Tier Sets,
--- cause we are gonna put raid gear there too"): for now the Tier 0 sets
--- (Dungeon Set 1). The home page gets a round icon, the character's class's
--- Tier 0 chest piece, right of the Onyxia icon (of the Sleeping Bag's, or the
--- Raids medallion, when those are hidden), the same size and with the same
--- soft golden glow. Its page is the home page's own, in place of the dungeon
--- list, under the row of icons: Tier 0, the set's eight pieces in a row
--- (Head ... Feet), each with its icon, name and the boss and dungeon it
--- drops from (the loot data's). Show Classes (top right, a drop-down: All,
--- then every class with its icon; per character): the ticked classes' sets,
--- one row each, the character's own first.
--- A piece: hover for its tooltip, click to open the boss page it drops on
--- (shift-click: link it).
---
--- hometabs (M 17 Nov 2026: "I want them to toggle their own pages: if I
--- click on tier or onyxia, I want to keep seeing the icons at the top with
--- the icon highlighted like the highlight from the WoW Forever icon, and we
--- are also gonna change that icon to just show the dungeon page"): the row
--- of icons at the top of the home page works as tabs. The WoW Forever emblem
--- is the dungeon list (its "Forever dungeons only" switch stays in Options),
--- the Tier Sets icon the Tier Sets page, the Onyxia icon the Onyxia
--- Attunement page. The page shown has its icon lit (the emblem's gold ring
--- and brighter glow); clicking a lit Tier Sets or Onyxia icon goes back to
--- the dungeon list. On the Onyxia Attunement page the row of icons stays at
--- the top, where the Dungeons button was (the page sits a little lower).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
--- The sets: the class's eight pieces, Head, Shoulder, Chest, Wrist, Hands,
--- Waist, Legs, Feet (item IDs as in Data/Dungeons.lua). The set's name is
--- read from the game's tooltip (the client's language); these are the
--- English ones, until it is.
+
+
+
+
 local SETS = {
     WARRIOR = { 16731, 16733, 16730, 16735, 16737, 16736, 16732, 16734, name = "Battlegear of Valor" },
     PALADIN = { 16727, 16729, 16726, 16722, 16724, 16723, 16728, 16725, name = "Lightforge Armor" },
@@ -45,19 +45,19 @@ local SETS = {
     WARLOCK = { 16698, 16701, 16700, 16703, 16705, 16702, 16699, 16704, name = "Dreadmist Raiment" },
     DRUID = { 16720, 16718, 16706, 16714, 16717, 16716, 16719, 16715, name = "Wildheart Raiment" },
 }
--- tier05row (2.0.10): Dungeon Set 2 (Tier 0.5), Head to Feet as above, and
--- which of the four armor exchanges of the Tier 0.5 chain gives each piece
--- (1 An Earnest Proposition: Wrist; 2 Just Compensation: Hands, Waist; 3
--- Anthion's Parting Words: Shoulder, Legs, Feet; 4 Saving the Best for
--- Last: Head, Chest). From the Forever client's quest rewards
--- (quests 8905-9022, every class's).
--- t05forever (2.1.1, M 20 Nov 2026, his Soulforge Gauntlets on: "the items in
--- the tier 0.5 set don't have the right ID because I cannot link them, and
--- also they have the wrong bonus"): Forever's own Dungeon Set 2, new items
--- with new stats and set bonuses, one version per role for some classes
--- (the quests give a box to pick one from). One Tier 0.5 row per version
--- (M: "one row per version"), its spec icon under "Tier 0.5". Each version:
--- Head ... Feet as above (SOURCES.txt).
+
+
+
+
+
+
+
+
+
+
+
+
+
 local SETS2 = {
     WARRIOR = { name = "Battlegear of Heroism",
         { role = "MELEE", 226860, 226858, 226862, 226863, 226861, 226864, 226859, 226857 },
@@ -87,7 +87,7 @@ local SETS2 = {
         { role = "MELEE", 226792, 226790, 226795, 226788, 226793, 226789, 226791, 226794 },
         { role = "TANK", 226801, 226798, 226804, 226796, 226802, 226797, 226799, 226803 } },
 }
--- (the first version's pieces, for the set's name from its chest's tooltip)
+
 local SETS2_NAME = {}
 for token, set in pairs(SETS2) do
     local first = { name = set.name }
@@ -95,17 +95,17 @@ for token, set in pairs(SETS2) do
     SETS2_NAME[token] = first
 end
 local PIECE_QUEST = { 4, 3, 4, 1, 2, 2, 3, 3 }
-local QUEST05 = { 8909, 8934, 8955, 9003 } -- (the names are the same for every class)
+local QUEST05 = { 8909, 8934, 8955, 9003 }
 local QUEST05_EN = { "An Earnest Proposition", "Just Compensation", "Anthion's Parting Words", "Saving the Best for Last" }
-local QuestTitle -- (set further down; the pieces' tooltips use it)
+local QuestTitle
 local CLASS_ORDER = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "SHAMAN", "MAGE", "WARLOCK", "DRUID" }
 local CHEST = 3
 
 local MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local GLOW = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow"
--- roundtab (2.0.10, M 17 Nov 2026: "I don't like the square highlight ... round it
--- around the icon so it's a bit cleaner"): a thin gold ring with a soft glow,
--- just outside the round icon (Media/TabRing.tga, made for it).
+
+
+
 local RING = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TabRing"
 local CLASS_ICONS = "Interface\\GLUES\\CHARACTERCREATE\\UI-CharacterCreate-Classes"
 
@@ -142,7 +142,7 @@ do
         end
     end
 end
-do -- tierback (2.0.10)
+do
     local strings = {
         enUS = { BACK_TO_TIERS = "Back to Tiers" },
         deDE = { BACK_TO_TIERS = "Zurück zu Tier-Sets" },
@@ -165,7 +165,7 @@ do -- tierback (2.0.10)
         end
     end
 end
-do -- tier05row, tierhide (2.0.10)
+do
     local strings = {
         enUS = { TIER_05 = "Tier 0.5", TIER05_LABEL = "Tier 0.5: %s", TIER05_FROM = "Tier 0.5 quest: %s", TIER_HIDE = "Hide", TIER_HIDE_TIP = "Right-click to hide",
             OPT_HIDE_TIER = "Hide Tier Sets", OPT_HIDE_TIER_TIP = "Hides the Tier Sets icon on the journal's home page. It stays hidden until level 50; untick this to show it sooner. You can also right-click the icon and pick Hide." },
@@ -214,7 +214,7 @@ local function PlayerClass()
     token = ok and Plain(token) or nil
     return type(token) == "string" and token or nil
 end
--- The character's class's set (a class with none: the warrior's, for the icon).
+
 local function OwnClass()
     local token = PlayerClass()
     if token and SETS[token] then return token, true end
@@ -241,11 +241,11 @@ local function ItemInfo(id)
     return name, link, quality
 end
 
--- tierlink (2.1.2, M 20 Nov 2026: "why can't I shift click on tier 0.5"):
--- an item's chat link from the game's C_Item.GetItemInfo (WoW Forever's
--- client has no global GetItemInfo, so ItemInfo above gave no link and a
--- Shift-click did nothing, on every Tier row). Not cached yet: asked for, and
--- the next click has it (hovering the piece loads it too).
+
+
+
+
+
 local function ItemLink(id)
     id = tonumber(id)
     if not id then return nil end
@@ -260,10 +260,10 @@ local function ItemLink(id)
     return nil
 end
 
--- The set's name in the client's language: the "Lightforge Armor (0/8)"
--- line of its chest piece's tooltip.
+
+
 local setNames, scanTip = {}, nil
-local function SetName(token, sets) -- (tier05row: SETS2 too)
+local function SetName(token, sets)
     sets = sets or SETS
     local cache = setNames[sets] or {}
     setNames[sets] = cache
@@ -293,9 +293,9 @@ local function SetName(token, sets) -- (tier05row: SETS2 too)
     return set.name
 end
 
--- Where a piece drops: every boss (and Trash Drops) whose loot lists it, in
--- the journal's dungeon order; not the RPG Mode's hidden bosses or locked
--- dungeons.
+
+
+
 local function Sources(id)
     local list = {}
     for _, dungeonName in ipairs(FDJ.ORDER or {}) do
@@ -330,36 +330,36 @@ local function ClassLabel(token)
     local name = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[token]) or token
     local c = RAID_CLASS_COLORS and RAID_CLASS_COLORS[token]
     local color = c and Hex(c.r, c.g, c.b) or "ffffff"
-    -- tiertidy (2.1.5, M 24 Nov 2026: "we don't need to say vestments of the
-    -- devout next to priest"): the class's name only
+
+
     return "|cff" .. color .. name .. "|r"
 end
 
--- ------------------------------------------------------------- the page
+
 local panel
 local Refresh, PaintTabs, ApplyLayout
 local ICON_SIZE, GAP, ROW_GAP = 44, 8, 18
--- tiercompact (M 17 Nov 2026: "a compact view option before Show all classes,
--- so if we tick Show all classes we can compact and it's cleaner on one
--- page"): one slim line per class, its name and set on the left, the eight
--- pieces as small icons; names and where they drop are in the tooltip.
+
+
+
+
 local ICON_C, GAP_C, ROW_H_C, ROW_GAP_C, LABEL_W = 30, 10, 36, 4, 230
-local TIER_LABEL_W = 64 -- tierlabels: the "Tier 0" / "Tier 0.5" column
+local TIER_LABEL_W = 64
 
 local function Journal() return _G.ForeverDungeonJournalFrame end
 
--- The home page's dungeon list (and what goes with it), hidden while the
--- Tier Sets page is shown in its place.
+
+
 local function ListParts(f)
     return { f.homeScroll, f.homeEmptyText, f.homeShowAllButton, f.hideDungeonsButton }
 end
--- tiertop (2.1.6, M 24 Nov 2026: "a bug in the tier set tab. It doesn't hide
--- the top options like the other tabs do"): the top right of the home page,
--- the Character Logs portrait, Favourites, Loot Filter (and RPG Mode's
--- button), goes as on the Onyxia and Sleeping Bag pages; shown again by
--- anything while the page is up, it goes again. Back to the list: each as
--- its own rule has it (Favourites and Loot Filter always, the portrait
--- unless Options hides it, RPG Mode's with the home page's refresh).
+
+
+
+
+
+
+
 local function TopParts(f)
     return { f.runLogButton, f.favouritesButton, f.lootFilterButton, f.rpgModeButton }
 end
@@ -369,13 +369,13 @@ local function KeepAway(b)
     topHooked[b] = true
     local function Again(self)
         local f = Journal()
-        -- toptabs (2.1.6, M 25 Nov 2026: "when I change tabs, the buttons at
-        -- the top right don't show, not even my character log ... when I go
-        -- back to dungeons"): only while the page is on screen. Left for a
-        -- dungeon page (the Onyxia or Sleeping Bag tab, a boss from a tier
-        -- piece) or with the journal closing, the page put them back as it
-        -- went but still counted as open, so they went away again for good.
-        local pvp = _G.ForeverDungeonJournalPvPPanel -- (pvpicon: its page too)
+
+
+
+
+
+
+        local pvp = _G.ForeverDungeonJournalPvPPanel
         local up = (panel and panel:IsVisible()) or (pvp and pvp:IsVisible())
         if up and f and f.currentView == "home" then self:Hide() end
     end
@@ -396,7 +396,7 @@ local function ShowTop(f)
     if f.lootFilterButton then f.lootFilterButton:Show() end
     if f.runLogButton then f.runLogButton:SetShown(not (FDJ.IsRunLogButtonHidden and FDJ.IsRunLogButtonHidden())) end
 end
--- (pvpicon: the PvP page, Systems/PvP.lua, puts them away and back the same way)
+
 function FDJ.HideHomeTop(f)
     for _, b in ipairs(TopParts(f)) do
         if b then KeepAway(b) b:Hide() end
@@ -404,8 +404,8 @@ function FDJ.HideHomeTop(f)
 end
 function FDJ.ShowHomeTop(f) ShowTop(f) end
 
--- Which of the top icons' pages is shown: "dungeons" (the home page's list),
--- "tier", "onyxia", or nil (any other page).
+
+
 function FDJ.ActiveHomeTab()
     local f = Journal()
     if not f then return "dungeons" end
@@ -414,22 +414,22 @@ function FDJ.ActiveHomeTab()
     end
     local page = FDJ.GetSelectedDungeon and FDJ.GetSelectedDungeon()
     if FDJ.ONYXIA_PAGE and page == FDJ.ONYXIA_PAGE then return "onyxia" end
-    -- bagtab (2.0.10, M 17 Nov 2026: "the sleeping bag is not showing its
-    -- own page ... I do not see the other option at the top"): the Cozy
-    -- Sleeping Bag's page is a tab like the Onyxia one.
+
+
+
     if FDJ.SLEEPING_BAG_PAGE and page == FDJ.SLEEPING_BAG_PAGE then return "sleepingbag" end
     return nil
 end
 
--- tierback (2.0.10, M 17 Nov 2026: "when I click on a tier set or on a boss
--- and it sends me to the page, I want a button at the top left, just like
--- where dungeon usually is, that says back to tiers"): a piece's boss page
--- opened from here has "Back to Tiers" in the Dungeons button's place; it
--- leads back to this page, scrolled where it was. Another dungeon or the
--- home page opened: the Dungeons button again.
-local tierReturn -- { dungeon = name, scroll = offset, armed = true once the page is open }
--- tier05button (2.1.5): another page opened from this one (the Tier 0.5
--- quest chain's, from its button here) gets the same Back to Tiers.
+
+
+
+
+
+
+local tierReturn
+
+
 function FDJ.OpenFromTierPage(dungeon, open)
     if type(open) ~= "function" then return end
     local scroll = panel and panel.scroll and panel.scroll.GetVerticalScroll and panel.scroll:GetVerticalScroll() or 0
@@ -440,9 +440,9 @@ function FDJ.OpenFromTierPage(dungeon, open)
         if FDJ.UpdateDungeonArrows then pcall(FDJ.UpdateDungeonArrows) end
     end
 end
--- pvpquestjournal (2.1.6): a page opened from another one (the PvP page's
--- Quests: Systems/PvPQuests.lua) gets this button too, with that page's
--- words (back.text()) and its way back (back.open()).
+
+
+
 function FDJ.OpenFromPage(dungeon, open, back)
     if type(open) ~= "function" then return end
     tierReturn = { dungeon = dungeon, scroll = 0, back = type(back) == "table" and back or nil }
@@ -472,9 +472,9 @@ local function OpenSource(cell)
     end
 end
 
--- tiertick (2.0.10, M 17 Nov 2026: "the check mark to be bold and slightly
--- bigger"): a bold green tick (Media\TierTick), 23 (M: "23 is fine"; the
--- size bar he tried it with is gone); Compact view's is smaller.
+
+
+
 local TICK_TEX = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TierTick.tga"
 local TICK_SIZE = 23
 local function TickSize(compact)
@@ -496,16 +496,16 @@ local function MakeCell(parent)
     cell.hl = cell:CreateTexture(nil, "HIGHLIGHT")
     cell.hl:SetAllPoints(cell.icon)
     cell.hl:SetColorTexture(1, 1, 1, 0.18)
-    -- tiersource (2.0.10, M 17 Nov 2026: "when I hover who drops it, I want
-    -- to see the boss portrait with the dungeon name"): the text under the
-    -- name has its own hover: the boss's portrait and where (the quest, for
-    -- a Tier 0.5 piece); the icon and the name keep the item's tooltip.
+
+
+
+
     cell.sourceHit = CreateFrame("Button", nil, cell)
     cell.sourceHit:RegisterForClicks("LeftButtonUp")
     cell.sourceHit:SetScript("OnEnter", function(self) if FDJ.ShowTierSourceTip then FDJ.ShowTierSourceTip(self, cell) end end)
     cell.sourceHit:SetScript("OnLeave", function() if FDJ.HideTierSourceTip then FDJ.HideTierSourceTip() end end)
     cell.sourceHit:SetScript("OnClick", function() if FDJ.HideTierSourceTip then FDJ.HideTierSourceTip() end OpenSource(cell) end)
-    cell.check = cell:CreateTexture(nil, "OVERLAY", nil, 7) -- tiercheck
+    cell.check = cell:CreateTexture(nil, "OVERLAY", nil, 7)
     cell.check:SetTexture(TICK_TEX)
     cell.check:SetPoint("CENTER", cell.border, "TOPRIGHT", -3, -3)
     cell.check:Hide()
@@ -525,14 +525,14 @@ local function MakeCell(parent)
         if not GameTooltip then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         pcall(GameTooltip.SetHyperlink, GameTooltip, "item:" .. self.itemID)
-        if self.compact and self.sources and #self.sources > 0 then -- tiercompact: no source under it
+        if self.compact and self.sources and #self.sources > 0 then
             GameTooltip:AddLine(" ")
             for j = 1, math.min(#self.sources, 5) do
                 local boss, dungeon = BossText(self.sources[j])
                 GameTooltip:AddLine(L("DROPS_FROM", boss .. " (" .. dungeon .. ")"), 1, 0.82, 0, true)
             end
         end
-        if self.questIndex then -- tier05row
+        if self.questIndex then
             GameTooltip:AddLine(" ")
             GameTooltip:AddLine(L("TIER05_FROM", QuestTitle(self.questIndex)), 1, 0.82, 0, true)
         end
@@ -545,7 +545,7 @@ local function MakeCell(parent)
     cell:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     cell:SetScript("OnClick", function(self)
         if IsModifiedClick and IsModifiedClick() and HandleModifiedItemClick then
-            local link = ItemLink(self.itemID) -- tierlink (2.1.2)
+            local link = ItemLink(self.itemID)
             if link then HandleModifiedItemClick(link) end
             return
         end
@@ -574,7 +574,7 @@ local function MakeRow(parent)
     row.line:SetPoint("RIGHT", row, "RIGHT", -2, 0)
     row.cells = {}
     for i = 1, 8 do row.cells[i] = MakeCell(row) end
-    -- tier05row: the Tier 0.5 pieces, the arrows down to them, its set's name
+
     row.cells2, row.arrows = {}, {}
     for i = 1, 8 do
         row.cells2[i] = MakeCell(row)
@@ -590,7 +590,7 @@ local function MakeRow(parent)
     row.arrowC:SetSize(16, 16)
     row.arrowC:SetVertexColor(1, 0.82, 0.3)
     row.arrowC:Hide()
-    row.lab0 = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal") -- tierlabels
+    row.lab0 = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     row.lab0:SetJustifyH("LEFT")
     row.lab0:SetTextColor(1.00, 0.82, 0.27)
     row.lab05 = row:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
@@ -608,14 +608,14 @@ local function ClassName(token)
     return "|cff" .. (c and Hex(c.r, c.g, c.b) or "ffffff") .. name .. "|r"
 end
 
--- tier05row (2.0.10, M 17 Nov 2026: "build the tier 0.5 right below the
--- tier set ... a little arrow that points below at the tier 0.5 piece"):
--- under each class's Tier 0 pieces, a small arrow down to the piece it
--- becomes (Dungeon Set 2), with the quest that gives it. In Compact view the
--- Tier 0.5 pieces follow the Tier 0 ones on the same line, after an arrow.
--- tiercheck (M: "if I have the chest I want a little green check mark on the
--- top right ... not for other classes"): the character's own class's pieces
--- it has (worn, in the bags or in the bank) get a green tick.
+
+
+
+
+
+
+
+
 local function Owned(id)
     if type(IsEquippedItem) == "function" then
         local ok, worn = pcall(IsEquippedItem, id)
@@ -632,8 +632,8 @@ local function Owned(id)
     return (n or 0) > 0
 end
 
--- The quest that gives a Tier 0.5 piece, in the client's language once the
--- game has it (the English name until then).
+
+
 QuestTitle = function(i)
     local id = QUEST05[i]
     if not id then return "" end
@@ -658,11 +658,11 @@ local function FillCell(cell, id, size, cellW, compact, sources, questIndex, own
     end
     local fallback = (first and first.item and tonumber(first.item[4])) or 3
     local r, g, b = 0, 0.44, 0.87
-    -- tierepic (2.0.10, M 17 Nov 2026: "the epic items to have the epic
-    -- portrait color, not the blue one"): the colour the game's own tooltip
-    -- gives the item (the journal's loot lists do the same), not the item
-    -- data's quality, which can be the old one (Forever made many Tier 0.5
-    -- pieces epic).
+
+
+
+
+
     local okQ, qr, qg, qb = false, nil, nil, nil
     if FDJ.GetAuthoritativeItemQuality then okQ, qr, qg, qb = pcall(FDJ.GetAuthoritativeItemQuality, id, link, quality, fallback) end
     if okQ and qr then
@@ -678,7 +678,7 @@ local function FillCell(cell, id, size, cellW, compact, sources, questIndex, own
     cell.compact = compact
     local tick = TickSize(compact)
     cell.check:SetSize(tick, tick)
-    -- (dev, not in a release: /dj tiercheck ticks every piece to preview it)
+
     cell.check:SetShown((own == true and Owned(id)) or FDJ.tierCheckTest == true)
     if compact then
         cell.name:Hide()
@@ -712,13 +712,13 @@ local function FillCell(cell, id, size, cellW, compact, sources, questIndex, own
     return h
 end
 
--- t05forever: a version's label ("Tier 0.5" over its spec icon, or the icon
--- alone in Compact view), and the cells, label and arrow of the versions
--- after the first (made the first time a class with that many is shown; the
--- rows are reused).
--- t05icon (2.1.1, M 20 Nov 2026: "rather have the spec icon instead of
--- melee ... show the spec icon, that's enough"): each version's spec icon
--- (the class's talent tree icon) in place of its role's name.
+
+
+
+
+
+
+
 local SPEC_ICONS = {
     WARRIOR = { MELEE = "Ability_Warrior_SavageBlow", TANK = "Ability_Warrior_DefensiveStance" },
     PALADIN = { MELEE = "Spell_Holy_AuraOfLight", HEALER = "Spell_Holy_HolyBolt", TANK = "Spell_Holy_DevotionAura" },
@@ -726,9 +726,9 @@ local SPEC_ICONS = {
     SHAMAN = { CASTER = "Spell_Nature_Lightning", HEALER = "Spell_Nature_MagicImmunity", MELEE = "Spell_Nature_LightningShield" },
     DRUID = { CASTER = "Spell_Nature_StarFall", HEALER = "Spell_Nature_HealingTouch", MELEE = "Ability_Druid_CatForm", TANK = "Ability_Racial_BearForm" },
 }
--- t05tip (2.1.1, M 20 Nov 2026: "when hovering over the icon of the spec
--- ... the little tooltip to say the spec name ... cat, bear ... both in
--- compact and detail view"): the spec's name in the game's words.
+
+
+
 do
     local strings = {
         enUS = { TIER05_SPEC_WARRIOR_MELEE = "Arms / Fury", TIER05_SPEC_WARRIOR_TANK = "Protection", TIER05_SPEC_PALADIN_MELEE = "Retribution", TIER05_SPEC_PALADIN_HEALER = "Holy", TIER05_SPEC_PALADIN_TANK = "Protection", TIER05_SPEC_PRIEST_HEALER = "Holy", TIER05_SPEC_PRIEST_CASTER = "Shadow", TIER05_SPEC_SHAMAN_CASTER = "Elemental", TIER05_SPEC_SHAMAN_HEALER = "Restoration", TIER05_SPEC_SHAMAN_MELEE = "Enhancement", TIER05_SPEC_DRUID_CASTER = "Balance", TIER05_SPEC_DRUID_HEALER = "Restoration", TIER05_SPEC_DRUID_MELEE = "Cat", TIER05_SPEC_DRUID_TANK = "Bear" },
@@ -769,10 +769,10 @@ local function Version(row, v)
     end
     return extra.cells, extra.lab, extra.arrow
 end
--- t05bigicon (2.1.1, M 20 Nov 2026: "make the icon a bit bigger and more
--- centered below tier 0.5"): the spec icon is a small frame of its own
--- (centered under "Tier 0.5" in the detailed view, left of the arrow in
--- Compact view), made the first time; t05tip: hovered, the spec's name.
+
+
+
+
 local function SpecIcon(row, v, token, role)
     local holder = v == 1 and row or row.extra[v]
     local f = holder.specIcon
@@ -807,8 +807,8 @@ local function HideVersions(row, from)
     end
 end
 
--- One class's row: its label, then the eight pieces side by side, and the
--- Tier 0.5 pieces under them (tier05row).
+
+
 local function FillRow(row, token, width, compact)
     local set, set2 = SETS[token], SETS2[token]
     local own = token == PlayerClass()
@@ -824,7 +824,7 @@ local function FillRow(row, token, width, compact)
     row.sub:ClearAllPoints()
     row.t05:ClearAllPoints()
     if compact then
-        -- tiercompact: class over set name, left of the pieces
+
         row.classIcon:SetSize(24, 24)
         row.classIcon:SetPoint("LEFT", row, "LEFT", 2, 0)
         row.label:SetPoint("BOTTOMLEFT", row.classIcon, "RIGHT", 6, 1)
@@ -844,18 +844,18 @@ local function FillRow(row, token, width, compact)
         row.label:SetText(ClassLabel(token))
         row.sub:Hide()
         row.line:Show()
-        -- tiertidy: no "Tier 0.5: <set>" on the right ("we don't need that")
+
         row.t05:SetText("")
         row.t05:Hide()
     end
     if compact then
-        -- the Tier 0 pieces, an arrow, the Tier 0.5 pieces: all on one line
+
         local step = math.max(20, math.min(ICON_C + 4 + GAP_C, math.floor((width - LABEL_W - 26) / 16)))
         local gap = math.max(3, math.floor(step * 0.2))
         local size = step - 4 - gap
         local y = -math.floor((ROW_H_C - size - 4) / 2)
-        -- t05forever: one version, on the same line; more, each on a line
-        -- of its own under the Tier 0 pieces, its role left of the arrow
+
+
         local count = set2 and #set2 or 0
         for i = 1, 8 do
             local cell = row.cells[i]
@@ -867,11 +867,11 @@ local function FillRow(row, token, width, compact)
             if count == 0 then row.cells2[i]:Hide() end
         end
         row.arrowC:Hide()
-        -- t05left (2.1.1, M 20 Nov 2026: "way too much dead space ... move
-        -- all the tier 0.5 to the left, so that it's close to the paladin
-        -- icon"): several versions: each on a line of its own under the Tier
-        -- 0 pieces, lined up with them, its spec icon and the arrow just left
-        -- of it; the class's name beside the Tier 0 line.
+
+
+
+
+
         if count > 1 then
             row.classIcon:ClearAllPoints()
             row.classIcon:SetPoint("LEFT", row, "TOPLEFT", 2, y - math.floor((size + 4) / 2))
@@ -910,9 +910,9 @@ local function FillRow(row, token, width, compact)
         return height
     end
     row.arrowC:Hide()
-    -- tierlabels (2.0.10, M 17 Nov 2026: "I want 0 and 0.5 to the left of the
-    -- first item"): "Tier 0" and "Tier 0.5" in a column left of the pieces,
-    -- level with their icons.
+
+
+
     local left = TIER_LABEL_W
     local cellW = math.max(56, math.floor((width - left - GAP * 7) / 8))
     row.lab0:ClearAllPoints()
@@ -945,8 +945,8 @@ local function FillRow(row, token, width, compact)
         arrow:SetPoint("TOP", row, "TOPLEFT", left + (i - 1) * (cellW + GAP) + math.floor(cellW / 2), -arrowY)
         arrow:Show()
     end
-    -- t05forever: each version's row under the one before, its role under
-    -- "Tier 0.5" on the left
+
+
     for v, version in ipairs(set2) do
         local cells, lab = Version(row, v)
         local tallest2 = 0
@@ -964,8 +964,8 @@ local function FillRow(row, token, width, compact)
         lab:Show()
         local icon = version.role and SPEC_ICONS[token] and SPEC_ICONS[token][version.role]
         if icon then
-            -- t05bigicon: "Tier 0.5" level with the pieces' top, the icon
-            -- centered under it
+
+
             lab:SetPoint("TOPLEFT", row, "TOPLEFT", 2, -(y2 + 1))
             lab:SetWidth(0)
             local spec = SpecIcon(row, v, token, version.role)
@@ -985,9 +985,9 @@ local function FillRow(row, token, width, compact)
     return y2
 end
 
--- tierclasses: the classes ticked in Show Classes, for this character (its
--- own class until changed; a class with no set: every class). The old "Show
--- all classes" tick carries over as every class.
+
+
+
 local function SelectedClasses()
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     local char = ForeverDungeonJournalCharacterDB
@@ -1016,8 +1016,8 @@ end
 
 local function Build(journal)
     local home = journal.homePanel
-    -- The home page's own page, where the dungeon list is (under the row of
-    -- icons and the line beneath them).
+
+
     panel = CreateFrame("Frame", "ForeverDungeonJournalTierPanel", home)
     panel:SetPoint("TOPLEFT", home, "TOPLEFT", 14, -62)
     panel:SetPoint("BOTTOMRIGHT", home, "BOTTOMRIGHT", -14, 12)
@@ -1028,11 +1028,11 @@ local function Build(journal)
     panel.title:SetPoint("TOPLEFT", 6, -4)
     panel.title:SetTextColor(1.00, 0.82, 0.27)
 
-    -- tiercompact: Compact view, left of Show Classes (kept between sessions).
-    -- tiercompactbutton (2.0.10, M 17 Nov 2026: "the compact view of the
-    -- tier sets, the button I mean, to be the same button as the ones that
-    -- we have for dungeons"): the boss and loot lists' Compact view /
-    -- Detailed view button, not a tick box.
+
+
+
+
+
     panel.compact = CreateFrame("Button", nil, panel, "BackdropTemplate")
     panel.compact:SetSize(104, 20)
     panel.compact:SetBackdrop({
@@ -1056,10 +1056,10 @@ local function Build(journal)
         Refresh()
     end)
 
-    -- tierclasses (M 17 Nov 2026: "Show Classes as a drop down menu, All at
-    -- the top marking every class, then the classes with their class icon
-    -- at the start"): which classes' sets are shown, per character (the
-    -- character's own class until it is changed).
+
+
+
+
     local b = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
     if FDJ.OwnFonts then FDJ.OwnFonts(b) end
     panel.classes = b
@@ -1090,7 +1090,7 @@ local function Build(journal)
     })
     menu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
     menu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
-    do -- a thin line under All
+    do
         local line = menu:CreateTexture(nil, "ARTWORK")
         line:SetColorTexture(0.57, 0.43, 0.20, 0.6)
         line:SetHeight(1)
@@ -1132,7 +1132,7 @@ local function Build(journal)
         option:SetScript("OnClick", function(self)
             local sel = SelectedClasses()
             if not self.token then
-                -- All: every class; clicked again, back to the character's own
+
                 if AllSelected(sel) then
                     for _, t in ipairs(CLASS_ORDER) do sel[t] = nil end
                     sel[(OwnClass())] = true
@@ -1141,7 +1141,7 @@ local function Build(journal)
                 end
             elseif sel[self.token] then
                 sel[self.token] = nil
-                if not next(sel) then sel[self.token] = true end -- never none
+                if not next(sel) then sel[self.token] = true end
             else
                 sel[self.token] = true
             end
@@ -1174,27 +1174,27 @@ local function Build(journal)
         HideList(journal)
         if PaintTabs then PaintTabs() end
     end)
-    -- Back to the dungeon list: the list as it was.
+
     panel:SetScript("OnHide", function()
         if journal.homeScroll then journal.homeScroll:Show() end
         if journal.hideDungeonsButton then journal.hideDungeonsButton:Show() end
-        ShowTop(journal) -- (tiertop)
+        ShowTop(journal)
         if journal.homePanel:IsShown() and FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
         if PaintTabs then PaintTabs() end
     end)
-    -- Leaving the home page (a piece's boss page, a search...) closes it.
+
     home:HookScript("OnHide", function() panel:Hide() end)
-    -- tierback: back on the home page: the boss page's way back is done
+
     home:HookScript("OnShow", function()
         tierReturn = nil
         if journal.fdjTierBack then journal.fdjTierBack:Hide() end
     end)
 
-    -- Item names and the set's name arrive with the item data.
+
     local pending
     panel:RegisterEvent("GET_ITEM_INFO_RECEIVED")
     for _, event in ipairs({ "BAG_UPDATE_DELAYED", "PLAYER_EQUIPMENT_CHANGED", "BANKFRAME_OPENED", "QUEST_DATA_LOAD_RESULT" }) do
-        pcall(panel.RegisterEvent, panel, event) -- tiercheck, tier05row
+        pcall(panel.RegisterEvent, panel, event)
     end
     panel:SetScript("OnEvent", function(self)
         if pending or not self:IsVisible() then return end
@@ -1216,11 +1216,11 @@ Refresh = function()
     panel.classes:ClearAllPoints()
     panel.classes:SetPoint("TOPRIGHT", panel, "TOPRIGHT", -6, -2)
     local compact = ForeverDungeonJournalDB and ForeverDungeonJournalDB.tierCompact == true or false
-    panel.compact.text:SetText(L(compact and "LOOT_DETAILED" or "LOOT_COMPACT")) -- tiercompactbutton
+    panel.compact.text:SetText(L(compact and "LOOT_DETAILED" or "LOOT_COMPACT"))
     panel.compact:SetWidth(math.max(104, math.ceil((panel.compact.text:GetStringWidth() or 80) + 20)))
     panel.compact:ClearAllPoints()
     panel.compact:SetPoint("RIGHT", panel.classes, "LEFT", -12, 0)
-    -- tierclasses: the ticked classes, the character's own first
+
     local own = OwnClass()
     local sel = SelectedClasses()
     local classes = {}
@@ -1240,9 +1240,9 @@ Refresh = function()
     end
     local width = math.max(500, math.floor((panel.scroll:GetWidth() or 760) - 4))
     panel.content:SetWidth(width)
-    -- Tier 0 (the raid tiers will come under it).
-    -- tierlabels (2.0.10): no "Tier 0" heading; the page says Tier Sets and
-    -- each class's rows have Tier 0 / Tier 0.5 beside them.
+
+
+
     panel.section:SetText("")
     panel.section:Hide()
     local y = 4
@@ -1280,19 +1280,19 @@ function FDJ.OpenTierPage()
     PaintTabs()
 end
 
--- The WoW Forever emblem: the dungeon list.
+
 function FDJ.ShowDungeonsTab()
     local f = Journal()
     if not f then return end
     if panel and panel:IsShown() then panel:Hide() end
-    if FDJ.HidePvPPage then FDJ.HidePvPPage() end -- pvpicon
+    if FDJ.HidePvPPage then FDJ.HidePvPPage() end
     ClickBack(f)
     ApplyLayout()
 end
 
--- --------------------------------------------------------------- the tabs
--- The page shown has its icon lit, as the WoW Forever emblem used to be
--- while it filtered the list: a gold ring and a brighter, larger glow.
+
+
+
 local function Light(b, on)
     if not (b and b.halo) then return end
     local w = b:GetWidth() or 36
@@ -1307,7 +1307,7 @@ local function Light(b, on)
     local ring = math.floor(w * 1.92 + 0.5)
     b.fdjTabRing:SetSize(ring, ring)
     b.fdjTabRing:SetShown(on)
-    if b.fdjPulseUntil then return end -- the Onyxia icon pulsing: left as it is
+    if b.fdjPulseUntil then return end
     local halo = math.floor(w * (on and 2.15 or 1.92) + 0.5)
     b.halo:SetSize(halo, halo)
     b.halo:SetAlpha(on and 1 or 0.75)
@@ -1319,18 +1319,18 @@ PaintTabs = function()
     local tab = FDJ.ActiveHomeTab()
     Light(f.tierButton, tab == "tier")
     Light(f.onyxiaButton, tab == "onyxia")
-    Light(f.sleepingBagButton, tab == "sleepingbag") -- bagtab
-    Light(f.pvpButton, tab == "pvp") -- pvpicon (Systems/PvP.lua)
+    Light(f.sleepingBagButton, tab == "sleepingbag")
+    Light(f.pvpButton, tab == "pvp")
     if FDJ.PaintForeverEmblem then pcall(FDJ.PaintForeverEmblem) end
 end
 FDJ.PaintHomeTabs = function() PaintTabs() end
 
--- The row of icons: on the home page, and at the top of the Onyxia
--- Attunement page (in place of the Dungeons button, the page a little lower
--- to make room). They stay where they are anchored (the home page's top);
--- only their parent changes, so they show with the page.
+
+
+
+
 local function Icons(f)
-    return { f.foreverFilterButton, f.foreverRaidButton, f.sleepingBagButton, f.onyxiaButton, f.tierButton, f.pvpButton } -- (pvpicon: Systems/PvP.lua)
+    return { f.foreverFilterButton, f.foreverRaidButton, f.sleepingBagButton, f.onyxiaButton, f.tierButton, f.pvpButton }
 end
 local function MoveIcons(f, parent)
     local icons = Icons(f)
@@ -1351,7 +1351,7 @@ local function SetContentTop(f, y)
     f.contentPanel:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -18, 18)
 end
 
--- tierback: the button (in the Dungeons button's place, as wide as its text)
+
 local function TierBackButton(f)
     local b = f.fdjTierBack
     if b then return b end
@@ -1365,7 +1365,7 @@ local function TierBackButton(f)
         local back = tierReturn
         tierReturn = nil
         b:Hide()
-        if back and back.back and type(back.back.open) == "function" then -- (pvpquestjournal)
+        if back and back.back and type(back.back.open) == "function" then
             pcall(back.back.open)
             return
         end
@@ -1386,7 +1386,7 @@ local function UpdateTierBack(f, tabPage)
     local active = tierReturn and tierReturn.armed and not tabPage and f.currentView ~= "home"
     if active then
         local b = TierBackButton(f)
-        local words = tierReturn.back and type(tierReturn.back.text) == "function" and tierReturn.back.text() -- (pvpquestjournal)
+        local words = tierReturn.back and type(tierReturn.back.text) == "function" and tierReturn.back.text()
         b:SetText((type(words) == "string" and words ~= "") and words or L("BACK_TO_TIERS"))
         local fs = b.GetFontString and b:GetFontString()
         if fs then fs:SetTextColor(1.00, 0.82, 0.27) end
@@ -1396,8 +1396,8 @@ local function UpdateTierBack(f, tabPage)
         return
     end
     if f.fdjTierBack then f.fdjTierBack:Hide() end
-    -- (a dungeon page always has its Dungeons button: it stayed hidden when
-    -- the Onyxia or Sleeping Bag page had been the one open before)
+
+
     if not tabPage and f.currentView ~= "home" and f.backButton then f.backButton:Show() end
 end
 
@@ -1405,7 +1405,7 @@ ApplyLayout = function()
     local f = Journal()
     if not (f and f.homePanel and f.contentPanel) then return end
     local tab = FDJ.ActiveHomeTab()
-    if f.currentView ~= "home" and (tab == "onyxia" or tab == "sleepingbag") then -- (bagtab)
+    if f.currentView ~= "home" and (tab == "onyxia" or tab == "sleepingbag") then
         local bar = f.fdjTabBar
         if not bar then
             bar = CreateFrame("Frame", nil, f)
@@ -1430,36 +1430,36 @@ ApplyLayout = function()
     PaintTabs()
 end
 
--- Every dungeon page shown (Journal.lua calls this each time): the Onyxia
--- Attunement page gets the row of icons, any other the Dungeons button back.
+
+
 local arrowsBefore = FDJ.UpdateDungeonArrows
 FDJ.UpdateDungeonArrows = function(...)
     if arrowsBefore then arrowsBefore(...) end
     pcall(ApplyLayout)
 end
 
--- The Onyxia icon: its page, or (lit) back to the dungeon list.
+
 local onyxiaBefore = FDJ.OpenOnyxiaChain
 if onyxiaBefore then
     FDJ.OpenOnyxiaChain = function(...)
-        if FDJ.ActiveHomeTab() == "onyxia" then return end -- tabstay (2.0.13, M 18 Nov 2026: "if I double click it it auto jumps to the dungeon tab"): a lit tab clicked again stays; the WoW Forever emblem is the way back
+        if FDJ.ActiveHomeTab() == "onyxia" then return end
         if panel and panel:IsShown() then panel:Hide() end
         return onyxiaBefore(...)
     end
 end
 
--- bagtab: the Sleeping Bag icon the same: its page, or (lit) back to the
--- dungeon list.
+
+
 local bagBefore = FDJ.OpenSleepingBagChain
 if bagBefore then
     FDJ.OpenSleepingBagChain = function(...)
-        if FDJ.ActiveHomeTab() == "sleepingbag" then return end -- tabstay
+        if FDJ.ActiveHomeTab() == "sleepingbag" then return end
         if panel and panel:IsShown() then panel:Hide() end
         return bagBefore(...)
     end
 end
 
--- -------------------------------------------------------------- the icon
+
 local function Round(owner)
     local halo = owner:CreateTexture(nil, "BACKGROUND", nil, -1)
     halo:SetTexture(GLOW)
@@ -1467,9 +1467,9 @@ local function Round(owner)
     halo:SetVertexColor(1, 0.82, 0.35)
     halo:SetAlpha(0.75)
     local icon = owner:CreateTexture(nil, "ARTWORK")
-    -- tiericonedge (2.0.10, M 17 Nov 2026: "this little white line at the
-    -- top ... make it black, just like the rest of the circle"): the item
-    -- icon's own light border is cut off, so only the picture is in the circle.
+
+
+
     icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
     if owner.CreateMaskTexture then
         local mask = owner:CreateMaskTexture()
@@ -1480,16 +1480,16 @@ local function Round(owner)
     return halo, icon
 end
 
--- tierhide (2.0.10, M 17 Nov 2026: "We should always have a hide command ...
--- I want people to build their UI exactly how they want"): Options > Hide
--- Tier Sets (account-wide), and Hide on the icon's right-click, as the
--- Sleeping Bag and Onyxia icons.
--- tierlevel (2.0.10, M 17 Nov 2026: "I want the tier button to appear at
--- level 50 ... leave it hidden until then. And if people want to see it,
--- they can just go into options ... I don't want to overwhelm new players"):
--- below level 50 the icon is hidden (Options > Hide Tier Sets shows ticked);
--- unticking it there shows it at any level. Once ticked or unticked by the
--- player, that choice stays (account-wide).
+
+
+
+
+
+
+
+
+
+
 local TIER_LEVEL = 50
 function FDJ.IsTierIconHidden()
     local choice = ForeverDungeonJournalDB and ForeverDungeonJournalDB.hideTierSets
@@ -1552,8 +1552,8 @@ local function ShowHideMenu(anchor)
     if GameTooltip then GameTooltip:Hide() end
 end
 
--- toptabs: back on the dungeon list (no Tier Sets or PvP page up, not in
--- Edit Mode), the top right is there, whatever hid it on the way.
+
+
 local function TopSafety(frame)
     local home = frame and frame.homePanel
     if not home or frame.fdjTopSafety then return end
@@ -1570,7 +1570,7 @@ local function BuildButton(frame)
     local home = frame.homePanel
     local b = CreateFrame("Button", nil, home)
     frame.tierButton = b
-    b:RegisterForClicks("LeftButtonUp", "RightButtonUp") -- tierhide
+    b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetSize(36, 36)
     b:SetFrameLevel(home:GetFrameLevel() + 5)
     b.halo, b.icon = Round(b)
@@ -1591,24 +1591,24 @@ local function BuildButton(frame)
         self.icon:SetPoint("CENTER")
     end)
     b:SetScript("OnClick", function(self, button)
-        if button == "RightButton" then ShowHideMenu(self) return end -- tierhide
+        if button == "RightButton" then ShowHideMenu(self) return end
         if GameTooltip then GameTooltip:Hide() end
-        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
-        if FDJ.ActiveHomeTab() ~= "tier" then FDJ.OpenTierPage() end -- tabstay: lit already: stays
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end
+        if FDJ.ActiveHomeTab() ~= "tier" then FDJ.OpenTierPage() end
     end)
     b:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(L("TIER_TITLE"), 1, 0.82, 0)
         GameTooltip:AddLine(L("TIER_ICON_TIP"), 1, 1, 1, true)
-        GameTooltip:AddLine(L("TIER_HIDE_TIP"), 0.6, 0.6, 0.6) -- tierhide
+        GameTooltip:AddLine(L("TIER_HIDE_TIP"), 0.6, 0.6, 0.6)
         GameTooltip:Show()
     end)
     b:SetScript("OnLeave", function() GameTooltip:Hide() end)
     return b
 end
 
--- Right of the Onyxia icon when it shows, else of the Sleeping Bag's, else
--- of the Raids medallion; the same size as theirs.
+
+
 local placed
 local function Place(frame, raid, size)
     if not frame or not frame.homePanel or not raid then return end
@@ -1627,8 +1627,8 @@ local function Place(frame, raid, size)
     local anchor = (onyxia and onyxia:IsShown()) and onyxia or ((bag and bag:IsShown()) and bag or raid)
     b:ClearAllPoints()
     b:SetPoint("LEFT", anchor, "RIGHT", size >= 40 and 12 or (size >= 30 and 10 or 8), 0)
-    b:SetShown(not FDJ.IsTierIconHidden()) -- tierhide
-    -- The Onyxia or Sleeping Bag icon shown or hidden later: move along.
+    b:SetShown(not FDJ.IsTierIconHidden())
+
     for _, other in pairs({ onyxia or false, bag or false }) do
         if other and not other.fdjTierHooked then
             other.fdjTierHooked = true
@@ -1639,10 +1639,10 @@ local function Place(frame, raid, size)
     end
 end
 
--- Systems/ForeverFilter.lua places the Sleeping Bag's icon (and, through
--- Systems/OnyxiaAttunement.lua, the Onyxia icon) after the Raids medallion
--- on every refresh of the home page; the Tier Sets icon follows them, and
--- the tabs are set again.
+
+
+
+
 local PlaceBefore = FDJ.PlaceSleepingBagButton
 FDJ.PlaceSleepingBagButton = function(frame, raid, size, ...)
     if PlaceBefore then pcall(PlaceBefore, frame, raid, size, ...) end
@@ -1650,9 +1650,9 @@ FDJ.PlaceSleepingBagButton = function(frame, raid, size, ...)
     pcall(ApplyLayout)
 end
 
--- tiersource (2.0.10): the "who drops it" hover: each boss that drops the
--- piece with its portrait (the journal's own), its name and its dungeon (the
--- first four; more: "+N more"); a Tier 0.5 piece: the quest that gives it.
+
+
+
 do
     local tip
     local ROWS, PORTRAIT = 4, 46
@@ -1754,7 +1754,7 @@ do
     end
 end
 
--- tierlevel: reaching level 50 shows the icon (when the player never chose)
+
 do
     local watch = CreateFrame("Frame")
     watch:RegisterEvent("PLAYER_LEVEL_UP")

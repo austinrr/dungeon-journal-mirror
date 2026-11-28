@@ -2,33 +2,33 @@ local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
 FDJ.QUEST_START_MAPS = {
-    -- Excavation Site: Wetlands prerequisite quest giver.
+
     [95663] = { mapID = 1417, x = 0.7454, y = 0.3563, label = "Zaruk — Hammerfall", targetName = "Zaruk", detail = "Start Dragonmaw Rumors here" },
 
-    -- Hall of Thanes quest givers.
+
     [96394] = { mapID = 1455, x = 0.333, y = 0.481, label = "Afadra Dunwall — top of Old Ironforge", targetName = "Afadra Dunwall", detail = "Top of Old Ironforge, outside the dungeon" },
     [96393] = { mapID = 1426, x = 0.647, y = 0.584, label = "Earthseer Farsen — Gol'Bolar Quarry, Dun Morogh", targetName = "Earthseer Farsen" },
     [96403] = { mapID = 1455, x = 0.435, y = 0.520, label = "Thom Filch — Hall of Thanes portal, Ironforge", targetName = "Thom Filch" },
 
-    -- Ruins of Lordaeron quest givers / entrance.
+
     [92401] = { mapID = 1421, x = 0.4450, y = 0.4300, label = "Tabitha Heartweaver — The Sepulcher" },
     [92421] = { mapID = 1458, x = 0.5790, y = 0.8950, label = "Morbin Lightbane — Royal Quarter" },
     [95216] = { mapID = 1458, x = 0.4650, y = 0.7160, label = "Theodore Griffs — Apothecarium" },
     [92422] = { mapID = 1420, x = 0.6520, y = 0.6020, label = "Deathguard Kristof — southeast of Brill" },
 
     [214]  = { mapID = 1436, x = 0.5667, y = 0.4735, label = "Scout Riell" },
-    -- swmap (2.0.9): the Stormwind markers moved to Forever's Stormwind map
-    -- (they were at their places on the old map): Wilder Thistlenettle,
-    -- Nikova Raskol, Brohann Caskbelly, Shylamiir, Lord Grayson
-    -- Shadowbreaker (here and in QuestChains.lua), Highlord Bolvar
-    -- Fordragon, Grimand Elmore, Furen Longbeard (QuestUpdates.lua). Forever
-    -- client tables (their spawns).
+
+
+
+
+
+
     [168]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
     [167]  = { mapID = 1453, x = 0.703, y = 0.408, label = "Wilder Thistlenettle" },
     [2040] = { mapID = 1453, x = 0.6300, y = 0.3400, label = "Shoni the Shilent — Dwarven District, Stormwind", targetName = "Shoni the Shilent" },
     [166]  = { mapID = 1436, x = 0.5640, y = 0.4750, label = "Gryan Stoutmantle" },
 
-    -- Ragefire Chasm quest givers.
+
     [5723] = { mapID = 1456, x = 0.701, y = 0.295, label = "Rahauro" },
     [5722] = { mapID = 1456, x = 0.701, y = 0.295, label = "Rahauro" },
     [5728] = { mapID = 1454, x = 0.3200, y = 0.3780, label = "Thrall" },
@@ -36,22 +36,22 @@ FDJ.QUEST_START_MAPS = {
     [5725] = { mapID = 1458, x = 0.5620, y = 0.9260, label = "Varimathras" },
     [6521] = { mapID = 1458, x = 0.5620, y = 0.9260, label = "Varimathras — Royal Quarter, Undercity" },
 
-    -- The Stockade quest givers.
+
     [386] = { mapID = 1433, x = 0.212, y = 0.466, label = "Guard Berton — Lakeshire" },
     [377] = { mapID = 1431, x = 0.720, y = 0.478, label = "Councilman Millstipe — Darkshire" },
     [387] = { mapID = 1453, x = 0.518, y = 0.693, label = "Warden Thelwater — The Stockade", targetName = "Warden Thelwater" },
-    -- Nikova Raskol walks a loop around Old Town. The old spot was Classic's
-    -- (73.6, 46.6), which on Forever's Stormwind map is north of Old Town.
-    -- Her path: Wowhead's sightings moved onto Forever's map (they match the
-    -- spots Forever players report: 73.4, 62.3 and 71.8, 60.1).
-    -- On the map the pin walks her loop (x/y: the middle of it, for
-    -- "near the spot" checks).
+
+
+
+
+
+
     [388] = { mapID = 1453, x = 0.764, y = 0.637, label = "Nikova Raskol — Old Town", targetName = "Nikova Raskol",
         patrol = { { 0.734, 0.554 }, { 0.763, 0.602 }, { 0.761, 0.637 }, { 0.737, 0.622 }, { 0.722, 0.608 } } },
     [378] = { mapID = 1437, x = 0.496, y = 0.182, label = "Motley Garmason — Dun Modr" },
     [391] = { mapID = 1453, x = 0.518, y = 0.693, label = "Warden Thelwater — The Stockade", targetName = "Warden Thelwater" },
 
-    -- Blackfathom Deeps quest givers (Classic map positions used by Forever).
+
     [971]  = { mapID = 1455, x = 0.5083, y = 0.0561, label = "Gerrig Bonegrip" },
     [1275] = { mapID = 1439, x = 0.3830, y = 0.4310, label = "Gershala Nightwhisper" },
     [3765] = { mapID = 1453, x = 0.363, y = 0.674, label = "Argos Nightwhisper — The Park", targetName = "Argos Nightwhisper" },
@@ -62,7 +62,7 @@ FDJ.QUEST_START_MAPS = {
     [6565] = { mapID = 1440, x = 0.1200, y = 0.3400, label = "Je'neu Sancrea" },
     [6921] = { mapID = 1440, x = 0.1200, y = 0.3400, label = "Je'neu Sancrea" },
 
-    -- Wailing Caverns quest givers.
+
     [1486] = { mapID = 1413, x = 0.4660, y = 0.3630, label = "Nalpak" },
     [1487] = { mapID = 1413, x = 0.4660, y = 0.3570, label = "Ebru" },
     [962] = { mapID = 1456, x = 0.2300, y = 0.2100, label = "Apothecary Zamah — Pools of Vision, Thunder Bluff", detail = "Serpentbloom starts from Apothecary Zamah in the Pools of Vision beneath Spirit Rise" },
@@ -71,13 +71,13 @@ FDJ.QUEST_START_MAPS = {
     [914] = { mapID = 1456, x = 0.7530, y = 0.3130, label = "Nara Wildmane" },
     [6981] = { mapID = 1456, x = 0.7060, y = 0.3000, label = "Falla Sagewind" },
 
-    -- Shadowfang Keep quest givers.
+
     [1098] = { mapID = 1421, x = 0.4340, y = 0.4090, label = "High Executor Hadrec" },
     [1740] = { mapID = 1413, x = 0.4930, y = 0.5720, label = "Doan Karhan" },
     [1013] = { mapID = 1458, x = 0.5370, y = 0.5450, label = "Keeper Bel'dugur" },
     [1014] = { mapID = 1421, x = 0.4420, y = 0.3980, label = "Dalar Dawnweaver" },
 
-    -- Gnomeregan quest givers.
+
     [2922] = { mapID = 1455, x = 0.690, y = 0.500, label = "Tinkmaster Overspark — Tinker Town, Ironforge", targetName = "Tinkmaster Overspark" },
     [2926] = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", targetName = "Ozzie Togglevolt" },
     [2962] = { mapID = 1426, x = 0.450, y = 0.490, label = "Ozzie Togglevolt — Kharanos", targetName = "Ozzie Togglevolt" },
@@ -90,17 +90,17 @@ FDJ.QUEST_START_MAPS = {
     [2948] = { mapID = 1455, x = 0.357, y = 0.040, label = "Talvash del Kissel — Mystic Ward, Ironforge", targetName = "Talvash del Kissel" },
     [2950] = { mapID = 1454, x = 0.760, y = 0.250, label = "Nogg — Valley of Honor, Orgrimmar", targetName = "Nogg" },
 
-    -- Razorfen Kraul quest givers.
+
     [1221] = { mapID = 1413, x = 0.624, y = 0.376, label = "Mebok Mizzyrix — Ratchet", targetName = "Mebok Mizzyrix" },
     [1101] = { mapID = 1444, x = 0.896, y = 0.466, label = "Falfindel Waywarder — Thalanaar", targetName = "Falfindel Waywarder" },
     [1102] = { mapID = 1456, x = 0.360, y = 0.590, label = "Auld Stonespire — Thunder Bluff", targetName = "Auld Stonespire" },
     [1109] = { mapID = 1458, x = 0.480, y = 0.690, label = "Master Apothecary Faranell — Apothecarium", targetName = "Master Apothecary Faranell" },
 
-    -- Scarlet Monastery: Graveyard quest giver outside the instance.
+
     [1113] = { mapID = 1458, x = 0.480, y = 0.690, label = "Master Apothecary Faranell — Apothecarium", targetName = "Master Apothecary Faranell" },
 
-    -- Quest givers for the dungeons added in 1.6.5 (positions from Wowhead).
-    -- Stormwind uses the newer city map in this client, so those use retail positions.
+
+
     [17] = { mapID = 1432, x = 0.370, y = 0.492, label = "Ghak Healtouch — Loch Modan", targetName = "Ghak Healtouch" },
     [704] = { mapID = 1432, x = 0.658, y = 0.654, label = "Prospector Ironband — Loch Modan", targetName = "Prospector Ironband" },
     [709] = { mapID = 1418, x = 0.514, y = 0.764, label = "Theldurin the Lost — Badlands", targetName = "Theldurin the Lost" },
@@ -139,15 +139,15 @@ FDJ.QUEST_START_MAPS = {
     [3907] = { mapID = 1418, x = 0.034, y = 0.482, label = "Thunderheart — Badlands", targetName = "Thunderheart" },
     [3981] = { mapID = 1418, x = 0.058, y = 0.474, label = "Galamav the Marksman — Badlands", targetName = "Galamav the Marksman" },
     [4003] = { mapID = 1454, x = 0.320, y = 0.378, label = "Thrall — Orgrimmar", targetName = "Thrall" },
-    -- (slitherrock, 2.1.7: the straight line up Terror Wing Path, Data/QuestUpdates.lua)
+
     [4024] = { mapID = 1428, x = 0.948, y = 0.316, label = "Cyrus Therepentous — Burning Steppes", targetName = "Cyrus Therepentous", direct = { { 0.78, 0.48, 0.97, 0.72 }, { 0.84, 0.25, 0.99, 0.48 } } },
     [4063] = { mapID = 1418, x = 0.258, y = 0.450, label = "Lotwil Veriatus — Badlands", targetName = "Lotwil Veriatus" },
     [4081] = { mapID = 1418, x = 0.038, y = 0.475, label = "WANTED poster — Kargath, Badlands", targetName = "WANTED" },
     [4082] = { mapID = 1418, x = 0.040, y = 0.468, label = "KILL ON SIGHT poster — Kargath, Badlands", targetName = "KILL ON SIGHT" },
     [4123] = { mapID = 1428, x = 0.652, y = 0.238, label = "Maxwort Uberglint — Burning Steppes", targetName = "Maxwort Uberglint" },
-    -- ragnarkharanos (2.1.7, M 25 Nov 2026, Hurley Blackbreath taken in
-    -- Ironforge: "This quest should say where the guy is. So it should say
-    -- Kharanos"): the town in the label, so the arrow says "Get to Kharanos".
+
+
+
     [4126] = { mapID = 1426, x = 0.468, y = 0.524, label = "Ragnar Thunderbrew — Kharanos, Dun Morogh", targetName = "Ragnar Thunderbrew" },
     [4132] = { mapID = 1418, x = 0.058, y = 0.474, label = "Warlord Goretooth — Badlands", targetName = "Warlord Goretooth" },
     [4134] = { mapID = 1418, x = 0.030, y = 0.476, label = "Shadowmage Vivian Lagrave — Badlands", targetName = "Shadowmage Vivian Lagrave" },
@@ -194,8 +194,8 @@ FDJ.QUEST_START_MAPS = {
     [7065] = { mapID = 1443, x = 0.638, y = 0.106, label = "Keeper Marandis — Desolace", targetName = "Keeper Marandis" },
     [7067] = { mapID = 1443, x = 0.434, y = 0.848, label = "Centaur Pariah — Desolace", targetName = "Centaur Pariah" },
     [7068] = { mapID = 1454, x = 0.388, y = 0.854, label = "Uthel'nay — Orgrimmar", targetName = "Uthel'nay" },
-    -- 2.0.4 (reported by Nyby): he is in the tower on Theramore Isle, not near
-    -- Brackenwall Village (ForeverChanges: 66.4, 49.3).
+
+
     [7070] = { mapID = 1445, x = 0.664, y = 0.493, label = "Archmage Tervosh — Dustwallow Marsh", targetName = "Archmage Tervosh" },
     [7441] = { mapID = 1444, x = 0.768, y = 0.374, label = "Azj'Tordin — Feralas", targetName = "Azj'Tordin" },
     [7481] = { mapID = 1444, x = 0.744, y = 0.440, label = "Sage Korolusk — Feralas", targetName = "Sage Korolusk" },
@@ -218,7 +218,7 @@ FDJ.QUEST_START_MAPS = {
     [98823] = { mapID = 1456, x = 0.702, y = 0.336, label = "Bashana Runetotem — Thunder Bluff", targetName = "Bashana Runetotem" },
     [98824] = { mapID = 1437, x = 0.388, y = 0.522, label = "Prospector Whelgar — Wetlands", targetName = "Prospector Whelgar" },
 
-    -- Quest givers added from the Classic Era quest compendium.
+
     [1956] = { mapID = 1445, x = 0.460, y = 0.570, label = "Tabetha — Dustwallow Marsh", targetName = "Tabetha" },
     [4143] = { mapID = 1444, x = 0.450, y = 0.254, label = "Gregan Brewspewer — Feralas", targetName = "Gregan Brewspewer" },
     [4146] = { mapID = 1413, x = 0.624, y = 0.386, label = "Liv Rizzlefix — The Barrens", targetName = "Liv Rizzlefix" },
@@ -244,14 +244,14 @@ FDJ.QUEST_START_MAPS = {
     [7629] = { mapID = 1428, x = 0.124, y = 0.314, label = "Gorzeeki Wildeyes — Burning Steppes", targetName = "Gorzeeki Wildeyes" },
     [7647] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     [8258] = { mapID = 1454, x = 0.384, y = 0.360, label = "Sagorne Creststrider — Orgrimmar", targetName = "Sagorne Creststrider" },
-    [97169] = { mapID = 1455, x = 0.471, y = 0.138, label = "Eldrun Stormbreaker — Ironforge", targetName = "Eldrun Stormbreaker" }, -- darkreaverally (2.1.4)
+    [97169] = { mapID = 1455, x = 0.471, y = 0.138, label = "Eldrun Stormbreaker — Ironforge", targetName = "Eldrun Stormbreaker" },
     [5463] = { mapID = 1423, x = 0.739, y = 0.490, label = "Leonid Barthalomew the Revered — Eastern Plaguelands", targetName = "Leonid Barthalomew the Revered" },
     [707] = { mapID = 1455, x = 0.746, y = 0.117, label = "Prospector Stormpike — Ironforge", targetName = "Prospector Stormpike" },
     [8415] = { mapID = 1453, x = 0.484, y = 0.502, label = "Lord Grayson Shadowbreaker — Stormwind", targetName = "Lord Grayson Shadowbreaker" },
     [5281] = { mapID = 1423, x = 0.718, y = 0.544, label = "Caretaker Alen — Eastern Plaguelands", targetName = "Caretaker Alen" },
     [5961] = { mapID = 1458, x = 0.580, y = 0.916, label = "Lady Sylvanas Windrunner — Undercity", targetName = "Lady Sylvanas Windrunner" },
     [722] = { mapID = 1418, x = 0.379, y = 0.106, label = "Hammertoe Grez — Uldaman excavation (outside the instance)", detail = "Hammertoe is in the outer excavation caves, before the instance portal" },
-    -- Starter locations from the Forever starter-location guide (safety net).
+
     [132] = { mapID = 1433, x = 0.214, y = 0.454, label = "Wiley the Black — Redridge Mountains", targetName = "Wiley the Black", detail = "Wiley the Black: Lakeshire inn, Redridge Mountains" },
     [135] = { mapID = 1436, x = 0.563, y = 0.475, label = "Gryan Stoutmantle — Westfall", targetName = "Gryan Stoutmantle", detail = "Gryan Stoutmantle: Sentinel Hill, Westfall" },
     [141] = { mapID = 1453, x = 0.783, y = 0.707, label = "Master Mathias Shaw — Stormwind", targetName = "Master Mathias Shaw", detail = "Master Mathias Shaw: SI:7, Old Town, Stormwind" },
@@ -285,27 +285,27 @@ FDJ.QUEST_START_MAPS = {
     [92752] = { mapID = 1453, x = 0.619, y = 0.306, label = "Sprite Jumpsprocket — Stormwind", targetName = "Sprite Jumpsprocket", detail = "Sprite Jumpsprocket: Dwarven District, Stormwind" },
 }
 
--- BEGIN turninspots
--- Turn-in NPCs who give no quest of their own here, for the quest tracker's
--- ? button. In-game coordinates from Warcraft Tavern's WoW Forever guide to
--- the Ruins of Lordaeron quests.
+
+
+
+
 FDJ.TURNIN_SPOTS = {
     { mapID = 1453, x = 0.690, y = 0.828, label = "General Marcus Jonathan — Valley of Heroes, Stormwind", targetName = "General Marcus Jonathan" },
     { mapID = 1453, x = 0.692, y = 0.277, label = "Lady Dena Kennedy — Stormwind Keep, Stormwind", targetName = "Lady Dena Kennedy" },
     { mapID = 1453, x = 0.562, y = 0.540, label = "Orphan Matron Nightingale — Cathedral Square, Stormwind", targetName = "Orphan Matron Nightingale" },
     { mapID = 1458, x = 0.733, y = 0.326, label = "Oran Snakewrithe — Magic Quarter, Undercity", targetName = "Oran Snakewrithe" },
 }
--- END turninspots
 
--- BEGIN mapquests
--- Quest spots inside the dungeons, shown on the dungeon maps: objects to
--- loot or use, quest givers / turn-ins inside, places to explore.
--- Positions: the Classic spawn database (CMaNGOS classic-db), converted
--- with the client's UiMapAssignment regions (as the boss spots); the
--- floor checked on the map art. Spots next to a boss portrait sit just
--- beside it. acts: start / end / loot / use / explore. dungeon: the
--- journal page that lists the quest; main: its journal entry (a chain
--- step's own quest).
+
+
+
+
+
+
+
+
+
+
 FDJ.MAP_QUEST_PINS = {
     ["Blackfathom Deeps"] = {
         { floor = 1, x = 0.329, y = 0.412, spots = {
@@ -353,9 +353,11 @@ FDJ.MAP_QUEST_PINS = {
                 { id = 4083, name = "The Spectral Chalice", dungeon = "Blackrock Depths", acts = { "start", "end" } },
             } },
         } },
-        -- nocorefrag (2.1.7, M 25 Nov 2026: "remove core fragment from the
-        -- map"): the Core Fragment's pin (Attunement to the Core) is gone.
-        { floor = 2, x = 0.514, y = 0.591, spots = {
+
+
+
+
+        { floor = 2, x = 0.514, y = 0.614, spots = {
             { name = "Mistress Nagmara", quests = {
                 { id = 4201, name = "The Love Potion", dungeon = "Blackrock Depths", acts = { "start", "end" } },
             } },
@@ -432,9 +434,9 @@ FDJ.MAP_QUEST_PINS = {
             } },
         } },
     },
-    -- No spawn data for WoW Forever's own dungeons: placed from Warcraft
-    -- Tavern's screenshots (Ardin on the wooden tower by the Relic Guardian,
-    -- beside its portrait; Daewyn's body in a tent at the Lost Dig Site).
+
+
+
     ["Excavation Site: Wetlands"] = {
         { floor = 1, x = 0.262, y = 0.668, spots = {
             { name = "Ardin Grassman", quests = {
@@ -450,11 +452,11 @@ FDJ.MAP_QUEST_PINS = {
         } },
     },
     ["Gnomeregan"] = {
-        -- gnomepins (2.1.7, M 26 Nov 2026: "this quest should basically be
-        -- kind of where the stairs are, where the ladder is to level 2, to the
-        -- left of the ladder. Also ... the escort quest ... on the green dot
-        -- in the dormitory"): the Sparklematic 5200 just left of the Dormitory's
-        -- way down; Kernobee (A Fine Mess) in the Dormitory on Level 2.
+
+
+
+
+
         { floor = 1, x = 0.452, y = 0.877, spots = {
             { name = "The Sparklematic 5200", quests = {
                 { id = 2951, name = "The Sparklematic 5200!", dungeon = "Gnomeregan", acts = { "start", "end" } },
@@ -470,14 +472,14 @@ FDJ.MAP_QUEST_PINS = {
         } },
         { floor = 4, x = 0.354, y = 0.177, spots = {
             { name = "Thermaplugg's Safe", quests = {
-                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" }, -- its own quest
+                { id = 2841, name = "Rig Wars", dungeon = "Gnomeregan", acts = { "loot" }, item = 9153, itemName = "Rig Blueprints" },
             } },
         } },
     },
-    -- hotattendant (2.1.7, M 26 Nov 2026, his Hall of Thanes map with a black
-    -- dot left of Faldrim Anvilmar: "the quest that starts at the ghostly
-    -- attendant on the black dot"): An Ancient Grudge, taken and handed in
-    -- there (Ghostly Attendant, NPC 265002, Wowhead Forever).
+
+
+
+
     ["Hall of Thanes"] = {
         { floor = 1, x = 0.427, y = 0.647, spots = {
             { name = "Ghostly Attendant", quests = {
@@ -486,11 +488,11 @@ FDJ.MAP_QUEST_PINS = {
         } },
     },
     ["Ragefire Chasm"] = {
-        -- rfcsatchel (2.1.7, M 26 Nov 2026, the ! / ? out east of Oggleflint's
-        -- room: "It should be in the same spot as the boss ... Try to put a pin
-        -- in the same boss room, but make it clean"): on Oggleflint's spot, a
-        -- touch up and right, so pinclear (Systems/MapMarkers.lua) sets it
-        -- against the top right of his ring at any zoom, like a badge.
+
+
+
+
+
         { floor = 1, x = 0.571, y = 0.363, spots = {
             { name = "Maur Grimtotem", quests = {
                 { id = 5724, name = "Returning the Lost Satchel", dungeon = "Ragefire Chasm", acts = { "start" } },
@@ -563,29 +565,29 @@ FDJ.MAP_QUEST_PINS = {
                 { id = 1098, name = "Deathstalkers in Shadowfang", dungeon = "Shadowfang Keep", acts = { "end" } },
             } },
         } },
-        -- urbook (2.1.7, M 26 Nov 2026: "The book of Ur quest is in the wrong
-        -- room. It should be in the level 3, to the left of Fenrus, against the
-        -- wall"): in the round room, just inside its west wall at Fenrus's height.
+
+
+
         { floor = 3, x = 0.451, y = 0.538, spots = {
             { name = "The Book of Ur", quests = {
                 { id = 1013, name = "The Book of Ur", dungeon = "Shadowfang Keep", acts = { "loot" }, item = 6283, itemName = "The Book of Ur" },
             } },
         } },
     },
-    -- bmhpins5 (2.1.7, M 26 Nov 2026, his Level 5 map of Blackmaw Hold: "green
-    -- dot is totem of ursoc quest piece"): The Twin Bears' Totem of Ursoc
-    -- (item 249694, forever-db), in the Depths of the Burrow.
-    -- bmhursol (same night, his Level 4 map with a red dot just below
-    -- Elder Shaman Bloodmane: "the other part of the totem ... totem of
-    -- Ursol. It's in this room as well ... near the boss"): the Totem of
-    -- Ursol (item 249693, forever-db), in the Depths of the Elders.
+
+
+
+
+
+
+
     ["Blackmaw Hold"] = {
-        { floor = 5, x = 0.431, y = 0.445, spots = { -- (bmhlevels: the Depths of the Elders are Level 5 now)
+        { floor = 5, x = 0.431, y = 0.445, spots = {
             { name = "Totem of Ursol", quests = {
                 { id = 92066, name = "The Twin Bears", dungeon = "Blackmaw Hold", acts = { "loot" }, item = 249693, itemName = "Totem of Ursol" },
             } },
         } },
-        { floor = 6, x = 0.474, y = 0.513, spots = { -- (bmhlevels: the Depths of the Burrow are Level 6 now)
+        { floor = 6, x = 0.474, y = 0.513, spots = {
             { name = "Totem of Ursoc", quests = {
                 { id = 92066, name = "The Twin Bears", dungeon = "Blackmaw Hold", acts = { "loot" }, item = 249694, itemName = "Totem of Ursoc" },
             } },
@@ -652,9 +654,9 @@ FDJ.MAP_QUEST_PINS = {
         } },
     },
     ["Uldaman"] = {
-        -- pinclear (2.1.3, M 21 Nov 2026: "The tablet of will is also next to
-        -- Galgann Firehammer. So you can put it a bit more to his left, but
-        -- still inside the room"; was 0.207, 0.341)
+
+
+
         { floor = 1, x = 0.253, y = 0.327, spots = {
             { name = "Tablet of Will", quests = {
                 { id = 1139, name = "The Lost Tablets of Will", dungeon = "Uldaman", acts = { "loot" }, item = 5824, itemName = "Tablet of Will" },
@@ -672,17 +674,17 @@ FDJ.MAP_QUEST_PINS = {
                 { id = 2318, name = "Translating the Journal", dungeon = "Uldaman", main = 2339, acts = { "start" } },
             } },
         } },
-        -- pinclear (2.1.3, M 21 Nov 2026: "the hidden chamber question mark is
-        -- wrong. It should be literally on the same spot as Ironaya ... in the
-        -- same room": beside her, on the right; was 0.316, 0.719)
+
+
+
         { floor = 1, x = 0.388, y = 0.739, spots = {
             { quests = {
                 { id = 2240, name = "The Hidden Chamber", dungeon = "Uldaman", acts = { "explore" } },
             } },
         } },
-        -- pinclear (2.1.3, M 21 Nov 2026: The Lost Dwarves' ? "on the lost
-        -- dwarf pin a little bit more to the left ... the same room"; was
-        -- 0.638, 0.948)
+
+
+
         { floor = 1, x = 0.5665, y = 0.920, spots = {
             { name = "Baelog", quests = {
                 { id = 2398, name = "The Lost Dwarves", dungeon = "Uldaman", acts = { "end" } },
@@ -702,4 +704,4 @@ FDJ.MAP_QUEST_PINS = {
         } },
     },
 }
--- END mapquests
+

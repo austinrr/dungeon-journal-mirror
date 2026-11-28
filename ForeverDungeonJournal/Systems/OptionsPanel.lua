@@ -1,6 +1,6 @@
--- Page under Options > AddOns > Dungeon Journal: a short landing page (big
--- title, version, how to reach the options) with a red "Open Options" button
--- that opens the journal's own options panel, like other addons do.
+
+
+
 local _, FDJ = ...
 
 local function L(key, ...)
@@ -42,7 +42,7 @@ local access = panel:CreateFontString(nil, "ARTWORK", "ForeverDJ_GameFontHighlig
 access:SetPoint("TOP", version, "BOTTOM", 0, -14)
 
 local open = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-FDJ.OwnFonts(open) -- ownfonts (2.0.8)
+FDJ.OwnFonts(open)
 open:SetSize(300, 44)
 open:SetPoint("TOP", access, "BOTTOM", 0, -30)
 open:SetNormalFontObject("ForeverDJ_GameFontNormalHuge")
@@ -54,8 +54,8 @@ open:SetScript("OnClick", function()
     end
 end)
 
--- The page is already "shown" when the game first displays it, so OnShow
--- alone left it blank the first time: fill it in right away and at login too.
+
+
 local function Refresh()
     version:SetText(L("OPT_VERSION", Version()))
     access:SetText(L("OPT_ACCESS", "/dj options"))

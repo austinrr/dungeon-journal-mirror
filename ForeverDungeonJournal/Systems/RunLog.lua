@@ -1,28 +1,28 @@
--- Run Log: records every dungeon run of the character on its own.
---   * Every mob killed (trash and bosses) and the XP each one gave.
---   * Need rolls: the items this character pressed Need on, won or lost.
---   * Speed: from the first trash kill to the last boss kill.
---   * Deaths, and how much of the dungeon's trash was killed.
--- A run is one copy of a dungeon (its instance ID, read from the creatures'
--- GUIDs). Leaving and coming back (a corpse run after releasing, or a trip
--- out to a vendor) carries on the same run; a reset dungeon starts a new one.
--- The page that shows the runs is Systems/RunLogUI.lua.
---
--- Not the combat log: WoW Forever closes COMBAT_LOG_EVENT_* to addons. Kills
--- come from PARTY_KILL / UNIT_DIED (GUIDs), the hostile-death and XP chat
--- lines (names), ENCOUNTER_END, and corpses seen on nameplates. XP is the
--- change of UnitXP, matched to the kill it came with. Anything the client
--- hands over as a secret value is skipped.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 local MAX_RUNS = 150
--- Dungeons whose bosses all act as rares on the tracker (testing only; empty).
+
 FDJ.RUNLOG_TEST_RARES = {}
-local RESUME_OPEN = 90 * 60      -- back inside within this time: same run (unfinished)
-local RESUME_DONE = 20 * 60      -- same, once the final boss is dead
-local MERGE_WINDOW = 3           -- seconds: two reports of one death
-local XP_WINDOW = 4              -- seconds: XP given for a kill
+local RESUME_OPEN = 90 * 60
+local RESUME_DONE = 20 * 60
+local MERGE_WINDOW = 3
+local XP_WINDOW = 4
 
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
@@ -39,7 +39,7 @@ local function L(key, ...)
     return key
 end
 
--- ------------------------------------------------------------ storage
+
 local function Store()
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     local db = ForeverDungeonJournalCharacterDB
@@ -53,15 +53,15 @@ end
 local function Account()
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
     local db = ForeverDungeonJournalDB
-    if type(db.runLogNames) ~= "table" then db.runLogNames = {} end         -- npcID -> name
-    if type(db.runLogTrashTotal) ~= "table" then db.runLogTrashTotal = {} end -- dungeon -> trash count
-    if type(db.runLogBossAliases) ~= "table" then db.runLogBossAliases = {} end -- boss npcID -> { lower name = true }
-    if type(db.runLogRooms) ~= "table" then db.runLogRooms = {} end -- spireroom: locale -> map -> { lower room = wing or "shared" }
+    if type(db.runLogNames) ~= "table" then db.runLogNames = {} end
+    if type(db.runLogTrashTotal) ~= "table" then db.runLogTrashTotal = {} end
+    if type(db.runLogBossAliases) ~= "table" then db.runLogBossAliases = {} end
+    if type(db.runLogRooms) ~= "table" then db.runLogRooms = {} end
     return db
 end
 
--- ------------------------------------------------------------ helpers
--- Creature-0-server-map-zoneUID-npcID-spawnUID: zoneUID is the instance copy.
+
+
 local function ParseGUID(guid)
     guid = Plain(guid)
     if type(guid) ~= "string" then return nil end
@@ -91,8 +91,8 @@ local function Lower(s)
     return (s:lower():gsub("\226\128\153", "'"))
 end
 
--- A Blizzard format string ("%s dies, you gain %d experience.") as a Lua
--- pattern. Captures come back in argument order (some locales use %2$s).
+
+
 local function MakePattern(fmt, anchorEnd)
     if type(fmt) ~= "string" or fmt == "" then return nil end
     local out, order, i = {}, {}, 1
@@ -126,14 +126,14 @@ end
 
 local function Match(p, text)
     if not p or type(text) ~= "string" then return nil end
-    -- rollnumbers (2.1.5): the loot history tag off first (no format keeps
-    -- it: LootFormat), or a line starting with a name took it in
+
+
     text = text:gsub("|HlootHistory:[^|]*|h.-|h:?%s*", "")
     local caps = { text:match(p.pattern) }
-    -- rollfix (2.0.10, M 16 Nov 2026: the Need roll showed no numbers, his
-    -- or the others'): the client can put a tag before the line ("[Loot]: ")
-    -- and links or colours round the names. Tried again without them, the
-    -- line matched anywhere in the text (item links are kept).
+
+
+
+
     if #caps == 0 then
         local clean = text:gsub("|HlootHistory:[^|]*|h.-|h:?%s*", "")
             :gsub("|Hplayer:[^|]*|h%[?([^%]|]*)%]?|h", "%1")
@@ -145,7 +145,7 @@ local function Match(p, text)
     local args = {}
     for k, argIndex in ipairs(p.order) do
         local v = caps[k]
-        -- rollfix (2.0.10): a name in colour or as a link: the plain name
+
         if type(v) == "string" and not v:find("|Hitem:", 1, true) then
             v = v:gsub("|Hplayer:[^|]*|h%[?([^%]|]*)%]?|h", "%1"):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
         end
@@ -159,12 +159,12 @@ local function Number(s)
     return tonumber((s:gsub("[^%d]", "")))
 end
 
--- rollnumbers (2.1.5, M 24 Nov 2026: "why are need rolls showing still not
--- working? i wanna see what i rolled"): the loot lines' own format can start
--- with the loot history tag ("|HlootHistory:%d|h[Loot]|h: Need Roll - %d
--- for %s by %s"); its number was taken for the roll, the roll for the item.
--- The tag comes off the format (the line loses it in Match): the arguments
--- are the line's own again.
+
+
+
+
+
+
 local function LootFormat(fmt)
     if type(fmt) ~= "string" then return nil end
     local s, e = fmt:find("|HlootHistory:.-|h.-|h:?%s*")
@@ -179,8 +179,8 @@ local function LootFormat(fmt)
     end
     return rest
 end
--- A roll line's item link, number and name, whatever their order in the
--- client's language.
+
+
 local function RollArgs(args)
     local link, n, name
     for _, v in pairs(args or {}) do
@@ -212,15 +212,15 @@ local function Patterns()
         rolledGreed = MakePattern(LootFormat(_G.LOOT_ROLL_ROLLED_GREED), true),
         rolledNeedBonus = _G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS and MakePattern(LootFormat(_G.LOOT_ROLL_ROLLED_NEED_ROLE_BONUS), true) or nil,
         lootSelf = MakePattern(_G.LOOT_ITEM_SELF, true),
-        lootSelfMulti = _G.LOOT_ITEM_SELF_MULTIPLE and MakePattern(_G.LOOT_ITEM_SELF_MULTIPLE, true) or nil, -- lootvalue: "You receive loot: [X]x3."
+        lootSelfMulti = _G.LOOT_ITEM_SELF_MULTIPLE and MakePattern(_G.LOOT_ITEM_SELF_MULTIPLE, true) or nil,
         reset = MakePattern(_G.INSTANCE_RESET_SUCCESS or "%s has been reset.", true),
-        -- reptrack (2.1.4): "Reputation with %s increased by %d." (not tied to
-        -- the end: the game can add a bonus after it)
+
+
         rep = MakePattern(_G.FACTION_STANDING_INCREASED or "Reputation with %s increased by %d.", false),
     }
-    -- rollnumbers: with the loot lines kept short (the game's default), only
-    -- the winner's line comes, with the roll in it: "[Loot]: You (Need - 87)
-    -- Won: <item>", "[Loot]: <name> (Greed - 54) Won: <item>".
+
+
+
     patterns.noSpam = {}
     for _, kind in ipairs({ "NEED", "GREED", "DE", "TRANSMOG" }) do
         for _, who in ipairs({ "YOU_WON", "WON" }) do
@@ -234,7 +234,7 @@ local function Patterns()
     return patterns
 end
 
--- ------------------------------------------------------------ dungeon data
+
 local bossCache = {}
 local function Bosses(dungeon)
     if not dungeon then return nil end
@@ -243,10 +243,10 @@ local function Bosses(dungeon)
     c = { byNpc = {}, byName = {}, finalNpc = nil, finalNames = {} }
     local d = FDJ.DB and FDJ.DB[dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
-        -- altarbosses (2.0.24): a journal group ("Altar Bosses") and its
-        -- children are not run bosses; their kills stay trash, as before.
-        -- felsteedoff (2.0.7): runLogHidden (the Shadowfang Keep horses):
-        -- no run boss either; their kills are trash.
+
+
+
+
         if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
             and not b.childOf and not b.children and not b.runLogHidden then
             if b.npcID then c.byNpc[b.npcID] = b end
@@ -262,12 +262,12 @@ local function Bosses(dungeon)
             end
         end
     end
-    -- bossnames: its name in the client's language, learned in the game
-    -- (units seen, the Encounter Journal). Kills told by name only (the
-    -- boss kill event, "dies" lines) match it too. rendgyth (2.0.34): taken
-    -- after every boss's own names, so a learned name can never take
-    -- another boss's own name (Gyth had learned "Warchief Rend Blackhand"
-    -- from the encounter event and, coming first, took Rend's kills).
+
+
+
+
+
+
     for _, b in ipairs((d and d.bosses) or {}) do
         if type(b) == "table" and not b.trash and not b.recipeTab and type(b.name) == "string"
             and not b.childOf and not b.children and not b.runLogHidden and b.npcID then
@@ -288,7 +288,7 @@ local function Bosses(dungeon)
             c.finalNames = type(names) == "table" and names or {}
         end
     end
-    -- No final boss known: the last real boss of the journal page.
+
     if not c.finalNpc and not next(c.finalNames) then
         local last
         for _, b in ipairs((d and d.bosses) or {}) do
@@ -311,9 +311,9 @@ local function BossFor(dungeon, npc, name)
     return lower and c.byName[lower] or nil
 end
 
--- ringoflaw (2.0.4): bosses that are one fight of which only one shows up
--- (the Ring of Law's challengers, data: fightGroup = "Ring of Law"). The
--- fight's own name and each member's name give the fight's name.
+
+
+
 local function FightGroup(dungeon, name)
     local lower = Lower(name)
     local d = lower and dungeon and FDJ.DB and FDJ.DB[dungeon]
@@ -325,10 +325,10 @@ local function FightGroup(dungeon, name)
     return nil
 end
 
--- ringoflaw (2.0.8): which of a fight's bosses a unit is, from what Forever
--- still tells about it inside a dungeon, where names and IDs are hidden: its
--- level and creature type (data: fightSig on each boss). nil when it could be
--- more than one (Grizzle and Eviscerator are both level 54 humanoids).
+
+
+
+
 local CREATURE_TYPE_IDS = { Beast = 1, Undead = 6, Humanoid = 7 }
 local CREATURE_TYPE_NAMES = {
     Beast = { "Beast", "Wildtier", "Bête", "Bestia", "Fera", "Животное", "야수", "野兽", "野獸" },
@@ -361,9 +361,9 @@ local function FightMemberOfUnit(dungeon, group, unit)
     end
     return pick
 end
--- A kill told under the fight's own name ("Ring of Law", the boss event):
--- which of its bosses it was, from the dead target, else from the boss the
--- fight was seen to bring.
+
+
+
 local function RefineFightKill(run, dungeon, k)
     if not (k and k.b) then return end
     local group, member = FightGroup(dungeon, k.b)
@@ -400,8 +400,8 @@ local function NameOfNpc(npc)
     if not npc then return nil end
     return Account().runLogNames[npc]
 end
--- wingnames (2.1.5): a wing mob's names in this client's language, baked in
--- (FDJ.RunLogMobNamesL10n, Data/RunLogWings.lua): is lname (lower case) one?
+
+
 local bakedNames
 local function BakedName(npc, lname)
     if not npc or not lname then return false end
@@ -422,9 +422,9 @@ local function BakedName(npc, lname)
     return set ~= nil and set[lname] == true
 end
 
-local FixBossKillsAll -- below: kills renamed once a boss's local name is known
+local FixBossKillsAll
 
--- The journal's boss NPC IDs (all dungeons).
+
 local bossNpcs
 local function IsBossNpc(npc)
     if not bossNpcs then
@@ -438,7 +438,7 @@ local function IsBossNpc(npc)
     return npc ~= nil and bossNpcs[npc] == true
 end
 
--- Another name a boss goes by (its name in the client's language). True if new.
+
 local function AddBossAlias(npc, name)
     local lower = Lower(name)
     if not npc or not lower or not IsBossNpc(npc) then return false end
@@ -461,17 +461,17 @@ local function LearnName(npc, name)
     end
 end
 
--- bossnames: the game's own boss names, in the client's language, from the
--- Encounter Journal. A journal creature is matched to the addon's boss by its
--- model (FDJ.STATIC_DISPLAY_IDS), so it works in every language, also for
--- bosses with no translation in the addon and when Forever hides NPC IDs.
+
+
+
+
 local journalScanned = false
 local function LearnFromJournal(force)
     if journalScanned and not force then return false end
     journalScanned = true
     if type(EJ_GetInstanceByIndex) ~= "function" or type(EJ_SelectInstance) ~= "function"
         or type(EJ_GetEncounterInfoByIndex) ~= "function" or type(EJ_GetCreatureInfo) ~= "function" then return false end
-    -- Don't move the journal the player is reading.
+
     if EncounterJournal and EncounterJournal.IsShown and EncounterJournal:IsShown() then journalScanned = false return false end
     local byDisplay, shared = {}, {}
     for npc, display in pairs(FDJ.STATIC_DISPLAY_IDS or {}) do
@@ -479,7 +479,7 @@ local function LearnFromJournal(force)
             if byDisplay[display] and byDisplay[display] ~= npc then shared[display] = true else byDisplay[display] = npc end
         end
     end
-    for display in pairs(shared) do byDisplay[display] = nil end -- one model, two bosses: not used
+    for display in pairs(shared) do byDisplay[display] = nil end
     if not next(byDisplay) then return false end
     local prevTier
     if type(EJ_GetCurrentTier) == "function" then
@@ -525,12 +525,12 @@ local function LearnFromJournal(force)
 end
 local journalTried = {}
 
--- ------------------------------------------------------------ where we are
+
 local inside, insideMap, insideDungeon = false, nil, nil
-local current            -- the run being recorded (inside the dungeon)
-local unitEvidence = { guid = {}, name = {} } -- session-only creature eligibility
-local recent = {}        -- kills of the last seconds (session only): merging
-local session = {}       -- run.id -> { killed = {guidKey}, seen = {guidKey} } kept in memory too
+local current
+local unitEvidence = { guid = {}, name = {} }
+local recent = {}
+local session = {}
 
 local function InDungeon()
     if not IsInInstance then return false end
@@ -543,14 +543,14 @@ local function InDungeon()
         local ok, d = pcall(FDJ.CurrentDungeon)
         if ok then dungeon = d end
     end
-    -- A remembered/default Scarlet choice is not evidence for this run.
-    -- Keep a fresh tracker generic until the room/door or a kill identifies it.
+
+
     if tonumber(map) == 189 and FDJ.ResolveScarletWing then
         local ok, wing, _, certain = pcall(FDJ.ResolveScarletWing)
         if ok then dungeon = certain and wing or nil end
     end
-    -- Both Spire routes share an entrance. Even a named room may be shared
-    -- (Hall of Blackhand); only a wing-specific kill chooses the run's wing.
+
+
     if tonumber(map) == 229 then dungeon = nil end
     return true, tonumber(map), dungeon, Plain(name)
 end
@@ -576,7 +576,7 @@ local function TrashSeen(run)
     if run.seenN then return run.seenN end
     local n = 0
     for _ in pairs(run.seen or {}) do n = n + 1 end
-    -- Kills known by name only (no GUID) were never in the seen list.
+
     for _, k in ipairs(run.kills or {}) do
         if not k.b and not k.g and not k.wb and not k.p then n = n + 1 end
     end
@@ -590,8 +590,8 @@ end
 local function CloseRun(run)
     if not run or run.closed then return end
     run.closed = true
-    -- 2.0.4: an unfinished run keeps its time: until it was ended, or the
-    -- last time you were inside.
+
+
     if not run.completed and not run.endedAt then
         run.endedAt = (run.outside and run.outside.t) or (current == run and Now()) or run.lastSeen or Now()
     end
@@ -606,7 +606,7 @@ local function CloseRun(run)
             if log.runs[i] == run then table.remove(log.runs, i) break end
         end
     elseif run.completed and run.dungeon then
-        -- A finished run teaches how much trash the dungeon has.
+
         local totals = Account().runLogTrashTotal
         local n = math.max(run.seenN or 0, TrashKilled(run))
         if n > (tonumber(totals[run.dungeon]) or 0) then totals[run.dungeon] = n end
@@ -659,18 +659,18 @@ local function EnsureRun()
     return run
 end
 
--- The instance copy, from a creature's GUID. A different copy of the same
--- dungeon means it was reset: the old run ends, a new one starts.
+
+
 local function CheckZone(zone, map)
     if not inside or not zone then return end
     if map and insideMap and map ~= insideMap then return end
-    -- A run starts with the first kill, not with a mob merely seen.
+
     local run = current
     if not run then return end
     if not run.zone then
         run.zone = zone
     elseif run.zone ~= zone then
-        -- Not back in that copy after all: its last trip out never ended.
+
         local last = run.exits and run.exits[#run.exits]
         if last and last.back and (Now() - last.back) < 600 then
             local since = false
@@ -686,18 +686,18 @@ local function CheckZone(zone, map)
     end
 end
 
--- ------------------------------------------------------------ kills
-local pendingXP = {}   -- { clock, amount }: XP that came before its kill
 
--- A run is complete once every boss of the journal page is dead, not just
--- the last one (a skipped boss keeps it open). Rares and bosses that need a
--- quest or a summoning item to appear are optional. A dungeon without boss
--- data completes on its final boss.
--- dwarvesally (2.1.3, M 21 Nov 2026, an Alliance Uldaman run, every boss on
--- the tracker crossed out: "run didnt end but all bosses are dead"): a boss
--- only the other faction can fight (factionOnly: The Lost Dwarves, friendly
--- to the Alliance) is not needed to end the run; the tracker already leaves
--- it off (Systems/RunLogUI.lua, TrackerBossAllowed).
+local pendingXP = {}
+
+
+
+
+
+
+
+
+
+
 local function PlayerFaction()
     if type(UnitFactionGroup) ~= "function" then return nil end
     local ok, faction = pcall(UnitFactionGroup, "player")
@@ -706,12 +706,12 @@ local function PlayerFaction()
     return faction
 end
 local function AllBossesDown(run, kill)
-    -- finalfirst (2.0.13, M 19 Nov 2026, a Stratholme: Undead run on stream
-    -- shown done before Baron Rivendare died - the Black Guard Swordsmith's
-    -- kill, a boss the page doesn't have, counted for the boss still open:
-    -- "there is no way the tracker can end before the last boss is dead.
-    -- This logic should apply to every single dungeon"): no run is done
-    -- while its final boss is not dead.
+
+
+
+
+
+
     local final = Bosses(run.dungeon)
     if final and (final.finalNpc or next(final.finalNames)) then
         local dead = kill and kill.f and true or false
@@ -722,21 +722,21 @@ local function AllBossesDown(run, kill)
     end
     local d = run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]
     local needed, known, group = {}, {}, {}
-    local faction = PlayerFaction() -- dwarvesally
+    local faction = PlayerFaction()
     for _, b in ipairs((d and d.bosses) or {}) do
         if type(b) == "table" and type(b.name) == "string" and not b.trash and not b.recipeTab then
             known[b.name] = true
-            -- ringoflaw: one fight, whichever of its bosses shows up
+
             local key = type(b.fightGroup) == "string" and b.fightGroup or b.name
             if key ~= b.name then known[key] = true group[b.name] = key group[key] = key end
-            -- altarneeded (2.1.4, OMGmacros on Discord, 22 Nov 2026: "Both my sunken
-            -- Temple runs never completed ... killing all the bosses does not
-            -- register as a completion"): a journal group ("Altar Bosses") and its
-            -- children are no bosses of a run (Bosses, above: their kills are
-            -- trash), so no run could ever have them down: not needed to end it.
+
+
+
+
+
             if not b.rare and not b.spawnQuest and not b.summonItem and not b.optional
-                and not b.childOf and not b.children -- altarneeded
-                and not (type(b.factionOnly) == "string" and faction and b.factionOnly ~= faction) then -- dwarvesally
+                and not b.childOf and not b.children
+                and not (type(b.factionOnly) == "string" and faction and b.factionOnly ~= faction) then
                 needed[key] = true
             end
         end
@@ -751,9 +751,9 @@ local function AllBossesDown(run, kill)
         end
     end
     if next(needed) == nil then return true end
-    -- bossnames: boss kills under names the journal doesn't know yet (the
-    -- client's language, no translation): as many of them as bosses still
-    -- open means every boss is down.
+
+
+
     local left, extra = 0, 0
     for _ in pairs(needed) do left = left + 1 end
     for _ in pairs(unknown) do extra = extra + 1 end
@@ -765,28 +765,28 @@ SetKillTimes = function(run, kill)
     if not run.firstKill then run.firstKill = kill.t end
     if not kill.b and not kill.wb and not kill.p and not run.firstTrash then run.firstTrash = kill.t end
     if kill.b and not kill.r then run.lastBoss = kill.t end
-    -- runlogkills (2.0.7): RPG Mode counts the same boss (Systems/RPGMode.lua):
-    -- the tracker knows it by its encounter ID where RPG Mode saw no name.
+
+
     if kill.b and not run.test and FDJ.RPGRunLogBoss then pcall(FDJ.RPGRunLogBoss, run.dungeon, kill.b, kill.n) end
     if kill.b and not run.completed and AllBossesDown(run, kill) then
         run.completed = true
         run.finalKill = kill.t
-        -- A moment later, once the boss's XP is counted.
+
         C_Timer.After(2, function()
             if FDJ.RunLogSummary then
                 local ok, text = pcall(FDJ.RunLogSummary, run)
-                if ok and text then FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end -- (chatlines)
+                if ok and text then FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end
             end
         end)
     end
 end
 
--- A boss fought together with others (killWith = { "Ruuzlu" }): its fight
--- is over, and the boss counted killed, only once all of them are dead.
--- The boss's own kill waits (wb) until then; the others' kills are part of
--- the fight (p), not trash.
+
+
+
+
 local function IsPartner(boss, kill)
-    -- each partner: a name, an NPC ID, or { name, NPC ID } (either matches)
+
     for _, partner in ipairs(boss.killWith or {}) do
         for _, v in ipairs(type(partner) == "table" and partner or { partner }) do
             if (type(v) == "number" and kill.n == v)
@@ -808,11 +808,11 @@ local function PartnersDead(run, boss)
     return true
 end
 
--- killedbefore (2.0.4): a boss that only shows up once another boss is dead
--- (Sneed comes out of his Shredder; data: killedBefore = { name, NPC ID }).
--- Its kill counts the other one too: with no XP for it and its name hidden,
--- that death was only an unnamed kill. That kill (the last unnamed one, at
--- most two minutes earlier) becomes the boss; else the boss is added.
+
+
+
+
+
 local KILLED_BEFORE_WINDOW = 120
 local function CreditOther(run, name, npc, kill)
     if type(name) ~= "string" then return end
@@ -830,7 +830,7 @@ local function CreditOther(run, name, npc, kill)
         end
         if hidden then break end
     end
-    -- c: counted through another boss, not by its own death
+
     if hidden then
         hidden.b, hidden.m = name, name
         hidden.n = hidden.n or npc
@@ -849,21 +849,21 @@ local function CreditKilledBefore(run, boss, kill)
     CreditOther(run, before[1], tonumber(before[2]), kill)
 end
 
--- ruuzlu (2.0.4): a boss's partner that is a boss of its own (Ruuzlu, with
--- Chief Ukorz Sandscalp). The fight's boss event says the fight is over:
--- the boss is killed, and so is a partner whose own death went unnamed (no
--- XP at a high level).
+
+
+
+
 local function EventEndsFight(run, kill, boss)
     if type(boss) ~= "table" or type(boss.killWith) ~= "table" then return end
     local dungeon = run.dungeon or insideDungeon
     if kill.wb == boss.name or not kill.b then
         kill.b, kill.wb = boss.name, nil
     end
-    -- ukorzfinal (2.1.2, a Zul'Farrak run reported "Not finished" with every
-    -- boss down, M 21 Nov 2026): the boss event of a fight whose partner died
-    -- hidden (Ruuzlu: Forever hides who died) named the kill first, so it was
-    -- never marked as the final boss's and the run could not end. The fight's
-    -- kill is its boss's, final boss included, however it was named.
+
+
+
+
+
     if kill.b == boss.name and not boss.rare and IsFinal(dungeon, kill.n, kill.m or boss.name, boss) then kill.f = 1 end
     for _, partner in ipairs(boss.killWith) do
         local name, npc
@@ -875,9 +875,9 @@ local function EventEndsFight(run, kill, boss)
     end
 end
 
--- A partner died: a boss waiting for it (its own death came first) is
--- killed now, if this was the last one. mark: the kill is part of that
--- fight, not trash (a partner with no page of its own).
+
+
+
 local function PartnerDied(run, kill, dungeon, mark)
     local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
@@ -885,7 +885,7 @@ local function PartnerDied(run, kill, dungeon, mark)
             if mark then kill.p = 1 end
             for _, k in ipairs(run.kills or {}) do
                 if k.wb == b.name and k ~= kill then
-                    -- (this kill is not in the list yet: count it as dead)
+
                     local others = {}
                     for _, partner in ipairs(b.killWith) do
                         if not IsPartner({ killWith = { partner } }, kill) then others[#others + 1] = partner end
@@ -893,7 +893,7 @@ local function PartnerDied(run, kill, dungeon, mark)
                     if PartnersDead(run, { killWith = others }) then
                         k.wb = nil
                         k.b = b.name
-                        k.t = kill.t or k.t -- the fight ended with this death
+                        k.t = kill.t or k.t
                         if not b.rare and IsFinal(dungeon, k.n, k.m, b) then k.f = 1 end
                         if SetKillTimes then SetKillTimes(run, k) end
                     end
@@ -909,8 +909,8 @@ local function ClassifyKill(run, kill)
     local dungeon = run.dungeon or insideDungeon
     local boss = BossFor(dungeon, kill.n, kill.m)
     if boss then
-        -- ruuzlu: already counted through its partner's fight event: this
-        -- death is part of that fight
+
+
         for _, k in ipairs(run.kills or {}) do
             if k ~= kill and k.c and k.b == boss.name then kill.p = 1 return end
         end
@@ -923,18 +923,18 @@ local function ClassifyKill(run, kill)
         kill.r = boss.rare and 1 or nil
         if not kill.r and IsFinal(dungeon, kill.n, kill.m, boss) then kill.f = 1 end
         CreditKilledBefore(run, boss, kill)
-        -- ruuzlu: a boss that is also another boss's partner
+
         PartnerDied(run, kill, dungeon, false)
         return
     end
-    -- One of a boss's partners: part of that fight; if the boss is already
-    -- dead and this was the last one, the fight is over now.
+
+
     PartnerDied(run, kill, dungeon, true)
 end
 
--- bossnames: a run's boss kills recorded under another name (the client's
--- language) get the journal's name once that name is known; the run then
--- completes if every boss is down.
+
+
+
 local function FixBossKills(run)
     local dungeon = type(run) == "table" and run.dungeon
     if not dungeon or type(run.kills) ~= "table" then return false end
@@ -948,15 +948,15 @@ local function FixBossKills(run)
                 if not k.r and IsFinal(dungeon, k.n, k.m or boss.name, boss) then k.f = 1 end
                 changed = true
             end
-            -- ukorzfinal (2.1.2): a final boss's kill saved without its mark
-            -- (Chief Ukorz Sandscalp's, above): marked now, so the run ends.
+
+
             if boss and not k.f and not k.r and not boss.rare and IsFinal(dungeon, k.n, k.m or boss.name, boss) then
                 k.f = 1
                 changed = true
             end
             if not k.r then lastBoss = k end
         elseif k.p and not k.wb and k.m and BossFor(dungeon, k.n, k.m) then
-            -- ruuzlu: a partner that has its own page now
+
             local boss = BossFor(dungeon, k.n, k.m)
             local dup = false
             for _, o in ipairs(run.kills) do if o ~= k and o.b == boss.name then dup = true break end end
@@ -966,7 +966,7 @@ local function FixBossKills(run)
                 changed = true
             end
         elseif not k.wb and not k.p and k.m then
-            -- A boss's death counted as trash (its name wasn't known then).
+
             local boss = BossFor(dungeon, k.n, k.m)
             if boss and type(boss.killWith) ~= "table" then
                 k.b = boss.name
@@ -977,19 +977,19 @@ local function FixBossKills(run)
             end
         end
     end
-    -- (dwarvesally, 2.1.3: so a run left open with every boss it needs
-    -- dead - The Lost Dwarves counted for the Alliance - ends here, at its
-    -- last boss's kill, a few seconds after logging in or /reload)
+
+
+
     if not run.completed and lastBoss and AllBossesDown(run, lastBoss) then
         run.completed = true
         run.finalKill = run.finalKill or lastBoss.t
         changed = true
     end
-    -- latekill (2.1.0, Kostiantyn on Discord 19 Nov 2026: Wailing Caverns
-    -- done, Mutanus in the log, the RPG Mode page still locked): a death the
-    -- tracker turns into a boss kill afterwards (counted as trash first, its
-    -- name known later) is told to RPG Mode too, as a kill counted at once
-    -- is: the final boss opens the page. (Hidden tracker or not.)
+
+
+
+
+
     if changed and not run.test and FDJ.RPGRunLogBoss then
         for _, k in ipairs(run.kills) do
             if k.b then pcall(FDJ.RPGRunLogBoss, dungeon, k.b, k.n) end
@@ -1006,11 +1006,11 @@ FixBossKillsAll = function()
     return any
 end
 
--- encounterids (2.0.3): ENCOUNTER_END's encounter ID is the same number on
--- every client language (Data/RunLogEncounters.lua). The kill is told under the
--- journal's name, so it counts whatever the client calls the boss; the boss
--- learns that local name, so its "dies" lines and earlier kills match too. An
--- instance the addon didn't recognise is named by its boss.
+
+
+
+
+
 function FDJ.RunLogEncounterName(id, name)
     local hit = tonumber(id) and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[tonumber(id)]
     if type(hit) ~= "table" then return name end
@@ -1018,9 +1018,9 @@ function FDJ.RunLogEncounterName(id, name)
     local d = FDJ.DB and FDJ.DB[dungeon]
     if not d then return name end
     local wings = FDJ.RunLogWingGroups and insideMap and FDJ.RunLogWingGroups[insideMap]
-    -- strayboss2: an encounter ID listed under another dungeon than the one
-    -- you're in (another of its wings is fine) doesn't name the kill: the
-    -- game's own name does (Forever gives some dungeons new IDs).
+
+
+
     local here = (current and current.dungeon) or insideDungeon
     if inside and here and here ~= dungeon then
         local sameMap = false
@@ -1033,8 +1033,8 @@ function FDJ.RunLogEncounterName(id, name)
         insideDungeon = dungeon
         if current and not current.dungeon then current.dungeon = dungeon end
     end
-    -- rendgyth (2.0.34): not when the game's name is another boss's own
-    -- name here (the event's name and the journal's boss can differ).
+
+
     local othersName = false
     if type(name) == "string" and name ~= "" then
         for _, b in ipairs(d.bosses or {}) do
@@ -1061,9 +1061,9 @@ function FDJ.RunLogEncounterName(id, name)
     return bossName
 end
 
--- rendgyth (2.0.34): bosses an encounter's end counts besides its own
--- (data: also = { ... }), each only if not already killed since you last
--- came into the dungeon.
+
+
+
 function FDJ.RunLogEncounterAlso(id)
     local hit = tonumber(id) and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[tonumber(id)]
     return type(hit) == "table" and type(hit.also) == "table" and hit.also or nil
@@ -1078,10 +1078,10 @@ function FDJ.RunLogKilledThisVisit(run, bossName)
     return false
 end
 
--- resetsplit (2.0.3): a boss that died before you last left the dungeon dies
--- again after you came back: the dungeon was reset (by the group leader, whose
--- reset message the others never get, or before this version). The old run
--- ends there; everything since you came back in starts the new run.
+
+
+
+
 function FDJ.RunLogSplitAfterReset(run, boss, name)
     if not run or run.closed or type(run.exits) ~= "table" then return nil end
     local last = run.exits[#run.exits]
@@ -1125,8 +1125,8 @@ local function TakePendingXP(kill)
     end
 end
 
--- A wing-specific mob or boss is stronger evidence than a generic instance
--- name. Ambiguous/shared names never choose a wing.
+
+
 local function WingFor(npc, name)
     local group = FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[insideMap]
     local found
@@ -1134,7 +1134,7 @@ local function WingFor(npc, name)
         local matched = BossFor(wing, npc, name) ~= nil
         for id, english in pairs((FDJ.RunLogWingTrash or {})[wing] or {}) do
             if npc == id or (Lower(name) and (Lower(name) == Lower(english)
-                or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then matched = true break end -- (wingnames)
+                or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then matched = true break end
         end
         if matched then
             if found and found ~= wing then return nil end
@@ -1144,11 +1144,11 @@ local function WingFor(npc, name)
     return found
 end
 
--- smwing (2.0.8): a mob two wings share (FDJ.RunLogSharedWings: a Scarlet
--- Myrmidon is in the Armory or the Cathedral) rules the other wings out for
--- this visit. When the wing the tracker says is ruled out, it returns the
--- one to say now (the only one left, else the likeliest), and whether it
--- is the only one. Never once a mob only one wing has has told the wing.
+
+
+
+
+
 local function SharedWing(npc, name)
     local list = FDJ.RunLogSharedWings and FDJ.RunLogSharedWings[insideMap]
     if not list then return nil end
@@ -1156,11 +1156,11 @@ local function SharedWing(npc, name)
     if not wings and Lower(name) then
         for id, w in pairs(list) do
             local english = FDJ.RunLogSharedTrash and FDJ.RunLogSharedTrash[insideMap] and FDJ.RunLogSharedTrash[insideMap][id]
-            if Lower(name) == Lower(english) or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)) then wings = w break end -- (wingnames)
+            if Lower(name) == Lower(english) or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)) then wings = w break end
         end
     end
     if not wings then return nil end
-    -- (kept with this visit's other evidence: unitEvidence is new each visit)
+
     local left = unitEvidence.wingsLeft
     if not left then
         left = {}
@@ -1182,9 +1182,9 @@ local function SharedWing(npc, name)
     return pick, count == 1
 end
 
--- spireroom (2.1.4): the room you're in (the minimap's sub-zone, lower
--- case), and which side of a shared instance it belongs to
--- (FDJ.RunLogRoomWings; in another language the rooms learned below).
+
+
+
 local function RoomHere()
     for _, getter in ipairs({ GetSubZoneText, GetMinimapZoneText }) do
         if type(getter) == "function" then
@@ -1215,15 +1215,15 @@ local function RoomWing(map)
     return wing
 end
 
--- A kill of a mob or boss only one side has: the room it happened in is
--- that side's (FDJ.RunLogRoomLearn), or both sides' once the other side
--- has had one there too.
+
+
+
 local function LearnRoom(map, wing)
     local learn = FDJ.RunLogRoomLearn and map and FDJ.RunLogRoomLearn[map]
     local rooms = FDJ.RunLogRoomWings and map and FDJ.RunLogRoomWings[map]
     if not learn or not rooms or not wing then return end
     local room = RoomHere()
-    if not room or rooms[room] then return end -- (the built-in names)
+    if not room or rooms[room] then return end
     local learned = LearnedRooms(map)
     local was = learned[room]
     if wing == learn then
@@ -1235,10 +1235,10 @@ end
 
 local function ApplyWing(wing, confirmed)
     if not wing then return end
-    -- A positive kill in another wing begins its own log, even when both
-    -- wings share a physical instance. Merely walking through a room does not.
-    -- Do not carry a generic run's entrance timer from older addon versions
-    -- into a newly identified wing. Keep that old log as a separate record.
+
+
+
+
     if current and not current.dungeon and FDJ.RunLogWingGroups[insideMap] then
         CloseRun(current)
         recent = {}
@@ -1249,7 +1249,7 @@ local function ApplyWing(wing, confirmed)
         recent = {}
     end
     insideDungeon = wing
-    -- smmaps (2.0.8): a Scarlet wing told by a kill: the big map shows it
+
     if confirmed and FDJ.TrackerScarletWing then pcall(FDJ.TrackerScarletWing, wing) end
     if current then
         if current.dungeon ~= wing then
@@ -1268,7 +1268,7 @@ end
 
 local function ExcludedType(ctype)
     if type(ctype) ~= "string" then return false end
-    -- UnitCreatureType is localized; these are the client critter labels.
+
     local critters = { ["Critter"] = true, ["Kleintier"] = true, ["Bestiole"] = true,
         ["Alma"] = true, ["Animale"] = true, ["Bicho"] = true,
         ["Существо"] = true, ["小动物"] = true, ["小動物"] = true, ["동물"] = true }
@@ -1294,7 +1294,7 @@ local function ObserveUnit(unit)
 end
 
 local function ObserveTargets()
-    -- Party/raid targets cover the first pull even with enemy nameplates off.
+
     ObserveUnit("target")
     ObserveUnit("mouseover")
     if IsInRaid and IsInRaid() then
@@ -1304,12 +1304,12 @@ local function ObserveTargets()
     end
 end
 
--- fightkill: inside Forever instances the creature type (and often the
--- GUID) is hidden, and an overlevelled or capped player gets no XP, so a
--- trash "X dies." / "You have slain X!" line carried no proof and no run
--- started until the first boss. A hostile death while the player or the
--- party is fighting (or just stopped) is a real kill. Common critter names
--- stay out: hitting a critter puts you in combat too.
+
+
+
+
+
+
 local fight = { on = false, untilT = 0, critters = {
     ["rat"] = true, ["roach"] = true, ["cockroach"] = true, ["beetle"] = true,
     ["fire beetle"] = true, ["maggot"] = true, ["larva"] = true, ["snake"] = true,
@@ -1340,8 +1340,8 @@ function FDJ.RunLogInFight()
     return false
 end
 
--- crabkill (2.1.6): is a dead critter among the player's and the group's
--- targets (and the mouseover)? Each fact read only where the game shows it.
+
+
 function FDJ.RunLogDeadCritter()
     local units = { "target", "mouseover" }
     if IsInRaid and IsInRaid() then
@@ -1372,7 +1372,7 @@ function FDJ.RunLogFightKill(name)
     return FDJ.RunLogInFight()
 end
 
--- What the game told us this session (for /dj tracker when nothing shows).
+
 FDJ.RunLogSignals = { hidden = 0, plain = 0, xp = 0, boss = 0 }
 
 local function EligibleKill(guid, npc, name, how)
@@ -1384,19 +1384,19 @@ local function EligibleKill(guid, npc, name, how)
     if WingFor(npc, name) or BossFor((current and current.dungeon) or insideDungeon, npc, name) then return true end
     for id, english in pairs((FDJ.RunLogSharedTrash or {})[insideMap] or {}) do
         if npc == id or (Lower(name) and (Lower(name) == Lower(english)
-            or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then return true end -- (wingnames)
+            or Lower(name) == Lower(NameOfNpc(id)) or BakedName(id, Lower(name)))) then return true end
     end
-    -- fightkill: a death line during a fight is a real kill, even with no XP
-    -- (overlevelled, level cap) and the mob's type hidden by the instance.
+
+
     if how == "death" and FDJ.RunLogFightKill(name) then return true end
-    -- Positive XP is proof of a real kill. Unknown GUID-only reports out of
-    -- combat cannot distinguish an unseen critter, so do not create a run.
+
+
     return how == "xp" or how == "boss"
 end
 
 local function OnPusillinGossip()
     if not inside or insideMap ~= 429 then return end
-    -- "npc" is the actual gossip partner; a selected target is not proof.
+
     local npc = ParseGUID(Plain(UnitGUID("npc")))
     local name = Plain(UnitName("npc"))
     local boss = BossFor("Dire Maul: East", npc, name)
@@ -1409,12 +1409,12 @@ local function OnPusillinGossip()
     Changed()
 end
 
--- Adds a kill, or completes one already reported by another event.
--- guid: the GUID if known; name: the mob's name if known. how: which kind
--- of report this is ("guid" PARTY_KILL/UNIT_DIED/corpse, "xp" the XP chat
--- line, "death" the "<mob> dies." line, "boss" ENCOUNTER_END). One death is
--- told at most once by each kind, so three Risen Sentries dying together
--- stay three kills, while the four reports of one death stay one.
+
+
+
+
+
+
 local function AddKill(guid, name, how)
     if not inside then return nil end
     how = how or "guid"
@@ -1427,34 +1427,34 @@ local function AddKill(guid, name, how)
     ObserveTargets()
     name = name or NameOfNpc(npc)
     if not EligibleKill(guid, npc, name, how) then return nil end
-    -- Old corpses visible on entry must not start a fresh timer.
+
     if how == "corpse" and not current then return nil end
     if zone then CheckZone(zone, map) end
     local wing = WingFor(npc, name)
     if how == "corpse" and wing and current.dungeon ~= wing then return nil end
     ApplyWing(wing, true)
-    if wing and how ~= "corpse" then LearnRoom(insideMap, wing) end -- spireroom
+    if wing and how ~= "corpse" then LearnRoom(insideMap, wing) end
     if not wing and how ~= "corpse" then
-        -- smwing (2.0.8): a shared mob that rules the tracker's wing out
+
         local shared, only = SharedWing(npc, name)
         if shared then
             ApplyWing(shared, false)
             if FDJ.TrackerScarletWing then pcall(FDJ.TrackerScarletWing, shared, not only) end
         end
-        -- spireroom (2.1.4): no run yet and no side: the room tells it (a
-        -- first guess; a kill only the other side has still moves it)
+
+
         if not current and not insideDungeon then
             local roomWing = RoomWing(insideMap)
             if roomWing then ApplyWing(roomWing, false) end
         end
-        -- dmstart (2.1.6, a player in Dire Maul: West, 25 Nov 2026: "run
-        -- doesn't start when killing mobs, only after first boss"): the
-        -- three wings share one instance and the game names no wing in the
-        -- corridors, and kills inside are nameless, so no kill told the
-        -- wing until a boss's and the run waited for it. A kill with still
-        -- no wing in Dire Maul starts the run on a guess: the wing picked
-        -- on the big map (kept), else the first; the first kill that tells
-        -- the wing (a boss) moves the run to it, its timer and kills kept.
+
+
+
+
+
+
+
+
         if not current and not insideDungeon and insideMap == 429 and how ~= "corpse" then
             local group = FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[429] or {}
             local kept = type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.dmMapWing
@@ -1472,25 +1472,25 @@ local function AddKill(guid, name, how)
     local now = Clock()
     local dungeon = run.dungeon or insideDungeon
     local boss = BossFor(dungeon, npc, name)
-    -- bossnames: a boss kill under a name the journal doesn't know: read the
-    -- game's names from the Encounter Journal (once per name) and try again.
+
+
     if not boss and how == "boss" and Lower(name) and not journalTried[Lower(name)] then
         journalTried[Lower(name)] = true
         pcall(LearnFromJournal, true)
         boss = BossFor(dungeon, npc, name)
     end
 
-    -- strayboss (M 17 Nov 2026: a streamer killed Kirtonos the Herald; his
-    -- portrait was crossed off, and an extra skull one too): the game's boss
-    -- event (ENCOUNTER_END) can name a boss differently from the journal
-    -- (and Scholomance's events are not in Data/RunLogEncounters.lua). Such
-    -- a name made a second kill, listed at the end of the tracker as a skull.
-    -- Now a boss event under a name no boss here has (and no fight's, like
-    -- the Ring of Law), coming within 30 seconds of a boss's death that had
-    -- no boss event yet, is that death's event; and a boss's death coming
-    -- within 30 seconds after such an event takes that kill over. Either way
-    -- the boss learns the name, so the next one matches at once (and older
-    -- runs' extra skulls are put right).
+
+
+
+
+
+
+
+
+
+
+
     if how == "boss" and name and not boss and not FightGroup(dungeon, name) then
         local at = Now()
         for i = #run.kills, 1, -1 do
@@ -1509,7 +1509,7 @@ local function AddKill(guid, name, how)
         for i = #run.kills, 1, -1 do
             local k = run.kills[i]
             if at - (k.t or 0) > 30 then break end
-            local waiting = k.sb and not k.b -- strayboss2: the event still waiting for its boss
+            local waiting = k.sb and not k.b
             if waiting or (k.ev and k.b and k.b ~= boss.name and not BossFor(dungeon, k.n, k.b) and not FightGroup(dungeon, k.b)) then
                 local stray = k.sb or k.b
                 k.sb = nil
@@ -1530,7 +1530,7 @@ local function AddKill(guid, name, how)
         end
     end
 
-    -- The same death, told by another event: complete that kill.
+
     for i = #recent, 1, -1 do
         local r = recent[i]
         if now - r.clock > MERGE_WINDOW then break end
@@ -1544,21 +1544,21 @@ local function AddKill(guid, name, how)
             elseif boss and BossFor(dungeon, k.n, k.b or k.m) == boss then
                 same = true
             elseif name and FightGroup(dungeon, name) and FightGroup(dungeon, name) == FightGroup(dungeon, k.b or k.m) then
-                same = true -- ringoflaw: the fight's event and its boss's death
-            elseif key and not name and k.m then        -- a name-only kill learning its GUID
+                same = true
+            elseif key and not name and k.m then
                 local known = NameOfNpc(npc)
                 same = (known == nil) or (Lower(known) == Lower(k.m))
-            elseif not key and r.key and name and not k.m then -- a GUID kill learning its name
+            elseif not key and r.key and name and not k.m then
                 same = true
-            elseif how == "party" and not key and not name then -- partykill: the XP line or boss event came first
+            elseif how == "party" and not key and not name then
                 same = true
-            elseif r.src.party and not r.key and not k.m and name then -- partykill: named a moment later
+            elseif r.src.party and not r.key and not k.m and name then
                 same = true
             end
         end
         if same then
             r.src[how == "corpse" and "guid" or how] = true
-            if how == "boss" then k.ev = 1 end -- strayboss: its boss event came
+            if how == "boss" then k.ev = 1 end
             if key and not r.key then
                 r.key = key
                 k.g = 1
@@ -1567,7 +1567,7 @@ local function AddKill(guid, name, how)
                 if not k.b then run.seen[key] = true end
             end
             if name and not k.m then k.m = name end
-            -- ringoflaw: the fight's kill learns which of its bosses it was
+
             local _, member = FightGroup(dungeon, name)
             if member and k.b and k.b ~= member.name and FightGroup(dungeon, k.b) == member.fightGroup then
                 k.b, k.m = member.name, name
@@ -1575,10 +1575,10 @@ local function AddKill(guid, name, how)
             end
             if k.n and k.m then LearnName(k.n, k.m) end
             if not k.b then ClassifyKill(run, k) if k.b then SetKillTimes(run, k) end end
-            -- ringoflaw (2.0.8): the boss event of a fight ("Ring of Law"), which
-            -- is no boss's own name, came after the group's kill (PARTY_KILL,
-            -- hidden): it names that kill. Only a new kill was named before, so
-            -- the Ring of Law never counted.
+
+
+
+
             if how == "boss" and not k.b and name then
                 k.b, k.wb = name, nil
                 RefineFightKill(run, dungeon, k)
@@ -1586,27 +1586,28 @@ local function AddKill(guid, name, how)
             elseif how == "boss" and k.b then
                 RefineFightKill(run, dungeon, k)
             end
-            -- ruuzlu: the boss event ends a fight with partners
+
             if how == "boss" and boss and type(boss.killWith) == "table" and (k.wb == boss.name or k.b == boss.name) then
                 local waiting = k.wb == boss.name
                 EventEndsFight(run, k, boss)
                 if waiting and k.b then SetKillTimes(run, k) end
             end
-            -- resetsplit: a "dies" line counted first, the boss event now.
+
             if k.b and how == "boss" then FDJ.RunLogSplitAfterReset(run, BossFor(dungeon, k.n, k.b), k.b) end
             Changed()
             return k
         end
     end
 
-    -- A corpse seen on a nameplate: if a kill of that mob was counted by name
-    -- only (no GUID), this is that kill, not a new one.
+
+
     if how == "corpse" and key and name then
         for i = #run.kills, 1, -1 do
             local k = run.kills[i]
             if not k.g and k.m and Lower(k.m) == Lower(name) then
                 k.g, k.n = 1, k.n or npc
                 run.killedG[key] = true
+                if guid and FDJ.CollectKill then pcall(FDJ.CollectKill, guid, name, k.b) end
                 if not k.b then run.seen[key] = true end
                 Changed()
                 return k
@@ -1623,18 +1624,18 @@ local function AddKill(guid, name, how)
     end
 
     local kill = { t = Now(), n = npc, m = name, g = key and 1 or nil }
-    -- partykill (2.0.4): a kill by your group on a mob the game keeps hidden.
+
     if how == "party" and not npc and not name then kill.a = 1 end
     ClassifyKill(run, kill)
     if how == "boss" and not kill.b and name then
         if not boss and not FightGroup(dungeon, name) and C_Timer and C_Timer.After then
-            -- strayboss2 (M 17 Nov 2026, Ras Frostwhisper on stream: "as soon
-            -- as the boss died the skull insta appeared with an X, and 1 second
-            -- later Ras also got the X"): a boss event under a name no boss
-            -- here has, before any boss died, waits 5 seconds unlisted; the
-            -- boss's own death in that time takes it (above), so no skull
-            -- shows even for a moment. Nobody claims it: it is listed under
-            -- its own name, as before (a boss the journal doesn't have).
+
+
+
+
+
+
+
             kill.sb = name
             local pending, pendingRun = kill, run
             C_Timer.After(5, function()
@@ -1648,10 +1649,10 @@ local function AddKill(guid, name, how)
             kill.b = name kill.wb = nil
         end
     end
-    if how == "boss" then kill.ev = 1 end -- strayboss: its boss event came
-    if how == "boss" then RefineFightKill(run, dungeon, kill) end -- ringoflaw (2.0.8)
+    if how == "boss" then kill.ev = 1 end
+    if how == "boss" then RefineFightKill(run, dungeon, kill) end
     if how == "boss" and boss and type(boss.killWith) == "table" and kill.b == boss.name then
-        EventEndsFight(run, kill, boss) -- ruuzlu
+        EventEndsFight(run, kill, boss)
     end
     if key then
         run.killedG[key] = true
@@ -1660,6 +1661,7 @@ local function AddKill(guid, name, how)
     if npc and name then LearnName(npc, name) end
     TakePendingXP(kill)
     table.insert(run.kills, kill)
+    if guid and FDJ.CollectKill then pcall(FDJ.CollectKill, guid, name, kill.b) end
     table.insert(recent, { clock = now, kill = kill, key = key, src = { [how] = true } })
     while #recent > 40 do table.remove(recent, 1) end
     SetKillTimes(run, kill)
@@ -1667,7 +1669,7 @@ local function AddKill(guid, name, how)
     return kill
 end
 
--- ------------------------------------------------------------ XP
+
 local lastXP, lastMax, lastLevel
 local chatCredit, chatCreditClock = 0, 0
 local questCredit, questCreditClock = 0, 0
@@ -1735,14 +1737,14 @@ local function OnXPUpdate()
         end
         if delta and delta > 0 then
             table.insert(xpQueue, delta)
-            -- The chat line naming the mob may come just after: wait for it.
+
             C_Timer.After(0.5, ProcessXP)
         end
     end
     lastXP, lastMax, lastLevel = xp, max, lvl
 end
 
--- "<mob> dies, you gain 450 experience."
+
 local function OnXPChat(text)
     text = Plain(text)
     if not inside or type(text) ~= "string" then return end
@@ -1750,11 +1752,11 @@ local function OnXPChat(text)
     if not args then return end
     local name, amount = args[1], Number(args[2])
     if type(name) ~= "string" or not amount or amount <= 0 then return end
-    -- xpbonus (2.0.3): "(+225 exp Rested bonus)", "(+31 group bonus)",
-    -- "(-10 raid penalty)" only say how much of the amount was bonus or
-    -- penalty: the game's number is already what the XP bar gained. Adding
-    -- them again counted a 4-player group's kills about 23% too high
-    -- (reported on Discord by McBurney: 164 shown, 133 gained).
+
+
+
+
+
     local now = Clock()
     if now - chatCreditClock > 3 then chatCredit = 0 end
     chatCredit = chatCredit + amount
@@ -1768,20 +1770,20 @@ local function OnXPChat(text)
     end
 end
 
--- ------------------------------------------------------------ seen mobs
--- The dungeon's rares (in test mode: its bosses) that a unit could be, from
--- what the game still tells about it: its classification and level.
+
+
+
 function FDJ.RunLogRareCandidates(unit, dungeon, test)
     local okC, cls = pcall(UnitClassification, unit)
     cls = okC and Plain(cls)
     if cls ~= "rare" and cls ~= "rareelite" then
-        -- raresig (2.1.7, M 25 Nov 2026 at Ragglesnout in Razorfen Downs, the
-        -- tracker showing him "not found" while he stood there: "why is he not
-        -- silver"): a rare the game doesn't call rare (Forever has Ragglesnout
-        -- as a plain elite) is told by its own signature (data: rareSig = {
-        -- level, type, cls }), as a fight's bosses are (fightSig): no boss
-        -- mob where it says so (notBoss), that classification, that level and
-        -- creature type, and no other rare of the dungeon fitting too.
+
+
+
+
+
+
+
         local okB, isBoss = pcall(UnitIsBossMob, unit)
         isBoss = okB and Plain(isBoss) == true
         local okL, lvl = pcall(UnitLevel, unit)
@@ -1800,7 +1802,7 @@ function FDJ.RunLogRareCandidates(unit, dungeon, test)
             end
         end
         for _, k in ipairs((current and current.kills) or {}) do
-            if pick and k.b == pick.name then return {} end -- (killed already)
+            if pick and k.b == pick.name then return {} end
         end
         return pick and { pick } or {}
     end
@@ -1820,16 +1822,16 @@ function FDJ.RunLogRareCandidates(unit, dungeon, test)
             if type(lvl) == "number" and tonumber(levels[b.name]) == lvl then byLevel[#byLevel + 1] = b end
         end
     end
-    -- One rare in the dungeon: that's it. Several: the one with that level,
-    -- or all of them when the level doesn't tell.
+
+
     if #all <= 1 then return all end
     if #byLevel > 0 then return byLevel end
     return all
 end
 
--- raresig (2.1.7): a rare's own fight begun (ENCOUNTER_START, its encounter
--- ID: Data/RunLogEncounters.lua): it was found, whatever the game lets an
--- addon read of it.
+
+
+
 function FDJ.RunLogEncounterStart(id)
     id = tonumber(Plain(id))
     local e = id and FDJ.RUNLOG_ENCOUNTERS and FDJ.RUNLOG_ENCOUNTERS[id]
@@ -1856,16 +1858,16 @@ local function OnUnit(unit)
     local npc, zone, map, key = ParseGUID(okG and guid or nil)
     local okN, name = pcall(UnitName, unit)
     name = okN and Plain(name) or nil
-    -- A rare found alive (by its ID, or by its name when Forever hides IDs
-    -- inside instances): its portrait glows on the tracker. A rare found
-    -- before the first kill starts the run.
+
+
+
     local dungeon = (current and current.dungeon) or insideDungeon
     local test = FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon]
     local found = {}
     local boss = (npc or name) and BossFor(dungeon, npc, name)
-    -- ringoflaw (2.0.8): name and ID hidden (inside a Forever dungeon): a
-    -- unit the game flags as a boss whose level and type fit only one of a
-    -- fight's bosses is that boss. (The fight's waves before it are no boss.)
+
+
+
     if not boss and not npc and not name and current and type(UnitIsBossMob) == "function" then
         local okB, isBoss = pcall(UnitIsBossMob, unit)
         if okB and Plain(isBoss) == true then
@@ -1879,8 +1881,8 @@ local function OnUnit(unit)
             end
         end
     end
-    -- ringoflaw: the challenger the fight brought (targeted or seen): the
-    -- tracker's Ring of Law entry shows that boss.
+
+
     if boss and type(boss.fightGroup) == "string" and current then
         current.groupPick = current.groupPick or {}
         if current.groupPick[boss.fightGroup] ~= boss.name then
@@ -1891,9 +1893,9 @@ local function OnUnit(unit)
     if boss and not boss.trackerHidden and (boss.rare or test) then
         found[1] = boss
     elseif not boss and not npc and not name then
-        -- ID and name both hidden: a unit the game calls "rare" is one of
-        -- this dungeon's rares not found yet, picked by its level when the
-        -- journal knows the rares' levels.
+
+
+
         found = FDJ.RunLogRareCandidates and FDJ.RunLogRareCandidates(unit, dungeon, test) or {}
     end
     if #found > 0 then
@@ -1937,12 +1939,12 @@ local function OnUnit(unit)
         Changed()
     end
     local okD, dead = pcall(UnitIsDead, unit)
-    -- A corpse no event told about (killed out of range): count it.
+
     if okD and Plain(dead) and not run.killedG[key] then AddKill(guid, name, "corpse") end
 end
 
--- ------------------------------------------------------------ need rolls
-local rollLinks = {}   -- rollID -> link
+
+local rollLinks = {}
 
 local function RollLink(rollID)
     if rollLinks[rollID] then return rollLinks[rollID] end
@@ -1959,8 +1961,8 @@ local function SetNeedResult(need, result)
     Changed()
 end
 
--- A Need roll on this item still waiting for its result; with orLost, also
--- one marked lost in the last 15 minutes (a later "you got it" wins over it).
+
+
 local function PendingNeedFor(itemID, orLost)
     local found
     for _, run in ipairs(Store().runs) do
@@ -1976,8 +1978,8 @@ local function PendingNeedFor(itemID, orLost)
     return found
 end
 
--- A Need roll: from the roll buttons (RollOnLoot) or, if another addon rolls
--- some other way, from the "You have selected Need for" chat line.
+
+
 local function OnNeed(rollID, link)
     if not inside then return end
     link = link or (rollID and RollLink(rollID))
@@ -2001,7 +2003,7 @@ local function OnNeed(rollID, link)
     Changed()
 end
 
--- The roll ended. If no chat line said who won, the bags tell.
+
 local function OnRollEnded(rollID)
     C_Timer.After(3, function()
         for _, run in ipairs(Store().runs) do
@@ -2014,7 +2016,7 @@ local function OnRollEnded(rollID)
             end
         end
     end)
-    -- The item can reach the bags a little later: look again.
+
     C_Timer.After(15, function()
         for _, run in ipairs(Store().runs) do
             for _, need in ipairs(run.needs or {}) do
@@ -2026,11 +2028,11 @@ local function OnRollEnded(rollID)
     end)
 end
 
--- Kills saved with neither name nor ID were the same deaths counted twice
--- (1.7.5 fix): dropped from the saved runs. Not the kills your group landed
--- on a mob the game keeps hidden (k.a, 2.0.4): those are real. Dropping them
--- after each loading screen emptied the run, and the next step outside
--- deleted it.
+
+
+
+
+
 local function DropNamelessKills()
     for _, run in ipairs(Store().runs) do
         local kept = {}
@@ -2041,7 +2043,7 @@ local function DropNamelessKills()
     end
 end
 
--- Rolls marked lost although the item is in the bags (1.7.5 fix): won.
+
 local function FixLostNeeds()
     for _, run in ipairs(Store().runs) do
         for _, need in ipairs(run.needs or {}) do
@@ -2052,11 +2054,11 @@ local function FixLostNeeds()
     end
 end
 
--- ------------------------------------------------------------ boss loot
--- What each boss dropped, shown when hovering its portrait. From the corpse's
--- loot window (the source GUID says which boss), from loot rolls, and from
--- the "won" / "receives loot" lines: an item in a killed boss's journal loot
--- is that boss's; any other blue or better roll soon after a boss kill too.
+
+
+
+
+
 local function JournalHas(dungeon, bossName, itemID)
     local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
     for _, b in ipairs((d and d.bosses) or {}) do
@@ -2076,8 +2078,8 @@ local function GoodQuality(link)
     return type(q) == "number" and q >= 3
 end
 
--- Who chose Need or Greed on what (from the roll lines), so the winner's
--- roll can be shown next to the item. itemID -> lower-case name -> kind
+
+
 local rollChoice = {}
 local function SetChoice(link, name, kind)
     local id = ItemIDOf(link)
@@ -2089,10 +2091,10 @@ local function ChoiceOf(id, name)
     local t = id and rollChoice[id]
     return t and type(name) == "string" and t[name:lower()] or nil
 end
--- The number each player rolled ("Need Roll - 87 for <item> by <name>").
--- itemID -> lower-case name -> number
+
+
 local rollValue = {}
-local rollName = {} -- itemID -> lower-case name -> the name as the game wrote it
+local rollName = {}
 local function SetRollValue(link, name, n)
     local id = ItemIDOf(link)
     n = tonumber(n)
@@ -2102,11 +2104,11 @@ local function SetRollValue(link, name, n)
     rollName[id] = rollName[id] or {}
     rollName[id][name:lower()] = name
 end
--- rollhistory (2.0.9, M 16 Nov 2026: "I want to see how much I rolled ...
--- and if I hover the items, I want to see the roll history of the other
--- players"): every roll on an item, the winning one first: { name =, k = "need" /
--- "greed", n = number }. Kept on the Need roll (need.rolls) and on the
--- boss's loot (e.rolls), so the Run Log shows them later.
+
+
+
+
+
 local function RollList(id)
     local vals = id and rollValue[id]
     if not vals then return nil end
@@ -2114,7 +2116,7 @@ local function RollList(id)
     for lower, n in pairs(vals) do
         list[#list + 1] = { name = (rollName[id] and rollName[id][lower]) or lower, k = (rollChoice[id] and rollChoice[id][lower]) or nil, n = n }
     end
-    -- (Need before Greed, as the game decides; then the higher number)
+
     table.sort(list, function(a, b)
         local na, nb = a.k == "need" and 1 or 0, b.k == "need" and 1 or 0
         if na ~= nb then return na > nb end
@@ -2127,14 +2129,14 @@ local function RollOf(id, name)
     return t and type(name) == "string" and t[name:lower()] or nil
 end
 
--- lootkill (2.0.7): a boss's own loot is proof it died. Inside a dungeon
--- Forever hides which mob died; a boss with no "fight over" event, or a
--- character it gives no XP, killed it unseen (the Ring of Law stayed a
--- skull while the group rolled on Ok'thor's Ban'thok Sash). An item that
--- only one boss of the dungeon drops (not its trash, not the shared loot,
--- no recipe: those come from many) counts that boss as killed, the moment
--- it is rolled on, looted or seen in a loot window.
-local lootOwners = {}   -- dungeon -> itemID -> boss entry, or false (several)
+
+
+
+
+
+
+
+local lootOwners = {}
 local function LootOwner(dungeon, itemID)
     local d = dungeon and FDJ.DB and FDJ.DB[dungeon]
     if not d or not itemID then return nil end
@@ -2176,8 +2178,8 @@ local function LootOwner(dungeon, itemID)
         lootOwners[dungeon] = index
     end
     local b = index[itemID]
-    -- Journal groups and their trolls, and bosses that are none of a run's
-    -- (runLogHidden), are left as they are.
+
+
     if not b or b.childOf or b.children or b.runLogHidden then return nil end
     return b
 end
@@ -2190,16 +2192,16 @@ local function KillFromLoot(link)
     local boss = LootOwner(dungeon, id)
     if not boss then return nil end
     RunSets(run)
-    -- this visit (a boss killed before a reset doesn't count, as in
-    -- FDJ.RunLogKilledThisVisit)
+
+
     local last = type(run.exits) == "table" and run.exits[#run.exits] or nil
     local since = (last and last.t) or 0
     local group = type(boss.fightGroup) == "string" and boss.fightGroup or nil
     for _, k in ipairs(run.kills) do
         if (k.t or 0) >= since then
-            if k.b == boss.name then return nil end -- already counted
-            -- ringoflaw: the fight's kill (or a guess at its challenger) is
-            -- this challenger's
+            if k.b == boss.name then return nil end
+
+
             if group and k.b and (k.b == group or FightGroup(dungeon, k.b) == group) then
                 k.b, k.n = boss.name, boss.npcID or k.n
                 Changed()
@@ -2207,7 +2209,7 @@ local function KillFromLoot(link)
             end
         end
     end
-    -- Its death was counted unnamed a moment ago: that kill is the boss's.
+
     local now = Now()
     local kill
     for i = #run.kills, 1, -1 do
@@ -2234,8 +2236,8 @@ local function AddBossLoot(link, sourceNpc, winner, fromRoll)
     local run = current
     local id = ItemIDOf(link)
     if not run or not id then return end
-    if not sourceNpc then KillFromLoot(link) end -- lootkill (2.0.7)
-    -- Already listed under a boss (the roll came first): add who won it.
+    if not sourceNpc then KillFromLoot(link) end
+
     for i = #run.kills, 1, -1 do
         for _, e in ipairs(run.kills[i].loot or {}) do
             if e.id == id and (not e.w or e.w == winner) then
@@ -2275,13 +2277,13 @@ local function AddBossLoot(link, sourceNpc, winner, fromRoll)
             if winner and not e.w then e.w = winner end
             if e.w and not e.r then e.r = ChoiceOf(id, e.w) end
             if e.w and not e.n then e.n = RollOf(id, e.w) end
-            e.rolls = RollList(id) or e.rolls -- (rollhistory)
+            e.rolls = RollList(id) or e.rolls
             Changed()
             return
         end
     end
     table.insert(target.loot, { id = id, link = link, w = winner, r = winner and ChoiceOf(id, winner) or nil,
-        n = winner and RollOf(id, winner) or nil, rolls = RollList(id) }) -- (rollhistory)
+        n = winner and RollOf(id, winner) or nil, rolls = RollList(id) })
     Changed()
 end
 
@@ -2296,7 +2298,7 @@ local function OnLootWindow()
         if type(link) == "string" and GetLootSourceInfo then
             local okS, guid = pcall(GetLootSourceInfo, slot)
             local npc = ParseGUID(okS and guid or nil)
-            if npc then AddBossLoot(link, npc) else KillFromLoot(link) end -- lootkill (2.0.7)
+            if npc then AddBossLoot(link, npc) else KillFromLoot(link) end
         elseif type(link) == "string" then
             KillFromLoot(link)
         end
@@ -2309,8 +2311,8 @@ local function PlayerName()
     return type(name) == "string" and name or (_G.YOU or "You")
 end
 
--- The winner named in "<name> won: <item>" can be this character (some
--- clients name you instead of saying "You won"), also with a second name.
+
+
 local function IsMe(name)
     name = Plain(name)
     if type(name) ~= "string" then return false end
@@ -2320,7 +2322,7 @@ local function IsMe(name)
     return name:sub(1, #me + 1) == me .. " " or name:sub(1, #me + 1) == me .. "-"
 end
 
--- What this character rolled on an item (any of its names).
+
 local function MyRoll(id)
     local t = id and rollValue[id]
     if not t then return nil end
@@ -2336,8 +2338,8 @@ local function SetNeedRoll(need)
         if n then need.n = n Changed() end
     end
 end
--- A roll number arrived: put it on this character's Need and on the boss
--- loot it belongs to (if the winner is already known).
+
+
 local function OnRollNumber(link, name, n)
     SetRollValue(link, name, n)
     local id = ItemIDOf(link)
@@ -2349,7 +2351,7 @@ local function OnRollNumber(link, name, n)
             end
         end
     end
-    -- rollhistory (2.0.9): everyone's rolls on the Need roll and the boss loot
+
     local list = RollList(id)
     for _, r in ipairs(Store().runs) do
         if not r.closed then
@@ -2371,15 +2373,15 @@ local function OnRollNumber(link, name, n)
     Changed()
 end
 
--- rollnumbers: the game's own loot history, where the client has one: every
--- player's roll on an item, yours too when you lost and the chat only names
--- the winner. (The newer drop list, or the older list of rolled items.)
+
+
+
 local function HistoryRoll(link, name, n, kind)
     link, name, n = Plain(link), Plain(name), tonumber(Plain(n))
     local id = ItemIDOf(link)
     if not id or type(name) ~= "string" or name == "" or not n or n <= 0 then return end
     if kind then SetChoice(link, name, kind) end
-    if RollOf(id, name) == n then return end -- (known already)
+    if RollOf(id, name) == n then return end
     OnRollNumber(link, name, n)
 end
 local function ReadHistoryDrop(encounterID, lootListID)
@@ -2420,12 +2422,12 @@ local function ReadHistoryAll()
     for i = 1, math.min(n or 0, 30) do ReadHistoryItem(i) end
 end
 
--- lootvalue (2.1.4, M 22 Nov 2026: "it also counts items that you dropped ...
--- it calculates the vendor price of the items ... every item"): every item the
--- player loots inside ("You receive loot", stacks counted) adds its vendor
--- price to the run (run.itemValue, copper); the Gold the tracker and the log
--- show is the coin looted plus that. An item the game hasn't loaded yet is
--- asked again a moment later (up to five times).
+
+
+
+
+
+
 local function AddLootValue(link, count, tries)
     local run = inside and current or nil
     if not run or type(link) ~= "string" then return end
@@ -2447,7 +2449,7 @@ local function OnLootChat(text)
     text = Plain(text)
     if type(text) ~= "string" then return end
     local p = Patterns()
-    for _, ns in ipairs(p.noSpam or {}) do -- (rollnumbers)
+    for _, ns in ipairs(p.noSpam or {}) do
         local a = Match(ns.p, text)
         if a then
             local link, n, name = RollArgs(a)
@@ -2496,12 +2498,12 @@ local function OnLootChat(text)
     if args then SetChoice(args[2], args[3], "need") OnRollNumber(args[2], args[3], Number(args[1])) return end
     args = Match(p.rolledGreed, text)
     if args then SetChoice(args[2], args[3], "greed") OnRollNumber(args[2], args[3], Number(args[1])) return end
-    -- lootvalue: a stack first (the single line's pattern would take "x3" into the link)
+
     args = Match(p.lootSelfMulti, text) or Match(p.lootSelf, text)
     if args then
         AddBossLoot(args[1], nil, PlayerName())
         AddLootValue(args[1], Number(args[2]) or 1)
-        -- Receiving the item settles a Need roll on it: won.
+
         local need = PendingNeedFor(ItemIDOf(args[1]), true)
         if need then SetNeedResult(need, "won") SetNeedRoll(need) end
         return
@@ -2519,7 +2521,7 @@ if hooksecurefunc and RollOnLoot then
     end)
 end
 
--- ------------------------------------------------------------ entering / leaving
+
 local function Ghost()
     local ok, ghost = pcall(UnitIsGhost, "player")
     if ok and Plain(ghost) then return true end
@@ -2547,7 +2549,7 @@ local function Leave()
     if not run or run.closed then return end
     run.lastSeen = Now()
     if IsEmpty(run) then CloseRun(run) return end
-    -- Leaving after the final boss is just the end of the run, not a break.
+
     if run.completed then CloseRun(run) return end
     local exit = { t = Now(), why = Ghost() and "released" or "stepped" }
     table.insert(run.exits, exit)
@@ -2561,35 +2563,45 @@ local function Enter(map, dungeon)
     recent = {}
     local run = OpenRunOf(map)
     if run then
-        -- 2.0.3: a run saved without its dungeon (not recognised on that
-        -- client's language): name it by the instance ID and see whether
-        -- its bosses were all down after all.
+
+
+
         if not (run.dungeon and FDJ.DB and FDJ.DB[run.dungeon]) and FDJ.RunLogFixDungeon then
             pcall(FDJ.RunLogFixDungeon, run)
         end
         if run.dungeon and not run.completed then FixBossKills(run) end
         local since = run.outside and run.outside.t or run.lastSeen
         local window = run.completed and RESUME_DONE or RESUME_OPEN
-        -- 2.0.3: a run whose bosses are all down is over: going back in after
-        -- leaving starts a new run instead of adding to it (runs completed
-        -- after an update stayed open and swallowed the next run). A /reload
-        -- inside keeps it, so its tracker can still be shown.
+
+
+
+
         if (run.completed and run.outside) or (since and Now() - since > window) then
             CloseRun(run)
             run = nil
         end
     end
     if run then
+
+
+
+
+
+
         if run.outside then
-            run.outside.back = Now()
+            local now = Now()
+            local list = run.exits or {}
+            local last = list[#list]
+            if last and not last.back and last.t == run.outside.t then last.back = now end
+            run.outside.back = now
             run.outside = nil
         end
         current = run
         if not run.dungeon and dungeon then run.dungeon = dungeon end
-        -- 2.0.3: back in a shared instance (Scarlet Monastery, Dire Maul,
-        -- Stratholme, Blackrock Spire) after a corpse run, /reload or relog:
-        -- it's the run's wing. The tracker hid, and /dj tracker found no run,
-        -- until a kill proved the wing again.
+
+
+
+
         if not insideDungeon and run.dungeon and FDJ.RunLogWingGroups and FDJ.RunLogWingGroups[map]
             and FDJ.DB and FDJ.DB[run.dungeon] then
             insideDungeon = run.dungeon
@@ -2603,18 +2615,18 @@ local function OnWorld()
     local isIn, map, dungeon = InDungeon()
     if isIn then
         if inside and insideMap == map and current then
-            -- /reload or a loading screen inside: nothing changes.
+
             insideDungeon = dungeon or insideDungeon
             return
         end
         if inside and current then Leave() end
         Enter(map, dungeon)
-        -- hideleave: a tracker closed before you left alive shows again
+
         if FDJ.TrackerEnteredDungeon then pcall(FDJ.TrackerEnteredDungeon) end
     elseif inside then
         Leave()
-        -- hideleave (2.0.10): out of the dungeon alive (not a ghost on a
-        -- corpse run): Options > Hide Tracker unticks itself
+
+
         if not Ghost() and FDJ.TrackerLeftAlive then pcall(FDJ.TrackerLeftAlive) end
         CloseStale()
     else
@@ -2622,7 +2634,7 @@ local function OnWorld()
     end
 end
 
--- The dungeon name may resolve a moment after zoning in (wings, subzones).
+
 local function RefreshDungeon()
     if not inside then return end
     local isIn, map, dungeon = InDungeon()
@@ -2632,18 +2644,18 @@ local function RefreshDungeon()
     end
 end
 
--- instancereset: "<Dungeon> has been reset." The group reset the dungeon,
--- so an unfinished run of it is over: its tracker goes away now, and going
--- back in starts a new run. (Corpse runs and vendor trips don't reset the
--- dungeon, so they still continue the same run.)
---
--- 2.0.4: only the player who resets gets that line, so only their own run
--- ends by itself. Everyone else ends theirs with the tracker's reset button
--- (or /dj reset). Nothing from other players (chat, addon messages) is
--- taken as a reset: anyone could send it.
 
--- The names a run goes by: the game's instance name, the journal's, and the
--- journal's in this client's language (all lower case).
+
+
+
+
+
+
+
+
+
+
+
 function FDJ.RunLogRunNames(run)
     local names = {}
     for _, s in ipairs({ run.instanceName, run.dungeon }) do
@@ -2658,7 +2670,7 @@ function FDJ.RunLogRunNames(run)
     return names
 end
 
--- Ends the unfinished runs we are outside of that test(run) says were reset.
+
 function FDJ.RunLogEndReset(test)
     local ended = {}
     for _, run in ipairs(Store().runs) do
@@ -2688,33 +2700,33 @@ local function OnInstanceReset(text)
     local name = args and Lower(args[1])
     if not name then return end
     FDJ.RunLogEndReset(NamedTest(name))
-    -- resetblank: a tracker waiting at 0 for that dungeon closes too
+
     if FDJ.EndBlankRun then FDJ.EndBlankRun(NamedTest(name)) end
 end
 
--- ------------------------------------------------------------ events
+
 local events = CreateFrame("Frame")
 for _, e in ipairs({
     "PLAYER_ENTERING_WORLD", "PLAYER_LEAVING_WORLD", "ZONE_CHANGED_NEW_AREA", "ZONE_CHANGED",
     "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "PLAYER_DEAD", "QUEST_TURNED_IN",
     "PLAYER_TARGET_CHANGED", "UPDATE_MOUSEOVER_UNIT", "NAME_PLATE_UNIT_ADDED", "NAME_PLATE_UNIT_REMOVED",
     "ENCOUNTER_END", "BOSS_KILL", "PARTY_KILL", "UNIT_DIED", "GOSSIP_SHOW", "UNIT_TARGET",
-    "ENCOUNTER_START", -- raresig (2.1.7)
+    "ENCOUNTER_START",
     "CHAT_MSG_COMBAT_XP_GAIN", "CHAT_MSG_COMBAT_HOSTILE_DEATH", "CHAT_MSG_LOOT",
     "START_LOOT_ROLL", "CANCEL_LOOT_ROLL", "LOOT_OPENED", "LOOT_READY", "PLAYER_MONEY", "CHAT_MSG_SYSTEM",
     "PLAYER_REGEN_DISABLED", "PLAYER_REGEN_ENABLED", "MERCHANT_SHOW", "MERCHANT_CLOSED",
-    "CHAT_MSG_COMBAT_FACTION_CHANGE", -- reptrack (2.1.4)
-    "LOOT_HISTORY_UPDATE_DROP", "LOOT_HISTORY_ROLL_CHANGED", "LOOT_HISTORY_ROLL_COMPLETE", "LOOT_HISTORY_FULL_UPDATE", -- rollnumbers (2.1.5)
+    "CHAT_MSG_COMBAT_FACTION_CHANGE",
+    "LOOT_HISTORY_UPDATE_DROP", "LOOT_HISTORY_ROLL_CHANGED", "LOOT_HISTORY_ROLL_COMPLETE", "LOOT_HISTORY_FULL_UPDATE",
 }) do
     pcall(events.RegisterEvent, events, e)
 end
 
--- Money: what the run earned (copper, gains only: buying or repairing
--- doesn't take it back), counted while inside. At the level cap, where no
--- XP comes, the page and the tracker show it instead of the mobs' XP.
+
+
+
 local lastMoney
--- lootvalue: money from selling at a vendor inside (Blackrock Depths' own) is
--- the items already counted at their vendor price: not counted again.
+
+
 local atMerchant = false
 local function ReadMoney()
     if not GetMoney then return nil end
@@ -2742,7 +2754,7 @@ local function OnMoney()
     if not now then return end
     local before = lastMoney
     lastMoney = now
-    if atMerchant then return end -- lootvalue
+    if atMerchant then return end
     if not before or now <= before or not inside then return end
     local run = current
     if not run then return end
@@ -2750,10 +2762,10 @@ local function OnMoney()
     if IsCapped() then run.capped = true end
     Changed()
 end
--- reptrack (2.1.4, M 23 Nov 2026: "the dungeon tracker for level 60s. Track
--- reputation instead of experience"): the reputation gained inside, per
--- faction (its name as the game writes it); at the level cap the tracker
--- shows it where the mobs' XP is below it (Systems/RunLogUI.lua).
+
+
+
+
 local function OnRepChat(text)
     text = Plain(text)
     if not inside or type(text) ~= "string" then return end
@@ -2769,7 +2781,7 @@ local function OnRepChat(text)
 end
 
 events:SetScript("OnEvent", function(_, event, ...)
-    if event == "ENCOUNTER_START" then -- raresig (2.1.7)
+    if event == "ENCOUNTER_START" then
         if FDJ.RunLogEncounterStart then pcall(FDJ.RunLogEncounterStart, (...)) end
         return
     end
@@ -2777,7 +2789,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         OnMoney()
         return
     end
-    if event == "MERCHANT_SHOW" or event == "MERCHANT_CLOSED" then atMerchant = event == "MERCHANT_SHOW" return end -- lootvalue
+    if event == "MERCHANT_SHOW" or event == "MERCHANT_CLOSED" then atMerchant = event == "MERCHANT_SHOW" return end
     if event == "PLAYER_ENTERING_WORLD" then
         if not lastMoney then lastMoney = ReadMoney() end
         if not lastXP then lastXP, lastMax, lastLevel = ReadXP() end
@@ -2786,7 +2798,7 @@ events:SetScript("OnEvent", function(_, event, ...)
             C_Timer.After(2, RefreshDungeon)
             C_Timer.After(5, FixLostNeeds)
             C_Timer.After(1, DropNamelessKills)
-            -- bossnames: the game's boss names, then saved runs repaired.
+
             C_Timer.After(8, function()
                 if not (InCombatLockdown and InCombatLockdown()) then pcall(LearnFromJournal) end
                 pcall(FixBossKillsAll)
@@ -2828,20 +2840,20 @@ events:SetScript("OnEvent", function(_, event, ...)
         OnUnit((...))
     elseif event == "PARTY_KILL" then
         local _, target = ...
-        -- partykill (2.0.4): inside a dungeon Forever hides who died (secret
-        -- GUIDs) and has no "dies" chat lines at all. The event itself still
-        -- says your group landed a killing blow: count it, even without XP.
+
+
+
         local sig = FDJ.RunLogSignals
         if Plain(target) == nil then
             sig.hidden = sig.hidden + 1
-            -- crabkill (2.1.6, M 24 Nov 2026 in the Drowned City, a party
-            -- member killing a Crab (level 1, a critter) at the entrance:
-            -- "Why does the timer start with this? It should not start on
-            -- critters"): the hidden kill told nothing of what died, so any
-            -- kill started the run. Before a run, a moment later (the
-            -- corpse is dead by then), the group's targets: a dead critter
-            -- among them (its type, a critter's name, level 1, or 100 health
-            -- or less) was this kill, and starts nothing.
+
+
+
+
+
+
+
+
             if not current and C_Timer and C_Timer.After then
                 C_Timer.After(0.3, function()
                     if FDJ.RunLogDeadCritter and FDJ.RunLogDeadCritter() then return end
@@ -2856,7 +2868,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         end
     elseif event == "UNIT_DIED" then
         local guid = ...
-        -- Only mobs: something the group fought (seen as hostile) or a boss.
+
         local npc = ParseGUID(guid)
         if npc then AddKill(guid, nil) end
     elseif event == "ENCOUNTER_END" or event == "BOSS_KILL" then
@@ -2867,9 +2879,9 @@ events:SetScript("OnEvent", function(_, event, ...)
             success = 1
         end
         id, name = Plain(id), Plain(name)
-        -- bossids (2.0.4): every boss event the game sends is noted (ID, the
-        -- game's name, the dungeon), so /dj bossids can show which bosses
-        -- have one in Forever. Forever's Adventure Guide has no dungeons.
+
+
+
         if (success == 1 or success == true) and tonumber(id) then
             ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
             local db = ForeverDungeonJournalDB
@@ -2887,7 +2899,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         if (success == 1 or success == true) and type(name) == "string" then
             FDJ.RunLogSignals.boss = FDJ.RunLogSignals.boss + 1
             AddKill(nil, name, "boss")
-            -- rendgyth (2.0.34): the encounter's other bosses (Gyth with Rend)
+
             for _, extra in ipairs((FDJ.RunLogEncounterAlso and FDJ.RunLogEncounterAlso(encounterID)) or {}) do
                 if not FDJ.RunLogKilledThisVisit(current, extra) then AddKill(nil, extra, "boss") end
             end
@@ -2906,7 +2918,7 @@ events:SetScript("OnEvent", function(_, event, ...)
         OnLootChat((...))
     elseif event == "CHAT_MSG_SYSTEM" then
         OnInstanceReset((...))
-    elseif event == "CHAT_MSG_COMBAT_FACTION_CHANGE" then -- reptrack
+    elseif event == "CHAT_MSG_COMBAT_FACTION_CHANGE" then
         OnRepChat((...))
     elseif event == "PLAYER_REGEN_DISABLED" or event == "PLAYER_REGEN_ENABLED" then
         FDJ.RunLogNoteFight(event == "PLAYER_REGEN_DISABLED")
@@ -2921,7 +2933,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     elseif event == "CANCEL_LOOT_ROLL" then
         local rollID = ...
         if rollID then OnRollEnded(rollID) end
-    elseif event == "LOOT_HISTORY_UPDATE_DROP" then -- rollnumbers
+    elseif event == "LOOT_HISTORY_UPDATE_DROP" then
         local encounterID, lootListID = ...
         pcall(ReadHistoryDrop, encounterID, lootListID)
     elseif event == "LOOT_HISTORY_ROLL_CHANGED" then
@@ -2932,7 +2944,7 @@ events:SetScript("OnEvent", function(_, event, ...)
     end
 end)
 
--- /dj rlog: what the recorder sees of your target (for testing).
+
 function FDJ.RunLogDebug()
     local function show(v)
         if type(issecretvalue) == "function" and issecretvalue(v) then return "SECRET" end
@@ -2947,14 +2959,14 @@ function FDJ.RunLogDebug()
     Say("target guid=" .. show(okG and guid) .. " name=" .. show(okN and name) .. " npc=" .. tostring(npc))
     Say("wing evidence=" .. tostring(WingFor(npc, Plain(name)))
         .. " eligible=" .. tostring(EligibleKill(Plain(guid), npc, Plain(name), "guid")))
-    Say("room=" .. tostring(RoomHere()) .. " room side=" .. tostring(RoomWing(insideMap))) -- spireroom
+    Say("room=" .. tostring(RoomHere()) .. " room side=" .. tostring(RoomWing(insideMap)))
     Say("boss=" .. tostring(boss and boss.name) .. " rare=" .. tostring(boss and (boss.rare or (FDJ.RUNLOG_TEST_RARES and FDJ.RUNLOG_TEST_RARES[dungeon])) or false))
     local function try(fn, ...) local ok, v = pcall(fn, ...) return ok and show(v) or "error" end
     Say("class=" .. try(UnitClassification, "target") .. " level=" .. try(UnitLevel, "target")
         .. " hpmax=" .. try(UnitHealthMax, "target") .. " type=" .. try(UnitCreatureType, "target")
         .. " dead=" .. try(UnitIsDead, "target"))
-    -- raresig (2.1.7): more of what could tell a rare apart where names are
-    -- hidden (its class and sex, a boss or not, its power)
+
+
     Say("npcclass=" .. try(UnitClass, "target") .. " sex=" .. try(UnitSex, "target")
         .. " bossmob=" .. try(UnitIsBossMob, "target") .. " powermax=" .. try(UnitPowerMax, "target"))
     local cands = {}
@@ -2965,7 +2977,7 @@ function FDJ.RunLogDebug()
     Say("rares seen: " .. (#seen > 0 and table.concat(seen, ", ") or "none"))
 end
 
--- ------------------------------------------------------------ for the page
+
 FDJ.RunLog = {
     Runs = function() return Store().runs end,
     Current = function() return current end,
@@ -2980,7 +2992,7 @@ FDJ.RunLog = {
         return math.max(learned, TrashSeen(run), TrashKilled(run))
     end,
     NpcName = NameOfNpc,
-    -- clientnames (2.0.3): a boss's name from the game client.
+
     AddAlias = function(npc, name)
         name = Plain(name)
         if not tonumber(npc) or type(name) ~= "string" or name == "" then return false end
@@ -2988,8 +3000,8 @@ FDJ.RunLog = {
         return AddBossAlias(tonumber(npc), name)
     end,
     FixAll = function() return FixBossKillsAll and FixBossKillsAll() end,
-    -- groupreset (2.0.4): end a run by hand (the dungeon was reset and
-    -- nothing told us); the next kill starts a new one.
+
+
     EndRun = function(run)
         run = run or current
         if not run or run.closed then return false end
@@ -3010,15 +3022,15 @@ FDJ.RunLog = {
             end
         end
     end,
-    -- For tests and the dev command: the pattern builder.
+
     MakePattern = MakePattern,
     Match = Match,
 }
 
--- ------------------------------------------------------------ the party
--- Who did the run: everyone in the group while the run is recorded
--- (run.party[name] = class token), for the run page's Party button. Names
--- the game hides (secret values) are skipped.
+
+
+
+
 do
     local function Record()
         if not (inside and current) or current.closed then return end

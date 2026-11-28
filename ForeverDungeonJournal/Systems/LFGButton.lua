@@ -1,10 +1,10 @@
--- "Looking For Group" eye on the dungeon page header, next to the Show
--- Location button. Click opens the game's Looking For Group window and tries
--- to pick this dungeon in it. The eye is the game's own animated LFG eye.
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
-local EYE = "Interface\\LFGFrame\\LFG-Eye" -- 512x256 sheet, 64x64 frames, 29 frames
+local EYE = "Interface\\LFGFrame\\LFG-Eye"
 
 local TIP = {
     enUS = "Find a group for %s", deDE = "Gruppe suchen für %s",
@@ -20,9 +20,9 @@ local TITLE = {
 }
 local function Lang() return FDJ.GetLanguage and FDJ.GetLanguage() or "enUS" end
 
--- ---------------------------------------------------------------- opening
--- Forever's Looking For Group window (LFGParentFrame, with the Browse tab
--- LFGBrowseFrame) is opened with LFGVanilla_ToggleFrame / ToggleGroupFinderFrame.
+
+
+
 local function IsLFGShown()
     local f = _G.LFGParentFrame
     return f and f.IsVisible and f:IsVisible() or false
@@ -40,15 +40,15 @@ local function OpenLFG()
     for _, try in ipairs(tries) do
         local ok, err = pcall(try)
         if not ok then FDJ.lfgLastError = tostring(err) end
-        -- Stop as soon as it is open, so a later toggle can't close it again.
+
         if IsLFGShown() then return true end
     end
     return IsLFGShown()
 end
 
--- ------------------------------------------------- picking the dungeon
--- Activity IDs in Forever's list (category 2 = Dungeons). Journal names that
--- differ from the list are mapped here; the rest are matched by name.
+
+
+
 local ACTIVITY_IDS = {
     ["Ragefire Chasm"] = 798, ["Wailing Caverns"] = 796, ["The Deadmines"] = 799,
     ["Shadowfang Keep"] = 800, ["Blackfathom Deeps"] = 801, ["Gnomeregan"] = 803,
@@ -81,8 +81,8 @@ local function FindActivity(dungeonName)
                     return aid, i
                 end
             end
-            -- Names that differ a little ("The Stockade" / "Stormwind
-            -- Stockades"): one contains the other, plural "s" ignored.
+
+
             local stem = wanted:gsub("s$", "")
             if #stem >= 5 then
                 for _, aid in ipairs(ids) do
@@ -100,9 +100,9 @@ local function FindActivity(dungeonName)
     return id, info
 end
 
--- Forever: LFGBrowseFrame:ShowSearchForActivities(activityIDs) selects the
--- activities and starts the search itself. It must run straight from the
--- click (searching needs a real key/mouse press), never from a timer.
+
+
+
 local function SelectActivity(activityID)
     local browse = _G.LFGBrowseFrame
     if not browse or not activityID or not browse.ShowSearchForActivities then return false end
@@ -122,12 +122,12 @@ local function OpenFor(dungeonName)
             .. (FDJ.lfgLastError and (" (" .. FDJ.lfgLastError .. ")") or "") .. ".")
         return
     end
-    -- The journal sits above normal game windows: close it so the Looking
-    -- For Group window isn't hidden behind it.
+
+
     local journal = _G.ForeverDungeonJournalFrame
     if journal and journal:IsShown() then journal:Hide() end
-    -- Picking the dungeon from addon code taints the window (see the overlay
-    -- below), so the window is only opened.
+
+
     do return end
     local id = FindActivity(dungeonName)
     if not id then return end
@@ -139,12 +139,12 @@ local function OpenFor(dungeonName)
     end
 end
 
--- ------------------------------------------------------ direct search
--- Asks the server for this dungeon's groups ourselves (C_LFGList.Search, the
--- same call the window's own search makes) instead of calling the window's
--- code. The results arrive as a game event that the window handles with its
--- own untouched code, so nothing in it gets tainted. Only the drop-down
--- labels are relabelled (plain text on the font strings) to match.
+
+
+
+
+
+
 local function SetLabel(dropdown, text)
     if not dropdown or not text then return end
     local fs = dropdown.Text
@@ -175,10 +175,10 @@ function FDJ.SearchDungeonDirect(dungeonName)
     end)
 end
 
--- ---------------------------------------------------------- browse hint
--- The Browse tab only reacts to a real mouse click, so when the window
--- opened on another page a note with a red arrow, fading in and out, points
--- at the Group Browser tab until you switch (or close the window).
+
+
+
+
 local HINT = {
     enUS = "Switch to Group Browser", deDE = "Zum Gruppenbrowser wechseln",
     frFR = "Passer au navigateur de groupes", esES = "Cambiar al buscador de grupos",
@@ -216,7 +216,7 @@ function FDJ.ShowBrowseHint()
         h.text:SetShadowOffset(1, -1)
         h:SetScript("OnUpdate", function(self, elapsed)
             self.t = (self.t or 0) + elapsed
-            -- Fade in and out, and nudge the arrow toward the tab.
+
             self:SetAlpha(0.55 + 0.45 * math.sin(self.t * 4))
             self.arrow:SetPoint("LEFT", 6 - 3 * math.abs(math.sin(self.t * 4)), 0)
             if (LFGBrowseFrame and LFGBrowseFrame:IsVisible()) or not IsLFGShown() then self:Hide() end
@@ -231,13 +231,13 @@ function FDJ.ShowBrowseHint()
     h:Show()
 end
 
--- ------------------------------------------------------- secure overlay
--- Searching for groups is locked to the game's own code: if addon code opens
--- the window or picks a dungeon, every search afterwards fails ("Searching..."
--- forever, until /reload). So an invisible secure button lies on top of the
--- eye and simply presses the game's own Group Finder micro button. It sits
--- on UIParent (not inside the journal), so the journal can still open and
--- close in combat; in combat the overlay is hidden and the eye does nothing.
+
+
+
+
+
+
+
 function FDJ.CreateLFGOverlay(eye)
     local micro = _G.LFDMicroButton or _G.LFGMicroButton
     if not micro or eye.fdjOverlay then return end
@@ -245,14 +245,14 @@ function FDJ.CreateLFGOverlay(eye)
     eye.fdjOverlay = o
     o:SetFrameStrata("FULLSCREEN")
     o:RegisterForClicks("AnyUp", "AnyDown")
-    -- Everything here goes through secure clicks only. Addon code must never
-    -- call into the Looking For Group window: that "taints" it, and the game
-    -- then refuses to show the group list (secret values) until /reload.
-    -- Step 1: press the game's Group Finder button. Step 2: press the Browse
-    -- (magnifying glass) tab through a second secure button.
-    -- The Browse tab may not exist yet at login (the game loads its LFG
-    -- window on first use), so the proxy is always created and pointed at
-    -- the tab as soon as the tab exists (before each click, out of combat).
+
+
+
+
+
+
+
+
     local proxy = CreateFrame("Button", "ForeverDungeonJournalLFGBrowseTab", UIParent, "SecureActionButtonTemplate")
     proxy:SetAttribute("type", "click")
     proxy:RegisterForClicks("AnyUp", "AnyDown")
@@ -267,32 +267,32 @@ function FDJ.CreateLFGOverlay(eye)
     loader:RegisterEvent("PLAYER_ENTERING_WORLD")
     loader:SetScript("OnEvent", function() PointProxy() end)
     o.fdjPointProxy = PointProxy
-    -- (The Browse tab is a plain frame that only reacts to a real mouse
-    -- click, so it can't be pressed from here; the window opens on the page
-    -- it was last left on.)
+
+
+
     local macro = "/click " .. micro:GetName()
     o:SetAttribute("type", "macro")
     o:SetAttribute("macrotext", macro)
-    -- Right-click: no game action, just the small Disable menu (PostClick).
+
     o:SetAttribute("type2", "fdjmenu")
     o:Hide()
     o:SetScript("OnEnter", function() local f = eye:GetScript("OnEnter"); if f then f(eye) end; eye:LockHighlight() end)
     o:SetScript("OnLeave", function() GameTooltip:Hide(); eye:UnlockHighlight() end)
     o:SetScript("PreClick", function(_, button)
         PointProxy()
-        -- Window already open: don't press the game's button again (it would
-        -- toggle the window shut); the click then only searches the dungeon.
+
+
         if button ~= "RightButton" and not (InCombatLockdown and InCombatLockdown()) then
             o:SetAttribute("type", IsLFGShown() and "fdjnone" or "macro")
         end
     end)
     o:SetScript("PostClick", function(_, button, down)
-        PointProxy() -- first ever click: the window was only just loaded
+        PointProxy()
         if button == "RightButton" then
             if not down then FDJ.ShowLFGMenu(eye) end
             return
         end
-        -- (Down and up both arrive here; act once per press.)
+
         local now = GetTime and GetTime() or 0
         if o.fdjLast and now - o.fdjLast < 0.5 then return end
         o.fdjLast = now
@@ -312,8 +312,8 @@ function FDJ.CreateLFGOverlay(eye)
                 end)
             end
         end
-        -- The journal stays open; lift the Looking For Group window above it.
-        -- (Only frame layering is changed, none of the window's code is run.)
+
+
         if IsLFGShown() and not (InCombatLockdown and InCombatLockdown()) then
             pcall(function()
                 local journal = _G.ForeverDungeonJournalFrame
@@ -343,10 +343,10 @@ function FDJ.CreateLFGOverlay(eye)
     end)
     local ev = CreateFrame("Frame")
     ev:RegisterEvent("PLAYER_REGEN_DISABLED")
-    ev:SetScript("OnEvent", function() o:Hide() end) -- fires just before combat lockdown
+    ev:SetScript("OnEvent", function() o:Hide() end)
 end
 
--- ------------------------------------------------------------ portrait
+
 local function PortraitSource()
     local candidates = {
         LFGBrowseFrame and LFGBrowseFrame.PortraitContainer and LFGBrowseFrame.PortraitContainer.portrait,
@@ -382,7 +382,7 @@ function FDJ.ApplyLFGPortrait(b)
             b.icon:SetTexture(file)
             b.icon:SetTexCoord(src:GetTexCoord())
         end
-        -- Round it off like the window's portrait.
+
         if not b.fdjMask and b.CreateMaskTexture then
             local mask = b:CreateMaskTexture()
             mask:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
@@ -406,7 +406,7 @@ function FDJ.ApplyLFGPortrait(b)
     end)
 end
 
--- ------------------------------------------------- hide / show option
+
 local DISABLE = {
     enUS = "Disable", deDE = "Deaktivieren", frFR = "Désactiver", esES = "Desactivar",
     itIT = "Disattiva", ptBR = "Desativar", ruRU = "Отключить", koKR = "비활성화",
@@ -438,14 +438,14 @@ function FDJ.SetLFGButtonHidden(hidden)
     local b = frame and frame.lfgButton
     if b then
         if hidden then b:Hide() elseif b.fdjDungeon then b:Show() end
-        -- Without the eye the Route button moves next to Show Location.
+
         if frame.dungeonRouteButton then
             frame.dungeonRouteButton:ClearAllPoints()
             frame.dungeonRouteButton:SetPoint("LEFT", hidden and frame.dungeonLocationButton or b, "RIGHT", 3, 0)
         end
     end
     if FDJ.lfgMenu then FDJ.lfgMenu:Hide() end
-    -- Keep the Options checkbox in step when this was changed by right-click.
+
     local settings = _G.ForeverDungeonJournalSettings
     if settings and settings:IsShown() then
         local onShow = settings:GetScript("OnShow")
@@ -463,11 +463,11 @@ function FDJ.LFGToggleTip()
     return PANEL_TIP[Lang()] or PANEL_TIP.enUS
 end
 
--- Small right-click menu with a single "Disable" entry.
--- ------------------------------------------------------- quick listing
--- Lists you straight away for this dungeon (C_LFGList.CreateListing, the
--- same call the window's "List Self" button makes), with the roles you last
--- picked in the Looking For Group window. Run from a real click on the menu.
+
+
+
+
+
 local LIST_ME = {
     enUS = "List me for this dungeon", deDE = "Mich für diesen Dungeon eintragen",
     frFR = "M'inscrire pour ce donjon", esES = "Apuntarme para esta mazmorra",
@@ -483,7 +483,7 @@ local MSG = {
     blocked = "the game doesn't allow addons to list you. Use the Looking For Group window instead.",
     failed = "couldn't list you (%s).",
 }
-local function Say(text) FDJ.ChatLine("|cffffd200Dungeon Journal:|r " .. text) end -- (chatlines)
+local function Say(text) FDJ.ChatLine("|cffffd200Dungeon Journal:|r " .. text) end
 
 local pendingList
 local listWatch = CreateFrame("Frame")
@@ -532,7 +532,7 @@ function FDJ.ListForDungeon(dungeonName)
     end
 end
 
--- Small right-click menu: "List me for this dungeon" and "Disable".
+
 function FDJ.ShowLFGMenu(anchor)
     local m = FDJ.lfgMenu
     if not m then
@@ -562,14 +562,14 @@ function FDJ.ShowLFGMenu(anchor)
             end)
             return item
         end
-        -- (A "List me for this dungeon" entry was tried: the game does not
-        -- let addons create listings, so it was removed.)
-        -- 2.0.4: Disable opens Options at its line (highlighted); the player
-        -- ticks it there, so they know where to undo it.
+
+
+
+
         m.disable = Item(1, function()
             if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_HIDE_LFG") else FDJ.SetLFGButtonHidden(true) end
         end)
-        -- Closes on its own once the mouse has been away for a moment.
+
         m:SetScript("OnUpdate", function(self, elapsed)
             if self:IsMouseOver() or (self.fdjAnchor and self.fdjAnchor:IsMouseOver()) then
                 self.fdjAway = 0
@@ -590,14 +590,14 @@ function FDJ.ShowLFGMenu(anchor)
     if GameTooltip then GameTooltip:Hide() end
 end
 
--- ---------------------------------------------------------------- button
+
 function FDJ.CreateLFGButton(frame, header, anchor)
     local b = CreateFrame("Button", nil, header)
     frame.lfgButton = b
     b:SetSize(38, 38)
     b:SetPoint("LEFT", anchor, "RIGHT", 2, 0)
     b:SetFrameLevel(header:GetFrameLevel() + 4)
-    -- Soft golden glow behind the eye, like the Show Location icon has.
+
     b.glow = b:CreateTexture(nil, "BACKGROUND")
     b.glow:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow")
     b.glow:SetBlendMode("ADD")
@@ -623,14 +623,14 @@ function FDJ.CreateLFGButton(frame, header, anchor)
     local hl = b:GetHighlightTexture()
     if hl then hl:ClearAllPoints(); hl:SetPoint("TOPLEFT", 5, -5); hl:SetPoint("BOTTOMRIGHT", -5, 5) end
 
-    -- Static icon: the same picture as the game's Group Finder menu button.
+
     pcall(function()
         local micro = _G.LFDMicroButton or _G.LFGMicroButton
         local nt = micro and micro.GetNormalTexture and micro:GetNormalTexture()
         if not nt then return end
         local atlas = nt.GetAtlas and nt:GetAtlas()
-        -- Drawn larger than the button (the menu art has empty space around
-        -- the eye), keeping the menu button's proportions.
+
+
         local mw, mh = nt:GetSize()
         local w = 42
         local h = (mw and mw > 0 and mh and mh > 0) and (w * mh / mw) or w
@@ -646,9 +646,9 @@ function FDJ.CreateLFGButton(frame, header, anchor)
         end
     end)
 
-    -- Preferred look: the eye portrait from the Looking For Group window
-    -- itself (round green eye), with a thin gold ring. Copied from the
-    -- game's frame once it has one; until then the menu-button eye stays.
+
+
+
     FDJ.ApplyLFGPortrait(b)
     b:HookScript("OnShow", function(self) FDJ.ApplyLFGPortrait(self) end)
     if LFGParentFrame and LFGParentFrame.HookScript then
@@ -665,8 +665,8 @@ function FDJ.CreateLFGButton(frame, header, anchor)
     b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     b:SetScript("OnClick", function(self, button)
         if button == "RightButton" then FDJ.ShowLFGMenu(self) return end
-        -- Normally the secure overlay on top takes the click. The eye itself
-        -- only gets it in combat (overlay hidden) or without a micro button.
+
+
         if self.fdjOverlay then
             if UIErrorsFrame then UIErrorsFrame:AddMessage(ERR_NOT_IN_COMBAT or "Can't do that while in combat", 1, 0.1, 0.1) end
             return
@@ -691,9 +691,9 @@ function FDJ.UpdateLFGButton(frame, dungeonName, dungeon)
     end
 end
 
--- /dj lfgdebug: records what the Looking For Group window offers on this
--- client into the saved variables (ForeverDungeonJournalDB.lfgDebug), so the
--- dungeon pre-selection can be matched to it.
+
+
+
 local function Describe(obj, depth)
     local out = {}
     if type(obj) ~= "table" then return out end
@@ -787,7 +787,7 @@ function FDJ.LFGDebug()
     FDJ.ShowCopyBox(FDJ.SerializeDebug(dump))
 end
 
--- Turns the debug table into plain text.
+
 function FDJ.SerializeDebug(t, indent)
     indent = indent or ""
     local lines = {}
@@ -806,7 +806,7 @@ function FDJ.SerializeDebug(t, indent)
     return table.concat(lines, "\n")
 end
 
--- A popup with a text box: the text is selected, so Ctrl+C copies it all.
+
 function FDJ.ShowCopyBox(text)
     local box = FDJ.copyBox
     if not box then
@@ -843,7 +843,7 @@ function FDJ.ShowCopyBox(text)
         edit:SetWidth(500)
         edit:SetScript("OnEscapePressed", function() box:Hide() end)
         edit:SetScript("OnTextChanged", function(self, user)
-            -- Read-only: typing puts the original text back.
+
             if user then self:SetText(box.fdjText or ""); self:HighlightText() end
         end)
         scroll:SetScrollChild(edit)

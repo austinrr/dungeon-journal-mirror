@@ -1,5 +1,5 @@
--- Favourites: persistent item favourites plus a home-page popup.
--- Boss-loot rows can be right-clicked to add/remove items.
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -8,8 +8,8 @@ local function L(key, ...)
     return key
 end
 
--- Interface strings. Keep these local to the feature so older locale files do
--- not need to know about favourites before this module loads.
+
+
 do
     local strings = {
         enUS = {
@@ -87,9 +87,9 @@ local function SetStar(texture)
 end
 
 local function GetDB()
-    -- Favourites are intentionally per-character. Do not read or migrate the
-    -- old account-wide favouriteItems table: each character starts and keeps
-    -- its own independent list.
+
+
+
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     ForeverDungeonJournalCharacterDB.favouriteItems = ForeverDungeonJournalCharacterDB.favouriteItems or {}
     return ForeverDungeonJournalCharacterDB.favouriteItems
@@ -139,7 +139,7 @@ local function AddFavourite(item, dungeonName, bossName, quest)
         quality = item[4],
         dungeon = dungeonName,
         boss = bossName,
-        -- Quest items: the quest they come from (no boss).
+
         questID = type(quest) == "table" and tonumber(quest.id) or nil,
         questName = type(quest) == "table" and quest.name or nil,
         added = time and time() or nil,
@@ -192,10 +192,10 @@ local function ItemIcon(itemID)
     return 134400
 end
 
--- favnames (2.1.4, M 23 Nov 2026: a French player's favourites showed the
--- items' English names): the Forever client has no global GetItemInfo, so
--- the game's name (in the client's language) was never read and the English
--- name saved with the favourite showed. C_Item's, as the loot list reads it.
+
+
+
+
 local function LiveItemInfo(id)
     local get = (C_Item and C_Item.GetItemInfo) or GetItemInfo
     if type(get) ~= "function" or not id then return nil end
@@ -217,15 +217,15 @@ local function ItemColor(fav)
     local quality = tonumber(fav.quality)
     local link
 
-    do -- favnames
+    do
         local _, itemLink, q = LiveItemInfo(fav.id)
         link = itemLink
         if q ~= nil then quality = q end
     end
 
-    -- Boss loot rows already use the rendered in-game tooltip as the source
-    -- of truth because Forever can return stale Classic-era quality metadata.
-    -- Use that exact resolver here too so colours always match.
+
+
+
     if FDJ.GetAuthoritativeItemQuality then
         return FDJ.GetAuthoritativeItemQuality(fav.id, link, quality, fav.quality)
     end
@@ -243,7 +243,7 @@ local function ShowItemTooltip(owner, itemID, hint)
     if GameTooltip.SetItemByID then
         pcall(GameTooltip.SetItemByID, GameTooltip, itemID)
     else
-        local _, link = LiveItemInfo(itemID) -- favnames
+        local _, link = LiveItemInfo(itemID)
         if link then GameTooltip:SetHyperlink(link) end
     end
     if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
@@ -294,14 +294,14 @@ local function IsMouseOverFavouriteMenu()
     if MouseIsOver then
         local fallback = FDJ.favouriteContextMenu
         if fallback and fallback:IsShown() then
-            -- Check both the container and the actual action button. Some WoW
-            -- clients do not report MouseIsOver(parent) reliably when only a
-            -- child button has mouse input enabled.
+
+
+
             if MouseIsOver(fallback) then return true end
             if fallback.button and fallback.button:IsShown() and MouseIsOver(fallback.button) then return true end
         end
 
-        -- Kept for compatibility if Blizzard dropdowns are ever used again.
+
         for level = 1, 4 do
             local list = _G["DropDownList" .. level]
             if list and list:IsShown() and MouseIsOver(list) then return true end
@@ -328,8 +328,8 @@ local function ArmFavouriteMenuDismiss()
             local middle = IsMouseButtonDown and IsMouseButtonDown("MiddleButton")
             local anyDown = left or right or middle
 
-            -- The menu is opened on RightButtonUp. Wait for that opening click
-            -- to be fully released before listening for the next click.
+
+
             if not self.fdjArmed then
                 if not anyDown then
                     self.fdjArmed = true
@@ -338,11 +338,11 @@ local function ArmFavouriteMenuDismiss()
                 return
             end
 
-            -- IMPORTANT: never hide the menu on mouse-down. Hiding a Button
-            -- between OnMouseDown and OnMouseUp prevents its OnClick callback,
-            -- which is why Add/Remove previously looked clickable but did
-            -- nothing. Let the click finish first, then dismiss on release if
-            -- it happened outside the menu.
+
+
+
+
+
             if anyDown then
                 self.fdjSawDown = true
                 return
@@ -368,11 +368,11 @@ function FDJ.ShowItemFavouriteMenu(owner, item, dungeonName, bossName, quest)
     local isFav = FDJ.IsFavouriteItem(itemID)
     local label = L(isFav and "FAV_REMOVE_ITEM" or "FAV_ADD_ITEM")
 
-    -- Use our own compact context menu instead of EasyMenu. Blizzard's
-    -- dropdown frames can close on mouse-down before their button callback
-    -- fires when our click-away watcher is active, which made "Remove from
-    -- Favourites" appear clickable but do nothing. The custom menu lets the
-    -- click land on the action first, while still dismissing on clicks away.
+
+
+
+
+
     local menu = EnsureFallbackMenu()
     menu:ClearAllPoints()
     menu:SetPoint("TOPLEFT", owner, "BOTTOMLEFT", 4, -2)
@@ -398,7 +398,7 @@ local function OpenFavouriteSource(fav)
     local dungeon = FDJ.DB and FDJ.DB[fav.dungeon]
     if not dungeon then return end
 
-    -- Quest item: jump to its quest instead of a boss page.
+
     if fav.questID then
         FDJ.HideItemFavouriteMenu()
         if FDJ.OpenQuestPage then FDJ.OpenQuestPage(fav.dungeon, fav.questID) end
@@ -415,8 +415,8 @@ local function OpenFavouriteSource(fav)
     if not bossIndex then return end
 
     local frame = FDJ.frame or _G.ForeverDungeonJournalFrame
-    -- Keep the Favourites window open while jumping to the item's source.
-    -- This lets players click through several favourites without reopening it.
+
+
     FDJ.HideItemFavouriteMenu()
 
     if FDJ.OpenBossPage then
@@ -460,8 +460,8 @@ local function CreateFavouriteRow(parent)
     row.slot:SetJustifyH("LEFT")
     row.slot:SetTextColor(0.68, 0.62, 0.52)
 
-    -- "Obtained" look: the same green frame and tick the journal puts on a
-    -- completed quest.
+
+
     row.completeGlow = CreateFrame("Frame", nil, row, "BackdropTemplate")
     row.completeGlow:SetPoint("TOPLEFT", -2, 2)
     row.completeGlow:SetPoint("BOTTOMRIGHT", 2, -2)
@@ -547,8 +547,8 @@ local function CreateWindow(frame)
         win:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
     end
 
-    -- Use the standard Blizzard red X. Prefer the one the frame template
-    -- already provides; otherwise create a stock UIPanelCloseButton.
+
+
     local close = win.CloseButton or win.closeButton
         or (win.TitleContainer and win.TitleContainer.CloseButton)
         or (win.BorderBox and win.BorderBox.CloseButton)
@@ -561,16 +561,16 @@ local function CreateWindow(frame)
     close:SetAlpha(1)
     close:Show()
 
-    -- The stock handler closes through HideUIPanel, which the client blocks
-    -- in combat. Replace it with a plain Hide() on our own (unprotected)
-    -- window so the X works in and out of combat.
+
+
+
     close:SetScript("OnClick", function()
         if FDJ.HideItemFavouriteMenu then FDJ.HideItemFavouriteMenu() end
         win:Hide()
     end)
 
     win:HookScript("OnShow", function()
-        -- Same size as the journal (it can be resized with its corner grip).
+
         if FDJ.SyncPopupScale then pcall(FDJ.SyncPopupScale) end
         close:EnableMouse(true)
         close:SetAlpha(1)
@@ -580,8 +580,8 @@ local function CreateWindow(frame)
     frame.favouritesWindow = win
     win:SetSize(338, 424)
     win:SetPoint("CENTER", UIParent, "CENTER", -260, 20)
-    -- One layer above the journal (DIALOG): in the same layer the journal's
-    -- deeply nested boss rows and portraits draw on top of this popup.
+
+
     win:SetFrameStrata("FULLSCREEN_DIALOG")
     win:SetToplevel(true)
     win:EnableMouse(true)
@@ -598,13 +598,13 @@ local function CreateWindow(frame)
         title:SetPoint("TOP", 0, -6)
     end
     win.fdjTitle = title
-    FDJ.OwnFonts(title) -- ownfonts (2.0.8): the window template's title text
+    FDJ.OwnFonts(title)
 
     local portrait = win.portrait or (win.PortraitContainer and win.PortraitContainer.portrait)
     if portrait then
-        -- The favourite star itself has transparent space around it. Put a
-        -- dark circular portrait backing underneath so the world/UI does not
-        -- show through the empty parts of the star icon.
+
+
+
         local portraitParent = portrait:GetParent() or win
         local starBackground = portraitParent:CreateTexture(nil, "BACKGROUND")
         win.fdjStarBackground = starBackground
@@ -639,8 +639,8 @@ local function CreateWindow(frame)
     scroll:SetPoint("TOPLEFT", inset, "TOPLEFT", 8, -8)
     scroll:SetPoint("BOTTOMRIGHT", inset, "BOTTOMRIGHT", -27, 8)
 
-    -- UIPanelScrollFrameTemplate exposes this on most clients. Keep a fallback
-    -- scan for Forever builds where the field name differs.
+
+
     win.fdjScrollBar = scroll.ScrollBar or scroll.scrollBar
     if not win.fdjScrollBar then
         for i = 1, select("#", scroll:GetChildren()) do
@@ -727,19 +727,19 @@ local function RefreshWindow(win)
         row.name:SetText(name)
         row.name:SetTextColor(r, g, b)
         if fav.questID then
-            -- Quest items have no slot text stored; show the quest they come from.
+
             local questName = fav.questName or ""
             if FDJ.LocalizeQuestField then
                 local ok, localized = pcall(FDJ.LocalizeQuestField, fav.questID, "name", questName)
                 if ok and type(localized) == "string" and localized ~= "" then questName = localized end
             end
-            -- Quest marker right in front of the quest name.
-            -- repeaticon (2.0.44): the blue ? for a repeatable quest
+
+
             row.slot:SetText((FDJ.QuestIconMarkup and FDJ.QuestIconMarkup(fav.questID, 14) or "|TInterface\\GossipFrame\\AvailableQuestIcon:14:14:0:0|t ") .. questName)
         else
             row.slot:SetText(FDJ.LocalizeItemSlot and FDJ.LocalizeItemSlot(fav.slot) or (fav.slot or ""))
         end
-        -- Obtained = the character has it in bags, bank or equipped.
+
         local owned = false
         local countItems = (C_Item and C_Item.GetItemCount) or GetItemCount
         if countItems then
@@ -751,18 +751,18 @@ local function RefreshWindow(win)
         end
         row.completeGlow:SetShown(owned)
         row.check:SetShown(owned)
-        -- Keep the text clear of the tick.
+
         row.name:SetPoint("RIGHT", owned and -34 or -8, 0)
         row.slot:SetPoint("RIGHT", owned and -34 or -8, 0)
         row:Show()
         y = y + 52
 
-        -- Request missing item data at most once per session. On some clients
-        -- RequestLoadItemDataByID can fire its completion event synchronously
-        -- when the item is already cached. Requesting again from RefreshWindow
-        -- would recursively re-enter this function until a C stack overflow.
+
+
+
+
         if C_Item and C_Item.RequestLoadItemDataByID and not requestedItemData[fav.id] then
-            local loaded = LiveItemInfo(fav.id) ~= nil -- favnames
+            local loaded = LiveItemInfo(fav.id) ~= nil
             if not loaded then
                 requestedItemData[fav.id] = true
                 pcall(C_Item.RequestLoadItemDataByID, fav.id)
@@ -785,9 +785,9 @@ local function RefreshWindow(win)
     local contentHeight = math.max(1, y)
     win.fdjContent:SetHeight(contentHeight)
 
-    -- Do not show a useless scrollbar/track when all favourites already fit.
-    -- Reset vertical scroll too, otherwise reopening a shorter list can keep
-    -- an old offset from a previously longer list.
+
+
+
     local visibleHeight = (win.fdjScroll and win.fdjScroll:GetHeight()) or 0
     local needsScroll = visibleHeight > 0 and contentHeight > (visibleHeight + 1)
     local scrollBar = win.fdjScrollBar
@@ -824,7 +824,7 @@ local function UpdateButton(frame)
     button:SetWidth(math.max(96, math.min(170, math.ceil((button.text:GetStringWidth() or 70) + 44))))
 end
 
--- The journal builds the Loot Filter button on its home page; add ours to its left.
+
 local baseCreateLootFilterButton = FDJ.CreateLootFilterButton
 if baseCreateLootFilterButton then
     FDJ.CreateLootFilterButton = function(frame, home, anchorButton)
@@ -858,12 +858,12 @@ if baseCreateLootFilterButton then
     end
 end
 
--- Refresh names/icons once item data arrives while the window is open.
+
 do
     local events = CreateFrame("Frame")
     events:RegisterEvent("GET_ITEM_INFO_RECEIVED")
     events:RegisterEvent("PLAYER_REGEN_DISABLED")
-    -- Looting or equipping a favourite updates its "obtained" look at once.
+
     pcall(events.RegisterEvent, events, "BAG_UPDATE_DELAYED")
     pcall(events.RegisterEvent, events, "PLAYER_EQUIPMENT_CHANGED")
     if C_EventUtils and C_EventUtils.IsEventValid and C_EventUtils.IsEventValid("ITEM_DATA_LOAD_RESULT") then
@@ -871,8 +871,8 @@ do
     end
     events:SetScript("OnEvent", function(_, event)
         if event == "PLAYER_REGEN_DISABLED" then
-            -- The favourites list itself may stay open in combat. Only dismiss
-            -- the tiny right-click action menu so it cannot linger over combat.
+
+
             FDJ.HideItemFavouriteMenu()
             return
         end
@@ -880,7 +880,7 @@ do
     end)
 end
 
--- Follow language changes made in the journal.
+
 local baseRelocalize = FDJ.RelocalizeLootFilter
 if baseRelocalize then
     FDJ.RelocalizeLootFilter = function(frame, ...)

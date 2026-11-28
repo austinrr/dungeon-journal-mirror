@@ -1,9 +1,9 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 FDJ.Locales = FDJ.Locales or {}
--- Korean UI strings. Anything missing falls back to English.
--- All text is shown through Blizzard font objects (never a raw font file), so
--- Hangul renders on every client and other languages keep their fonts.
+
+
+
 FDJ.Locales.koKR = {
     ["RANDOM_ENCHANT"] = "<무작위 마법부여>",
     ["ALSO_RECEIVE"] = "추가 보상:",
@@ -215,7 +215,7 @@ FDJ.Locales.koKR = {
     ["RPG_CONFIRM_TEXT"] = "이 모드에서는 최종 우두머리를 처치할 때까지 던전이 잠겨 있습니다. 모드는 언제든지 설정 창에서 바꿀 수 있습니다.",
     ["RPG_CONFIRM_OK"] = "확인",
     ["RPG_CONFIRM_BACK"] = "다시 선택",
-    ["RPG_INTRO_TEXT"] = "최종 우두머리를 처치할 때까지 던전이 잠겨 있습니다.\n옵션 창에서 퀘스트를 표시하도록 선택할 수도 있습니다.", -- introline (2.0.17, text 2.0.18)
+    ["RPG_INTRO_TEXT"] = "최종 우두머리를 처치할 때까지 던전이 잠겨 있습니다.\n옵션 창에서 퀘스트를 표시하도록 선택할 수도 있습니다.",
     ["RPG_INTRO_KEEP"] = "RPG 모드 유지",
     ["RPG_INTRO_OPTIONS"] = "설정에서 끄기",
     ["MODE_RPG_ENABLE"] = "설정에서 켜기",

@@ -1,8 +1,8 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Simplified Chinese content localization (dungeon names and descriptions,
--- item slots). Quests and boss names fall back to English until translated.
+
+
 FDJ.ContentLocales = FDJ.ContentLocales or {}
 FDJ.ContentLocales.zhCN = FDJ.ContentLocales.zhCN or {}
 
@@ -50,7 +50,7 @@ FDJ.ContentLocales.zhCN.dungeons = {
 }
 
 FDJ.ContentLocales.zhCN.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "圣物",
     ["Libram"] = "圣契",
     ["Totem"] = "图腾",
@@ -67,7 +67,7 @@ FDJ.ContentLocales.zhCN.slotParts = {
 }
 
 FDJ.ContentLocales.zhCN.bosses = {
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Faldrim Anvilmar"] = "法德林·安威玛尔",
     ["Plunder"] = "劫掠者",
     ["Durgen Dirgehammer"] = "杜根·挽锤",

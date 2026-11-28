@@ -1,18 +1,18 @@
--- spotlearn (2.0.8, M 15 Nov 2026): the arrow leads to where a quest NPC
--- really stands. The journal's spots come from maps on the web, rounded to
--- half a percent of a zone: up to 15 yards off in a big zone (Zaruk in
--- Hammerfall: the arrow pointed 12 yards past him). The game does not tell
--- an addon where an NPC stands, but it does when you talk to one: you are
--- then within a few yards of it. So whenever you talk to an NPC the arrow
--- knows (Data/ArrowNpcIds.lua), the place is kept for the whole account,
--- and the arrow uses it from then on when it is 4 to 80 yards from the
--- journal's own spot (nearer: the spot was right; farther: another NPC of
--- the same name, or one that walks). /dj spots lists what was learned, as
--- map coordinates, to put into the journal's data.
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
-local MIN_OFF, MAX_OFF = 4, 80 -- yards
+local MIN_OFF, MAX_OFF = 4, 80
 
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
@@ -23,7 +23,7 @@ local function Store()
     if type(ForeverDungeonJournalDB.spotFixes) ~= "table" then ForeverDungeonJournalDB.spotFixes = {} end
     return ForeverDungeonJournalDB.spotFixes
 end
-local known -- [npcID] = name
+local known
 local function Known()
     if not known then
         known = {}
@@ -41,7 +41,7 @@ local function SpotName(spot)
     end
 end
 
--- The learned place for a spot (world yards), when it should be used.
+
 function FDJ.SpotFix(spot, wx, wy, continent)
     if type(spot) ~= "table" or not wx or not wy then return nil end
     local name = SpotName(spot)

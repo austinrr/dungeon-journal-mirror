@@ -1,11 +1,11 @@
--- /dj export: FDJ3 compressed snapshot. See Systems/CharacterSnapshot.lua.
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
--- FDJ2 added the race. The website still reads FDJ1 codes, which have no
--- race field, so an older export keeps working.
 
--- Export dialog strings in every supported locale.
+
+
+
 do
     local strings = {
         enUS = {EXPORT_TITLE = "Dungeon Journal - character code", EXPORT_COPY = "Ctrl+A then Ctrl+C, and paste it on the website.", EXPORT_HINT = "%s - %d quests done. Want to view your progress when logged off? Paste this on the website.", EXPORT_ERROR = "Could not build the character code."},
@@ -27,17 +27,17 @@ do
     end
 end
 local function ExportText(key) return FDJ.L and FDJ.L(key) or key end
--- sitelink (2.1.1, M 20 Nov 2026: "I need to give the link to the website
--- ... and then say paste the code here"): the website's character page,
--- shown in the code window to copy.
+
+
+
 FDJ.SITE_CHARACTER_URL = "https://foreverjournal.pro/character"
 
--- exportbutton (2.1.1, M 20 Nov 2026: "on the character log at the top,
--- make it an export button ... that's gonna open the DJ export ... in the
--- general options, we could put it at the top, called export to website"):
--- the two buttons' texts (Systems/RunLogUI.lua, Systems/SettingsPanel.lua).
--- exporttip (2.1.1, M 20 Nov 2026): the Export button's tooltip ends "You can
--- also type /dj export." (was "The same as /dj export.").
+
+
+
+
+
+
 do
     local strings = {
         enUS = { EXPORT_SITE = "Paste the code here:", RUNLOG_EXPORT = "Export", OPT_EXPORT = "Export to website", OPT_EXPORT_TIP = "Makes a code of this character to copy and paste on the website. You can also type /dj export." },
@@ -63,7 +63,7 @@ do
 end
 
 
--- ------------------------------------------------------------------ encoding
+
 
 local B36 = "0123456789abcdefghijklmnopqrstuvwxyz"
 
@@ -85,8 +85,8 @@ end
 
 local B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 
--- base64url, no padding. Arithmetic rather than the bit library, which is not
--- present on every client this addon runs on.
+
+
 local function Base64Url(s)
     local out, n = {}, #s
     for i = 1, n, 3 do
@@ -105,8 +105,8 @@ local function Base64Url(s)
     return table.concat(out)
 end
 
--- Adler-32: catches a truncated or mistyped paste. Its running sums stay well
--- inside the range a double holds exactly, so there is no overflow to handle.
+
+
 local function Checksum(s)
     local a, b = 1, 0
     for i = 1, #s do
@@ -116,27 +116,27 @@ local function Checksum(s)
     return b * 65536 + a
 end
 
--- FDJ3: raw DEFLATE JSON, base64url, Adler-32 of the UTF-8 JSON.
+
 FDJ.BuildExportCode = function()
     local snapshot = FDJ.BuildCharacterSnapshot()
     local body = FDJ.ExportJSON(snapshot)
     local lib = (LibStub and LibStub:GetLibrary("LibDeflate", true)) or _G.FDJLibDeflate
     assert(lib, "LibDeflate unavailable")
-    -- exportlag (2.1.1, M 20 Nov 2026: "when I click on the export tab on
-    -- options, there is some lag"): level 5, not 9. Level 9 took about 4
-    -- times as long for a code only about 1% shorter (a 52 KB snapshot: 0.14 s
-    -- against 0.03 s on a desktop Lua 5.1). The website reads any level.
+
+
+
+
     local code = "FDJ3." .. Base64Url(lib:CompressDeflate(body, {level = 5})) .. "." .. Base36(Checksum(body))
     return code, #snapshot.completed, snapshot.name
 end
 
--- ------------------------------------------------------------------------ UI
+
 
 local dialog
 
 local function BuildDialog()
     local f = CreateFrame("Frame", "FDJExportFrame", UIParent, "BackdropTemplate")
-    f:SetSize(520, 186) -- exportbox (2.1.1): one line of code, not a wall; sitelink: the website's address under it
+    f:SetSize(520, 186)
     f:SetPoint("CENTER")
     f:SetFrameStrata("DIALOG")
     f:SetMovable(true)
@@ -161,12 +161,12 @@ local function BuildDialog()
 
     f.hint = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
     f.hint:SetPoint("TOP", title, "BOTTOM", 0, -6)
-    f.hint:SetWidth(470) -- exportgo (2.1.1): the longer line wraps inside the window
+    f.hint:SetWidth(470)
 
-    -- A read-only looking box the player can select all of and copy.
-    -- exportbox (2.1.1, M 20 Nov 2026: the multi-line box spilled the code
-    -- down over the whole screen): one line that scrolls sideways inside the
-    -- box, clipped to it; Ctrl+A / Ctrl+C still take the whole code.
+
+
+
+
     local box = CreateFrame("EditBox", nil, f)
     box:SetMultiLine(false)
     box:SetMaxLetters(0)
@@ -177,11 +177,11 @@ local function BuildDialog()
     box:SetAutoFocus(false)
     box:SetTextInsets(4, 4, 0, 0)
     if box.SetClipsChildren then box:SetClipsChildren(true) end
-    -- A click selects the whole code again, ready for Ctrl+C.
+
     box:SetScript("OnMouseUp", function(self) self:HighlightText() end)
     box:SetScript("OnEditFocusGained", function(self) self:HighlightText() end)
     box:SetScript("OnEscapePressed", function() f:Hide() end)
-    -- Typing into it would only corrupt the code, so put it straight back.
+
     box:SetScript("OnTextChanged", function(self, byUser)
         if byUser then
             self:SetText(f.code or "")
@@ -205,8 +205,8 @@ local function BuildDialog()
         bg:SetBackdropBorderColor(0.28, 0.28, 0.28, 1)
     end
 
-    -- sitelink: "Paste the code here:" and the website's address, in a box
-    -- that selects it all on a click, ready for Ctrl+C (typing puts it back).
+
+
     local siteLabel = f:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     siteLabel:SetPoint("TOPLEFT", 24, -104)
     siteLabel:SetText(ExportText("EXPORT_SITE"))
@@ -234,13 +234,13 @@ local function BuildDialog()
     foot:SetText(ExportText("EXPORT_COPY"))
 
     local close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(close) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(close)
     close:SetSize(80, 22)
     close:SetPoint("BOTTOMRIGHT", -16, 14)
     close:SetText(CLOSE or "Close")
     close:SetScript("OnClick", function() f:Hide() end)
 
-    tinsert(UISpecialFrames, "FDJExportFrame")  -- Escape closes it
+    tinsert(UISpecialFrames, "FDJExportFrame")
     return f
 end
 
@@ -255,19 +255,19 @@ FDJ.ShowExportDialog = function()
     dialog.hint:SetText(string.format(ExportText("EXPORT_HINT"),
         name or "?", questCount or 0))
     dialog.box:SetText(code)
-    -- exportbutton: over the Character Logs and the Options, which open it
-    -- (both FULLSCREEN_DIALOG)
+
+
     dialog:SetFrameStrata("FULLSCREEN_DIALOG")
     dialog:SetToplevel(true)
     dialog:Show()
     dialog:Raise()
     dialog.box:SetFocus()
-    if dialog.box.SetCursorPosition then dialog.box:SetCursorPosition(0) end -- show the start (exportbox)
+    if dialog.box.SetCursorPosition then dialog.box:SetCursorPosition(0) end
     dialog.box:HighlightText()
 end
 
--- /dj export, chained onto the journal's own handler the way the other
--- Systems modules extend it.
+
+
 local base = SlashCmdList and SlashCmdList.FOREVERDUNGEONJOURNAL
 if base then
     SlashCmdList.FOREVERDUNGEONJOURNAL = function(msg, ...)

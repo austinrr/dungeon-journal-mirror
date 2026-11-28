@@ -1,26 +1,26 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- ============================================================
--- Update alert.
---
--- Addons cannot reach the internet, so the only way to learn that a newer
--- release exists is from other players. Every copy quietly announces its
--- version to guild / party / raid over the hidden addon-message channel.
--- When someone reports a higher version, the player is told once per
--- session, and again at each login until they update.
--- ============================================================
+
+
+
+
+
+
+
+
+
 
 local PREFIX = "DJournalVer"
-local SEND_THROTTLE = 10 -- seconds between broadcasts on the same channel
+local SEND_THROTTLE = 10
 local CHAT_TAG = "|cffd8a83cDungeonJournal|r "
 
 local notified = false
--- A newer version only keeps the login reminder going while it has been
--- heard recently: test builds announce their version too, and a version
--- heard once from one (or saved by an older copy, which kept no date) must
--- not nag at every login until a real release passes it.
-local REMEMBER_FOR = 3 * 24 * 60 * 60 -- seconds
+
+
+
+
+local REMEMBER_FOR = 3 * 24 * 60 * 60
 local function Now() return (time and time()) or 0 end
 local lastSent = {}
 local pendingReply = {}
@@ -41,8 +41,8 @@ local function MyVersion()
     return version and tostring(version) or nil
 end
 
--- "1.4.3" -> { 1, 4, 3 }. Anything that is not a plain dotted number is
--- rejected, so a malformed or hostile message can never trigger the alert.
+
+
 local function ParseVersion(text)
     if type(text) ~= "string" or #text > 16 then return nil end
     local a, b, c = text:match("^(%d+)%.(%d+)%.(%d+)$")
@@ -104,9 +104,9 @@ local function Broadcast()
     end
 end
 
--- Someone on this channel runs an older copy: answer after a short random
--- delay so their copy learns about the newer release. The reply is dropped
--- if another player answers first, which keeps large guilds quiet.
+
+
+
 local function ScheduleReply(channel)
     if pendingReply[channel] then return end
     if not (C_Timer and C_Timer.After) then
@@ -136,7 +136,7 @@ local function OnAddonMessage(prefix, text, channel)
         return
     end
 
-    -- Same or newer version heard on this channel: no reply needed from us.
+
     pendingReply[channel] = nil
 
     if IsNewer(theirs, mine) then
@@ -147,7 +147,7 @@ local function OnAddonMessage(prefix, text, channel)
                 db.newestSeenVersion = text
                 db.newestSeenAt = Now()
             elseif not IsNewer(known, theirs) then
-                db.newestSeenAt = Now() -- the same version heard again
+                db.newestSeenAt = Now()
             end
         end
         Notify(text)
@@ -155,7 +155,7 @@ local function OnAddonMessage(prefix, text, channel)
 end
 
 local function LoginChecks()
-    -- Remind the player about a newer version heard in an earlier session.
+
     local db = ForeverDungeonJournalDB
     local mine = ParseVersion(MyVersion() or "")
     if type(db) == "table" and mine then
@@ -191,7 +191,7 @@ events:SetScript("OnEvent", function(_, event, ...)
             pcall(RegisterAddonMessagePrefix, PREFIX)
         end
         lastGroupSize = GetNumGroupMembers and GetNumGroupMembers() or 0
-        -- Wait until the loading screen is gone so the lines are not lost.
+
         if C_Timer and C_Timer.After then
             C_Timer.After(8, LoginChecks)
         else

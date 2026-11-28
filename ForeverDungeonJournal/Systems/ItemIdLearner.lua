@@ -1,28 +1,28 @@
--- Item ID learner.
--- Some items are added to the journal before their item ID is known (they
--- are written with ID 0: the row shows a red "?" icon). This file finds the
--- real ID on its own:
---   1. It asks the server about the item IDs around the dungeon's known IDs
---      (new items of one dungeon are numbered together) and matches by name.
---      This works without anyone having to drop the item.
---   2. It also learns from anything the client sees: tooltips, loot windows,
---      loot rolls, chat links, your bags and equipped gear, and the cache.
--- Learned IDs fill in straight away and are remembered between sessions.
--- /dj newids prints what was learned, ready to be written into the data.
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
-local missing        -- normalised item name -> { item tables with ID 0 }
+local missing
 local missingCount = 0
-local candidates     -- item IDs worth asking the server about
-local checked = {}   -- item ID -> true once its name was compared
+local candidates
+local checked = {}
 
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
     return v
 end
 
--- Lower-case name with colour codes, textures and atlas markup removed.
+
 local function Norm(name)
     name = Plain(name)
     if type(name) ~= "string" then return nil end
@@ -60,7 +60,7 @@ local function AddMissing(item, known)
     table.insert(missing[key], item)
 end
 
-local SPAN = 60 -- IDs checked on each side of a known ID
+local SPAN = 60
 
 local function Collect()
     missing, missingCount, candidates = {}, 0, {}
@@ -78,7 +78,7 @@ local function Collect()
                 AddMissing(quest.requiredItem, known) AddMissing(quest.startItem, known)
                 AddMissing(quest.noteItem, known) AddMissing(quest.providedItem, known)
             end
-            -- This dungeon has unknown items: queue the IDs around its known ones.
+
             if missingCount > before then
                 for _, id in ipairs(known) do
                     for n = id - SPAN, id + SPAN do
@@ -97,7 +97,7 @@ local function Collect()
     table.sort(candidates)
 end
 
--- Put a known ID into every journal entry with that name.
+
 local function Apply(key, id, announce)
     local items = missing and missing[key]
     if not items then return false end
@@ -111,7 +111,7 @@ local function Apply(key, id, announce)
     if FDJ.ResetItemSourceIndex then pcall(FDJ.ResetItemSourceIndex) end
     if FDJ.RefreshLootNow then pcall(FDJ.RefreshLootNow) end
     if announce then
-        FDJ.ChatLine("|cffd8a83cDungeonJournal:|r found the item ID of " .. tostring(name) .. ": " .. id .. "  (/dj newids)") -- (chatlines)
+        FDJ.ChatLine("|cffd8a83cDungeonJournal:|r found the item ID of " .. tostring(name) .. ": " .. id .. "  (/dj newids)")
     end
     return true
 end
@@ -123,14 +123,14 @@ local function Learn(id, name)
     local key = Norm(name)
     if not key or not missing[key] then return end
     Store()[key] = { id = id, name = missing[key][1][2] }
-    -- Silent: players saw a chat line for every item found. /dj newids lists them.
+
     Apply(key, id, false)
 end
 
--- questquiet (2.0.9): asking the game for an item's name asks the server
--- when the client does not know the item yet. quiet: only items the client
--- already knows (C_Item.IsItemDataCachedByID); where the game cannot tell,
--- nothing is asked.
+
+
+
+
 local function NameOfID(id, quiet)
     if quiet then
         local known = false
@@ -153,7 +153,7 @@ local function NameOfID(id, quiet)
     end
 end
 
--- Compare one item ID's name against the missing list (once it is loaded).
+
 local function CheckID(id, quiet)
     id = tonumber(Plain(id))
     if not id or id <= 0 or checked[id] then return end
@@ -174,7 +174,7 @@ local function LearnLink(link)
     for id in link:gmatch("item:(%d+)") do CheckID(id) end
 end
 
--- Ask the item cache by name ("Name" works once the client has seen it).
+
 local function TryCache()
     if not missing or missingCount == 0 then return end
     local getInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
@@ -185,7 +185,7 @@ local function TryCache()
     end
 end
 
--- Bags and equipped gear.
+
 local function ScanInventory()
     if not missing or missingCount == 0 then return end
     if C_Container and C_Container.GetContainerNumSlots then
@@ -207,13 +207,13 @@ local function ScanInventory()
     end
 end
 
--- loadpause (2.0.7): no questions to the server during a loading screen or
--- the first seconds after it (FDJ.LookupsPaused, Core/Journal.lua): the
--- scan waits and goes on where it was.
--- questquiet (2.0.9, Lyxodius on Discord): nor while a quest, gossip or
--- vendor window is open, or within 5 seconds of one: a quest's reward items
--- are asked of the server then, and must not wait behind the scan (a hand-in
--- window that showed one reward of several).
+
+
+
+
+
+
+
 local talkedAt
 local function Talking()
     for _, name in ipairs({ "QuestFrame", "GossipFrame", "MerchantFrame" }) do
@@ -237,16 +237,16 @@ local function Paused(fn)
     return false
 end
 
--- Server query of the candidate IDs, a few at a time so nothing stutters.
+
 local scanIndex, scanning = 1, false
 local function ScanStep()
     if not missing or missingCount == 0 or not candidates then scanning = false return end
     if Paused(ScanStep) then return end
     local requestLoad = C_Item and C_Item.RequestLoadItemDataByID
     local doExist = C_Item and C_Item.DoesItemExistByID
-    -- questquiet (2.0.9): 5 questions to the server every half second (was
-    -- 40 every quarter: 160 a second, for 20 seconds and more after every
-    -- login and /reload). IDs the client already knows cost no question.
+
+
+
     local stop, asked = scanIndex - 1, 0
     while stop < #candidates and asked < 5 and stop - scanIndex < 199 do
         stop = stop + 1
@@ -270,7 +270,7 @@ local function ScanStep()
     if scanIndex <= #candidates and C_Timer and C_Timer.After then
         C_Timer.After(asked > 0 and 0.5 or 0.05, ScanStep)
     else
-        -- One more pass a bit later for answers that came in after the request.
+
         scanning = false
         if C_Timer and C_Timer.After then
             local function LastPass()
@@ -293,13 +293,13 @@ function FDJ.LearnMissingItemIDsNow()
     if Paused(FDJ.LearnMissingItemIDsNow) then return end
     pcall(TryCache)
     pcall(ScanInventory)
-    for _, id in ipairs(candidates or {}) do pcall(CheckID, id, true) end -- questquiet: was a question to the server for every one, all at once
+    for _, id in ipairs(candidates or {}) do pcall(CheckID, id, true) end
     StartScan()
 end
 
--- ---------------------------------------------------------------------------
--- Where items are seen
--- ---------------------------------------------------------------------------
+
+
+
 local function OnTooltip(tooltip)
     if not tooltip or not tooltip.GetItem then return end
     local ok, _, link, id = pcall(tooltip.GetItem, tooltip)
@@ -320,7 +320,7 @@ local pendingBags = false
 events:SetScript("OnEvent", function(self, event, ...)
     if event == "PLAYER_LOGIN" then
         pcall(Collect)
-        -- IDs learned in earlier sessions.
+
         for key, entry in pairs(Store()) do
             if type(entry) == "table" and tonumber(entry.id) then Apply(Norm(key) or key, tonumber(entry.id), false) end
         end
@@ -369,11 +369,11 @@ events:SetScript("OnEvent", function(self, event, ...)
             C_Timer.After(0.5, function() pendingBags = false pcall(ScanInventory) pcall(TryCache) end)
         end
     else
-        LearnLink((...)) -- chat message text
+        LearnLink((...))
     end
 end)
 
--- /dj newids: what this client has learned, in a copy-friendly line.
+
 function FDJ.PrintLearnedItemIDs()
     local parts = {}
     for _, entry in pairs(Store()) do

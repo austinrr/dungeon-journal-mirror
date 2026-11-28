@@ -1,14 +1,14 @@
--- Some loading-screen art (City of Dalaran) ends in a dark strip at the bottom
--- of its home card. Cover it with a band tinted like the art, fading upward
--- into the picture so it doesn't look like a hard bar.
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 local WHITE = "Interface\\Buttons\\WHITE8X8"
 
 local function SetFade(tex, r, g, b)
-    -- Solid at the bottom, transparent at the top. Newer clients use
-    -- SetGradient with colour objects, older ones SetGradientAlpha.
+
+
     if CreateColor and pcall(tex.SetGradient, tex, "VERTICAL", CreateColor(r, g, b, 1), CreateColor(r, g, b, 0)) then
         return
     end

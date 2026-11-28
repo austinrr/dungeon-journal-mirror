@@ -1,31 +1,31 @@
--- walknet (2.0.9, M 16 Nov 2026, in Westfall's Dust Plains with the arrow to
--- The Fourth Troll Legend in Stranglethorn, 369 yards away through the
--- mountains: "it's not understanding mountains, it wants me to go through
--- the mountain"). A walk to a place in another zone was a straight line;
--- zone borders are mostly mountains, with few ways through. The arrow now
--- follows the continent's walking net (Data/WalkNet.lua: the walked ways
--- between its towns, passes, bridges and roads) from one zone to the next:
--- it joins the net at the stretch nearest the player, leads from corner to
--- corner along the cheapest way (roads before steep ground and water; a
--- drop or a waterfall only the way it can be walked; the other faction's
--- towns kept clear of) and leaves it at the stretch nearest the place. The
--- yards are the whole way. Inside one zone the straight line stays the way
--- unless the net's way is much longer (a ridge between), and a way begun on
--- the net is followed to its last corner (zone borders do not run along the
--- ridges).
--- Systems/MapMarkers.lua asks FDJ.WalkNetAim where it asks for a city's roads.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
 do
-    local OFF = 1.5     -- a yard off the net costs this many on it (the straight line there is not known to be clear)
-    local NEAR = 300    -- yards: the net is looked for this near first,
-    local FAR = 900     -- then this far
-    local BUCKET = 250  -- yards: the squares the stretches are sorted into
-    local PASSED = 12   -- yards: a corner this near is behind
-    local BESIDE = 35   -- yards: this near the stretch after a corner is on it (the corner is behind)
-    local ONROAD = 12   -- yards: this near a road's line is on the road
-    local LONGER = 1.35 -- inside one zone: the net only when its way is this many times the straight line (and 60 yards) longer
+    local OFF = 1.5
+    local NEAR = 300
+    local FAR = 900
+    local BUCKET = 250
+    local PASSED = 12
+    local BESIDE = 35
+    local ONROAD = 12
+    local LONGER = 1.35
     local CONTINENT_MAP = { [0] = 1415, [1] = 1414 }
 
     local function Number(v)
@@ -38,7 +38,7 @@ do
         return math.sqrt(dx * dx + dy * dy)
     end
 
-    -- The zone (its map) at a world position, as the game's continent map tells it.
+
     local zoneCache, zoneCount = {}, 0
     local function ZoneAt(c, x, y)
         local continentMap = CONTINENT_MAP[c]
@@ -58,13 +58,13 @@ do
             local okInfo, info = pcall(C_Map.GetMapInfoAtPosition, continentMap, mx, my)
             id = okInfo and type(info) == "table" and Number(info.mapID) or nil
         end
-        if not id then return nil end -- (not kept: the game may tell next time)
+        if not id then return nil end
         if zoneCount > 4000 then zoneCache, zoneCount = {}, 0 end
         zoneCache[key], zoneCount = id, zoneCount + 1
         return id
     end
 
-    -- The continent's net, read from its strings on first use.
+
     local nets = {}
     local function Net(c)
         local net = nets[c]
@@ -79,8 +79,8 @@ do
             end
         end
         local A, B, L, C, F, m = {}, {}, {}, {}, {}, 0
-        local at = {}      -- [node] = { edge, edge, ... }
-        local buckets = {} -- [square] = { edge, ... }
+        local at = {}
+        local buckets = {}
         for _, chunk in ipairs(data.edges) do
             for a, b, l, cost, f in string.gmatch(chunk, "(%d+) (%d+) (%d+) (%d+) (%d+) ") do
                 a, b = tonumber(a), tonumber(b)
@@ -106,11 +106,11 @@ do
         end
         net = { X = X, Y = Y, A = A, B = B, L = L, C = C, F = F, at = at, buckets = buckets, n = n, m = m, mesh = tonumber(data.mesh) }
         nets[c] = net
-        FDJ.WALKNET[c] = { nodes = {}, edges = {} } -- the strings are not needed again
+        FDJ.WALKNET[c] = { nodes = {}, edges = {} }
         return net
     end
 
-    -- Who walks: 1 Alliance, 2 Horde (3: either's ways, no faction yet).
+
     local function Side()
         if type(UnitFactionGroup) ~= "function" then return 3 end
         local ok, faction = pcall(UnitFactionGroup, "player")
@@ -118,13 +118,13 @@ do
         if ok and faction == "Horde" then return 2 end
         return 3
     end
-    local function Bit(flags, bit) -- bit: 1, 2, 4 or 8
+    local function Bit(flags, bit)
         return math.floor(flags / bit) % 2 == 1
     end
 
-    -- mojache (2.1.4): does the straight line (px, py) -> (tx, ty) cut across a
-    -- camp (FDJ.WALKNET_AVOID, Data/WalkNet.lua) that is no shortcut for this
-    -- side (side 3: for anyone)? Then it is no shortcut, however short.
+
+
+
     local avoid = {}
     local function Crosses(c, side, px, py, tx, ty)
         if side ~= 1 and side ~= 2 then return false end
@@ -154,10 +154,10 @@ do
         return false
     end
 
-    -- mojache (2.1.4): is the player in a way between walls (a stretch with
-    -- flag 16, the trench south of Camp Mojache)? There the straight line is
-    -- no shortcut, however short: the way is walked as it is.
-    local CORRIDOR = 30 -- yards from such a stretch
+
+
+
+    local CORRIDOR = 30.2
     local function InCorridor(net, side, x, y)
         local X, Y, A, B, F = net.X, net.Y, net.A, net.B, net.F
         local bx0, bx1 = math.floor((x - CORRIDOR) / BUCKET), math.floor((x + CORRIDOR) / BUCKET)
@@ -182,15 +182,15 @@ do
         return false
     end
 
-    -- The stretches a place (x, y) can join the net at: those nearest it in
-    -- its own zone (the nearest, and the ones not much further).
-    -- -> { { d = yards to the stretch, e = edge, t = how far along it (0 at a, 1 at b), x, y = the point on it }, ... }
+
+
+
     local function Joins(net, c, side, x, y, reach)
         local zone = ZoneAt(c, x, y)
-        -- nozone (2.0.13, M 18 Nov 2026 on Theramore's pier, the arrow
-        -- pointing straight over the water at the Barrens: "it's not
-        -- recognizing the dock"): out on a pier the game may name no zone
-        -- for the place: the nearest stretches then, whatever their zone
+
+
+
+
         local X, Y, A, B, F = net.X, net.Y, net.A, net.B, net.F
         local found, seen = {}, {}
         local bx0, bx1 = math.floor((x - reach) / BUCKET), math.floor((x + reach) / BUCKET)
@@ -233,11 +233,11 @@ do
         return out
     end
 
-    -- From every corner of the net: what the cheapest way to the place
-    -- costs (dist), how many yards it is (walk) and its next corner (next;
-    -- none: straight to the place from there).
+
+
+
     local fields = {}
-    local function Field(net, c, side, tx, ty, plain) -- (openahead: plain = by the yards alone, roads no cheaper)
+    local function Field(net, c, side, tx, ty, plain)
         for i = 1, #fields do
             local f = fields[i]
             if f.c == c and f.side == side and f.plain == plain and Yards(f.tx, f.ty, tx, ty) < 2 then return f end
@@ -252,7 +252,7 @@ do
         local OFF = OFF
         if plain then C, OFF = L, 1 end
         local dist, walk, nextOf = field.dist, field.walk, field.next
-        -- a binary heap of { cost, node }
+
         local heapCost, heapNode, size = {}, {}, 0
         local function Push(cost, node)
             size = size + 1
@@ -288,7 +288,7 @@ do
             local j = joins[i]
             local e = j.e
             local f = F[e]
-            -- from a along the stretch to the point (a -> b walked), from b (b -> a walked)
+
             if Bit(f, 4) then
                 local cost = OFF * j.d + j.t * C[e]
                 if not dist[A[e]] or cost < dist[A[e]] then
@@ -328,15 +328,15 @@ do
         return field
     end
 
-    -- pullahead (2.1.1, M 20 Nov 2026 on the road through Riverglades'
-    -- Bristle Hills, the arrow to Farholde Keep pointing off to the left:
-    -- "it wants to find the anchor point ... make it cleaner"): the net's
-    -- stretch there runs 20 yards beside the road, so the next corner was
-    -- always off to the side. The arrow now looks ahead along the way and
-    -- aims at the furthest corner (up to PULL yards walked) whose way there
-    -- stays within LANE yards of the straight line to it: on a straight
-    -- way it points down the way, at a bend it still turns at the bend.
-    -- Not past a stretch that is steep or water (it is walked as it is).
+
+
+
+
+
+
+
+
+
     local PULL, LANE = 160, 18
     local function PullAhead(net, field, node, px, py)
         local X, Y, A, B, L, C, at = net.X, net.Y, net.A, net.B, net.L, net.C, net.at
@@ -371,11 +371,11 @@ do
         return best
     end
 
-    -- Where the arrow aims on the way from (px, py) to (tx, ty) on continent
-    -- c: the next corner of the net and the yards from it to the place; nil
-    -- when the straight line is the way (the same zone, no net near, the
-    -- last corner passed). memo: a table of the caller's (the arrow's entry)
-    -- that keeps the answer while the player has not moved.
+
+
+
+
+
     local function Aim(memo, tx, ty, px, py, c)
         if not (Number(tx) and Number(ty) and Number(px) and Number(py)) or not CONTINENT_MAP[c] then return nil end
         local state = memo.walknet
@@ -387,13 +387,13 @@ do
         end
         state.px, state.py, state.aim, state.rest = px, py, nil, nil
         local straight = Yards(px, py, tx, ty)
-        local function Off(done) -- straight to the place from here on
+        local function Off(done)
             state.on, state.node, state.field = nil, nil, nil
             state.done = done and straight or nil
             return nil
         end
         if straight < 40 then return Off(true) end
-        -- the last corner is behind: the straight line, unless the player walks well away again
+
         if state.done then
             if straight < state.done + 150 then return nil end
             state.done = nil
@@ -403,16 +403,16 @@ do
         local X, Y = net.X, net.Y
         local here, there = ZoneAt(c, px, py), ZoneAt(c, tx, ty)
         local node, field = state.node, state.field
-        -- openahead (2.0.13, M 18 Nov 2026 in Hillsbrad Fields on the way to
-        -- Southshore's gryphon, the arrow leading back to a corner of the
-        -- way it had begun at Dalaran: "it's telling me to go back when
-        -- there's so much space in front of me ... a bit too strict on your
-        -- anchor points"): in the place's own zone, when the shortest walk
-        -- along the net (by the yards alone, roads no cheaper) is hardly
-        -- longer than the straight line, nothing stands between: the
-        -- straight line, also off a way already begun.
-        -- mojache (2.1.4): no straight line across the other faction's camp,
-        -- nor off a way between walls
+
+
+
+
+
+
+
+
+
+
         local crossing = Crosses(c, Side(), px, py, tx, ty) or InCorridor(net, Side(), px, py)
         if here and here == there and not crossing then
             local side = Side()
@@ -436,21 +436,21 @@ do
             if short and short < straight * 1.2 + 60 then return Off(true) end
         end
         if node then
-            -- A way once begun is kept, corner by corner: the same corner
-            -- until it is reached, then the next. Only a player who walks
-            -- well away from it is led anew.
+
+
+
             local d = Yards(px, py, X[node], Y[node])
             if d > state.closest + 30 then
                 node = nil
             else
                 if d < state.closest then state.closest = d end
-                -- betterway (2.0.13, M 18 Nov 2026 on the road south of
-                -- Nijel's Point, walking on south past the corner the arrow
-                -- had begun with: "even after I get out of the road, it's
-                -- still sending me back when I'm literally supposed to go
-                -- straight forward"): every 15 yards walked, the way from
-                -- where the player stands now: when it is shorter than going
-                -- on to the kept corner, the arrow takes it.
+
+
+
+
+
+
+
                 if not state.lookX or Yards(px, py, state.lookX, state.lookY) >= 15 then
                     state.lookX, state.lookY = px, py
                     local side = Side()
@@ -478,7 +478,7 @@ do
             end
         end
         if not node then
-            if not there then return Off() end -- (nozone: the player's own zone not named: led by the net all the same)
+            if not there then return Off() end
             local sameZone = here ~= nil and here == there and not state.on
             local side = Side()
             field = Field(net, c, side, tx, ty)
@@ -494,7 +494,7 @@ do
                 local j = joins[i]
                 local e = j.e
                 local f = F[e]
-                -- towards a (b -> a walked), towards b (a -> b walked)
+
                 if Bit(f, 8) and dist[A[e]] then
                     local cost = OFF * j.d + j.t * C[e] + dist[A[e]]
                     if not best or cost < best then best, node, way, pick = cost, A[e], j.d + j.t * L[e] + field.walk[A[e]], j end
@@ -505,23 +505,23 @@ do
                 end
             end
             if not node then return Off() end
-            -- samezone (M 16 Nov 2026, in Stranglethorn with the tablet 425
-            -- yards off behind a ridge): inside one zone the straight line
-            -- stays the way unless the net's way is much longer, which says
-            -- something stands between.
-            -- roadnet (M 16 Nov 2026, on Stranglethorn's road: "if I'm on
-            -- the road, it obviously should let me follow the road"): not
-            -- for a player standing on a road (a stretch the walking maps
-            -- price as one): the road is followed.
+
+
+
+
+
+
+
+
             local onRoad = pick and pick.d <= ONROAD and L[pick.e] > 0 and C[pick.e] / L[pick.e] <= 0.9
-            -- netsane (2.0.13, M 18 Nov 2026, off his hearthstone in
-            -- Stormwind's Trade District with the arrow to Archbishop
-            -- Benedictus in the Cathedral, 390 yards off: "it keeps telling
-            -- me that this npc is 20k yards away and pointing me to the
-            -- wrong direction"): the net's nearest stretch to a place can be
-            -- one it only reaches the long way round the continent (inside
-            -- a building, on another level). A way many times the straight
-            -- line is no way round a ridge: the straight line it is.
+
+
+
+
+
+
+
+
             if way > straight * 6 + 600 then
                 state.node, state.field = nil, nil
                 return nil
@@ -532,15 +532,15 @@ do
             end
             state.closest = Yards(px, py, X[node], Y[node])
         end
-        -- In the place's own zone: to the way's last corner (zone borders do
-        -- not run along the ridges), unless the place is right there.
+
+
         if here and here == there and straight < 80 then return Off(true) end
-        -- The corners already reached are behind: one the player stands at,
-        -- and one the player has gone by (cornerpast, M 16 Nov 2026, riding
-        -- down the river into Stranglethorn: "the arrow is basically sending
-        -- me back to Westfall" - a corner missed by more than a few yards
-        -- stayed the aim): the player is on the stretch after it, nearer its
-        -- far end than the corner is.
+
+
+
+
+
+
         local guard = 0
         while guard < 50 do
             local following = field.next[node]
@@ -556,14 +556,14 @@ do
                 past = t > 0 and Yards(px, py, nx + t * dx, ny + t * dy) <= BESIDE
             end
             if not past then break end
-            if not following then return Off(true) end -- the last corner: straight to the place
+            if not following then return Off(true) end
             node, guard = following, guard + 1
             state.closest = Yards(px, py, X[node], Y[node])
         end
         state.on, state.node, state.field = true, node, field
-        -- openmesh (2.0.13): across open ground (its points, net.mesh on)
-        -- the arrow looks up to three points ahead, so it points along
-        -- the walk and not at each point in turn.
+
+
+
         local far = node
         if net.mesh then
             for _ = 1, 3 do
@@ -572,7 +572,7 @@ do
                 far = following
             end
         end
-        local okPull, pulled = pcall(PullAhead, net, field, far, px, py) -- pullahead (2.1.1)
+        local okPull, pulled = pcall(PullAhead, net, field, far, px, py)
         if okPull and pulled and field.walk[pulled] then far = pulled end
         if far ~= node then
             state.aim, state.rest = { X[far], Y[far] }, field.walk[far]
@@ -582,19 +582,19 @@ do
         return state.aim, state.rest
     end
 
-    -- walkgrid (2.0.9, M 16 Nov 2026 in the Ruins of Zul'Kunda, the arrow to
-    -- The Third Troll Legend 54 yards off behind a wall: "It's just sending
-    -- me through walls"). Where a place's ground is known cell by cell
-    -- (FDJ.WALKGRIDS in Data/WalkNet.lua: walls, ledges, water) and both the
-    -- player and the place are on it, the arrow walks the cells: the
-    -- cheapest way from the place to every cell is worked out once, and
-    -- the arrow aims at the furthest cell of the player's way that can be
-    -- walked to in a straight line (no wall or ledge between), so it leads
-    -- round the walls and through the gaps. The place itself in a straight
-    -- line: the arrow points at it as always.
+
+
+
+
+
+
+
+
+
+
     local DIRS = { { 1, 1, 0 }, { 2, -1, 0 }, { 4, 0, 1 }, { 8, 0, -1 }, { 16, 1, 1 }, { 32, 1, -1 }, { 64, -1, 1 }, { 128, -1, -1 } }
     local KIND_COST = { [1] = 1.0, [2] = 0.8, [3] = 1.3, [4] = 2.5, [5] = 1.0, [6] = 3.0 }
-    -- (gridbound: a cell's steps looked up, not divided out: the bytes 0-255)
+
     local BITT = {}
     for k = 0, 7 do
         local bit, t = 2 ^ k, {}
@@ -608,16 +608,16 @@ do
         return math.floor(mask / bit) % 2 == 1
     end
     local grids
-    -- azsgrid (2.1.5): a grid's cells are read the first time the player
-    -- and a place are both on it (Ready), not all grids at the first aim.
+
+
     local function Grids()
         if grids then return grids end
         grids = {}
         for _, data in ipairs(FDJ.WALKGRIDS or {}) do
             grids[#grids + 1] = { c = data.continent, x0 = data.x0, y0 = data.y0, cell = data.cell, nx = data.nx, ny = data.ny, data = data, fields = {},
-                leave = data.leave == true, exits = type(data.exits) == "table" and data.exits or nil } -- (gridleave)
+                leave = data.leave == true, exits = type(data.exits) == "table" and data.exits or nil }
         end
-        FDJ.WALKGRIDS = nil -- (each grid keeps its own strings until it is read)
+        FDJ.WALKGRIDS = nil
         return grids
     end
     local function Ready(g)
@@ -627,7 +627,7 @@ do
         do
             local nx, ny = data.nx, data.ny
             local open, cost = {}, {}
-            -- (gridbound: read byte by byte, the hex digits by a table: twice as quick)
+
             local HEX = {}
             for k = 0, 9 do HEX[48 + k] = k end
             for k = 0, 5 do HEX[65 + k], HEX[97 + k] = 10 + k, 10 + k end
@@ -648,7 +648,7 @@ do
                     end
                 end
             end
-            -- no step leads off the grid, or onto a cell that cannot be stood on
+
             for i = 1, nx do
                 for j = 1, ny do
                     local idx = (i - 1) * ny + j
@@ -661,8 +661,8 @@ do
                                 if a < 1 or b < 1 or a > nx or b > ny or open[(a - 1) * ny + b] == 0 then
                                     mask = mask - dir[1]
                                 elseif d > 4 then
-                                    -- a slanting step past a wall's end (one of the two
-                                    -- square ways round closed): walked square instead
+
+
                                     local viaX = HasBit(open[idx], dir[2] > 0 and 1 or 2) and HasBit(open[(a - 1) * ny + j] or 0, dir[3] > 0 and 4 or 8)
                                     local viaY = HasBit(open[idx], dir[3] > 0 and 4 or 8) and HasBit(open[(i - 1) * ny + b] or 0, dir[2] > 0 and 1 or 2)
                                     if viaX ~= viaY then mask = mask - dir[1] end
@@ -677,13 +677,13 @@ do
         end
         return g
     end
-    -- The cell under (x, y): its row, column (from 0); nil off the grid.
+
     local function CellAt(g, x, y)
         local i, j = math.floor((x - g.x0) / g.cell), math.floor((y - g.y0) / g.cell)
         if i < 0 or j < 0 or i >= g.nx or j >= g.ny then return nil end
         return i, j
     end
-    -- A cell that can be stood on at (x, y): its own, else the nearest within three cells.
+
     local function Stand(g, x, y)
         local i, j = CellAt(g, x, y)
         if not i then return nil end
@@ -705,16 +705,16 @@ do
         local j = idx - 1 - i * g.ny
         return g.x0 + (i + 0.5) * g.cell, g.y0 + (j + 0.5) * g.cell
     end
-    -- From the place's cell: the cost and the yards of the cheapest way to every cell that reaches it.
-    -- gridleave (2.1.5 dev, M 24 Nov 2026 at 48.6, 29.6 in Azshara, the coursers to kill at 57.9, 23.5,
-    -- off the grid): a place off a grid that leads off itself (leave = true): goal is its key ("off:x:y"),
-    -- and the way ends at whichever open cell on the grid's edge is best, with the yards from there on in
-    -- a straight line (the ground off the grid is open).
-    -- gridbound (2.1.6, rgcoast: a bigger grid, about 0.2 s for each new
-    -- place): the way is worked out from the place until a little past the
-    -- player's cell (from), 1.3 times its cost and 150 more; a cell within
-    -- that is known exactly (all cells under the stop are settled). Walked
-    -- off further: worked out again from there.
+
+
+
+
+
+
+
+
+
+
     local function GridField(g, goal, tx, ty, from)
         for i = 1, #g.fields do
             local f = g.fields[i]
@@ -733,8 +733,8 @@ do
         else
             dist, walk, heapCost, heapNode, size = {}, {}, {}, {}, 0
             local edge = {}
-            -- (only an edge the place lies beyond: the straight line on from it never comes back over the grid;
-            -- with g.exits, only its cells marked 1 there: the land goes on off the grid)
+
+
             local north, south = tx >= g.x0 + g.nx * cell, tx < g.x0
             local west, east = ty >= g.y0 + ny * cell, ty < g.y0
             local ex = g.exits or {}
@@ -752,7 +752,7 @@ do
             end
             for i = 0, g.nx - 1 do Add(i, 0) Add(i, ny - 1) end
             for j = 1, ny - 2 do Add(0, j) Add(g.nx - 1, j) end
-            -- (in order of cost: a sorted list is a heap)
+
             table.sort(edge, function(a, b) return dist[a] < dist[b] end)
             for k = 1, #edge do heapCost[k], heapNode[k] = dist[edge[k]], edge[k] end
             size = #edge
@@ -779,8 +779,8 @@ do
             if c <= dist[u] then
                 for d = 1, 8 do
                     local dir = DIRS[d]
-                    -- the step is walked towards the place: from v onto u (a hop
-                    -- down a ledge goes one way only)
+
+
                     local v = u - dir[2] * ny - dir[3]
                     if HasBit(open[v] or 0, dir[1]) then
                         local len = (d > 4 and 1.41421356 or 1) * cell
@@ -806,15 +806,15 @@ do
         g.fields[#g.fields + 1] = field
         return field
     end
-    -- Can the straight line from (ax, ay) to (bx, by) be walked: every
-    -- step from cell to cell along it open (a wall's end is not cut).
+
+
     local function Clear(g, ax, ay, bx, by)
         local i, j = CellAt(g, ax, ay)
         local ei, ej = CellAt(g, bx, by)
         if not i or not ei then return false end
         local ny, open, cell = g.ny, g.open, g.cell
         if open[i * ny + j + 1] == 0 then return false end
-        -- cell by cell along the line (each crossing of a cell's edge is one step north, south, west or east)
+
         local dx, dy = bx - ax, by - ay
         local si, sj = dx > 0 and 1 or -1, dy > 0 and 1 or -1
         local huge = math.huge
@@ -837,8 +837,8 @@ do
         end
         return i == ei and j == ej
     end
-    -- gridleave: where the straight line from (ax, ay) on the grid to (bx, by)
-    -- off it leaves the grid (a little inside its last cell); nil: nowhere.
+
+
     local function Edge(g, ax, ay, bx, by)
         local dx, dy = bx - ax, by - ay
         local len = math.sqrt(dx * dx + dy * dy)
@@ -853,16 +853,16 @@ do
         if not CellAt(g, ex, ey) then return nil end
         return ex, ey
     end
-    -- -> handled (the player and the place are on one grid and a way is
-    -- known), then the aim { x, y } and the yards from it on; no aim: the
-    -- place itself is in a straight line.
+
+
+
     local function GridAim(memo, tx, ty, px, py, c)
         if not (Number(tx) and Number(ty) and Number(px) and Number(py)) then return false end
         local g, off
         for _, grid in ipairs(Grids()) do
             if grid.c == c and CellAt(grid, px, py) then
                 if CellAt(grid, tx, ty) then g = grid break end
-                if grid.leave and not off then off = grid end -- gridleave: the place off it
+                if grid.leave and not off then off = grid end
             end
         end
         g = g or off
@@ -878,10 +878,10 @@ do
         if not goal or not from then memo.walkgrid = nil return false end
         local field = GridField(g, goal, tx, ty, from)
         local dist = field.dist
-        if not dist[from] then memo.walkgrid = nil return false end -- no way known from here
+        if not dist[from] then memo.walkgrid = nil return false end
         state = { g = g, tx = tx, ty = ty, px = px, py = py }
         memo.walkgrid = state
-        -- the player's way, cell by cell (downhill in cost), as far as 80 cells
+
         local ny, open = g.ny, g.open
         local way, at = {}, from
         for n = 1, 80 do
@@ -899,12 +899,12 @@ do
             at = best
             way[n] = at
         end
-        -- from where the player stands (the cell's middle when standing off the ground known)
+
         local sx, sy = px, py
         local si, sj = CellAt(g, px, py)
         if not si or si * ny + sj + 1 ~= from then sx, sy = Centre(g, from) end
         if away then
-            -- gridleave: the straight line to the place clear as far as the grid goes: straight at it
+
             local ex, ey = Edge(g, sx, sy, tx, ty)
             if ex and Clear(g, sx, sy, ex, ey) then return true, nil, nil end
         else
@@ -926,9 +926,9 @@ do
         return true, state.aim, state.rest
     end
 
-    -- netwalk (2.1.1): the yards of the net's way from (px, py) to (tx, ty)
-    -- on continent c, for weighing a flight against it (Systems/MapMarkers.lua,
-    -- Plan); nil when the net does not know a way.
+
+
+
     function FDJ.WalkNetYards(px, py, tx, ty, c)
         if not (Number(tx) and Number(ty) and Number(px) and Number(py)) or not CONTINENT_MAP[c] then return nil end
         local ok, yards = pcall(function()
@@ -958,9 +958,9 @@ do
         return ok and yards or nil
     end
 
-    -- -> { x, y } (world yards) and the yards from there on, or nil.
-    -- gridOnly: a hand-made way's corner is the aim and it is near: only a
-    -- place's cells may lead to it (round a wall), not the net.
+
+
+
     function FDJ.WalkNetAim(memo, tx, ty, px, py, continent, gridOnly)
         if type(memo) ~= "table" then return nil end
         local okGrid, handled, aim, rest = pcall(GridAim, memo, tx, ty, px, py, continent)

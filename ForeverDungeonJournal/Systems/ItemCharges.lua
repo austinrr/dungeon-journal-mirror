@@ -1,16 +1,16 @@
--- charges (2.0.10, M 17 Nov 2026, a Discord report: "In Dungeon Journal there
--- is no info about Charges. After drop it says it got 3 charges"): the
--- journal's item tooltips are the game's tooltip of the item itself (as a
--- chat link shows it), and the game puts "3 Charges" (like Durability) only
--- on a copy someone owns. For the items listed here the journal adds the
--- line itself, under the green "Use:" line where the game has it. Only on the
--- journal's own tooltips (not on items in the bags, which show their own).
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
--- item ID = charges a new copy has (seen in the game)
+
 FDJ.ITEM_CHARGES = {
-    [9449] = 3, -- Manual Crowd Pummeler (Gnomeregan, Crowd Pummeler 9-60)
+    [9449] = 3,
 }
 
 local function Plain(v)
@@ -18,7 +18,7 @@ local function Plain(v)
     return v
 end
 
--- A tooltip raised by the journal or one of its windows.
+
 local function OwnedByJournal(tooltip)
     local ok, owner = pcall(tooltip.GetOwner, tooltip)
     if not ok then return false end
@@ -56,7 +56,7 @@ local function AddCharges(tooltip, data)
     local itemID = ItemID(tooltip, data)
     local charges = itemID and FDJ.ITEM_CHARGES[itemID]
     if not charges then return end
-    if tooltip.fdjChargesDone == itemID then return end -- (announced twice)
+    if tooltip.fdjChargesDone == itemID then return end
     local name = tooltip:GetName()
     if not name then return end
     local text = ChargesText(charges)
@@ -66,19 +66,19 @@ local function AddCharges(tooltip, data)
         local fs = _G[name .. "TextLeft" .. i]
         local t = fs and Plain(fs:GetText())
         if type(t) == "string" then
-            if t:find(text, 1, true) then return end -- already there
+            if t:find(text, 1, true) then return end
             if not useLine and t:sub(1, #useTag) == useTag then useLine = fs end
         end
     end
     tooltip.fdjChargesDone = itemID
     if useLine then
-        -- On the "Use:" line itself, as its second line: no tooltip line moves,
-        -- so the sell price and other addons' lines stay where they are.
+
+
         useLine:SetText(Plain(useLine:GetText()) .. "\n|cffffffff" .. text .. "|r")
     else
         tooltip:AddLine(text, 1, 1, 1)
     end
-    -- the tooltip is sized again once it is fully built
+
     if C_Timer and C_Timer.After then
         C_Timer.After(0, function()
             if tooltip:IsShown() then pcall(tooltip.Show, tooltip) end
@@ -96,7 +96,7 @@ end
 if not viaProcessor and GameTooltip and GameTooltip.HookScript then
     pcall(GameTooltip.HookScript, GameTooltip, "OnTooltipSetItem", function(self) Safe(self) end)
 end
--- a new tooltip (or the same one built again) can take the line again
+
 if GameTooltip and GameTooltip.HookScript then
     pcall(GameTooltip.HookScript, GameTooltip, "OnTooltipCleared", function(self) self.fdjChargesDone = nil end)
 end

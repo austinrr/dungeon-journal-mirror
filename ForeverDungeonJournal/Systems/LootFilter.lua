@@ -1,8 +1,8 @@
--- Loot Filter: a small options window opened from the home page that decides
--- which items the boss loot lists show.
---   * Show recipes            (off by default: recipe drops are a big shared pool)
---   * Only loot my class can use
---   * Only items with the ticked stats (an item passes if it has any of them)
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -11,12 +11,12 @@ local function L(key, ...)
     return key
 end
 
--- charfilter (2.1.4, M 22 Nov 2026, Dawn on the Discord playing a cloth, a
--- leather and a plate character and ticking the filter again on each: "the
--- loot filter should be character locked. It should not be account locked"):
--- the Loot Filter's ticks are saved per character
--- (ForeverDungeonJournalCharacterDB.lootFilter). A character without its own
--- yet starts once from what the account had, so nobody loses their setup.
+
+
+
+
+
+
 local function CopyTable(t)
     local out = {}
     for k, v in pairs(t) do out[k] = type(v) == "table" and CopyTable(v) or v end
@@ -31,31 +31,31 @@ local function Settings()
         db = type(shared) == "table" and CopyTable(shared) or {}
         char.lootFilter = db
     end
-    -- The "show recipes" option was removed: recipes live on the recipe tab
-    -- (or under the boss-page divider), never inline in the loot list.
+
+
     db.recipes = false
     if db.classOnly == nil then db.classOnly = false end
     if type(db.stats) ~= "table" then db.stats = {} end
-    -- Spell Crit / Spell Hit were folded into Critical Strike / Hit.
+
     if db.stats.SPELLCRIT then db.stats.CRIT = true end
     if db.stats.SPELLHIT then db.stats.HIT = true end
     db.stats.SPELLCRIT, db.stats.SPELLHIT, db.stats.BLOCK = nil, nil, nil
     if db.matchAll == nil then db.matchAll = true end
     if db.enabled == nil then db.enabled = false end
     if type(db.minLevel) ~= "number" or db.minLevel <= 0 then db.minLevel = nil end
-    if type(db.maxLevel) ~= "number" or db.maxLevel <= 0 then db.maxLevel = nil end -- levelrange
-    -- Armor types ticked in the Armor Filter (none ticked = all types).
-    -- Older builds stored a single type in db.armor: carry it over once.
+    if type(db.maxLevel) ~= "number" or db.maxLevel <= 0 then db.maxLevel = nil end
+
+
     if type(db.armorTypes) ~= "table" then db.armorTypes = {} end
     if type(db.armor) == "string" then db.armorTypes[db.armor] = true end
     db.armor = nil
     for key in pairs(db.armorTypes) do
         if key ~= "Cloth" and key ~= "Leather" and key ~= "Mail" and key ~= "Plate"
             and key ~= "Cloak" and key ~= "Ring" and key ~= "Neck" and key ~= "Trinket"
-            and key ~= "Head" and key ~= "Shoulder" and key ~= "Chest" and key ~= "Wrist" -- armorslots
+            and key ~= "Head" and key ~= "Shoulder" and key ~= "Chest" and key ~= "Wrist"
             and key ~= "Hands" and key ~= "Waist" and key ~= "Legs" and key ~= "Feet" then db.armorTypes[key] = nil end
     end
-    -- Weapon types ticked in the Weapon Filter (none ticked = no filter).
+
     if type(db.weaponTypes) ~= "table" then db.weaponTypes = {} end
     for _, kind in ipairs({ "Sword", "Axe", "Mace" }) do
         if db.weaponTypes[kind] then
@@ -65,12 +65,12 @@ local function Settings()
     for key in pairs(db.weaponTypes) do
         if FDJ.LOOT_FILTER_WEAPON_SET and not FDJ.LOOT_FILTER_WEAPON_SET[key] then db.weaponTypes[key] = nil end
     end
-    -- Spell schools ticked under Spell Damage (none ticked = any spell damage).
+
     if type(db.schools) ~= "table" then db.schools = {} end
     for key in pairs(db.schools) do
         if key ~= "FIRE" and key ~= "FROST" and key ~= "NATURE" and key ~= "SHADOW" and key ~= "ARCANE" and key ~= "HOLY" then db.schools[key] = nil end
     end
-    -- Resistances ticked in the Resistance Filter (none ticked = no filter).
+
     if type(db.resists) ~= "table" then db.resists = {} end
     for key in pairs(db.resists) do
         if key ~= "FIRE" and key ~= "FROST" and key ~= "NATURE" and key ~= "SHADOW" and key ~= "ARCANE" then db.resists[key] = nil end
@@ -78,8 +78,8 @@ local function Settings()
     return db
 end
 
--- The resistance filter is switched off for now (set to true to bring back
--- the drop-down next to Defense).
+
+
 local RESIST_FILTER = true
 
 local function AnyResistTicked(db)
@@ -91,23 +91,23 @@ local function AnyArmorTicked(db)
     return next(db.armorTypes or {}) ~= nil
 end
 
--- ------------------------------------------------------------ armor type
--- Armor filter: "Cloth" / "Leather" / "Mail" / "Plate", or nil for all.
--- Only armor pieces of another type are filtered out; weapons, shields,
--- rings, necks, trinkets and cloaks have no armor type and stay (unless
--- Cloak / Ring / Neck / Trinket is ticked too, see below).
+
+
+
+
+
 local ARMOR_TYPES = { "Cloth", "Leather", "Mail", "Plate" }
--- Cloaks are stored as "Back, Cloth" but every armor type wears them.
+
 local function IsCloak(item)
     local slot = type(item) == "table" and item[3]
     if type(slot) ~= "string" then return false end
     local first = slot:match("^%s*([^,]+)")
     return first ~= nil and first:gsub("%s+$", "") == "Back"
 end
--- untypedarmor (2.0.12): an armor piece the data gives no armor type
--- ("Head" for Blindwatcher's Sight) counts as every type: whichever armor
--- type is ticked, it shows. (Before, with Cloak / Ring / Neck / Trinket
--- ticked too, it was left out; reported on Discord by oviar.)
+
+
+
+
 local ARMOR_SLOTS = { Head = true, Shoulder = true, Chest = true, Wrist = true, Hands = true, Waist = true, Legs = true, Feet = true }
 local function UntypedArmor(item)
     local slot = type(item) == "table" and item[3]
@@ -132,11 +132,11 @@ local function ArmorType(item)
     end
     return nil
 end
--- Cloak / Ring / Neck / Trinket sit in the same drop-down, under the armor
--- types. They have no armor type, so they are matched on the item's slot.
--- Ticking any of them turns the drop-down into "show only these": ticked
--- slots and armor of ticked types stay, the rest goes; weapons are left to
--- the Weapon filter.
+
+
+
+
+
 local JEWELRY_TYPES = { "Cloak", "Ring", "Neck", "Trinket" }
 local JEWELRY_SLOT = { Back = "Cloak", Finger = "Ring", Neck = "Neck", Trinket = "Trinket" }
 local ARMOR_CHOICES = { "Cloth", "Leather", "Mail", "Plate", "Cloak", "Ring", "Neck", "Trinket" }
@@ -152,10 +152,10 @@ local function AnyJewelryTicked(t)
     for _, key in ipairs(JEWELRY_TYPES) do if t[key] then return true end end
     return false
 end
--- armorslots (2.0.10, M 17 Nov 2026: "a window that covers all the pieces
--- we are missing, helm shoulders etc"): Head ... Feet, in a second box right
--- of the Armor drop-down. Like Cloak / Ring / Neck / Trinket, ticking any
--- of them shows only the ticked slots (of the ticked armor types, if any).
+
+
+
+
 local ARMOR_SLOT_CHOICES = { "Head", "Shoulder", "Chest", "Wrist", "Hands", "Waist", "Legs", "Feet" }
 local function ArmorSlot(item)
     local slot = type(item) == "table" and item[3]
@@ -175,14 +175,14 @@ local function ArmorLabel(key)
 end
 FDJ.LootFilterSettings = Settings
 
--- ------------------------------------------------------------ weapon type
--- Weapon filter: ticked weapon types (shields included). While any is ticked,
--- weapons of other types are hidden, and so is everything that is not a
--- weapon unless the Armor filter is also set and the item is armor of a
--- ticked type (e.g. Leather + Dagger for a rogue).
--- Swords, axes and maces come one- and two-handed; the other types only one way.
--- heldoffhand (2.0.11, M 18 Nov 2026: "we forgot to add held in off hands in
--- the loot filter"): "Held In Off-hand" items, last, after Shield.
+
+
+
+
+
+
+
+
 local WEAPON_TYPES = { "1H Sword", "2H Sword", "1H Axe", "2H Axe", "1H Mace", "2H Mace", "Dagger", "Fist Weapon", "Polearm", "Staff", "Bow", "Gun", "Crossbow", "Wand", "Thrown", "Shield", "Held In Off-hand" }
 local HANDED = { Sword = true, Axe = true, Mace = true }
 local WEAPON_SET = {}
@@ -195,7 +195,7 @@ local function WeaponType(item)
     if not first then first = slot end
     first = first:gsub("%s+$", "")
     if first == "Thrown" then return "Thrown" end
-    if first:lower() == "held in off-hand" then return "Held In Off-hand" end -- heldoffhand
+    if first:lower() == "held in off-hand" then return "Held In Off-hand" end
     if kind and first ~= "Projectile" then
         kind = kind:gsub("%s+$", "")
         if HANDED[kind] then return (first == "Two-Hand" and "2H " or "1H ") .. kind end
@@ -203,7 +203,7 @@ local function WeaponType(item)
     end
     return nil
 end
--- Menu label: "One-Hand Sword", "Dagger"... in the journal language.
+
 local function WeaponLabel(key)
     local loc = FDJ.LocalizeItemSlot or function(t) return t end
     local hand, kind = key:match("^(%d)H (.+)$")
@@ -214,9 +214,9 @@ local function AnyWeaponTicked(db)
     return next(db.weaponTypes or {}) ~= nil
 end
 
--- ---------------------------------------------------------------- recipes
--- Blueprints are few and distinctive: on boss pages they stay in the main
--- loot list instead of going under the "Recipes & Patterns" divider.
+
+
+
 local function IsBlueprint(item)
     if type(item) ~= "table" then return false end
     local slot, name = item[3], item[2]
@@ -226,11 +226,11 @@ end
 
 FDJ.IsBlueprint = IsBlueprint
 
--- Loot offered by the search bar: whatever the Loot Filter keeps, plus every
--- blueprint (blueprints are always listed on boss pages, so always findable).
+
+
 function FDJ.SearchableBossLoot(boss)
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return {} end
-    if boss.recipeTab then return boss.loot end -- recipes are found on their tab
+    if boss.recipeTab then return boss.loot end
     local kept = FDJ.FilterBossLoot(boss).loot or {}
     local seen, out = {}, {}
     for _, item in ipairs(kept) do seen[item] = true; out[#out + 1] = item end
@@ -243,10 +243,10 @@ end
 local function IsRecipe(item)
     if type(item) ~= "table" then return false end
 
-    -- Most profession drops use slot strings such as "Recipe, Leatherworking",
-    -- but some Forever entries use variants like "Leatherworking Recipe".
-    -- Detect both the stored slot text and the item-name prefix so patterns,
-    -- plans, recipes and blueprints always obey the recipe visibility toggle.
+
+
+
+
     local slot = item[3]
     if type(slot) == "string" then
         local lowerSlot = slot:lower()
@@ -267,9 +267,9 @@ local function IsRecipe(item)
     return false
 end
 
--- ---------------------------------------------------------- class usability
--- Decided from the slot text stored with every item ("Hands, Leather",
--- "Two-Hand, Sword"), so it works before the item is cached.
+
+
+
 local ARMOR = {
     Cloth = { ALL = true },
     Leather = { DRUID = 1, ROGUE = 1, HUNTER = 1, SHAMAN = 1, WARRIOR = 1, PALADIN = 1 },
@@ -278,9 +278,9 @@ local ARMOR = {
     Shield = { WARRIOR = 1, PALADIN = 1, SHAMAN = 1 },
 }
 local ONE_HAND = {
-    -- rogueaxe (2.1.3): WoW Forever lets Rogues use one-handed axes; without
-    -- them here, "Only show loot my class can use" greyed out every one-hand
-    -- axe for a Rogue (Glutton's Cleaver; reported on Discord by Dom).
+
+
+
     Axe = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, ROGUE = 1, SHAMAN = 1 },
     Sword = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, ROGUE = 1, MAGE = 1, WARLOCK = 1 },
     Mace = { WARRIOR = 1, PALADIN = 1, ROGUE = 1, PRIEST = 1, SHAMAN = 1, DRUID = 1 },
@@ -292,10 +292,10 @@ local TWO_HAND = {
     Sword = { WARRIOR = 1, PALADIN = 1, HUNTER = 1 },
     Mace = { WARRIOR = 1, PALADIN = 1, SHAMAN = 1, DRUID = 1 },
     Staff = { WARRIOR = 1, HUNTER = 1, PRIEST = 1, SHAMAN = 1, MAGE = 1, WARLOCK = 1, DRUID = 1 },
-    -- druidpolearm (2.0.8): WoW Forever lets Druids train Polearms (their
-    -- skill window lists it); without them here, "Only show loot my class can
-    -- use" greyed out every polearm for a Druid (Felbough Arm; reported on
-    -- Discord by swisp).
+
+
+
+
     Polearm = { WARRIOR = 1, PALADIN = 1, HUNTER = 1, DRUID = 1 },
 }
 local RANGED = {
@@ -306,14 +306,14 @@ local RANGED = {
     Thrown = { WARRIOR = 1, HUNTER = 1, ROGUE = 1 },
 }
 
--- futurearmor (2.0.10, M 17 Nov 2026: "if a level 30 paladin ticks show my
--- class loot, level 40+ plate should be valid for him, same for warrior;
--- hunters and shamans should see mail pieces that are level 40+"; the
--- Discord report by Krylo): gear the class learns to wear at a later level
--- (plate and mail at 40) counts as usable when the item itself needs that
--- level or more, since by the time the character can equip it, the class
--- can wear it. itemLevel: the item's required level (nil when not known yet:
--- then the character's own level decides, as before).
+
+
+
+
+
+
+
+
 local function Allowed(rule, class, level, itemLevel)
     if not rule then return true end
     if rule.ALL then return true end
@@ -323,8 +323,8 @@ local function Allowed(rule, class, level, itemLevel)
     return type(itemLevel) == "number" and itemLevel >= need
 end
 
--- The level an item needs: from the game's item data, or for an item whose
--- ID is not known yet, the "Requires Level" line the game showed (item.tip).
+
+
 local function ItemRequiredLevel(item)
     local id = item and item[1]
     if type(id) == "number" and id > 0 then
@@ -350,7 +350,7 @@ local function ClassCanUse(item)
     local slot, kind = slotText:match("^([^,]+),%s*(.+)$")
     if not slot then slot = slotText end
     if slot == "Thrown" then return Allowed(RANGED.Thrown, class, level) end
-    if not kind then return true end -- Finger, Neck, Trinket, Bag, Held In Off-hand...
+    if not kind then return true end
     if slot == "Back" then return true end
     if slot == "Ranged" then return Allowed(RANGED[kind], class, level) end
     if slot == "Two-Hand" then return Allowed(TWO_HAND[kind], class, level) end
@@ -363,11 +363,11 @@ local function ClassCanUse(item)
 end
 FDJ.LootFilterClassCanUse = ClassCanUse
 
--- ------------------------------------------------------------------ stats
--- Read from the item tooltip. Primary stats use the client's own stat names,
--- so they work in every language; the rest match the English tooltip wording.
+
+
+
 local function Has(line, text) return line:find(text, 1, true) ~= nil end
--- Schools ticked under Spell Damage while a filter runs (nil = any school).
+
 local schoolsWanted
 local SCHOOL_WORDS = { FIRE = "fire", FROST = "frost", NATURE = "nature", SHADOW = "shadow", ARCANE = "arcane", HOLY = "holy" }
 local SCHOOL_ORDER = { "FIRE", "FROST", "NATURE", "SHADOW", "ARCANE", "HOLY" }
@@ -375,13 +375,13 @@ local function SpellDamageLine(l)
     if Has(l, "increases healing done") then return false end
     local generic = Has(l, "increases damage and healing done") or (Has(l, "increases damage done") and Has(l, "spell")) or Has(l, "spell damage") or Has(l, "spell power")
     if not generic then return false end
-    -- "Increases damage done by Fire spells and effects": one school only.
+
     local lineSchool
     for key, word in pairs(SCHOOL_WORDS) do
         if Has(l, word .. " spell") or Has(l, word .. " damage") then lineSchool = key break end
     end
     if not schoolsWanted then return true end
-    -- With schools ticked, only "+X <school> damage" lines of those schools count.
+
     return lineSchool ~= nil and schoolsWanted[lineSchool] == true
 end
 local STATS = {
@@ -390,24 +390,24 @@ local STATS = {
     { key = "STA", global = "SPELL_STAT3_NAME", label = "Stamina" },
     { key = "INT", global = "SPELL_STAT4_NAME", label = "Intellect" },
     { key = "SPI", global = "SPELL_STAT5_NAME", label = "Spirit" },
-    -- Healing only counts lines that lead with healing; spell damage lines
-    -- ("Increases damage and healing done by magical spells") are Spell Damage.
+
+
     { key = "HEAL", test = function(l) return Has(l, "increases healing done") end },
     { key = "SPELL", test = SpellDamageLine },
     { key = "AP", test = function(l) return Has(l, "attack power") end },
-    -- WoW Forever merged spell and melee hit/crit into one stat each.
+
     { key = "CRIT", test = function(l) return Has(l, "critical strike") end },
     { key = "HIT", test = function(l) return Has(l, "chance to hit") or Has(l, "hit rating") end },
     { key = "DEF", test = function(l) return Has(l, "defense") end },
-    -- "Restores 5 mana per 5 sec." (some items say "every 5 sec").
+
     { key = "MP5", tip = "LF_STAT_MP5_TIP", test = function(l) return Has(l, "mana per 5") or Has(l, "mana every 5") end },
-    -- "Restores 6 health per 5 sec." / "health every 5 sec."
+
     { key = "HP5", tip = "LF_STAT_HP5_TIP", test = function(l) return Has(l, "health per 5") or Has(l, "health every 5") end },
 }
 FDJ.LOOT_FILTER_STATS = STATS
 
 local function StatLabel(stat)
-    -- Use the journal language (it can differ from the client language).
+
     local text = L("LF_STAT_" .. stat.key)
     if stat.key == "SPELL" then
         local n = 0
@@ -419,13 +419,13 @@ end
 
 local scanTip
 local textCache = {}
--- equipdim (2.0.8): a tooltip read before the server has sent the item says
--- only "Retrieving item information", but other addons still add their own
--- lines to it (Vendor price, Item Level, "New in Forever"...), so it passed
--- the two-line check below and was kept for the whole session: the item
--- stayed greyed out even after its stats came in (Slitherwrap Girdle, +9
--- Agility; reported on Discord by swisp). Such a read is never kept now, and
--- whatever was read about an item is read again once its data arrives.
+
+
+
+
+
+
+
 local function PendingLine(text)
     if text == RETRIEVING_ITEM_INFO or text == RETRIEVING_DATA then return true end
     return string.lower(text):find("retrieving item information", 1, true) ~= nil
@@ -450,16 +450,16 @@ local function TooltipText(itemID, cacheOnly)
     for i = 1, count do
         local line = _G["ForeverDungeonJournalScanTooltipTextLeft" .. i]
         local text = line and line.GetText and line:GetText()
-        if type(issecretvalue) == "function" and issecretvalue(text) then text = nil end -- secrettip (2.1.6)
+        if type(issecretvalue) == "function" and issecretvalue(text) then text = nil end
         if type(text) == "string" and text ~= "" then
-            if PendingLine(text) then return nil end -- equipdim: not loaded yet
-            -- Stop at the item-set block ("Rotmender's Raiment (0/5)"): set
-            -- bonuses are not stats of this item.
+            if PendingLine(text) then return nil end
+
+
             if text:find("%(%d+/%d+%)%s*$") then break end
             if not text:find("^%(%d+%)") then parts[#parts + 1] = text end
         end
     end
-    if #parts < 2 then return nil end -- item not loaded yet
+    if #parts < 2 then return nil end
     for i = 1, #parts do parts[i] = string.lower(parts[i]) end
     textCache[itemID] = parts
     return parts
@@ -477,15 +477,15 @@ local function StatInText(stat, lines)
     return false
 end
 
--- statsapi (2.0.11): the stats past the five primary ones are matched on the
--- English tooltip wording above, which only an English game client shows: on
--- a Chinese, German, French... client Healing, Spell Damage, Attack Power,
--- Critical Strike, Hit, Defense, MP5 and HP5 found nothing (reported on
--- Discord by Sunday, zhTW). There they are read from the game's own item
--- stats instead (C_Item.GetItemStats: names like
--- ITEM_MOD_SPELL_HEALING_DONE_SHORT, the same in every language; checked on
--- the Forever client with Deep Ritual Girdle: healing 16, spell damage 6).
--- English clients: unchanged, the tooltip wording only.
+
+
+
+
+
+
+
+
+
 local function EnglishClient()
     local locale = GetLocale and GetLocale() or "enUS"
     return locale == "enUS" or locale == "enGB"
@@ -496,7 +496,7 @@ local function ClientStats(itemID)
     local fn = (C_Item and C_Item.GetItemStats) or GetItemStats
     if type(fn) ~= "function" then return nil end
     local ok, stats = pcall(fn, "item:" .. itemID)
-    if not ok or type(stats) ~= "table" or next(stats) == nil then return nil end -- not loaded yet
+    if not ok or type(stats) ~= "table" or next(stats) == nil then return nil end
     local plain = {}
     for key, value in pairs(stats) do
         if type(key) == "string" and type(value) == "number" then plain[key] = value end
@@ -504,7 +504,7 @@ local function ClientStats(itemID)
     statCache[itemID] = plain
     return plain
 end
--- The total of every stat whose name holds one of the words.
+
 local function StatSum(stats, ...)
     local total = 0
     for key, value in pairs(stats) do
@@ -514,20 +514,20 @@ local function StatSum(stats, ...)
     end
     return total
 end
--- As the English wording counts them: Healing only when healing leads ("Increases
--- healing done by up to 16 and damage done by up to 6"); "damage and healing
--- done" (both the same) is Spell Damage.
--- schoolstats (2.0.13): one school's damage is a stat of its own
--- (ITEM_MOD_FIRE_DAMAGE_DONE_SHORT=9 on Flamestarter's Signet, HOLY_ on
--- Heartflame Gauntlets, ARCANE_ on Sparklance Wand; checked on the Forever
--- client): it counts as Spell Damage, and the schools picked under Spell
--- Damage's arrow are matched on it.
+
+
+
+
+
+
+
+
 local SCHOOL_STAT = {
     FIRE = "FIRE_DAMAGE_DONE", FROST = "FROST_DAMAGE_DONE", NATURE = "NATURE_DAMAGE_DONE",
     SHADOW = "SHADOW_DAMAGE_DONE", ARCANE = "ARCANE_DAMAGE_DONE", HOLY = "HOLY_DAMAGE_DONE",
 }
 local function SpellFromGame(s)
-    -- Schools picked: only "+X <school> damage" of those schools (as in English).
+
     if schoolsWanted then
         for school, on in pairs(schoolsWanted) do
             if on and SCHOOL_STAT[school] and StatSum(s, SCHOOL_STAT[school]) > 0 then return true end
@@ -551,9 +551,9 @@ local STAT_FROM_GAME = {
     MP5 = function(s) return StatSum(s, "MANA_REGEN", "POWER_REGEN0") > 0 end,
     HP5 = function(s) return StatSum(s, "HEALTH_REGEN") > 0 end,
 }
--- equipdim (2.0.8): the five primary stats are also checked against the
--- game's own item stats, on every client (English too), so an item whose
--- tooltip came back without its stat lines is not greyed out for that alone.
+
+
+
 local function GameStat(key) return function(s) return (s[key] or 0) > 0 end end
 local PRIMARY_FROM_GAME = {
     STR = GameStat("ITEM_MOD_STRENGTH_SHORT"),
@@ -562,7 +562,7 @@ local PRIMARY_FROM_GAME = {
     INT = GameStat("ITEM_MOD_INTELLECT_SHORT"),
     SPI = GameStat("ITEM_MOD_SPIRIT_SHORT"),
 }
--- equipdim: drop what was read about an item before its data came in.
+
 local arrivalWatcher = CreateFrame and CreateFrame("Frame")
 if arrivalWatcher then
     for _, event in ipairs({ "GET_ITEM_INFO_RECEIVED", "ITEM_DATA_LOAD_RESULT" }) do
@@ -577,8 +577,8 @@ if arrivalWatcher then
     end)
 end
 
--- kroldok: an item whose ID is not known yet is matched on the stats the
--- game showed for it (its tip lines in the data).
+
+
 local function TipText(item)
     local tip = type(item) == "table" and item.tip
     if type(tip) ~= "table" then return nil end
@@ -593,17 +593,17 @@ local function TipText(item)
     return #parts > 0 and parts or nil
 end
 
--- levelrange (2.1.2, M 21 Nov 2026: "instead of minimum required level ...
--- two boxes ... with a dash in between"): the level an item needs. Forever
--- has no global GetItemInfo (the old Minimum required level box read it, so
--- it let almost everything through): C_Item.GetItemInfo first; else the
--- "Requires Level" line the game showed (item.tip) or of the item's tooltip
--- (in the client's language). No requirement counts as level 1; nil:
--- not known yet.
+
+
+
+
+
+
+
 local LEVEL_PATTERN
 local ItemLevelNeeded
 local function RequiredLevelOf(item)
-    -- questlevel: a quest reward needs its quest's level at least.
+
     local questLevel = type(item) == "table" and tonumber(item.fdjQuestLevel) or nil
     local need = ItemLevelNeeded(item)
     if questLevel and questLevel > 0 then return math.max(need or 1, questLevel) end
@@ -634,29 +634,29 @@ function ItemLevelNeeded(item)
                 local n = tonumber(line:match(LEVEL_PATTERN))
                 if n then return n end
             end
-            return 1 -- read, and no level needed
+            return 1
         end
     end
     return nil
 end
 
--- matchAll: the item must have every ticked stat; otherwise any one is enough.
+
 local function HasAnyStat(item, wanted, matchAll)
     local id = item and item[1]
     local text
     if not id or id <= 0 then
-        text = TipText(item) -- kroldok
+        text = TipText(item)
         if not text then return false end
     else
-        -- The all-dungeon page never scans here: its tooltips are read a few per
-        -- frame beforehand (WarmTooltips), so one click cannot run too long.
+
+
         text = TooltipText(id, FDJ.lootFilterStrict)
-        if not text then return not FDJ.lootFilterStrict end -- unknown yet: keep on boss pages, wait in the results list
+        if not text then return not FDJ.lootFilterStrict end
     end
     local schools = Settings().schools
     schoolsWanted = (schools and next(schools)) and schools or nil
-    -- statsapi: the game's own stats, on a client in another language.
-    -- equipdim: the primary stats on every client (read only when needed).
+
+
     local english = EnglishClient()
     local gameStats, askedGame
     local found = false
@@ -687,10 +687,10 @@ local function AnyStatWanted(db)
     return false
 end
 
--- ------------------------------------------------------------ resistances
--- Matched on the tooltip with the client's own resistance names (so every
--- client language works) plus the English wording. "+X All Resistances"
--- counts for every school.
+
+
+
+
 local RESISTS = {
     { key = "FIRE",   global = "RESISTANCE2_NAME", label = "fire resistance" },
     { key = "NATURE", global = "RESISTANCE3_NAME", label = "nature resistance" },
@@ -704,15 +704,15 @@ local function HasResist(item, wanted)
     local id = item and item[1]
     local text
     if not id or id <= 0 then
-        text = TipText(item) -- kroldok
+        text = TipText(item)
         if not text then return false end
     else
         text = TooltipText(id, FDJ.lootFilterStrict)
         if not text then return not FDJ.lootFilterStrict end
     end
-    -- The item must have every ticked school. Only real resistance lines
-    -- ("+10 Fire Resistance") count; proc text such as "deals 50 Fire
-    -- damage" does not. "+X All Resistances" covers every school.
+
+
+
     local found = {}
     for _, line in ipairs(text) do
         if line:find("^%+%s*%d") then
@@ -729,22 +729,22 @@ local function HasResist(item, wanted)
     return true
 end
 
--- ----------------------------------------------------------------- filter
--- Returns the boss itself when nothing is hidden, otherwise a stand-in whose
--- loot list holds only the visible items (every other field reads through).
--- ------------------------------------------------------------ recipe tab
--- Instead of repeating the same recipes on every boss, each dungeon whose
--- bosses drop recipes gets one extra entry at the end of its boss list that
--- holds each recipe once, with the portraits of the bosses that drop it.
--- uniquefirst (2.0.29): a recipe that drops in its own dungeon, not one of
--- the Forever sets found everywhere: the old game's recipes (item IDs below
--- 250000), and Forever's own one-offs listed here.
+
+
+
+
+
+
+
+
+
+
 FDJ.UNIQUE_RECIPES = FDJ.UNIQUE_RECIPES or {
-    [252893] = true, -- Pattern: Timbermaw Tunic (Blackmaw Hold)
-    [251453] = true, -- Plans: Breastplate of Salvation (Blackmaw Hold)
-    [274049] = true, -- Schematic: 9-60 Battery Pack (Gnomeregan, 2.0.35)
-    [251451] = true, -- Plans: Stalwart Helm (Lower Blackrock Spire, Bloodaxe Veteran; 2.0.7)
-    [252940] = true, -- Pattern: Pristine Scorpid Leggings (Scholomance, Spectral Researcher; 2.0.7)
+    [252893] = true,
+    [251453] = true,
+    [274049] = true,
+    [251451] = true,
+    [252940] = true,
 }
 function FDJ.IsUniqueRecipe(itemID)
     itemID = tonumber(itemID)
@@ -752,13 +752,13 @@ function FDJ.IsUniqueRecipe(itemID)
     return itemID < 250000 or FDJ.UNIQUE_RECIPES[itemID] == true
 end
 
--- crowdedrecipes (2.0.7): a Recipes & Patterns page holding many of the
--- Forever recipe sets that drop all over (10 or more: the gloves, boots,
--- cords, helms...) draws no portraits: the same faces on every row, up to
--- 180 of them on one page, and each drawn live. Like Dire Maul: North, it
--- goes to two columns when long, with the bosses on the row and in its
--- tooltip ("Drops from"). Epic recipes keep their bosses' portraits.
--- Pages of a dungeon's own recipes (Blackrock Depths...) are unchanged.
+
+
+
+
+
+
+
 FDJ.CROWDED_RECIPE_PAGE = 10
 function FDJ.IsCrowdedRecipePage(boss)
     if type(boss) ~= "table" or not boss.recipeTab or type(boss.loot) ~= "table" then return false end
@@ -775,10 +775,10 @@ function FDJ.RecipeRowKeepsPortrait(item)
     return type(item) == "table" and (tonumber(item[4]) or 0) >= 4
 end
 
--- recipeprof (2.0.7): the professions a Recipes & Patterns page holds, for
--- the row of profession icons on its "N items" line (the game's own
--- profession icons; a click shows that profession's recipes only). Only
--- the professions the page has recipes of, and only when it has two or more.
+
+
+
+
 FDJ.RECIPE_PROF_ORDER = { "Alchemy", "Blacksmithing", "Enchanting", "Engineering", "Leatherworking", "Tailoring", "Cooking", "First Aid", "Fishing", "Mining", "Herbalism", "Skinning" }
 FDJ.RECIPE_PROF_ICONS = {
     ["Alchemy"] = "Interface\\Icons\\Trade_Alchemy",
@@ -821,12 +821,12 @@ do
             dungeon.fdjRecipeTabBuilt = true
             local order, byID = {}, {}
             for _, boss in ipairs(dungeon.bosses) do
-                -- Include dungeon-specific trash recipes as well as boss recipes.
-                -- Exclude only the synthetic Recipes & Patterns page itself.
+
+
                 if not boss.recipeTab and type(boss.loot) == "table" then
-                    -- Let the row portraits (shared with Trash Drops) draw named
-                    -- sources. " / " separates sources on a row, so a boss
-                    -- whose name contains it uses "&" instead.
+
+
+
                     local sourceName = boss.name:gsub(" / ", " & ")
                     local displayID = boss.npcID and FDJ.STATIC_DISPLAY_IDS and FDJ.STATIC_DISPLAY_IDS[boss.npcID]
                     if displayID and FDJ.TRASH_MOB_DISPLAY_IDS and not FDJ.TRASH_MOB_DISPLAY_IDS[sourceName] then
@@ -835,8 +835,8 @@ do
                     for _, item in ipairs(boss.loot) do
                         if IsRecipe(item) and not IsBlueprint(item) then
                             boss.fdjHasRecipeTab = true
-                            -- Use a known trash mob when available, otherwise
-                            -- clearly attribute the plans to the Trash Drops page.
+
+
                             local source = sourceName
                             if boss.trash and type(item[5]) == "string" and item[5] ~= "" then
                                 if not item[5]:lower():find(" trash", 1, true)
@@ -858,10 +858,10 @@ do
                     end
                 end
             end
-            -- uniquefirst (2.0.29): the dungeon's own recipes (Green Dragonscale
-            -- Leggings, Dark Iron Plate...) at the top, above the usual Forever
-            -- sets that drop all over (the Filigreed, Silvered, Leather ...
-            -- patterns): each group keeps its order.
+
+
+
+
             if #order > 1 then
                 local mine, shared = {}, {}
                 for _, entry in ipairs(order) do
@@ -882,19 +882,19 @@ end
 function FDJ.FilterBossLoot(boss)
     FDJ.lootFilterHidden = 0
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
-    -- The recipe tab is a view of other bosses' drops: never list it twice.
+
     if boss.recipeTab then return setmetatable({ loot = {} }, { __index = boss }) end
     local db = Settings()
-    -- Switched off: default view (recipe drops hidden, nothing else filtered).
+
     local on = db.enabled
     local showRecipes = on and db.recipes
     local classOnly = on and db.classOnly
-    local wantStats = on and AnyStatWanted(db) and not FDJ.lootFilterSkipStats -- fastshow
+    local wantStats = on and AnyStatWanted(db) and not FDJ.lootFilterSkipStats
     local minLevel = on and db.minLevel or nil
-    local maxLevel = on and db.maxLevel or nil -- levelrange
+    local maxLevel = on and db.maxLevel or nil
     if minLevel and maxLevel and minLevel > maxLevel then minLevel, maxLevel = maxLevel, minLevel end
     local armor = on and AnyArmorTicked(db) and db.armorTypes or nil
-    local resists = on and AnyResistTicked(db) and not FDJ.lootFilterSkipStats and db.resists or nil -- fastshow
+    local resists = on and AnyResistTicked(db) and not FDJ.lootFilterSkipStats and db.resists or nil
     local weapons = on and AnyWeaponTicked(db) and db.weaponTypes or nil
     if showRecipes and not classOnly and not wantStats and not minLevel and not maxLevel and not armor and not resists and not weapons then return boss end
     local shown = {}
@@ -906,19 +906,19 @@ function FDJ.FilterBossLoot(boss)
             if classOnly and not ClassCanUse(item) then keep = false end
             if keep and armor then
                 local itemArmor = ArmorType(item)
-                local slotsOn = AnyArmorSlotTicked(armor) -- armorslots
-                -- armorslots: slots ticked with no armor type = any type
+                local slotsOn = AnyArmorSlotTicked(armor)
+
                 if itemArmor and not armor[itemArmor]
                     and not (slotsOn and not AnyArmorTypeTicked(armor)) then keep = false end
                 if keep and (AnyJewelryTicked(armor) or slotsOn) then
                     local jewel = JewelryType(item)
-                    local piece = slotsOn and ArmorSlot(item) or nil -- armorslots
+                    local piece = slotsOn and ArmorSlot(item) or nil
                     if jewel then
                         if not armor[jewel] then keep = false end
                     elseif piece then
                         if not armor[piece] then keep = false end
                     elseif not itemArmor
-                        and not (UntypedArmor(item) and AnyArmorTypeTicked(armor)) -- untypedarmor
+                        and not (UntypedArmor(item) and AnyArmorTypeTicked(armor))
                         and not (weapons and WeaponType(item)) then
                         keep = false
                     end
@@ -929,15 +929,15 @@ function FDJ.FilterBossLoot(boss)
                 if itemWeapon then
                     if not weapons[itemWeapon] then keep = false end
                 elseif not (armor and (ArmorType(item) or IsCloak(item) or armor[JewelryType(item) or ""]
-                    or armor[ArmorSlot(item) or ""] -- armorslots
-                    or (UntypedArmor(item) and AnyArmorTypeTicked(armor)))) then -- untypedarmor
+                    or armor[ArmorSlot(item) or ""]
+                    or (UntypedArmor(item) and AnyArmorTypeTicked(armor)))) then
                     keep = false
                 end
             end
-            if keep and (minLevel or maxLevel) then -- levelrange: from - to (10 - 10: level 10 only)
+            if keep and (minLevel or maxLevel) then
                 local required = RequiredLevelOf(item)
                 if required == nil then
-                    if FDJ.lootFilterStrict then keep = false end -- not loaded yet
+                    if FDJ.lootFilterStrict then keep = false end
                 elseif (minLevel and required < minLevel) or (maxLevel and required > maxLevel) then
                     keep = false
                 end
@@ -952,19 +952,19 @@ function FDJ.FilterBossLoot(boss)
     return setmetatable({ loot = shown }, { __index = boss })
 end
 
--- Boss pages: recipe drops are still removed when switched off, but gear the
--- filter rules out stays in the list and is marked to be drawn blacked out.
+
+
 function FDJ.FilterBossLootForPage(boss)
     FDJ.lootFilterDimmed = {}
     FDJ.lootFilterHidden = 0
-    -- Recipe section on boss pages: recipe drops are never silently hidden.
-    -- They sit under a "Recipes & Patterns (N)" divider at the end of the
-    -- list, folded by default; lootRecipeSplit is the number of rows above it.
+
+
+
     FDJ.lootRecipeCount = 0
     FDJ.lootRecipeSplit = nil
     if type(boss) ~= "table" or type(boss.loot) ~= "table" then return boss end
-    if boss.fdjDungeon then return boss end -- the Show page already holds matches only
-    if boss.recipeTab then return boss end  -- the recipe tab always lists everything
+    if boss.fdjDungeon then return boss end
+    if boss.recipeTab then return boss end
     local db = Settings()
     local showRecipes = db.enabled and db.recipes
     local keep = {}
@@ -977,14 +977,14 @@ function FDJ.FilterBossLootForPage(boss)
             if showRecipes then
                 shown[#shown + 1] = item
             elseif not boss.fdjHasRecipeTab then
-                -- (with a recipe tab in the dungeon, recipes live there instead)
+
                 recipes[#recipes + 1] = item
             end
         else
             shown[#shown + 1] = item
             if not keep[item] then FDJ.lootFilterDimmed[item] = true end
         end
-        if boss.lootRemoved then FDJ.lootFilterDimmed[item] = true end -- lootremoved: all of it greyed out
+        if boss.lootRemoved then FDJ.lootFilterDimmed[item] = true end
     end
     FDJ.lootFilterHidden = 0
     if #recipes > 0 then
@@ -998,9 +998,9 @@ function FDJ.FilterBossLootForPage(boss)
     return setmetatable({ loot = shown }, { __index = boss })
 end
 
--- lootchildren (2.0.8): would the filter rule this item out? (an item shown
--- under the half that makes it: Sul'thraze the Lasher). Leaves the page's
--- hidden count as it was.
+
+
+
 function FDJ.LootFilterRulesOut(item)
     if type(item) ~= "table" or IsRecipe(item) then return false end
     local hidden = FDJ.lootFilterHidden
@@ -1028,7 +1028,7 @@ function FDJ.UpdateLootFilterNote(frame)
     end
 end
 
--- --------------------------------------------------------------------- UI
+
 local function IsActive()
     local db = Settings()
     return db.enabled and (db.recipes or db.classOnly or db.minLevel ~= nil or db.maxLevel ~= nil or AnyArmorTicked(db) or AnyWeaponTicked(db) or AnyResistTicked(db) or AnyStatWanted(db))
@@ -1052,7 +1052,7 @@ end
 
 local function MakeCheck(parent, frame, getter, setter)
     local check = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    FDJ.OwnFonts(check) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(check)
     check:SetSize(24, 24)
     local text = check:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     text:SetPoint("LEFT", check, "RIGHT", 4, 0)
@@ -1072,8 +1072,8 @@ local function RefreshWindow(frame)
     win.title:SetText(L("LOOT_FILTER"))
     win.statsHeader:SetText(L("LF_STATS_HEADER"))
     win.statsHint:SetText(L("LF_STATS_HINT"))
-    -- Small inline icons in front of the two option labels: a recipe scroll,
-    -- and the icon of the class this character is playing.
+
+
     local recipeIcon = "|TInterface\\Icons\\INV_Scroll_03:16:16:0:0:64:64:5:59:5:59|t "
     local classIcon = ""
     do
@@ -1091,7 +1091,7 @@ local function RefreshWindow(frame)
     win.show:SetText(L("LF_SHOW"))
     local showText = win.show.GetFontString and win.show:GetFontString()
     if showText and showText.SetPoint then
-        -- Icon and label are centred together as one group.
+
         showText:ClearAllPoints()
         showText:SetPoint("CENTER", win.show, "CENTER", 9, 0)
         win.show.icon:ClearAllPoints()
@@ -1101,7 +1101,7 @@ local function RefreshWindow(frame)
     if win.questRewards then
         win.questRewards.fdjLabel:SetText("|TInterface\\GossipFrame\\AvailableQuestIcon:16:16:0:0|t " .. L("LF_QUEST_REWARDS"))
     end
-    win.minLabel:SetText(L("LF_LEVEL_RANGE")) -- levelrange
+    win.minLabel:SetText(L("LF_LEVEL_RANGE"))
     local on = Settings().enabled and true or false
     win.toggle:SetText(on and L("LF_DISABLE") or L("LF_ENABLE"))
     if not win.minBox:HasFocus() then win.minBox:SetText(Settings().minLevel and tostring(Settings().minLevel) or "") end
@@ -1116,14 +1116,14 @@ local function RefreshWindow(frame)
     if win.armor then
         local ticked = Settings().armorTypes or {}
         local names = {}
-        for _, list in ipairs({ ARMOR_CHOICES, ARMOR_SLOT_CHOICES }) do -- armorslots
+        for _, list in ipairs({ ARMOR_CHOICES, ARMOR_SLOT_CHOICES }) do
             for _, armor in ipairs(list) do
                 if ticked[armor] then
                     names[#names + 1] = ArmorLabel(armor)
                 end
             end
         end
-        -- Like Resistances: "Armor", or "Armor (2)" with ticks (nothing ticked = all).
+
         win.armor.text:SetText(#names > 0 and (L("LF_ARMOR_BTN") .. " (" .. #names .. ")") or L("LF_ARMOR_BTN"))
         for _, option in ipairs(win.armor.options or {}) do
             local value = option.fdjArmor
@@ -1230,9 +1230,9 @@ local function CreateWindow(frame)
     win.statsHint:SetJustifyH("LEFT")
     win.statsHint:SetTextColor(0.72, 0.67, 0.58)
 
-    -- levelrange (2.1.2): Level range, from [  ] - to [  ] (the level the
-    -- item needs); an empty box sets no limit on its side, both empty shows
-    -- everything. 10 - 10: the items for level 10.
+
+
+
     win.minLabel = win:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlight")
     win.minLabel:SetPoint("TOPLEFT", win.statsHint, "BOTTOMLEFT", 0, -10)
     local function LevelBox(name, key)
@@ -1250,7 +1250,7 @@ local function CreateWindow(frame)
         end)
         box:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
         box:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-        box:SetScript("OnTabPressed", function(self) -- from one box to the other
+        box:SetScript("OnTabPressed", function(self)
             local other = (self == win.minBox) and win.maxBox or win.minBox
             if other then other:SetFocus() end
         end)
@@ -1264,11 +1264,11 @@ local function CreateWindow(frame)
     win.maxBox = LevelBox("ForeverDungeonJournalLootFilterMaxLevel", "maxLevel")
     win.maxBox:SetPoint("LEFT", win.levelDash, "RIGHT", 10, 0)
 
-    -- Armor type drop-down: a red WoW button like the others in this window,
-    -- with a mail-armor icon on the left and a down arrow on the right.
+
+
     win.armor = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(win.armor) -- ownfonts (2.0.8)
-    -- Armor / Weapon / Resistance drop-downs side by side under the level box.
+    FDJ.OwnFonts(win.armor)
+
     win.armor:SetSize(116, 22)
     win.armor:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -2, -10)
     win.armor:SetText("")
@@ -1290,7 +1290,7 @@ local function CreateWindow(frame)
     local menu = CreateFrame("Frame", nil, win.armor, "BackdropTemplate")
     win.armor.menu = menu
     local choices = ARMOR_CHOICES
-    -- A thin divider separates the armor types from Cloak / Ring / Neck / Trinket.
+
     local GAP = 7
     local function RowY(i) return -5 - (i - 1) * 22 - ((i > #ARMOR_TYPES) and GAP or 0) end
     menu:SetSize(130, #choices * 22 + 10 + GAP)
@@ -1313,9 +1313,9 @@ local function CreateWindow(frame)
     menu:SetBackdropColor(0.055, 0.05, 0.043, 0.99)
     menu:SetBackdropBorderColor(0.57, 0.43, 0.20, 1)
     menu:Hide()
-    -- armorslots: Head ... Feet in a box of their own right of the list, as
-    -- tall as it; Head..Wrist line up with Cloth..Plate, Hands..Feet with
-    -- Cloak..Trinket. Part of the list: opens and closes with it.
+
+
+
     local slotMenu = CreateFrame("Frame", nil, menu, "BackdropTemplate")
     win.armor.slotMenu = slotMenu
     slotMenu:SetSize(130, menu:GetHeight())
@@ -1337,8 +1337,8 @@ local function CreateWindow(frame)
         option:SetHeight(21)
         option:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
         option.fdjArmor = value or nil
-        -- Tick box: armor types can be combined (e.g. Cloth + Leather);
-        -- "All" clears the ticks. The list stays open while ticking.
+
+
         option.box = option:CreateTexture(nil, "ARTWORK")
         option.box:SetTexture("Interface\\Buttons\\UI-CheckBox-Up")
         option.box:SetSize(18, 18)
@@ -1378,10 +1378,10 @@ local function CreateWindow(frame)
     end)
     win.armor:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
 
-    -- Weapon type drop-down (shields included), under the armor one.
+
     do
         local b = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(b) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(b)
         win.weapon = b
         b:SetSize(116, 22)
         b:SetPoint("LEFT", win.armor, "RIGHT", 4, 0)
@@ -1404,7 +1404,7 @@ local function CreateWindow(frame)
         b.menu = wmenu
         local wchoices = {}
         for _, w in ipairs(WEAPON_TYPES) do wchoices[#wchoices + 1] = w end
-        -- Two columns so the list stays short.
+
         local rows = math.ceil(#wchoices / 2)
         wmenu:SetSize(330, rows * 22 + 10)
         wmenu:SetPoint("TOPLEFT", b, "BOTTOMLEFT", -4, -4)
@@ -1467,9 +1467,9 @@ local function CreateWindow(frame)
         b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     end
 
-    -- Master switch: while off, the journal shows its default loot view.
+
     win.toggle = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(win.toggle) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(win.toggle)
     win.toggle:SetSize(96, 22)
     win.toggle:SetPoint("TOPRIGHT", -34, -12)
     win.toggle:SetScript("OnClick", function()
@@ -1487,7 +1487,7 @@ local function CreateWindow(frame)
         local row = math.floor((i - 1) / 2)
         check:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6 + column * 182, -16 - 34 - row * 28)
         if stat.tip then
-            -- The label is outside the 24px box; widen the hover/click area over it.
+
             check:SetHitRectInsets(0, -130, 0, 0)
             check:SetScript("OnEnter", function(self)
                 local tip = win.fdjTip
@@ -1519,8 +1519,8 @@ local function CreateWindow(frame)
         win.statChecks[#win.statChecks + 1] = check
     end
 
-    -- Small down arrow next to "Spell Damage" (like the language selector):
-    -- narrow spell damage down to schools. Ticking a school ticks Spell Damage.
+
+
     if win.spellCheck then
         local check = win.spellCheck
         local arrow = CreateFrame("Button", nil, win)
@@ -1595,16 +1595,16 @@ local function CreateWindow(frame)
     win.matchAll = MakeCheck(win, frame, function() return Settings().matchAll end, function(v) Settings().matchAll = v end)
     win.matchAll:SetPoint("TOPLEFT", win.minLabel, "BOTTOMLEFT", -6, -16 - 34 - math.ceil(#STATS / 2) * 28 - 6)
     win.checks[#win.checks + 1] = win.matchAll
-    -- questrewards (2.0.10): Show results lists matching quest rewards too
+
     win.questRewards = MakeCheck(win, frame, function() return Settings().questRewards end, function(v) Settings().questRewards = v or nil end)
     win.questRewards:SetPoint("TOPLEFT", win.matchAll, "BOTTOMLEFT", 0, -4)
     win.checks[#win.checks + 1] = win.questRewards
 
-    -- Resistance drop-down, built like the armor one, right under it.
-    -- Ticked schools: the item needs at least one of them.
+
+
     if RESIST_FILTER then
         local b = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(b) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(b)
         win.resist = b
         b:SetSize(116, 22)
         b:SetPoint("LEFT", win.weapon or win.armor, "RIGHT", 4, 0)
@@ -1683,8 +1683,8 @@ local function CreateWindow(frame)
         b:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
     end
 
-    -- Fit the window to its content: the bottom buttons sit a fixed gap
-    -- under "Item must have all ticked stats" ("Show quest rewards too").
+
+
     win:SetScript("OnShow", function(self)
         local last = self.questRewards or self.matchAll
         local top, bottom = self:GetTop(), last and last:GetBottom()
@@ -1692,21 +1692,21 @@ local function CreateWindow(frame)
     end)
 
     win.clear = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(win.clear) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(win.clear)
     win.clear:SetSize(110, 22)
     win.clear:SetPoint("BOTTOMRIGHT", -16, 14)
 
     win.ok = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(win.ok) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(win.ok)
     win.ok:SetSize(90, 22)
     win.ok:SetPoint("BOTTOM", 14, 14)
     win.ok:SetScript("OnClick", function() win:Hide() end)
 
     win.show = CreateFrame("Button", nil, win, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(win.show) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(win.show)
     win.show:SetSize(130, 22)
     win.show:SetPoint("BOTTOMLEFT", 16, 14)
-    -- The game's loot-pouch cursor icon.
+
     win.show.icon = win.show:CreateTexture(nil, "OVERLAY")
     win.show.icon:SetSize(22, 22)
     win.show.icon:SetTexture("Interface\\AddOns\\ForeverDungeonJournal\\Media\\LootBags")
@@ -1728,7 +1728,7 @@ local function CreateWindow(frame)
         s.classOnly = false
         s.stats = {}
         s.minLevel = nil
-        s.maxLevel = nil -- levelrange
+        s.maxLevel = nil
         s.armorTypes = {}
         s.weaponTypes = {}
         s.resists = {}
@@ -1756,7 +1756,7 @@ function FDJ.ToggleLootFilterWindow(frame)
     end
 end
 
--- Called by the journal when it builds the home page.
+
 function FDJ.CreateLootFilterButton(frame, home, anchorButton)
     local button = CreateFrame("Button", nil, home, "BackdropTemplate")
     frame.lootFilterButton = button
@@ -1788,9 +1788,9 @@ function FDJ.RelocalizeLootFilter(frame)
     if frame and frame.lootFilterWindow and frame.lootFilterWindow:IsShown() then RefreshWindow(frame) end
 end
 
--- ---------------------------------------------------------------- results
--- "Show": one scrolling list of every boss, across all dungeons, that drops
--- something matching the current filter.
+
+
+
 local ROW_HEIGHT = { dungeon = 30, boss = 24, item = 36 }
 
 local function QualityColor(quality)
@@ -1825,7 +1825,7 @@ local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
     for i = 1, lineCount do
         local left = _G[tipName .. "TextLeft" .. i]
         local lineText = left and left:GetText()
-        if type(issecretvalue) == "function" and issecretvalue(lineText) then lineText = nil end -- secrettip (2.1.6)
+        if type(issecretvalue) == "function" and issecretvalue(lineText) then lineText = nil end
         if type(lineText) == "string" and requiredNeedle ~= "" and lineText:find(requiredNeedle, 1, true) then
             requiredIndex = i
             break
@@ -1840,12 +1840,12 @@ local function InsertTooltipLineBeforeRequiredLevel(tooltip, text, r, g, b)
         local dstL = _G[tipName .. "TextLeft" .. (i + 1)]
         local dstR = _G[tipName .. "TextRight" .. (i + 1)]
         if srcL and dstL then
-            if FDJ.TipCopyText then FDJ.TipCopyText(srcL, dstL) else dstL:SetText(srcL:GetText() or "") end -- secrettip (2.1.6)
+            if FDJ.TipCopyText then FDJ.TipCopyText(srcL, dstL) else dstL:SetText(srcL:GetText() or "") end
             local cr, cg, cb, ca = srcL:GetTextColor()
             dstL:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
         end
         if srcR and dstR then
-            if FDJ.TipCopyText then FDJ.TipCopyText(srcR, dstR) else dstR:SetText(srcR:GetText() or "") end -- secrettip (2.1.6)
+            if FDJ.TipCopyText then FDJ.TipCopyText(srcR, dstR) else dstR:SetText(srcR:GetText() or "") end
             local cr, cg, cb, ca = srcR:GetTextColor()
             dstR:SetTextColor(cr or 1, cg or 1, cb or 1, ca or 1)
         end
@@ -1883,7 +1883,7 @@ local function MakeResultRow(parent)
             if FDJ.AddUnseenItemHint then FDJ.AddUnseenItemHint(GameTooltip) end
         else
             GameTooltip:SetText(self.item[2] or "", QualityColor(self.item[4]))
-            if FDJ.AddItemTipLines then FDJ.AddItemTipLines(GameTooltip, self.item) end -- kroldok
+            if FDJ.AddItemTipLines then FDJ.AddItemTipLines(GameTooltip, self.item) end
         end
         if type(self.item[6]) == "string" and self.item[6] ~= "" then
             local statText = L(self.item[6])
@@ -1937,8 +1937,8 @@ end
 function FDJ.RefreshLootFilterResults(frame)
     local panel = frame and frame.lootFilterResults
     if not panel then return end
-    -- Only used for the empty state now: when items match, the Show page
-    -- (boss list + loot) opens instead of this flat list.
+
+
     local list, itemCount = {}, 0
     panel.title:SetText(L("LF_RESULTS"))
     local bar = rawget(panel.scroll, "ScrollBar") or _G["ForeverDungeonJournalLootFilterResultsScrollScrollBar"]
@@ -1988,8 +1988,8 @@ function FDJ.RefreshLootFilterResults(frame)
             row.text:SetFontObject("ForeverDJ_GameFontHighlight")
             row.text:SetPoint("LEFT", row.icon, "RIGHT", 8, 0)
             local name
-            -- favnames (2.1.4): C_Item's (the client has no global
-            -- GetItemInfo), so the item's name is in the client's language
+
+
             local get = (C_Item and C_Item.GetItemInfo) or GetItemInfo
             if type(get) == "function" and item[1] and item[1] > 0 then
                 local ok, liveName = pcall(get, item[1])
@@ -2030,13 +2030,13 @@ FDJ.ShowLootFilterList = function(frame)
         panel.title:SetTextColor(1.00, 0.82, 0.27)
 
         panel.back = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(panel.back) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(panel.back)
         panel.back:SetSize(100, 22)
         panel.back:SetPoint("TOPRIGHT", -14, -12)
         panel.back:SetScript("OnClick", function() panel:Hide() end)
 
         panel.filter = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(panel.filter) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(panel.filter)
         panel.filter:SetSize(120, 22)
         panel.filter:SetPoint("RIGHT", panel.back, "LEFT", -8, 0)
         panel.filter:SetScript("OnClick", function() FDJ.ToggleLootFilterWindow(frame) end)
@@ -2053,7 +2053,7 @@ FDJ.ShowLootFilterList = function(frame)
         panel.empty:SetTextColor(0.72, 0.67, 0.58)
         panel.rows = {}
 
-        -- Item data arrives asynchronously: redraw shortly after it does.
+
         local watcher = CreateFrame("Frame")
         watcher:RegisterEvent("GET_ITEM_INFO_RECEIVED")
         watcher:SetScript("OnEvent", function()
@@ -2072,8 +2072,8 @@ FDJ.ShowLootFilterList = function(frame)
     FDJ.RefreshLootFilterResults(frame)
 end
 
--- The Show page reuses the normal dungeon page: a temporary "dungeon" whose
--- boss list is every boss, from every dungeon, with loot matching the filter.
+
+
 local PAGE_KEY = "Loot Filter Results"
 FDJ.LOOT_FILTER_PAGE = PAGE_KEY
 
@@ -2083,14 +2083,14 @@ FDJ.LocalizeDungeonName = function(internalName)
     return baseLocalizeDungeonName(internalName)
 end
 
--- questrewards (2.0.10, M 17 Nov 2026: "under Item must have all stats, an
--- option to toggle that says: Show quest rewards too"): with it ticked, Show
--- results also lists the dungeons' quests whose rewards match the filter,
--- each after its dungeon's bosses: the quest's name with a note icon, its
--- matching rewards as the loot. The quests are the dungeon's quest list's
--- (this character's faction; class and profession quests as the Quests
--- options say; RPG Mode: only quests it shows). The quest data has no slot
--- for its rewards, so it is read from the game's item data.
+
+
+
+
+
+
+
+
 local REWARD_EQUIP = {
     INVTYPE_HEAD = "Head", INVTYPE_NECK = "Neck", INVTYPE_SHOULDER = "Shoulder", INVTYPE_BODY = "Shirt",
     INVTYPE_CHEST = "Chest", INVTYPE_ROBE = "Chest", INVTYPE_WAIST = "Waist", INVTYPE_LEGS = "Legs",
@@ -2105,9 +2105,9 @@ local REWARD_KIND = {
     [2] = { [0] = "Axe", [1] = "Axe", [2] = "Bow", [3] = "Gun", [4] = "Mace", [5] = "Mace", [6] = "Polearm",
         [7] = "Sword", [8] = "Sword", [10] = "Staff", [13] = "Fist Weapon", [15] = "Dagger", [18] = "Crossbow", [19] = "Wand" },
 }
-local QUEST_REWARD_ICON = "Interface\\GossipFrame\\AvailableQuestIcon" -- resultquest: the quest pages' "!"
--- "Head, Plate", "Two-Hand, Sword", "Finger"... as in the loot data; "" when
--- not gear or not known yet.
+local QUEST_REWARD_ICON = "Interface\\GossipFrame\\AvailableQuestIcon"
+
+
 local function RewardSlot(id)
     local equipLoc, classID, subID
     local instant = (C_Item and C_Item.GetItemInfoInstant) or GetItemInfoInstant
@@ -2153,9 +2153,9 @@ local function QuestRewardBosses(dungeonName, dungeon)
             QuestRewardIDs(quest, function(id, reward)
                 if seen[id] then return end
                 seen[id] = true
-                -- questlevel (2.1.2, M 21 Nov 2026): a reward counts at its
-                -- quest's level too ("Available from Level 40"), not only at
-                -- the item's (most rewards need no level of their own).
+
+
+
                 loot[#loot + 1] = { id, reward[2], RewardSlot(id), tonumber(reward[3]) or 1, fdjQuestLevel = tonumber(quest.requires) }
             end)
             if #loot > 0 then
@@ -2163,7 +2163,7 @@ local function QuestRewardBosses(dungeonName, dungeon)
                 if FDJ.LocalizeQuestField and quest.id then title = FDJ.LocalizeQuestField(quest.id, "name", title) or title end
                 local icon = QUEST_REWARD_ICON
                 if quest.id and FDJ.IsRepeatableQuest and FDJ.IsRepeatableQuest(quest.id) and FDJ.REPEATABLE_QUEST_TEXTURE then
-                    icon = FDJ.REPEATABLE_QUEST_TEXTURE -- the blue ? of a repeatable quest, as in the quest list
+                    icon = FDJ.REPEATABLE_QUEST_TEXTURE
                 end
                 out[#out + 1] = { name = title, loot = loot, customIcon = icon, fdjQuestRewards = quest.id or true, fdjQuest = quest }
             end
@@ -2172,10 +2172,10 @@ local function QuestRewardBosses(dungeonName, dungeon)
     return out
 end
 
--- resultquest (2.0.10, M 17 Nov 2026: "clicking on the exclamation mark
--- should redirect to the official quest page in the dungeon"): the "!" of a
--- quest entry in the page's list opens the quest on its dungeon's Quests
--- tab; a click on the rest of the row shows the quest on the right.
+
+
+
+
 function FDJ.ApplyResultQuestMark(button, entry)
     local quest = type(entry) == "table" and rawget(entry, "fdjQuest") or nil
     local mark = button and button.fdjQuestMark
@@ -2221,11 +2221,11 @@ local function BuildPage()
         local dungeon = FDJ.DB and FDJ.DB[dungeonName]
         if FDJ.IsDungeonLocked and FDJ.IsDungeonLocked(dungeonName) then dungeon = nil end
         for _, boss in ipairs((dungeon and dungeon.bosses) or {}) do
-            -- altarbosses (2.0.24): a group's children drop what the group
-            -- lists; the group is listed once, not each child again.
+
+
             local shown = (not boss.childOf) and (FDJ.FilterBossLoot(boss).loot or {}) or {}
             if recipesOnly then
-                -- Only "Show recipe drops" is ticked: list the recipes alone.
+
                 local recipes = {}
                 for _, item in ipairs(shown) do
                     if IsRecipe(item) then recipes[#recipes + 1] = item end
@@ -2237,7 +2237,7 @@ local function BuildPage()
                 itemCount = itemCount + #shown
             end
         end
-        if dungeon and db.enabled and db.questRewards then -- questrewards
+        if dungeon and db.enabled and db.questRewards then
             for _, quest in ipairs(QuestRewardBosses(dungeonName, dungeon)) do
                 local shown = FDJ.FilterBossLoot(quest).loot or {}
                 if recipesOnly then
@@ -2260,18 +2260,18 @@ local function BuildPage()
     return bosses, itemCount
 end
 
--- Read the tooltips of every loot item a few per frame, then call onDone.
+
 local warmWorker, warmQueue, warmDone, requestedData
-local warmLeft = 0 -- settle: items whose tooltip was still empty at the last read
+local warmLeft = 0
 local WARM_PER_FRAME = 8
--- fastshow (2.0.10, M 17 Nov 2026: "fix the lag when we click Show results:
--- it lasts quite a few seconds and people might think it's not working and
--- close it before it loads"). Show results first reads the tooltip of the
--- items it checks for stats, 8 a frame: every loot item of every dungeon,
--- a few seconds. Now: only the items the other filters (class, armor,
--- weapon, level) keep are read, each once; each frame reads for up to 12 ms
--- (at least 8 items); and a box on the journal says "Searching the loot...
--- 42%" with a bar, until the results open.
+
+
+
+
+
+
+
+
 local WARM_BUDGET_MS = 12
 local warmTotal, warmProgress = 0, nil
 local function HideLoading(frame)
@@ -2318,8 +2318,8 @@ local function ShowLoading(frame, done, total)
     box:Show()
 end
 local function WarmTooltips(onDone, progress)
-    -- a read the player is watching is never cut short by a quiet one
-    -- (an item's data arriving); it builds the results itself when done
+
+
     if warmQueue and warmProgress and not progress then return end
     if warmProgress and warmProgress ~= progress then HideLoading(warmProgress) end
     warmProgress = progress
@@ -2348,7 +2348,7 @@ local function WarmTooltips(onDone, progress)
                 end
             end
         end
-        if dungeon and filterOn and Settings().questRewards then -- questrewards
+        if dungeon and filterOn and Settings().questRewards then
             for _, quest in ipairs(QuestRewardBosses(dungeonName, dungeon)) do
                 local ok, kept = pcall(FDJ.FilterBossLoot, quest)
                 for _, item in ipairs((ok and type(kept) == "table" and kept.loot) or quest.loot) do
@@ -2384,7 +2384,7 @@ local function WarmTooltips(onDone, progress)
                 if not requestedData and C_Item and type(C_Item.RequestLoadItemDataByID) == "function" then
                     pcall(C_Item.RequestLoadItemDataByID, id)
                 end
-                if not TooltipText(id) then warmLeft = warmLeft + 1 end -- settle
+                if not TooltipText(id) then warmLeft = warmLeft + 1 end
                 n = n + 1
                 if n >= WARM_PER_FRAME and (not clock or clock() - start >= WARM_BUDGET_MS) then break end
             end
@@ -2406,7 +2406,7 @@ end
 local OpenLootFilterPage
 function FDJ.ShowLootFilterResults(frame, keepBoss)
     if Settings().enabled and (AnyStatWanted(Settings()) or AnyResistTicked(Settings())) then
-        WarmTooltips(function() OpenLootFilterPage(frame, keepBoss) end, frame) -- fastshow: with the box
+        WarmTooltips(function() OpenLootFilterPage(frame, keepBoss) end, frame)
     else
         OpenLootFilterPage(frame, keepBoss)
     end
@@ -2416,8 +2416,8 @@ OpenLootFilterPage = function(frame, keepBoss)
     if not (frame and frame:IsShown()) then return end
     local bosses, itemCount = BuildPage()
     if #bosses == 0 then
-        FDJ.ShowLootFilterList(frame) -- shows the "no items match" message
-        if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end -- settle
+        FDJ.ShowLootFilterList(frame)
+        if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end
         return
     end
     if frame.lootFilterResults then frame.lootFilterResults:Hide() end
@@ -2429,7 +2429,7 @@ OpenLootFilterPage = function(frame, keepBoss)
         quests = {},
         bosses = bosses,
         fdjItemCount = itemCount,
-        lootFilterPage = true, -- no Quests/Map tabs, larger centred title
+        lootFilterPage = true,
     }
     if FDJ.OpenBossPage then
         local index = 1
@@ -2440,13 +2440,13 @@ OpenLootFilterPage = function(frame, keepBoss)
         end
         FDJ.OpenBossPage(PAGE_KEY, index)
     end
-    -- Never remember the temporary page as the last real dungeon.
+
     if ForeverDungeonJournalDB then
         if previous == PAGE_KEY then previous = nil end
         ForeverDungeonJournalDB.lastDungeon = previous or (FDJ.ORDER and FDJ.ORDER[1])
         ForeverDungeonJournalDB.lastBoss = 1
     end
-    if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end -- settle
+    if FDJ.SettleLootFilterResults then FDJ.SettleLootFilterResults(frame) end
 end
 
 local function PageIsOpen(frame)
@@ -2462,13 +2462,13 @@ local function RebuildOpenPage(frame)
 end
 FDJ.RebuildLootFilterPage = RebuildOpenPage
 
--- settle (1.9.3): an item the game had not loaded yet when the results were
--- built (its tooltip still empty) cannot be checked, so it is left out. Its
--- data usually came in while the other tooltips were still being read, and
--- the page, not open yet, missed the news: the item only showed at the next
--- Show results (Old Serra'kis' Glowing Thresher Cape). Now such items are
--- read again a second later, up to 5 times, and the results are built again
--- when the count of matching items changes.
+
+
+
+
+
+
+
 local settleToken, SETTLE_TRIES = 0, 5
 function FDJ.SettleLootFilterResults(frame, tries)
     if not (C_Timer and type(C_Timer.After) == "function") then return end
@@ -2499,7 +2499,7 @@ function FDJ.SettleLootFilterResults(frame, tries)
     end)
 end
 
--- Item data arrives asynchronously; pick up items that could not be checked yet.
+
 local pageWatcher = CreateFrame and CreateFrame("Frame")
 if pageWatcher then
     pageWatcher:RegisterEvent("GET_ITEM_INFO_RECEIVED")
@@ -2521,12 +2521,12 @@ if pageWatcher then
     end)
 end
 
--- ------------------------------------------------- trash mob portraits
--- On a Trash Drops row, the mobs that drop the item are drawn as small
--- portraits on the right; hovering one shows its name. Returns true when the
--- portraits replace the source text (every named mob has a known portrait).
--- The mobs a row's source names, when every one of them has a portrait
--- (else none: the row keeps the names as text).
+
+
+
+
+
+
 function FDJ.RowMobNames(sourceText)
     local names = {}
     if type(sourceText) == "string" and FDJ.TRASH_MOB_DISPLAY_IDS and type(SetPortraitTextureFromCreatureDisplayID) == "function" then
@@ -2542,10 +2542,10 @@ function FDJ.RowMobNames(sourceText)
     return names
 end
 
--- moborder (2.0.25; 2.0.24 gave each mob a fixed column, which left gaps):
--- rows stay packed to the right, but the mobs keep one order across the
--- page: the mob on the most rows rightmost, then the next, and so on (ties:
--- the one met first). (The 2.0.25 hover glow across rows went in 2.0.26.)
+
+
+
+
 function FDJ.PlanMobSlots(loot)
     FDJ.mobSlots = nil
     if type(loot) ~= "table" then return end
@@ -2553,7 +2553,7 @@ function FDJ.PlanMobSlots(loot)
     for index, item in ipairs(loot) do
         for at, name in ipairs(FDJ.RowMobNames(type(item) == "table" and item[5] or nil)) do
             if not count[name] then
-                count[name], first[name] = 0, index * 100 + at -- ties: met first, then as written
+                count[name], first[name] = 0, index * 100 + at
                 order[#order + 1] = name
             end
             count[name] = count[name] + 1
@@ -2569,23 +2569,23 @@ function FDJ.PlanMobSlots(loot)
     FDJ.mobSlots = { rank = rank }
 end
 
--- mobfast (2.0.31): the looks of trash mobs known by NPC ID only, found
--- all at once instead of one after another behind the bosses: a hidden
--- model of each NPC tells its display, which is saved with the journal's
--- other portraits (ForeverDungeonJournalDB.displayIDs), so after the first
--- time they are drawn at once. Started a few seconds after logging in and
--- again when a page shows them; a portrait waiting for one is drawn the
--- moment it is found.
+
+
+
+
+
+
+
 FDJ.mobLooks = FDJ.mobLooks or { pending = {}, waiting = {}, models = {} }
--- loadpause (2.0.7): a few looked up at a time, not all of them at once, and
--- none during a loading screen (FDJ.LookupsPaused, Core/Journal.lua).
+
+
 local LOOKS_AT_ONCE = 4
--- mobmiss (2.0.7): mobs whose look the game didn't give after every try
--- are remembered (ForeverDungeonJournalDB.displayMiss, NPC ID -> when), so
--- the lookups after logging in skip them for a week instead of trying them
--- again at every login (hidden models for minutes after each login and
--- zoning). Opening a page that shows one still tries it, and a mob found
--- later is taken off the list.
+
+
+
+
+
+
 local MISS_DAYS = 7
 local function MissStore()
     if type(ForeverDungeonJournalDB) ~= "table" then return nil end
@@ -2601,11 +2601,11 @@ function FDJ.MobRecentlyMissed(npcID)
     return at ~= nil and NowSeconds() - at < MISS_DAYS * 86400
 end
 function FDJ.MobDisplay(npcID)
-    -- staleface (2.0.9): the looks saved before the fix may be another mob's:
-    -- forgotten once, found again as the pages ask for them.
+
+
     if type(ForeverDungeonJournalDB) == "table" and not ForeverDungeonJournalDB.displayIDsFixed then
         if type(ForeverDungeonJournalDB.displayIDs) == "table" then
-            for k in pairs(ForeverDungeonJournalDB.displayIDs) do ForeverDungeonJournalDB.displayIDs[k] = nil end -- in place: Core/Journal.lua holds the same table
+            for k in pairs(ForeverDungeonJournalDB.displayIDs) do ForeverDungeonJournalDB.displayIDs[k] = nil end
         end
         ForeverDungeonJournalDB.displayIDsFixed = 1
     end
@@ -2618,12 +2618,12 @@ function FDJ.DrawMobPortrait(texture, displayID)
     if FDJ.AcquirePortrait then okPortrait, shown = pcall(FDJ.AcquirePortrait, texture, displayID) end
     if not (okPortrait and shown) then
         if FDJ.AcquirePortrait then
-            -- rtvcap (2.0.9): the portrait pool had no room (every portrait
-            -- it may draw is on screen), or the game has none for this look.
-            -- It is no longer drawn straight on the row (one more render
-            -- target, outside the cap, black while it loads): a plain dark
-            -- disc, as for a mob not found yet; the pool puts the portrait
-            -- over it once there is room (softhost).
+
+
+
+
+
+
             texture:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
             texture:SetTexCoord(0, 1, 0, 1)
             texture:SetVertexColor(0.08, 0.07, 0.06, 0.85)
@@ -2648,10 +2648,10 @@ function FDJ.ResolveMobDisplays(npcIDs)
         looks.driver = CreateFrame("Frame")
         looks.driver:SetScript("OnUpdate", function(self)
             if FDJ.portraitZoning then return end
-            if FDJ.LookupsPaused and FDJ.LookupsPaused() then return end -- loadpause (2.0.7)
-            -- journalopen (2.0.7): only while the journal window is open (the
-            -- page that asked is on screen); closed, the hidden models are put
-            -- away and the mobs not found yet are asked again when it opens.
+            if FDJ.LookupsPaused and FDJ.LookupsPaused() then return end
+
+
+
             local journal = _G.ForeverDungeonJournalFrame
             if not (journal and journal.IsShown and journal:IsShown()) then
                 if not looks.closedPause then looks.closedPause = true if FDJ.PauseMobLooks then FDJ.PauseMobLooks() end end
@@ -2665,14 +2665,14 @@ function FDJ.ResolveMobDisplays(npcIDs)
             end
             for npcID, job in pairs(looks.pending) do
                 busy = true
-                -- Not asked yet, and LOOKS_AT_ONCE already asking: its turn later.
+
                 if job.tries == 0 and asking >= LOOKS_AT_ONCE then
-                    -- waits
+
                 else
                     if job.tries == 0 then asking = asking + 1 end
                     local model = looks.models[npcID]
-                    -- rtvcap (2.0.9): a hidden model whose look-up is over is
-                    -- reused, not one more made for each mob.
+
+
                     if not model then
                         for otherID, other in pairs(looks.models) do
                             if not looks.pending[otherID] then
@@ -2682,11 +2682,11 @@ function FDJ.ResolveMobDisplays(npcIDs)
                             end
                         end
                         if model then looks.models[npcID] = model end
-                        -- staleface (2.0.9, M 16 Nov 2026: the Phase Lasher, a
-                        -- flower, drawn as a tree; trees as satyrs): a reused
-                        -- model tells the mob it showed last until the new one
-                        -- is in, so that look is not taken at once (only if it
-                        -- still says so after a few asks: two mobs may share one).
+
+
+
+
+
                         if model then model.fdjStale = model.fdjLastDisplay end
                     end
                     if not model then
@@ -2702,13 +2702,13 @@ function FDJ.ResolveMobDisplays(npcIDs)
                     if not model then
                         looks.pending[npcID] = nil
                     elseif t - job.at >= 2.5 then
-                        -- Ask (again): an NPC this client has not met comes in a
-                        -- moment after the server answers.
+
+
                         job.tries, job.at = job.tries + 1, t
                         if job.tries > 12 then
                             looks.pending[npcID] = nil
                             model:Hide()
-                            local store = MissStore() -- mobmiss (2.0.7)
+                            local store = MissStore()
                             if store then store[npcID] = NowSeconds() end
                         else
                             model:Show()
@@ -2725,7 +2725,7 @@ function FDJ.ResolveMobDisplays(npcIDs)
                                 ForeverDungeonJournalDB.displayIDs = ForeverDungeonJournalDB.displayIDs or {}
                                 ForeverDungeonJournalDB.displayIDs[npcID] = display
                             end
-                            local store = MissStore() -- mobmiss (2.0.7): found after all
+                            local store = MissStore()
                             if store then store[npcID] = nil end
                             if model.ClearModel then pcall(model.ClearModel, model) end
                             model:Hide()
@@ -2744,8 +2744,8 @@ function FDJ.ResolveMobDisplays(npcIDs)
     end
     looks.driver:Show()
 end
--- loadpause (2.0.7): a loading screen starts: the hidden models put away;
--- the mobs not found yet are asked again a few seconds after arriving.
+
+
 function FDJ.PauseMobLooks()
     local looks = FDJ.mobLooks
     for npcID, model in pairs(looks.models) do
@@ -2755,31 +2755,31 @@ function FDJ.PauseMobLooks()
         model:Hide()
     end
 end
--- All of them, a few seconds after logging in (once a session).
+
 function FDJ.WarmMobDisplays()
     if FDJ.mobLooks.warmed then return end
     FDJ.mobLooks.warmed = true
     local ids = {}
     for name, npcID in pairs(FDJ.TRASH_MOB_NPC_IDS or {}) do
-        -- mobmiss (2.0.7): not the ones the game didn't give in the last week.
-        -- bakelooks (2.0.9): nor the ones whose look is known now.
+
+
         if not (FDJ.TRASH_MOB_DISPLAY_IDS and FDJ.TRASH_MOB_DISPLAY_IDS[name]) and not FDJ.MobRecentlyMissed(npcID) then
             ids[#ids + 1] = npcID
         end
     end
     FDJ.ResolveMobDisplays(ids)
 end
--- noinstance (2.0.7): no longer started by itself after logging in. With the
--- 38 mobs 2.0.6 added (most never met by most characters) it kept hidden
--- models busy for minutes after each login, and a loading screen in or out
--- of a dungeon could then flicker for ever. A mob is now looked up when a
--- page shows it (FDJ.SetRowMobs), outside dungeons only.
+
+
+
+
+
 
 function FDJ.SetRowMobs(row, sourceText)
     row.fdjMobButtons = row.fdjMobButtons or {}
     local names = FDJ.RowMobNames(sourceText)
     local plan = FDJ.mobSlots
-    -- moborder: the page's order, its first mob rightmost.
+
     if plan and plan.rank and #names > 1 then
         table.sort(names, function(x, y) return (plan.rank[x] or 999) < (plan.rank[y] or 999) end)
     end
@@ -2794,8 +2794,8 @@ function FDJ.SetRowMobs(row, sourceText)
             button:SetScript("OnEnter", function(self)
                 if not GameTooltip or not self.fdjMobName then return end
                 GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-                -- sourcetip (2.0.9, M 16 Nov 2026): on a family's row ("All
-                -- satyrs", "All trees") the portrait stands for the whole family
+
+
                 local family = self:GetParent() and self:GetParent().fdjMobTip
                 GameTooltip:SetText(family or (FDJ.LocalizeBossName and FDJ.LocalizeBossName(self.fdjMobName)) or self.fdjMobName, 1, 0.82, 0.27)
                 GameTooltip:Show()
@@ -2807,23 +2807,23 @@ function FDJ.SetRowMobs(row, sourceText)
         button.fdjMobNpc = nil
         FDJ.mobLooks.waiting[button] = nil
         button:ClearAllPoints()
-        -- moborder: packed to the right, in the page's order (no gaps); with
-        -- no page order, in the source's order as before.
+
+
         local column = (plan and plan.rank) and (i - 1) or (#names - i)
         button:SetPoint("RIGHT", row, "RIGHT", -10 - column * 38, 0)
         if column + 1 > row.fdjMobSpan then row.fdjMobSpan = column + 1 end
         local mobDisplayID = FDJ.TRASH_MOB_DISPLAY_IDS[name]
         if mobDisplayID then
-            -- Bundled picture, else the off-screen portrait pool like the bosses
-            -- (no black square while it loads). rtvcap (2.0.9): through
-            -- DrawMobPortrait, which no longer draws straight on the row
-            -- when the pool has no room.
+
+
+
+
             FDJ.DrawMobPortrait(button.portrait, mobDisplayID)
         else
-            -- trashnpc (2.0.22): known by NPC ID only. mobfast (2.0.31): its
-            -- look saved from an earlier lookup is drawn at once; else it is
-            -- looked up now (all of the page's together) and drawn the moment
-            -- it is found, a plain dark disc until then (no "?").
+
+
+
+
             local npcID = FDJ.TRASH_MOB_NPC_IDS[name]
             local display = FDJ.MobDisplay(npcID)
             if display then
@@ -2841,18 +2841,18 @@ function FDJ.SetRowMobs(row, sourceText)
         button:Show()
     end
     for i = #names + 1, #row.fdjMobButtons do row.fdjMobButtons[i]:Hide() end
-    -- Keep the item name clear of the portraits.
+
     if row.name and row.name.SetPoint then
         row.name:SetPoint("RIGHT", row, "RIGHT", -10 - row.fdjMobSpan * 38, 0)
     end
     return #names > 0
 end
 
--- lootoptions (2.0.11, M 18 Nov 2026: Options > Loot > "Hide quest item
--- drops"): boss loot pages leave out the quest items ("Quest Item" in the
--- loot tables). The boss handed to the page is a copy of the boss without
--- them (the same copy every time, so the page sees one boss); the search's
--- Matching loot page and the recipe tab are left as they are.
+
+
+
+
+
 do
     local plain = FDJ.FilterBossLootForPage
     local copies = setmetatable({}, { __mode = "k" })
@@ -2874,10 +2874,10 @@ do
     end
 end
 
--- BEGIN lootremoved
--- lootremoved (2.1.3, M 21 Nov 2026, the Obsidian Sentinel: "Due to players
--- finding an efficient gold farm with this boss, blizzard has for now
--- removed its loot"): the line under the boss's name (boss.lootNote).
+
+
+
+
 do
     local strings = {
         enUS = "Due to players finding an efficient gold farm with this boss, Blizzard has for now removed its loot.",
@@ -2897,4 +2897,4 @@ do
         if t and t.LOOT_NOTE_LOOT_REMOVED == nil then t.LOOT_NOTE_LOOT_REMOVED = text end
     end
 end
--- END lootremoved
+

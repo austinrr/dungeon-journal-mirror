@@ -1,14 +1,14 @@
--- The Onyxia Attunement page (data: Data/QuestUpdates.lua, BEGIN
--- onyxiaattunement): a round Onyxia icon on the journal's home page, right
--- of the Cozy Sleeping Bag's (or of the Raids medallion when the bag's icon
--- is hidden), the same size and with the same soft golden glow, once the
--- character is level enough to start its faction's chain. Click: the
--- character's faction's attunement chain, unfolded at the step the
--- character is on (the whole chain done: its last quest); right-click: Hide
--- (Options > Show Onyxia Attunement brings it back, at any level). Reaching
--- that level pops the icon up on the screen, once per account. The page's title
--- is "Onyxia Attunement" in the journal's language (ATTUNE_ONYXIA, the
--- attunement tag's own string).
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -20,9 +20,9 @@ local MASK = "Interface\\CharacterFrame\\TempPortraitAlphaMask"
 local GLOW = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\TickGlow"
 
 do
-    -- ATTUNE_ONYXIA already exists in English, German, French, Spanish,
-    -- Italian and Portuguese (the attunement tag); the other languages and
-    -- the icon's tooltip line.
+
+
+
     local strings = {
         enUS = { ATTUNE_ONYXIA = "Onyxia Attunement", ONYXIA_ICON_TIP = "The quest chain for the Drakefire Amulet, the key to Onyxia's Lair.",
             ONYXIA_POPUP = "You can now start Onyxia Attunement", ONYXIA_POPUP_CLICK = "Click to open it in the journal.",
@@ -98,7 +98,7 @@ local function Faction()
     return faction == "Horde" and "Horde" or "Alliance"
 end
 
--- The page's level: where the character's faction's chain starts.
+
 local function Resolve()
     FDJ.DB[PAGE].level = Faction() == "Horde" and "55+" or "48+"
 end
@@ -109,7 +109,7 @@ do
     events:SetScript("OnEvent", Resolve)
 end
 
--- The chain at the step the character is on (the first one not handed in).
+
 function FDJ.OpenOnyxiaChain()
     if not FDJ.OpenQuestChain then return end
     local quest = FDJ.ONYXIA_QUESTS and FDJ.ONYXIA_QUESTS[Faction()]
@@ -125,14 +125,14 @@ function FDJ.OpenOnyxiaChain()
     FDJ.OpenQuestChain(PAGE, quest, stepID)
 end
 
--- ---------------------------------------------------------- shown or not
--- 2.0.5: the icon comes with the level that starts the faction's chain (the
--- first step's required level: Dragonkin Menace 48, Blood and Thunder 55).
--- 2.0.6: Options > Show Onyxia Attunement (account-wide), and Hide on the
--- icon's right-click. showOnyxiaIcon: true = shown (ticked, at any level),
--- false = hidden (unticked, or Hide, at or above the level), nil = shown
--- once the level is reached (also what unticking below the level gives, 2.0.12).
-local levelNow -- PLAYER_LEVEL_UP's new level (UnitLevel can still say the old one)
+
+
+
+
+
+
+
+local levelNow
 local function StartLevel()
     local quest = FDJ.ONYXIA_QUESTS and FDJ.ONYXIA_QUESTS[Faction()]
     local chain = quest and FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_CHAINS[quest]
@@ -150,11 +150,11 @@ local function CanStart()
 end
 FDJ.OnyxiaCanStart = CanStart
 
--- onyxiadone (2.0.13, M 18 Nov 2026: "just auto toggle hide once somebody is
--- attuned to Onyxia"): once the chain's last quest is handed in (the
--- Drakefire Amulet), the icon is hidden on that character (Options > Hide
--- Onyxia Attunement shows ticked). Unticking it there shows it again, on
--- that character.
+
+
+
+
+
 local function Attuned()
     local quest = FDJ.ONYXIA_QUESTS and FDJ.ONYXIA_QUESTS[Faction()]
     if not (quest and FDJ.QuestTurnedIn) then return false end
@@ -172,9 +172,9 @@ function FDJ.IsOnyxiaIconShown()
 end
 FDJ.OnyxiaIconShown = FDJ.IsOnyxiaIconShown
 
--- -------------------------------------------------------------- the icon
+
 local menu
-local placed -- frame, raids medallion, size: the last placement
+local placed
 local Place
 
 local function Replace()
@@ -183,7 +183,7 @@ end
 
 function FDJ.SetOnyxiaIconShown(on)
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
-    if Attuned() then -- onyxiadone: this character's own choice
+    if Attuned() then
         ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
         ForeverDungeonJournalCharacterDB.showOnyxiaAttuned = on and true or nil
         if menu then menu:Hide() end
@@ -191,11 +191,11 @@ function FDJ.SetOnyxiaIconShown(on)
         Replace()
         return
     end
-    -- untickbelow (2.0.12): unticking (or Hide) below the chain's level goes
-    -- back to the default (nil: the icon comes, with its popup, on the ding)
-    -- instead of hiding it for good, so a player who ticked it early just to
-    -- look still gets it at the level. Only unticking at or above the level
-    -- saves "hidden" (false).
+
+
+
+
+
     if on then
         ForeverDungeonJournalDB.showOnyxiaIcon = true
     elseif CanStart() then
@@ -204,11 +204,11 @@ function FDJ.SetOnyxiaIconShown(on)
         ForeverDungeonJournalDB.showOnyxiaIcon = nil
     end
     if menu then menu:Hide() end
-    if not on and FDJ.StopOnyxiaPulse then FDJ.StopOnyxiaPulse() end -- hidden at once
+    if not on and FDJ.StopOnyxiaPulse then FDJ.StopOnyxiaPulse() end
     Replace()
 end
 
--- onyxiadone: the last quest handed in: the icon goes at once.
+
 do
     local watch = CreateFrame("Frame")
     watch:RegisterEvent("QUEST_TURNED_IN")
@@ -225,11 +225,11 @@ do
     end)
 end
 
--- Right-click: a small menu with Hide (the same as the Sleeping Bag's).
--- Hide hides it and opens Options at Hide Onyxia Attunement (flashing),
--- so the player sees where it comes back from. (hideonyxia 2.0.15: the
--- option was "Show Onyxia Attunement"; it is now a Hide option like the
--- others, ticked by default until the chain's level.)
+
+
+
+
+
 local function ShowMenu(anchor)
     if not menu then
         menu = CreateFrame("Frame", "ForeverDungeonJournalOnyxiaMenu", UIParent, "BackdropTemplate")
@@ -256,7 +256,7 @@ local function ShowMenu(anchor)
             if FDJ.OpenSettingsAt then FDJ.OpenSettingsAt("OPT_SHOW_ONYXIA") end
         end)
         menu.hide = item
-        -- Closes on its own once the mouse has been away for a moment.
+
         menu:SetScript("OnUpdate", function(self, elapsed)
             if self:IsMouseOver() or (self.fdjAnchor and self.fdjAnchor:IsMouseOver()) then
                 self.fdjAway = 0
@@ -323,7 +323,7 @@ local function Build(frame)
             return
         end
         if GameTooltip then GameTooltip:Hide() end
-        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end -- tabsound (2.0.11): the journal's opening page sound
+        if PlaySound then pcall(PlaySound, (SOUNDKIT and SOUNDKIT.IG_ABILITY_PAGE_TURN) or 836) end
         FDJ.OpenOnyxiaChain()
     end)
     b:SetScript("OnEnter", function(self)
@@ -337,13 +337,13 @@ local function Build(frame)
     return b
 end
 
--- Right of the Sleeping Bag's icon when it shows, else of the Raids medallion.
+
 Place = function(frame, raid, size)
     if not frame or not frame.homePanel or not raid then return end
     placed = { frame, raid, size }
     local b = frame.onyxiaButton or Build(frame)
     size = size or 40
-    local inner = math.floor(size * 0.9 + 0.5) -- as the Sleeping Bag's
+    local inner = math.floor(size * 0.9 + 0.5)
     b:SetSize(inner, inner)
     b.icon:SetSize(inner, inner)
     b.hl:SetSize(inner, inner)
@@ -355,7 +355,7 @@ Place = function(frame, raid, size)
     b:ClearAllPoints()
     b:SetPoint("LEFT", anchor, "RIGHT", size >= 40 and 12 or (size >= 30 and 10 or 8), 0)
     b:SetShown(FDJ.IsOnyxiaIconShown() or (b.fdjPulseUntil ~= nil))
-    -- The bag's icon hidden or shown later (Hide, the bag looted): move along.
+
     if bag and not bag.fdjOnyxiaHooked then
         bag.fdjOnyxiaHooked = true
         bag:HookScript("OnShow", Replace)
@@ -363,17 +363,17 @@ Place = function(frame, raid, size)
     end
 end
 
--- Systems/ForeverFilter.lua places the Sleeping Bag's icon after the Raids
--- medallion on every refresh of the home page; the Onyxia icon follows.
+
+
 local PlaceBag = FDJ.PlaceSleepingBagButton
 FDJ.PlaceSleepingBagButton = function(frame, raid, size, ...)
     if PlaceBag then pcall(PlaceBag, frame, raid, size, ...) end
     pcall(Place, frame, raid, size)
 end
 
--- ------------------------------------------------- the icon, pointed out
--- The home page's icon glows and pulses for a few seconds, then goes back
--- to normal (the popup's click: "here it is").
+
+
+
 local PULSE_TIME = 6
 local pulser = CreateFrame("Frame")
 pulser:Hide()
@@ -388,7 +388,7 @@ pulser:SetScript("OnUpdate", function(self, elapsed)
         b.halo:SetSize(glow, glow)
         b.icon:SetSize(inner, inner)
         self:Hide()
-        Replace() -- shown or not as usual again
+        Replace()
         return
     end
     local wave = 0.5 + 0.5 * math.sin(self.t * 5)
@@ -412,8 +412,8 @@ function FDJ.PulseOnyxiaIcon()
     local journal = _G.ForeverDungeonJournalFrame
     local b = journal and journal.onyxiaButton
     if not b then return end
-    -- Not hidden by the player: shown while it pulses even before the level
-    -- (only the dev test gets there that early).
+
+
     local hidden = ForeverDungeonJournalDB and ForeverDungeonJournalDB.showOnyxiaIcon == false
     if hidden then return end
     b.fdjPulseUntil = PULSE_TIME
@@ -423,15 +423,15 @@ function FDJ.PulseOnyxiaIcon()
     pulser:Show()
 end
 
--- ----------------------------------------------------- the level-up popup
--- 2.0.6: reaching the level that starts the chain pops up the Onyxia icon
--- with "You can now start Onyxia Attunement", above the game's "You've
--- Reached Level" banner. 2.0.7: the message stays still (easier to read)
--- for 10 seconds; only the red arrow pointing at the icon comes and goes,
--- as on the journal's other popups; the icon has its golden glow, as on the
--- home page. Clicking it opens the journal on its home page, where the
--- Onyxia icon glows and pulses for 6 seconds. Right-click closes it.
--- Not when the player hid the icon (Options, or Hide).
+
+
+
+
+
+
+
+
+
 local POPUP_TIME = 10
 local ARROW = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\QuestPrevArrow"
 local popup
@@ -441,7 +441,7 @@ local function OpenHome()
     if FDJ.ToggleJournal and not (journal and journal:IsShown()) then pcall(FDJ.ToggleJournal) end
     journal = _G.ForeverDungeonJournalFrame
     if not journal then return end
-    -- Back to the dungeon list (the journal's own Dungeons button).
+
     if journal.currentView ~= "home" and journal.backButton then
         local back = journal.backButton:GetScript("OnClick")
         if back then pcall(back, journal.backButton) end
@@ -462,7 +462,7 @@ local function BuildPopup()
     })
     p:SetBackdropColor(0, 0, 0, 0.92)
     p:SetBackdropBorderColor(0.6, 0.6, 0.6, 1)
-    -- The icon: its own button, with the home page icon's golden glow.
+
     local icon = CreateFrame("Button", nil, p)
     icon:SetSize(40, 40)
     icon:SetPoint("LEFT", 12, 0)
@@ -479,7 +479,7 @@ local function BuildPopup()
     icon.hl:SetSize(40, 40)
     icon.hl:SetPoint("CENTER")
     p.iconButton = icon
-    -- The red arrow pointing at the icon: comes and goes, nudging toward it.
+
     p.arrow = p:CreateTexture(nil, "OVERLAY")
     p.arrow:SetTexture(ARROW)
     p.arrow:SetVertexColor(1, 0.12, 0.08)
@@ -498,7 +498,7 @@ local function BuildPopup()
             self:Hide()
             return
         end
-        -- The message itself stays still: in over 0.3 s, out over the last 0.6 s.
+
         self:SetAlpha(math.min(1, self.t / 0.3, (POPUP_TIME - self.t) / 0.6))
         local wave = math.sin(self.t * 4)
         self.arrow:SetAlpha(0.55 + 0.45 * wave)
@@ -526,20 +526,20 @@ function FDJ.ShowOnyxiaPopup()
     local w = math.max(popup.text:GetStringWidth() or 0, popup.hint:GetStringWidth() or 0)
     popup:SetSize(math.max(280, w + 110), 64)
     popup:ClearAllPoints()
-    -- Above the game's "You've Reached Level" banner.
+
     popup:SetPoint("TOP", UIParent, "TOP", 0, -100)
     popup.t = 0
     popup:SetAlpha(0)
     popup:Show()
 end
 
--- A level gained: the icon comes up at once on the home page, and reaching
--- the chain's level pops it up on the screen.
--- popuponce (2.0.11): the popup comes only on the ding itself (never at login,
--- so a character already past that level when the addon is installed or
--- updated never gets it), and only once per account: the first character to
--- ding the level shows it, then onyxiaPopupSeen (account-wide) stops it for
--- every other character.
+
+
+
+
+
+
+
 do
     local events = CreateFrame("Frame")
     events:RegisterEvent("PLAYER_LEVEL_UP")

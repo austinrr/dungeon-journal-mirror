@@ -1,5 +1,5 @@
--- "Report a bug" button in the title bar, left of the language selector. Opens a small window with
--- the report instructions and the Discord link (selectable, so it can be copied).
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -17,9 +17,9 @@ local BACKDROP = {
     insets = { left = 4, right = 4, top = 4, bottom = 4 },
 }
 
--- exporttitle (2.1.1, M 20 Nov 2026: "put the export button right before
--- report ... move the wheel to the left ... the same size as report"): the
--- Export button's option (Hide Export button) and its strings.
+
+
+
 do
     local strings = {
         enUS = { OPT_HIDE_EXPORT = "Hide Export button on main page", OPT_HIDE_EXPORT_TIP = "Hides the Export button at the top of the journal, left of Report. The Options' Export tab still has your character code." },
@@ -48,9 +48,9 @@ function FDJ.IsExportButtonHidden()
     return type(ForeverDungeonJournalDB) == "table" and ForeverDungeonJournalDB.hideExportButton == true or false
 end
 
--- exporttitle: the cogwheel left of Export, or of Report while Export is
--- hidden; and the journal's title moved left if they would reach it (the
--- longer titles and labels of some languages).
+
+
+
 local function PlaceTitleButtons(frame)
     if not frame then return end
     local cog, export, report = frame.optionsCogButton, frame.exportButton, frame.bugReportButton
@@ -84,12 +84,12 @@ function FDJ.SetExportButtonHidden(hidden)
     end
 end
 
--- The Report button's label and width. reportsteady (2.0.47): only when it is
--- made, when the journal shows (its font ready) and when the language
--- changes; not on a click, where the width moved a few pixels (and the
--- options cogwheel, left of it, with it).
--- exporttitle (2.1.1): Export, left of Report, has the same width (the wider
--- of the two labels).
+
+
+
+
+
+
 local function RelocalizeButton(frame)
     if not frame or not frame.bugReportButtonText then return end
     frame.bugReportButtonText:SetText(L("BUG_REPORT_SHORT"))
@@ -103,7 +103,7 @@ local function RelocalizeButton(frame)
     PlaceTitleButtons(frame)
 end
 
--- The report window's texts (when it opens, and on a language change).
+
 local function RelocalizeWindow(frame)
     if not frame then return end
     local w = frame.bugReportWindow
@@ -147,7 +147,7 @@ local function BuildWindow(frame)
     w.discordLabel = w:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     w.discordLabel:SetPoint("TOP", w.body, "BOTTOM", 0, -14)
 
-    -- An edit box so the link can be selected and copied (Ctrl+C).
+
     local link = CreateFrame("EditBox", nil, w, "InputBoxTemplate")
     w.link = link
     link:SetSize(300, 22)
@@ -161,7 +161,7 @@ local function BuildWindow(frame)
     end)
 
     w.close = CreateFrame("Button", nil, w, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(w.close) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(w.close)
     w.close:SetSize(110, 24)
     w.close:SetPoint("BOTTOM", 0, 14)
     w.close:SetScript("OnClick", function() w:Hide() end)
@@ -172,7 +172,7 @@ end
 function FDJ.ToggleBugReportWindow(frame)
     local w = frame.bugReportWindow or BuildWindow(frame)
     if w:IsShown() then w:Hide() return end
-    RelocalizeWindow(frame) -- reportsteady (2.0.47): the button stays as it is
+    RelocalizeWindow(frame)
     w:Show()
 end
 
@@ -180,15 +180,15 @@ function FDJ.CreateBugReportButton(frame, home, anchorButton)
     if not anchorButton then return end
     local button = CreateFrame("Button", nil, home, "BackdropTemplate")
     frame.bugReportButton = button
-    -- Small icon button; the label lives in the tooltip.
+
     button:SetSize(80, 24)
     button:SetPoint("RIGHT", anchorButton, "LEFT", -6, 0)
     button:SetBackdrop(BACKDROP)
     button:SetBackdropColor(0.12, 0.115, 0.105, 0.98)
     button:SetBackdropBorderColor(0.48, 0.40, 0.27, 1)
     local icon = button:CreateTexture(nil, "ARTWORK")
-    -- Blizzard's own blue bug icon (the one its issue reporter uses); falls back
-    -- to a spell icon if this client does not ship it.
+
+
     icon:SetTexture("Interface\\HelpFrame\\HelpIcon-Bug")
     icon:SetSize(26, 26)
     icon:SetPoint("LEFT", button, "LEFT", 1, 0)
@@ -217,24 +217,24 @@ function FDJ.CreateBugReportButton(frame, home, anchorButton)
         if PlaySound and SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON then pcall(PlaySound, SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON) end
         FDJ.ToggleBugReportWindow(frame)
     end)
-    -- exporttitle (2.1.1): Export, left of Report
+
     if FDJ.CreateExportButton then FDJ.CreateExportButton(frame, home, button) end
     Relocalize(frame)
-    -- reportsteady (2.0.47): measured again whenever the journal comes on
-    -- screen (its font loaded): the button's own OnShow (the journal's
-    -- OnShow is set later and would replace a hook there).
+
+
+
     button:SetScript("OnShow", function() RelocalizeButton(frame) end)
 end
 
--- exporttitle (2.1.1, M 20 Nov 2026: "put the export button right before
--- report ... the same size as report, with export, and it does the same
--- thing ... open the option panel"): Report's look, a red arrow for its icon
--- (exportarrow, M 20 Nov 2026: "a little ... red arrow ... like the yellow
--- arrow at the top": the journal's yellow arrow, in the red of the export
--- note's arrow), "Export"; a click opens
--- the Options' Export tab with the code's row lit up (FDJ.OpenExportTab).
--- Options: Hide Export button. The one-time note points at it (exporthint,
--- Systems/RunLogUI.lua).
+
+
+
+
+
+
+
+
+
 function FDJ.CreateExportButton(frame, home, anchorButton)
     if not anchorButton or frame.exportButton then return end
     local button = CreateFrame("Button", nil, home, "BackdropTemplate")
@@ -274,27 +274,27 @@ function FDJ.CreateExportButton(frame, home, anchorButton)
         elseif FDJ.ShowExportDialog then FDJ.ShowExportDialog() end
     end)
     button:SetShown(not FDJ.IsExportButtonHidden())
-    if FDJ.AttachExportHint then FDJ.AttachExportHint(button, frame) end -- exporthint (exportlater: the journal's openings counted)
+    if FDJ.AttachExportHint then FDJ.AttachExportHint(button, frame) end
 end
 
--- optionscog (2.0.46): Blizzard's options cogwheel (the one on the Looking
--- For Group panel: atlas OptionsIcon-Brown, 16x16, 80% until hovered,
--- nudged while pressed) left of Report. "Options" on mouse-over; a click
--- opens the journal's options (as right-clicking the minimap button does).
+
+
+
+
 function FDJ.CreateOptionsCogButton(frame, home, anchorButton)
     if not anchorButton or frame.optionsCogButton then return end
     local button = CreateFrame("Button", nil, home)
     frame.optionsCogButton = button
     button:SetSize(16, 16)
     button:SetPoint("RIGHT", anchorButton, "LEFT", -8, 0)
-    PlaceTitleButtons(frame) -- exporttitle (2.1.1): left of Export, when it shows
+    PlaceTitleButtons(frame)
     button:RegisterForClicks("LeftButtonUp")
     local icon = button:CreateTexture(nil, "ARTWORK")
     button.Icon = icon
     icon:SetAllPoints()
     local ok = icon.SetAtlas and pcall(icon.SetAtlas, icon, "OptionsIcon-Brown", false)
     if not ok or not icon:GetTexture() and not (icon.GetAtlas and icon:GetAtlas()) then
-        icon:SetTexture("Interface\\Buttons\\UI-OptionsButton") -- older clients' cogwheel
+        icon:SetTexture("Interface\\Buttons\\UI-OptionsButton")
     end
     icon:SetAlpha(0.8)
     button:SetScript("OnEnter", function(self)
@@ -326,7 +326,7 @@ function FDJ.CreateOptionsCogButton(frame, home, anchorButton)
     end)
 end
 
--- Follow the journal language whenever the loot filter button is relocalised.
+
 local previous = FDJ.RelocalizeLootFilter
 function FDJ.RelocalizeLootFilter(frame)
     if previous then previous(frame) end

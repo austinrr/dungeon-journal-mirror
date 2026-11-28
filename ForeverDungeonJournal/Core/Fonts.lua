@@ -1,25 +1,25 @@
--- The journal's own fonts (2.0.8).
---
--- The journal used the game's shared font objects (QuestFont, QuestTitleFont,
--- GameFontNormal, ...). Other addons can rewrite those for the whole UI:
--- ElvUI's "Replace Blizzard Fonts" (General > Fonts) gives them its own font
--- face, size and outline, and on the quest parchment that outline turned the
--- black quest text into an unreadable black smudge (ard, #help, Nov 2026).
---
--- So the journal now draws its text with copies that belong to it, made the
--- same way as the game's: one font per alphabet (roman, korean, simplified and
--- traditional Chinese, russian), so Cyrillic and Asian names still find their
--- glyphs. Nobody else knows these names, so no other addon changes them, and
--- with no such addon installed the journal looks exactly as before.
---
--- The values are the game's own: Blizzard_Fonts_Shared (Fonts.xml,
--- FontStyles.xml, GameFontStyles.xml) of the WoW Forever client, read from
--- https://github.com/Gethe/wow-ui-source (branch "forever").
---
--- Each copy is called "ForeverDJ_" .. the game's name, e.g. ForeverDJ_QuestFont,
--- and is used everywhere the journal used the game's one (font strings, button
--- texts). FDJ.OwnFonts(object) swaps a button or check button made from a
--- Blizzard template (UIPanelButtonTemplate, ...) over to the copies too.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 local FDJ = _G.ForeverDungeonJournal_NS
 if type(FDJ) ~= "table" then
@@ -31,8 +31,8 @@ end
 local PREFIX = "ForeverDJ_"
 local ALPHABETS = { "roman", "korean", "simplifiedchinese", "traditionalchinese", "russian" }
 
--- name = { color = { r, g, b } (nil: the font's default), shadow = { x, y, r, g, b } (nil: none),
---          <alphabet> = { file, height, flags [, spacing] } }
+
+
 local FONTS = {
     QuestFont = { color = { 0, 0, 0 }, shadow = nil,
         roman = { "Fonts\\FRIZQT__.TTF", 13, "" },
@@ -58,6 +58,15 @@ local FONTS = {
         simplifiedchinese = { "Fonts\\ARKai_T.ttf", 15, "" },
         traditionalchinese = { "Fonts\\blei00d.TTF", 15, "" },
         russian = { "Fonts\\FRIZQT___CYR.TTF", 12, "" } },
+
+
+
+    GameFontNormalBold = { color = { 1, 0.82, 0 }, shadow = { 1, -1, 0, 0, 0 },
+        roman = { "Fonts\\FRIZQT__.TTF", 12, "OUTLINE" },
+        korean = { "Fonts\\2002.TTF", 12, "OUTLINE" },
+        simplifiedchinese = { "Fonts\\ARKai_T.ttf", 15, "OUTLINE" },
+        traditionalchinese = { "Fonts\\blei00d.TTF", 15, "OUTLINE" },
+        russian = { "Fonts\\FRIZQT___CYR.TTF", 12, "OUTLINE" } },
     GameFontHighlight = { color = { 1, 1, 1 }, shadow = { 1, -1, 0, 0, 0 },
         roman = { "Fonts\\FRIZQT__.TTF", 12, "" },
         korean = { "Fonts\\2002.TTF", 12, "" },
@@ -142,11 +151,11 @@ local FONTS = {
         simplifiedchinese = { "Fonts\\ARKai_T.ttf", 17, "OUTLINE" },
         traditionalchinese = { "Fonts\\blei00d.TTF", 17, "OUTLINE" },
         russian = { "Fonts\\FRIZQT___CYR.TTF", 16, "OUTLINE" } },
-    -- warnfont (2.1.1, M 20 Nov 2026: the red disclaimers were "a little bit
-    -- annoying to read, especially on the steel background"; the outline
-    -- "way too hard to read"; then, picked in /dj warnstyle: "I like this
-    -- warn style. We can keep this"): the journal's fonts, three sizes up
-    -- (the small one two), no outline, no shadow; blue (FDJ.WARNING_COLOR).
+
+
+
+
+
     WarningFont = { color = nil, shadow = nil,
         roman = { "Fonts\\FRIZQT__.TTF", 15, "" },
         korean = { "Fonts\\2002.TTF", 15, "" },
@@ -211,8 +220,8 @@ local function Make(name, def)
         if ok and made then
             font = made
             Style(font, def)
-            -- Each alphabet's member gets the same colour and shadow, and its
-            -- own letter spacing (Korean quest text has 3).
+
+
             if font.GetFontObjectForAlphabet then
                 for _, alphabet in ipairs(ALPHABETS) do
                     local okM, member = pcall(font.GetFontObjectForAlphabet, font, alphabet)
@@ -223,7 +232,7 @@ local function Make(name, def)
     end
 
     if not font and type(CreateFont) == "function" then
-        -- Older clients without font families: one font, the client's alphabet.
+
         local ok, made = pcall(CreateFont, own)
         if ok and made then
             font = made
@@ -242,16 +251,16 @@ end
 
 for name, def in pairs(FONTS) do pcall(Make, name, def) end
 
--- FDJ.OwnFont("GameFontNormal") -> the journal's copy (or the game's font if
--- the copy could not be made).
+
+
 function FDJ.OwnFont(name)
     return FDJ.OwnFontObjects[name] or _G[name]
 end
 
--- warnfont: a red disclaimer's font string -> the warning font (small: the
--- small one) and the warning colour. The font strings are kept (weakly) so a
--- change of style reaches the ones on screen.
-FDJ.WARNING_COLOR = FDJ.WARNING_COLOR or { 0, 0.129, 1 } -- #0021FF
+
+
+
+FDJ.WARNING_COLOR = FDJ.WARNING_COLOR or { 0, 0.129, 1 }
 FDJ.WARNING_COLOR_SMALL = FDJ.WARNING_COLOR_SMALL or { 0, 0.129, 1 }
 FDJ.WarningStrings = FDJ.WarningStrings or setmetatable({}, { __mode = "k" })
 function FDJ.WarningFont(fontString, small)
@@ -263,7 +272,7 @@ function FDJ.WarningFont(fontString, small)
     FDJ.WarningStrings[fontString] = small and "small" or "normal"
 end
 
--- The game's font object -> the journal's copy.
+
 local byBlizzard
 local function OwnFor(fontObject)
     if not fontObject then return nil end
@@ -284,8 +293,8 @@ local function Swap(object, getter, setter)
     if own then pcall(object[setter], object, own) end
 end
 
--- A button, check button, edit box or font string made from a Blizzard
--- template: its texts switch to the journal's copies of the same fonts.
+
+
 function FDJ.OwnFonts(object)
     if type(object) ~= "table" then return object end
     Swap(object, "GetNormalFontObject", "SetNormalFontObject")

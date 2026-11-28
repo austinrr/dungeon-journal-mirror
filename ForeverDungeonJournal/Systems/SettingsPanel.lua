@@ -1,9 +1,9 @@
--- Settings panel (right-click the minimap button, or /dj options).
--- Also owns the two "auto-hide" rules for the dungeon list on the home page.
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
--- Panel text follows the journal's language choice (Auto = client language).
+
 local function L(key, ...)
     if FDJ.L then return FDJ.L(key, ...) end
     return key
@@ -19,9 +19,9 @@ local function Plain(v)
     return v
 end
 
--- ---------------------------------------------------------------------------
--- Auto-hide rules
--- ---------------------------------------------------------------------------
+
+
+
 local function PlayerLevel()
     if type(UnitLevel) ~= "function" then return nil end
     local ok, level = pcall(UnitLevel, "player")
@@ -42,7 +42,7 @@ local function PlayerClass()
     return type(token) == "string" and token:upper() or nil
 end
 
--- "29-38" -> 38
+
 local function MaxDungeonLevel(dungeon)
     local text = dungeon and dungeon.level
     if type(text) ~= "string" then return nil end
@@ -51,9 +51,9 @@ local function MaxDungeonLevel(dungeon)
     return top
 end
 
--- True when the character has handed in every quest of this dungeon that it
--- can actually take (own faction, own class). False when there are none.
--- (questdone: a quest ready to turn in is not done yet.)
+
+
+
 local function AllQuestsDone(dungeon)
     if not FDJ.QuestTurnedIn then return false end
     local faction, class = PlayerFaction(), PlayerClass()
@@ -62,14 +62,14 @@ local function AllQuestsDone(dungeon)
     for _, quest in ipairs(dungeon.quests or {}) do
         local forFaction = quest.faction == nil or quest.faction == "Both"
             or quest.faction == "Neutral" or quest.faction == faction
-        -- otherclass (2.0.8): another class's quest (or a profession the
-        -- character doesn't have) never counts, "Show all ..." on or not
+
+
         local forClass = not quest.classOnly
-            or (class and FDJ.QuestClassMatches(quest.classOnly, class)) -- (twoclasses)
+            or (class and FDJ.QuestClassMatches(quest.classOnly, class))
         local forProfession = not quest.profession
             or not FDJ.PlayerHasProfession or FDJ.PlayerHasProfession(quest.profession)
         if forFaction and forClass and forProfession and not quest.hideFromMainList and not quest.repeatable and quest.id
-            and not (FDJ.IsQuestLost and FDJ.IsQuestLost(quest)) then -- a lost quest doesn't count
+            and not (FDJ.IsQuestLost and FDJ.IsQuestLost(quest)) then
             count = count + 1
             if not FDJ.QuestTurnedIn(quest.id) then return false end
         end
@@ -77,7 +77,7 @@ local function AllQuestsDone(dungeon)
     return count > 0
 end
 
--- "29-38" -> 29, 38; "55+" -> 55, nil
+
 local function DungeonLevelRange(dungeon)
     local text = dungeon and dungeon.level
     if type(text) ~= "string" then return nil end
@@ -88,8 +88,8 @@ local function DungeonLevelRange(dungeon)
     return low, top
 end
 
--- devlevel (dev, not in the release; M 16 Nov 2026): /dj level 1-60 shows
--- the dungeon list as a character of that level sees it.
+
+
 local function ListLevel()
     return FDJ.devLevel or PlayerLevel()
 end
@@ -97,11 +97,11 @@ end
 FDJ.DungeonLevelRange = DungeonLevelRange
 FDJ.ListLevel = ListLevel
 
--- keepshown (2.0.10, M 17 Nov 2026; Discord report by HonestAuntyElle: an
--- auto-hidden dungeon could not be shown again in Hide Dungeons, whatever
--- was clicked): dungeons the player chose to show in Hide Dungeons although
--- an auto-hide option would hide them. Per character, like the dungeons
--- hidden by hand.
+
+
+
+
+
 function FDJ.ShownDungeons()
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     local char = ForeverDungeonJournalCharacterDB
@@ -109,9 +109,9 @@ function FDJ.ShownDungeons()
     return char.shownDungeons
 end
 
--- Which auto-hide option hides a dungeon (its option's label key), or nil.
--- ignoreLevelRange (levelempty, 2.0.9): as if "Show only my level range" were off
--- only (rehide): check just that one option (its saved setting's name)
+
+
+
 local function AutoHideReason(dungeonName, ignoreLevelRange, only)
     local db = Store()
     if not db.autoHideOutleveled and not db.autoHideQuestsDone and not db.onlyMyLevelRange then return nil end
@@ -121,7 +121,7 @@ local function AutoHideReason(dungeonName, ignoreLevelRange, only)
     local dungeon = FDJ.DB and FDJ.DB[dungeonName]
     if not dungeon then return nil end
 
-    -- Never hide the dungeon the player is standing in.
+
     if FDJ.CurrentDungeon then
         local ok, current = pcall(FDJ.CurrentDungeon)
         if ok and current == dungeonName then return nil end
@@ -131,10 +131,10 @@ local function AutoHideReason(dungeonName, ignoreLevelRange, only)
         local level, top = ListLevel(), MaxDungeonLevel(dungeon)
         if level and top and level > top then return "OPT_HIDE_OUTLEVELED" end
     end
-    -- levelrange (2.0.9, M 16 Nov 2026: "players can choose to show only
-    -- dungeons in their range level"): only those whose level range (the
-    -- Looking For Group panel's) has the character's level in it. Off by
-    -- default. A dungeon with no range given always shows.
+
+
+
+
     if db.onlyMyLevelRange and not ignoreLevelRange then
         local level = ListLevel()
         local low, top = DungeonLevelRange(dungeon)
@@ -147,7 +147,7 @@ local function AutoHideReason(dungeonName, ignoreLevelRange, only)
     return nil
 end
 
--- ignoreShown (keepshown): as if the player had not chosen to show it
+
 function FDJ.IsDungeonAutoHidden(dungeonName, ignoreLevelRange, ignoreShown)
     if not ignoreShown and FDJ.ShownDungeons()[dungeonName] then return false end
     return AutoHideReason(dungeonName, ignoreLevelRange) ~= nil
@@ -156,10 +156,10 @@ function FDJ.DungeonAutoHideReason(dungeonName)
     return AutoHideReason(dungeonName)
 end
 
--- rehide (2.0.10, M 17 Nov 2026: "if the auto hide option is untoggled and
--- retoggled, the dungeons get hidden again, like a reset"): turning an
--- auto-hide option on drops the "show it anyway" picks for the dungeons
--- that option hides, so they are hidden again.
+
+
+
+
 local function RehideFor(option)
     local shown = FDJ.ShownDungeons()
     for dungeonName in pairs(shown) do
@@ -167,11 +167,11 @@ local function RehideFor(option)
     end
 end
 
--- ---------------------------------------------------------------------------
--- Panel
--- ---------------------------------------------------------------------------
--- BEGIN tabspage
--- tabspage (2.1.5): Options > Tabs, its title and the four Show options.
+
+
+
+
+
 do
     local strings = {
         enUS = { "Tabs",
@@ -237,9 +237,9 @@ do
         end
     end
 end
--- END tabspage
 
--- pvpicon (2.1.6): Options > Tabs > Show PvP (Systems/PvP.lua)
+
+
 do
     local strings = {
         enUS = { "Show PvP", "Shows the PvP icon on the journal's home page. It stays unticked until level 10; tick it to see the icon sooner. Untick it to hide the icon; you can also right-click the icon and pick Hide." },
@@ -262,7 +262,7 @@ do
     end
 end
 
--- chatlines (2.1.5): Options > General > Hide chat lines
+
 do
     local strings = {
         enUS = { "Hide chat lines", "Hides the lines the journal writes in your chat: the version when you log in, the note when an update is out, the unlock and run messages and the like." },
@@ -290,21 +290,29 @@ local panel
 
 local OPTIONS = {
     { header = "OPT_UI" },
-    -- exporttab (2.1.1, M 20 Nov 2026: "I don't like the export button like
-    -- this. Just make an export tab before Discord"): the character code is
-    -- now on its own Export tab (BuildExportPage), not a button here.
-    -- bindtop (2.0.11): the key bind first on General, so players see it at once.
+
+
+
+
     { keybind = true, label = "OPT_BIND" },
-    -- resizemode (2.0.10, M 17 Nov 2026): opens the journal with a handle on
-    -- each corner to drag it bigger (Systems/Resize.lua)
+
+
     {
         buttons = {
             { label = "OPT_RESIZE", tip = "OPT_RESIZE_TIP",
                 click = function() if FDJ.StartResizeMode then FDJ.StartResizeMode() end end },
-            -- resetsize (M 17 Nov 2026): the normal size and scale again
+
             { label = "OPT_RESET_SIZE", tip = "OPT_RESET_SIZE_TIP",
                 click = function() if FDJ.ResetJournalSize then FDJ.ResetJournalSize() end end },
         },
+    },
+    {
+
+
+        label = "OPT_DARK_MODE",
+        tip = "OPT_DARK_MODE_TIP",
+        get = function() return FDJ.IsDarkMode and FDJ.IsDarkMode() or false end,
+        set = function(on) if FDJ.SetDarkMode then FDJ.SetDarkMode(on) end end,
     },
     {
         label = "OPT_HIDE_ITEM_LINE",
@@ -313,8 +321,8 @@ local OPTIONS = {
         set = function(on) Store().itemSourceStrip = not on end,
     },
     {
-        -- autocompare (2.0.6): the journal's item tooltips compare with the
-        -- equipped item without Shift (off by default: Shift as before).
+
+
         label = "OPT_AUTO_COMPARE",
         tip = "OPT_AUTO_COMPARE_TIP",
         get = function() return Store().autoCompare == true end,
@@ -333,7 +341,7 @@ local OPTIONS = {
         end,
     },
     {
-        -- chatlines (2.1.5): the journal's own lines in the chat (FDJ.ChatLine, Core/Bootstrap.lua)
+
         label = "OPT_HIDE_CHAT",
         tip = "OPT_HIDE_CHAT_TIP",
         get = function() return Store().hideChatLines == true end,
@@ -346,7 +354,7 @@ local OPTIONS = {
         set = function(on) if FDJ.SetLFGButtonHidden then FDJ.SetLFGButtonHidden(on) end end,
     },
     {
-        -- exporttitle (2.1.1): the Export button in the title bar (Systems/BugReport.lua)
+
         label = "OPT_HIDE_EXPORT",
         tip = "OPT_HIDE_EXPORT_TIP",
         get = function() return FDJ.IsExportButtonHidden and FDJ.IsExportButtonHidden() or false end,
@@ -361,15 +369,15 @@ local OPTIONS = {
             if FDJ.RefreshWorldMapOverlay and WorldMapFrame and WorldMapFrame:IsShown() then pcall(FDJ.RefreshWorldMapOverlay) end
         end,
     },
-    -- (useprompt: its Hide option taken out, M 20 Nov 2026: "I don't want it")
-    -- tabspage (2.1.5, M 24 Nov 2026: "the general list is getting too long ...
-    -- another option ... tabs below general, and that's where we have the hide
-    -- sleeping bag, hide onyxia ... all the buttons that change the tabs, the
-    -- icons in our main page"; "change the wording from hide to show ... it's
-    -- easier for new players ... I also don't want to change the settings for
-    -- everybody else"): the home page's icons, each a Show option. Only the
-    -- wording and the tick turn round: what is saved stays as it was (an icon
-    -- hidden before is shown unticked).
+
+
+
+
+
+
+
+
+
     { header = "OPT_TABS" },
     {
         label = "OPT_SHOW_SLEEPING_BAG",
@@ -378,10 +386,10 @@ local OPTIONS = {
         set = function(on) if FDJ.SetSleepingBagHidden then FDJ.SetSleepingBagHidden(not on) end end,
     },
     {
-        -- The Onyxia Attunement icon (Systems/OnyxiaAttunement.lua).
-        -- Unticked (hidden) by default until the character can start the
-        -- chain, then it ticks by itself; any level may tick it to see it
-        -- sooner. Unticking it below the level goes back to that default.
+
+
+
+
         label = "OPT_SHOW_ONYXIA",
         tip = "OPT_SHOW_ONYXIA_TIP",
         get = function() return FDJ.IsOnyxiaIconShown and FDJ.IsOnyxiaIconShown() or false end,
@@ -389,7 +397,7 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- tierhide (2.0.10): the Tier Sets icon (Systems/TierSets.lua)
+
         label = "OPT_SHOW_TIER",
         tip = "OPT_SHOW_TIER_TIP",
         get = function() return not (FDJ.IsTierIconHidden and FDJ.IsTierIconHidden()) end,
@@ -397,8 +405,8 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- pvpicon (2.0.13): the PvP icon on the home page (Systems/PvP.lua);
-        -- tabspage: here, as a Show option (what is saved unchanged)
+
+
         label = "OPT_SHOW_PVP",
         tip = "OPT_SHOW_PVP_TIP",
         get = function() return not (FDJ.IsPvPIconHidden and FDJ.IsPvPIconHidden()) end,
@@ -406,10 +414,10 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- pvpchild (2.1.6, M 25 Nov 2026: "I can't find the option to show
-        -- every battleground. Just put it ... as a children option of show
-        -- PvP, just below"): under Show PvP, indented, greyed out while the
-        -- PvP icon is not shown (was in a PvP section of its own).
+
+
+
+
         label = "OPT_PVP_SHOW_ALL",
         tip = "OPT_PVP_SHOW_ALL_TIP",
         child = "OPT_SHOW_PVP",
@@ -431,10 +439,10 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- Same switch as the WoW Forever emblem at the top left of the
-        -- dungeon list (Systems/ForeverFilter.lua), for players who clicked
-        -- the emblem by mistake and can't find the other dungeons. Off by
-        -- default.
+
+
+
+
         label = "OPT_FOREVER_ONLY",
         tip = "OPT_FOREVER_ONLY_TIP",
         get = function() return FDJ.IsForeverOnly and FDJ.IsForeverOnly() or false end,
@@ -442,7 +450,7 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- levelrange (2.0.9): the game's "Show All Level Ranges" turned round
+
         label = "OPT_MY_LEVEL_RANGE",
         tip = "OPT_MY_LEVEL_RANGE_TIP",
         get = function() return Store().onlyMyLevelRange == true end,
@@ -479,8 +487,8 @@ local OPTIONS = {
         set = function(on) Store().hideDoneTick = on or nil end,
         refreshHome = true,
     },
-    -- questspage (2.0.8, M 15 Nov 2026): the quest options on a page of
-    -- their own, after the Dungeon list (moved from it, unchanged).
+
+
     { header = "QUESTS" },
     {
         label = "OPT_SHOW_ALL_CLASS",
@@ -503,9 +511,9 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- questrowtrial (2.0.8): off: a dungeon's quest list shows the
-        -- character's faction only, its crest locked at the top (every
-        -- dungeon: FDJ.QUESTROW_ALL).
+
+
+
         label = "OPT_BOTH_FACTIONS",
         tip = "OPT_BOTH_FACTIONS_TIP",
         get = function() return Store().showBothFactions == true end,
@@ -515,8 +523,8 @@ local OPTIONS = {
         end,
     },
     {
-        -- chainglowoff (2.0.8, M 15 Nov 2026): no golden glow on a quest
-        -- whose chain is done ("Pick it up" stays). Off by default.
+
+
         label = "OPT_HIDE_CHAIN_GLOW",
         tip = "OPT_HIDE_CHAIN_GLOW_TIP",
         get = function() return Store().hideChainGlow == true end,
@@ -526,9 +534,9 @@ local OPTIONS = {
         end,
     },
     {
-        -- hideunavailable (2.0.11, M 18 Nov 2026): the quests marked
-        -- Unavailable are left out of the quest lists. Off by default; turns
-        -- itself off when an update makes one of them available again.
+
+
+
         label = "OPT_HIDE_UNAVAILABLE",
         tip = "OPT_HIDE_UNAVAILABLE_TIP",
         get = function() return Store().hideUnavailableQuests == true end,
@@ -540,10 +548,10 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- hidedone (2.1.3, M 21 Nov 2026: "the hide completed quest ... needed
-        -- to be in the option panel under quests"): the quests handed in are
-        -- left out of a dungeon's quest list (Core/Journal.lua); the dungeon
-        -- list on the main page still counts them. Off by default.
+
+
+
+
         label = "OPT_HIDE_DONE_QUESTS",
         tip = "OPT_HIDE_DONE_QUESTS_TIP",
         get = function() return Store().hideDoneQuests == true end,
@@ -552,8 +560,19 @@ local OPTIONS = {
             if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
         end,
     },
-    -- lootoptions (2.0.11, M 18 Nov 2026: "add a new Loot section in the
-    -- option panel, the options: Hide drop rates, Hide quest item drops").
+    {
+
+
+        label = "OPT_HIDE_BREADCRUMBS",
+        tip = "OPT_HIDE_BREADCRUMBS_TIP",
+        get = function() return Store().hideBreadcrumbs == true end,
+        set = function(on)
+            Store().hideBreadcrumbs = on or nil
+            if FDJ.ScheduleQuestRefresh then pcall(FDJ.ScheduleQuestRefresh) end
+        end,
+    },
+
+
     { header = "OPT_LOOT" },
     {
         label = "OPT_HIDE_QUEST_DROPS",
@@ -564,22 +583,22 @@ local OPTIONS = {
             if FDJ.RefreshLootNow then pcall(FDJ.RefreshLootNow) end
         end,
     },
-    -- pvpicon (2.0.13, M 18 Nov 2026: "an option in the panel called PvP
-    -- that says show every battleground"): moved under Tabs > Show PvP
-    -- (pvpchild, 2.1.6); the PvP section had nothing else.
-    -- The on-screen dungeon tracker (Systems/RunLogUI.lua).
+
+
+
+
     { header = "OPT_TRACKER" },
     {
-        -- locktracker (2.0.11, M 18 Nov 2026): the tracker can't be moved, no
-        -- resize corner, no X; right-click still opens Options.
+
+
         label = "OPT_TRACK_LOCK",
         tip = "OPT_TRACK_LOCK_TIP",
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("lock") or false end,
         set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("lock", on) end end,
     },
     {
-        -- hidetracker (2.0.4): ticked by the tracker's X, unticked by
-        -- "/dj tracker"; unticking it here shows the tracker again.
+
+
         label = "OPT_TRACK_HIDE",
         tip = "OPT_TRACK_HIDE_TIP",
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hide") or false end,
@@ -616,7 +635,7 @@ local OPTIONS = {
         set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideGold", on) end end,
     },
     {
-        -- lootname (2.1.4): the coin only, without the items' vendor value
+
         label = "OPT_TRACK_HIDE_VENDOR",
         tip = "OPT_TRACK_HIDE_VENDOR_TIP",
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideVendor") or false end,
@@ -628,10 +647,10 @@ local OPTIONS = {
         get = function() return FDJ.TrackerOption and FDJ.TrackerOption("hideBosses") or false end,
         set = function(on) if FDJ.SetTrackerOption then FDJ.SetTrackerOption("hideBosses", on) end end,
     },
-    -- RPG Mode's achievement popups (Systems/RPGMode.lua).
+
     { header = "OPT_RPG_PAGE" },
     {
-        -- the same switch as RPG Mode on the Dungeon list page
+
         label = "OPT_RPG_ENABLE",
         tip = "OPT_RPG_MODE_TIP",
         get = function() return FDJ.IsRPGMode and FDJ.IsRPGMode() or false end,
@@ -639,8 +658,8 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- Off: each character keeps its own unlocks. On: every character's
-        -- unlocks are shared by the whole account (Systems/RPGMode.lua).
+
+
         label = "OPT_RPG_ACCOUNT",
         tip = "OPT_RPG_ACCOUNT_TIP",
         get = function() return FDJ.RPGOption and FDJ.RPGOption("accountWide") or false end,
@@ -648,8 +667,8 @@ local OPTIONS = {
         refreshHome = true,
     },
     {
-        -- showquests (2.0.16): every dungeon's quests shown in RPG Mode, the
-        -- cards with their quest count, no quest popups (Systems/RPGMode.lua).
+
+
         label = "OPT_RPG_SHOW_QUESTS",
         tip = "OPT_RPG_SHOW_QUESTS_TIP",
         get = function() return FDJ.RPGOption and FDJ.RPGOption("showQuests") or false end,
@@ -683,7 +702,7 @@ local OPTIONS = {
         set = function(v) if FDJ.SetRPGOption then FDJ.SetRPGOption("volume", v) end end,
     },
     {
-        -- Moving RPG Mode progress to another computer (Systems/ProgressTransfer.lua).
+
         buttons = {
             { label = "OPT_RPG_EXPORT", tip = "OPT_RPG_EXPORT_TIP",
                 click = function() if FDJ.ShowProgressExport then FDJ.ShowProgressExport() end end },
@@ -693,15 +712,15 @@ local OPTIONS = {
     },
 }
 
--- ---------------------------------------------------------------------------
--- Key binding button (same binding as Key Bindings > AddOns > Dungeon Journal)
--- ---------------------------------------------------------------------------
+
+
+
 local BINDING = "FOREVERDUNGEONJOURNAL_TOGGLE"
 local MODIFIER_KEYS = { LSHIFT = true, RSHIFT = true, LCTRL = true, RCTRL = true, LALT = true, RALT = true, LMETA = true, RMETA = true }
 
-local function Say(text) FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end -- (chatlines)
+local function Say(text) FDJ.ChatLine("|cffd8a83cDungeonJournal:|r " .. text) end
 
--- "CTRL-SHIFT-L" -> "Ctrl-Shift-L" (the client's own abbreviation shows "c-L").
+
 local MODIFIER_NAMES = { CTRL = "Ctrl", SHIFT = "Shift", ALT = "Alt", META = "Cmd" }
 local function PrettyKey(key)
     if not key or key == "" then return nil end
@@ -741,8 +760,8 @@ local function CreateKeybindRow(parent, option, y)
     label:SetText(L(option.label))
     panel.texts[#panel.texts + 1] = { label, option.label }
 
-    -- Same look as the game's own key binding buttons (Options > Keybindings):
-    -- near-black fill, thin grey rounded edge, white key text, grey "Not Bound".
+
+
     local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
     button:SetSize(156, 21)
     button:SetPoint("TOPLEFT", parent, "TOPLEFT", 252, y)
@@ -767,7 +786,7 @@ local function CreateKeybindRow(parent, option, y)
     button.text:SetWordWrap(false)
 
     local capturing = false
-    local pending -- key combination waiting for its key to be released
+    local pending
     local function Refresh()
         local bound = BindingText()
         local text = capturing and L("OPT_PRESS_KEY") or bound or L("OPT_NOT_BOUND")
@@ -817,16 +836,16 @@ local function CreateKeybindRow(parent, option, y)
         if IsShiftKeyDown and IsShiftKeyDown() then combo = combo .. "SHIFT-" end
         if IsAltKeyDown and IsAltKeyDown() then combo = combo .. "ALT-" end
         combo = combo .. key
-        -- Never take over a key another action already uses (movement,
-        -- action bars, ...): SetBinding would silently replace it.
+
+
         local current = GetBindingAction and GetBindingAction(combo)
         if current and current ~= "" and current ~= BINDING then
             Say(L("OPT_KEY_TAKEN", PrettyKey(combo)))
             Stop()
             return
         end
-        -- Bind only once the key is let go. Binding it while it is still
-        -- held makes that same key press open the journal straight away.
+
+
         pending = { combo = combo, key = key }
     end)
     button:SetScript("OnKeyUp", function(_, key)
@@ -844,12 +863,12 @@ local function CreateKeybindRow(parent, option, y)
         GameTooltip:Show()
     end)
     button:SetScript("OnLeave", function() if GameTooltip then GameTooltip:Hide() end end)
-    -- Never leave a hidden panel holding the keyboard.
+
     button:SetScript("OnHide", Stop)
 
-    -- Giving a frame an OnKeyDown script switches its keyboard on, and it
-    -- then swallows every key (no movement) until the panel closes. Keep it
-    -- off until the button is clicked to record a key.
+
+
+
     button:EnableKeyboard(false)
     if button.SetPropagateKeyboardInput then button:SetPropagateKeyboardInput(true) end
     button.Refresh = Refresh
@@ -865,19 +884,19 @@ local function Version()
     return ""
 end
 
--- Built after the game's own Options window (WoW Forever):
---   * translucent dark frame with a thin bronze edge and a slim title bar
---     (small gold title, red X);
---   * "Game" / "AddOns"-style tabs over a bronze-edged content box;
---   * on the Options tab, a category list on the left (dark header bar with
---     white text, gold entries, the open one underlined in gold) and the
---     page on the right: big white title, gold rule, gold labels with their
---     boxes in a column; a page with more rows than fit scrolls, with the
---     game's thin scroll bar on its right (2.0.10);
---   * no Close button at the bottom (2.0.9): the red X closes it.
+
+
+
+
+
+
+
+
+
+
 local PANEL_W, PANEL_H = 660, 430
 local SIDEBAR_W = 178
-local LABEL_X, BOX_X = 34, 300 -- inside a page: label left edge, box column
+local LABEL_X, BOX_X = 34, 300
 
 local BRONZE = { 0.50, 0.39, 0.22 }
 local function Edge(frame, size, alpha)
@@ -897,7 +916,7 @@ local function Line(parent, r, g, b, a)
     return t
 end
 
--- Gold fade used under the open category ("Controls" in the game).
+
 local function GoldFade(tex, fromAlpha, toAlpha)
     tex:SetTexture("Interface\\Buttons\\WHITE8X8")
     local ok = pcall(function()
@@ -906,8 +925,8 @@ local function GoldFade(tex, fromAlpha, toAlpha)
     if not ok then tex:SetVertexColor(1.00, 0.78, 0.10, (fromAlpha + toAlpha) / 2) end
 end
 
--- Pixel-exact frames built from 1px lines (colours sampled from the game's
--- own Options window). layers: outermost first, each { r, g, b } in 0-255.
+
+
 local function LinedFrame(frame, layers, drawLayer, openBottom)
     for i, c in ipairs(layers) do
         local d = i - 1
@@ -931,7 +950,7 @@ local function LinedFrame(frame, layers, drawLayer, openBottom)
     end
 end
 
--- Window edge: dark rim, two gold lines, dark, bronze, brown, black.
+
 local WINDOW_EDGE = {
     { 51, 31, 14 }, { 182, 150, 104 }, { 177, 150, 109 }, { 49, 31, 16 },
     { 112, 76, 38 }, { 59, 41, 25 }, { 10, 7, 6 },
@@ -939,8 +958,8 @@ local WINDOW_EDGE = {
 local BOX_EDGE = { { 100, 76, 60 }, { 64, 47, 38 } }
 local TAB_EDGE = { { 122, 92, 72 }, { 96, 72, 58, 0.8 } }
 
--- Borrow the real frame art from the game's own Options window
--- (SettingsPanel.NineSlice): same corners, edges and title bar.
+
+
 local NINE = { "TopLeftCorner", "TopRightCorner", "BottomLeftCorner", "BottomRightCorner",
     "TopEdge", "BottomEdge", "LeftEdge", "RightEdge", "Center" }
 
@@ -982,7 +1001,7 @@ local function CopyGameFrameArt(dst)
         end
     end
     if not (made.TopLeftCorner and made.TopEdge and made.LeftEdge) then holder:Hide() return false end
-    -- Same anchors as the game uses (offsets included), mapped onto our frame.
+
     for key, t in pairs(made) do
         local src = nine[key]
         for i = 1, src:GetNumPoints() do
@@ -996,8 +1015,8 @@ local function CopyGameFrameArt(dst)
     return true
 end
 
--- One-time record of how the game's Options window is built (pieces, atlases,
--- sizes), saved with the addon's settings so the look can be matched exactly.
+
+
 local function DumpGameOptions()
     local sp = _G.SettingsPanel
     if not sp or not ForeverDungeonJournalDB then return end
@@ -1046,8 +1065,8 @@ local function DumpGameOptions()
     ForeverDungeonJournalDB.fdjOptionsDump = out
 end
 
--- Gold band that fades out on both sides (peak at `split` of the width),
--- like the highlight and rules in the game's Options window.
+
+
 local function GoldBand(parent, layer, peak, split)
     local f = CreateFrame("Frame", nil, parent)
     local left = f:CreateTexture(nil, layer or "ARTWORK")
@@ -1074,7 +1093,7 @@ local function PageTitle(page, key)
     return -66
 end
 
--- Grey band behind a row while hovered, as in the game's Options window.
+
 local function RowHover(page, y, height)
     local band = page:CreateTexture(nil, "BACKGROUND", nil, 1)
     band:SetPoint("TOPLEFT", 10, y + 2)
@@ -1088,11 +1107,11 @@ end
 
 local function CreateOptionRow(page, option, y)
     local label = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
-    local indent = option.child and 22 or 0 -- pvpchild: an option under another, indented
+    local indent = option.child and 22 or 0
     label:SetPoint("TOPLEFT", LABEL_X + indent, y - 7)
     label:SetWidth(BOX_X - LABEL_X - indent - 12)
     if option.child then
-        -- a small elbow from the option above
+
         local down = page:CreateTexture(nil, "ARTWORK")
         down:SetColorTexture(0.57, 0.43, 0.20, 0.8)
         down:SetSize(1, 12)
@@ -1107,18 +1126,18 @@ local function CreateOptionRow(page, option, y)
     panel.texts[#panel.texts + 1] = { label, option.label }
 
     local check = CreateFrame("CheckButton", nil, page, "UICheckButtonTemplate")
-    FDJ.OwnFonts(check) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(check)
     check:SetSize(30, 30)
     check:SetPoint("TOPLEFT", BOX_X, y)
     check.option = option
-    check.label = label -- pvpchild: greyed with the box
-    -- The label counts as part of the box: clicking or hovering it works too.
+    check.label = label
+
     check:SetHitRectInsets(-(BOX_X - LABEL_X), 0, 0, 0)
     check:SetScript("OnClick", function(self)
         local on = self:GetChecked() and true or false
         pcall(self.option.set, on)
         if self.option.refreshHome and FDJ.RefreshHomeCards then pcall(FDJ.RefreshHomeCards) end
-        -- a switch shown on two pages (RPG Mode) ticks on both
+
         if FDJ.RefreshSettingsChecks then pcall(FDJ.RefreshSettingsChecks) end
     end)
     local band = RowHover(page, y)
@@ -1133,14 +1152,14 @@ local function CreateOptionRow(page, option, y)
     end)
     check:SetScript("OnLeave", function(self)
         band:Hide()
-        if self.fdjOff then label:SetTextColor(0.50, 0.50, 0.50) else label:SetTextColor(1.00, 0.82, 0.00) end -- pvpchild
+        if self.fdjOff then label:SetTextColor(0.50, 0.50, 0.50) else label:SetTextColor(1.00, 0.82, 0.00) end
         if GameTooltip then GameTooltip:Hide() end
     end)
     panel.checks[#panel.checks + 1] = check
 end
 
--- A row with a slider (0-100%), e.g. Options > RPG Mode > Achievement
--- Popup sound. Letting go of it plays a sample (the RPG fanfare).
+
+
 local function CreateSliderRow(page, option, y)
     local label = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     label:SetPoint("TOPLEFT", LABEL_X, y - 7)
@@ -1194,12 +1213,12 @@ local function CreateSliderRow(page, option, y)
     panel.sliders[#panel.sliders + 1] = slider
 end
 
--- A row of buttons, e.g. Options > RPG Mode > Export Progress / Import Progress.
+
 local function CreateButtonsRow(page, option, y)
     local x = LABEL_X
     for _, spec in ipairs(option.buttons) do
         local button = CreateFrame("Button", nil, page, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(button) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(button)
         button:SetSize(spec.width or 150, 24)
         button:SetPoint("TOPLEFT", page, "TOPLEFT", x, y - 6)
         button:SetText(L(spec.label))
@@ -1254,8 +1273,8 @@ local function BuildDiscordPage(page)
     end)
     link:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
 
-    -- Never take the keyboard by itself (it would block key bindings);
-    -- clicking the box selects the link for Ctrl+C.
+
+
     page:SetScript("OnShow", function()
         link:SetText(FDJ.DISCORD_LINK or "")
         link:ClearFocus()
@@ -1264,13 +1283,13 @@ local function BuildDiscordPage(page)
     end)
 end
 
--- exporttab (2.1.1, M 20 Nov 2026: "make an export tab before Discord at
--- the top ... everything is going to be in that tab"): what the /dj export
--- window shows, on the Options' own tab: the character's name and quests
--- done, the code (one line; a click selects all of it for Ctrl+C), the
--- website's address to paste it at, and how to copy it. The code is made
--- again each time the tab opens. Like the Discord tab, it never takes the
--- keyboard by itself (it would block key bindings).
+
+
+
+
+
+
+
 local function BuildExportPage(page)
     local y = PageTitle(page, "OPT_EXPORT")
     local info = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
@@ -1293,7 +1312,7 @@ local function BuildExportPage(page)
     code:SetScript("OnEditFocusLost", function(self) self:HighlightText(0, 0) end)
     code:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
     code:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
-    -- Typing into it would only corrupt the code, so put it straight back.
+
     code:SetScript("OnTextChanged", function(self, byUser)
         if byUser then
             self:SetText(page.code or "")
@@ -1315,10 +1334,10 @@ local function BuildExportPage(page)
         codeBg:SetBackdropBorderColor(0.28, 0.28, 0.28, 1)
     end
 
-    -- exportgo (2.1.1, M 20 Nov 2026: "the export link ... send the user to
-    -- the export option page, with the usual highlight on the code"): the
-    -- gold band that pulses on an option row opened from elsewhere
-    -- (PulseRow), here on the code's row; FDJ.OpenExportTab asks for it.
+
+
+
+
     local glow = page:CreateTexture(nil, "BACKGROUND", nil, 2)
     glow:SetPoint("LEFT", page, "LEFT", 10, 0)
     glow:SetPoint("RIGHT", page, "RIGHT", -10, 0)
@@ -1343,7 +1362,7 @@ local function BuildExportPage(page)
         pulse:Play()
     end
 
-    -- "Paste the code here:" and the website's address (a click selects it).
+
     local siteLabel = page:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormal")
     siteLabel:SetPoint("TOPLEFT", code, "BOTTOMLEFT", -6, -26)
     panel.texts[#panel.texts + 1] = { siteLabel, "EXPORT_SITE" }
@@ -1371,10 +1390,10 @@ local function BuildExportPage(page)
     copy:SetTextColor(0.75, 0.72, 0.66)
     panel.texts[#panel.texts + 1] = { copy, "EXPORT_COPY" }
 
-    -- exporthidetab (2.1.1, M 20 Nov 2026: "at the bottom an option to toggle
-    -- on and off called hide export button on main page ... I'm always going
-    -- to give them options to use their UI as they wish"): the same switch as
-    -- General's, at the bottom of this tab, under a gold rule.
+
+
+
+
     local bottom = CreateFrame("Frame", nil, page)
     bottom:SetPoint("BOTTOMLEFT", 0, 8)
     bottom:SetPoint("BOTTOMRIGHT", 0, 8)
@@ -1390,10 +1409,10 @@ local function BuildExportPage(page)
         set = function(on) if FDJ.SetExportButtonHidden then FDJ.SetExportButtonHidden(on) end end,
     }, -4)
 
-    -- exportlag (2.1.1, M 20 Nov 2026: "when I click on the export tab ...
-    -- there is some lag"): the tab opens at once and the code is made the
-    -- next moment (a quicker compression too, Systems/CharacterExport.lua).
-    -- Leaving the tab before then makes nothing.
+
+
+
+
     local function Fill()
         local ok, text, questCount, name = false, nil, nil, nil
         if FDJ.BuildExportCode then ok, text, questCount, name = pcall(FDJ.BuildExportCode) end
@@ -1405,12 +1424,12 @@ local function BuildExportPage(page)
             info:SetText(L("EXPORT_ERROR"))
         end
         code:SetText(page.code)
-        if code.SetCursorPosition then code:SetCursorPosition(0) end -- show the start
-        if page.pulseWanted then -- exportgo: opened from the Export button
+        if code.SetCursorPosition then code:SetCursorPosition(0) end
+        if page.pulseWanted then
             page.pulseWanted = nil
-            -- pulseonce (2.1.1, M 20 Nov 2026: "only once, not every time we
-            -- open it or we click on it"): the first time only, for good
-            -- (once per account, exportPulseSeen).
+
+
+
             local db = ForeverDungeonJournalDB
             if type(db) == "table" and not db.exportPulseSeen then
                 db.exportPulseSeen = true
@@ -1436,20 +1455,20 @@ local function BuildExportPage(page)
     page:SetScript("OnHide", function() page.fillToken = (page.fillToken or 0) + 1 end)
 end
 
--- BEGIN scrollpages (2.0.10)
--- An options page whose rows don't fit (General with the key bind, RPG Mode
--- with the slider and the Export / Import buttons) scrolls: mouse wheel, or
--- the scroll bar on the page's right. The bar is the game's own (Options >
--- Game: thin track, arrows at both ends, bronze thumb, its sounds) and only
--- shows when the page has more rows than fit. The page title and its gold
--- rule stay put; only the rows move.
-local SCROLL_TOP = 58       -- just under the page title's gold rule (-52)
-local SCROLL_BOTTOM = 6     -- just above the box's bottom edge
-local SCROLL_BAR_SPACE = 24 -- right of the rows, for the bar
-local SCROLL_STEP = 35      -- one wheel notch: one row
 
--- The game's scroll bar (MinimalScrollBar), wired to the scroll frame the
--- way the game does it (ScrollUtil.InitScrollFrameWithScrollBar).
+
+
+
+
+
+
+local SCROLL_TOP = 58
+local SCROLL_BOTTOM = 6
+local SCROLL_BAR_SPACE = 24
+local SCROLL_STEP = 35
+
+
+
 local function GameScrollBar(page, scroll)
     if not (ScrollUtil and ScrollUtil.InitScrollFrameWithScrollBar) then return nil end
     local ok, bar = pcall(CreateFrame, "EventFrame", nil, page, "MinimalScrollBar")
@@ -1464,8 +1483,8 @@ local function GameScrollBar(page, scroll)
     return bar
 end
 
--- Clients without it: a plain bar in the same colours (dark track, bronze
--- thumb), same mouse wheel.
+
+
 local function PlainScrollBar(page, scroll)
     local bar = CreateFrame("Slider", nil, page)
     bar:SetOrientation("VERTICAL")
@@ -1502,8 +1521,8 @@ local function PlainScrollBar(page, scroll)
     return bar
 end
 
--- The page's rows go on the frame this returns (page.content). y for the
--- first row: the same spot on screen as before the pages scrolled.
+
+
 local function ScrollPage(page, titleY)
     local scroll = CreateFrame("ScrollFrame", nil, page)
     scroll:SetPoint("TOPLEFT", 0, -SCROLL_TOP)
@@ -1518,7 +1537,7 @@ local function ScrollPage(page, titleY)
     local bar = GameScrollBar(page, scroll) or PlainScrollBar(page, scroll)
     page.scrollBar = bar
 
-    -- The bar only when the rows don't all fit.
+
     local function Refresh()
         if scroll.UpdateScrollChildRect then scroll:UpdateScrollChildRect() end
         local view = scroll:GetHeight() or 0
@@ -1537,7 +1556,7 @@ local function ScrollPage(page, titleY)
     return content, titleY + SCROLL_TOP
 end
 
--- Bring an option's row into view on its page (Options opened at a line).
+
 local function ScrollRowIntoView(row)
     local content = row and row:GetParent()
     local scroll = content and content.fdjScroll
@@ -1558,7 +1577,7 @@ local function ScrollRowIntoView(row)
     target = math.max(0, math.min(range, target))
     if math.abs(target - current) > 0.5 then scroll:SetVerticalScroll(target) end
 end
--- END scrollpages
+
 
 local function CreatePanel()
     panel = CreateFrame("Frame", "ForeverDungeonJournalSettings", UIParent, "BackdropTemplate")
@@ -1572,8 +1591,8 @@ local function CreatePanel()
     panel:RegisterForDrag("LeftButton")
     panel:SetScript("OnDragStart", panel.StartMoving)
     panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
-    -- Drag the bottom-right corner to make the whole panel bigger or smaller
-    -- (text included: it scales, it does not just add empty space). Kept.
+
+
     local function Scale() return (ForeverDungeonJournalDB and ForeverDungeonJournalDB.optionsScale) or 1 end
     panel:SetScale(Scale())
     local function PinTopLeft(newScale)
@@ -1628,7 +1647,7 @@ local function CreatePanel()
 
     panel.checks, panel.keybinds, panel.texts = {}, {}, {}
 
-    -- Slim title bar.
+
     local bar = panel:CreateTexture(nil, "BACKGROUND", nil, 2)
     bar:SetPoint("TOPLEFT", 7, -7)
     bar:SetPoint("TOPRIGHT", -7, -7)
@@ -1660,10 +1679,10 @@ local function CreatePanel()
     version:SetPoint("LEFT", panel, "TOPLEFT", 12, -12)
     version:SetText(Version())
     local close = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
-    close:SetPoint("CENTER", panel, "TOPRIGHT", -13, -13) -- on the frame corner, like the game's
+    close:SetPoint("CENTER", panel, "TOPRIGHT", -13, -13)
     close:SetScript("OnClick", function() panel:Hide() end)
 
-    -- Content box (the tabs sit on its top edge).
+
     local box = CreateFrame("Frame", nil, panel, "BackdropTemplate")
     box:SetPoint("TOPLEFT", 14, -66)
     box:SetPoint("BOTTOMRIGHT", -14, 44)
@@ -1677,7 +1696,7 @@ local function CreatePanel()
     box:SetBackdropBorderColor(0.50, 0.39, 0.31, 1)
     box:SetFrameLevel(panel:GetFrameLevel() + 4)
 
-    -- ---------------------------------------------------- tab 1: options
+
     local optionsView = CreateFrame("Frame", nil, box)
     optionsView:SetAllPoints(box)
     local divider = Line(optionsView, BRONZE[1], BRONZE[2], BRONZE[3], 0.8)
@@ -1697,7 +1716,7 @@ local function CreatePanel()
 
     local pages, entries = {}, {}
     local page, y
-    local rows, bottom -- scrollpages (2.0.10): the page's scrolling part, where its rows go; its last row's bottom
+    local rows, bottom
     for _, option in ipairs(OPTIONS) do
         if option.header then
             page = CreateFrame("Frame", nil, optionsView)
@@ -1727,7 +1746,7 @@ local function CreatePanel()
             bottom = y - 32
             y = y - 35
         end
-        -- the scrolling part is as tall as the page's rows reach (+ a little air)
+
         if rows and bottom then rows:SetHeight(math.max(1, -bottom + 4)) end
     end
 
@@ -1762,27 +1781,27 @@ local function CreatePanel()
         e:SetScript("OnLeave", function(self) if panel.selectedPage ~= i then self.text:SetTextColor(1, 0.82, 0) end end)
         entries[i] = e
     end
-    -- Underline only on the open entry.
+
     local baseSelect = SelectPage
     SelectPage = function(index)
         baseSelect(index)
         for i, e in ipairs(entries) do e.underline:SetShown(i == index) end
     end
 
-    -- ---------------------------------------------------- tab 2: Export
-    -- exporttab (2.1.1): the character code, before Discord (BuildExportPage)
+
+
     local exportView = CreateFrame("Frame", nil, box)
     exportView:SetAllPoints(box)
     exportView:Hide()
     BuildExportPage(exportView)
-    panel.exportView, panel.exportTab = exportView, 2 -- exportgo (FDJ.OpenExportTab)
+    panel.exportView, panel.exportTab = exportView, 2
 
-    -- ---------------------------------------------------- tab 3: Discord
+
     local discordView = CreateFrame("Frame", nil, box)
     discordView:SetAllPoints(box)
     BuildDiscordPage(discordView)
 
-    -- ------------------------------------------------------------- tabs
+
     local views = { optionsView, exportView, discordView }
     local tabKeys = { "OPT_TAB_OPTIONS", "RUNLOG_EXPORT", "OPT_DISCORD" }
     panel.tabs = {}
@@ -1803,8 +1822,8 @@ local function CreatePanel()
         tab.fill:SetPoint("TOPLEFT", 2, -2)
         tab.fill:SetPoint("BOTTOMRIGHT", -2, 0)
         tab.fill:SetTexture("Interface\\Buttons\\WHITE8X8")
-        -- Options_Tab_* / Options_Tab_Active_* are the art of the game's
-        -- "Game" / "AddOns" tabs; fall back to drawn lines without them.
+
+
         local hasAtlas = C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo("Options_Tab_Middle")
         if hasAtlas then
             tab.fill:SetAlpha(0)
@@ -1848,14 +1867,14 @@ local function CreatePanel()
         end
     end
 
-    -- BEGIN optsearch
+
     do
-        -- optsearch (2.1.1, M 20 Nov 2026: "top right of the options, add a little
-        -- search that people can type in their option and just find it"): a search
-        -- box at the top right. Typing lists every option whose name or tip has
-        -- each word typed (any case), under its section's name, each with its own
-        -- box to tick (the same option as on its page). Emptied (the X, or a
-        -- section clicked on the left), the pages are back as they were.
+
+
+
+
+
+
         local results = CreateFrame("Frame", nil, optionsView)
         results:SetPoint("TOPLEFT", SIDEBAR_W + 1, 0)
         results:SetPoint("BOTTOMRIGHT", 0, 0)
@@ -1866,8 +1885,8 @@ local function CreatePanel()
         panel.texts[#panel.texts + 1] = { noneFound, "OPT_SEARCH_NONE" }
         noneFound:Hide()
 
-        -- Lower case, letters with accents and Cyrillic too (string.lower is
-        -- A-Z only); colour codes out.
+
+
         local function Fold(text)
             local s = tostring(text or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):lower()
             s = s:gsub("\195([\128-\158])", function(c)
@@ -1891,7 +1910,7 @@ local function CreatePanel()
             return Fold(table.concat(parts, " "))
         end
 
-        -- One row per option found, made the first time it is found.
+
         local mirrors, sectionNames = {}, {}
         local function Mirror(option)
             local holder = mirrors[option]
@@ -1993,7 +2012,7 @@ local function CreatePanel()
             RefreshValues()
         end
 
-        -- The box, in the journal's own search box style (smaller).
+
         local search = CreateFrame("EditBox", "ForeverDungeonJournalSettingsSearch", panel, "BackdropTemplate")
         search:SetSize(176, 22)
         search:SetPoint("BOTTOMRIGHT", box, "TOPRIGHT", -4, 4)
@@ -2043,7 +2062,7 @@ local function CreatePanel()
         search:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
         panel.searchBox = search
 
-        -- A section clicked on the left: its page, the search emptied.
+
         for _, e in ipairs(entries) do
             e:HookScript("OnClick", function()
                 if searching then
@@ -2052,16 +2071,16 @@ local function CreatePanel()
                 end
             end)
         end
-        -- Closed: the search is emptied (Options opens on its pages again).
+
         panel:HookScript("OnHide", function()
             search:ClearFocus()
             if (search:GetText() or "") ~= "" then search:SetText("") end
         end)
     end
-    -- END optsearch
 
-    -- noclose (2.0.9): no Close button at the bottom; the X in the title bar
-    -- (and Esc) close the panel.
+
+
+
 
     panel:SetScript("OnShow", function(self)
         for _, entry in ipairs(self.texts) do entry[1]:SetText(L(entry[2])) end
@@ -2079,8 +2098,8 @@ local function CreatePanel()
     panel:Hide()
 end
 
--- Ticks follow changes made elsewhere while the panel is open (the WoW
--- Forever emblem).
+
+
 function FDJ.RefreshSettingsChecks()
     if not (panel and panel.checks) then return end
     local on = {}
@@ -2089,7 +2108,7 @@ function FDJ.RefreshSettingsChecks()
         check:SetChecked(ok and value or false)
         on[check.option.label] = ok and value and true or false
     end
-    -- pvpchild: an option under another works only while that one is ticked
+
     for _, check in ipairs(panel.checks) do
         local parent = check.option.child
         if parent and on[parent] ~= nil then
@@ -2107,12 +2126,12 @@ function FDJ.ToggleSettingsPanel()
     if panel:IsShown() then panel:Hide() else panel:Show() end
 end
 
--- ---------------------------------------------------------------------------
--- AddOn drawer (the addon list button next to the minimap on newer clients,
--- where Leatrix and others appear). Wired up in the .toc; clients without the
--- drawer simply ignore those lines.
---   left-click: open / close the journal     right-click: options
--- ---------------------------------------------------------------------------
+
+
+
+
+
+
 function ForeverDungeonJournal_OnAddonCompartmentClick(_, mouseButton)
     if mouseButton == "RightButton" then
         if FDJ.ToggleSettingsPanel then FDJ.ToggleSettingsPanel() end
@@ -2134,9 +2153,9 @@ function ForeverDungeonJournal_OnAddonCompartmentLeave()
     if GameTooltip then GameTooltip:Hide() end
 end
 
--- BEGIN rpgintro
--- Open the options on the page that holds one option and make its row pulse
--- gold a few times (the RPG Mode note's "Disable in Options" button).
+
+
+
 local function PulseRow(check)
     if not check.fdjPulse then
         local page = check:GetParent()
@@ -2165,9 +2184,9 @@ local function PulseRow(check)
     check.fdjPulse:Play()
 end
 
--- exportgo (2.1.1, M 20 Nov 2026: "the export link to just send the user to
--- the export option page, with the usual highlight on the code"): the
--- Options open on the Export tab, and once the code is made its row pulses.
+
+
+
 function FDJ.OpenExportTab()
     if not panel then CreatePanel() end
     panel.selectedTab = panel.exportTab or 2
@@ -2177,7 +2196,7 @@ function FDJ.OpenExportTab()
     if panel.Raise then panel:Raise() end
 end
 
--- quiet: just open that page, no flashing row.
+
 function FDJ.OpenSettingsAt(label, quiet)
     if not panel then CreatePanel() end
     local pageIndex, pages = 1, 0
@@ -2193,8 +2212,8 @@ function FDJ.OpenSettingsAt(label, quiet)
     if panel:IsShown() then panel:Hide() end
     panel:Show()
     if panel.Raise then panel:Raise() end
-    -- scrollpages (2.0.10): a row lower down the page scrolls into view
-    -- (once the panel has its size, the next moment).
+
+
     local function Reveal()
         for _, check in ipairs(panel.checks or {}) do
             if check.option and check.option.label == label then ScrollRowIntoView(check) end
@@ -2206,14 +2225,14 @@ function FDJ.OpenSettingsAt(label, quiet)
         if check.option and check.option.label == label then PulseRow(check) end
     end
 end
--- END rpgintro
 
--- BEGIN hideunavailable
--- 2.0.11 (M 18 Nov 2026: "give players an option to Hide unavailable quests,
--- this option will then be auto unticked if we change a quest from
--- unavailable back to viable"). The quests the data marks unavailable
--- (unavailable = true, or unavailableRaces) are saved with the option; at
--- login, if one of them is no longer marked, the option turns itself off.
+
+
+
+
+
+
+
 do
     local strings = {
         enUS = { OPT_HIDE_UNAVAILABLE = "Hide unavailable quests",
@@ -2247,7 +2266,7 @@ do
         end
     end
 
-    -- Every quest the data marks unavailable now (quest ID -> true).
+
     FDJ.UnavailableQuestIDs = function()
         local ids = {}
         for _, dungeon in pairs(FDJ.DB or {}) do
@@ -2280,9 +2299,45 @@ do
         watcher:SetScript("OnEvent", function() pcall(FDJ.CheckHideUnavailable) end)
     end
 end
--- END hideunavailable
 
--- BEGIN hidedone
+
+
+do
+    local strings = {
+        enUS = { OPT_HIDE_BREADCRUMBS = "Hide breadcrumb quests",
+            OPT_HIDE_BREADCRUMBS_TIP = "Leaves out the optional breadcrumb quests: the Breadcrumb Quests section at the bottom of a dungeon's quest list, and the breadcrumbs before step 1 in quest chains." },
+        deDE = { OPT_HIDE_BREADCRUMBS = "Hinführungsquests ausblenden",
+            OPT_HIDE_BREADCRUMBS_TIP = "Lässt die optionalen Hinführungsquests weg: den Abschnitt Hinführungsquests unten in der Questliste eines Dungeons und die Hinführungsquests vor Schritt 1 in Questreihen." },
+        frFR = { OPT_HIDE_BREADCRUMBS = "Masquer les quêtes d'introduction",
+            OPT_HIDE_BREADCRUMBS_TIP = "Retire les quêtes d'introduction facultatives : la section des quêtes d'introduction en bas de la liste des quêtes d'un donjon, et celles placées avant l'étape 1 dans les suites de quêtes." },
+        esES = { OPT_HIDE_BREADCRUMBS = "Ocultar misiones de introducción",
+            OPT_HIDE_BREADCRUMBS_TIP = "Quita las misiones de introducción opcionales: la sección de misiones de introducción al final de la lista de misiones de una mazmorra y las que aparecen antes del paso 1 en las cadenas de misiones." },
+        itIT = { OPT_HIDE_BREADCRUMBS = "Nascondi missioni introduttive",
+            OPT_HIDE_BREADCRUMBS_TIP = "Toglie le missioni introduttive facoltative: la sezione delle missioni introduttive in fondo all'elenco delle missioni di una spedizione e quelle prima del passo 1 nelle catene di missioni." },
+        ptBR = { OPT_HIDE_BREADCRUMBS = "Ocultar missões introdutórias",
+            OPT_HIDE_BREADCRUMBS_TIP = "Tira as missões introdutórias opcionais: a seção de missões introdutórias no fim da lista de missões de uma masmorra e as que aparecem antes da etapa 1 nas cadeias de missões." },
+        ruRU = { OPT_HIDE_BREADCRUMBS = "Скрывать вводные задания",
+            OPT_HIDE_BREADCRUMBS_TIP = "Убирает необязательные вводные задания: раздел вводных заданий внизу списка заданий подземелья и вводные задания перед шагом 1 в цепочках." },
+        koKR = { OPT_HIDE_BREADCRUMBS = "안내 퀘스트 숨기기",
+            OPT_HIDE_BREADCRUMBS_TIP = "선택 사항인 안내 퀘스트를 숨깁니다. 던전 퀘스트 목록 아래의 안내 퀘스트 항목과 연계 퀘스트의 1단계 앞에 있는 안내 퀘스트가 사라집니다." },
+        zhCN = { OPT_HIDE_BREADCRUMBS = "隐藏引导任务",
+            OPT_HIDE_BREADCRUMBS_TIP = "不显示可选的引导任务：副本任务列表底部的引导任务部分，以及任务链中第1步之前的引导任务。" },
+        zhTW = { OPT_HIDE_BREADCRUMBS = "隱藏引導任務",
+            OPT_HIDE_BREADCRUMBS_TIP = "不顯示可選的引導任務：副本任務列表底部的引導任務部分，以及任務鏈中第1步之前的引導任務。" },
+    }
+    strings.esMX = strings.esES
+    for locale, entries in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t then
+            for key, value in pairs(entries) do
+                if t[key] == nil then t[key] = value end
+            end
+        end
+    end
+end
+
+
+
 do
     local strings = {
         enUS = { OPT_HIDE_DONE_QUESTS = "Hide completed quests",
@@ -2316,9 +2371,9 @@ do
         end
     end
 end
--- END hidedone
 
--- lootoptions (2.0.11): Options > Loot.
+
+
 do
     local strings = {
         enUS = { OPT_LOOT = "Loot",
@@ -2353,7 +2408,7 @@ do
     end
 end
 
--- optsearch (2.1.1): the Options search box's texts.
+
 do
     local strings = {
         enUS = { OPT_SEARCH = "Search options", OPT_SEARCH_RESULTS = "Search results", OPT_SEARCH_NONE = "No options found." },

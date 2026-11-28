@@ -429,7 +429,7 @@ FDJ.ContentLocales.itIT.bosses = {
 }
 
 FDJ.ContentLocales.itIT.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "Reliquia",
     ["Libram"] = "Libretto",
     ["Totem"] = "Totem",

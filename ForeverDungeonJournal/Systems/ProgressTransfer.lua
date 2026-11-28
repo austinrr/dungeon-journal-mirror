@@ -1,26 +1,26 @@
--- Options > RPG Mode > Export Progress / Import Progress: moving RPG Mode
--- progress to another computer. Addon data is saved on the computer only
--- (the WTF folder), so the player copies a code on the old one and pastes it
--- on the new one.
---
--- The code holds this character's unlocks (journal pages, bosses found,
--- quests, dungeon maps, trash counted toward a map), the account-wide
--- record (Options > RPG Mode > Account-Wide Unlocks), the journal mode and
--- that option. Importing only ever adds: nothing already unlocked is lost,
--- and an old code can't take anything away. A code is imported only on the
--- character it was made on (name and realm), so it can't unlock a friend's
--- progress.
---
--- Format: "FDJP1:" .. LibDeflate's printable encoding of the deflated text
--- .. ":" .. Adler-32 of the text in base 36. The text: a header line
--- "FDJP <tab> 1 <tab> name <tab> realm <tab> rpg|gamer <tab> 1|0", then
--- one line per entry, tab-separated:
---   K scope dungeon            page unlocked
---   B scope dungeon key        boss found (npc ID, or the boss name in lower case)
---   Q scope questID            quest unlocked
---   M scope dungeon            dungeon map opened
---   T dungeon count            trash counted toward that map (this character)
--- scope: c = this character, a = the account's record.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -154,7 +154,7 @@ local function L(key, ...)
 end
 
 local function Say(text)
-    FDJ.ChatLine("|cffd8a83cDungeon Journal:|r " .. text) -- (chatlines)
+    FDJ.ChatLine("|cffd8a83cDungeon Journal:|r " .. text)
 end
 
 local function Lib()
@@ -211,7 +211,7 @@ local function SameRealm(a, b)
     return N(a) == N(b)
 end
 
--- ------------------------------------------------------------------ export
+
 local function Lines(out, scope, db)
     local function Sorted(t)
         local keys = {}
@@ -269,8 +269,8 @@ function FDJ.BuildProgressCode()
     return "FDJP1:" .. packed .. ":" .. Base36(lib:Adler32(text))
 end
 
--- ------------------------------------------------------------------ import
--- Returns the decoded text, or nil if the code is broken.
+
+
 local function Decode(code)
     local lib = Lib()
     if not lib or type(code) ~= "string" then return nil end
@@ -305,8 +305,8 @@ local function Parse(text)
     return data
 end
 
--- Adds the code's unlocks; counts what is new (to this character or the
--- account's record).
+
+
 local function Merge(data)
     local char, acc = CharDB(), AccountDB()
     local function Target(scope, key)
@@ -337,11 +337,11 @@ local function Merge(data)
             if not t[f[3]][key] then
                 t[f[3]][key] = true
                 any = true
-                -- a boss is saved under its NPC ID and its name: count names
+
                 if type(key) == "string" then newBosses[f[3] .. "\t" .. key] = true end
             end
         elseif kind == "T" and f[2] and f[2] ~= "" then
-            -- T dungeon count: this character's trash counted toward the map
+
             local n = tonumber(f[3])
             if n and n > 0 then
                 if type(char.rpgTrash) ~= "table" then char.rpgTrash = {} end
@@ -374,7 +374,7 @@ local function Merge(data)
     return any, Count(newPages), Count(newBosses), Count(newQuests), Count(newMaps)
 end
 
--- Returns true and the message on success, or false and the message.
+
 function FDJ.ImportProgressCode(code)
     local text = Decode(code)
     local data = text and Parse(text)
@@ -388,12 +388,12 @@ function FDJ.ImportProgressCode(code)
     return true, L("RPG_IMPORT_DONE", pages, bosses, quests, maps)
 end
 
--- ---------------------------------------------------------------------- UI
+
 local function Window(name, height)
     local f = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
     f:SetSize(520, height)
     f:SetPoint("CENTER")
-    -- Opened from the Options panel (FULLSCREEN_DIALOG): same layer, on top of it.
+
     f:SetFrameStrata("FULLSCREEN_DIALOG")
     f:SetToplevel(true)
     f:SetClampedToScreen(true)
@@ -419,7 +419,7 @@ local function Window(name, height)
     f.text:SetWidth(470)
     f.text:SetJustifyH("CENTER")
 
-    -- The box sits under the message, however many lines it wraps to.
+
     local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOP", f.text, "BOTTOM", 0, -12)
     scroll:SetPoint("LEFT", f, "LEFT", 22, 0)
@@ -452,7 +452,7 @@ local function Window(name, height)
         bg:SetBackdropColor(0, 0, 0, 0.6)
         bg:SetBackdropBorderColor(0.28, 0.28, 0.28, 1)
     end
-    -- Clicking anywhere in the box puts the cursor in it.
+
     bg:EnableMouse(true)
     bg:SetScript("OnMouseDown", function() box:SetFocus() end)
 
@@ -462,25 +462,25 @@ local function Window(name, height)
     f.foot:SetJustifyH("LEFT")
 
     f.close = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(f.close) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(f.close)
     f.close:SetSize(90, 22)
     f.close:SetPoint("BOTTOMRIGHT", -16, 14)
     f.close:SetText(CLOSE or "Close")
     f.close:SetScript("OnClick", function() f:Hide() end)
 
-    tinsert(UISpecialFrames, name) -- Escape closes it
+    tinsert(UISpecialFrames, name)
     return f
 end
 
 local exportWindow, importWindow
 
--- Shown above the Options panel (and anything else in its layer).
+
 local function OnTop(f)
     local options = _G.ForeverDungeonJournalSettings
     local level = options and options.GetFrameLevel and options:GetFrameLevel() or 0
     f:SetFrameLevel(math.max(f:GetFrameLevel(), level + 30))
     if f.Raise then f:Raise() end
-    -- Its own parts in order: the box's backdrop, the box, its scroll bar, the buttons.
+
     local base = f:GetFrameLevel()
     if f.bg then f.bg:SetFrameLevel(base + 1) end
     if f.scroll then
@@ -502,7 +502,7 @@ function FDJ.ShowProgressExport()
     if importWindow then importWindow:Hide() end
     if not exportWindow then
         exportWindow = Window("FDJProgressExportFrame", 250)
-        -- Typing into it would only break the code, so put it straight back.
+
         exportWindow.box:SetScript("OnTextChanged", function(self, byUser)
             if byUser then
                 self:SetText(exportWindow.code or "")
@@ -528,7 +528,7 @@ function FDJ.ShowProgressImport()
         importWindow = Window("FDJProgressImportFrame", 250)
         local f = importWindow
         f.import = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-        FDJ.OwnFonts(f.import) -- ownfonts (2.0.8)
+        FDJ.OwnFonts(f.import)
         f.import:SetSize(110, 22)
         f.import:SetPoint("RIGHT", f.close, "LEFT", -8, 0)
         f.import:SetScript("OnClick", function()

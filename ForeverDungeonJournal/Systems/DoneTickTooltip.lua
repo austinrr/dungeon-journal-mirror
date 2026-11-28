@@ -1,8 +1,8 @@
--- Hovering the green tick on a home dungeon card shows "All quests completed"
--- (or, on a dungeon with no quest for the character, "Last boss killed").
--- The tick is a texture on the card button, so instead of putting a mouse
--- frame over it (which would steal the card's hover and click), the card
--- checks while hovered whether the mouse is over the tick.
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -14,7 +14,7 @@ local TEXT = {
     zhCN = "所有任务已完成", zhTW = "所有任務已完成",
 }
 
--- bossdone (2.0.8): the tick of a dungeon with no quest for the character.
+
 local BOSS_TEXT = {
     enUS = "Last boss killed", deDE = "Letzter Boss besiegt",
     frFR = "Dernier boss vaincu", esES = "Último jefe derrotado", esMX = "Último jefe derrotado",
@@ -40,7 +40,7 @@ local function Update(card)
     if not GameTooltip then return end
     local over = OverTick(card)
     if over and not card.fdjTickTipShown then
-        -- Hide Dungeons mode already owns the tooltip for this card; leave it.
+
         if GameTooltip:IsShown() and GameTooltip:GetOwner() == card then return end
         card.fdjTickTipShown = true
         GameTooltip:SetOwner(card, "ANCHOR_TOP")

@@ -424,7 +424,7 @@ FDJ.ContentLocales.ptBR.quests = {
 FDJ.ContentLocales.ptBR.bosses = {
     ["Trash Drops"] = "Saque de inimigos comuns",
     ["Lordaeron Captain"] = "Capitão de Lordaeron",
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Faldrim Anvilmar"] = "Faldrim Sidermar",
     ["Plunder"] = "Pilhar",
     ["Durgen Dirgehammer"] = "Durgen Martelúgubre",
@@ -491,7 +491,7 @@ FDJ.ContentLocales.ptBR.bosses = {
 }
 
 FDJ.ContentLocales.ptBR.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "Relíquia",
     ["Libram"] = "Livreto",
     ["Totem"] = "Totem",

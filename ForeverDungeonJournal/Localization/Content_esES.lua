@@ -424,7 +424,7 @@ FDJ.ContentLocales.esES.quests = {
 FDJ.ContentLocales.esES.bosses = {
     ["Trash Drops"] = "Botín trash",
     ["Lordaeron Captain"] = "Capitán de Lordaeron",
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Faldrim Anvilmar"] = "Faldrim Yunquemar",
     ["Plunder"] = "Saqueo",
     ["Durgen Dirgehammer"] = "Durgen Martillo Funesto",
@@ -477,7 +477,7 @@ FDJ.ContentLocales.esES.bosses = {
     ["Fallen Champion"] = "Campeón caído",
     ["Ironspine"] = "Dorsacerado",
     ["Bloodmage Thalnos"] = "Mago sangriento Thalnos",
-    -- Official client names (DungeonEncounter db2, build 1.60.1.69876).
+
     ["Ghamoo-ra"] = "Ghamoo-Ra",
     ["Saltspine"] = "Espinasal",
     ["Shadetooth"] = "Sombradiente",
@@ -495,7 +495,7 @@ FDJ.ContentLocales.esES.bosses = {
 }
 
 FDJ.ContentLocales.esES.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "Reliquia",
     ["Libram"] = "Tratado",
     ["Totem"] = "Tótem",

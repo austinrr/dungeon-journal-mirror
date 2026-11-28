@@ -1,4 +1,4 @@
--- FDJ3 wire snapshot. No changes or new locals in Core/Journal.lua.
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 local function Array() return setmetatable({}, {__fdjArray = true}) end
@@ -47,7 +47,7 @@ local function SnapshotRun(r, now)
         duration=duration, capped=not not r.capped, money=r.money or 0, deaths=r.deaths or 0,
         xp=0, bosses=Array(), trash=Array(), needs=Array(), exits=Array(), deathTimes=Array(),
         trashKilled=FDJ.RunLog.TrashKilled(r), trashTotal=FDJ.RunLog.TrashTotal(r)}
-    -- closed is a boolean in older saves; ended is always a timestamp or absent.
+
     if type(out.ended) ~= 'number' then out.ended = nil end
     local killed, shown, trash = {}, {}, {}
     for _, k in ipairs(r.kills or {}) do
@@ -84,13 +84,13 @@ local function SnapshotRun(r, now)
     for _, t in ipairs(r.deathTimes or {}) do out.deathTimes[#out.deathTimes+1]=t end
     return out
 end
--- charportrait (2.1.1, M 20 Nov 2026: "add two fields to the character
--- export ... so the website can show the character's portrait and talents"):
--- sex (2 male, 3 female) and talents, one entry per talent tree in the
--- game's tab order: n (the tree's name), p (the points spent, summed from
--- the ranks below) and t (the talents with points, { tier, column, rank } as
--- GetTalentInfo gives them). A call that fails, or a talent API that is
--- missing: talents left out, the export goes on without them.
+
+
+
+
+
+
+
 local function Secret(v) return type(issecretvalue) == "function" and issecretvalue(v) end
 local function Sex()
     if type(UnitSex) ~= "function" then return nil end
@@ -98,9 +98,9 @@ local function Sex()
     if ok and not Secret(sex) and (sex == 2 or sex == 3) then return sex end
     return nil
 end
--- The old talent functions (GetNumTalentTabs, GetTalentTabInfo,
--- GetTalentInfo): not in WoW Forever (M's /dump, 20 Nov 2026: "attempt to
--- call a nil value"), kept for a client that has them.
+
+
+
 local function LegacyTalents()
     if type(GetNumTalentTabs) ~= "function" or type(GetTalentTabInfo) ~= "function"
         or type(GetNumTalents) ~= "function" or type(GetTalentInfo) ~= "function" then return nil end
@@ -108,9 +108,9 @@ local function LegacyTalents()
     if not ok or Secret(tabs) or type(tabs) ~= "number" or tabs < 1 then return nil end
     local trees = Array()
     for tab = 1, tabs do
-        -- The tree's name is the first return in Classic Era and TBC (name,
-        -- icon, pointsSpent, background) and the second from Wrath on (id,
-        -- name, description, icon, pointsSpent, ...): the first string.
+
+
+
         local okInfo, a, b = pcall(GetTalentTabInfo, tab)
         if not okInfo then return nil end
         local name
@@ -121,7 +121,7 @@ local function LegacyTalents()
         if not okNum or Secret(count) or type(count) ~= "number" then return nil end
         local tree = { n = name, p = 0, t = Array() }
         for i = 1, count do
-            -- name, icon, tier, column, rank, maxRank, ...
+
             local okTalent, _, _, tier, column, rank = pcall(GetTalentInfo, tab, i)
             if not okTalent or Secret(tier) or Secret(column) or Secret(rank) then return nil end
             if type(rank) == "number" and rank > 0 then
@@ -137,17 +137,17 @@ local function LegacyTalents()
     return trees
 end
 
--- traittalents (2.1.1, M 20 Nov 2026: "the dump talent didn't work ... can
--- you check and maybe redo the code"): WoW Forever's talent window is the
--- game's trait tree (C_Traits; its UI: Blizzard_PlayerSpells, Camelot): one
--- tree per class, the three talent trees as its groups, side by side. Each
--- group: its name, and every node with points, { tier, column, rank, spellID,
--- nodeID } (nodeID, M 20 Nov 2026: the website builds Forever's own trees
--- from the game's trait tables, where the node is the key; spellID 0 when
--- the game gives none, so the node ID always keeps its place).
--- Tier and column come from the node's place in its group (the smallest gap
--- between two rows or columns is one step; 1 = the top row / the left
--- column); spellID is the talent's spell, for the website to check the place.
+
+
+
+
+
+
+
+
+
+
+
 local function Num(v) return type(v) == "number" and not Secret(v) and v or nil end
 local function TraitTalents()
     local T = C_Traits
@@ -263,7 +263,7 @@ function FDJ.BuildCharacterSnapshot()
     ForeverDungeonJournalCharacterDB = ForeverDungeonJournalCharacterDB or {}
     local db=ForeverDungeonJournalCharacterDB
     if type(db.exportKey)~='string' or #db.exportKey<16 then
-        -- WoW exposes no cryptographic RNG. Persist 48 draws; never reseed the shared RNG.
+
         local chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
         local key={}
         for i=1,48 do local n=math.random(1,#chars); key[i]=chars:sub(n,n) end
@@ -277,14 +277,14 @@ function FDJ.BuildCharacterSnapshot()
         level=UnitLevel('player'),faction=faction,version=metadata and metadata('ForeverDungeonJournal','Version') or '2.0.4',
         exportedAt=now,exportKey=db.exportKey,rpg=FDJ.IsRPGMode and FDJ.IsRPGMode() or false,
         completed=Array(),lost=Array(),inLog=Array(),dungeons=Array(),runs=Array()}
-    out.sex=Sex() -- charportrait
+    out.sex=Sex()
     local okTalents, talents=pcall(Talents)
     if okTalents then out.talents=talents end
-    -- favexport (2.1.1, M 20 Nov 2026: "the items you favoured, transfer over
-    -- with the code to the website"): this character's Favourites
-    -- (Systems/Favourites.lua), in the Favourites window's order (dungeon,
-    -- then name): id, name, dungeon (the journal's page, English), its slug,
-    -- boss (English), quest (the quest an item comes from), added (time).
+
+
+
+
+
     out.favourites=Array()
     local favs={}
     for _, fav in pairs(type(db.favouriteItems)=='table' and db.favouriteItems or {}) do
@@ -309,16 +309,16 @@ function FDJ.BuildCharacterSnapshot()
             dungeon=dungeon,slug=dungeon and Slug(dungeon) or nil,boss=type(fav.boss)=='string' and fav.boss or nil,
             quest=tonumber(fav.questID),added=tonumber(fav.added)}
     end
-    -- rpgexport (2.1.1, M 20 Nov 2026: an RPG Mode character on the website
-    -- showed every dungeon): in RPG Mode the code carries what the journal
-    -- shows. journey: the Journey bar (points, max, quests, questTotal,
-    -- pages, pageTotal). Per dungeon: cleared = its page unlocked as the
-    -- journal shows it (with Account-Wide Unlocks, the account's, and the
-    -- Legacy Challenges); locked = the page can't be opened; sketch = its card
-    -- is the pencil sketch (also with Show dungeon quests, where the page
-    -- opens on its quests: locked false, sketch true, the quest count on the
-    -- card); sketchArt = the sketch drawn on it (Media\RPG\Sketch_<id>, 0:
-    -- Sketch_Unknown).
+
+
+
+
+
+
+
+
+
+
     local rpg=out.rpg
     local kills=rpg and FDJ.RPGKillsView and FDJ.RPGKillsView() or nil
     if rpg and FDJ.RPGJourney then
@@ -348,7 +348,7 @@ function FDJ.BuildCharacterSnapshot()
                     if inLog then out.inLog[#out.inLog+1]=q.id end
                 end
                 if (not FDJ.QuestMatchesFaction or FDJ.QuestMatchesFaction(q,faction)) and not q.hideFromMainList and not q.repeatable
-                    and (not FDJ.QuestCountsForCharacter or FDJ.QuestCountsForCharacter(q)) then -- otherclass (2.0.8)
+                    and (not FDJ.QuestCountsForCharacter or FDJ.QuestCountsForCharacter(q)) then
                     row.quests[#row.quests+1]={id=q.id,name=q.name or '?',done=not not done,lost=not not lost,inLog=not not inLog,
                         locked=out.rpg and FDJ.RPGQuestHidden and FDJ.RPGQuestHidden(name,q) or false}
                     if not lost then row.total=row.total+1; if done then row.done=row.done+1 end end

@@ -1,15 +1,15 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Client-cache fallbacks; live rewards always take precedence.
+
 FDJ.FOREVER_QUEST_XP_FALLBACK[1490] = 115
--- Reward observed in the beta quest window.
+
 FDJ.FOREVER_QUEST_XP_FALLBACK[378] = 5750
 FDJ.QUEST_PREREQ_CHAINS[98823] = {{
     id = 95664,
     name = "Elder Knowledge",
-    -- excavhorde (2.0.7): started by the Titan Relic from inside the dungeon,
-    -- so the route hands it in (and takes Earthen Echo) after the run.
+
+
     startsInDungeon = true,
 }}
 FDJ.QUEST_PREREQ_CHAINS[98824] = {{
@@ -27,7 +27,7 @@ FDJ.QUEST_PREREQ_DETAILS[95664] = {
 FDJ.FOREVER_QUEST_XP_FALLBACK[95664] = 1400
 FDJ.QUEST_PREREQ_DETAILS[95810] = {
     objective = "Deliver the Titan Relic to Prospector Whelgar at the Wetlands excavation site.",
-    objectiveInDungeon = false, -- handed in at Whelgar's camp, not inside
+    objectiveInDungeon = false,
     startItem = {270866, "Titan Relic", 1, "Dropped by: Relic Guardian"},
     pickup = "Titan Relic (dropped by Relic Guardian)",
     level = 31,
@@ -36,15 +36,15 @@ FDJ.QUEST_PREREQ_DETAILS[95810] = {
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[95810] = 630
 
--- Paladin (human / dwarf): The Tome of Valor -> The Test of Righteousness.
--- The list is exactly the five-quest series shown on Wowhead and ends on 1806,
--- the step that awards Verigan's Fist.
--- tomestart (2.1.7, M 25 Nov 2026, with Wowhead Forever's quest 1649: "add
--- this quest ... It's the first step for the Paladin quest in Shadowfang
--- Keep"): the chain starts with 1649 (the Tome of Valor, a book, starts it;
--- handed in to Duthorian Rall) and 1650 (from him to Daphne Stilwell), which
--- 1651 needs. Levels, objectives, givers and XP: Wowhead Forever (quests
--- 1649, 1650; item 6776: it starts 1649).
+
+
+
+
+
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[1806] = {
     { id = 1649, name = "The Tome of Valor" },
     { id = 1650, name = "The Tome of Valor" },
@@ -80,7 +80,7 @@ FDJ.QUEST_PREREQ_DETAILS[1653] = { level = 21, requires = 20, objective = "Speak
 FDJ.QUEST_PREREQ_DETAILS[1654] = {
     level = 22, requires = 20,
     objective = "Using Jordan's Weapon Notes, find some Whitestone Oak Lumber, Bailor's Refined Ore Shipment, Jordan's Smithing Hammer, and a Kor Gem, and return them to Jordan Stilwell in Ironforge.",
-    -- {itemID, name, quality, source line shown at the bottom of the item tooltip}
+
     requiredItems = {
         {6994, "Whitestone Oak Lumber", 1, "Dropped by: Goblin Woodcarver, The Deadmines"},
         {6993, "Jordan's Refined Ore Shipment", 1, "Reward from the quest Bailor's Ore Shipment: Bailor Stonehand, Thelsamar, Loch Modan"},
@@ -97,12 +97,12 @@ FDJ.PREREQ_REWARD_ITEMS_FALLBACK[1806] = { items = { {6953, "Verigan's Fist", 3}
 FDJ.FOREVER_QUEST_XP_FALLBACK[1806] = 5500
 
 
--- BEGIN hordepaladin
--- Paladin (undead / tauren, WoW Forever): The Debt -> A Moon-Kissed Blade ->
--- An Underrated Talent -> Ott's Masterwork -> The Moonsilver Blade, then Old
--- Fire-Eye (the journal entry), which awards Wolfsbane. A Moon-Kissed Blade
--- needs Whitestone Oak Lumber (The Deadmines), the Enchanted Silver Ingot
--- (Shadowfang Keep) and the Purified Kor Gem (Blackfathom Deeps naga).
+
+
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[95140] = {
     { id = 91858, name = "Diplomatic Incident" },
     { id = 91859, name = "A Curious Pair" },
@@ -127,7 +127,7 @@ FDJ.QUEST_PREREQ_DETAILS[95034] = {
 FDJ.QUEST_PREREQ_DETAILS[95036] = {
     level = 25, requires = 20,
     objective = "Speak with Trevan Rol in the Sepulcher and bring him the materials he requires.",
-    -- {itemID, name, quality, source line shown at the bottom of the item tooltip}
+
     requiredItems = {
         {6994, "Whitestone Oak Lumber", 1, "Dropped by: Goblin Woodcarver, The Deadmines"},
         {267361, "Enchanted Silver Ingot", 1, "Found on a table in Archmage Arugal's room at the end of Shadowfang Keep, after you kill him"},
@@ -166,8 +166,8 @@ FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95126] = { items = { {268484, "Moonsilver Blade
 FDJ.QUEST_PREREQ_DETAILS[95140] = { level = 26, requires = 20, objective = "Use the Moonsilver Blade to destroy Old-Fire Eye in Silverpine Forest.", pickup = "Lumina Windsinger, The Sepulcher, Silverpine Forest", turnin = "Lumina Windsinger, The Sepulcher, Silverpine Forest", description = "Final step. Old Fire-Eye is at the Greymane Wall in southern Silverpine Forest. Rewards Wolfsbane." }
 FDJ.PREREQ_REWARD_ITEMS_FALLBACK[95140] = { items = { {267369, "Wolfsbane", 3} }, choice = false }
 FDJ.FOREVER_QUEST_XP_FALLBACK[95140] = 2650
--- The six steps before The Debt (Wowhead Forever series of quest 91858;
--- reported on Discord by belpickle and xperl73): all level 22, from 18.
+
+
 do
     local DANITHA = { mapID = 1420, x = 0.220, y = 0.446, label = "Danitha Morr — Bandarion Keep, Tirisfal Glades", targetName = "Danitha Morr" }
     local TREVAN = { mapID = 1421, x = 0.434, y = 0.410, label = "Trevan Rol — The Sepulcher", targetName = "Trevan Rol" }
@@ -220,18 +220,18 @@ do
         map = LUMINA_KEEP, turninMap = LUMINA,
     }
 end
--- END hordepaladin
 
--- BEGIN ritualsofpower
--- Mage, Scarlet Monastery Library: Journey to the Marsh -> Hidden Secrets ->
--- Get the Scoop -> Rituals of Power (the journal entry). Wowhead Forever
--- quests 1947, 1949-1951.
+
+
+
+
+
 do
     local TABETHA = { mapID = 1445, x = 0.460, y = 0.570, label = "Tabetha — Dustwallow Marsh", targetName = "Tabetha" }
     local TIRTH = { mapID = 1441, x = 0.782, y = 0.758, label = "Magus Tirth — Shimmering Flats", targetName = "Magus Tirth" }
     FDJ.QUEST_PREREQ_CHAINS[1951] = {
-        -- marshstep (2.0.13, thanu5987 on Discord, 19 Nov 2026; Wowhead Forever
-        -- quest 1947): the chain starts at a mage trainer in a capital city.
+
+
         { id = 1947, name = "Journey to the Marsh" },
         { id = 1949, name = "Hidden Secrets" },
         { id = 1950, name = "Get the Scoop" },
@@ -260,12 +260,12 @@ do
         map = TIRTH,
     }
 end
--- END ritualsofpower
 
--- BEGIN lessoninliteracy
--- A Lesson in Literacy (mage, Zul'Farrak): one quest ID, a giver per faction
--- (Wowhead Forever quest 82084). The player's own giver once the faction is
--- known; until then the entry names both.
+
+
+
+
+
 do
     local GIVER = {
         Alliance = { text = "Garion Wendell, Stormwind",
@@ -293,10 +293,10 @@ do
         f:SetScript("OnEvent", Apply)
     end
 end
--- END lessoninliteracy
 
--- An Unholy Alliance (Horde): the journal entry is the final step (6521); part 1 starts from the Small Scroll in Razorfen
--- Kraul; the final step is completed in the area outside Razorfen Downs and gives the item reward.
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[6521] = {
     { id = 6522, name = "An Unholy Alliance" },
 }
@@ -306,12 +306,12 @@ FDJ.PREREQ_REWARD_ITEMS_FALLBACK[6521] = { items = { {17039, "Skullbreaker", 2},
 FDJ.PREREQ_REWARD_MONEY_FALLBACK[6521] = 2000
 FDJ.FOREVER_QUEST_XP_FALLBACK[6521] = 3500
 
--- These are item-start quests. Leave other new quests to the live predicate.
+
 FDJ.QUEST_SHAREABILITY_AUDIT[95809] = false
 FDJ.QUEST_SHAREABILITY_AUDIT[95664] = false
 FDJ.QUEST_SHAREABILITY_AUDIT[95810] = false
 
--- Drop superseded translations of corrected fields, retaining localized names.
+
 for _, content in pairs(FDJ.ContentLocales or {}) do
     local quests = content.quests or {}
     if quests[95809] then
@@ -320,9 +320,9 @@ for _, content in pairs(FDJ.ContentLocales or {}) do
     end
 end
 
--- Test of Lore (Horde): earlier steps, all require level 25 (Wowhead Forever series).
--- Ragefire Chasm: Returning the Lost Satchel is the journal entry; Searching for
--- the Lost Satchel is its earlier step.
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[5724] = {
     { id = 5722, name = "Searching for the Lost Satchel" },
 }
@@ -349,38 +349,38 @@ FDJ.QUEST_PREREQ_DETAILS[1152] = { level = 30, requires = 25, objective = "Find 
 FDJ.FOREVER_QUEST_XP_FALLBACK[1152] = 1200
 FDJ.QUEST_PREREQ_DETAILS[1154] = { level = 30, requires = 25, objective = "Find the Legacy of the Aspects and return it to Braug Dimspirit near the entrance to Talondeep Path in Stonetalon Mountains.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1154] = 1850
--- loreaspects (2.1.1, M 20 Nov 2026 at Braug Dimspirit, Test of Lore in his
--- log and the arrow on Braug: "for test of lore, I need to get the legacy of
--- the aspects ... it is on Ashenvale ... I have to go through that passage
--- ... through that cave"): the book is at the bottom of the Dor'Danil Barrow
--- Den in southern Ashenvale (the quest's own text), its entrance at (76, 75)
--- (Warcraft Wiki; Questie's mark). While the book is still to find, the
--- arrow goes there (the walking net leads through the Talondeep Path
--- tunnel), then back to Braug. The French name is the game's own (Warcraft
--- Wiki); the arrow's line under it says where the book lies.
--- bookexact (M 20 Nov 2026 in the den's subzone, the arrow gone 230 yards
--- off: "we are still far from the book ... the arrow should not disappear
--- right now"): one thing at one place, not an area to clear (exact), to pick
--- up (pickUp: "Pick it up" and the loot bag at it), where Questie marks the
--- book (75.8, 74.2).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 FDJ.QUEST_PREREQ_DETAILS[1154].objectiveMap = { mapID = 1440, x = 0.755, y = 0.745, label = "Dor'Danil Barrow Den \226\128\148 Ashenvale", noteKey = "ARROW_ASPECTS_BOOK",
     markerType = "location", exact = true, pickUp = true }
--- denway (2.1.1, M 20 Nov 2026 in front of the den's door, the arrow pointing
--- left at the book under the hill: "it should tell me to go in"): the book
--- (object 20725) lies at 75.5, 74.45 (Wowhead Forever), at the bottom of the
--- den; its comments: "Go to /way 75.9 75.3, and go down", "go to the bottom,
--- make a left, keep going straight", "the leftmost large circular space".
--- The way in: a walking router on the Forever client's Kalimdor
--- maps (the navigation grid, run offline from the door at 75.9, 75.3 to
--- the den's lowest floor under the book): in at the door, east along the
--- tunnel and down round the east side, then west through the bottom rooms
--- (415 yards). Each point is passed only by walking by it (4 yards), so the
--- ground above the den does not count; keep: led along it even within 60
--- yards of the book. The line under the arrow says which part it is.
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local IN, DOWN, LEFT = "Into the barrow den", "Down to the bottom", "Left at the bottom, to the book in the big room"
-    -- (labelNear: the line only near the den, not from Stonetalon)
+
     local function P(x, y, label) return { mapID = 1440, x = x, y = y, label = label, keep = true, labelNear = 150 } end
     FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1440", 0.755, 0.745)] = { reach = 4, leg = 3,
         P(0.7590, 0.7530, IN), P(0.7626, 0.7501, IN), P(0.7648, 0.7490, IN), P(0.7699, 0.7490, IN),
@@ -416,7 +416,7 @@ do
     FDJ.ContentLocales.frFR = fr
     fr.places = fr.places or {}
     if fr.places["Dor'Danil Barrow Den"] == nil then fr.places["Dor'Danil Barrow Den"] = "Refuge des saisons de Dor'danil" end
-    -- (Ashenvale's own name where the zone list has none yet)
+
     for lang, name in pairs({ koKR = "잿빛 골짜기", zhCN = "灰谷", zhTW = "梣谷" }) do
         local content = FDJ.ContentLocales[lang] or {}
         FDJ.ContentLocales[lang] = content
@@ -443,10 +443,10 @@ do
 end
 FDJ.QUEST_PREREQ_DETAILS[6627] = { level = 30, requires = 25, objective = "Answer Braug Dimspirit's question successfully and then speak to him again.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", warning = "ANSWER: Neltharion", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[6627] = 245
--- keyshortcut (2.1.1, M 20 Nov 2026: "it's not true that the key unlocks
--- the upper part of the dungeon, because you can do it even without the
--- key ... the key allows a shortcut to the last boss"): Key Ingredients'
--- warning (Data/Dungeons.lua) in every language
+
+
+
+
 do
     FDJ.ContentLocales = FDJ.ContentLocales or {}
     local KEY = "The key from this quest opens a shortcut to the last boss."
@@ -467,8 +467,8 @@ do
         if content.places[KEY] == nil then content.places[KEY] = text end
     end
 end
--- zalfanpin (2.1.1): Zalfan Moonshadow's own name on the dungeon map, in
--- the game's languages (Wowhead Forever's; German and Italian keep it)
+
+
 do
     FDJ.ContentLocales = FDJ.ContentLocales or {}
     for lang, name in pairs({ frFR = "Zalfan Lunombre", esES = "Zalfan Umbraluna", ptBR = "Zalfan Umbraluna",
@@ -482,10 +482,10 @@ do
         if content.places["Zalfan Moonshadow"] == nil then content.places["Zalfan Moonshadow"] = name end
     end
 end
--- loreanswer (2.1.1, M 20 Nov 2026 at Braug Dimspirit, the last Test of Lore
--- in his log: "make sure the arrow says to pick Neltharion as the answer"):
--- while the question is not answered, the arrow leads to Braug with the
--- answer in its orange line; answered, it is the usual hand-in.
+
+
+
+
 FDJ.QUEST_PREREQ_DETAILS[6627].objectiveMap = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit \226\128\148 Stonetalon Mountains", targetName = "Braug Dimspirit", noteKey = "ARROW_LORE_ANSWER", exact = true }
 do
     local strings = {
@@ -508,20 +508,20 @@ do
 end
 FDJ.QUEST_PREREQ_DETAILS[1159] = { level = 30, requires = 25, objective = "Find Parqual Fintallas in Undercity.", pickup = "Braug Dimspirit, Talondeep Path, Stonetalon Mountains", turnin = "Parqual Fintallas, Undercity", map = { mapID = 1442, x = 0.786, y = 0.454, label = "Braug Dimspirit — Stonetalon Mountains", detail = "Near the entrance to Talondeep Path" } }
 FDJ.FOREVER_QUEST_XP_FALLBACK[1159] = 1200
--- The Library step of the chain: the book is inside Scarlet Monastery: Library.
+
 FDJ.QUEST_PREREQ_DETAILS[1160] = { level = 36, requires = 25, objective = "Find The Beginnings of the Undead Threat and return it to Parqual Fintallas in Undercity.", pickup = "Parqual Fintallas, Undercity", turnin = "Parqual Fintallas, Undercity", description = "The book is inside Scarlet Monastery: Library.", map = { mapID = 1458, x = 0.576, y = 0.652, label = "Parqual Fintallas — Undercity", detail = "Parqual Fintallas in Undercity" } }
--- loreinside (2.1.1, M 20 Nov 2026 on its page: "why is it not saying
--- dungeon step ... the book is inside"): the book is in the Library, so the
--- step is done inside (its text names the dungeon only in its note).
+
+
+
 FDJ.QUEST_PREREQ_DETAILS[1160].objectiveInDungeon = true
 FDJ.FOREVER_QUEST_XP_FALLBACK[1160] = 2100
 FDJ.QUEST_PREREQ_DETAILS[6628] = { level = 30, requires = 25, objective = "Answer Parqual Fintallas' question successfully and then speak to him again.", pickup = "Parqual Fintallas, Undercity", turnin = "Parqual Fintallas, Undercity", warning = "ANSWER: Ner'zhul", map = { mapID = 1458, x = 0.576, y = 0.652, label = "Parqual Fintallas — Undercity", detail = "Parqual Fintallas in Undercity" } }
 
 
 
--- City of Dalaran (Alliance): Heart of Disruption follows the introductory
--- An Alarming Request breadcrumb. Starving Arcane (same Image of Archmage
--- Modera) also needs An Alarming Request first.
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[92458] = {
     { id = 92432, name = "An Alarming Request" },
 }
@@ -534,7 +534,7 @@ FDJ.QUEST_PREREQ_DETAILS[92432] = {
     objective = "Report to the Image of Archmage Modera near the City of Dalaran.",
     pickup = "Emissary Jacques, Southshore, Hillsbrad Foothills",
     turnin = "Image of Archmage Modera, Lordamere Lake near Dalaran",
-    -- Start pin read off Wowhead's Hillsbrad Foothills map (approximate).
+
     map = { mapID = 1424, x = 0.484, y = 0.602, label = "Emissary Jacques — Southshore", detail = "Emissary Jacques in Southshore, Hillsbrad Foothills" },
     description = "Introductory quest leading to Heart of Disruption and Starving Arcane.",
 }
@@ -545,12 +545,12 @@ FDJ.QUEST_SHAREABILITY_AUDIT[92457] = true
 FDJ.QUEST_SHAREABILITY_AUDIT[92458] = false
 
 
--- City of Dalaran (Horde): required attunement chain.
--- Prison Break In and Key to the City can both be picked up from Magus Wordeen
--- Voidglare in Tarren Mill. Dalaran Patrols follows Prison Break In. Once the
--- Magus quests are complete, Blood in the Streets leads to Heart of Disruption.
--- Keeper Bel'varil's Stone Tokens -> Bracers of Binding branch is useful to do
--- in the same area but is NOT required for the Dalaran attunement.
+
+
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[96984] = {
     { id = 544, name = "Prison Break In" },
     { id = 93680, name = "Key to the City", shareNormally = true },
@@ -613,7 +613,7 @@ FDJ.QUEST_SHAREABILITY_AUDIT[545] = true
 FDJ.QUEST_SHAREABILITY_AUDIT[92434] = false
 FDJ.QUEST_SHAREABILITY_AUDIT[96984] = false
 
--- Starter pins from the starter-location guide for steps defined in this file.
+
 for _, id in ipairs({ 1652, 1653 }) do
     local details = FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[id]
     if details and not details.map and FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[id] then
@@ -621,7 +621,7 @@ for _, id in ipairs({ 1652, 1653 }) do
     end
 end
 
--- Franclorn disclaimer (Dark Iron Legacy step), per language.
+
 do
     local t = {
         deDE = "Ihr müsst tot sein, um mit ihm zu sprechen. Er befindet sich im Schwarzfels, in einem Raum, an dem Ihr auf dem Weg die Kette hinab nach BRD vorbeikommt.",
@@ -643,10 +643,10 @@ do
         c.quests[3801].warning = text
     end
 end
--- BEGIN roguejobs
--- Rogue jobs from C (the Dead Drop beside Pyrewood Village). The journal entries are
--- the payment quests; the dungeon jobs are their chain steps. The Eye of Bhossca is
--- only offered after the whole Horn of Xelthos chain.
+
+
+
+
 do
     local DEAD_DROP = {"Dead Drop", "Interface\\Icons\\INV_Box_02", "A chest in a hut beside Pyrewood Village, Silverpine Forest"}
     local function DropMap() return { mapID = 1421, x = 0.471, y = 0.711, label = "Dead Drop — Pyrewood Village", detail = "A chest in a hut beside Pyrewood Village" } end
@@ -704,21 +704,21 @@ do
     FDJ.FOREVER_QUEST_XP_FALLBACK[78307] = 6900
     FDJ.FOREVER_QUEST_XP_FALLBACK[78676] = 3450
     FDJ.FOREVER_QUEST_XP_FALLBACK[78699] = 6900
-    -- Solo jobs started from a world object: they cannot be shared.
+
     for _, id in ipairs({ 78261, 78307, 78676, 78699 }) do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = false
     end
 end
--- END roguejobs
 
--- BEGIN roguetalisman
--- The Talisman of Kazdor (Zul'Farrak, rogues, 2.1.0, M 19 Nov 2026): how to
--- unlock it. The Manor, Ravenholdt, C's jobs (the IDs the journal already
--- has for The Horn of Xelthos and The Eye of Bhossca), then, at level 45,
--- Fahrad's letter in a capital city's mailbox and Fool Me Twice at
--- Ravenholdt Manor. Levels, texts and XP: Wowhead Forever (quests 6681,
--- 80526, 80411) and the Forever database (6681: started by the Elegant
--- Letter, item 17126; Fahrad, NPC 6707, at 84.5, 80.3 in Alterac Mountains).
+
+
+
+
+
+
+
+
+
 do
     local function Fahrad() return { mapID = 1416, x = 0.845, y = 0.803, label = "Fahrad — Ravenholdt Manor", targetName = "Fahrad" } end
     local AT_FAHRAD = "Fahrad, Ravenholdt Manor, Alterac Mountains"
@@ -733,9 +733,9 @@ do
     FDJ.QUEST_PREREQ_DETAILS[6681] = {
         level = 24, requires = 24,
         objective = "Take the Seal of Ravenholdt to Fahrad at Ravenholdt Manor, hidden away in the hills of Hillsbrad.",
-        -- (letterfix, M 19 Nov 2026, "follow the comments": Alliance from
-        -- Mathias Shaw only, and Detect Traps for the trap on the way in:
-        -- Wowhead Forever's comments, 17 to 19 Nov 2026)
+
+
+
         warning = "Train Detect Traps first: walking past the trapped chest in the cave passage into the manor completes the test (Fahrad teaches it too).",
         description = "Get the letter that starts this quest. Horde: a rogue trainer's option \"May I have it, please.\" Alliance: Mathias Shaw in Stormwind.",
         startItem = {17126, "Elegant Letter", 1, "Horde: from a rogue trainer (\"May I have it, please.\"). Alliance: from Mathias Shaw, Stormwind"},
@@ -751,17 +751,17 @@ do
     FDJ.FOREVER_QUEST_XP_FALLBACK[6681] = 1950
     FDJ.FOREVER_QUEST_XP_FALLBACK[80526] = 470
     FDJ.FOREVER_QUEST_XP_FALLBACK[80411] = 4700
-    -- Not sharable (Wowhead Forever).
+
     for _, id in ipairs({ 6681, 80526, 80411 }) do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = false
     end
 end
--- END roguetalisman
 
--- BEGIN recipechain
--- The New Plague (Horde, Ruins of Lordaeron): Theodore Griffs now only offers it after
--- the whole A Recipe For Death chain (Apothecary Renferrel, The Sepulcher, and Master
--- Apothecary Faranell, Undercity). The steps live only inside the chain.
+
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[95216] = {
     { id = 447, name = "A Recipe For Death" },
     { id = 450, name = "A Recipe For Death" },
@@ -802,7 +802,7 @@ FDJ.QUEST_PREREQ_DETAILS[451] = {
     },
 }
 FDJ.PREREQ_REWARD_ITEMS_FALLBACK[447] = { items = { {3448, "Senggin Root", 1} }, choice = false }
--- 451: choose the concoction or the cloak; the two potions come with either.
+
 FDJ.PREREQ_REWARD_ITEMS_FALLBACK[451] = { items = { {3451, "Nightglow Concoction", 2}, {3582, "Acidproof Cloak", 2} }, choice = true,
     also = { {2458, "Elixir of Minor Fortitude", 1}, {2459, "Swiftness Potion", 1} } }
 FDJ.PREREQ_REWARD_MONEY_FALLBACK[447] = 500
@@ -812,11 +812,11 @@ FDJ.FOREVER_QUEST_XP_FALLBACK[450] = 1350
 FDJ.FOREVER_QUEST_XP_FALLBACK[451] = 2050
 FDJ.QUEST_SHAREABILITY_AUDIT[447] = true
 FDJ.QUEST_SHAREABILITY_AUDIT[450] = true
--- END recipechain
 
--- BEGIN rearguard
--- The Wrath of Rath'mael (Horde, Ruins of Lordaeron): Deathguard Kristof now only offers it
--- after the Rear Guard Patrol chain from Deathguard Linnea (her camp south-east of Brill).
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[92422] = {
     { id = 356, name = "Rear Guard Patrol" },
     { id = 99156, name = "Rear Guard Patrol" },
@@ -844,13 +844,13 @@ FDJ.FOREVER_QUEST_XP_FALLBACK[356] = 650
 FDJ.FOREVER_QUEST_XP_FALLBACK[99156] = 900
 FDJ.QUEST_SHAREABILITY_AUDIT[356] = true
 FDJ.QUEST_SHAREABILITY_AUDIT[99156] = true
--- END rearguard
 
--- BEGIN drownedcity
--- The Drowned City (Horde): Kin'weelay's chain to the dungeon quest, and
--- Enemies in the Water before The Only Good Brinescale... Givers, objectives,
--- items, spawns, levels and XP: Forever client tables;
--- names and chain order from ForeverChanges and Hearthside.
+
+
+
+
+
+
 do
     local KINWEELAY = { mapID = 1434, x = 0.323, y = 0.277, label = "Kin'weelay — Grom'gol Base Camp", targetName = "Kin'weelay", detail = "Kin'weelay at Grom'gol Base Camp, Stranglethorn Vale" }
     local GROMGOL = "Kin'weelay, Grom'gol Base Camp, Stranglethorn Vale"
@@ -859,7 +859,7 @@ do
     FDJ.QUEST_START_MAPS[95789] = { mapID = 1434, x = 0.269, y = 0.772, label = "Krazek — Booty Bay", targetName = "Krazek", detail = "Krazek, upstairs in Booty Bay, Stranglethorn Vale" }
     FDJ.QUEST_START_MAPS[95791] = FDJ.QUEST_START_MAPS[95789]
     FDJ.QUEST_START_MAPS[95787] = { mapID = 1424, x = 0.506, y = 0.571, label = "Loremaster Dibbs — Southshore", targetName = "Loremaster Dibbs", detail = "Loremaster Dibbs in Southshore, Hillsbrad Foothills" }
-    -- Magics of the Drowned City and Dibbs' two follow-ups: the same marker.
+
     FDJ.QUEST_START_MAPS[95788] = FDJ.QUEST_START_MAPS[95787]
     FDJ.QUEST_START_MAPS[95799] = FDJ.QUEST_START_MAPS[95787]
     FDJ.QUEST_START_MAPS[95798] = FDJ.QUEST_START_MAPS[95787]
@@ -896,10 +896,10 @@ do
         map = KINWEELAY,
     }
 
-    -- A Tale Spun Around the Fire follows The Drowned City (Wowhead Forever
-    -- quest 96078: Kin'weelay sends the etchings to Master Gadrin; a
-    -- player, Nov 2026). Like the Alliance side, the follow-up is the
-    -- list's entry and The Drowned City a step inside its chain.
+
+
+
+
     local GADRIN = { mapID = 1411, x = 0.558, y = 0.744, label = "Master Gadrin — Sen'jin Village", targetName = "Master Gadrin", detail = "Master Gadrin in Sen'jin Village, Durotar" }
     local TABLET_VARTAKA, TABLET_MINLOTH = "Next to the boss Var'Taka", "Next to the last boss, Min'loth the Serpent"
     local TABLET_DREADRISE = "In Captain Dreadrise's area"
@@ -917,9 +917,9 @@ do
         pickup = GROMGOL, turnin = GROMGOL,
         map = KINWEELAY, turninMap = KINWEELAY,
         requiredItems = {
-            -- tabletnotes (2.1.6, M 24 Nov 2026 in the Drowned City: "We are
-            -- gonna start putting real comments"): where each one is, as
-            -- found.
+
+
+
             {270308, "The First Tablet of I'lalai", 1, TABLET_FIRST},
             {270309, "The Second Tablet of I'lalai", 1, TABLET_VARTAKA},
             {270310, "The Third Tablet of I'lalai", 1, TABLET_DREADRISE},
@@ -931,11 +931,11 @@ do
         if quest.id == 96078 then quest.turninMap = GADRIN end
     end
 
-    -- Commander Aggro'gosh gives and takes both (Wowhead Forever: quests
-    -- 95773 and 95776, NPC 2464). Enemies in the Water needs The Gurubashi
-    -- Legends of Old handed in; The Only Good Brinescale... needs Enemies in
-    -- the Water and Locating the Lost City (a player, Nov 2026; its text
-    -- follows both).
+
+
+
+
+
     local AGGROGOSH = { mapID = 1434, x = 0.322, y = 0.288, label = "Commander Aggro'gosh — Grom'gol Base Camp", targetName = "Commander Aggro'gosh", detail = "Commander Aggro'gosh at Grom'gol Base Camp, Stranglethorn Vale" }
     local AT_AGGROGOSH = "Commander Aggro'gosh, Grom'gol Base Camp, Stranglethorn Vale"
     FDJ.QUEST_START_MAPS[95773] = AGGROGOSH
@@ -970,31 +970,31 @@ do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = true
     end
 end
--- END drownedcity
--- BEGIN drownedhorde
--- drownedhorde (2.1.3, M 21 Nov 2026: "build a Drowned City Horde"): what
--- the Route needs for the Horde side (Wowhead Forever quests 95748, 95770,
--- 95773, 95776, 96078, 96774 and their comments).
---  - Locating the Lost City is done at the cavern just west of the Vile Reef
---    (a comment: /way 21.7, 27.1).
---  - Enemies in the Water: 10 Brinescale Tridents from the Brinescale
---    Skirmishers on the sea floor (best by the dungeon's entrance, away from
---    the elite murlocs: a comment); a place to kill at, not a thing to pick
---    up (the trident's own spot is for the journal only: noRouteStop).
---  - The Only Good Brinescale... needs Enemies in the Water and Locating the
---    Lost City, neither waiting for the other (together).
---  - A Tale Spun Around the Fire follows The Drowned City, which needs the
---    run (its tablets are inside); the tale itself is a delivery to Master
---    Gadrin in Sen'jin Village (no run of its own).
---  - Mazu'kon (Ancient Gurubashi Idol) stands on a hill in north-west
---    Mulgore: the path up starts at 40.2, 17.4 (a comment).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local BRINESCALE = { markerType = "location", mapID = 1434, x = 0.225, y = 0.256, label = "Brinescale Skirmishers — Stranglethorn Vale", detail = "Brinescale Skirmishers on the sea floor west of Grom'gol, by the Drowned City's entrance" }
-    -- cavernpoint (2.1.3, M 21 Nov 2026 in the Vile Reef, the arrow's
-    -- crossed swords over Locating the Lost City: "Why is the arrow here
-    -- still a battle sword if I just have to find the location? ... You can
-    -- see on the cursor coordinates where it is", 21.8, 27.6; was 21.7, 27.1):
-    -- one place to find, not an area (exact): the arrow points at it.
+
+
+
+
+
     local CAVERN = { markerType = "location", mapID = 1434, x = 0.218, y = 0.276, exact = true, label = "Cavern west of the Vile Reef — Stranglethorn Vale", detail = "The underwater cavern just west of the Vile Reef: the way into the Drowned City" }
     local D = FDJ.QUEST_PREREQ_DETAILS
     if D[95770] then D[95770].objectiveMap = CAVERN end
@@ -1013,7 +1013,7 @@ do
     for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
         if quest.id == 96078 then quest.routeNoRun = true end
     end
-    -- Mazu'kon: the arrow to the foot of the path first
+
     local MAZUKON = FDJ.QUEST_START_MAPS[96774]
     if type(MAZUKON) == "table" then
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
@@ -1022,14 +1022,14 @@ do
         }
     end
 end
--- END drownedhorde
--- BEGIN swimstraight
--- swimstraight (2.1.3, M 21 Nov 2026 on the Savage Coast, the arrow to
--- Enemies in the Water: "it should just point me straight into the
--- water"): the places out in the sea west of Grom'gol are swum to in a
--- straight line (Systems/MapMarkers.lua: Way.SwimStraight), not walked
--- round by the shore: the Brinescale Skirmishers, the cavern of Locating
--- the Lost City, the Drowned City's entrance and the Vile Reef's tablet.
+
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     local function Swim(spot) if type(spot) == "table" then spot.swim = true end end
@@ -1046,29 +1046,29 @@ do
         end
     end
     Swim(FDJ.DB and FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].entrance)
-    -- swimplace (2.1.3, M 21 Nov 2026 at the cavern: "It should say swim
-    -- underwater, by the way"): the cavern and the entrance lie under water:
-    -- "Swim underwater" under the arrow's yards near them (MapMarkers.lua)
+
+
+
     local cavern = D[95770] and D[95770].objectiveMap
     if type(cavern) == "table" then cavern.underwater = true end
     local door = FDJ.DB and FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].entrance
     if type(door) == "table" then door.underwater = true end
 end
--- END swimstraight
 
 
--- BEGIN drownedalliance
--- The Drowned City (Alliance) as chains, the last quest the list's entry and
--- the steps inside it. At the Rebel Camp in northern Stranglethorn, Sergeant
--- Yohwa's The Second Rebellion and Bad Medicine are done together; once both
--- are handed in, Brother Nimetz gives Kurzen's Mystery, then Troll Witchery,
--- then An Acquaintance in Southshore, which takes the player to Loremaster
--- Dibbs. Dibbs gives Take Two With Water and Magics of the Drowned City; each
--- leads to one of his follow-ups. Chain order: a player's notes (Discord,
--- Nov 2026). Quest texts, levels, XP and items: Wowhead Forever (quests 203,
--- 204, 205, 207, 95786-95788, 95798, 95799; the four troll tablets); where
--- the NPCs stand: Forever client tables (spawns of
--- 739, 2277, 2916, 252019) and Wowhead Forever (733).
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local DIBBS = FDJ.QUEST_START_MAPS[95787]
     local NIMETZ = { mapID = 1434, x = 0.378, y = 0.036, label = "Brother Nimetz — Rebel Camp", targetName = "Brother Nimetz", detail = "Brother Nimetz at the Rebel Camp, northern Stranglethorn Vale" }
@@ -1083,10 +1083,10 @@ do
     local TABLET_FIRST = "Down the stairs after the first boss, on the left"
     local BOTH = "Done together with the other of Sergeant Yohwa's two quests (The Second Rebellion and Bad Medicine); Brother Nimetz offers Kurzen's Mystery once both are handed in."
 
-    -- Objects, not NPCs: nothing to target from the map.
+
     local function Tablet(name, x, y, where)
-        -- pickUp: a thing to pick up (the arrow stays there and says so);
-        -- underwater: on the bottom of the Vile Reef ("Swim underwater")
+
+
         return { markerType = "location", mapID = 1434, x = x, y = y, label = name .. " — Stranglethorn Vale", detail = where, pickUp = true,
             underwater = (name == "Gri'lek the Wanderer") or nil }
     end
@@ -1159,9 +1159,9 @@ do
         pickup = AT_DIBBS, turnin = AT_DIBBS,
         map = DIBBS,
         requiredItems = {
-            -- tabletnotes (2.1.6, M 24 Nov 2026 in the Drowned City: "We are
-            -- gonna start putting real comments"): where each one is, as
-            -- found.
+
+
+
             {270308, "The First Tablet of I'lalai", 1, TABLET_FIRST},
             {270309, "The Second Tablet of I'lalai", 1, TABLET_VARTAKA},
             {270310, "The Third Tablet of I'lalai", 1, TABLET_DREADRISE},
@@ -1193,11 +1193,11 @@ do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = true
     end
 
-    -- Ancient Gurubashi Secrets: Archmage Timear, outside where the Violet
-    -- Hold stood in Dalaran (a player, Nov 2026; Wowhead Forever's spawn of
-    -- 31439).
+
+
+
     FDJ.QUEST_START_MAPS[97130] = { mapID = 1416, x = 0.154, y = 0.740, label = "Archmage Timear — Dalaran", targetName = "Archmage Timear", detail = "Archmage Timear, outside where the Violet Hold stood in Dalaran, Alterac Mountains" }
-    -- Confirmed turn-in: Archmage Timear is the same NPC as the quest giver.
+
     for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
         if quest.id == 97130 then
             quest.turninMap = FDJ.QUEST_START_MAPS[97130]
@@ -1205,21 +1205,21 @@ do
         end
     end
 
-    -- drownedally (2.0.9, M: "the tracking guide, the one with the arrow, for
-    -- Alliance Drowned City quests"): what the Route needs to know.
-    --  - Sergeant Yohwa's two quests are taken together (the second does not
-    --    wait for the first to be handed in).
-    --  - Where each lead-in is done: the Kurzen men of both of Yohwa's quests
-    --    stand at Kurzen's Compound (Jungle Fighters and Medicine Men, 28
-    --    spawns around 44.7, 10.4); the Skullsplitter Mystics south of it (24
-    --    spawns around 45.9, 36.4; the Witch Doctors a little further south).
-    --    Forever client tables (spawns of 937, 940,
-    --    780, 670). Kurzen's Mystery: its four tablets have their places
-    --    already (requiredItems' maps).
-    --  - Dibbs' two quests are done inside the dungeon: handed in after the
-    --    run. His two follow-ups are deliveries: no run of their own.
+
+
+
+
+
+
+
+
+
+
+
+
+
     do
-        local KURZEN = { markerType = "location", mapID = 1434, x = 0.447, y = 0.104, label = "Kurzen's Compound — Stranglethorn Vale", detail = "Kurzen Jungle Fighters and Medicine Men, in and around Kurzen's Compound" } -- (no town named here: the arrow would say "Get to" it)
+        local KURZEN = { markerType = "location", mapID = 1434, x = 0.447, y = 0.104, label = "Kurzen's Compound — Stranglethorn Vale", detail = "Kurzen Jungle Fighters and Medicine Men, in and around Kurzen's Compound" }
         local SKULLSPLITTERS = { markerType = "location", mapID = 1434, x = 0.459, y = 0.364, label = "Skullsplitter trolls — Stranglethorn Vale", detail = "Skullsplitter Mystics and Witch Doctors in the troll ruins south of Kurzen's Compound" }
         FDJ.QUEST_PREREQ_DETAILS[203].objectiveMap = KURZEN
         FDJ.QUEST_PREREQ_DETAILS[204].objectiveMap = KURZEN
@@ -1234,18 +1234,18 @@ do
             if quest.id == 95799 or quest.id == 95798 then quest.routeNoRun = true end
         end
     end
-    -- rebelway (2.0.9, M on Duskwood's south road, 15 Nov 2026: the arrow to
-    -- the Rebel Camp "is pointing me towards the mountains instead of
-    -- telling me to go straight and go past the bridge and then turn
-    -- right"): the camp lies behind a ridge. The way from Darkshire, worked
-    -- out on the Eastern Kingdoms walking map (the navigation grid, read as
-    -- data): the road south-west, over the bridge into Stranglethorn, right
-    -- at the first turn, then up the path into the camp (1,633 yards).
+
+
+
+
+
+
+
     do
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
         local function D(x, y) return { mapID = 1431, x = x, y = y } end
         local function S(x, y) return { mapID = 1434, x = x, y = y } end
-        local route = { forward = true, nearest = true, reach = 4, leg = 3, byNet = true, -- (bynet, 2.0.9)
+        local route = { forward = true, nearest = true, reach = 4, leg = 3, byNet = true,
         D(0.7770, 0.4502), D(0.7647, 0.4664), D(0.7647, 0.4803), D(0.7616, 0.4919), D(0.7600, 0.4965),
         D(0.7600, 0.4988), D(0.7569, 0.5081), D(0.7492, 0.5220), D(0.7492, 0.5243), D(0.7492, 0.5289),
         D(0.7492, 0.5313), D(0.7477, 0.5336), D(0.7461, 0.5359), D(0.7446, 0.5382), D(0.7446, 0.5405),
@@ -1272,14 +1272,14 @@ do
             FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)] = route
         end
     end
-    -- tabletways (2.0.9, M at the Rebel Camp, 16 Nov 2026: the arrow to The
-    -- First Troll Legend "is sending me through the mountains"): the camp
-    -- lies in a hollow, with ridges between it and the coast. The ways
-    -- between the camp and the four tablets of Kurzen's Mystery and from
-    -- tablet to tablet, worked out on the Eastern Kingdoms walking map
-    -- (the navigation grid, read as data), each walked corner by corner in
-    -- either direction (the one to the Second Troll Legend ends in the
-    -- water of the Vile Reef: the tablet lies on its bottom).
+
+
+
+
+
+
+
+
     do
         local PLACE = { camp = true, T1 = "1434|0.2940|0.1920", T2 = "1434|0.2480|0.2280", T3 = "1434|0.2300|0.1200", T4 = "1434|0.2470|0.0900" }
         local WAYS = {
@@ -1378,7 +1378,7 @@ do
             },
         }
         local function Way(list, back)
-            local route = { forward = true, nearest = true, reach = 4, leg = 3, byNet = true } -- (bynet, 2.0.9)
+            local route = { forward = true, nearest = true, reach = 4, leg = 3, byNet = true }
             local n = (#list - 2) / 2
             for i = 1, n do
                 local k = back and (n - i + 1) or i
@@ -1397,8 +1397,8 @@ do
         for place, key in pairs(PLACE) do
             if key ~= true then FDJ.ARROW_VIAS[key] = { routes = into[place] } end
         end
-        -- Back to the camp (Brother Nimetz, Sergeant Yohwa): from each tablet,
-        -- beside the way from Darkshire.
+
+
         for _, spot in ipairs({ YOHWA, NIMETZ }) do
             local key = string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)
             local routes = { FDJ.ARROW_VIAS[key] }
@@ -1407,23 +1407,23 @@ do
         end
     end
 
-    -- The steps are listed inside their chains only (QuestChains.lua's pass
-    -- ran before these chains were added), and the follow-ups' hand-in NPCs
-    -- get their map spots.
+
+
+
     for _, quest in ipairs((FDJ.DB["The Drowned City"] and FDJ.DB["The Drowned City"].quests) or {}) do
         if quest.id == 95787 or quest.id == 95788 then quest.hideFromMainList = true end
         if quest.id == 95799 then quest.turninMap = KARNIK end
         if quest.id == 95798 then quest.turninMap = ABRA end
     end
 end
--- END drownedalliance
 
--- BEGIN glowingshard
--- The Glowing Shard: first speak with Sputtervalve in Ratchet (the quest's
--- objective; he has no ? over his head), then hand it in to Falla Sagewind on
--- top of the mountain above Wailing Caverns (Forever client tables via
--- the client's tables: end NPC 8418, Sputtervalve 3442 and their spawns). The
--- tracker's ? shows Ratchet until he has been spoken to, then Falla.
+
+
+
+
+
+
+
 do
     local FALLA = { mapID = 1413, x = 0.482, y = 0.328, label = "Falla Sagewind — above Wailing Caverns", targetName = "Falla Sagewind", detail = "In a tent on top of the mountain above Wailing Caverns" }
     for _, quest in ipairs((FDJ.DB["Wailing Caverns"] and FDJ.DB["Wailing Caverns"].quests) or {}) do
@@ -1435,33 +1435,33 @@ do
             quest.objectiveWhere = "Sputtervalve, by the flight master in Ratchet (63.0, 37.2); he has no ? over his head"
         end
     end
-    -- Falla Sagewind was put in Thunder Bluff here by mistake.
+
     FDJ.QUEST_START_MAPS[6981] = FALLA
-    -- The game's objective line, named (Systems/QuestText.lua:
-    -- FDJ.ObjectiveLineOverride): 0/1 / 1/1 Speak with Sputtervalve in Ratchet.
+
+
     FDJ.OBJECTIVE_LINE_OVERRIDES = FDJ.OBJECTIVE_LINE_OVERRIDES or {}
     FDJ.OBJECTIVE_LINE_OVERRIDES[6981] = { match = "in ratchet", text = "Speak with Sputtervalve in Ratchet" }
 end
--- END glowingshard
 
--- BEGIN malletchain
--- The Mallet of Zul'Farrak, which summons Gahz'rilla at the gong in
--- Zul'Farrak: no quest in the game, two things done by hand (WoW Forever is
--- the same as Classic: Warcraft Tavern's Forever Zul'Farrak guide). Shown as
--- a page of its own (questChainPage, like the Cozy Sleeping Bag), opened from
--- the button on Gahz'rilla's boss page, beside his portrait.
--- malletone (2.1.3, M 21 Nov 2026: "it's not really a pickup ... it's not
--- even a chain quest ... put everything together"): one entry, no chain, no
--- "Pick it up" and no Starts at (noPickUp): the objective is killing Qiaga
--- the Keeper for the Sacred Mallet (Show on Map: Qiaga), then, under it,
--- using the Sacred Mallet at the altar on top of Jintha'Alor (objectiveMore,
--- its own Show on Map). Nothing of it is done inside Zul'Farrak
--- (objectiveInDungeon = false); only the gong is. Done once the character
--- holds the Mallet of Zul'Farrak (FDJ.PSEUDO_QUEST_DONE, made-up ID). The
--- tracker's and the arrow's spot (startMap) is Qiaga until the Sacred Mallet
--- is in the bags, then the altar.
--- Spots: Altar of Zul (48.6, 68.0) and the altar on top of Jintha'Alor
--- (58.5, 77.5), The Hinterlands, from player guides.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local PAGE = "Mallet of Zul'Farrak"
     FDJ.MALLET_PAGE = PAGE
@@ -1472,7 +1472,7 @@ do
     local QIAGA = { mapID = 1425, x = 0.486, y = 0.680, label = "Qiaga the Keeper — Altar of Zul, The Hinterlands", targetName = "Qiaga the Keeper", detail = "At the top of the Altar of Zul" }
     local ALTAR = { markerType = "location", mapID = 1425, x = 0.585, y = 0.775, label = "Altar of Jintha'Alor — The Hinterlands", detail = "The altar at the very top of Jintha'Alor" }
 
-    -- Held by the character (bags or bank)?
+
     local function Has(itemID)
         local count
         if C_Item and C_Item.GetItemCount then
@@ -1490,17 +1490,17 @@ do
     local quest = {
         id = MAIN, name = "Mallet of Zul'Farrak", level = 50, requires = 1, faction = "Both",
         noPickUp = true, objectiveInDungeon = false,
-        -- malletwarn (2.1.3, M 21 Nov 2026): the red line at the top
+
         warning = "There is no quest to pick up here. Just kill and loot.",
-        -- subwarn (2.1.4, M 22 Nov 2026): the small red line under it, and
-        -- under that the Ancient Egg's quest button (it is also fetched at
-        -- Jintha'Alor): a click opens its step in The God Hakkar's chain,
-        -- Sunken Temple's page.
+
+
+
+
         subWarning = "Best done together with:",
         subWarningLink = { dungeon = "Sunken Temple", quest = 3528, step = 4787, name = "The Ancient Egg" },
         objective = "Kill Qiaga the Keeper to loot the Sacred Mallet.",
         objectiveMap = QIAGA,
-        -- %s: Jintha'Alor (area 354), the client's own name when the journal speaks its language
+
         objectiveMore = { text = "Then use the Sacred Mallet at the altar on the very top of %s: it turns into the Mallet of Zul'Farrak.", area = { 354, "Jintha'Alor" }, map = ALTAR },
         pickup = "Qiaga the Keeper, top of the Altar of Zul, The Hinterlands (48.6, 68.0)",
         turnin = "The gong at Gahz'rilla's pool, inside Zul'Farrak: use the Mallet of Zul'Farrak there to summon Gahz'rilla.",
@@ -1508,14 +1508,14 @@ do
         rewardSummary = "",
         rewardItems = { { MALLET, "Mallet of Zul'Farrak", 1 } },
     }
-    -- startMap: Qiaga, then (Sacred Mallet in the bags) the altar
+
     setmetatable(quest, { __index = function(_, key)
         if key == "startMap" then return Has(SACRED) and ALTAR or QIAGA end
     end })
 
     FDJ.DB[PAGE] = {
-        questChainPage = true, -- Quests, plus Bosses and Map of Zul'Farrak
-        -- Bosses and Map lead back to Zul'Farrak (Bosses at Gahz'rilla).
+        questChainPage = true,
+
         parentDungeon = "Zul'Farrak",
         parentBoss = "Gahz'rilla",
         level = "45+",
@@ -1528,8 +1528,8 @@ do
     FDJ.PSEUDO_QUEST_DONE = FDJ.PSEUDO_QUEST_DONE or {}
     FDJ.PSEUDO_QUEST_DONE[MAIN] = function() return Has(MALLET) end
 
-    -- Gahz'rilla's page: "Summon with: [Mallet of Zul'Farrak]" under his
-    -- name (Systems/BossSummon.lua); a click on the mallet opens this page.
+
+
     local zf = FDJ.DB["Zul'Farrak"]
     for _, boss in ipairs((zf and zf.bosses) or {}) do
         if boss.name == "Gahz'rilla" then
@@ -1537,22 +1537,22 @@ do
             boss.summonChain = { page = PAGE, quest = MAIN }
         end
     end
-    -- summonhelp (2.0.9, M 16 Nov 2026): the quest Gahz'rilla (2770) says he
-    -- has to be summoned, above its Objective, with "How to summon
-    -- Gahz'rilla" opening this page (Core/Journal.lua, FDJ.PlaceSummonHelp).
+
+
+
     for _, q in ipairs((zf and zf.quests) or {}) do
         if q.id == 2770 then
             q.summonHelp = { boss = "Gahz'rilla", item = MALLET, itemName = "Mallet of Zul'Farrak", page = PAGE, quest = MAIN }
         end
     end
 end
--- END malletchain
--- BEGIN mallethint
--- mallethint (2.1.4, M 22 Nov 2026 on Nekrum's Medallion: "in the Altar of
--- Zul, you're gonna put a disclaimer saying you can kill Qiaga at the top of
--- the altar to loot the Sacred Mallet"; then "that's a normal disclaimer, so
--- you can keep it blue"): The Altar of Zul's warning, at the top of its step
--- page (warningTop).
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     if D and D[2989] and D[2989].warning == nil then
@@ -1560,23 +1560,23 @@ do
         D[2989].warningTop = true
     end
 end
--- END mallethint
 
--- BEGIN sleepingbag
--- The Cozy Sleeping Bag (WoW Forever 1.60.1): its quest chain as a page of
--- its own (questChainPage), opened from the button left of Favourites on the
--- journal's home page. The Alliance start at the Burned-Out Remains in
--- Westfall and follow the note to The Barrens, the Horde the other way round;
--- from Stepping Stones on, the chain is the same for both. Every step starts
--- and ends at an object. Quests, objects, spawns, levels and XP: Forever
--- client tables; rewards and the way to each spot:
--- Wowhead (Forever).
+
+
+
+
+
+
+
+
+
+
 do
     local PAGE = "Cozy Sleeping Bag"
     FDJ.SLEEPING_BAG_PAGE = PAGE
     FDJ.SLEEPING_BAG_ITEM = 211527
 
-    -- Objects, not NPCs: nothing to target from the map.
+
     local function Spot(mapID, x, y, label, detail)
         return { markerType = "location", mapID = mapID, x = x, y = y, label = label, detail = detail }
     end
@@ -1590,21 +1590,21 @@ do
     local BAG = Spot(1424, 0.857, 0.522, "Messenger Bag — Thoradin's Wall", "Hanging outside the room in Thoradin's Wall")
     local SATCHEL = Spot(1424, 0.857, 0.522, "Hastily Rolled-Up Satchel — Thoradin's Wall", "Right under the Messenger Bag")
 
-    -- arrowvia: the way to a spot the straight line does not reach: points
-    -- the waypoint arrow leads to first, in order (a player guide to the
-    -- chain: the path into the Stonetalon hills, the fallen cart at
-    -- Thoradin's Wall; for the Alliance the way round Honor's Stand).
+
+
+
+
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local function Via(spot, list)
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)] = list
     end
-    -- The way to the abandoned camp, worked out on the walking maps
-    -- of Kalimdor (1.8.1): the camp sits on a shelf in the hills, reached
-    -- only by the path that leaves the main road at 52.2, 53.4 (or, from
-    -- the north, by the path off the Charred Vale descent); Sun Rock
-    -- Retreat's crater walls are cliffs on every other side.
+
+
+
+
+
     Via(POCKET_LITTER, { routes = {
-        { -- from Sun Rock Retreat (Horde)
+        {
             { mapID = 1442, x = 0.500, y = 0.610, label = "Out of Sun Rock Retreat: its east exit, to the road", faction = "Horde" },
             { mapID = 1442, x = 0.520, y = 0.579, label = "The main road, north", faction = "Horde" },
             { mapID = 1442, x = 0.522, y = 0.560, label = "The main road, north" },
@@ -1613,7 +1613,7 @@ do
             { mapID = 1442, x = 0.488, y = 0.542, label = "The hill path, west" },
             { mapID = 1442, x = 0.430, y = 0.541, label = "The hill path, west" },
         },
-        { -- from the Barrens road (both factions; the Alliance round Honor's Stand)
+        {
             { mapID = 1413, x = 0.402, y = 0.249, label = "The road into Stonetalon (round Honor's Stand)", faction = "Alliance" },
             { mapID = 1442, x = 0.605, y = 0.817, label = "The road west out of the Barrens" },
             { mapID = 1442, x = 0.580, y = 0.672, label = "The road north, past Webwinder Path" },
@@ -1624,7 +1624,7 @@ do
             { mapID = 1442, x = 0.488, y = 0.542, label = "The hill path, west" },
             { mapID = 1442, x = 0.430, y = 0.541, label = "The hill path, west" },
         },
-        { -- from Stonetalon Peak (Alliance)
+        {
             { mapID = 1442, x = 0.410, y = 0.157, label = "The road south out of Stonetalon Peak", faction = "Alliance" },
             { mapID = 1442, x = 0.438, y = 0.164, label = "The road south out of Stonetalon Peak", faction = "Alliance" },
             { mapID = 1442, x = 0.467, y = 0.291, label = "The road south", faction = "Alliance" },
@@ -1637,18 +1637,18 @@ do
             { mapID = 1442, x = 0.407, y = 0.552, label = "Up the mountain path to the camp", faction = "Alliance" },
         },
     } })
-    -- The Mound of Dirt: straight on from the camp, north over the ridge
-    -- and down the hillside (no via point).
-    -- Thoradin's Wall round the Messenger Bag (1.8.4), from the
-    -- walking maps of the Eastern Kingdoms: the fallen cart (its bed about
-    -- 6 yards up, centre 88.0, 47.1), a few yards of ground, then rubble that
-    -- ramps up south-west onto the wall and along it to the bag. The game
-    -- gives no height, so where the player stands on this grid (0.1 % map
-    -- steps from 85.0, 46.4) says whether they are up: '#' rubble, ramp and
-    -- wall top (only raised ground), '+' the cart and the structure's edges
-    -- (on or beside it), '.' plain ground, ' ' nothing to stand on. The
-    -- arrow keeps to the cart until the player is on it (within 5 yards of
-    -- its centre) or up on the rubble, and goes back to it on plain ground.
+
+
+
+
+
+
+
+
+
+
+
+
     local WALL = { mapID = 1424, x0 = 0.850, y0 = 0.464, step = 0.001, rows = {
             "............................+++++",
             "........................... +++++",
@@ -1720,8 +1720,8 @@ do
     Via(BAG, { CART })
     Via(SATCHEL, { CART })
 
-    -- Where each step is picked up and handed in, written out with the
-    -- coordinates (shown on the step's page under Starts at / Turn in).
+
+
     local AT_BARRENS = "Burned-Out Remains at the burnt tower on the road south of Camp Taurajo, The Barrens (46.3, 73.9)"
     local AT_WESTFALL = "Burned-Out Remains in the cart wreckage at the Alexston Farmstead, Westfall (37.3, 50.6)"
     local AT_LITTER = "Pocket Litter on a box at the abandoned camp, Stonetalon Mountains (40.8, 52.6)"
@@ -1730,7 +1730,7 @@ do
     local AT_BAG = "Messenger Bag hanging at Thoradin's Wall, Hillsbrad Foothills (85.7, 52.2)"
 
     FDJ.DB[PAGE] = {
-        questChainPage = true, -- Quests is its only tab
+        questChainPage = true,
         level = "14+",
         location = "",
         description = "",
@@ -1746,8 +1746,8 @@ do
         } },
     }
 
-    -- Step 1 is a quest of its own for each faction (79007 Horde, 79008
-    -- Alliance); FDJ.SetSleepingBagFaction picks the character's.
+
+
     local NOTE = { id = 79008, name = "... and that note you found" }
     FDJ.QUEST_PREREQ_CHAINS[79976] = {
         NOTE,
@@ -1768,8 +1768,8 @@ do
         pickup = AT_WESTFALL, turnin = AT_BARRENS,
         map = WESTFALL_REMAINS, turninMap = BARRENS_REMAINS,
     }
-    -- Picked up from the Nailed Plank where step 1 ends (pickup and map: set
-    -- for the faction below).
+
+
     local STEPPING = {
         level = 24, requires = 14,
         objective = "Find the cozy spot in the mountains between The Barrens and Desolace: the Pocket Litter at an abandoned camp in Stonetalon Mountains.",
@@ -1804,8 +1804,8 @@ do
         Horde = { WESTFALL_PLANK, "Nailed Plank next to the Burned-Out Remains at the Alexston Farmstead, Westfall (37.4, 50.9)" },
         Alliance = { BARRENS_PLANK, "Nailed Plank on the side of the burnt tower south of Camp Taurajo, The Barrens (46.4, 73.8)" },
     }
-    -- The page shows the character's faction only: its quest is that
-    -- faction's, and the journal hides the Alliance / Horde buttons on it.
+
+
     function FDJ.SetSleepingBagFaction(faction)
         local plank = PLANK[faction] or PLANK.Alliance
         NOTE.id = faction == "Horde" and 79007 or 79008
@@ -1830,23 +1830,23 @@ do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = false
     end
 end
--- END sleepingbag
 
--- BEGIN lesstext
--- Step pages show the objective, the quest givers and where to go. Notes that only
--- give the step's place in its chain (the chain list already shows it) or story
--- text are hidden, in every language.
+
+
+
+
+
 for _, id in ipairs({ 65, 132, 135, 141, 153, 155, 275, 276, 277, 303, 373, 389, 463, 545, 865, 870, 877, 880, 1100, 1109, 1198, 1489, 1490, 1806, 2041, 2842, 2926, 2947, 2949, 5726, 92432, 92742, 92744, 92745, 92748, 92750, 92751, 92752, 92819, 95647, 95663, 96391 }) do
     local d = FDJ.QUEST_PREREQ_DETAILS[id]
     if d then d.suppressDescription = true end
 end
--- END lesstext
 
--- BEGIN npcfloors
--- Quest NPCs well below (-) or above (+) the ground around them, in yards:
--- { continent, world x, world y, height }. The waypoint arrow says so near
--- them (a crypt, Undercity under the ruins, a tower top). Generated by
--- floors.py from the client's spawn heights (SOURCES.txt).
+
+
+
+
+
+
 FDJ.NPC_FLOORS = {
     ["Apothecary Zamah"] = { { 1, -996, 277, -26 }, { 1, -995.5, 278.5, -26 }, { 1, -995.5, 280.5, -26 } },
     ["Argent Outfitter"] = { { 0, 1580, 245, -122 }, { 0, 1586, 250, -122 } },
@@ -1881,12 +1881,12 @@ FDJ.NPC_FLOORS = {
     ["Thurston Xane"] = { { 1, -996, 254, -36 }, { 1, -995.5, 255, -36 } },
     ["Tyrande Whisperwind"] = { { 1, 9662.5, 2524.5, 29 }, { 1, 9662.5, 2526.5, 28 } },
 }
--- END npcfloors
 
--- BEGIN droprare
--- droprare (2.0.8, M 15 Nov 2026): the tooltip line of a loot entry with
--- dropNote = "EXTREMELY_RARE_DROP" (Zul'Farrak: Spellshock Leggings 1/440,
--- Bloodletter Scalpel 1/611).
+
+
+
+
+
 do
     local texts = {
         enUS = "Extremely rare drop", deDE = "Extrem seltene Beute", frFR = "Butin extrêmement rare",
@@ -1899,8 +1899,8 @@ do
         if t and t.EXTREMELY_RARE_DROP == nil then t.EXTREMELY_RARE_DROP = text end
     end
 end
--- chainglowoff (2.0.8): the Quests page option that removes the glow
--- (glowstep, M 15 Nov 2026: its name says "chain step")
+
+
 do
     local texts = {
         enUS = { "Remove quest glow on chain step \"Pick it up\"", "A quest whose chain you have finished, and that you can take now, glows gold in the quest list. Tick this to remove the glow (\"Pick it up\" stays)." },
@@ -1923,7 +1923,7 @@ do
         end
     end
 end
--- bossquest (2.0.8): the tooltip of the quest beside a boss's name
+
 do
     local tips = {
         enUS = "Click to open the quest", deDE = "Klicken, um die Quest zu öffnen", frFR = "Cliquez pour ouvrir la quête",
@@ -1936,11 +1936,11 @@ do
         if t and t.BOSS_QUEST_TIP == nil then t.BOSS_QUEST_TIP = text end
     end
 end
--- END droprare
 
--- BEGIN rarelabels
--- darkreaver (2.0.8, M 15 Nov 2026): a boss's own label in place of "Rare"
--- (rareLabel), in the player's language when it is listed here.
+
+
+
+
 do
     local LABELS = {
         ["Paladin Mount Quest Boss"] = {
@@ -1950,7 +1950,7 @@ do
             ruRU = "Босс квеста коня паладина", koKR = "성기사 탈것 퀘스트 보스",
             zhCN = "圣骑士坐骑任务首领", zhTW = "聖騎士坐騎任務首領",
         },
-        -- warlockmount (2.1.2): Lord Hel'nurath (Dire Maul: West)
+
         ["Warlock Mount Quest Boss"] = {
             deDE = "Hexenmeister-Reittierquest-Boss", frFR = "Boss quête monture démoniste",
             esES = "Jefe misión montura brujo", esMX = "Jefe misión montura brujo",
@@ -1958,8 +1958,8 @@ do
             ruRU = "Босс квеста коня чернокнижника", koKR = "흑마법사 탈것 퀘스트 보스",
             zhCN = "术士坐骑任务首领", zhTW = "術士坐騎任務首領",
         },
-        -- isalien (2.1.1): the Dungeon Set 2 (Tier 0.5) bosses' label (Isalien,
-        -- Kormok, Mor Grayhoof, Jarien and Sothos, Theldren, Lord Valthalak)
+
+
         ["0.5 Quest Event"] = {
             deDE = "0.5-Questereignis", frFR = "Événement de quête 0.5",
             esES = "Evento de misión 0.5", esMX = "Evento de misión 0.5",
@@ -1975,22 +1975,22 @@ do
         return (byLang and lang and byLang[lang]) or label
     end
 end
--- END rarelabels
 
--- BEGIN questrowtrial
--- questrowtrial (2.0.8, M 15 Nov 2026, tried on The Deadmines and Scarlet Monastery: Library first): the
--- quest list of these dungeons shows the character's own faction only
--- (unless "Show both factions' quests" is on in the options; the crest at
--- the top is the character's, locked), and its rows have no faction crests:
--- in their place a round ! (as big as the turn-in ?) that shows how to pick
--- the quest up, with "Pick it up" beside it once its quest chain is done.
+
+
+
+
+
+
+
+
 FDJ.QUESTROW_TRIAL = {
     ["The Deadmines"] = true,
-    ["Scarlet Monastery: Library"] = true, -- (M, 15 Nov 2026: "now do the same for scarlet lib quests")
+    ["Scarlet Monastery: Library"] = true,
 }
--- questrowall (2.0.8, M 15 Nov 2026: "roll this update for every single
--- dungeon"): every dungeon's quest list now (the list above is what was
--- tried first).
+
+
+
 FDJ.QUESTROW_ALL = true
 do
     local strings = {
@@ -2036,17 +2036,17 @@ do
         end
     end
 end
--- END questrowtrial
 
--- BEGIN npcupstairs
--- upstairs (2.0.8, M 15 Nov 2026): quest NPCs up a flight of stairs inside a
--- building (Raleigh the Devout: upstairs in the Southshore inn). Once the
--- arrow shows the NPC's portrait (the NPC is in reach), it says "Go
--- upstairs" under the yards.
+
+
+
+
+
+
 FDJ.NPC_UPSTAIRS = {
     ["Raleigh the Devout"] = true,
-    ["Ashe Amberhall"] = true, -- upnpc (2.1.1): top floor of Farholde Keep's tower, Riverglades
-    ["Archmage Tervosh"] = true, -- theramoretower (2.1.4): up the mage tower in Theramore
+    ["Ashe Amberhall"] = true,
+    ["Archmage Tervosh"] = true,
 }
 do
     local strings = {
@@ -2060,15 +2060,15 @@ do
         if t and t.ARROW_GO_UP == nil then t.ARROW_GO_UP = text end
     end
 end
--- END npcupstairs
--- BEGIN theramoretower
--- theramoretower (2.1.4, M 22 Nov 2026 in Theramore at 67.2, 50.4 and 66.9,
--- 50.0, the arrow to Archmage Tervosh (Shadowshard Fragments) straight at the
--- wall on the tower's south-east side: "It should send me to the right actual
--- entrance"): the way in is on the other side, where M stood to show it
--- (65.4, 48.2). The arrow leads there first, from any side, and only then to
--- Tervosh; keep: within 60 yards of him too (the wall is 35 yards from him);
--- inside: passed as well once indoors (MapMarkers' doorway).
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local IN = "Into the tower"
@@ -2084,16 +2084,16 @@ do
         if content.places[IN] == nil then content.places[IN] = line end
     end
 end
--- END theramoretower
 
--- BEGIN questrp
--- questrp (2.0.8, M 15 Nov 2026): a quest whose hand-in starts a little scene
--- before the NPC offers the next quest (Down the Scarlet Path: Raleigh the
--- Devout breaks the seal on Anton's letter, reads it, speaks, throws it on
--- the table; then In the Name of the Light). The arrow stays on the NPC and
--- says "Wait for the RP" until the scene's last line (lines = how many the
--- NPC says or emotes); the time it took is kept, so the next time it counts
--- down. The lines: AzerothCore creature_text, NPC 3980 (SOURCES.txt).
+
+
+
+
+
+
+
+
+
 FDJ.QUEST_RP = {
     [1052] = { npc = 3980, name = "Raleigh the Devout", lines = 3 },
 }
@@ -2119,31 +2119,31 @@ do
         end
     end
 end
--- END questrp
 
--- BEGIN dalaranquests
--- Kirin Tor quests from Archmage Lan'dalock in Dalaran (Alterac Mountains),
--- seen in the game on 2026-11-06. Alliance for now: Dalaran is where the
--- Alliance lands from Zephras Isle (the Horde lands in Mulgore).
--- Their quest IDs are not public yet. Each has a stand-in ID until the game
--- names it: the quest in the log (any language: the quest's own item among
--- its objectives) or at the quest giver (English title). The real ID is then
--- used and remembered (ForeverDungeonJournalDB.learnedQuestIDs).
+
+
+
+
+
+
+
+
+
 do
     local LANDALOCK = { mapID = 1416, x = 0.154, y = 0.738, label = "Archmage Lan'dalock — Dalaran", targetName = "Archmage Lan'dalock" }
     local ADDED = {
-        -- Blackmaw Hold and Shaper's Terrace (Horde players' quest logs, Nov
-        -- 2026): not on Wowhead yet. Ekkal stands at the Ruins of Eldarath
-        -- (Wowhead Forever's spawn of NPC 235903).
+
+
+
         { dungeon = "Blackmaw Hold", quest = {
-            id = 97327, -- real ID (Wowhead Forever, forever-tool); was stand-in -97201
+            id = 97327,
             learnTitle = "Blackmaw Pouches",
             learnItem = 273050,
             name = "Blackmaw Pouches",
             level = 60,
             requires = 55,
             faction = "Both",
-            pickup = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)", -- blackmawaudit (2.0.36)
+            pickup = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)",
             objective = "Enter Blackmaw Hold and recover 5 Blackmaw Pouches for Ekkal at the Ruins of Eldarath in Azshara.",
             turnin = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)",
             rewardSummary = "90s  •  Timbermaw Hold +150",
@@ -2153,25 +2153,25 @@ do
             startMap = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
             turninMap = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" },
         } },
-        -- shapersquests (2.0.4): real IDs, XP and reputation from Wowhead
-        -- Forever (quest tooltips) and ForeverChanges, cross-checked with the
-        -- reported research (Shaper's Terrace Quest Research, 11 Nov 2026).
-        -- shapersgivers (2.0.41): four givers from the Shaper's Terrace Quest
-        -- Audit (13 Nov 2026, Questie-derived Forever data) and forg.gg's
-        -- quest pages, the places matching the NPCs' own spawn pages:
-        -- Chemist Fuely and Master Apothecary Faranell (Undercity), Curator
-        -- Thorius (Ironforge). Turn-ins are not known yet; Digestible
-        -- Research's start is still not known.
-        -- 2.0.43: the Alliance three are handed in to Curator Thorius
-        -- (Wowhead Forever quest pages, M's screenshots, 13 Nov 2026).
-        -- 2.0.44: the Horde two are handed in to their givers (M, in game:
-        -- the quest texts ask you to bring the items back to them).
-        -- 2.0.45: Digestible Research starts from the Partially Digested
-        -- Journal, an object lying on the ground inside the dungeon (the
-        -- Verdant Plains); clicking it gives the quest, no item (a player's
-        -- screenshot and M, 13 Nov 2026).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         { dungeon = "Shaper's Terrace", quest = {
-            id = 97049, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97202
+            id = 97049,
             learnTitle = "Essence of Seeping Slimes",
             learnItem = 276235,
             name = "Essence of Seeping Slimes",
@@ -2190,7 +2190,7 @@ do
             startMap = { mapID = 1458, x = 0.475, y = 0.733, label = "Chemist Fuely — Undercity", targetName = "Chemist Fuely" },
         } },
         { dungeon = "Shaper's Terrace", quest = {
-            id = 95926, -- real ID (Wowhead Forever, ForeverChanges); was stand-in -97203
+            id = 95926,
             learnTitle = "The Dark Crystal",
             learnItem = 271771,
             name = "The Dark Crystal",
@@ -2208,9 +2208,9 @@ do
             requiredItem = { 271771, "Drained Crystal Fragment", 1, 1, "Near the Achromatic Crystal inside Shaper's Terrace" },
             startMap = { mapID = 1458, x = 0.488, y = 0.693, label = "Master Apothecary Faranell — Undercity", targetName = "Master Apothecary Faranell" },
         } },
-        -- The Alliance's three (reported, 11 Nov 2026).
+
         { dungeon = "Shaper's Terrace", quest = {
-            id = 95924, -- Wowhead Forever, ForeverChanges
+            id = 95924,
             learnTitle = "Panic at the Digsite",
             name = "Panic at the Digsite",
             level = 60,
@@ -2228,7 +2228,7 @@ do
             startMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
         } },
         { dungeon = "Shaper's Terrace", quest = {
-            id = 95925, -- Wowhead Forever, ForeverChanges
+            id = 95925,
             learnTitle = "Mapping the Way Forward",
             name = "Mapping the Way Forward",
             level = 60,
@@ -2245,8 +2245,8 @@ do
             note = "You map them with an Explorers' League Cartographer's Kit.",
             startMap = { mapID = 1455, x = 0.715, y = 0.157, label = "Curator Thorius — Hall of Explorers, Ironforge", targetName = "Curator Thorius" },
         } },
-        -- Digestible Research: real ID and reward item IDs from Wowhead
-        -- Forever (quest 95790; was the stand-in -97204 until 2.0.3).
+
+
         { dungeon = "Shaper's Terrace", quest = {
             id = 95790,
             learnTitle = "Digestible Research",
@@ -2278,11 +2278,11 @@ do
             liveXPFallback = 8600,
             rewardSummary = "55s",
             requiredItem = { 276916, "The Coldbringer's Eye", 1, 1, "From Amnennar the Coldbringer, the last boss of Razorfen Downs" },
-            -- Archmage Lan'dalock gives it (a player's screenshot, Nov 2026).
+
             startMap = LANDALOCK,
             turninMap = LANDALOCK,
         } },
-        -- Its real ID is on Wowhead Forever now (96770; level 46, from 39).
+
         { dungeon = "Zul'Farrak", quest = {
             id = 96770,
             learnTitle = "The Witch Doctor's Head",
@@ -2300,9 +2300,9 @@ do
             startMap = LANDALOCK,
             turninMap = LANDALOCK,
         } },
-        -- The Horde side: Mazu'kon of the Earthen Ring on the Skywatcher
-        -- Plateau in Mulgore (a player, Nov 2026; Wowhead Forever quest
-        -- 96775: level 46, from 42, 10,100 XP, 65s, reputation).
+
+
+
         { dungeon = "Zul'Farrak", quest = {
             id = 96775,
             learnTitle = "Zum'rah's Head",
@@ -2320,9 +2320,9 @@ do
             startMap = FDJ.QUEST_START_MAPS[96774],
             turninMap = FDJ.QUEST_START_MAPS[96774],
         } },
-        -- Alcaz Prison (a stream, 2026-11-07): given inside the prison by
-        -- Commander Folkar (NPC 260386), handed in to Thrall. Its level is
-        -- not known yet: the dungeon's range is used.
+
+
+
         { dungeon = "Alcaz Prison", quest = {
             id = 95483,
             learnTitle = "Thrall Needs to Know",
@@ -2335,15 +2335,15 @@ do
             turnin = "Thrall, Valley of Wisdom, Orgrimmar (32.0, 37.8)",
             rewardSummary = "",
             rewards = "Choose: Fatebound Buckler, Courier's Clasp or Dustwallow Dirk\n2,400 XP • Orgrimmar +100",
-            -- Item IDs: Wowhead Forever (all three rare).
+
             rewardChoice = true,
             rewardItems = { { 279831, "Fatebound Buckler", 3 }, { 279833, "Courier's Clasp", 3 }, { 279474, "Dustwallow Dirk", 3 } },
             liveXPFallback = 2400,
             turninMap = { mapID = 1454, x = 0.320, y = 0.378, label = "Thrall — Orgrimmar", targetName = "Thrall" },
         } },
-        -- alcazquests (1.9.5, players' screenshots): the Kor'kron's masks
-        -- quest. Who gives it is not known yet: its text is a Kor'kron's
-        -- who fought the Defias there. Level not known yet: the dungeon's.
+
+
+
         { dungeon = "Alcaz Prison", quest = {
             id = 96334,
             learnTitle = "Blood Red Bandanas",
@@ -2362,8 +2362,8 @@ do
             requiredItem = { 274028, "Blood Red Bandana", 1, 8, "From the Defias guards in Alcaz Prison" },
             turninMap = { mapID = 1454, x = 0.344, y = 0.386, label = "Eitrigg — Grommash Hold, Orgrimmar", targetName = "Eitrigg" },
         } },
-        -- The naga's quest (a player's quest log, 1.9.6): level 53. Who gives
-        -- it and takes it back is not known yet; seen by a Horde player.
+
+
         { dungeon = "Alcaz Prison", quest = {
             id = 96332,
             learnTitle = "A Little Payback",
@@ -2384,7 +2384,7 @@ do
         } },
     }
 
-    local pending = {} -- stand-in ID -> quest
+    local pending = {}
     for _, add in ipairs(ADDED) do
         local d = FDJ.DB and FDJ.DB[add.dungeon]
         if d then
@@ -2401,12 +2401,12 @@ do
         end
     end
 
-    -- alcazquests (1.9.5): Thrall Needs to Know comes at the end of a chain
-    -- (players' screenshots): Sergeant Ulka, outside the prison, sends you
-    -- in after Commander Folkar (No Orc Left Behind); he sends you on to find
-    -- King Varian Wrynn (The Honor of the Kor'kron, handed in at the Perfumed
-    -- Note after Blazeroar), then back to Thrall. The steps' IDs are not
-    -- public either: stand-ins, learnt like the quests'.
+
+
+
+
+
+
     local ULKA = { mapID = 1445, x = 0.702, y = 0.188, label = "Sergeant Ulka — Dustwallow Marsh", targetName = "Sergeant Ulka", detail = "Sergeant Ulka, outside Alcaz Prison on Alcaz Island" }
     FDJ.QUEST_PREREQ_CHAINS[95483] = {
         { id = 95309, name = "No Orc Left Behind" },
@@ -2426,8 +2426,8 @@ do
         pickup = "Commander Folkar, inside Alcaz Prison",
         turnin = "Perfumed Note, after Blazeroar, inside Alcaz Prison",
     }
-    -- 1.9.6: the note sends you back to Folkar, who then gives Thrall Needs
-    -- to Know.
+
+
     FDJ.QUEST_PREREQ_DETAILS[96369] = {
         level = 53, requires = 48,
         objective = "Tell Commander Folkar what you found.",
@@ -2451,7 +2451,7 @@ do
         return ForeverDungeonJournalDB.learnedQuestIDs
     end
 
-    -- The stand-in ID becomes the real one everywhere the journal keeps it.
+
     local function Use(standIn, real, quiet)
         local quest = pending[standIn]
         if not quest or type(real) ~= "number" or real <= 0 then return end
@@ -2466,8 +2466,8 @@ do
             if maps[real] == nil then maps[real] = maps[standIn] end
             maps[standIn] = nil
         end
-        -- alcazquests: the chain it heads or is a step of, its chain page
-        -- and its XP go with it.
+
+
         local chains = FDJ.QUEST_PREREQ_CHAINS
         if chains then
             if chains[standIn] ~= nil then
@@ -2507,13 +2507,13 @@ do
         return type(name) == "string" and name ~= "" and name or nil
     end
 
-    -- A quest the game names (log or giver window): one of ours?
+
     function FDJ.LearnQuestID(questID, title)
         questID = tonumber(Plain(questID))
         if not questID or questID <= 0 or not next(pending) then return end
         for _, q in pairs(FDJ.DB or {}) do
             for _, e in ipairs((type(q) == "table" and q.quests) or {}) do
-                if e.id == questID then return end -- already known
+                if e.id == questID then return end
             end
         end
         title = Plain(title)
@@ -2536,8 +2536,8 @@ do
         end
     end
 
-    -- Learned before (any character of this account), and quests accepted
-    -- now: known before the rest of the journal hears of them.
+
+
     local learn = CreateFrame("Frame")
     learn:RegisterEvent("PLAYER_LOGIN")
     learn:RegisterEvent("QUEST_ACCEPTED")
@@ -2559,36 +2559,36 @@ do
         pcall(FDJ.LearnQuestID, id, title)
     end)
 end
--- END dalaranquests
 
--- BEGIN alcazquests2
--- 2.0.22: every Alcaz Prison quest with its giver and the quests that lead
--- to it. Quest IDs, series, objectives and rewards: Wowhead Forever (Nov
--- 2026); XP: forever-tool / ForeverChanges; the Horde givers and the order
--- of the Kor'kron quests: Ke on the Discord (quest log screenshots); the
--- Alliance givers and the disguise tip: Wowhead comments.
+
+
+
+
+
+
+
 do
     local db = FDJ.DB and FDJ.DB["Alcaz Prison"]
     local EITRIGG = { mapID = 1454, x = 0.344, y = 0.386, label = "Eitrigg — Grommash Hold, Orgrimmar", targetName = "Eitrigg" }
-    -- nazeername (2.0.13, KILLDARK on Discord, 18 Nov 2026, "Worng NPC": the
-    -- game's name is Nazeer Bloodpike, no s, so the click to target him
-    -- missed; his spot: Forever client tables,
-    -- spawn of NPC 4791, 35.2, 30.7 - was 36.0, 31.0, some 40 yards off)
+
+
+
+
     local NAZEER = { mapID = 1445, x = 0.352, y = 0.307, label = "Nazeer Bloodpike — Brackenwall Village, Dustwallow Marsh", targetName = "Nazeer Bloodpike" }
     local ULKA = { mapID = 1445, x = 0.702, y = 0.188, label = "Sergeant Ulka — Alcaz Island, Dustwallow Marsh", targetName = "Sergeant Ulka" }
-    -- shawspot (2.0.9, Pekins on Discord, 15 Nov 2026: "more towards the
-    -- south of Old Town at 79, 71"): 75.8, 59.8 was his place on the old
-    -- Stormwind map; on Forever's map he stands at 78.3, 70.7 (Forever
-    -- client tables, spawn of NPC 332; the same
-    -- spot the journal already uses for Shaw's Report).
+
+
+
+
+
     local SHAW = { mapID = 1453, x = 0.783, y = 0.707, label = "Master Mathias Shaw — SI:7, Old Town, Stormwind", targetName = "Master Mathias Shaw" }
     local SULLY = { mapID = 1445, x = 0.662, y = 0.452, label = "Sully McCleary — inn, Theramore", targetName = "Sully McCleary" }
     local SULLY_OUT = { mapID = 1445, x = 0.634, y = 0.424, label = "Sully McCleary — outside Theramore, across the bridge", targetName = "Sully McCleary" }
-    -- sullyout (2.1.4, alcazally): the Sully behind the graveyard (NPC 260271,
-    -- 63.4, 42.3) gives and takes The Return of the King?, The Secret Prison,
-    -- A Bit of Wet Work and Somber News; the one in the inn (260146) only
-    -- takes Our Man in Theramore and gives Watch Yer Back (the game's quest
-    -- data as QuestieDB has it; SOURCES.txt, alcazally).
+
+
+
+
+
     local AT_SULLY_OUT = "Sully McCleary, outside Theramore across the bridge, Dustwallow Marsh (63.4, 42.4)"
     local LANDALOCK = { mapID = 1416, x = 0.154, y = 0.738, label = "Archmage Lan'dalock — Violet Hold entrance, Dalaran", targetName = "Archmage Lan'dalock" }
     local MOONBROOK = { mapID = 1436, x = 0.434, y = 0.678, label = "Mason Connery's treasure — Moonbrook inn, Westfall", targetName = "Loose Floorboard" }
@@ -2597,9 +2597,9 @@ do
     local AT_SULLY = "Sully McCleary, in the inn in Theramore, Dustwallow Marsh (66.2, 45.2)"
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
 
-    -- Horde: Eitrigg > Nazeer > Sergeant Ulka, who then gives No Orc Left
-    -- Behind (Thrall Needs to Know's chain), A Little Payback and Blood Red
-    -- Bandanas.
+
+
+
     local KORKRON = {
         { id = 95283, name = "The Missing Kor'kron" },
         { id = 95284, name = "The Elite of the Elite" },
@@ -2639,8 +2639,8 @@ do
     if D[95309] then D[95309].turninMap = nil end
     XP[95283] = 1300; XP[95284] = 1300; XP[95285] = 1300
 
-    -- Alliance: Mathias Shaw > Sully McCleary in Theramore > eavesdropping
-    -- on Jaina; Sully then gives The Secret Prison and A Bit of Wet Work.
+
+
     local SI7 = {
         { id = 95194, name = "Our Man in Theramore" },
         { id = 95196, name = "Watch Yer Back" },
@@ -2661,7 +2661,7 @@ do
     D[95198] = {
         level = 53, requires = 48,
         objective = "Use the SI:7 Disguise Kit to eavesdrop on Jaina and her inner circle at the Theramore Mage Tower.",
-        pickup = AT_SULLY_OUT, turnin = AT_SULLY_OUT, -- (sullyout)
+        pickup = AT_SULLY_OUT, turnin = AT_SULLY_OUT,
         map = SULLY_OUT, turninMap = SULLY_OUT,
         providedItem = {269000, "SI:7 Disguise Kit", 1, "Given when you accept the quest"},
         note = "Up the tower, talk to the guard next to Archmage Tervosh (he looks like you in the disguise) and relieve him; don't get close to Jaina or she dispels it. You stay stuck a while after it completes: use Exit Vehicle.",
@@ -2669,14 +2669,14 @@ do
     D[95262] = {
         level = 53, requires = 48,
         objective = "Enter Alcaz Prison and learn what became of the King of Stormwind.",
-        pickup = AT_SULLY_OUT, turnin = "Inside Alcaz Prison (who takes it is not known yet)", -- (sullyout)
+        pickup = AT_SULLY_OUT, turnin = "Inside Alcaz Prison (who takes it is not known yet)",
         map = SULLY_OUT,
     }
     XP[95194] = 1300; XP[95196] = 1300; XP[95198] = 1300; XP[95262] = 14400
 
-    -- Both factions: the man in iron chains (Mason Connery, after Blazeroar)
-    -- wants the key The Questioner carries; freed, he gives a note to his
-    -- treasure in Westfall.
+
+
+
     D[96335] = {
         level = 53, requires = 48, startsInDungeon = true,
         objective = "Recover the Alcaz Shackle Key from The Questioner in Alcaz Prison.",
@@ -2691,7 +2691,7 @@ do
             id = 95263, name = "Somber News", level = 53, requires = 48, faction = "Alliance",
             pickup = "Inside Alcaz Prison, once you learn what became of King Varian Wrynn",
             objective = "Return to Sully McCleary in Dustwallow Marsh.",
-            turnin = AT_SULLY_OUT, turninMap = SULLY_OUT, -- (sullyout)
+            turnin = AT_SULLY_OUT, turninMap = SULLY_OUT,
             liveXPFallback = 2850,
             rewardSummary = "Stormwind +75",
             rewards = "2,850 XP • Stormwind +75",
@@ -2699,9 +2699,9 @@ do
         },
         {
             id = 96381, name = "A Bit of Wet Work", level = 53, requires = 48, faction = "Alliance",
-            pickup = AT_SULLY_OUT, startMap = SULLY_OUT, -- (sullyout)
+            pickup = AT_SULLY_OUT, startMap = SULLY_OUT,
             objective = "Enter the Alcaz Prison and slay 15 Strashaz Soldiers, 8 Strashaz Enchantresses, and bring the head of Tidemistress Ca'zass to Sully McCleary.",
-            turnin = AT_SULLY_OUT, turninMap = SULLY_OUT, -- (sullyout)
+            turnin = AT_SULLY_OUT, turninMap = SULLY_OUT,
             liveXPFallback = 11550,
             rewardSummary = "Stormwind +100  •  Ironforge +100",
             rewards = "Choose: Theramore Defender's Gauntlets, Marshdweller's Pants or Naga Scale Spaulders\n11,550 XP • Stormwind +100 • Ironforge +100",
@@ -2722,10 +2722,10 @@ do
             rewardSummary = "",
             rewards = "Document Box\n11,550 XP",
             rewardItems = { { 274041, "Document Box", 1 } },
-            -- (statesecrets, M 23 Nov 2026: who takes the box is known now:
-            -- the link under the note opens the faction's State Secrets)
-            -- (statesecrets2, M 23 Nov 2026: "sells for 25 gold, OR it starts
-            -- State Secrets. Make sure you capitalize the or")
+
+
+
+
             note = "The Document Box sells for 25g, OR it starts State Secrets:",
             noteQuestLinkSide = { Alliance = { id = 96377, name = "State Secrets" }, Horde = { id = 96376, name = "State Secrets" } },
             chain = { { id = 96335, name = "The Man in the Iron Chains" } },
@@ -2757,48 +2757,48 @@ do
     FDJ.QUEST_START_MAPS[96772] = LANDALOCK
     FDJ.QUEST_START_MAPS[96332] = ULKA
     FDJ.QUEST_START_MAPS[96334] = ULKA
-    FDJ.QUEST_START_MAPS[96381] = SULLY_OUT -- (sullyout)
+    FDJ.QUEST_START_MAPS[96381] = SULLY_OUT
 end
--- END alcazquests2
--- BEGIN alcazally
--- alcazally (2.1.4, M 23 Nov 2026: "build the Alcaz Prison Alliance route
--- now"): what the Route needs for the Alliance's Alcaz Prison quests
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). Before the run: Our Man in
--- Theramore (Shaw) to Sully in the inn, Watch Yer Back to Sully behind the
--- graveyard, The Return of the King? (up the mage tower in the disguise),
--- then The Secret Prison and A Bit of Wet Work from him, and The Dragon's
--- Journal from Archmage Lan'dalock in Dalaran. Then the swim to Alcaz
--- Island. After it: Somber News and A Bit of Wet Work to Sully (who then
--- gives Shaw Needs To Know, for Shaw in Stormwind), The Dragon's Journal to
--- Dalaran and More Valuable Than Gold to Connery's Trunk in Moonbrook.
--- (myskips, M 23 Nov 2026: "this skip, I only want it for a specific quest
--- that I told you ... don't just invent your own skips": no "Skip for now"
--- on these two hand-ins.)
--- Spots: the game's quest data (QuestieDB) and the guides (SOURCES.txt).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     local ap = FDJ.DB and FDJ.DB["Alcaz Prison"]
-    -- The Return of the King?: the disguise is put on with the kit (its icon
-    -- on the arrow), then the guard by Archmage Tervosh, up the mage tower,
-    -- is relieved. The tower's way in and "Go upstairs": theramoretower.
+
+
+
     if D and D[95198] and D[95198].objectiveMap == nil then
-        -- (a place, no NPC to target: the guard's name is not known; the
-        -- line under the arrow within 60 yards)
-        -- goalat (2.1.4, M 23 Nov 2026: the box came up at Theramore's gate,
-        -- the town's subzone learned as the place): the box (the kit, what
-        -- to do) only once inside the tower; until then the arrow points
-        -- there (theramoretower: by its door). The guard: NPC 261485, 66.3,
-        -- 49.4 (QuestieDB), beside Tervosh.
+
+
+
+
+
+
+
         D[95198].objectiveMap = { mapID = 1445, x = 0.664, y = 0.493, label = "Jaina's guard \226\128\148 Theramore Mage Tower",
             markerType = "location", upstairs = true, clickItem = { 269000, "SI:7 Disguise Kit" }, hintKey = "ROUTE_DISGUISE_NEAR",
             goalAt = 75, goalIndoors = true, useAtGoal = true }
     end
     local SHAW = { mapID = 1453, x = 0.783, y = 0.707, label = "Master Mathias Shaw \226\128\148 SI:7, Old Town, Stormwind", targetName = "Master Mathias Shaw" }
-    -- More Valuable Than Gold: handed in at Connery's Trunk (object 611086,
-    -- Westfall 43.4, 67.9), upstairs in the Moonbrook inn: a thing to click,
-    -- no one to talk to.
-    -- (readyonpickup, M 23 Nov 2026: ready to hand in once taken, Core/
-    -- Journal.lua; the ? marks the spot its Turn in gives, 43.4, 67.8)
+
+
+
+
+
     FDJ.READY_ON_PICKUP = FDJ.READY_ON_PICKUP or {}
     FDJ.READY_ON_PICKUP[96337] = true
     local TRUNK = { mapID = 1436, x = 0.434, y = 0.678, label = "Mason Connery's treasure \226\128\148 Moonbrook inn, Westfall",
@@ -2807,19 +2807,19 @@ do
         if quest.id == 96337 then
             quest.turninMap = TRUNK
         end
-        -- Somber News' hand-in gives Shaw Needs To Know (95264: Sully, behind
-        -- the graveyard, to Master Mathias Shaw), taken right after it.
+
+
         if quest.id == 95263 and quest.routeFollow == nil then
             quest.routeFollow = { Alliance = { id = 95264, name = "Shaw Needs To Know", turnin = SHAW } }
         end
     end
-    -- The way to the entrance: the island has no boat or flight path; the
-    -- arrow leads to Sergeant Ulka's landing on its west shore (70.3, 18.9),
-    -- saying to swim across, then up to the prison. On the island itself
-    -- (direct: its box) straight to the prison. (alcazstraight, M 23 Nov
-    -- 2026: the box the whole island, from its west shore, 70.0, where that
-    -- landing is, to its south tip; in it the walking net isn't asked
-    -- either: MapMarkers.)
+
+
+
+
+
+
+
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local SWIM = "Swim across to Alcaz Island"
     FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1445", 0.753, 0.141)] = {
@@ -2845,7 +2845,7 @@ do
             if content.places[english] == nil then content.places[english] = list[i] end
         end
     end
-    -- the lines near the tower's guard and at the trunk
+
     local lines = {
         enUS = { "Use the SI:7 Disguise Kit (click its icon), then relieve the guard next to Archmage Tervosh. Keep away from Jaina.",
             "Upstairs, in the middle room: click Connery's Trunk" },
@@ -2877,22 +2877,22 @@ do
         end
     end
 end
--- END alcazally
--- lvl58 (2.1.4, M 23 Nov 2026: "it's available from level 58 ... go back
--- to showing XP"): The Darkreaver Menace's XP, the Horde's 8258 and the
--- Alliance's 97169: 7668's 19,900 (Wowhead Forever's 9,950 with Forever's
--- dungeon-quest multiplier, audit212).
+
+
+
+
+
 FDJ.FOREVER_QUEST_XP_FALLBACK[8258] = 19900
 FDJ.FOREVER_QUEST_XP_FALLBACK[97169] = 19900
 
--- BEGIN morzul
--- morzul (2.1.4, M 23 Nov 2026: "we should put this quest as the start of
--- imp delivery", Wowhead Forever quest 7562): Mor'zul Bloodbringer, the
--- first step of Imp Delivery's chain. From a warlock's demon trainer in a
--- capital city (Spackle Thornberry, Stormwind; Jubahl Corpseseeker,
--- Ironforge; Martha Strain, Undercity; Kurgul, Orgrimmar), to Mor'zul
--- Bloodbringer in the Burning Steppes; level 58, needs 60, not sharable
--- (SOURCES.txt, morzul).
+
+
+
+
+
+
+
+
 do
     local C, D = FDJ.QUEST_PREREQ_CHAINS, FDJ.QUEST_PREREQ_DETAILS
     local MORZUL = { mapID = 1428, x = 0.126, y = 0.314, label = "Mor'zul Bloodbringer \226\128\148 Burning Steppes", targetName = "Mor'zul Bloodbringer" }
@@ -2912,8 +2912,8 @@ do
         }
     end
     if FDJ.QUEST_SHAREABILITY_AUDIT and FDJ.QUEST_SHAREABILITY_AUDIT[7562] == nil then FDJ.QUEST_SHAREABILITY_AUDIT[7562] = false end
-    -- in each language: name, objective, start (both sides, Alliance,
-    -- Horde), hand-in (the trainers' names as the game has them in English)
+
+
     local T = {
         deDE = { "Mor'zul Bloodbringer", "Sprecht mit Mor'zul Bloodbringer in der Brennenden Steppe.",
             "Euer Dämonenausbilder in einer Hauptstadt: Spackle Thornberry (Sturmwind), Jubahl Corpseseeker (Eisenschmiede), Martha Strain (Unterstadt) oder Kurgul (Orgrimmar)",
@@ -2976,24 +2976,24 @@ do
         if content.places[MORZUL.label] == nil then content.places[MORZUL.label] = t[1] .. " \226\128\148 " .. STEPPES[lang] end
     end
 end
--- END morzul
 
--- BEGIN statesecrets
--- statesecrets (2.1.4, M 23 Nov 2026 on More Valuable Than Gold's page:
--- "this NPC takes the box, so you can remove the who takes it is not known
--- yet ... It starts State Secrets, and you make it as a clickable quest, and
--- you open a new page and you put the rewards there. It's just its own
--- standalone quest page ... for the horde, it's going to be from Nazgrel"):
--- the Document Box's quest, each faction's own: 96377 from Renzik "The
--- Shiv" (up in SI:7), 96376 from Nazgrel (Grommash Hold). Pages of their
--- own on Alcaz Prison, not in its list (hideFromMainList): the link under
--- More Valuable Than Gold's note opens the faction's one (noteQuestLinkSide,
--- Core/Journal.lua). The givers, their spots and the reward (Fractured
--- Insignia, 6,550 XP, 1g 60s; Nazgrel's: Orgrimmar +150): SOURCES.txt,
--- statesecrets. (statesecrets2, M 23 Nov 2026: "once you click on the
--- quest, you don't say the chain, you just say the show map. It's
--- standalone quest ... You're just showing it as an option for people":
--- no chain on these pages.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local ap = FDJ.DB and FDJ.DB["Alcaz Prison"]
     local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
@@ -3028,8 +3028,8 @@ do
     FDJ.QUEST_START_MAPS = FDJ.QUEST_START_MAPS or {}
     if FDJ.QUEST_START_MAPS[96377] == nil then FDJ.QUEST_START_MAPS[96377] = RENZIK end
     if FDJ.QUEST_START_MAPS[96376] == nil then FDJ.QUEST_START_MAPS[96376] = NAZGREL end
-    -- in each language: the note, the two pages (NPC names as the game has
-    -- them where the journal has no translation), their places
+
+
     local T = {
         deDE = { "Die Dokumentenkiste bringt beim Händler 25g, ODER sie startet State Secrets:",
             'Renzik "The Shiv", oben im SI:7, Altstadt, Sturmwind (78.3, 71.1)', 'Zeigt Renzik "The Shiv" die Dokumentenkiste.',
@@ -3076,7 +3076,7 @@ do
         content.quests = content.quests or {}
         local gold = content.quests[96337] or {}
         content.quests[96337] = gold
-        gold.note = t[1] -- (the note's old line is gone)
+        gold.note = t[1]
         for id, texts in pairs({ [96377] = { t[2], t[3] }, [96376] = { t[4], t[5] } }) do
             local q = content.quests[id] or {}
             content.quests[id] = q
@@ -3090,23 +3090,23 @@ do
         if content.places[BOX_FROM] == nil then content.places[BOX_FROM] = t[8] end
     end
 end
--- END statesecrets
 
--- BEGIN maraudonquests
--- 2.0.23: Rot and Regret's real unlock (Wowhead Forever quest pages and
--- comments, Nov 2026): the Shen'dralas pylon chain opens the area's quests;
--- Mithera at the Forlorn Gardens then gives Word of the Woods, which leads
--- to Woodwyrd. Maraudon quest XP: Forever pays about 1.95x the Classic
--- amount (Wowhead's multiplier; the values match forever-tool's).
+
+
+
+
+
+
+
 do
     local db = FDJ.DB and FDJ.DB["Maraudon"]
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
-    local M = 2652 -- Shen'dralas
+    local M = 2652
     local PYLON = { mapID = M, x = 0.436, y = 0.342, label = "Shen'dralar Pylon — Shen'dralas", targetName = "Shen'dralar Pylon" }
     local MORDENT = { mapID = M, x = 0.350, y = 0.464, label = "Mordent Evenshade — Evenshade's Overlook, Shen'dralas", targetName = "Mordent Evenshade" }
     local KIRANDIS = { mapID = M, x = 0.472, y = 0.758, label = "Magister Kirandis — temple of Shen'dralas", targetName = "Magister Kirandis" }
     local MITHERA = { mapID = M, x = 0.528, y = 0.760, label = "Mithera — by the Forlorn Gardens, Shen'dralas", targetName = "Mithera" }
-    -- woodwyrdspot (2.0.13, M 19 Nov 2026, his map's ? for Word of the Woods at 69.9, 72.1; was a guess by Mithera)
+
     local WOODWYRD = { mapID = M, x = 0.699, y = 0.721, label = "Woodwyrd — Forlorn Gardens, Shen'dralas", targetName = "Woodwyrd" }
     local AT_MORDENT = "Mordent Evenshade, Evenshade's Overlook, Shen'dralas (35.0, 46.4)"
     local AT_WOODWYRD = "Woodwyrd, Forlorn Gardens, Shen'dralas (69.9, 72.1)"
@@ -3128,8 +3128,8 @@ do
         turnin = AT_MORDENT, map = PYLON, turninMap = MORDENT,
         note = "The other pylons: east at 73, 23 (more arcane elementals, you get dismounted there) and south at 47, 78 inside the big Shen'dralas building.",
     }
-    -- objspots (2.0.13): the three pylons, one stop each until found (the
-    -- places: the quest's note below, from Wowhead Forever's comments)
+
+
     D[92914].objectiveSpots = {
         [1] = { mapID = M, x = 0.435, y = 0.342, label = "Western pylon — Shen'dralas" },
         [2] = { mapID = M, x = 0.730, y = 0.233, label = "Eastern pylon — Shen'dralas (arcane elementals, you get dismounted there)" },
@@ -3140,7 +3140,7 @@ do
         objective = "Recover shards and fragments of the pylons, found guarded at the Magram and Gelkis villages. Return them to Mordent Evenshade.",
         pickup = AT_MORDENT, turnin = AT_MORDENT, map = MORDENT, turninMap = MORDENT,
         requiredItems = {
-            -- chainstops (2.0.13, M 18 Nov 2026: "it tells me to turn in the quest when I still have to get ... the fragments"): where each one is (warcraftmaps.com's quest page), a stop each until it is in the bags
+
             {255656, "Pylon Fragment", 1, "From the Pylon Shard crystal at the Magram village, Desolace (68.1, 79.1)", map = { mapID = 1443, x = 0.681, y = 0.791, label = "Pylon Fragment — the crystal at the Magram village, Desolace", pickUp = true }},
             {255657, "Pylon Shard", 1, "From the Pylon Shard crystal at the Gelkis village, Desolace (36.1, 85.6)", map = { mapID = 1443, x = 0.361, y = 0.856, label = "Pylon Shard — the crystal at the Gelkis village, Desolace", pickUp = true }},
         },
@@ -3151,23 +3151,23 @@ do
         objective = "Acquire the Mana Sieve from within the temple in Shen'dralas and use it to collect Ancient Mana Crystals, then empower the pylons and return to Mordent Evenshade.",
         pickup = AT_MORDENT, turnin = AT_MORDENT, map = MORDENT, turninMap = MORDENT,
         note = "The Mana Sieve is on the top floor of the big temple. Take 8 mana from the arcane orbs around Shen'dralas, then use the pylon parts with 4 mana on each pylon.",
-        -- chainstops (2.0.13): the sieve first (until it is in the bags), then each pylon not repaired yet (warcraftmaps.com's quest page)
+
         requiredItems = { {255662, "Mana Sieve", 1, "On the top floor of the big temple in Shen'dralas (46.0, 78.1)", map = { mapID = M, x = 0.460, y = 0.781, label = "Mana Sieve — top floor of the big temple, Shen'dralas", pickUp = true, upstairs = true }} },
         objectiveSpots = {
-            -- (arrowitem, M 19 Nov 2026: the line he gave, and the Pile of Pylon Parts to click on the arrow; no raid mark: a pylon is no NPC)
+
             ["Western pylon"] = { mapID = M, x = 0.435, y = 0.342, label = "Western pylon — Shen'dralas", markerType = "location", clickItem = { 271882, "Pile of Pylon Parts" }, hint = "Collect 8 Coalesced Mana Crystals from the Unstable Mana Rifts, then use the Pile of Pylon Parts" },
             ["Eastern pylon"] = { mapID = M, x = 0.730, y = 0.233, label = "Eastern pylon — Shen'dralas", markerType = "location", clickItem = { 271882, "Pile of Pylon Parts" }, hint = "Collect 8 Coalesced Mana Crystals from the Unstable Mana Rifts, then use the Pile of Pylon Parts" },
         },
     }
-    -- templeway (2.0.13, M 19 Nov 2026 at 40.7, 74.2 below the temple, the
-    -- arrow to the Mana Sieve straight into the cliff: "I needed to be a bit
-    -- more precise into understanding how to get into the temple"): the
-    -- temple's top floor (the Mana Sieve, the temple pylon) has its door on
-    -- its north side (47.1, 73.3), on the upper level that runs round the
-    -- temple to the city in the south and to the east. From the low ground
-    -- west of the temple the only way up is the long stairway north of it
-    -- (foot at 46.3, 60.9). The points: the Kalimdor walking maps.
-    -- The arrow takes the route whose first point is nearest.
+
+
+
+
+
+
+
+
+
     do
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
         local function P(x, y, label) return { mapID = M, x = x, y = y, label = label } end
@@ -3184,32 +3184,32 @@ do
             return list
         end
         local routes = {
-            STAIRS, -- from the north (Evenshade's Overlook, the road)
-            Join({ -- from the low ground west of the temple
+            STAIRS,
+            Join({
                 P(0.387, 0.712, "North-west, round the cliffs below the temple"),
                 P(0.395, 0.663, "North, round the cliffs below the temple"),
                 P(0.436, 0.633, "East, to the stairway north of the temple"),
             }, STAIRS),
-            { -- from the city south of the temple (the upper level)
+            {
                 P(0.440, 0.800, "Along the west side of the temple"),
                 P(0.440, 0.758, "Along the west side of the temple"),
                 P(0.456, 0.733, "Round to the temple's north side"),
                 P(0.471, 0.733, "Into the temple's top floor (its north door)"),
             },
-            { -- from the east (the upper level)
+            {
                 P(0.507, 0.758, "West, to the temple's north side"),
                 P(0.487, 0.730, "West, to the temple's north side"),
                 P(0.471, 0.733, "Into the temple's top floor (its north door)"),
             },
         }
-        -- buildingexit (2.0.13, M 19 Nov 2026, from Magister Kirandis to
-        -- Mithera): indoors in the temple, to a place outside it: out by the
-        -- north door first (the walking maps: from the top floor every way out goes
-        -- through it, 47.5, 73.0).
+
+
+
+
         FDJ.ARROW_EXITS = FDJ.ARROW_EXITS or {}
         table.insert(FDJ.ARROW_EXITS, { mapID = M, x = 0.470, y = 0.770, radius = 60,
-            door = P(0.473, 0.726, "Leave the temple") }) -- (just past the doorway, outside: M 19 Nov 2026)
-        for _, spot in ipairs({ { 0.460, 0.781 }, { 0.470, 0.780 } }) do -- the Mana Sieve, the temple pylon
+            door = P(0.473, 0.726, "Leave the temple") })
+        for _, spot in ipairs({ { 0.460, 0.781 }, { 0.470, 0.780 } }) do
             FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(M), spot[1], spot[2])] = { routes = routes }
         end
     end
@@ -3221,22 +3221,22 @@ do
     D[93394] = {
         level = 43, requires = 35,
         objective = "Locate Magister Kirandis inside the temple of Shen'dralas.",
-        -- "in", not "inside": "inside" marks a turn-in as in the dungeon (In Dungeon icon).
+
         pickup = AT_MORDENT, turnin = "Magister Kirandis, in the temple of Shen'dralas (47.2, 75.8)",
         map = MORDENT, turninMap = KIRANDIS,
         note = "This opens the Shen'dralas quests, Mithera's included.",
     }
-    -- 2.0.3 (Discord report, h0p3; Wowhead Forever 93341/93594 comments):
-    -- Word of the Woods only opens once Mithera's Forlorn Gardens is handed in.
+
+
     D[93341] = {
         level = 43, requires = 35,
         objective = "Investigate the Forlorn Gardens near Shen'dralas and then return to Mithera at the nearby temple.",
         pickup = "Mithera, by the Forlorn Gardens, Shen'dralas (52.8, 76.0)",
         turnin = "Mithera, by the Forlorn Gardens, Shen'dralas (52.8, 76.0)",
         map = MITHERA, turninMap = MITHERA,
-        -- chainstops (2.0.13): the pedestal first. (pedestalspot, M 19 Nov 2026:
-        -- the arrow said "Talk to Forlorn Gardens" at a guessed spot by Mithera;
-        -- the game's own objective mark on his map: 71.6, 79.6.)
+
+
+
         objectiveSpots = { [1] = { mapID = M, x = 0.716, y = 0.796, label = "Pedestal — Forlorn Gardens, Shen'dralas", markerType = "location", hint = "Examine the pedestal" } },
     }
     D[93594] = {
@@ -3267,26 +3267,26 @@ do
                 q.objective = "Venture to Maraudon and recover a Vial of Earth Song Water, then use it to put out Woodwyrd's flame at the Forlorn Gardens."
                 q.requiredItem = { 258296, "Vial of Earth Song Water", 1, 1, "From the small geyser in the pools Rotgrip swims around in, Maraudon" }
                 q.rewards = "Choose: Overgrown Cuffs or Thornplated Cord\n11,100 XP"
-                q.rewardSummary = "" -- rewardline (2.0.13): the buttons and XP box show it; no text line under them
-                q.note = "Back at the Forlorn Gardens, use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself. Afterwards Woodwyrd sends you to the Bristleback Retreat (Passing the Blame), which leads to Agamaggan's Blood." -- rfdshelf (2.1.6, M 25 Nov 2026): "in Razorfen Downs" dropped, the quest is no longer listed there
+                q.rewardSummary = ""
+                q.note = "Back at the Forlorn Gardens, use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself. Afterwards Woodwyrd sends you to the Bristleback Retreat (Passing the Blame), which leads to Agamaggan's Blood."
             end
         end
     end
     FDJ.QUEST_START_MAPS[93404] = WOODWYRD
 end
--- END maraudonquests
 
--- BEGIN rfdquests
--- 2.0.24: Razorfen Downs. Agamaggan's Blood, the end of Rot and Regret's
--- chain (Wowhead Forever 93604, 93601, NPC 253527 Kog'thug the Brave).
--- XP: WoW Forever's values (Wowhead's multipliers, 2.375 or 2.1, matching
--- forever-tool), the Alliance Coldbringer's Eye's real ID 96773, and the
--- full reward lists of Bring the End / Bring the Light / An Unholy Alliance.
+
+
+
+
+
+
+
 do
     local db = FDJ.DB and FDJ.DB["Razorfen Downs"]
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
-    local M = 2652 -- Shen'dralas
-    -- woodwyrdspot (2.0.13, M 19 Nov 2026, his map's ? for Word of the Woods at 69.9, 72.1; was a guess by Mithera)
+    local M = 2652
+
     local WOODWYRD = { mapID = M, x = 0.699, y = 0.721, label = "Woodwyrd — Forlorn Gardens, Shen'dralas", targetName = "Woodwyrd" }
     local KOGTHUG = { mapID = M, x = 0.726, y = 0.314, label = "Kog'thug the Brave — Bristleback Retreat, Shen'dralas", targetName = "Kog'thug the Brave" }
     local LANDALOCK = { mapID = 1416, x = 0.154, y = 0.738, label = "Archmage Lan'dalock — Violet Hold entrance, Dalaran", targetName = "Archmage Lan'dalock" }
@@ -3308,13 +3308,13 @@ do
         level = 49, requires = 35,
         objective = "Venture to Maraudon and recover a Vial of Earth Song Water, then use it to put out Woodwyrd's flame at the Forlorn Gardens.",
         pickup = AT_WOODWYRD, turnin = AT_WOODWYRD, map = WOODWYRD, turninMap = WOODWYRD,
-        -- chainstops (2.0.13): the vial is from a Maraudon run: Maraudon's entrance is a stop until the vial is in the bags
+
         requiredItems = { {258296, "Vial of Earth Song Water", 1, "From the small geyser in the pools Rotgrip swims around in, Maraudon", map = { mapID = 1443, x = 0.291, y = 0.625, label = "Maraudon Entrance — the Vial of Earth Song Water is inside (the small geyser in Rotgrip's pools)", markerType = "dungeon" }} },
         note = "A Maraudon dungeon quest (see Maraudon). Use the vial on the burning tree next to Woodwyrd, not on Woodwyrd himself.",
-        -- rfdstep (2.0.30): only on this chain's step page (Agamaggan's Blood,
-        -- Razorfen Downs); Maraudon's own Rot and Regret page has no such line.
+
+
         warning = "Yes, this step is in MARAUDON. It's needed to unlock this Razorfen quest.",
-        warningTop = true, -- 2.0.31: above the Objective
+        warningTop = true,
     }
     D[93601] = {
         level = 45, requires = 35,
@@ -3323,13 +3323,13 @@ do
     }
     XP[93404] = 11100; XP[93601] = 390
 
-    -- rfdshelf (2.1.6, M 25 Nov 2026: "remove this quest from RFD and we
-    -- just keep it in the files in case people complain and we have to pull
-    -- it back"): Agamaggan's Blood is no longer listed on Razorfen Downs. Its
-    -- blood is got outside the dungeon now and its chain has a Maraudon step,
-    -- so it is soloed after Maraudon. The quest's page stays below, kept in
-    -- FDJ.SHELVED_QUESTS[93604]: set SHOW_AGAMAGGAN to true to list it again
-    -- (its warning, XP, chain and Route ask come back with it).
+
+
+
+
+
+
+
     local SHOW_AGAMAGGAN = false
     if db then
         db.quests = db.quests or {}
@@ -3366,12 +3366,12 @@ do
         }
         for _, q in ipairs(db.quests) do
             if FOREVER_XP[q.id] then q.liveXPFallback = FOREVER_XP[q.id] end
-            -- rfdstep (2.0.31): the chain's Rot and Regret step is done in Maraudon.
-            -- outsiderfd (2.0.13, M 19 Nov 2026): a disclaimer under it: the blood is got outside the dungeon.
+
+
             if q.id == 93604 and not q.warning then q.warning = "WARNING: This chain has a step in Maraudon\nThis quest is completed in the area OUTSIDE Razorfen Downs" end
             if q.id == 3341 or q.id == 3636 then
-                -- rfdsword (2.0.10): a choice of the Talisman or the Ring; the
-                -- Vanquisher's Sword comes on top (Wowhead Forever)
+
+
                 q.rewardChoice = true
                 q.rewardItems = { {10824, "Amberglow Talisman", 3}, {270081, "Purified Ring", 3} }
                 q.additionalRewardItems = { {10823, "Vanquisher's Sword", 3} }
@@ -3397,17 +3397,17 @@ do
         FDJ.QUEST_SHAREABILITY_AUDIT[96773] = true
     end
 end
--- END rfdquests
 
--- BEGIN uldamanzfquests
--- 2.0.25: Uldaman and Zul'Farrak checked against Wowhead Forever and
--- forever-tool (Nov 2026). Quest XP: WoW Forever's values (each quest has
--- its own multiplier; forever-tool's official numbers, spot-checked on
--- Wowhead). The necklace chains end one quest later than the journal had
--- them: Restoring the Necklace (2361, Talvash del Kissel) for the Alliance,
--- Deliver the Gems (2340) and Necklace Recovery, Take 3 (2341, Jarkal
--- Mossmeld) for the Horde; the Alliance Platinum Discs end with 2439 at
--- Dinita Stonemantle, who gives the potion / Thawpelt Sack choice.
+
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local SM = FDJ.QUEST_START_MAPS
@@ -3416,11 +3416,11 @@ do
     local JARKAL = { mapID = 1418, x = 0.026, y = 0.460, label = "Jarkal Mossmeld — Kargath, Badlands", targetName = "Jarkal Mossmeld" }
     local MAGELLAS = { mapID = 1455, x = 0.696, y = 0.186, label = "High Explorer Magellas — Hall of Explorers, Ironforge", targetName = "High Explorer Magellas" }
     local DINITA = { mapID = 1455, x = 0.338, y = 0.602, label = "Dinita Stonemantle — The Vault, Ironforge", targetName = "Dinita Stonemantle" }
-    -- discshorde (2.0.10): Wowhead Forever NPC spots, Thunder Bluff
+
     local TRUTHSEEKER = { mapID = 1456, x = 0.344, y = 0.472, label = "Sage Truthseeker — Thunder Bluff", targetName = "Sage Truthseeker" }
     local BENA = { mapID = 1456, x = 0.468, y = 0.334, label = "Bena Winterhoof — Thunder Bluff", targetName = "Bena Winterhoof" }
 
-    -- A journal entry that becomes a chain step keeps its page as a step.
+
     local function AsStep(q)
         if D[q.id] then return end
         local items = q.requiredItems
@@ -3450,7 +3450,7 @@ do
         end
     end
 
-    -- Alliance: Talvash del Kissel's necklace.
+
     Insert("Uldaman", 2204, {
         id = 2361, name = "Restoring the Necklace", faction = "Alliance", level = 44, requires = 37,
         pickup = "Talvash del Kissel, Mystic Ward, Ironforge (36.0, 4.0)",
@@ -3469,7 +3469,7 @@ do
         { id = 2204, name = "Restoring the Necklace" },
     })
 
-    -- Horde: Jarkal Mossmeld's necklace.
+
     D[2340] = {
         level = 44, requires = 37,
         objective = "Deliver the Necklace and Gem Salvage to Dran Droffers in Orgrimmar.",
@@ -3488,9 +3488,9 @@ do
         rewardSummary = "Darkspear Trolls +100",
         rewards = "Jarkal's Enhancing Necklace\n5,600 XP • Darkspear Trolls +100",
         rewardItems = { { 7888, "Jarkal's Enhancing Necklace", 3 } },
-        -- undeadok (2.0.11, M 18 Nov 2026): Undead CAN do this chain. The
-        -- "not available to your race" came from the Shattered Necklace
-        -- itself (it starts the Alliance quest), so no Undead warning here.
+
+
+
     }, {
         { id = 2283, name = "Necklace Recovery" },
         { id = 2284, name = "Necklace Recovery, Take 2" },
@@ -3499,8 +3499,8 @@ do
         { id = 2339, name = "Find the Gems and Power Source" },
         { id = 2340, name = "Deliver the Gems" },
     })
-    -- necklacenote (2.0.11, M 18 Nov 2026): on the chain's first step, at
-    -- the top: the necklace only starts the quest for the Alliance.
+
+
     if D[2283] then
         D[2283].warning = "As Horde you can't start the quest from the necklace, you need to have the quest first."
         D[2283].warningTop = true
@@ -3525,11 +3525,11 @@ do
         end
     end
 
-    -- Alliance Platinum Discs: the reward comes one step later.
-    -- discshorde (2.0.10, M 17 Nov 2026: "fix this reward choice for both
-    -- factions"): the same for the Horde (2280, then 2440 at Bena
-    -- Winterhoof); the reward (Wowhead Forever 2439 / 2440): 5 Superior
-    -- Healing Potions or 5 Greater Mana Potions, and the Thawpelt Sack on top.
+
+
+
+
+
     local DISC_CHOICE = { { 3928, "Superior Healing Potion", 1, 5 }, { 6149, "Greater Mana Potion", 1, 5 } }
     local DISC_ALSO = { { 9587, "Thawpelt Sack", 1 } }
     for _, q in ipairs((FDJ.DB and FDJ.DB["Uldaman"] and FDJ.DB["Uldaman"].quests) or {}) do
@@ -3579,16 +3579,16 @@ do
         { id = 2280, name = "The Platinum Discs" },
     })
 
-    -- WoW Forever quest XP (forever-tool / Wowhead Forever, Nov 2026).
+
     local FOREVER_XP = {
-        -- Uldaman
+
         [2398] = 550, [2240] = 6850, [721] = 4800, [722] = 5500, [707] = 710, [704] = 5000,
         [17] = 6050, [2202] = 6750, [709] = 6150, [2418] = 3500, [1360] = 6300, [2342] = 7000,
         [1139] = 10250, [2200] = 4450, [2201] = 6300, [2204] = 1650, [2283] = 4800, [2284] = 4800,
         [2339] = 7300, [2278] = 8200, [2279] = 5250, [2280] = 5250, [1956] = 7800,
         [2198] = 5800, [2199] = 2450, [2318] = 6750, [2338] = 350, [2340] = 1850,
         [2341] = 5600, [2361] = 5600, [2439] = 420, [2440] = 420,
-        -- Zul'Farrak
+
         [2769] = 405, [2770] = 14200, [2861] = 410, [2846] = 12100, [2768] = 12600, [2864] = 390,
         [2865] = 7800, [3042] = 7800, [3527] = 10500, [2991] = 10500, [2936] = 9700,
         [96770] = 10100, [96775] = 10100,
@@ -3602,19 +3602,19 @@ do
         end
     end
 end
--- END uldamanzfquests
 
--- BEGIN uldamanzfitems
--- 2.0.26: item cards for every Uldaman and Zul'Farrak quest and chain step
--- that asks for items (they had none). Item IDs and sources: Wowhead Forever
--- and ForeverChanges quest pages (Nov 2026). Scarab Shells: Tran'rek is a
--- breadcrumb; with it in your log you can't take (or be shared) Scarab
--- Shells until you hand it in (Ed on the Discord's bug-reports, Nov 2026).
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
-    -- {itemID, name, count, where}
+
     local ITEMS = {
-        -- Uldaman
+
         [704]  = { {4610, "Carved Stone Urn", 4, "Outside the instance: urns on both sides of the gate and under the tents before Dig One"} },
         [17]   = { {8047, "Magenta Fungus Cap", 12, "Mushrooms near the fires, mostly outside the instance in the Uldaman excavation"} },
         [2202] = { {8047, "Magenta Fungus Cap", 12, "Mushrooms near the fires, mostly outside the instance in the Uldaman excavation"} },
@@ -3643,7 +3643,7 @@ do
                    {7846, "Crag Coyote Fang", 10, "Dropped by crag coyotes all over the Badlands"},
                    {7848, "Rock Elemental Shard", 5, "Dropped by rock elementals in the hills by Kargath, around 13, 36"} },
         [1954] = { {7291, "Infernal Orb", 1, "Dropped by the summoners at Mannoroc Coven, Desolace (around 53, 83)"} },
-        -- Zul'Farrak
+
         [2770] = { {8707, "Gahz'rilla's Electrified Scale", 1, "From Gahz'rilla, summoned with the Mallet of Zul'Farrak at the gong"} },
         [2846] = { {9234, "Tiara of the Deep", 1, "Dropped by Hydromancer Velratha"} },
         [2768] = { {8548, "Divino-matic Rod", 1, "Dropped by Sergeant Bly"} },
@@ -3686,16 +3686,16 @@ do
         D[2990].providedItem = { 9468, "Sharpbeak's Feather", 1, "Given by Gryphon Master Talonaxe when you accept the quest" }
     end
 end
--- END uldamanzfitems
 
--- BEGIN brdquests
--- 2.0.31: Blackrock Depths. Forever's quest list for the zone (forever-tool,
--- official game data, build 1.60.1.70399) has 43 quests; two were missing:
---   * Fragment of the Firelands (97197), new in Forever, Horde (Alaana
---     Stormwalker, Mulgore). Reported on Discord by Snax (seen at level 49).
---   * The Challenge (9015), the Dungeon Set 2 step that summons Theldren
---     with the Banner of Provocation.
--- XP: WoW Forever's values for every BRD quest and step (most were Classic's).
+
+
+
+
+
+
+
+
+
 do
     local db = FDJ.DB and FDJ.DB["Blackrock Depths"]
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
@@ -3750,19 +3750,19 @@ do
                 rewardSummary = "85s  •  Cenarion Circle +300",
                 rewards = "14,800 XP • 85s • Cenarion Circle +300",
                 rewardItems = {},
-                -- fragmentmagmus (2.0.7): Wowhead Forever item 277129, "Dropped by:
-                -- Magmus" (Vakos on Discord, M, 14 Nov 2026). Wowhead's 20.48% is left out:
-                -- for a quest item it should be every kill while on the quest (M).
+
+
+
                 requiredItems = {
                     {277129, "Fragment of the Firelands", 1, "Drops from Magmus in Blackrock Depths"},
                 },
                 note = "The Fragment of the Firelands drops from Magmus, the guardian at the door to the Imperial Seat in Blackrock Depths. Seen picked up at level 49.",
             })
         end
-        -- challengeoff (2.0.11, M 18 Nov 2026: "remove this quest from brd for
-        -- now, its a long tier 0.5 chain that people wont look for when going
-        -- in the dungeon"): left out of the quest list. To bring it back,
-        -- drop the "false and".
+
+
+
+
         if false and not have[9015] then
             table.insert(db.quests, {
                 id = 9015,
@@ -3793,27 +3793,27 @@ do
         end
         for id, xp in pairs(FOREVER_XP) do XP[id] = xp end
     end
-    -- Chain steps (forever-tool, official values).
+
     XP[3801] = 500; XP[4002] = 550; XP[4342] = 2900; XP[4122] = 6200; XP[4361] = 6400
     XP[4121] = 7750; XP[3981] = 9450; XP[4242] = 9800; XP[4264] = 11150; XP[4282] = 11150
     XP[4241] = 11450; XP[4341] = 11500; XP[4001] = 12600; XP[4004] = 2200; XP[4363] = 20250
     XP[8948] = 1450; XP[8949] = 1450; XP[8950] = 1450
-    -- Shareability left to the game (C_QuestLog.IsPushableQuest): not audited.
-end
--- END brdquests
 
--- BEGIN blackmawstquests
--- 2.0.32: Blackmaw Hold and Sunken Temple checked against Forever's quest
--- lists (forever-tool, official data, build 1.60.1.70399) and Wowhead
--- Forever's quest tooltips.
--- Blackmaw Hold: Blackmaw Reclamation, The Twin Bears, Feeding Time! and the
--- repeatable Blackmaw Pouches were missing; A Lost Memento had no XP.
--- Sunken Temple: The Sunken Temple (Alliance 3445, Horde 3380) is the first
--- step before The Stone Circle; every XP value is now Forever's.
+end
+
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local bh = FDJ.DB and FDJ.DB["Blackmaw Hold"]
-    local EKKAL = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)" -- blackmawaudit (2.0.36)
+    local EKKAL = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)"
     local EKKAL_MAP = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" }
     if bh then
         bh.quests = bh.quests or {}
@@ -3822,7 +3822,7 @@ do
         local function Add(q) if not have[q.id] then table.insert(bh.quests, q) have[q.id] = true end end
         Add({
             id = 92066, name = "The Twin Bears", faction = "Both", level = 55, requires = 47,
-            pickup = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)", -- confirmed by M; spot: Wowhead Forever (2.0.39)
+            pickup = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
             objective = "Find the Totem of Ursoc and the Totem of Ursol inside Blackmaw Hold. Then, return them to Lorekeeper Nok at Ursolan.",
             turnin = "Lorekeeper Nok, Ursolan, Azshara (41.4, 20.0)",
             startMap = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" },
@@ -3832,16 +3832,16 @@ do
             rewards = "11,300 XP • Timbermaw Hold +150",
             rewardChoice = true,
             rewardItems = { {279891, "Guidance of Ursoc", 2}, {279892, "Wisdom of Ursol", 2} },
-            -- repneeds (2.0.13, M 19 Nov 2026): the need as a reputation bar above
-            -- Objective (was this note: "Needs Timbermaw Hold reputation Neutral
-            -- or better.").
+
+
+
             repNeeds = {
                 { faction = 576, name = "Timbermaw Hold", standing = 4 },
             },
         })
         Add({
             id = 92065, name = "Blackmaw Reclamation", faction = "Both", level = 60, requires = 47,
-            pickup = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)", -- blackmawaudit (2.0.36)
+            pickup = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
             objective = "Bring Varrox Bleakhoof's Head to Gatekeeper Rageroar at Ursolan.",
             turnin = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)",
             startMap = { mapID = 1447, x = 0.424, y = 0.202, label = "Gatekeeper Rageroar — Ursolan, Azshara", targetName = "Gatekeeper Rageroar" },
@@ -3851,10 +3851,10 @@ do
             rewards = "13,200 XP • Timbermaw Hold +150",
             rewardChoice = true,
             rewardItems = { {260216, "Ouroboros Ring", 3}, {260217, "Eagle's Head Signet", 3}, {260218, "Malefactor's End", 3}, {260219, "Engraved Band", 3} },
-            -- nonote (2.1.4, M 22 Nov 2026: "get rid of the notes here. It's
-            -- pointless. We already have the neutral reputation"): no Notes;
-            -- the reputation it needs is shown above Objective (repNeeds).
-            repNeeds = { { faction = 576, name = "Timbermaw Hold", standing = 4 } }, -- repneeds (2.0.13, M 19 Nov 2026: Neutral)
+
+
+
+            repNeeds = { { faction = 576, name = "Timbermaw Hold", standing = 4 } },
         })
         Add({
             id = 96246, name = "Blackmaw Pouches", faction = "Both", level = 60, requires = 55,
@@ -3876,7 +3876,7 @@ do
             rewardSummary = "Regurgitated Seed Pod",
             rewards = "Regurgitated Seed Pod",
             rewardItems = { {249900, "Regurgitated Seed Pod", 1} },
-            note = "Repeatable. By its completion text you feed the flesh to a hungry lasher, which spits out a seed pod. Where it is isn't known yet; please report it on Discord.", -- blackmawaudit (2.0.36)
+            note = "Repeatable. By its completion text you feed the flesh to a hungry lasher, which spits out a seed pod. Where it is isn't known yet; please report it on Discord.",
         })
         for _, q in ipairs(bh.quests) do
             if q.id == 92070 then q.liveXPFallback = 11300 end
@@ -3884,8 +3884,8 @@ do
         XP[92070] = 11300; XP[92065] = 13200; XP[92066] = 11300; XP[97327] = 13200
     end
 
-    -- Sunken Temple: The Sunken Temple, before The Stone Circle. Two quests,
-    -- one per faction; the step shows the character's (set at login).
+
+
     local FERALAS = 1444
     D[3445] = {
         level = 51, requires = 46,
@@ -3932,7 +3932,7 @@ do
         end
     end
     for id, xp in pairs(ST_XP) do XP[id] = xp end
-    -- Chain steps (forever-tool, official values).
+
     local STEP_XP = {
         [3445] = 3650, [3380] = 6550, [3444] = 4900,
         [1424] = 4450, [1429] = 3750, [1444] = 3750,
@@ -3945,22 +3945,22 @@ do
     }
     for id, xp in pairs(STEP_XP) do XP[id] = xp end
 end
--- END blackmawstquests
 
--- BEGIN shamanrfk
--- 2.0.36: the Shaman weapon chain (reported on Discord: Elemental Aid missing
--- from Razorfen Kraul). Like the other class chains, the journal entry is the
--- final quest, The Tempest's Weapons; Elemental Aid is the dungeon step
--- (Charlga Razorflank drops the Tattered Note). Call of Air, the Air Totem
--- quest, unlocks it but is left out of the steps: the Horde has a different
--- quest ID per trainer city.
--- callofair (2.1.4, M 23 Nov 2026, Shera on Discord: "the first quest that's a
--- requirement is Call of Air, which then sends you to Prate Cloudseer to pick
--- up Elemental Aid"): for the Horde, Call of Air is now the chain's first
--- step (1531, Searn Firewarder in Orgrimmar; Thunder Bluff's 1532 and the
--- Skyborne's 96136 count for it too: FDJ.QUEST_DONE_BY), handed in to Prate
--- Cloudseer, who gives Elemental Aid; Elemental Aid is handed in to Rau
--- Cliffrunner (SOURCES.txt, callofair).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
@@ -4008,7 +4008,7 @@ do
             rewardSummary = "",
             rewardChoice = true,
             rewardItems = WEAPONS,
-            -- rewardfix2 (2.0.12, M 18 Nov 2026, RFC-Maraudon audit): the shield as for the Alliance (not the unconfirmed rune)
+
             additionalRewardItems = {{280696, "Elementalist's Guard", 3}},
             startMap = PRATE_MAP,
         })
@@ -4020,7 +4020,7 @@ do
         { id = 96135, name = "Heed My Call" },
     }
     C[79442] = {
-        { id = 1531, name = "Call of Air" }, -- callofair (2.1.4)
+        { id = 1531, name = "Call of Air" },
         { id = 79360, name = "Elemental Aid" },
         { id = 79364, name = "Eyes on the Sky" },
         { id = 79361, name = "Storm, Earth, and Fire" },
@@ -4035,7 +4035,7 @@ do
         description = "The Razorfen Kraul step. Call of Air (from Eldrun Stormbreaker in Ironforge) sends you to Veyric. Alliance Shamans can share this quest.",
         map = VEYRIC_MAP,
     }
-    -- callofair (2.1.4): the Horde's Air Totem quest, the chain's first step
+
     local SEARN_MAP = { mapID = 1454, x = 0.380, y = 0.377, label = "Searn Firewarder \226\128\148 Orgrimmar", targetName = "Searn Firewarder" }
     D[1531] = {
         level = 30, requires = 30,
@@ -4052,11 +4052,11 @@ do
         level = 33, requires = 30,
         objective = "Defeat Charlga Razorflank in Razorfen Kraul and collect information on the quilboar's plans.",
         requiredItems = { NOTE },
-        pickup = PRATE, turnin = RAU, -- callofair (2.1.4): from Prate, handed in to Rau
+        pickup = PRATE, turnin = RAU,
         description = "The Razorfen Kraul step. Prate Cloudseer gives it when you hand in Call of Air; hand it in to Rau Cliffrunner at Freewind Post. It can't be shared on the Horde side.",
         map = PRATE_MAP, turninMap = RAU_MAP,
     }
-    -- callofair: the new lines in each language (names as the game shows them)
+
     do
         local T = {
             deDE = { "Ruf der Luft", "Sucht Prate Cloudseer in Tausend Nadeln.", "Searn Firewarder, Orgrimmar (38.0, 37.7)",
@@ -4101,7 +4101,7 @@ do
             if q.description == nil then q.description = t[4] end
             local aid = content.quests[79360] or {}
             content.quests[79360] = aid
-            aid.description = t[5] -- (the step's new line: its old one named Rau as the giver)
+            aid.description = t[5]
             content.places = content.places or {}
             if content.places[SEARN_MAP.label] == nil then
                 content.places[SEARN_MAP.label] = "Searn Firewarder \226\128\148 " .. ((lang == "ruRU" and "Оргриммар") or (lang == "koKR" and "오그리마")
@@ -4152,21 +4152,21 @@ do
     FDJ.PREREQ_REWARD_MONEY_FALLBACK[96264] = 3500
     FDJ.PREREQ_REWARD_MONEY_FALLBACK[96135] = 5000
 end
--- END shamanrfk
 
--- BEGIN warriorrfk
--- 2.0.37: the level 20 Warrior armor chains. The journal entry is the final
--- quest (Furen's Armor / Brutal Hauberk); Fire Hardened Mail / Brutal Armor
--- is the step that needs the Vial of Phlogiston from Roogug. The first quest
--- (Yorus Barleybrew / Speak with Ruga) comes from the warrior trainer and is
--- left out of the steps, like Call of Air for the Shaman chain.
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
     local FUREN = "Furen Longbeard, Dwarven District, Stormwind (64.6, 37.2)"
     local FUREN_MAP = { mapID = 1453, x = 0.646, y = 0.372, label = "Furen Longbeard — Stormwind", targetName = "Furen Longbeard" }
     local YORUS = "Yorus Barleybrew, Lakeshire, Redridge Mountains"
-    -- rfkroute (2.0.28): where he stands (the Lakeshire inn), for the route.
+
     local YORUS_MAP = { mapID = 1433, x = 0.215, y = 0.447, label = "Yorus Barleybrew — Lakeshire", targetName = "Yorus Barleybrew" }
     local THUNGRIM = "Thun'grim Firegaze, hills east of the Crossroads, The Barrens (57, 30)"
     local THUNGRIM_MAP = { mapID = 1413, x = 0.570, y = 0.300, label = "Thun'grim Firegaze — east of the Crossroads", targetName = "Thun'grim Firegaze", detail = "On the hilltop east of the Crossroads, just south of Thorn Hill" }
@@ -4212,7 +4212,7 @@ do
     C[1782] = {
         { id = 1699, name = "The Rethban Gauntlet" },
         { id = 1702, name = "The Shieldsmith" },
-        { id = 1701, name = "Fire Hardened Mail", needsDungeon = true }, -- rfkroute: handed in after the run
+        { id = 1701, name = "Fire Hardened Mail", needsDungeon = true },
     }
     C[1848] = {
         { id = 1824, name = "Trial at the Field of Giants" },
@@ -4282,55 +4282,55 @@ do
     XP[1838] = 3650
     XP[1848] = 3050
 end
--- END warriorrfk
 
--- BEGIN drownedloot
--- The Drowned City as seen in the game (a stream, 2026-11-06): the bosses'
--- levels and the drops seen so far, item IDs from the game's own item data
--- (its hotfix cache). Primeval Elemental, fought with Deathless Marrow,
--- drops its own loot: it has its own page after him.
+
+
+
+
+
+
 do
     local d = FDJ.DB and FDJ.DB["The Drowned City"]
     if d and type(d.bosses) == "table" then
-        d.fullItemsTBD = true -- only the drops seen so far
+        d.fullItemsTBD = true
         local LOOT = {
             ["Zul'Alai"] = {
-                { 274599, "Oathbound Bracers", "Wrist, Leather", 3 }, -- confirmed (Nov 2026)
-                { 274598, "Bloodslash Axe", "One-Hand, Axe", 3 }, -- confirmed (a player, Nov 2026)
+                { 274599, "Oathbound Bracers", "Wrist, Leather", 3 },
+                { 274598, "Bloodslash Axe", "One-Hand, Axe", 3 },
                 { 274600, "Berserker Shackles", "Wrist, Mail", 3 },
             },
             ["Var'Taka"] = {
                 { 274602, "Brinebelly Leggings", "Legs, Leather", 3 },
-                { 274601, "Harpoon of Command", "Two-Hand, Polearm", 3 }, -- confirmed (Nov 2026)
-                { 274613, "Priestess Cloak", "Back", 3 }, -- confirmed (a player, Nov 2026)
+                { 274601, "Harpoon of Command", "Two-Hand, Polearm", 3 },
+                { 274613, "Priestess Cloak", "Back", 3 },
             },
             ["Captain Dreadrise"] = {
                 { 274604, "Frosty Blunderbuss", "Ranged, Gun", 3 },
                 { 274605, "Briny Sash", "Waist, Cloth", 3 },
-                { 274603, "Dreadfrost Saber", "Main Hand, Sword", 3 }, -- confirmed (a player, Nov 2026)
+                { 274603, "Dreadfrost Saber", "Main Hand, Sword", 3 },
             },
             ["Deathless Marrow"] = {
                 { 274606, "Bloodspine Staff", "Two-Hand, Staff", 3 },
-                { 274614, "Knucklebone Ring", "Finger", 3 }, -- confirmed (a player, Nov 2026)
-                { 274607, "Viscera Spaulders", "Shoulder, Mail", 3 }, -- confirmed (Nov 2026)
+                { 274614, "Knucklebone Ring", "Finger", 3 },
+                { 274607, "Viscera Spaulders", "Shoulder, Mail", 3 },
             },
             ["Primeval Elemental"] = {
                 { 274612, "Waterlogged Burial Shroud", "Back", 3 },
-                { 274611, "Robe of the Drowned", "Chest, Cloth", 3 }, -- confirmed (Nov 2026)
-                { 274615, "Heart of the Primeval", "Trinket", 3 }, -- confirmed (a player, Nov 2026)
+                { 274611, "Robe of the Drowned", "Chest, Cloth", 3 },
+                { 274615, "Heart of the Primeval", "Trinket", 3 },
             },
             ["Min'loth the Serpent"] = {
                 { 274610, "Ritual-Binder's Gloves", "Hands, Leather", 3 },
-                { 274608, "Maw of Min'loth", "Off Hand, Shield", 3 }, -- confirmed (a player, Nov 2026)
-                { 274609, "Serpentbane Crown", "Head, Mail", 3 }, -- confirmed (a player, Nov 2026)
+                { 274608, "Maw of Min'loth", "Off Hand, Shield", 3 },
+                { 274609, "Serpentbane Crown", "Head, Mail", 3 },
             },
         }
-        -- The rest of the dungeon's loot (the same batch of item IDs,
-        -- 274598-274615, in the game's item data): put with a boss by ID order
-        -- and required level, nobody has seen it drop yet. Shown folded under
-        -- "Not confirmed, but probable drop" on the boss page.
+
+
+
+
         local PROBABLE = {
-            -- (Viscera Spaulders, Deathless Marrow: confirmed, now in his loot)
+
         }
         local have = false
         for _, b in ipairs(d.bosses) do
@@ -4341,7 +4341,7 @@ do
                 if b.name == "Deathless Marrow" then
                     table.insert(d.bosses, i + 1, {
                         name = "Primeval Elemental",
-                        portraitNpcID = 270887, -- the client's "Staging Area" copy, for the picture only
+                        portraitNpcID = 270887,
                         aliases = { "Primeval Elemental" },
                         description = "Fought together with Deathless Marrow.",
                         loot = {},
@@ -4361,8 +4361,8 @@ do
             end
             if PROBABLE[b.name] and not b.probableLoot then b.probableLoot = PROBABLE[b.name] end
         end
-        -- Share Linken's Boots of Iron with every Drowned City boss,
-        -- including rares and Primeval Elemental, whose page is added above.
+
+
         if FDJ.SHARED_BY_BOSS then
             local byBoss = FDJ.SHARED_BY_BOSS["The Drowned City"] or {}
             FDJ.SHARED_BY_BOSS["The Drowned City"] = byBoss
@@ -4390,18 +4390,18 @@ do
         levels["Deathless Marrow"] = "39"
         levels["Primeval Elemental"] = "38"
         levels["Gill"] = "38"
-        levels["Umbra"] = "38" -- rare; level from its nameplate (Discord screenshot, Nov 2026)
-        levels["\"Pyromancer\" Braxton"] = "38" -- rare elite; level from its nameplate (a stream, Nov 2026)
+        levels["Umbra"] = "38"
+        levels["\"Pyromancer\" Braxton"] = "38"
         levels["Min'loth the Serpent"] = "40"
     end
 end
--- END drownedloot
 
--- BEGIN kroldokquests
--- Krol'dok Stronghold: the Alliance Tome of Twilight follows A Small Favor
--- (Wowhead Forever). Vengeance of the Highborne: Ranath Nightstride in the
--- inn in Dalaran (a player, Nov 2026; Wowhead Forever's spawn of NPC
--- 268425), who also pays for it (the quest text); shareable (Wowhead).
+
+
+
+
+
+
 do
     local RANATH = { mapID = 1416, x = 0.178, y = 0.660, label = "Ranath Nightstride — Dalaran", targetName = "Ranath Nightstride", detail = "Ranath Nightstride, in the inn in Dalaran, Alterac Mountains" }
     FDJ.QUEST_START_MAPS[96771] = RANATH
@@ -4410,8 +4410,8 @@ do
     end
     FDJ.QUEST_SHAREABILITY_AUDIT[96771] = true
 
-    -- Before A Small Favor: Ashe Amberhall's two Sunnyglade quests
-    -- (Wowhead Forever 94879, 94881; a reported chain, Nov 2026).
+
+
     local ASHE = { mapID = 2548, x = 0.666, y = 0.810, label = "Ashe Amberhall — Farholde Keep, Riverglades", targetName = "Ashe Amberhall" }
     local AT_ASHE = "Ashe Amberhall, Farholde Keep, Riverglades"
     FDJ.QUEST_PREREQ_CHAINS[94984] = {
@@ -4434,9 +4434,9 @@ do
         note = "Done alongside Scraps of Knowledge.",
     }
 
-    -- The key quests: a Krol'dok Moulding looted in the stronghold starts
-    -- Krol'dok Moulding (Wowhead Forever 94980 / 94973), then Key
-    -- Ingredients (94981 / 94974) gives the Krol'dok Compound Key.
+
+
+
     FDJ.QUEST_PREREQ_CHAINS[94981] = { { id = 94980, name = "Krol'dok Moulding" } }
     FDJ.QUEST_PREREQ_CHAINS[94974] = { { id = 94973, name = "Krol'dok Moulding" } }
     FDJ.QUEST_PREREQ_DETAILS[94980] = {
@@ -4454,12 +4454,12 @@ do
         turnin = "Kreza Darkthorn, Rog'mar, Riverglades (59.8, 46.0)", turninMap = { mapID = 2548, x = 0.598, y = 0.460, label = "Kreza Darkthorn — Rog'mar, Riverglades", targetName = "Kreza Darkthorn" },
     }
 
-    -- Twilight Mementos > Lingering Essence > Curios of Curiosity (Wowhead
-    -- Forever's series, 2.0.20): the last is the list's entry. Sergeant
-    -- Riftan gives the first two (Wowhead Forever; a Discord report).
+
+
+
     local KD_RIFTAN = { mapID = 2548, x = 0.306, y = 0.490, label = "Sergeant Riftan — Farholde Lookouts, Twilight's Shroud", targetName = "Sergeant Riftan" }
-    -- Twilight Mementos opens once Bring Me His Head is handed in to
-    -- Sergeant Riftan (a Wowhead Forever comment on 94983, Nov 2026).
+
+
     FDJ.QUEST_PREREQ_CHAINS[94998] = {
         { id = 94890, name = "Bring Me His Head" },
         { id = 94983, name = "Twilight Mementos" },
@@ -4491,7 +4491,7 @@ do
     }
     FDJ.QUEST_START_MAPS[94998] = ASHE
 
-    -- Rewards (Wowhead Forever): XP, money and items of the new steps.
+
     FDJ.FOREVER_QUEST_XP_FALLBACK[94879] = 3150
     FDJ.FOREVER_QUEST_XP_FALLBACK[94881] = 2850
     FDJ.FOREVER_QUEST_XP_FALLBACK[94980] = 3300
@@ -4523,12 +4523,12 @@ do
     FDJ.FOREVER_QUEST_XP_FALLBACK[96771] = 11500
     FDJ.FOREVER_QUEST_XP_FALLBACK[94907] = 3750
 end
--- BEGIN kroldokeyeofmugglocations
--- Eye of Mugg uses different faction quest IDs. The two versions of
--- Bring Me His Head are different quests as well; never share one ID.
--- Locations: Krom'rosh at Rog'mar (59.4,45.5); Demar Brant at Farholde
--- Keep (66.6,79.9); Da'grosh at the Shroud (33.4,38.0); Sgt. Riftan
--- with the Farholde Lookouts (30.4,49.0), all on Riverglades map 2548.
+
+
+
+
+
+
 do
     local ROGMAR = {
         mapID = 2548, x = 0.594, y = 0.455,
@@ -4553,13 +4553,13 @@ do
     FDJ.QUEST_START_MAPS[94768] = DAGROSH
     FDJ.QUEST_START_MAPS[94890] = RIFTAN
 
-    -- Separate prerequisite records avoid cross-faction completion checks.
-    -- The Horde's Twilight's Hammer chain (2.0.20; a Wowhead Forever comment
-    -- on 94968, players' quest logs on Discord): The Wayward Warrior, then
-    -- Break Their Chains, Carving a Path and Rise Up!, then Bring Me His
-    -- Head, which opens A Token of Vengeance (Da'grosh); It Is Time,
-    -- Brother... then opens Eye of Mugg (Krom'rosh) and Tome of Twilight
-    -- (Tran'gul) at Rog'mar.
+
+
+
+
+
+
+
     local HORDE_TWILIGHT = {
         { id = 94744, name = "The Wayward Warrior" },
         { id = 94748, name = "Break Their Chains" },
@@ -4626,7 +4626,7 @@ do
         requiredItems = { {265837, "Kilgar's Head", 1, "From Overlord Kilgar at Twilight's Shroud"} },
         note = "Horde version. Handing it in to Da'grosh opens A Token of Vengeance."
     }
-    -- Preserve the Alliance record already used by Twilight Mementos.
+
     local ally = FDJ.QUEST_PREREQ_DETAILS[94890] or {}
     ally.pickup = "Sergeant Riftan, Farholde Lookouts, Twilight's Shroud, Riverglades (30.6, 49.0)"
     ally.turnin = "Sergeant Riftan, Farholde Lookouts, Twilight's Shroud, Riverglades (30.6, 49.0)"
@@ -4666,18 +4666,18 @@ do
         end
     end
 end
--- END kroldokeyeofmugglocations
 
--- BEGIN kroldokchains2
--- 2.0.21: the full unlock chains of Krol'dok Stronghold's dungeon quests.
--- Alliance Eye of Mugg: starts with Scraps of Knowledge (Mobalytics); The
--- Western Front, No Soldier Left Behind, Carving a Path, Bring Me His Head
--- and News to Farholde from Wowhead Forever (Bring Me His Head's series,
--- "available once Kilgar has been killed" on 94982, "this quest area leads
--- to Eye of Mugg and Twilight Mementos" on 94886). Twilight Mementos:
--- starts with Saving Sunnyglade (Mobalytics). Horde: Encroaching Twilight
--- first (Mobalytics), then Clugfist's Decree > The Wayward Warrior
--- (Wowhead series) and the steps of the Wowhead comment on 94968.
+
+
+
+
+
+
+
+
+
+
+
 do
     local M = 2548
     local BRANT = { mapID = M, x = 0.666, y = 0.810, label = "Demar Brant — Farholde Keep, Riverglades", targetName = "Demar Brant" }
@@ -4699,7 +4699,7 @@ do
         return out
     end
 
-    -- Alliance
+
     local RIFTAN_LINE = {
         { id = 94886, name = "The Western Front" },
         { id = 94888, name = "No Soldier Left Behind" },
@@ -4752,17 +4752,17 @@ do
         note = "Handing it in opens Eye of Mugg (Demar Brant).",
     }
 
-    -- Horde
-    -- muggchain (2.0.8, M 15 Nov 2026: his "Eye of Mugg: Horde chain audit",
-    -- a player's report that the list jumped from Encroaching Twilight to
-    -- Clugfist's Decree): the whole way to Clugfist's Decree is listed now.
-    -- Krom'rosh's two first quests, then Tran'gul's two Twilight quests,
-    -- Clubtoe's quests in the Sunnyglade cave (two quests are called The
-    -- Purple Ones: 95417, then 95601), back to Tran'gul, on to Clugfist and
-    -- his two quests. Quests done side by side follow each other in the list
-    -- (every step is needed). Rise Up! stays (a player's report on Wowhead's
-    -- 94968 lists it; the quest databases don't), with the quest that leads
-    -- to it, Rumblings of Discontent, before it.
+
+
+
+
+
+
+
+
+
+
+
     local horde = {
         { id = 93786, name = "A Message in Blood" },
         { id = 93787, name = "Food for the Taking" },
@@ -4842,10 +4842,10 @@ do
     XP[94877] = 3150; XP[94886] = 380; XP[94888] = 3750; XP[94889] = 3750; XP[94891] = 4050
     XP[94672] = 3300; XP[95428] = 330
 
-    -- muggchain (2.0.8): the steps added to the Horde chain, and what was
-    -- not known about the old ones. Givers, hand-ins, levels and XP: Icy
-    -- Veins Forever and forever-xp.com (they agree); where they stand:
-    -- forever-xp.com.
+
+
+
+
     local CLUBTOE = { mapID = M, x = 0.500, y = 0.470, label = "Clubtoe — Sunnyglade cave, Riverglades", targetName = "Clubtoe" }
     local BRUTE = { mapID = M, x = 0.492, y = 0.467, label = "Twilight Brute — Sunnyglade cave, Riverglades", targetName = "Twilight Brute" }
     local AT_TRANGUL = "Tran'gul, Rog'mar, Riverglades (59.5, 44.0)"
@@ -4941,21 +4941,21 @@ do
     XP[95417] = 320; XP[95601] = 3150; XP[95602] = 3150; XP[95427] = 3300
     XP[95418] = 320; XP[95420] = 320; XP[95424] = 3300; XP[95425] = 3450; XP[95431] = 330
 end
--- END kroldokchains2
--- END kroldokquests
 
--- BEGIN blackmawquests
--- A Lost Memento (92070) begins when a player uses their own
--- Feathered Charm Necklace, not from a shareable NPC quest.
+
+
+
+
+
 FDJ.QUEST_SHAREABILITY_AUDIT[92070] = false
--- Blackmaw Hold: Beneath Nordrassil leads to Get to the Roots of It (a
--- Blackmaw Hold guide, Nov 2026, with Wowhead Forever quest IDs 92343-92346
--- and 92069). Where the NPCs stand: the reported coordinates.
+
+
+
 do
     local NARA = { mapID = 1456, x = 0.756, y = 0.310, label = "Nara Wildmane — Elder Rise, Thunder Bluff", targetName = "Nara Wildmane" }
     local MATHRENGYL = { mapID = 1457, x = 0.354, y = 0.084, label = "Mathrengyl Bearwalker — Cenarion Enclave, Darnassus", targetName = "Mathrengyl Bearwalker" }
     local JEDIGA = { mapID = 1447, x = 0.225, y = 0.514, label = "Jediga — Valormok, Azshara", targetName = "Jediga" }
-    local OGTINC = { mapID = 1447, x = 0.424, y = 0.427, label = "Ogtinc — Azshara", targetName = "Ogtinc" } -- 42.7 (blackmawaudit, 2.0.36)
+    local OGTINC = { mapID = 1447, x = 0.424, y = 0.427, label = "Ogtinc — Azshara", targetName = "Ogtinc" }
     local TRUESONG = { mapID = 1447, x = 0.118, y = 0.783, label = "Commander Truesong — Azshara", targetName = "Commander Truesong" }
     FDJ.QUEST_START_MAPS[92343] = NARA
     FDJ.QUEST_START_MAPS[92344] = MATHRENGYL
@@ -4972,7 +4972,7 @@ do
     FDJ.QUEST_PREREQ_DETAILS[92345] = {
         level = 55, requires = 45,
         objective = "Speak with Mathrengyl Bearwalker in the Cenarion Enclave in Darnassus.",
-        pickup = "Commander Truesong, Azshara (11.8, 78.3)", -- blackmawaudit (2.0.36)
+        pickup = "Commander Truesong, Azshara (11.8, 78.3)",
         turnin = "Mathrengyl Bearwalker, Cenarion Enclave, Darnassus",
         map = TRUESONG, turninMap = MATHRENGYL,
     }
@@ -4989,48 +4989,48 @@ do
         if quest.id == 92069 then quest.turninMap = OGTINC end
     end
 end
--- END blackmawquests
 
--- BEGIN blackmawaudit
--- Blackmaw Hold Quest Update Audit (14 Nov 2026), checked against Icy Veins
--- Forever (quests and NPC spawns) and Questie-derived data (pd.zroot.it):
--- the two Blackmaw Magic givers, and the chain before Blackmaw Reclamation.
--- Gatekeeper Rageroar's spot (42.4, 20.2) is from players (the audit); no
--- database has his spawn yet. Unele (A Lost Memento): her spawn is Icy
--- Veins' (NPC 249855). M confirmed Unele and Archmage Timear as the
--- hand-ins, and Muln Earthfury in Mulgore only (2.0.37).
+
+
+
+
+
+
+
+
+
 do
     local TIMEAR = { mapID = 1416, x = 0.154, y = 0.740, label = "Archmage Timear — Dalaran", targetName = "Archmage Timear" }
     local MULN = { mapID = 1412, x = 0.334, y = 0.225, label = "Muln Earthfury — Skywatcher Plateau, Mulgore", targetName = "Muln Earthfury" }
     local RAGEROAR = { mapID = 1447, x = 0.424, y = 0.202, label = "Gatekeeper Rageroar — Ursolan, Azshara", targetName = "Gatekeeper Rageroar" }
-    local KORSA = { mapID = 1447, x = 0.630, y = 0.233, label = "Korsa — Legashi Stronghold, Azshara", targetName = "Korsa" }
+    local KORSA = { mapID = 1447, x = 0.629, y = 0.211, label = "Korsa — Legashi Stronghold, Azshara", targetName = "Korsa" }
     local UNELE = { mapID = 1447, x = 0.434, y = 0.174, label = "Unele — Ursolan, Azshara", targetName = "Unele" }
     local RAGEROAR_TEXT = "Gatekeeper Rageroar, Ursolan, Azshara (42.4, 20.2)"
     local GORN = "Gorn One Eye, Timbermaw Hold"
-    -- Gorn One Eye in the Timbermaw Hold tunnel: Wowhead Forever's spawn of
-    -- NPC 11555, Felwood 65.2, 2.6 (2.0.43; the turn-in ? goes there).
+
+
     local GORN_MAP = { mapID = 1448, x = 0.652, y = 0.026, label = "Gorn One Eye — Timbermaw Hold, Felwood", targetName = "Gorn One Eye" }
     FDJ.QUEST_START_MAPS[97173] = TIMEAR
     FDJ.QUEST_START_MAPS[97198] = MULN
     FDJ.QUEST_START_MAPS[92065] = RAGEROAR
-    FDJ.QUEST_START_MAPS[92066] = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" } -- 2.0.39
+    FDJ.QUEST_START_MAPS[92066] = { mapID = 1447, x = 0.414, y = 0.200, label = "Lorekeeper Nok — Ursolan, Azshara", targetName = "Lorekeeper Nok" }
     for _, quest in ipairs((FDJ.DB["Blackmaw Hold"] and FDJ.DB["Blackmaw Hold"].quests) or {}) do
-        if quest.id == 97173 then quest.turninMap = TIMEAR end -- confirmed (2.0.37)
+        if quest.id == 97173 then quest.turninMap = TIMEAR end
         if quest.id == 97198 then quest.turninMap = MULN end
-        if quest.id == 92070 then quest.turninMap = UNELE end -- confirmed (2.0.37)
+        if quest.id == 92070 then quest.turninMap = UNELE end
     end
-    -- Blackmaw Reclamation comes after Blackmaw Counter-Offensive (Icy Veins
-    -- and Wowhead Forever's quest series). Step 1 is any ONE of Master
-    -- Feardred 86777, Thinning Their Forces 86792, Later, Satyr 86796 (the
-    -- databases: "one of"; M, 2.0.42): "1. Pick one of the following
-    -- quests:", the three below it (pickone).
-    -- bmchain (2.1.1, Discord "Blackmaw Hold prequest incomplete", Theladron
-    -- 20 Nov 2026, tested in game): the chain starts at Ekkal with The Legashi
-    -- Threat, then Report to Rageroar and Missing Blackmaw Scouts (Korsa's
-    -- quests can't be taken before it). Return to Rageroar needs Master
-    -- Feardred AND Thinning Their Forces (confirmed), so the three are no longer
-    -- "pick one"; Later, Satyr is kept as a step (he suspects all three; the
-    -- escort alone doesn't open it). Quest IDs: Wowhead Forever's series.
+
+
+
+
+
+
+
+
+
+
+
+
     FDJ.QUEST_PREREQ_CHAINS[92065] = {
         { id = 86746, name = "The Legashi Threat" },
         { id = 86752, name = "Report to Rageroar" },
@@ -5046,13 +5046,13 @@ do
     FDJ.QUEST_PREREQ_DETAILS[86797] = {
         level = 53, requires = 47,
         objective = "Return to Gatekeeper Rageroar at Ursolan.",
-        pickup = "Korsa, outside Legashi Stronghold, Azshara (63.0, 23.3)",
+        pickup = "Korsa, outside Legashi Stronghold, Azshara (62.9, 21.1)",
         turnin = RAGEROAR_TEXT,
         map = KORSA, turninMap = RAGEROAR,
     }
-    -- Step 1's quests (2.0.37). Korsa starts and ends Master Feardred (Wowhead
-    -- Forever); her spots and Graal's cage: Icy Veins' spawns of 236770, 237007.
-    local KORSA_TEXT = "Korsa, outside Legashi Stronghold, Azshara (63.0, 23.3)"
+
+
+    local KORSA_TEXT = "Korsa, outside Legashi Stronghold, Azshara (62.9, 21.1)"
     local GRAAL = { mapID = 1447, x = 0.659, y = 0.144, label = "Graal — Legashi Stronghold, Azshara", targetName = "Graal" }
     FDJ.QUEST_PREREQ_DETAILS[86777] = {
         level = 53, requires = 47,
@@ -5074,7 +5074,7 @@ do
         turnin = KORSA_TEXT,
         map = GRAAL, turninMap = KORSA,
     }
-    -- bmchain (2.1.1): no longer "any one of the three" (all are steps now).
+
     local EKKAL_TEXT = "Ekkal, Ruins of Eldarath, Azshara (42.0, 38.9)"
     local EKKAL_MAP = { mapID = 1447, x = 0.420, y = 0.389, label = "Ekkal — Ruins of Eldarath, Azshara", targetName = "Ekkal" }
     FDJ.QUEST_PREREQ_DETAILS[86746] = {
@@ -5088,7 +5088,7 @@ do
         objective = "Speak with Gatekeeper Rageroar at Ursolan.",
         pickup = EKKAL_TEXT, turnin = RAGEROAR_TEXT,
         map = EKKAL_MAP, turninMap = RAGEROAR,
-        note = "Needs Neutral reputation with Timbermaw Hold.", -- Wowhead Forever comments
+        note = "Needs Neutral reputation with Timbermaw Hold.",
     }
     FDJ.QUEST_PREREQ_DETAILS[86791] = {
         level = 53, requires = 47,
@@ -5124,43 +5124,43 @@ do
     local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
     XP[86797] = 525; XP[86798] = 550; XP[87346] = 5650; XP[86814] = 7050
     XP[86777] = 5250; XP[86792] = 5450; XP[86796] = 5450
-    XP[86746] = 5250; XP[86752] = 530; XP[86791] = 530 -- bmchain (Wowhead Forever)
+    XP[86746] = 5250; XP[86752] = 530; XP[86791] = 530
 end
--- END blackmawaudit
 
--- BEGIN shapersquests
--- Shaper's Terrace: Crystalline Elements' giver, Mayena Earthseeker, in
--- Mulgore (Wowhead Forever's spawn of NPC 263445).
+
+
+
+
 do
     local MAYENA = { mapID = 1412, x = 0.348, y = 0.222, label = "Mayena Earthseeker — Mulgore", targetName = "Mayena Earthseeker" }
     FDJ.QUEST_START_MAPS[95928] = MAYENA
     FDJ.FOREVER_QUEST_XP_FALLBACK[95928] = 17650
-    FDJ.FOREVER_QUEST_XP_FALLBACK[95790] = 17650 -- Digestible Research
-    -- 2.0.4: the other five (XP: ForeverChanges; sharing: ForeverChanges and
-    -- the reported research).
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95790] = 17650
+
+
     FDJ.FOREVER_QUEST_XP_FALLBACK[97049] = 17650
-    FDJ.FOREVER_QUEST_XP_FALLBACK[95926] = 17650 -- 2.0.42: the game's own reward window (M, 13 Nov 2026); was 6,600 (ForeverChanges)
+    FDJ.FOREVER_QUEST_XP_FALLBACK[95926] = 17650
     FDJ.FOREVER_QUEST_XP_FALLBACK[95924] = 17650
     FDJ.FOREVER_QUEST_XP_FALLBACK[95925] = 17650
-    FDJ.QUEST_SHAREABILITY_AUDIT[95928] = true  -- Crystalline Elements
-    FDJ.QUEST_SHAREABILITY_AUDIT[97049] = true  -- Essence of Seeping Slimes
-    FDJ.QUEST_SHAREABILITY_AUDIT[95926] = true  -- The Dark Crystal
-    FDJ.QUEST_SHAREABILITY_AUDIT[95924] = true  -- Panic at the Digsite
-    FDJ.QUEST_SHAREABILITY_AUDIT[95925] = false -- Mapping the Way Forward
-    FDJ.QUEST_SHAREABILITY_AUDIT[95790] = false -- Digestible Research
+    FDJ.QUEST_SHAREABILITY_AUDIT[95928] = true
+    FDJ.QUEST_SHAREABILITY_AUDIT[97049] = true
+    FDJ.QUEST_SHAREABILITY_AUDIT[95926] = true
+    FDJ.QUEST_SHAREABILITY_AUDIT[95924] = true
+    FDJ.QUEST_SHAREABILITY_AUDIT[95925] = false
+    FDJ.QUEST_SHAREABILITY_AUDIT[95790] = false
 end
--- END shapersquests
 
--- BEGIN leadinlinks
--- Lead-in quests that end inside the dungeon, at the NPC (or corpse) who
--- then gives the next quest, work like In Search of Thaelrid > Blackfathom
--- Villainy: both are journal entries of their own. The lead-in's Notes have
--- "Leads to: <next quest>"; the next quest starts inside the dungeon (In
--- Dungeon icon) and has a button to the lead-in under Starts at. No quest
--- chain for the pair (the lead-in has no earlier steps of its own).
+
+
+
+
+
+
+
+
 do
     local PAIRS = {
-        { dungeon = "Excavation Site: Wetlands", nextID = 95795, lead = { id = 95772 } }, -- Songblade Search > Fallen in the Fen (both already entries)
+        { dungeon = "Excavation Site: Wetlands", nextID = 95795, lead = { id = 95772 } },
         { dungeon = "Excavation Site: Wetlands", nextID = 95809, lead = {
             id = 95647,
             name = "Lost in the Thicket Things",
@@ -5224,7 +5224,7 @@ do
                 if q.id == pair.lead.id then leadQuest = q end
             end
             if nextQuest then
-                -- The lead-in: its own entry, just before the quest it leads to.
+
                 if not leadQuest then
                     leadQuest = pair.lead
                     local details = FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[leadQuest.id]
@@ -5243,7 +5243,7 @@ do
         end
     end
 
-    -- Notes that only repeated what the links now say.
+
     local function Q(dungeon, id)
         for _, q in ipairs((FDJ.DB and FDJ.DB[dungeon] and FDJ.DB[dungeon].quests) or {}) do
             if q.id == id then return q end
@@ -5254,7 +5254,7 @@ do
     local heartwoven = Q("Excavation Site: Wetlands", 95809)
     if heartwoven and heartwoven.note == "Follow-up of Lost in the Thicket Things." then heartwoven.note = nil end
 
-    -- Quest spots on the dungeon maps: these lead-ins now open their own page.
+
     for _, pins in pairs(FDJ.MAP_QUEST_PINS or {}) do
         for _, pin in ipairs(pins) do
             for _, spot in ipairs(pin.spots or {}) do
@@ -5265,16 +5265,16 @@ do
         end
     end
 end
--- END leadinlinks
 
--- BEGIN toxicsoilfinal
--- The Deadmines: the Toxic Soil storyline's journal entry is the dungeon step,
--- Destruction in Deadmines (92753, plant the explosives beside the forge
--- inside the Deadmines), with the nine quests before it as its chain (2.0.4:
--- the quest you do in the dungeon is the one listed; the second Destruction in
--- Deadmines, 92819, just "use the detonator" at the exit, is not shown).
--- Wowhead Forever: 92753 ends with Alba Fairmoon at the Deadmines exit ("I
--- will wait for you in the hills behind Moonbrook") and gives Stormwind +100.
+
+
+
+
+
+
+
+
+
 do
     local ALBA_EXIT = "Alba Fairmoon, in the hills behind Moonbrook (at the Deadmines exit), Westfall"
     local d = FDJ.DB and FDJ.DB["The Deadmines"]
@@ -5298,26 +5298,26 @@ do
         details[92753].turnin = ALBA_EXIT
         details[92753].description = "Plant the explosives beside the forge, then meet Alba Fairmoon at the Deadmines exit."
     end
-    -- 92819 is not a step any more: its old step data pointed at the Sentinel Hill inn.
+
     if details then details[92819] = nil end
     if FDJ.QUEST_START_MAPS then FDJ.QUEST_START_MAPS[92819] = nil end
-    -- The translated hand-in still named the Sentinel Hill inn.
+
     for _, content in pairs(FDJ.ContentLocales or {}) do
         local quests = content.quests or {}
         if quests[92753] then quests[92753].turnin = nil end
     end
 end
--- END toxicsoilfinal
 
--- BEGIN turninall
--- Turn-in places the ? buttons were missing (quest list, quest page, quest
--- tracker): the NPCs' spots on the world map. Wowhead Forever NPC pages
--- (Dawnwatcher Selgorm 4783, High Explorer Magellas 5387, Treshala
--- Fallowbrook 4521, Monika Sengutz 3982, Keeper Remulos 11832, Sanath Lim-yo
--- 8395, Greta Mosshoof 10922, Malyfous Darkhammer 10637, Franclorn Forgewright
--- 8888, Lothos Riftwaker 14387, Krom'rosh 256418, Ashe Amberhall 257591, Muln
--- Earthfury 259118); Demar Brant: Warcraft Wiki (Farholde Keep 66.6, 79.9).
--- Detonation at a Distance ends with Jasper Fel (SI:7), Wowhead quest 92750.
+
+
+
+
+
+
+
+
+
+
 do
     local spots = FDJ.TURNIN_SPOTS or {}
     FDJ.TURNIN_SPOTS = spots
@@ -5333,18 +5333,18 @@ do
     Add(1448, 0.512, 0.822, "Greta Mosshoof — Emerald Sanctuary, Felwood", "Greta Mosshoof")
     Add(1452, 0.610, 0.386, "Malyfous Darkhammer — Everlook, Winterspring", "Malyfous Darkhammer")
     Add(1428, 0.288, 0.284, "Franclorn Forgewright — Blackrock Mountain (a ghost, seen only while dead)", "Franclorn Forgewright")
-    spots[#spots].ghostTalk = true -- ghosttalk (2.1.7): "Die in the lava near the chain", then "Talk to him as a ghost" (Systems/MapMarkers.lua)
+    spots[#spots].ghostTalk = true
     Add(1428, 0.264, 0.246, "Lothos Riftwaker — Blackrock Mountain", "Lothos Riftwaker")
     Add(2548, 0.594, 0.454, "Krom'rosh — Riverglades", "Krom'rosh")
     Add(2548, 0.666, 0.810, "Ashe Amberhall — Farholde Keep, Riverglades", "Ashe Amberhall")
     Add(2548, 0.666, 0.799, "Demar Brant — Farholde Keep, Riverglades", "Demar Brant")
 
-    -- Quests whose turn-in NPC shares a name with another, or is not known
-    -- yet: the place itself.
+
+
     local MULN = { mapID = 1412, x = 0.334, y = 0.224, label = "Muln Earthfury — Skywatcher Plateau, Mulgore", targetName = "Muln Earthfury" }
     local GROMGOL = { mapID = 1434, x = 0.323, y = 0.277, label = "Grom'gol Base Camp — Stranglethorn Vale (who takes it is not known yet)" }
     local FARHOLDE = { mapID = 2548, x = 0.666, y = 0.800, label = "Farholde Keep — Riverglades (who takes it is not known yet)" }
-    -- The Grom'gol quests' hand-in, Commander Aggro'gosh, is known now (drownedcity).
+
     local AGGROGOSH = { mapID = 1434, x = 0.322, y = 0.288, label = "Commander Aggro'gosh — Grom'gol Base Camp", targetName = "Commander Aggro'gosh" }
     local byQuest = { [98823] = MULN, [95776] = AGGROGOSH, [95773] = AGGROGOSH, [94983] = FARHOLDE }
     for _, data in pairs(FDJ.DB or {}) do
@@ -5361,14 +5361,14 @@ do
         details[92750].turnin = "Jasper Fel, SI:7, Old Town, Stormwind"
     end
 end
--- END turninall
 
--- BEGIN coldbringerhorde
--- The Coldbringer's Eye, Horde (quest 97196): level 41, from level 34,
--- shareable, 8,600 XP, 55s, Earthen Ring +300 and Thunder Bluff +150
--- (Wowhead Forever). Given and taken back by Sutara Plainstalker
--- <Quartermaster> of the Earthen Ring (NPC 264078), Skywatcher Plateau,
--- Mulgore 34.4, 22.8 (Wowhead Forever).
+
+
+
+
+
+
+
 do
     local SUTARA = { mapID = 1412, x = 0.344, y = 0.228, label = "Sutara Plainstalker — Mulgore", targetName = "Sutara Plainstalker", detail = "Sutara Plainstalker of the Earthen Ring, north-west Mulgore" }
     local d = FDJ.DB and FDJ.DB["Razorfen Downs"]
@@ -5404,20 +5404,20 @@ do
     end
     if FDJ.QUEST_SHAREABILITY_AUDIT then FDJ.QUEST_SHAREABILITY_AUDIT[97196] = true end
 end
--- END coldbringerhorde
 
--- BEGIN onyxiaattunement
--- 2.0.3: the Onyxia attunement as a quest chain page of its own, opened from
--- the round Onyxia icon on the journal's home page, right of the Cozy
--- Sleeping Bag's (Systems/OnyxiaAttunement.lua). Its quests are Upper
--- Blackrock Spire's Drakefire Amulet (Alliance) and Blood of the Black
--- Dragon Champion (Horde), with their chains (Data/QuestChains.lua); each
--- character sees its own faction's. Every raider needs the Drakefire
--- Amulet in their bags to enter Onyxia's Lair.
--- Horde: Blood and Thunder (98325) is new in WoW Forever and comes before
--- Warlord's Command (M's attunement guide, 12 Nov 2026; Wowhead Forever
--- quest 98325). Chains and steps checked against Wowhead Forever's quest
--- pages (12 Nov 2026).
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local PAGE = "Onyxia Attunement"
     FDJ.ONYXIA_PAGE = PAGE
@@ -5435,10 +5435,10 @@ do
     }
     XP[98325] = 660
     if FDJ.PREREQ_REWARD_MONEY_FALLBACK then FDJ.PREREQ_REWARD_MONEY_FALLBACK[98325] = 900 end
-    -- bloodthunder (2.0.4): Warlord's Command's own page (Lower Blackrock
-    -- Spire) shows Blood and Thunder as its pre-quest.
+
+
     if C[4903] == nil then C[4903] = { { id = 98325, name = "Blood and Thunder" } } end
-    -- First step of every Horde chain that starts with Warlord's Command.
+
     for _, id in ipairs({ 4974, 6569, 6602 }) do
         local chain = C[id]
         if type(chain) == "table" and type(chain[1]) == "table" and chain[1].id == 4903 then
@@ -5446,8 +5446,8 @@ do
         end
     end
 
-    -- The page: copies of the two quests (their own note here; the UBRS
-    -- page keeps its entries as they are).
+
+
     local quests = {}
     local ubrs = FDJ.DB and FDJ.DB["Upper Blackrock Spire"]
     for _, faction in ipairs({ "Alliance", "Horde" }) do
@@ -5461,29 +5461,29 @@ do
         end
     end
     FDJ.DB[PAGE] = {
-        questChainPage = true, -- Quests is its only tab
-        noArrow = true,        -- no waypoint arrow when tracked (the Sleeping Bag's chain only)
-        level = "48+",         -- the character's faction: Systems/OnyxiaAttunement.lua
+        questChainPage = true,
+        noArrow = true,
+        level = "48+",
         location = "",
         description = "",
         bosses = {},
         quests = quests,
     }
 end
--- END onyxiaattunement
 
--- BEGIN dalaranvias (2.0.12)
--- The way to the Image of Archmage Modera, who stands outside Dalaran's west
--- wall by Lordamere Lake (world 401.5, 569: the client's spawn table;
--- her spot was 48 yards too far east, inside the wall). The straight line
--- from the south or the east runs through the walled city, so the arrow
--- leads round it: by the west side from Hillsbrad and the south, by the
--- north shore from Tarren Mill and the east. Worked out on the Eastern
--- Kingdoms walking maps (the navigation grid of the Forever
--- client): the shortest walk to her from Southshore, Tarren Mill, the
--- Alterac side and the north-east shore, cut down to the corners that keep
--- each leg clear. From the lake north-west of the city the straight line is
--- the way (direct).
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local WEST = "Round Dalaran's west wall, along the lake"
@@ -5493,45 +5493,45 @@ do
     local routes = {
         direct = { mapID = 1416, x0 = 0.000, y0 = 0.000, x1 = 0.125, y1 = 0.500 },
         routes = {
-            { forward = true, -- from Hillsbrad and the south
+            { forward = true,
                 West(0.182, 0.865), West(0.153, 0.847), West(0.141, 0.847), West(0.115, 0.823),
                 West(0.100, 0.740), West(0.094, 0.731), West(0.074, 0.651), West(0.072, 0.640),
             },
-            { forward = true, -- from Tarren Mill, Alterac and the north-east shore
+            { forward = true,
                 North(0.248, 0.625), North(0.193, 0.530), North(0.142, 0.510), North(0.130, 0.508),
                 North(0.117, 0.515), North(0.109, 0.523), North(0.089, 0.559),
             },
         },
     }
-    -- Her spot on the Alterac Mountains map (the quests' Show on Map) and on
-    -- the Silverpine Forest map (her spot by name).
+
+
     for _, spot in ipairs({ { 1416, 0.077, 0.588 }, { 1421, 0.684, 0.452 } }) do
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot[1]), spot[2], spot[3])] = routes
     end
 end
--- END dalaranvias
 
--- BEGIN liftgate (2.0.28; exact paths 2.0.29)
--- The Great Lift is the one way between the Barrens (up on the cliff:
--- Razorfen Kraul's entrance, Ratchet) and Thousand Needles (Lonebrow's
--- Journal at its foot, Thalanaar beyond). Its two platforms stand at world
--- -4668, -1837 (the client's spawn table: the lift's objects 11898 and
--- 11899, 85 yards up and 41 down).
--- exactpath (2.0.29): the arrow walks the real way, corner by corner, on
--- every leg of Razorfen Kraul's route for the Alliance. Each leg is the
--- shortest walk on the Kalimdor walking maps (the
--- navigation grid of the Forever client, read as data), kept clear of the
--- Horde's camps (Camp Taurajo, the Crossroads, Honor's Stand...) and cut down
--- to the corners that keep each stretch between two of them walkable:
--- Ratchet and Theramore's dock to the lift's top and to the Kraul's
--- entrance, the lift's top to the entrance, and on the canyon floor the
--- lift's foot to the journal and to Thalanaar. Pairs of map x, y: the
--- Barrens map (1413) above, the Thousand Needles map (1441) below.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
-    local below = { [1441] = true, [1444] = true, [1446] = true, [1449] = true, [1451] = true } -- Thousand Needles, Feralas, Tanaris, Un'Goro, Silithus
-    local above = { [1413] = true, [1412] = true, [1456] = true, [1411] = true, [1454] = true, [1445] = true, -- the Barrens, Mulgore, Thunder Bluff, Durotar, Orgrimmar, Dustwallow
-        [1440] = true, [1442] = true, [1439] = true, [1438] = true, [1457] = true, [1447] = true, [1448] = true, [1452] = true, [1450] = true } -- and the north, which comes down through the Barrens
+    local below = { [1441] = true, [1444] = true, [1446] = true, [1449] = true, [1451] = true }
+    local above = { [1413] = true, [1412] = true, [1456] = true, [1411] = true, [1454] = true, [1445] = true,
+        [1440] = true, [1442] = true, [1439] = true, [1438] = true, [1457] = true, [1447] = true, [1448] = true, [1452] = true, [1450] = true }
     local UP = "Take the Great Lift up to the Barrens"
     local DOWN = "Take the Great Lift down to Thousand Needles"
     local RATCHET_LIFT = {
@@ -5612,9 +5612,9 @@ do
         0.1122, 0.2365, 0.1122, 0.2351, 0.1113, 0.2337, 0.1084, 0.2308, 0.1075, 0.2308, 0.1065, 0.2294, 0.1056, 0.2280, 0.0942, 0.2095,
         0.0885, 0.2095, 0.0810, 0.1953, 0.0810, 0.1939, 0.0810, 0.1925, 0.0810, 0.1911, 0.0810, 0.1896,
     }
-    -- A route: legs in walking order, each { points, reversed, top }; the
-    -- lift is crossed where a leg above meets one below. Every point before
-    -- the lift says which way the lift is taken.
+
+
+
     local function Route(...)
         local route = { forward = true, nearest = true, reach = 4, leg = 3 }
         local legs = { ... }
@@ -5637,50 +5637,50 @@ do
     local function Set(mapID, x, y, ...)
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(mapID), x, y)] = { routes = { ... } }
     end
-    -- Razorfen Kraul's entrance
+
     Set(1413, 0.429, 0.902,
         Route({ RATCHET_RFK, false, true }),
         Route({ THERAMORE_RFK, false, true }),
         Route({ FOOT_THALANAAR, true, false }, { LIFT_RFK, false, true }))
-    -- Mebok Mizzyrix, Ratchet (Blueleaf Tubers)
+
     Set(1413, 0.624, 0.376,
         Route({ RATCHET_RFK, true, true }),
         Route({ FOOT_THALANAAR, true, false }, { RATCHET_LIFT, true, true }))
-    -- Lonebrow's Journal, at the lift's foot
+
     Set(1441, 0.307, 0.244,
         Route({ RATCHET_LIFT, false, true }, { FOOT_JOURNAL, false, false }),
         Route({ THERAMORE_LIFT, false, true }, { FOOT_JOURNAL, false, false }),
-        Route({ LIFT_RFK, true, true }, { FOOT_JOURNAL, false, false }), -- from the Kraul's entrance
+        Route({ LIFT_RFK, true, true }, { FOOT_JOURNAL, false, false }),
         Route({ JOURNAL_THALANAAR, true, false }))
-    -- Falfindel Waywarder, Thalanaar (The Crone of the Kraul)
+
     Set(1444, 0.896, 0.466,
         Route({ RATCHET_LIFT, false, true }, { FOOT_THALANAAR, false, false }),
         Route({ THERAMORE_LIFT, false, true }, { FOOT_THALANAAR, false, false }),
-        Route({ LIFT_RFK, true, true }, { FOOT_THALANAAR, false, false })) -- from the Kraul's entrance
+        Route({ LIFT_RFK, true, true }, { FOOT_THALANAAR, false, false }))
 end
--- END liftgate
 
--- BEGIN smlibrary (2.0.16): the walked ways of Scarlet Monastery: Library's
--- route for the Alliance, corner by corner like Razorfen Kraul's. Each leg
--- is the shortest walk on the Eastern Kingdoms walking maps
--- (the navigation grid of the Forever client with its
--- floors: gates, stairs, halls; read as data), kept clear of the Horde's
--- towns where there is a way round, and cut down to the corners that keep
--- each stretch walkable:
---   S_C  Southshore's gryphon master to Chillwind Camp's (through Alterac)
---   C_L  Chillwind Camp to the Library's door: the road west, through the
---        Bulwark's gate (the only way on foot; Horde guards), north through
---        Tirisfal, up the Monastery's stairs and through its hall
---   O_C  Magus Olvek (Dalaran) to Chillwind Camp
---   C_R  Chillwind Camp to Raleigh the Devout (Southshore)
---   S_O  Southshore to Magus Olvek
--- A leg is a flat list: a number over 2 is the map the pairs of x, y after
--- it are on (1420 Tirisfal Glades, 1422 Western Plaguelands, 1416 Alterac
--- Mountains, 1424 Hillsbrad Foothills).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
-    -- The zones these ways run through: a route is only followed (and its
-    -- points only count) by a player standing in one of them.
+
+
     local ZONES = { [1420] = true, [1422] = true, [1416] = true, [1424] = true, [1421] = true, [1458] = true, [1423] = true }
     local BULWARK = "Through the Bulwark's gate (Horde guards)"
     local S_C = {
@@ -5745,8 +5745,8 @@ do
         0.1496, 0.6975, 0.1451, 0.6886, 0.1451, 0.6663, 0.1436, 0.6529, 0.1436, 0.6507, 0.1436, 0.6484, 0.1421, 0.6484, 0.1362, 0.6440,
         0.1302, 0.6440, 0.1287, 0.6440, 0.1228, 0.6440, 0.1213, 0.6417, 0.1183, 0.6395, 0.1124, 0.6283, 0.0960, 0.6283, 0.0945, 0.6261,
     }
-    -- A route: legs in walking order, each { list, reversed, first, last, label }
-    -- (the label on its points first .. last, counted along the list).
+
+
     local function Route(...)
         local route = { forward = true, nearest = true, reach = 4, leg = 3, zones = ZONES, walkfirst = true }
         for _, leg in ipairs({ ... }) do
@@ -5768,7 +5768,7 @@ do
             for k = 1, n do
                 local point = points[leg[2] and (n - k + 1) or k]
                 local last = route[#route]
-                -- (two legs meet at the same point: once)
+
                 if not (last and last.mapID == point.mapID and last.x == point.x and last.y == point.y) then
                     route[#route + 1] = point
                 end
@@ -5781,38 +5781,38 @@ do
     end
     local TO_DOOR = { C_L, false, 50, 59, BULWARK }
     local FROM_DOOR = { C_L, true, 50, 59, BULWARK }
-    -- The Library's door (the dungeon's entrance on its route)
+
     Set(1420, 0.8535, 0.3239,
         Route({ S_C, false }, TO_DOOR),
         Route({ O_C, false }, TO_DOOR))
-    -- Raleigh the Devout, Southshore (In the Name of the Light)
+
     Set(1424, 0.514, 0.584,
         Route(FROM_DOOR, { C_R, false }))
-    -- Magus Olvek, Dalaran (Past Due): handing it in, and picking it up
-    -- (the spot its pickup is told by)
+
+
     Set(1416, 0.094, 0.626,
         Route(FROM_DOOR, { O_C, true }),
         Route({ S_O, false }))
     Set(1416, 0.097, 0.619,
         Route({ S_O, false }))
-    -- Librarian Mae Paledust, Ironforge (Mythology of the Titans): from the
-    -- Monastery the way to the gryphons (Chillwind Camp, then Southshore).
+
+
     Set(1455, 0.740, 0.134,
         Route(FROM_DOOR, { S_C, true }))
 end
--- END smlibrary
 
--- BEGIN wetlandsways (2.0.8): the walked ways to Excavation Site: Wetlands
--- and the Deathstalker Agent above the Dragonmaw camp (M, 15 Nov 2026: on
--- the road at 53.2, 44.6 the arrow pointed straight at the agent, through
--- the hills). The only way up is from the south: down the main road past
--- the Dragonmaw gate, then the path that climbs north-west. Each leg is the
--- shortest walk on the Eastern Kingdoms walking maps (the
--- navigation grid of the Forever client, read as data), cut down to the
--- corners that keep each stretch walkable:
---   N_  from the Thandol Span (Arathi, Hammerfall)   M_  from Menethil Harbor
---   S_  from Dun Algaz (Loch Modan)
---   _A  to the Deathstalker Agent                    _E  to the dungeon's entrance
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local ZONES = { [1437] = true }
@@ -5879,9 +5879,9 @@ do
         0.5088, 0.6198, 0.5068, 0.6092, 0.5038, 0.5881, 0.4937, 0.5729, 0.4766, 0.5624,
     }
     local function Route(list, reversed)
-        -- off = 8: the straight line to a way's nearest stretch counts
-        -- eight times (the hill between the road and the path up is no
-        -- way).
+
+
+
         local route = { forward = true, nearest = true, reach = 4, leg = 3, zones = ZONES, walkfirst = true, off = 8 }
         local n = #list / 2
         for k = 1, n do
@@ -5893,27 +5893,27 @@ do
     local function Set(x, y, ...)
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1437", x, y)] = { routes = { ... } }
     end
-    -- The Deathstalker Agent (Dragonmaw Rumors, Open the Maw)
-    -- (No way of its own between the agent and the entrance, 190 yards
-    -- apart on the same hill: a short way would be picked from the road
-    -- below too, straight up the hill. The long ways' last corners lead
-    -- from one to the other.)
+
+
+
+
+
     Set(0.514, 0.592, Route(N_A), Route(M_A), Route(S_A))
-    -- The dungeon's entrance
+
     Set(0.477, 0.562, Route(N_E), Route(M_E), Route(S_E))
 end
--- END wetlandsways
 
 
 
--- BEGIN knightofmourning
--- knightofmourning (2.0.10, M 17 Nov 2026): the Forsaken paladin chain into
--- Blackmaw Hold (Wowhead Forever, quests 93030 and 99187): The Knight of
--- Mourning (listen to his tale), then The Reliquary of Tyr (the journal
--- entry), which awards the Sword of Mourning. The Reliquary of Tyr drops
--- from Elder Shaman Bloodmane (Wowhead Forever item 286415). The Knight of
--- Mourning stands in Tirisfal Glades (17.6, 67.4); players pick up both
--- quests from him.
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local bh = FDJ.DB and FDJ.DB["Blackmaw Hold"]
@@ -5952,52 +5952,52 @@ do
         end
     end
 end
--- END knightofmourning
 
--- BEGIN tasteofflame
--- tasteofflame (2.0.10, M 17 Nov 2026: "This quest is actually a chain, and
--- we do not show the start"; then: "It starts from Squire, then you get Set
--- Them Ablaze, and then you unlock Trinkets, which gives you as a reward the
--- molt, which then you can bring to the guy"): A Taste of Flame in Blackrock
--- Depths (4024) after Squire Maltrake (3462), Set Them Ablaze! (3463),
--- Trinkets... (3481: the Hoard of the Black Dragonflight, with the Black
--- Dragonflight Molt inside) and A Taste of Flame (4022: show the molt to
--- Cyrus Therepentous). Levels, givers, spots, XP, money and rewards: Wowhead
--- Forever (quests 3462, 3463, 3481, 4022; Velarok Windblade, Squire
--- Maltrake and the hoard at 39, 39 in Searing Gorge; Cyrus at 94.8, 31.6 in
--- Burning Steppes). Cyrus's other A Taste of Flame (4023, elite: the drake
--- he summons drops a molt) also opens 4024: it counts for step 4.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local VELAROK = { mapID = 1427, x = 0.390, y = 0.390, label = "Velarok Windblade — Searing Gorge", targetName = "Velarok Windblade" }
     local MALTRAKE = { mapID = 1427, x = 0.390, y = 0.390, label = "Squire Maltrake — Searing Gorge", targetName = "Squire Maltrake" }
     local HOARD = { mapID = 1427, x = 0.390, y = 0.389, label = "Hoard of the Black Dragonflight — Searing Gorge" }
-    -- slitherrock (2.1.7, M 25 Nov 2026 north of Morgan's Vigil at 80.9, 60.4,
-    -- the arrow to Cyrus Therepentous at 94.8, 31.6 pointing west, 1,425 yards:
-    -- "the arrow has no idea where I'm going ... It's not understanding burning
-    -- steps"; the walking net does not know Terror Wing Path and led round by
-    -- the main road; Wowhead: "it's the cave to the NE along the Mountains",
-    -- "Its in the top right corner"): from the ground around Morgan's Vigil and
-    -- up the valley east of Dreadmaul Rock, the straight line to his cave.
+
+
+
+
+
+
+
     local CYRUS = { mapID = 1428, x = 0.948, y = 0.316, label = "Cyrus Therepentous — Burning Steppes", targetName = "Cyrus Therepentous", direct = { { 0.78, 0.48, 0.97, 0.72 }, { 0.84, 0.25, 0.99, 0.48 } } }
-    -- velarokfield (2.1.7, M 25 Nov 2026, the arrow to Velarok saying "Get to
-    -- Thorium Point": "It's not in Thorium Point ... Look at the cursor":
-    -- 39.2, 38.9, out in the open south of the camp): no "Get to" line for
-    -- him and what stands by him (the flight point 130 yards off named it).
-    -- openfield (same day, on Firewatch Ridge at 28.3, 41.1 and 29.1, 41.3,
-    -- the arrow pointing north round by Thorium Point, 456 yards for 240:
-    -- "look at where I'm standing, and look at where it's pointing"): the
-    -- ground between the ridge and him is open: straight across it.
+
+
+
+
+
+
+
+
     local OPEN = { 0.27, 0.35, 0.42, 0.46 }
     for _, spot in ipairs({ VELAROK, MALTRAKE, HOARD }) do spot.noGetTo = true spot.direct = OPEN end
     local VELAROK_TEXT = "Velarok Windblade, Searing Gorge (39.0, 39.0)"
     local MALTRAKE_TEXT = "Squire Maltrake, Searing Gorge (39.0, 39.0)"
     local HOARD_TEXT = "Hoard of the Black Dragonflight, Searing Gorge (39.0, 38.9)"
     local CYRUS_TEXT = "Cyrus Therepentous, Burning Steppes (94.8, 31.6)"
-    -- tofstart (2.1.7, M 25 Nov 2026: "The real Taste of Flame quest starts
-    -- from a divine retribution and then follows this particular order until
-    -- we get to Squire"): Velarok's own six steps come first. Order, levels,
-    -- objectives, items, XP, money and the torch: Wowhead Forever (quests
-    -- 3441, 3442, 3443, 3452, 3453, 3454); where the items drop: forever-db.
+
+
+
+
+
     local TORCH = { mapID = 1427, x = 0.391, y = 0.391, label = "Torch of Retribution \226\128\148 Searing Gorge", exact = true, noGetTo = true, direct = OPEN }
     local TORCH_TEXT = "Torch of Retribution, Searing Gorge (39.1, 39.1)"
     local FIRE = { markerType = "location", mapID = 1427, x = 0.515, y = 0.455, label = "Fire elementals and war golems \226\128\148 Searing Gorge" }
@@ -6095,11 +6095,11 @@ do
         startObject = {"Hoard of the Black Dragonflight", "Interface\\Icons\\INV_Box_02", "Beside Squire Maltrake, Searing Gorge (39.0, 38.9)"},
         map = HOARD, turninMap = HOARD,
     }
-    -- openhoard (2.1.7, M 26 Nov 2026 at Cyrus with the hoard unopened:
-    -- "remind the player that it has to open the hoard of the dragonflight"):
-    -- the way to Cyrus for this step says "Open Hoard of the Black
-    -- Dragonflight" while the hoard (10569, Trinkets...'s reward) is in the
-    -- bags and its Black Dragonflight Molt (10575) is not (Systems/MapMarkers.lua: openline).
+
+
+
+
+
     local CYRUS_MOLT = {}
     for k, v in pairs(CYRUS) do CYRUS_MOLT[k] = v end
     CYRUS_MOLT.openItem = { 10569, "Hoard of the Black Dragonflight", 10575 }
@@ -6111,7 +6111,7 @@ do
         requiredItems = { {10575, "Black Dragonflight Molt", 1, "Inside the Hoard of the Black Dragonflight (Trinkets...)"} },
         note = "No molt? Cyrus has another A Taste of Flame (elite): after accepting it, ask him how to prove your worth and kill the Frenzied Black Drake he summons for its molt. It opens the Blackrock Depths quest too.",
     }
-    -- rewards and money (Wowhead Forever)
+
     FDJ.PREREQ_REWARD_ITEMS_FALLBACK[3463] = { items = { {10742, "Dragonflight Leggings", 2}, {10743, "Drakefire Headguard", 2}, {10744, "Axe of the Ebon Drake", 2}, {270114, "Dragonscale Pants", 2} }, choice = true }
     FDJ.PREREQ_REWARD_MONEY_FALLBACK[3463] = 23000
     FDJ.PREREQ_REWARD_MONEY_FALLBACK[3442] = 21000
@@ -6125,57 +6125,57 @@ do
     XP[3441] = 440; XP[3442] = 4400; XP[3443] = 4400; XP[3452] = 4700; XP[3453] = 470; XP[3454] = 4700
     XP[3462] = 470; XP[3463] = 7600; XP[3481] = 470; XP[4022] = 5450
 end
--- END tasteofflame
 
--- BEGIN onyxiaxp
--- onyxiaxp (2.0.10, M 17 Nov 2026, with his Onyxia Attunement XP audit):
--- every quest of both attunement chains with its WoW Forever XP. Wowhead
--- Forever gives each quest a base XP and Forever's multiplier; the game
--- grants base x multiplier rounded to 50 (checked against the game's own
--- reward window: Wild Ancients 6,600 x 2.675 = 17,650). 23 of the 31 steps
--- had no XP of their own, and the two finals showed the bare base (8,300 /
--- 9,950). The same quest IDs on the Blackrock Spire pages get it too.
+
+
+
+
+
+
+
+
+
 do
     local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
-    -- Alliance: Dragonkin Menace ... Drakefire Amulet
+
     XP[4182] = 5450; XP[4183] = 4100; XP[4184] = 4100; XP[4185] = 540
     XP[4186] = 5450; XP[4223] = 540; XP[4224] = 540
-    XP[4241] = 11450 -- 5,450 x 2.1
-    XP[4242] = 9800 -- 5,450 x 1.8
-    XP[4264] = 11150; XP[4282] = 11150 -- 6,200 x 1.8
-    XP[4322] = 13950 -- 7,750 x 1.8
-    XP[6402] = 660; XP[6403] = 9950; XP[99435] = 9950 -- (99435: Forever's other The Great Masquerade)
+    XP[4241] = 11450
+    XP[4242] = 9800
+    XP[4264] = 11150; XP[4282] = 11150
+    XP[4322] = 13950
+    XP[6402] = 660; XP[6403] = 9950; XP[99435] = 9950
     XP[6501] = 6600
-    XP[6502] = 22200 -- 8,300 x 2.675
-    -- Horde: Blood and Thunder ... Blood of the Black Dragon Champion
+    XP[6502] = 22200
+
     XP[98325] = 660
-    XP[4903] = 15350 -- 8,300 x 1.85
+    XP[4903] = 15350
     XP[4941] = 6600
-    XP[4974] = 26600 -- 9,950 x 2.675
+    XP[4974] = 26600
     XP[6566] = 660; XP[6567] = 3300; XP[6568] = 4950; XP[6569] = 6600; XP[6570] = 4950
     XP[6582] = 6600; XP[6583] = 6600; XP[6584] = 6600; XP[6585] = 6600
     XP[6601] = 4950
-    XP[6602] = 26600 -- 9,950 x 2.675
+    XP[6602] = 26600
 end
--- END onyxiaxp
 
--- BEGIN rfkhorde
--- rfkhorde (2.0.10, M 17 Nov 2026: "create the arrow guiding route for Horde
--- Razorfen Kraul"): what the Route needs to know for the Horde's quests
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). Givers and hand-ins: Wowhead
--- Forever's quest pages; the places to farm: the mobs' spawns in the Forever
--- client tables and Wowhead Forever's drop tables.
---  - An Unholy Alliance starts from the Small Scroll Charlga Razorflank
---    drops: no stop before the run; with the quest in the log, a delivery
---    to Varimathras (Undercity 56.2, 92.6).
---  - Warriors, Brutal Hauberk: Trial at the Field of Giants is done at the
---    silithid mounds south of Camp Taurajo (Twitching Antennae: Silithid
---    Creepers, Swarmers and Grubs around 44.5, 70.5). Brutal Armor needs 15
---    Smoky Iron Ingots (Windshear dwarves, Windshear Mine, Stonetalon
---    Mountains 73, 60), 10 Powdered Azurite (Hillsbrad Miners, Azurelode
---    Mine, Hillsbrad Foothills 30, 55), 10 Iron Bars (bought) and the Vial
---    of Phlogiston from Roogug inside the Kraul: it is handed in after the
---    run, like the Alliance's Fire Hardened Mail.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
     for _, quest in ipairs((rfk and rfk.quests) or {}) do
@@ -6199,42 +6199,42 @@ do
         D[1838].routeBuy = { { 3575, "Iron Bar", 10 } }
     end
 end
--- END rfkhorde
 
--- BEGIN rfdally
--- rfdally (2.0.11, M 17 Nov 2026: a Route for "Razorfen Downs Alliance"):
--- Agamaggan's Blood ends a ten-step chain in Shen'dralas with a step inside
--- Maraudon (Rot and Regret, 93404): starting the Route asks whether to
--- include it (routeask, Systems/QuestText.lua).
+
+
+
+
+
+
 do
     local rfd = FDJ.DB and FDJ.DB["Razorfen Downs"]
     for _, quest in ipairs((rfd and rfd.quests) or {}) do
         if quest.id == 93604 then
             quest.routeAsk = { "Maraudon", 93404 }
-            quest.routeSkipNow = true -- skipnow (2.0.13): "Skip for now" under the arrow at the Maraudon step
+            quest.routeSkipNow = true
         end
-        -- grouphint (2.0.13): A Host of Evil's mobs are elites outside the door
+
         if quest.id == 6626 then quest.routeGroupFirst = true end
     end
 end
--- END rfdally
 
--- BEGIN rfdhorde
--- rfdhorde (2.1.6, M 24 Nov 2026: "build rfd horde route"): what the Route
--- needs to know for the Horde's Razorfen Downs quests (Systems/QuestText.lua:
--- FDJ.ROUTE_DUNGEONS). Givers and hand-ins as in the journal (Andrew
--- Brownell and Varimathras in Undercity, Sutara Plainstalker in Mulgore:
--- their spawns in the Forever client tables agree); A Host of Evil,
--- Extinguishing the Idol and Agamaggan's Blood as for the Alliance (rfdally).
---  - An Unholy Alliance (6521) follows the Small Scroll from Charlga
---    Razorflank in Razorfen Kraul (6522): starting the Route asks whether to
---    include the Razorfen Kraul step (routeask). Included: the arrow leads to
---    Razorfen Kraul's door for the scroll (dropMap), says to accept it once
---    it drops, then to Varimathras.
---  - Ambassador Malcin is outside, in the thorn maze before Razorfen Downs'
---    door (NPC 12865: his five spawns in the Forever client tables, Barrens
---    48.5, 95.6 to 46.2, 90.2): with the quest in the log, a stop at him
---    before the run (objectiveMap; "Not found? Next spot" through the others).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS or {}
     local VARIMATHRAS = { mapID = 1458, x = 0.562, y = 0.926, label = "Varimathras — Royal Quarter, Undercity", targetName = "Varimathras" }
@@ -6252,22 +6252,22 @@ do
                 detail = "Ambassador Malcin is in the thorn maze before the door: kill him for his head",
                 targetName = "Ambassador Malcin", kill = true,
                 spawns = { { x = 0.485, y = 0.956 }, { x = 0.484, y = 0.954 }, { x = 0.480, y = 0.924 }, { x = 0.478, y = 0.906 }, { x = 0.462, y = 0.902 } } }
-            -- runin (2.1.6, M 25 Nov 2026): Malcin is done on the way in with
-            -- the group: his stop says so and is left for last (Systems/QuestText.lua)
+
+
             quest.routeRunIn = true
         end
     end
-    -- malcinbox (2.1.7, M 25 Nov 2026 in the thorn maze: "pull up the sword
-    -- thingy and just say kill Ambassador Malcin. It can spawn in different
-    -- locations ... and then the host of evil quest objective as well"): for
-    -- the Horde, Malcin and A Host of Evil (its Razorfen Battleguards,
-    -- Thornweavers and Death's Head Cultists stand in the same maze: their
-    -- spawns in the Forever client tables, 45.7-48.9, 87.5-95.6) are one
-    -- place, the middle of it all (47.7, 92.0): on the way the arrow points
-    -- there; in it, the crossed swords and "Kill Ambassador Malcin" (and
-    -- that he can be anywhere in the area: M, "use in the area, not in the
-    -- maze. Maze is too complicated of a word"), then A Host of Evil's
-    -- objectives (routeRunInArea, Systems/QuestText.lua). Its words: below.
+
+
+
+
+
+
+
+
+
+
+
     local MAZE = { markerType = "location", mapID = 1413, x = 0.477, y = 0.920, label = "Razorfen Downs \226\128\148 The Barrens" }
     for _, quest in ipairs((rfd and rfd.quests) or {}) do
         if quest.id == 6521 and quest.routeRunInArea == nil then
@@ -6276,7 +6276,7 @@ do
             quest.routeRunInArea = { Horde = { spot = MAZE } }
         end
     end
-    -- (his name as the journal's own line about him has it)
+
     local words = {
         enUS = { "Kill Ambassador Malcin", "He can be in different places in the area" },
         deDE = { "Tötet Botschafter Malcin", "Er kann an verschiedenen Stellen in der Gegend sein" },
@@ -6298,17 +6298,17 @@ do
         end
     end
 end
--- END rfdhorde
 
--- BEGIN shamanvoodoo
--- 2.0.11 (M 18 Nov 2026: "add this shaman sunken temple quest for alliance
--- shamans ... alliance starts with Mastering the Elements, then goes on to
--- the other 2 quests"). Da Voodoo (8413) is for both factions (Wowhead
--- Forever: Side Both). Its chain's first step is the faction's own:
--- Mastering the Elements (8411, Bath'rah the Windwatcher) for the Alliance,
--- Elemental Mastery (8410, Beram Skychaser) for the Horde; then Spirit
--- Totem (8412). Both first steps list the four elementals they need
--- (Wowhead Forever quests 8410 / 8411, forever-tool 8411: 3,800 XP).
+
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local AIR, EARTH, FIRE, WATER = { 7069, "Elemental Air", 1 }, { 7067, "Elemental Earth", 1 },
@@ -6333,11 +6333,11 @@ do
     end
     local FIRST = { id = 8410, name = "Elemental Mastery" }
     C[8413] = { FIRST, { id = 8412, name = "Spirit Totem" } }
-    -- voodooview (M 18 Nov 2026, on the Alliance tab of a Horde character:
-    -- "the first step of the alliance shows a pick up in thunder bluff"):
-    -- the first step follows the faction tab being looked at
-    -- (FDJ.ApplyViewFaction, called by the quest pages); with no tab told,
-    -- the character's own faction.
+
+
+
+
+
     local function Apply(view)
         local faction = view
         if faction ~= "Alliance" and faction ~= "Horde" then
@@ -6359,8 +6359,8 @@ do
         f:SetScript("OnEvent", function() Apply() end)
     end
     function FDJ.ApplyViewFaction(faction) Apply(faction) end
-    -- The game's own names and objectives where forever-tool has them
-    -- (official Battle.net data); the rest stay English.
+
+
     local LOC = {
         deDE = { name = "Die Beherrschung der Elemente", objective = "Bringt Bath'rah dem Windbehüter die Elemente Erde, Luft, Feuer und Wasser." },
         frFR = { name = "Maîtriser les éléments" },
@@ -6379,16 +6379,16 @@ do
         end
     end
 end
--- END shamanvoodoo
 
--- BEGIN tuberspickups
--- 2.0.11 (M 18 Nov 2026, the Razorfen Kraul Route: after taking Blueleaf
--- Tubers the arrow went straight on to the next quest). Its three things lie
--- beside Mebok Mizzyrix in Ratchet: the Route stops at each one the bags
--- don't hold yet (Systems/QuestText.lua: routepickups). Items and spots:
--- Wowhead Forever quest 1221 (items 5880, 6684, 5897) and objects 21277
--- (Crate with Holes), 68865 (Snufflenose Command Sticks), 21530 (Snufflenose
--- Owner's Manual), all at Ratchet 62.3-62.5, 37.6-37.7.
+
+
+
+
+
+
+
+
+
 do
     local rfk = FDJ.DB and FDJ.DB["Razorfen Kraul"]
     local function At(x, y, label)
@@ -6404,38 +6404,38 @@ do
         end
     end
 end
--- END tuberspickups
 
--- BEGIN smhorde
--- smhorde (2.0.12, M 18 Nov 2026: "build horde route for scarlet monastery
--- all wings"): what the Route needs for the Horde's quests in the four wings
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). Givers, hand-ins, the order of
--- the chains and the quests' objectives: the Forever client tables
--- (quest, quest_prereq, quest_objective, quest_start, quest_end,
--- spawn).
---  - Into The Scarlet Monastery (1048; and the Alliance's In the Name of the
---    Light, 1053, the same four kills) is done over three wings: Whitemane
---    and Mograine in the Cathedral (objectives 1, 2), Herod in the Armory
---    (3), Loksey in the Library (4). routeWings: a wing's Route asks for a
---    run only while its own kills are open, and leaves the hand-in to the
---    Route of the wing still to do.
---  - Hearts of Zeal follows Going, Going, Guano!, which is done in Razorfen
---    Kraul: starting the Route asks whether to include that step (routeAsk),
---    and with it in the log the arrow leads to the Kraul.
---  - Final Passage ends the Test of Lore chain. The run is for its step
---    Test of Lore (1160: Beginnings of the Undead Threat, from the Library);
---    Final Passage itself is a delivery to Dorn Plainstalker (routeNoRun).
---    Test of Endurance: Grenka Bloodscreech in the Roguefeather Den; Test of
---    Strength: Rok'Alim the Pounder (their spawns).
---  - The Graveyard's own door (measured in the game: Systems/ScarletWing.lua)
---    is its entrance in Data/DungeonEntrances.lua. The Armory's and the
---    Cathedral's portals are not measured yet: their Routes end at the foot
---    of the Monastery's stairs.
---  - The walked ways from Undercity: the shortest walks on the Eastern
---    Kingdoms walking maps (the navigation grid, a walking router run offline)
---    from the ruins' courtyard to the foot of the Monastery's stairs (FOOT),
---    on through the hall to the Library's door (LIB: the Alliance way's last
---    corners) and to the Graveyard's door (GRAVE).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local WINGS = { ["Scarlet Monastery: Cathedral"] = { 1, 2 }, ["Scarlet Monastery: Armory"] = { 3 }, ["Scarlet Monastery: Library"] = { 4 } }
     local KRAUL = FDJ.DB and FDJ.DB["Razorfen Kraul"] and FDJ.DB["Razorfen Kraul"].entrance
@@ -6455,16 +6455,16 @@ do
         D[1109].objectiveMap = { markerType = "dungeon", mapID = KRAUL.mapID, x = KRAUL.x, y = KRAUL.y, label = KRAUL.label, detail = "Kraul Bats inside Razorfen Kraul drop the Kraul Guano" }
     end
     if type(D[1150]) == "table" then
-        -- grenkaway (2.0.13, M 19 Nov 2026 at 28.8, 49.3 on the canyon floor,
-        -- the arrow showing "0/1 Grenka's Claw" with no pointer: "It should
-        -- tell me to go up that path ... I need to enter the cave, which is
-        -- up there"): Grenka Bloodscreech is one place (her cave), not an
-        -- area: the arrow points to her (targetName, kill: "Kill Grenka
-        -- Bloodscreech" there) and leads up the path from the canyon floor
-        -- and into the cave. Her spawn: the client's tables (26.6, 55.8).
-        -- The way: a walking router on the Forever client's maps,
-        -- run offline from the canyon floor (28.8, 49.3; 30, 45; 35, 50):
-        -- all three go up the same path.
+
+
+
+
+
+
+
+
+
+
         D[1150].objectiveMap = { markerType = "location", mapID = 1441, x = 0.266, y = 0.558, label = "Roguefeather Den — Thousand Needles", detail = "Grenka Bloodscreech, in the harpies' cave, drops Grenka's Claw",
             targetName = "Grenka Bloodscreech", kill = true }
         local function P(x, y, label, keep) return { mapID = 1441, x = x, y = y, label = label, keep = keep or nil } end
@@ -6479,31 +6479,31 @@ do
         }
     end
     if type(D[1151]) == "table" then
-        -- patrolline (2.0.13, M 19 Nov 2026 at 52.1, 43.2, Test of Strength:
-        -- "should say ... find Rok'Alim, it patrols in the west side ... maybe
-        -- we could find the exact path and we can make the arrow go through
-        -- that path ... when you click the arrow, it shows you the path"): he
-        -- walks the west side of the zone. His path: Wowhead's WoW Forever
-        -- page (20 places seen, 10.3, 22.9 to 25.9, 41.6), cut to ten along
-        -- it; the client's spawn table has two of them (17.1, 38.1 and 10.6, 23.1).
-        -- The arrow leads to the nearest place on it and, there, "Not found?
-        -- Next spot" to the next one along; it says he patrols the west side;
-        -- a click on it draws his path on the map; "Kill Rok'Alim the Pounder"
-        -- once in reach.
+
+
+
+
+
+
+
+
+
+
+
         local PATH = { { 0.105, 0.230 }, { 0.111, 0.240 }, { 0.140, 0.278 }, { 0.135, 0.300 }, { 0.161, 0.365 },
             { 0.173, 0.377 }, { 0.188, 0.390 }, { 0.205, 0.394 }, { 0.244, 0.425 }, { 0.256, 0.422 } }
-        -- (patrolfollow, M 19 Nov 2026 at 24.1, 43.0 walking his path, the arrow
-        -- pointing back at the place it had picked: "The arrow should at least
-        -- follow our path"): no more places one by one; the arrow joins his
-        -- path where the player is nearest it and leads along it, south-east
-        -- to north-west (the way in from Freewind Post), to its far end.)
+
+
+
+
+
         local line, way = {}, { forward = true, nearest = true, reach = 6, leg = 5 }
         for i, p in ipairs(PATH) do
             line[i] = { mapID = 1441, x = p[1], y = p[2] }
             way[#PATH - i + 1] = { mapID = 1441, x = p[1], y = p[2] }
         end
         D[1151].objectiveMap = { markerType = "location", mapID = 1441, x = PATH[1][1], y = PATH[1][2], label = "Rok'Alim the Pounder — Thousand Needles", detail = "Rok'Alim the Pounder patrols the west side of Thousand Needles and drops the Fragments of Rok'Alim",
-            targetName = "Rok'Alim the Pounder", kill = true, patrol = { mapID = 1441, points = line }, -- (on Thousand Needles' own map: on Kalimdor's, the map jumped between the two, M 19 Nov 2026)
+            targetName = "Rok'Alim the Pounder", kill = true, patrol = { mapID = 1441, points = line },
             hintKey = "ARROW_ROKALIM_PATROL", hintAlways = true, noGetTo = true, seenPortrait = true }
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1441", PATH[1][1], PATH[1][2])] = way
@@ -6554,7 +6554,7 @@ do
         end
         return route
     end
-    -- Only for the Horde: the Alliance's ways to the Library's door (smlibrary) stay as they are.
+
     local function Horde()
         local ok, side = pcall(UnitFactionGroup, "player")
         return ok and side == "Horde"
@@ -6563,11 +6563,11 @@ do
         FDJ.ARROW_VIAS_HORDE = FDJ.ARROW_VIAS_HORDE or {}
         FDJ.ARROW_VIAS_HORDE[string.format("%s|%.4f|%.4f", tostring(mapID), x, y)] = { routes = { Route(list) } }
     end
-    Set(1420, 0.8535, 0.3239, LIB)   -- the Library's door
-    Set(1420, 0.8480, 0.3037, GRAVE) -- the Graveyard's door
-    Set(1420, 0.826, 0.338, FOOT)    -- the foot of the stairs (the Armory, the Cathedral)
-    -- These are the Horde's ways only (the Library's door has the
-    -- Alliance's already): put in once the character's faction is known.
+    Set(1420, 0.8535, 0.3239, LIB)
+    Set(1420, 0.8480, 0.3037, GRAVE)
+    Set(1420, 0.826, 0.338, FOOT)
+
+
     local swap = CreateFrame and CreateFrame("Frame")
     if swap and swap.RegisterEvent then
         swap:RegisterEvent("PLAYER_LOGIN")
@@ -6579,16 +6579,16 @@ do
         end)
     end
 end
--- END smhorde
 
--- xpaudit (2.0.12, M 18 Nov 2026: the RFC to Maraudon quest audit, "XP for
--- 67 quests (two sources agree)"): the offline XP (used only until the game
--- has the quest's own reward loaded; the live value always wins) for the
--- quests where forever-tool.com (Battle.net data) and ForeverChanges agree,
--- or where Wowhead Forever's quest page settles it. Left as they were: the
--- six with only one source (97288, 92415, 92753, 1113, 1050, 1049). The
--- quest's own liveXPFallback and the XP in its rewards text change with it.
--- The Wrath of Rath'mael (92422) had 0 XP before; both sources give 4,600.
+
+
+
+
+
+
+
+
+
 do
     local XP = {
         [166] = 6200, [214] = 2950, [373] = 2050, [377] = 4400, [386] = 4200, [387] = 5550,
@@ -6629,24 +6629,24 @@ do
     end
 end
 
--- BEGIN audit212
--- audit212 (2.0.12, M 18 Nov 2026: "I have a new quest report. We gotta make
--- sure we get everything fixed"): the 2.0.12 quest rewards, XP and missing
--- quests audit.
--- XP: the offline XP (used only until the game has the quest's own reward
--- loaded; the live value always wins) for 83 quests. Each value is
--- Wowhead Forever's own data (the quest's base XP times Forever's dungeon
--- quest multiplier, from the Forever client) and Icy Veins agrees on every
--- one; the old values were the base XP without the multiplier. Mayara
--- Brightwing and Vivian Lagrave (4766, 4769) had 0 and get Wowhead's 660;
--- Starfall (5250) keeps 580 (Wowhead's own number).
--- New quest: Ever After (82062, the Blackrock Depths secret ledge). Wowhead
--- Forever (quest 82062; items 221315, 221316, 216619). State Secrets (96376 /
--- 96377 / 96379) taken out again (M 18 Nov 2026: "please remove state secret
--- ... It's a double"), and The Broken Glaive (98830, M: "It's not in the game
--- yet ... just data mined"). Left out: The Heart of the Void
--- (78916 / 78917: Wowhead Forever lists it at level 25 with 0 XP, a Season
--- of Discovery leftover), The Challenge (left off on purpose, as before).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D, C, XP = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS, FDJ.FOREVER_QUEST_XP_FALLBACK
     local function Add(dungeonName, quest, afterID)
@@ -6677,10 +6677,10 @@ do
     end
     local share = FDJ.QUEST_SHAREABILITY_AUDIT
 
-    -- Ever After: the Rugged Traveler on the hidden ledge. Level 56,
-    -- requires 48, not shareable; 8,400 XP and 85s; the door on the ledge
-    -- (fixed by the 17 Nov hotfix) takes you to a ledge above Lord
-    -- Incendius, with no way back.
+
+
+
+
     Add("Blackrock Depths", {
         id = 82062, name = "Ever After",
         faction = "Both", level = 56, requires = 48, startsInDungeon = true,
@@ -6688,9 +6688,9 @@ do
         objective = "Speak with the Rugged Traveler.",
         turnin = "Rugged Traveler, Blackrock Depths",
         liveXPFallback = 8400,
-        -- capitalpill (2.1.7, M 25 Nov 2026: "We want the green one ... plus
-        -- 300 alliance capitals"): the green reputation box, "+300" and the
-        -- capitals of the faction the page is showing (Core/Journal.lua).
+
+
+
         rewardSummary = "85s  •  Faction capitals +300",
         rewardItems = {
             { 221316, "Premo's Poise-Demanding Uniform", 1 },
@@ -6701,7 +6701,7 @@ do
     })
     if share then share[82062] = false end
 
-    -- The XP.
+
     local NEW = {
         [1049] = 8450, [1050] = 8900, [1113] = 7850, [4701] = 12500, [4724] = 11850,
         [4729] = 12500, [4742] = 16200, [4764] = 4400, [4766] = 660, [4768] = 22200,
@@ -6744,56 +6744,56 @@ do
         end
     end
 end
--- END audit212
 
--- BEGIN dalhorde
--- dalhorde (2.0.13, M 18 Nov 2026: "make me the dungeon route arrow for
--- Dalaran Horde"): the City of Dalaran Route for the Horde. Heart of
--- Disruption's chain from Magus Wordeen Voidglare in Tarren Mill: Prison
--- Break In and Key to the City (taken together, both done at the Lordamere
--- Internment Camp), then Dalaran Patrols (after Prison Break In), Blood in
--- the Streets to the Image of Archmage Modera by the sewer gate, who gives
--- Heart of Disruption; its hand-in is back with Voidglare. With it The Grave
--- Knight (Melisara, Tarren Mill), Source of Power (Doctor Martin Felben,
--- Undercity) and Opportunistic Education (inside, by the sewer entrance).
--- Where things are: the four traitors (Ricter, Alina, Dermot, Kegan Darkmar),
--- the Dalaran Summoners and Elemental Slaves (their thickest spot, 20 within
--- 80 yards), Voidglare, Melisara and Felben: the client's spawns; the
--- Warden's Footlocker with the Grimy Key: about 16, 88 on the Alterac map,
--- inside a camp building (leprestore.com's guide, from beta reports). The
--- walked ways between Tarren Mill and the camp, the patrols and Modera:
--- a walking router run offline on the Eastern Kingdoms walking maps
--- (the client's navigation grid), 2026-11-18; only the corners are kept.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D, C = FDJ.QUEST_PREREQ_DETAILS, FDJ.QUEST_PREREQ_CHAINS
     local CAMP = { mapID = 1416, x = 0.214, y = 0.882, label = "Lordamere Internment Camp — the four Forsaken traitors", goalNear = 40 }
-    -- (lockerspot, 2.0.13: by Warden Belamoore on the ground floor of the big house, under Kegan Darkmar: M's
-    -- screenshots there at 16.5, 89.0, the chest a few yards in front of him; it was 16.0, 88.0 from a guide)
-    -- lockerspot (M's /dj mark, 18 Nov 2026: Warden Belamoore killed on the
-    -- box, 0.1629, 0.8920; the box is downstairs in Kegan Darkmar's house)
+
+
+
+
     local LOCKER = { mapID = 1416, x = 0.1629, y = 0.8920, label = "Warden's Footlocker — downstairs in the big house west of the Lordamere Internment Camp", hint = "Open the box in the house for the key" }
-    local TRAITORS = {} -- dalstops: the four traitors' own spots
-    -- patrolspot (M 18 Nov 2026, at the Old Dalaran Ruins, 26.5, 66.5, with the game's own quest area on his map north-west of him: the old spot, a Classic spawn, is inside the city now)
+    local TRAITORS = {}
+
     local PATROL = { mapID = 1416, x = 0.250, y = 0.600, label = "Dalaran Summoners and Elemental Slaves — Old Dalaran Ruins, east of Dalaran" }
     local VOID = { mapID = 1424, x = 0.615, y = 0.207, label = "Magus Wordeen Voidglare — Tarren Mill", targetName = "Magus Wordeen Voidglare" }
     local MEL = { mapID = 1424, x = 0.626, y = 0.206, label = "Melisara — Tarren Mill", targetName = "Melisara" }
     local FELBEN = { mapID = 1458, x = 0.466, y = 0.741, label = "Doctor Martin Felben — Undercity", targetName = "Doctor Martin Felben" }
     if D then
-        -- dalcamp (2.0.13, M 18 Nov 2026): the traitors' old places (Classic's,
-        -- as the client's spawn table and the old guides have them: 20, 85) are
-        -- inside Forever's rebuilt Dalaran now, under its level ?? Kirin Tor
-        -- Guards: "no bro this cant be right" (the arrow led him there, 12
-        -- yards from Alina's old spot, nobody, and a guard killed him). Where
-        -- they stand on Forever is not known yet. The arrow leads into the
-        -- Lordamere Internment Camp as the game names it (where M stood in
-        -- it: 21.2, 88.8 and 21.6, 87.6) and steps aside there, 40 yards
-        -- from its middle, with the quest's lines ("0/1 Bloodstone Shard").
+
+
+
+
+
+
+
+
+
         if D[544] then D[544].objectiveMap = CAMP end
-        -- dalstops (2.0.13): each traitor a stop of his own, where he stands
-        -- on Forever (M's own marks in game, /dj mark, 18 Nov 2026), while
-        -- his Bloodstone is not in the bags. Who has which: the client's
-        -- item sources.
-        local function Traitor(x, y, who) return { mapID = 1416, x = x, y = y, label = who .. " — Lordamere Internment Camp", detail = "Dropped by " .. who .. " at the Lordamere Internment Camp", kill = true } end -- (arrowkill: "Kill Ricter")
+
+
+
+
+        local function Traitor(x, y, who) return { mapID = 1416, x = x, y = y, label = who .. " — Lordamere Internment Camp", detail = "Dropped by " .. who .. " at the Lordamere Internment Camp", kill = true } end
         if D[544] then
             D[544].requiredItems = {
                 {3689, "Bloodstone Marble", 1, "Dropped by Ricter at the Lordamere Internment Camp", map = Traitor(0.1933, 0.9018, "Ricter")},
@@ -6801,9 +6801,9 @@ do
                 {3691, "Bloodstone Wedge", 1, "Dropped by Dermot at the Lordamere Internment Camp", map = Traitor(0.1876, 0.9141, "Dermot")},
                 {3688, "Bloodstone Oval", 1, "Dropped by Kegan Darkmar, upstairs in the big house west of the Lordamere Internment Camp", map = Traitor(0.1662, 0.8909, "Kegan Darkmar")},
             }
-            D[544].requiredItems[4].map.upstairs = true -- (upstairs: "Go upstairs" near him)
+            D[544].requiredItems[4].map.upstairs = true
             for _, item in ipairs(D[544].requiredItems) do TRAITORS[#TRAITORS + 1] = item.map end
-            D[544].objectiveMap = nil -- (the stops lead into the camp; the camp as a whole would stay the arrow's stop in front of them)
+            D[544].objectiveMap = nil
         end
         if D[93680] then
             LOCKER.pickUp = true
@@ -6813,7 +6813,7 @@ do
         if D[545] then D[545].objectiveMap = PATROL end
     end
     for _, step in ipairs((C and C[96984]) or {}) do
-        if step.id == 93680 then step.together = true end -- taken with Prison Break In
+        if step.id == 93680 then step.together = true end
     end
     local dal = FDJ.DB and FDJ.DB["City of Dalaran"]
     for _, q in ipairs((dal and dal.quests) or {}) do
@@ -6822,48 +6822,48 @@ do
         if q.id == 96988 then q.turninMap = FELBEN end
     end
 
-    -- The walked ways (world yards; a point's map x, y on the Alterac
-    -- Mountains map).
+
+
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local AM = 1416
     local function P(x, y, label) return { mapID = AM, x = x, y = y, label = label } end
     local SOUTH = "Round by the south, along the river to Tarren Mill"
     local EAST = "Round Dalaran's east side to Tarren Mill"
     local TOCAMP = "Along the river to the Lordamere Internment Camp"
-    -- Back to Tarren Mill from the camp, the patrols and Modera (only for a
-    -- player in Alterac or Silverpine: in Hillsbrad the straight line is it;
-    -- east of the hills, too).
+
+
+
     local toTM = {
         direct = { mapID = AM, x0 = 0.520, y0 = 0.000, x1 = 1.000, y1 = 1.000 },
         routes = {
-            { nearest = true, zones = { [1416] = true, [1421] = true }, -- from the camp
+            { nearest = true, zones = { [1416] = true, [1421] = true },
                 P(0.2329, 0.8605, SOUTH), P(0.2373, 0.8895, SOUTH), P(0.2790, 0.9476, SOUTH),
                 P(0.4234, 0.9944, SOUTH), P(0.5484, 0.8984, SOUTH) },
-            { nearest = true, zones = { [1416] = true, [1421] = true }, -- from the Warden's Footlocker
+            { nearest = true, zones = { [1416] = true, [1421] = true },
                 P(0.1600, 0.9163, SOUTH), P(0.1763, 0.9431, SOUTH), P(0.3073, 0.9476, SOUTH),
                 P(0.3207, 0.9676, SOUTH), P(0.4234, 0.9944, SOUTH), P(0.5484, 0.8984, SOUTH) },
-            { nearest = true, zones = { [1416] = true, [1421] = true }, -- from the patrols
+            { nearest = true, zones = { [1416] = true, [1421] = true },
                 P(0.2180, 0.8248, SOUTH), P(0.2344, 0.8203, SOUTH), P(0.2418, 0.8962, SOUTH),
                 P(0.2790, 0.9476, SOUTH), P(0.3073, 0.9476, SOUTH), P(0.3207, 0.9676, SOUTH),
                 P(0.3653, 0.9699, SOUTH), P(0.4010, 0.9944, SOUTH), P(0.4234, 0.9944, SOUTH),
                 P(0.5379, 0.9074, SOUTH) },
-            { nearest = true, zones = { [1416] = true, [1421] = true }, -- from Modera and the sewer gate
+            { nearest = true, zones = { [1416] = true, [1421] = true },
                 P(0.1109, 0.5190, EAST), P(0.1406, 0.5056, EAST), P(0.1853, 0.5190, EAST),
                 P(0.2284, 0.5659, EAST), P(0.2790, 0.6819, EAST), P(0.3013, 0.6909, EAST),
                 P(0.3802, 0.6842, EAST), P(0.4055, 0.6484, EAST), P(0.4650, 0.6216, EAST),
                 P(0.4993, 0.6373, EAST), P(0.5141, 0.6596, EAST), P(0.5365, 0.7511, EAST) },
         },
     }
-    -- Out from Tarren Mill (only for a player in Hillsbrad).
+
     local HB = { [1424] = true }
     local toCamp = { routes = { { nearest = true, zones = HB,
         P(0.5379, 0.9074, TOCAMP), P(0.4323, 0.9899, TOCAMP), P(0.4010, 0.9944, TOCAMP), P(0.3341, 0.9944, TOCAMP),
-        P(0.2656, 0.9274, TOCAMP), P(0.2359, 0.8851, TOCAMP) } } } -- (dalstops: the camp is south-west of the way's old last corner)
+        P(0.2656, 0.9274, TOCAMP), P(0.2359, 0.8851, TOCAMP) } } }
     local toLocker = { routes = { { nearest = true, zones = HB,
         P(0.5379, 0.9074, TOCAMP), P(0.4323, 0.9899, TOCAMP), P(0.4010, 0.9944, TOCAMP), P(0.3341, 0.9944, TOCAMP),
         P(0.2998, 0.9498, TOCAMP), P(0.1912, 0.9342, TOCAMP), P(0.1763, 0.9431, TOCAMP), P(0.1600, 0.9163, TOCAMP) } } }
     local toPatrol = { routes = { { nearest = true, zones = HB,
-        -- patrolway (M's blue line, 18 Nov 2026: "it makes me walk through the gates of Dalaran ... there are patrols, guards ... the arrow needs to do the blue line, not the red line"): north along the east side of the hill east of Dalaran, clear of the gates (the corners: the walking maps)
+
         P(0.5484, 0.8984, "Round the hill east of Dalaran"), P(0.4323, 0.9899, "Round the hill east of Dalaran"), P(0.4010, 0.9944, "Round the hill east of Dalaran"), P(0.3564, 0.9609, "Round the hill east of Dalaran"),
         P(0.3460, 0.9275, "Round the hill east of Dalaran"), P(0.3460, 0.8471, "Round the hill east of Dalaran"), P(0.3177, 0.7868, "Round the hill east of Dalaran"), P(0.3013, 0.7645, "Round the hill east of Dalaran"),
         P(0.2671, 0.7199, "Round the hill east of Dalaran"), P(0.2656, 0.6775, "Round the hill east of Dalaran") } } }
@@ -6871,14 +6871,14 @@ do
     FDJ.ARROW_VIAS[Key(VOID)] = toTM
     FDJ.ARROW_VIAS[Key(MEL)] = toTM
     FDJ.ARROW_VIAS[Key(CAMP)] = toCamp
-    for _, spot in ipairs(TRAITORS) do FDJ.ARROW_VIAS[Key(spot)] = toCamp end -- dalstops
+    for _, spot in ipairs(TRAITORS) do FDJ.ARROW_VIAS[Key(spot)] = toCamp end
     FDJ.ARROW_VIAS[Key(LOCKER)] = toLocker
     FDJ.ARROW_VIAS[Key(PATROL)] = toPatrol
 end
--- END dalhorde
--- BEGIN vorrellake
--- vorrellake (2.0.12, M 18 Nov 2026): Vorrel's Revenge's note (the warning
--- above the objective, Data/Dungeons.lua) in the other languages.
+
+
+
+
 do
     local WARN = {
         deDE = "Diese Quest wird außerhalb des Dungeons abgeschlossen, im See unterhalb von Unterstadt.",
@@ -6906,20 +6906,20 @@ do
         end
     end
 end
--- END vorrellake
 
--- BEGIN dorncave
--- dorncave (2.0.13, M 19 Nov 2026, Test of Faith: the arrow took him up
--- onto the mesa over Windbreak Canyon, "a place that I've never seen
--- before. And the cave is literally down there ... there is another path
--- that goes up the cave"): Dorn Plainstalker stands in the cave on the
--- canyon's north wall (the client's spawn, z -7); its way in is the
--- path up from the canyon floor at 54.7, 45.1. The walking net reached him
--- from the mesa above. The points: a walking router on the
--- Forever client's maps, run offline to his spawn from the canyon floor
--- (135 yards from 54.6, 45.3), from Freewind Post's side (the canyon west
--- of the cave) and from the east. keep: the last points still lead within
--- 60 yards of him (the cave mouth is that close).
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local function P(x, y, label, keep) return { mapID = 1441, x = x, y = y, label = label, keep = keep or nil } end
@@ -6936,48 +6936,48 @@ do
         return list
     end
     FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1441", 0.538, 0.414)] = { routes = {
-        CAVE, -- from the canyon east of the cave, or right below it
-        Join({ -- from Freewind Post's side: along the canyon west of the cave
+        CAVE,
+        Join({
             P(0.5137, 0.4964, "Along the canyon, east to the cave"),
             P(0.5213, 0.4822, "Along the canyon, east to the cave"),
             P(0.5308, 0.4766, "Along the canyon, east to the cave"),
         }, CAVE),
     } }
 end
--- END dorncave
 
--- BEGIN plankjump
--- plankjump (2.0.13, M 19 Nov 2026 at 26.4, 31.7, Test of Faith just
--- taken - Dorn sends you up onto the mesa there - and the arrow at its
--- hand-in: "I have to do the objective first ... It should point at this
--- little wooden trampoline and tell the user jump down, and then the quest
--- is going to be complete"): while it is in the log and not done, the
--- arrow leads to the planks (a few yards north of where he stood) and says
--- to jump off them.
--- (M 19 Nov 2026 at 26.4, 31.4 by the rune circle, the arrow there with no
--- pointer: "have the arrow point at the planks ... if they jump at the
--- wrong spot, they die": the spot is out past the planks' end, straight
--- north of the circle - the planks are dead ahead of it, facing north - so
--- from the mesa the arrow points along them; exact: a place, not an area,
--- so it keeps pointing there.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local d = FDJ.QUEST_PREREQ_DETAILS and FDJ.QUEST_PREREQ_DETAILS[1149]
     if d then
-        -- (planksouth, M 19 Nov 2026 at 26.4, 31.4 facing the planks, the arrow
-        -- pointing behind him: the planks are south of the circle, not north)
+
+
         d.objectiveMap = { mapID = 1441, x = 0.264, y = 0.324, label = "The planks — Test of Faith",
             markerType = "location", hintKey = "ARROW_JUMP_PLANKS", exact = true }
     end
 end
--- END plankjump
 
--- BEGIN eyeclick
--- eyeclick (2.0.13, M 19 Nov 2026, The Coldbringer's Eye: "you have to click
--- on the eye after killing the last boss ... it's not a loot from the boss
--- itself ... some people might forget about it", and a disclaimer under the
--- objective): both factions' quests (96773 Alliance, 97196 Horde).
+
+
+
+
+
+
 do
-    -- (M 20 Nov 2026: "say doesn't drop the Eye from its body")
+
     local NOTE = "Amnennar doesn't drop the Eye from his body: after killing him, click the Eye on the floor to pick it up."
     local SOURCE = "Click it after killing Amnennar the Coldbringer, the last boss of Razorfen Downs"
     local d = FDJ.DB and FDJ.DB["Razorfen Downs"]
@@ -7012,24 +7012,24 @@ do
                 c.quests[id] = c.quests[id] or {}
                 c.quests[id].objectiveNote = pair[1]
             end
-            c.places = c.places or {} -- (the free-text lines: FDJ.LocalizeFreeText)
+            c.places = c.places or {}
             if c.places[SOURCE] == nil then c.places[SOURCE] = pair[2] end
         end
     end
 end
--- END eyeclick
 
--- BEGIN materials
--- Materials of Significance (2.1.0, M 19 Nov 2026; Nurax on Discord): the
--- Alliance Paladin quest from Gregory in Felwood whose parts come from
--- Maraudon and Blackrock Depths. One quest record in both dungeons' lists:
--- each page marks its own part (item.dungeon, a gold edge). Wowhead Forever
--- (quests 81790, 81766, 96476, 81944; items 220166-220170; NPCs Gregory
--- 221636, Aeonas the Vindicated 221587, the Silver Hand Charger 221832,
--- Brave Stonetorch 214529): level 53, requires 45, 12,750 XP and 1g 67s 52c
--- (the same 12,750 as Nurax's quest log; the 6,550 is A Newly Discovered
--- Purpose...'s, the Symbol of Faith's quest), no item reward. The
--- infernals' spot: their spawns in the Forever client's data.
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local function Gregory() return { mapID = 1448, x = 0.446, y = 0.520, label = "Gregory — Bloodvenom Falls, Felwood", targetName = "Gregory" } end
     local function Katherine() return { mapID = 1453, x = 0.486, y = 0.492, label = "Katherine the Pure — Cathedral of Light, Stormwind", targetName = "Katherine the Pure" } end
@@ -7070,14 +7070,14 @@ do
             if not have then table.insert(d.quests, quest) end
         end
     end
-    -- fullchain (2.1.0, M 19 Nov 2026: "show the whole brother need chain ...
-    -- we always show the chain"): the whole Alliance Paladin storyline, from
-    -- the Strange Orb in Darkshore (A Brother In Need's own chain), through A
-    -- Brother In Need, By The Light's Grace and Aeonas the Vindicated
-    -- (Scarlet Monastery: Cathedral), then Some Good News, The Mysterious
-    -- Merchant and Elrick, Paladin of the Silver Hand (Wowhead Forever's
-    -- series 81762 > 81764 > 81765; the missive is Elrick's), to The Bloody
-    -- Missive and In Search of Aeonas.
+
+
+
+
+
+
+
+
     local full = {}
     for _, step in ipairs(FDJ.QUEST_PREREQ_CHAINS[79946] or {}) do
         full[#full + 1] = { id = step.id, name = step.name }
@@ -7123,7 +7123,7 @@ do
     }
     FDJ.QUEST_PREREQ_DETAILS[81765] = {
         level = 50, requires = 45,
-        -- (Ennoris, Wowhead Forever's comments, 18 Nov 2026)
+
         warning = "In a group with other paladins only one of you can pick up the note Elrick drops (the Bloody Missive). If you didn't get it, don't hand this in to the innkeeper: abandon the quest and do it again.",
         objective = "Speak with Elrick to learn more.",
         pickup = "Elrick, Theramore Inn, Dustwallow Marsh (66.4, 45.4)", turnin = "Innkeeper Janene, Theramore Inn, Dustwallow Marsh (66.6, 45.2)",
@@ -7158,32 +7158,32 @@ do
     FDJ.FOREVER_QUEST_XP_FALLBACK[96476] = 2650
     FDJ.FOREVER_QUEST_XP_FALLBACK[81790] = 12750
     FDJ.PREREQ_REWARD_MONEY_FALLBACK[81766] = 10412
-    -- Not sharable (Wowhead Forever).
+
     for _, id in ipairs({ 81766, 96476, 81790 }) do
         FDJ.QUEST_SHAREABILITY_AUDIT[id] = false
     end
-    -- skippedstep (2.1.4, M 23 Nov 2026, CobraLeader on Discord: "even if you
-    -- have found the broken Warhammer in step 7, this step is greyed out"):
-    -- Battle at the Mannoroc Coven (96438) is a lead-in you can skip: the
-    -- Broken Warhammer also starts The Broken Hammer (79939), which needs no
-    -- quest before it, and Katherine doesn't always offer it. Done once The
-    -- Broken Hammer is in the quest log or handed in (Core/Journal.lua,
-    -- FDJ.DoneByOther; SOURCES.txt, skippedstep).
+
+
+
+
+
+
+
     FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
     FDJ.QUEST_DONE_BY[96438] = FDJ.QUEST_DONE_BY[96438] or { 79939 }
     FDJ.QUEST_DONE_BY_LOG = FDJ.QUEST_DONE_BY_LOG or {}
     FDJ.QUEST_DONE_BY_LOG[96438] = FDJ.QUEST_DONE_BY_LOG[96438] or { 79939 }
 end
--- END materials
 
--- BEGIN repeatonce
--- repeatonce (2.1.0, M 19 Nov 2026; Ziefog on Discord: The Medallion of Faith
--- "is repeatable"): in WoW Forever the quest stays repeatable under its own ID,
--- so the game never marks it done. As with Blackmaw Pouches, the journal lists
--- it twice: the quest itself, ticked once this character has handed it in
--- (remembered at the hand-in, or proven by the quest after it, Aurius'
--- Reckoning), and a repeatable entry (blue ?) that is always there.
--- FDJ.REPEAT_ONCE[id] = { ids that prove it was done }.
+
+
+
+
+
+
+
+
+
 FDJ.REPEAT_ONCE = FDJ.REPEAT_ONCE or {}
 FDJ.REPEAT_ONCE[5122] = { 5125 }
 function FDJ.DoneOnce(questID)
@@ -7205,7 +7205,7 @@ do
     f:RegisterEvent("PLAYER_LOGIN")
     f:SetScript("OnEvent", function(_, event, questID)
         if event == "PLAYER_LOGIN" then
-            -- The repeatable entry's texts: the quest's own, per language.
+
             for _, content in pairs(FDJ.ContentLocales or {}) do
                 local src = type(content) == "table" and content.quests and content.quests[5122]
                 if src then
@@ -7223,8 +7223,8 @@ do
         if type(db.doneOnce) ~= "table" then db.doneOnce = {} end
         db.doneOnce[questID] = true
     end)
-    -- The repeatable entry, right after the quest itself (its own stand-in
-    -- ID, so the game's state of 5122 ticks only the quest itself).
+
+
     local d = FDJ.DB and FDJ.DB["Stratholme: Living"]
     if d and type(d.quests) == "table" then
         local at, have
@@ -7243,23 +7243,23 @@ do
         end
     end
 end
--- END repeatonce
 
--- BEGIN kroldokally
--- kroldokally (2.1.1, M 19 Nov 2026: "build the arrow guide for Krol'dok
--- Alliance"): what the Route needs for the Alliance's quests of Krol'dok
--- Stronghold (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS).
---  - Where each chain step is done, between its pickup and its hand-in:
---    Sunnyglade's cultists (Saving Sunnyglade, Scraps of Knowledge, Curious
---    Trinkets), the Twilight camps by Sergeant Riftan (No Soldier Left
---    Behind, Carving a Path), the tower with the conduit (A Small Favor) and
---    Overlord Kilgar's fortress (Bring Me His Head).
---  - Krol'dok Moulding drops inside (Tunk): the run comes before it, and Key
---    Ingredients after it is a delivery (4 Thick Leather, 12 Iron Bars,
---    bought: a stop at the nearest auction house before the run, while the
---    bags hold too few).
---  - Twilight Mementos is done inside the stronghold: it, Lingering Essence
---    and Curios of Curiosity are handed in after the run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local M = 2548
     local SUNNYGLADE = { markerType = "location", mapID = M, x = 0.455, y = 0.523, label = "Sunnyglade — Riverglades",
@@ -7275,8 +7275,8 @@ do
         [94888] = CAMPS, [94889] = CAMPS, [94907] = CONDUIT, [94890] = KILGAR }) do
         if D[id] and D[id].objectiveMap == nil then D[id].objectiveMap = spot end
     end
-    -- elitenote (M 20 Nov 2026): the arrow to Bring Me His Head says it is a
-    -- level 46 elite quest to find a group for (under the yards).
+
+
     if D[94890] then D[94890].routeNote, D[94890].routeNoteArg = "ROUTE_ELITE_GROUP", 46 end
     local C = FDJ.QUEST_PREREQ_CHAINS or {}
     for _, id in ipairs({ 94981, 94974 }) do
@@ -7287,12 +7287,12 @@ do
     for _, step in ipairs(C[94998] or {}) do
         if type(step) == "table" and step.id == 94983 then step.needsDungeon = true end
     end
-    -- kroldoktogether (M 20 Nov 2026, No Soldier Left Behind ready, a
-    -- Twilight Fanatic of Carving a Path still to kill and the arrow already
-    -- at Sergeant Riftan: "the efficient way would be to turn in every quest
-    -- at the same time"): Carving a Path is taken together with No Soldier
-    -- Left Behind (both from Riftan), so the route finishes both before
-    -- going back to him, and hands them in on one visit.
+
+
+
+
+
+
     for _, chain in pairs(C) do
         local prev
         for _, step in ipairs(type(chain) == "table" and chain or {}) do
@@ -7305,34 +7305,34 @@ do
         if quest.id == 94981 then
             quest.routeNoRun = true
             quest.routeBuy = { { 4304, "Thick Leather", 4 }, { 3575, "Iron Bar", 12 } }
-            quest.routeBuyFirst = true -- buyfirst (M 20 Nov 2026): the auction house before the run
+            quest.routeBuyFirst = true
         end
     end
 end
--- END kroldokally
--- BEGIN kroldokhorde
--- kroldokhorde (2.1.7, M 25 Nov 2026: "create Riverglade horde route"): what
--- the Route needs for the Horde's quests of Krol'dok Stronghold
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS).
---  - Where each step of the long Horde chain is done, between its pickup
---    and its hand-in: Meadowsbrook's farm (A Message in Blood, Food for the
---    Taking: west of Wheeler's Grange, 46.6, 81.3, a Wowhead Forever comment
---    on 93787), the Farholde soldiers south of the river (Show Them How It's
---    Done), Sunnyglade's cultists (as for the Alliance), the caves under
---    Sunnyglade (The Purple Ones, Sickening Lights, Twilight No More!: the
---    stairs down at 50, 46, Wowhead Forever comments on 94727), the Twilight
---    camp southeast of Bolder'ok and Klunk (Might Makes Right, Unworthy
---    Champion), the Twilight's Shroud camps (Break Their Chains, Carving a
---    Path), the cave by Crag'rog (Rise Up!) and Overlord Kilgar's fortress
---    (Bring Me His Head, elite). The places: forever-db spawns of the mobs.
---    Digging for Answers' miner is Clubtoe himself (Wowhead Forever 94727:
---    "Twilight miner convinced", at Clubtoe): no stop of its own.
---  - Quests taken together from the same NPC (A Message in Blood and Food
---    for the Taking: "I could take both at once", Wowhead Forever comment on
---    93787; Tran'gul's two, Clubtoe's two, Clugfist's two, Da'grosh's two)
---    are done side by side and handed in on one visit.
---  - Key Ingredients as for the Alliance: the Krol'dok Moulding drops
---    inside, the leather and bars are bought before the run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local M = 2548
     local function Spot(x, y, label, detail, extra)
@@ -7351,8 +7351,8 @@ do
     local MINERS = Spot(0.265, 0.356, "Crag'rog's cave \226\128\148 Riverglades", "The ogre miners in the cave beside Crag'rog")
     local KILGAR = Spot(0.264, 0.442, "Overlord Kilgar \226\128\148 Twilight's Shroud", "In the fortress, a level 46 elite: bring a group", { targetName = "Overlord Kilgar" })
     local D = FDJ.QUEST_PREREQ_DETAILS or {}
-    -- relicloot (2.1.7): the Feed Satchels and the Ritual Circles are things
-    -- to click: the loot bag on the arrow once only they are left there
+
+
     local function Loot(spot)
         local t = {}
         for k, v in pairs(spot) do t[k] = v end
@@ -7364,9 +7364,9 @@ do
         [95424] = BOLDEROK, [95425] = KLUNK, [94748] = SHROUD, [94745] = SHROUD, [95432] = MINERS, [94768] = KILGAR }) do
         if D[id] and D[id].objectiveMap == nil then D[id].objectiveMap = spot end
     end
-    -- elitenote: Bring Me His Head, as for the Alliance
+
     if D[94768] then D[94768].routeNote, D[94768].routeNoteArg = "ROUTE_ELITE_GROUP", 46 end
-    -- together: taken with the step before it, handed in on the same visit
+
     local TOGETHER = { [93787] = 93786, [94680] = 94672, [95602] = 95601, [95425] = 95424, [94745] = 94748 }
     for _, chain in pairs(FDJ.QUEST_PREREQ_CHAINS or {}) do
         local prev
@@ -7384,30 +7384,30 @@ do
         end
     end
 end
--- END kroldokhorde
--- BEGIN zfuldally
--- zfally / uldally (2.1.2, M 21 Nov 2026: "build zul farrak and uldaman arrow
--- route for alliance"): what the Route needs for the Alliance's quests of
--- Zul'Farrak and Uldaman (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS).
--- Zul'Farrak:
---  - Screecher Spirits: the Vale Screechers of central Feralas, between
---    Yeh'kinya's pickup and her hand-in (their spawns' middle).
---  - Witherbark Cages: a stop at each of the three cages not checked yet
---    (the two in the first village, the one in the second).
---  - The Altar of Zul: the altar's top (in through the north gate, up the
---    pyramid's steps).
--- Uldaman:
---  - Murdaloc: him and the Stonevault Bonesnappers at Agmond's End.
---  - Amulet of Secrets: Magregan Deepshadow, outside the instance (a level 38
---    elite in the Forever client's tables).
---  - Badlands Reagent Run: a stop at the coyotes, the buzzards and the rock
---    elementals while the bags hold too few of each (where most of them stand).
---  - Agmond's Fate: the Carved Stone Urns, on the ground at the dig site
---    outside Uldaman, picked up before the run.
---  - Lore for a Price: the five Silver Bars, bought at the auction house.
---  - The Shattered Necklace, Find the Gems, Restoring the Necklace and the
---    Platinum Discs start inside: handed in after the run, not before it;
---    Back to Uldaman is handed in inside (at the Remains of a Paladin).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local FER, HIN, BAD = 1444, 1425, 1418
     local D = FDJ.QUEST_PREREQ_DETAILS or {}
@@ -7416,11 +7416,11 @@ do
         for k, v in pairs(extra or {}) do spot[k] = v end
         return spot
     end
-    -- Zul'Farrak
+
     if D[3520] and D[3520].objectiveMap == nil then
-        -- screecherspot (2.1.4, M 22 Nov 2026 at the Forgotten Coast: "I'd
-        -- rather the arrow for this quest send me to this spot precisely,
-        -- there are many mobs here"): 47.5 48.1 (was 50.6 47.9)
+
+
+
         D[3520].objectiveMap = Spot(FER, 0.475, 0.481, "Screecher Spirit — Feralas",
             "Kill the screechers here, use Yeh'kinya's Bramble on a body, then touch the spirit that appears (3 spirits)")
     end
@@ -7436,13 +7436,13 @@ do
         D[2989].objectiveMap = Spot(HIN, 0.490, 0.680, "The Altar of Zul — The Hinterlands",
             "Go in through the gate on the north side and run up the pyramid's steps to the top of the altar", { exact = true })
     end
-    -- Uldaman
-    -- murdalocarea (2.1.3, M 21 Nov 2026 over Murdaloc's body: "the arrow is
-    -- not telling the full story. It's telling me to kill Murdaloc. I killed
-    -- it ... It should tell me to kill the Stonevault Bonesnappers as well"):
-    -- a place to kill at (no one NPC's spot): at Agmond's End the arrow shows
-    -- both of the quest's lines, Murdaloc and the 12 Bonesnappers, as the
-    -- tracker does (FDJ.RouteGoalLines), each greyed once done.
+
+
+
+
+
+
+
     if D[739] and D[739].objectiveMap == nil then
         D[739].objectiveMap = Spot(BAD, 0.496, 0.663, "Murdaloc — Badlands",
             "Slay Agmond's killer, Murdaloc. Slay 12 Stonevault Bonesnappers.")
@@ -7451,35 +7451,35 @@ do
         D[722].objectiveMap = Spot(BAD, 0.390, 0.197, "Magregan Deepshadow — Badlands",
             "He carries Hammertoe's Amulet: a level 38 elite, bring a group", { targetName = "Magregan Deepshadow", kill = true })
     end
-    -- infernus (2.1.3, M 21 Nov 2026 at Advisor Belgrum with An Ambassador of
-    -- Evil taken, the arrow on Belgrum: "the arrow is telling me to talk to
-    -- the guy. But I can't because I need to complete the quest first"): the
-    -- quest's kill, Ambassador Infernus (his bracer), had no place of its own,
-    -- so the Route went straight to the hand-in. He stands at the bottom of
-    -- Angor Fortress, 42.1, 28.9 (the Forever client's spawn; Wowhead's
-    -- comments: at the bottom of the fortress, stone golems guarding him; a
-    -- level 42 elite).
+
+
+
+
+
+
+
+
     if D[762] and D[762].objectiveMap == nil then
         D[762].objectiveMap = Spot(BAD, 0.421, 0.289, "Ambassador Infernus — Badlands",
             "He drops Ambassador Infernus' Bracer: a level 42 elite at the bottom of Angor Fortress, with stone golems", { targetName = "Ambassador Infernus", kill = true })
     end
-    -- angorway (2.1.3, M 21 Nov 2026 in Loch Modan, the arrow to Infernus
-    -- leading south-west, "to basically Searing Gorge and Dun Morogh. It
-    -- should send me straight to the Badlands"): the walking net knows no
-    -- heights, and its nearest stretch to him was the Uldaman dig site under
-    -- the fortress's north wall, reached through Loch Modan's Valley of
-    -- Kings. The fortress is entered up its ramp on the south-east side,
-    -- from the Badlands road (the Forever client's spawns climb from height
-    -- 243 at the road to 300 inside): the arrow leads to the foot of the
-    -- ramp first; inside the fortress, straight to him.
+
+
+
+
+
+
+
+
+
     if D[762] and D[762].objectiveMap then
         local spot = D[762].objectiveMap
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(spot.mapID), spot.x, spot.y)] = {
             direct = { mapID = BAD, x0 = 0.395, y0 = 0.245, x1 = 0.455, y1 = 0.335 },
-            -- bottomline (2.1.3, M 21 Nov 2026 in the fortress: "once we enter
-            -- the fortress, we should say get to the bottom of the fortress,
-            -- because that's where it is"): indoors in it, this line
+
+
+
             directLine = "Get to the bottom of the fortress",
             { mapID = BAD, x = 0.463, y = 0.350, label = "Up the ramp into Angor Fortress" },
         }
@@ -7487,9 +7487,9 @@ do
     if D[2500] and D[2500].routeGoals == nil then
         D[2500].routeGoals = {
             { 7846, 10, spot = Spot(BAD, 0.492, 0.387, "Crag Coyote Fang — Badlands", "Kill the crag coyotes here") },
-            -- (buzzardspot, 2.1.3, M 21 Nov 2026 at 16.2 58.6 by Apocryphan's
-            -- Rest: "the spot where I am right now is the ideal one for the
-            -- buzzards"; was 16.2 60.1)
+
+
+
             { 7847, 5, spot = Spot(BAD, 0.162, 0.586, "Buzzard Gizzard — Badlands", "Kill the buzzards here") },
             { 7848, 5, spot = Spot(BAD, 0.154, 0.377, "Rock Elemental Shard — Badlands", "Kill the rock elementals here") },
         }
@@ -7498,21 +7498,21 @@ do
     local ud = FDJ.DB and FDJ.DB["Uldaman"]
     for _, quest in ipairs((ud and ud.quests) or {}) do
         if quest.id == 704 and quest.routePickups == nil then
-            -- (withrun, 2.1.3: picked up with the group on the way in)
+
             quest.routePickups = { { 4610, "Carved Stone Urn", 4, map = Spot(BAD, 0.355, 0.155, "Carved Stone Urn — Badlands",
                 "On the ground at the dig site outside Uldaman", { pickUp = true }), withRun = true } }
         end
     end
-    -- necklaceout (2.1.3): The Shattered Necklace starts outside: its
-    -- necklace drops from the elites at the dig site; the Route farms them
-    -- first (D[2198].dropMap), then Talvash in Ironforge.
-    -- dwarfspot (2.1.3, M 21 Nov 2026, led to the low troggs of Loch Modan's
-    -- Stonesplinter Valley over the trogg tunnel: "it should basically send
-    -- me to the cursor coordinates ... And that's also where you do power
-    -- stones"): the Shadowforge dwarves in front of the entrance, 47.3 12.0
-    -- (the troggs were in the tunnel, under the ridge from Loch Modan: the
-    -- arrow can't lead into it). goalNear: there only once really there
-    -- (not through the ridge).
+
+
+
+
+
+
+
+
+
+
     if D[2198] and D[2198].dropMap == nil then
         D[2198].dropMap = Spot(BAD, 0.473, 0.120, "Shattered Necklace — Badlands",
             "Kill the elite Shadowforge dwarves here until the Shattered Necklace drops", { goalNear = 150 })
@@ -7527,48 +7527,48 @@ do
         end
     end
 end
--- END zfuldally
--- BEGIN maraudonally
--- maraudonally (2.1.4, M 22 Nov 2026: "build me the alliance route for
--- Maraudon"): what the Route needs for the Alliance's Maraudon quests
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS).
---  - Seed of Life starts inside (Zaetar's Spirit, once Princess Theradras
---    is dead): handed in after the run, to Keeper Remulos in Moonglade
---    (the planner's seedoflife; his spot: turninall). The Scepter of
---    Celebras is done inside: no stop.
---  - Materials of Significance (the Paladin quest): its chain runs through
---    Scarlet Monastery and Theramore, and its hand-in needs Blackrock
---    Depths' Molten Lager too: off the Route while it is still to pick up
---    (ticking it in the tracker puts it on: optin); in the quest log, the
---    run for its Grave Dust only (otherdungeon).
---  - The Centaur Pariah walks the road between 43, 85 and 50, 86
---    (Wowhead's comments, Warcraft Wiki; the Forever client spawns him at
---    50.4, 86.7): at his spot, a line under the arrow says so.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local md = FDJ.DB and FDJ.DB["Maraudon"]
     for _, quest in ipairs((md and md.quests) or {}) do
         if quest.id == 81790 then quest.routeOptIn = true end
-        -- groupnow (2.1.4, M 22 Nov 2026): Cavindra stands at the orange
-        -- entrance: the arrow to her says to start looking for a group.
+
+
         if quest.id == 7044 then quest.routeGroupNow = true end
-        -- pariahwarn (2.1.4, M 22 Nov 2026: "a disclaimer to Pariah's
-        -- Instructions that says three pieces are from ... outside the
-        -- dungeon"): Kolk, Gelk and Magra, the first three Khans, are in
-        -- the outer caves, outside the instance (Veng and Maraudos are
-        -- inside). Translated: Localization/Content_NewDungeons.lua, l10nuldwarn.
+
+
+
+
+
         if quest.id == 7067 then quest.warning = "Three of the five gems come from the Khans OUTSIDE the instance, in the outer caves." end
-        -- pariahgems (2.1.4, M 22 Nov 2026 on The Pariah's Instructions: "find
-        -- the actual gems and put it in the objective ... hover the gems and
-        -- see where exactly the Khan is"): the Amulet of Spirits and the five
-        -- gems as item cards under the objective, each saying where its Khan's
-        -- spirit is; the three outside have their spot on the Desolace map
-        -- (a click marks it). Items 17757, 17761-17765; spirits 12240 (Kolk),
-        -- 12239 (Gelk), 12241 (Magra), 12242 (Maraudos), 12243 (Veng); the
-        -- Nameless Prophet 13718 (SOURCES.txt). Maraudos and Veng walk their
-        -- wings inside: no spot. noRouteStop: the Route makes no stop of them.
-        -- Translated: Localization/Content_NewDungeons.lua, l10npariahgems.
-        -- (M 22 Nov 2026: the page's note, which said the same, removed from
-        -- Data/Dungeons.lua: "the items already say what to do")
+
+
+
+
+
+
+
+
+
+
+
+
         if quest.id == 7067 and not quest.requiredItems then
             local function Spot(x, y, label) return { mapID = 1443, x = x, y = y, label = label } end
             quest.requiredItems = {
@@ -7581,23 +7581,23 @@ do
             }
         end
     end
-    -- khanstops (2.1.4, M 22 Nov 2026, the arrow after Legends of Maraudon:
-    -- "it told me I'm ready to go in ... but we need to do Pariah's
-    -- instructions, so we need to kill all the Khans. So I need the arrow to
-    -- point me towards the Khans"): The Pariah's Instructions' outside part
-    -- before the run (routepickups): the Nameless Prophet for the Amulet of
-    -- Spirits (his four spawn points: "Not found? Next spot"), then the three
-    -- spirits outside, Kolk, Gelk and Magra, each a stop until its gem is in
-    -- the bags. At a spirit the amulet's icon is on the arrow (clickItem: a
-    -- click uses it on the spirit targeted) and the line says what to do.
-    -- Maraudos and Veng are inside: done on the run. Spots: pariahgems
-    -- (SOURCES.txt). Once the Amulet of Union is made the quest is ready to
-    -- hand in and none of this is asked.
+
+
+
+
+
+
+
+
+
+
+
+
     do
         local AMULET = { 17757, "Amulet of Spirits" }
-        -- sidegetto (2.1.4, M 22 Nov 2026: "get to the orange side ... for the purple
-        -- one, get to the purple side"): which way at the crossroads, under the
-        -- yards (getToKey); Kolk is down the middle path.
+
+
+
         local function Spirit(x, y, who, label, side)
             return { mapID = 1443, x = x, y = y, label = label, targetName = who, clickItem = AMULET, nearKey = "ROUTE_KHAN_NEAR", getToKey = side }
         end
@@ -7613,7 +7613,7 @@ do
                 }
             end
         end
-        -- (their portraits on the arrow: spirits 12240, 12239, 12241, the Prophet 13718)
+
         local ids = FDJ.ARROW_NPC_IDS
         if type(ids) == "table" then
             for who, npc in pairs({ ["Spirit of Kolk"] = 12240, ["Spirit of Gelk"] = 12239, ["Spirit of Magra"] = 12241, ["The Nameless Prophet"] = 13718 }) do
@@ -7659,18 +7659,18 @@ do
             end
         end
     end
-    -- vialstop (2.1.4, M 22 Nov 2026, inside the orange wing with the Coated
-    -- Cerulean Vial still empty: "once we pick up the Legends of Maraudon, the
-    -- arrow should remind us that we need to fill the coated cerulean vial ...
-    -- I went inside the dungeon now and I didn't do that"): Vyletongue
-    -- Corruption's vial is filled outside the instance, in the big pool with
-    -- orange crystals just past Cavindra on the way to the orange portal (not
-    -- the small pool she stands in): a stop there before the run until the
-    -- Filled Cerulean Vial (17696) is in the bags, the Coated one's (17693)
-    -- icon on the arrow to click (SOURCES.txt, vialstop).
+
+
+
+
+
+
+
+
+
     do
         local POOL = { mapID = 1443, x = 0.332, y = 0.657, label = "Orange crystal pool — outer caves of Maraudon",
-            clickItem = { 17693, "Coated Cerulean Vial" }, hintKey = "ROUTE_FILL_VIAL", getToKey = "ROUTE_SIDE_ORANGE" } -- (the line within 60 yards: further off, "Get to the orange side")
+            clickItem = { 17693, "Coated Cerulean Vial" }, hintKey = "ROUTE_FILL_VIAL", getToKey = "ROUTE_SIDE_ORANGE" }
         for _, quest in ipairs((md and md.quests) or {}) do
             if (quest.id == 7041 or quest.id == 7029) and quest.routePickups == nil then
                 quest.routePickups = { { 17696, "Filled Cerulean Vial", 1, map = POOL } }
@@ -7711,20 +7711,20 @@ do
             if content.places[POOL.label] == nil then content.places[POOL.label] = text end
         end
     end
-    -- vinepicture (2.1.4, M 22 Nov 2026, in the orange wing with his picture of
-    -- a Vylestem Vine: "put this picture in the notes of Vyletongue Corruption
-    -- ... use the filled cerulean vial on these, so people understand because
-    -- they're not clickable"): his picture, cropped round the plant and a little
-    -- brighter (Media/MaraudonVylestemVine.tga), under the quest's notes.
+
+
+
+
+
     do
         local IMG = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\MaraudonVylestemVine"
         local CAPTION = "Use the Filled Cerulean Vial on these plants, the Vylestem Vines. They can't be clicked or targeted, so look out for them in the orange wing."
         for _, quest in ipairs((md and md.quests) or {}) do
             if (quest.id == 7041 or quest.id == 7029) and quest.noteImage == nil then
-                -- vinenote (2.1.4, M 23 Nov 2026, the Notes over the picture:
-                -- "get rid of this part of the notes and put the note use the
-                -- filled vial ... in its place"): its line is the Notes now,
-                -- no caption under the picture
+
+
+
+
                 quest.note = CAPTION
                 quest.noteImage = { file = IMG, size = 190 }
             end
@@ -7750,16 +7750,16 @@ do
     local pariah = FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[7067]
     if pariah and pariah.hintKey == nil then pariah.hintKey = "ROUTE_PARIAH_WALKS" end
 end
--- END maraudonally
--- BEGIN rotdone
--- rotdone (2.1.4, M 22 Nov 2026 out of Maraudon, the arrow still on its
--- entrance: "the last step of rot and regret is basically back at the quest
--- giver, shadowshard fragments should ask if you wanna skip this step, since
--- no followup and low drop rate outside the instance"): Rot and Regret with
--- the Vial of Earth Song Water in the bags needs no run, only a stop at the
--- burning tree by Woodwyrd to use it, then its hand-in (routeRunItem,
--- Systems/QuestText.lua). Shadowshard Fragments' stops get the arrow's "Skip
--- for now" and its low drop line, as Power Stones (lowdrop).
+
+
+
+
+
+
+
+
+
+
 do
     local md = FDJ.DB and FDJ.DB["Maraudon"]
     local TREE = { mapID = 2652, x = 0.699, y = 0.721, label = "Woodwyrd \226\128\148 Forlorn Gardens, Shen'dralas", targetName = "Woodwyrd",
@@ -7770,12 +7770,12 @@ do
             quest.routeRunItem = { 258296, "Vial of Earth Song Water", 1, map = TREE }
         end
         if quest.id == 7070 or quest.id == 7068 then quest.routeLowDrop = true end
-        -- agaroute (2.1.4, M 22 Nov 2026 at Woodwyrd: "after turning in rot and
-        -- regret also leads to getting agamaggan blood? its basically close
-        -- by"): Woodwyrd gives Passing the Blame, handed in to Kog'thug the
-        -- Brave at the Bristleback Retreat, who gives Agamaggan's Blood
-        -- (routeFollow / next, Systems/QuestText.lua; its run is Razorfen
-        -- Downs' own Route).
+
+
+
+
+
+
         if quest.id == 93404 and quest.routeFollow == nil then
             local follow = { id = 93601, name = "Passing the Blame", turnin = KOGTHUG,
                 next = { id = 93604, name = "Agamaggan's Blood" } }
@@ -7818,14 +7818,14 @@ do
         if t and t.ROUTE_USE_VIAL_TREE == nil then t.ROUTE_USE_VIAL_TREE = text end
     end
 end
--- END rotdone
--- BEGIN farturnin
--- farturnin (2.1.4, M 22 Nov 2026 at Nijel's Point: "seed of life is very far
--- and in moonglade, the arrow should say, this turn in is in Moonglade: Skip
--- for now"): Seed of Life's hand-in (Keeper Remulos) is in Moonglade: its
--- arrow says so and has "Skip for now" (Systems/QuestText.lua). Moonglade's
--- name in each language for when the journal and the game speak different
--- ones (otherwise the game's own).
+
+
+
+
+
+
+
+
 do
     local md = FDJ.DB and FDJ.DB["Maraudon"]
     local MOONGLADE = { mapID = 1450, name = "Moonglade", enUS = "Moonglade", deDE = "Mondlichtung",
@@ -7852,29 +7852,29 @@ do
         if t and t.ARROW_TURNIN_ZONE == nil then t.ARROW_TURNIN_ZONE = text end
     end
 end
--- END farturnin
 
--- BEGIN onway
--- onway (2.1.3, M 21 Nov 2026, the arrow taking him to Hammertoe in the
--- excavation: "it should also say like pick up carved urns on your way"):
--- the things a dungeon's Route quests can be done with at its outer site,
--- for the arrow's "On your way" box (FDJ.RouteOnWayLines, Systems/
--- QuestText.lua): { quest, area = the site's middle, radius = yards }.
--- Uldaman: the outer caves and the dig site in front of them (33 to 47,
--- 7 to 24, Badlands): the urns (Agmond's Fate), the fungus caps (both
--- Reagent Runs: fungusout) and the power stones from the Shadowforge
--- dwarves there (uldwarn), all there by the Forever client's spawns.
--- onobjective (2.1.3, M 21 Nov 2026 in Angor Fortress: "set it on
--- objectives ... You should only pop when I'm doing Solution to Doom,
--- Reclaimed Treasures, Amulet of Secrets, like those kind of quests"): no
--- longer by the yards to the site. The box comes up on the way to a stop of
--- one of the quests done outside the instance, close to it (at.quests), when
--- that stop is at the site (at: the box 33 to 47, 7 to 24.5 on the Badlands
--- map; not a hand-in elsewhere): Solution to Doom (the Ancient Chest), A Sign
--- of Hope, Amulet of Secrets and Prospect of Faith (Hammertoe, Magregan),
--- both Reclaimed Treasures (the chests), Agmond's Fate (the urns), both
--- Reagent Runs (the caps), Power Stones, The Shattered Necklace and Necklace
--- Recovery (the dig site's elites).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ROUTE_ON_WAY = FDJ.ROUTE_ON_WAY or {}
     local SITE = { mapID = 1418, x = 0.400, y = 0.145 }
@@ -7890,35 +7890,35 @@ do
         { quest = 2418, area = SITE },
     }
 end
--- END onway
 
--- insideaudit (2.1.1, M 20 Nov 2026, Test of Lore's Library step and Old
--- Fire-Eye's page: "you need to fix every one of them ... understand where
--- the problem is"): every dungeon quest and every step of its chain checked
--- against where it is really done (the quest database's mobs, items and
--- objects, the quests' own texts and notes); here at the end of the file,
--- once every quest and step above is in place. The tint and "Dungeon Step"
--- only where something of the quest itself is done inside a dungeon (this
--- page's or another's): steps the text check missed ("Blackrock Spire" is
--- not the name of either spire's page; "the Rookery"; a dungeon named only
--- in a note) are set by hand; quests done only outside (a breadcrumb, a
--- delivery or a wait in town, mobs outside the instance) lose the tint.
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
-    -- steps done inside
+
     for _, id in ipairs({
         4974, 6569, 4903, 4734, 4735, 1109, 93404, 7629, 7642, 5463, 7643, 5382,
         5515, 5384, 4241, 3527, 3528, 78261, 78676, 79946, 79963
     }) do
         if D[id] then D[id].objectiveInDungeon = true end
     end
-    -- steps started inside (an item a mob drops in there, an NPC in there)
+
     for _, id in ipairs({
         5089, 6522, 373, 4264, 79970
     }) do
         if D[id] then D[id].dungeonStep = true end
     end
-    -- dungeon quests done entirely outside: no tint
+
     local outside = {}
     for _, id in ipairs({
         3765, 1806, 6562, 4128, 4133, 4324, 7492, 7494, 5250, 98823, 98824, 2926,
@@ -7936,13 +7936,13 @@ do
     end
 end
 
--- BEGIN uldwarn
--- uldwarn (2.1.3, M 21 Nov 2026, the Uldaman pages: "we need a disclaimer
--- that says farm elites outside of Uldaman for the necklace. We also need a
--- disclaimer for the urn quest, saying: This is completed OUTSIDE, in the
--- tunnel leading to the entrance"): the warning line at the top of The
--- Shattered Necklace's step page and of Agmond's Fate's page (translated:
--- Localization/Content_NewDungeons.lua, l10nuldwarn).
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     if D and D[2198] then
@@ -7952,26 +7952,26 @@ do
     local ud = FDJ.DB and FDJ.DB["Uldaman"]
     for _, quest in ipairs((ud and ud.quests) or {}) do
         if type(quest) == "table" and quest.id == 704 then
-            -- (M 21 Nov 2026: "say this is completed in the area outside the
-            -- dungeon. Don't mention the tunnel")
+
+
             quest.warning = "This is completed in the area outside the dungeon."
         end
-        -- (M 21 Nov 2026, Power Stones' note: "we should just delete it and
-        -- basically move it as a disclaimer ... the power stones can also drop
-        -- from elite dwarves outside the dungeon"; they drop inside too:
-        -- Wowhead Forever, SOURCES.txt)
+
+
+
+
         if type(quest) == "table" and quest.id == 2418 then
             quest.warning = "The power stones can also drop from elite dwarves outside the dungeon."
         end
     end
 end
--- END uldwarn
--- BEGIN hostwarn
--- hostwarn (2.1.4, M 23 Nov 2026, A Host of Evil's page: "we also need to add
--- a disclaimer to this quest. This is completed outside the dungeon"): the
--- warning line at the top of A Host of Evil (its mobs stand around Razorfen
--- Downs' entrance), as Agmond's Fate's (translated: Localization/
--- Content_NewDungeons.lua, l10nuldwarn).
+
+
+
+
+
+
+
 do
     local rfd = FDJ.DB and FDJ.DB["Razorfen Downs"]
     for _, quest in ipairs((rfd and rfd.quests) or {}) do
@@ -7980,14 +7980,14 @@ do
         end
     end
 end
--- END hostwarn
--- BEGIN shardwarn
--- shardwarn (2.1.4, M 23 Nov 2026, Shadowshard Fragments' page: "add a
--- disclaimer to this quest. This is completed outside the dungeon"): the
--- same warning line at the top of Shadowshard Fragments, both factions'
--- (7070 Alliance, 7068 Horde: the shadowshard elementals are in Maraudon's
--- outer caves), translated as A Host of Evil's (Localization/
--- Content_NewDungeons.lua, l10nuldwarn).
+
+
+
+
+
+
+
+
 do
     local mara = FDJ.DB and FDJ.DB["Maraudon"]
     for _, quest in ipairs((mara and mara.quests) or {}) do
@@ -7996,20 +7996,96 @@ do
         end
     end
 end
--- END shardwarn
 
--- BEGIN outsidesteps
--- outsidesteps (2.1.3, M 21 Nov 2026, A Sign of Hope's page: "It's not a
--- dungeon chain step, it's outside ... Remove the dungeon chain step ... and
--- put a disclaimer outside the instance at the top. And then it's the same
--- thing for the next quest ... the quest after, Prospect of Faith is also not
--- a dungeon chain step"): Hammertoe Grez, Magregan Deepshadow and Prospector
--- Ryedol stand outside the instance (the quest database's spawns; Wowhead,
--- warcraft.wiki.gg, classicdb, warcrafttavern: SOURCES.txt). The text check
--- took "in Uldaman" in their objectives for inside. Necklace Recovery (2283,
--- Horde's Shattered Necklace) the same: the necklace drops at the dig site
--- outside (necklaceout). Every other step with the label was checked against
--- where its NPCs, objects and items really are: done inside a dungeon.
+
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D and D[4262] and D[4262].warning == nil then
+        D[4262].warning = "This is completed right outside the dungeon entrance."
+        D[4262].warningTop = true
+    end
+end
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS
+    if D and D[4361] and D[4361].dungeonStep == nil then D[4361].dungeonStep = false end
+end
+
+
+
+
+
+
+
+
+
+
+do
+    local page = FDJ.DB and FDJ.DB["Blackrock Depths"]
+    for _, quest in ipairs((page and page.quests) or {}) do
+        if type(quest) == "table" and quest.id == 4123 then
+            if quest.warning == nil then
+                quest.warning = "Your group needs 12 Relic Coffer Keys to open all the Relic Coffer doors in the Black Vault. Once they are all open, Watchman Doomgrip spawns: he drops the key for this quest."
+            end
+            if quest.requiredItems == nil then
+                quest.requiredItems = {
+                    { 11078, "Relic Coffer Key", 1, "Drops from the Dark Iron dwarves inside Blackrock Depths, or buy it from the auction house.", count = 12 },
+                }
+            end
+        end
+    end
+end
+
+
+
+do
+    local page = FDJ.DB and FDJ.DB["Blackrock Depths"]
+    for _, boss in ipairs((page and page.bosses) or {}) do
+        if type(boss) == "table" and boss.name == "Secret Safe" and boss.lootNote == nil then
+            boss.lootNote = "LOOT_NOTE_SECRET_SAFE"
+        end
+    end
+    local lines = {
+        enUS = "12 Relic Coffer Keys vault event",
+        deDE = "Gewölbe-Event: 12 Relic Coffer Keys",
+        frFR = "Événement de la chambre forte : 12 Relic Coffer Keys",
+        esES = "Evento de la cámara: 12 Relic Coffer Keys",
+        itIT = "Evento della camera blindata: 12 Relic Coffer Key",
+        ptBR = "Evento do cofre: 12 Relic Coffer Keys",
+        ruRU = "Событие хранилища: 12 ключей Relic Coffer Key",
+        koKR = "금고 이벤트: Relic Coffer Key 12개",
+        zhCN = "宝库事件：12把Relic Coffer Key",
+        zhTW = "寶庫事件：12把Relic Coffer Key",
+    }
+    lines.esMX = lines.esES
+    for locale, text in pairs(lines) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.LOOT_NOTE_SECRET_SAFE == nil then t.LOOT_NOTE_SECRET_SAFE = text end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     for _, id in ipairs({ 721, 722, 723, 2283 }) do
@@ -8019,8 +8095,8 @@ do
             D[id].startsInDungeon = nil
         end
     end
-    -- the warning line at the top (translated: Localization/
-    -- Content_NewDungeons.lua, l10nuldwarn)
+
+
     for _, id in ipairs({ 721, 722 }) do
         if D and D[id] then
             D[id].warning = "This is completed OUTSIDE the instance."
@@ -8028,13 +8104,13 @@ do
         end
     end
 end
--- END outsidesteps
--- BEGIN gemswarn
--- gemswarn (2.1.3, M 21 Nov 2026, Find the Gems' page: "we need to add a
--- disclaimer to this quest, and we say complete this quest before killing
--- the last boss"): the warning line at the top of the Alliance's Find the
--- Gems (the next step, Restoring the Necklace, wants the power source from
--- Archaedas). Translated: Localization/Content_NewDungeons.lua, l10nuldwarn.
+
+
+
+
+
+
+
 do
     local D = FDJ.QUEST_PREREQ_DETAILS
     if D and D[2201] then
@@ -8042,34 +8118,34 @@ do
         D[2201].warningTop = true
     end
 end
--- END gemswarn
 
--- BEGIN hammertoecave
--- hammertoecave (2.1.3, M 21 Nov 2026, standing at Hammertoe Grez with the
--- arrow 163 yards back at the cave mouth: "It thinks that this NPC is
--- outside the tunnel, but it's actually inside ... You need to research this
--- NPC position better"): Hammertoe stands at 37.9, 10.6 (the Forever
--- client's spawn; Allakhazam's 37.94, 10.53; M in game beside him at 37.8,
--- 11.1), about 160 yards into the excavation tunnel. His spot was the cave
--- mouth (44.3, 12.0, Data/QuestMaps.lua). From outside, the arrow leads to
--- the cave mouth first, because the straight line goes over the ridge the
--- tunnel runs under. Inside, anywhere nearer to him than the mouth (forward),
--- it points straight at him.
+
+
+
+
+
+
+
+
+
+
+
+
 do
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", "1418", 0.379, 0.106)] = { forward = true,
         { mapID = 1418, x = 0.443, y = 0.120, label = "Into the excavation cave" },
     }
 end
--- END hammertoecave
 
--- BEGIN fungusout
--- fungusout (2.1.3, M 21 Nov 2026, Uldaman Reagent Run's page after picking
--- three caps in the excavation tunnel by Hammertoe: "let's say these can
--- also be picked up outside the dungeon"): the Magenta Cap Clusters grow in
--- the outer excavation caves too (the Forever client's spawns: 17 between
--- 33.5 and 41.0, 10.4 to 24.4, Badlands) as well as inside. The Alliance's
--- quest (17) and the Horde's (2202) are the same. Translated: l10nuldwarn.
+
+
+
+
+
+
+
+
 do
     local ud = FDJ.DB and FDJ.DB["Uldaman"]
     for _, quest in ipairs((ud and ud.quests) or {}) do
@@ -8078,18 +8154,18 @@ do
         end
     end
 end
--- END fungusout
 
--- BEGIN ancientchest
--- ancientchest (2.1.3, M 21 Nov 2026, standing at the Ancient Chest in the
--- Sealed Hall with Solution to Doom: "this quest is also outside the
--- instance ... we should put a disclaimer ... If you could somehow put this
--- minimap ... the black dot is where the quest is made, and it's also where
--- Amulet of Secrets is made"): the chest stands at 39.3, 18.8 in the outer
--- caves (the Forever client's spawn; icy-veins Forever: 39.5, 18.6; M in game
--- at 39.4, 19.6). The picture: M's minimap there (21 Nov 2026), his own arrow
--- painted out, the black mark circled (Media/UldamanExcavationMinimap.tga).
--- Translated: l10nuldwarn (the warning), l10nhammertoecave (the captions).
+
+
+
+
+
+
+
+
+
+
+
 do
     local IMG = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\UldamanExcavationMinimap"
     local ud = FDJ.DB and FDJ.DB["Uldaman"]
@@ -8106,21 +8182,21 @@ do
             caption = "Minimap, outside Uldaman: the icon marks Magregan Deepshadow." }
     end
 end
--- END ancientchest
 
--- BEGIN commonhall
--- commonhall (2.1.3, M 21 Nov 2026, Reclaimed Treasures' page in the North
--- Common Hall with his minimap: "This quest is also outside the instance ...
--- I don't want you to show the black dot ... replace the black dot with the
--- actual icon of the quest"): Krom Stoutarm's Chest stands at 35.6, 23.5 in
--- the outer caves (the Forever client's spawn; icy-veins Forever: 35.7,
--- 23.5), about 70 yards south of where M stood (35.1, 19.3). The picture
--- (Media/UldamanCommonHallMinimap.tga): M's minimap there, his arrow painted
--- out, the chest's place from the minimap's indoor scale (300 yards across):
--- the south end of the hall below him. The black mark on the Sealed Hall
--- picture is painted out too: the quests' own item icons go in the gold rings
--- (marks, Core/Journal.lua noteimage). The Horde's Reclaimed Treasures (2342):
--- the Garrett Family Chest, 34.2, 18.6, outside too (same sources).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local IMG = "Interface\\AddOns\\ForeverDungeonJournal\\Media\\UldamanCommonHallMinimap"
     local ud = FDJ.DB and FDJ.DB["Uldaman"]
@@ -8135,14 +8211,14 @@ do
         end
     end
 end
--- END commonhall
 
--- BEGIN restlesssouls
--- The Restless Souls (Stratholme, both pages): Egan's quest (5282) can only
--- be taken after Caretaker Alen's The Restless Souls (5281) in Light's Hope
--- Chapel, so 5281 is a required step, not an optional introduction (kaanu
--- on the Discord, 21 Nov 2026: at level 55 without 5281 done, Egan doesn't
--- offer 5282; Wowhead Forever quest 5281).
+
+
+
+
+
+
+
 FDJ.QUEST_PREREQ_CHAINS[5282] = {
     { id = 5281, name = "The Restless Souls" },
 }
@@ -8150,28 +8226,28 @@ FDJ.QUEST_PREREQ_DETAILS[5281] = {
     level = 60,
     requires = 55,
     objective = "Find Egan. You only know that he was last seen around Stratholme.",
-    -- Egan is in Terrordale, outside: the objective's "around Stratholme"
-    -- made it a step inside the dungeon (teal page, dungeon icon).
+
+
     objectiveInDungeon = false,
     pickup = "Caretaker Alen, Light's Hope Chapel, Eastern Plaguelands",
     turnin = "Egan, Terrordale, Eastern Plaguelands",
     map = FDJ.QUEST_START_MAPS and FDJ.QUEST_START_MAPS[5281],
 }
 FDJ.FOREVER_QUEST_XP_FALLBACK[5281] = FDJ.FOREVER_QUEST_XP_FALLBACK[5281] or 6600
--- END restlesssouls
--- BEGIN chestpickups
--- chestpickups (2.1.3, M 21 Nov 2026 in the North Common Hall with Reclaimed
--- Treasures: "we didn't have the arrow for the treasure reclaim treasure
--- quest because I think it told me that I was ready to go in, but then I
--- went outside and I saw this quest here"): the chests outside the instance
--- had no stop of their own, so the Route went straight to the entrance. Now,
--- with the quest taken and its treasure not in the bags, a stop at the chest
--- before the run (routepickups, Systems/QuestText.lua): Krom Stoutarm's Chest
--- (Reclaimed Treasures), the Garrett Family Chest (the Horde's Reclaimed
--- Treasures) and, the same case, the Ancient Chest (Solution to Doom). Spots:
--- the Forever client's spawns (commonhall, ancientchest; SOURCES.txt). They
--- stand in the excavation caves: from outside the arrow leads to the cave
--- mouth first, inside straight at the chest (as for Hammertoe Grez).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local BAD = 1418
     local function Spot(x, y, label, detail)
@@ -8200,38 +8276,38 @@ do
         }
     end
 end
--- END chestpickups
--- BEGIN uldnorun
--- uldnorun (2.1.3, M 21 Nov 2026, flying from Thelsamar to Ironforge with
--- the Uldaman quests done: the Route's last two steps): the reward voucher
--- (The Platinum Discs, 2439: Magellas -> Dinita Stonemantle in the Vault)
--- and the finished necklace (Restoring the Necklace, 2361: Talvash del
--- Kissel, taken and handed in to him) are deliveries in Ironforge: taken and
--- handed in there, no run for them (they sent the Route back into Uldaman).
+
+
+
+
+
+
+
+
 for _, quest in ipairs((FDJ.DB and FDJ.DB["Uldaman"] and FDJ.DB["Uldaman"].quests) or {}) do
     if quest.id == 2439 or quest.id == 2361 then quest.routeNoRun = true end
 end
--- END uldnorun
--- BEGIN lowdrop
--- lowdrop (2.1.3, M 21 Nov 2026: "I also want a skip button for Power
--- Stone ... low drop chance, no follow-up, skip if you want"): Power Stones'
--- stops on the Route (Rigglefuzz, and Uldaman's entrance when the run is
--- only for it) have the arrow's "Skip for now" and that line under the yards
--- (Systems/QuestText.lua), until the stones are all in the bags.
+
+
+
+
+
+
+
 for _, quest in ipairs((FDJ.DB and FDJ.DB["Uldaman"] and FDJ.DB["Uldaman"].quests) or {}) do
     if quest.id == 2418 then quest.routeLowDrop = true end
 end
--- END lowdrop
--- BEGIN yagyin
--- yagyin (2.1.3, M 21 Nov 2026: "solution to Doom gives a follow-up to go to
--- Ironforge ... the first step should be turning in solution to Doom"):
--- Theldurin the Lost gives To Ironforge for Yagyin's Digest (727, Gerrig
--- Bonegrip in the Forlorn Cavern, Ironforge) or, for the Horde, To the
--- Undercity for Yagyin's Digest (728, Keeper Bel'dugur in the Apothecarium)
--- once Solution to Doom is handed in (the Forever client's quest tables:
--- starts, ends, the NPCs' spawns). On the Route: taken from him right after
--- it and handed in in town (Systems/QuestText.lua: routeFollow). Names: the
--- game's own (Italian keeps English).
+
+
+
+
+
+
+
+
+
+
+
 do
     for _, quest in ipairs((FDJ.DB and FDJ.DB["Uldaman"] and FDJ.DB["Uldaman"].quests) or {}) do
         if quest.id == 709 then
@@ -8263,32 +8339,32 @@ do
         end
     end
 end
--- END yagyin
--- BEGIN stally
--- stally (2.1.5, M 23 Nov 2026: "you need to build me Sunken Temple Alliance
--- route"): what the Route needs for the Alliance's Sunken Temple quests
--- (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). The places: SOURCES.txt, stally.
---  - Into The Temple of Atal'Hakkar: In Search of The Temple is found by
---    swimming out to the temple ruins in the Pool of Tears. Rhapsody's
---    Kalimdor Kocktail: a stop at the rocs of Tanaris, the Groddoc apes and
---    the Ironfur bears of Feralas while the bags hold too few of each.
---  - Into the Depths and Secret of the Circle: The Stone Circle waits in
---    Marvon's Chest in Ratchet.
---  - The God Hakkar: The Prophecy of Mosh'aru's two tablets are from
---    Zul'Farrak: starting the Route asks whether to include that step
---    (routeAsk, with "Skip for now" under its arrow); with it in the log the
---    arrow leads to Zul'Farrak's entrance. The Ancient Egg: in the cave at
---    the top of Jintha'Alor.
---  - Haze of Evil: Muigin and Larion's Bloodpetals, from the Bloodpetal plants.
---  - The class quests' steps outside the dungeon: a stop where their things
---    are while the bags hold too few (Toxic Test: the devilsaurs, any of the
---    three kinds counts, the Devilsaur Barb's icon on the arrow); the
---    Shaman's four elements and the Warlock's felcloth at the auction house.
---  - An Imp's Request and Hot and Itchy: the game gives one or the other,
---    never both: one choice in Trolls of a Feather's chain, Hot and Itchy
---    first (Impsy gives it; the other comes from a class trainer).
---  - Archmage Xylem's tower is reached only through Sanath Lim-yo's teleport
---    at the foot of the cliff: the arrow to Xylem leads to Sanath first.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local SOS, TAN, FER, RAT, HIN, UNG, AZS, WPL, FEL, BL = 1435, 1446, 1444, 1413, 1425, 1449, 1447, 1422, 1448, 1419
     local D = FDJ.QUEST_PREREQ_DETAILS or {}
@@ -8303,7 +8379,7 @@ do
     local function Find(id, spot)
         if D[id] and D[id].objectiveMap == nil then D[id].objectiveMap = spot end
     end
-    -- Into The Temple of Atal'Hakkar
+
     Find(1448, Spot(SOS, 0.702, 0.529, "Temple of Atal'Hakkar — Swamp of Sorrows",
         "Swim out to the temple ruins in the middle of the Pool of Tears"))
     Goals(1452, {
@@ -8311,19 +8387,19 @@ do
         { 6259, 3, spot = Spot(FER, 0.585, 0.587, "Groddoc Liver — Feralas", "Kill the Groddoc apes here") },
         { 6258, 3, spot = Spot(FER, 0.537, 0.480, "Ironfur Liver — Feralas", "Kill the Ironfur bears here") },
     })
-    -- Into the Depths, Secret of the Circle
+
     Find(3444, Spot(RAT, 0.625, 0.385, "Stone Circle — Ratchet",
         "Open Marvon's Chest outside the small hut by the shore", { exact = true, pickUp = true }))
-    -- The God Hakkar
+
     local zf = FDJ.DB and FDJ.DB["Zul'Farrak"] and FDJ.DB["Zul'Farrak"].entrance
     if type(zf) == "table" and zf.mapID then
         Find(3527, { markerType = "dungeon", mapID = zf.mapID, x = zf.x, y = zf.y, label = zf.label,
             detail = "Both tablets drop from bosses inside Zul'Farrak" })
     end
-    -- eggnote (2.1.6, M 24 Nov 2026 at Shadra'Alor, the arrow to The Ancient
-    -- Egg: "add a little disclaimer to the arrow when doing this quest ...
-    -- climb to the top of Jintha'Alor. Find a group"): its line under the
-    -- yards, all the way there (Systems/MapMarkers.lua: spot.noteKey).
+
+
+
+
     Find(4787, Spot(HIN, 0.576, 0.868, "Ancient Egg — The Hinterlands",
         "In the cave behind the amphitheater at the top of Jintha'Alor: trolls patrol around the egg",
         { exact = true, pickUp = true, noteKey = "ROUTE_EGG_CLIMB" }))
@@ -8346,23 +8422,23 @@ do
             if t and t.ROUTE_EGG_CLIMB == nil then t.ROUTE_EGG_CLIMB = text end
         end
     end
-    -- eggcave (2.1.6, M 24 Nov 2026 in the cave at 57.9, 79.7, the egg at
-    -- 57.6, 87.1 and the arrow 1,100 yards back out: "the arrow is telling me
-    -- to go back ... I should go to the end of the cave"): the cave's way,
-    -- from the altar at the top through the mouth (58.5, 79.4) and down west
-    -- round to the egg's room, worked out on the walking maps (the cave's
-    -- floor, about 70 yards under the ground above the egg; 24 corners, none
-    -- more than 2 yards off the way). Nearest: led on from wherever in it;
-    -- byNet, indoors: only in the cave, outside the walking net leads (the
-    -- slopes outside pass within yards of the cave's west end, the rock
-    -- between); keep: along it to the end, not straight through the rock
-    -- once near the egg.
+
+
+
+
+
+
+
+
+
+
+
     do
         FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
         local CAVE = "Follow the cave to its end"
         local function P(x, y) return { mapID = HIN, x = x, y = y, label = CAVE, keep = true, labelNear = 150 } end
         FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(HIN), 0.576, 0.868)] = {
-            forward = true, nearest = true, reach = 4, leg = 3, byNet = true, indoors = true, -- (only in the cave)
+            forward = true, nearest = true, reach = 4, leg = 3, byNet = true, indoors = true,
             P(0.5850, 0.7752), P(0.5850, 0.7833), P(0.5871, 0.7865), P(0.5871, 0.7881), P(0.5785, 0.8011),
             P(0.5774, 0.8157), P(0.5752, 0.8190), P(0.5741, 0.8190), P(0.5741, 0.8206), P(0.5731, 0.8206),
             P(0.5720, 0.8239), P(0.5720, 0.8271), P(0.5676, 0.8336), P(0.5514, 0.8336), P(0.5503, 0.8352),
@@ -8385,42 +8461,42 @@ do
     for _, quest in ipairs((st and st.quests) or {}) do
         if quest.id == 3528 and quest.routeAsk == nil then
             quest.routeAsk = { "Zul'Farrak", 3527 }
-            quest.routeSkipNow = true -- (skipnow: "Skip for now" under the arrow at the Zul'Farrak step)
+            quest.routeSkipNow = true
         end
     end
-    -- Haze of Evil
+
     Goals(4141, { { 11316, 15, spot = Spot(UNG, 0.670, 0.301, "Bloodpetal — Un'Goro Crater", "Kill the Bloodpetal plants in the zone") } })
-    -- Druid: A Better Ingredient
+
     Goals(9052, {
         { 22435, 8, spot = Spot(UNG, 0.483, 0.815, "Gorishi Sting — Un'Goro Crater", "Kill the Gorishi wasps here") },
         { 22434, 8, spot = Spot(UNG, 0.375, 0.652, "Bloodcap — Un'Goro Crater",
             "Pick the Bloodcaps from the Bloodpetal Sprouts on the ground around here (green bulbs)") },
     })
-    -- (the devilsaurs walk: the nearest to Torwa first, "Not found? Next spot" to the next)
+
     Find(9051, Spot(UNG, 0.573, 0.618, "Devilsaur — Un'Goro Crater", "Use the Devilsaur Barb on any devilsaur (click its icon)", {
         clickItem = { 22432, "Devilsaur Barb" },
         spawns = { { x = 0.573, y = 0.618 }, { x = 0.501, y = 0.607 }, { x = 0.742, y = 0.330 },
             { x = 0.573, y = 0.237 }, { x = 0.312, y = 0.364 }, { x = 0.346, y = 0.224 } },
     }))
-    -- courserspot (2.1.5 dev, M 24 Nov 2026 at 48.6, 29.6, the arrow's swords up with no coursers
-    -- around: "the arrow should push a little bit more towards the objective ... The objective is on my
-    -- cursor location", 57.9, 23.5): the middle of where the Mosshoof Coursers run, not its western
-    -- edge. goalNear 250: there within 250 yards as before, its subzone only within 400 (not all of Ursolan).
-    -- Hunter: The Green Drake
+
+
+
+
+
     Goals(8153, { { 20017, 2, spot = Spot(AZS, 0.579, 0.235, "Perfect Courser Antler — Azshara", "Kill the Mosshoof Coursers here", { goalNear = 250 }) } })
     Goals(8231, { { 20087, 6, spot = Spot(AZS, 0.862, 0.311, "Wavethrasher Scales — Azshara", "Kill the wavethrashers along the shore here") } })
-    -- Mage: Destroy Morphaz
+
     Goals(8251, { { 20028, 10, spot = Spot(AZS, 0.567, 0.281, "Glittering Dust — Azshara", "Kill the blood elves here") } })
     Goals(8252, { { 20029, 6, spot = Spot(AZS, 0.405, 0.521, "Enchanted Coral — Azshara", "Kill the Spitelash Sirens here") } })
-    -- Paladin: Forging the Mightstone
+
     Goals(8414, { { 12840, 20, spot = Spot(WPL, 0.508, 0.805, "Minion's Scourgestone — Western Plaguelands", "Kill the Scourge here") } })
-    -- Priest: Blood of Morphaz
-    Goals(8255, { { 20027, 4, spot = Spot(AZS, 0.579, 0.235, "Healthy Courser Gland — Azshara", "Kill the Mosshoof Coursers here", { goalNear = 250 }) } }) -- (courserspot)
+
+    Goals(8255, { { 20027, 4, spot = Spot(AZS, 0.579, 0.235, "Healthy Courser Gland — Azshara", "Kill the Mosshoof Coursers here", { goalNear = 250 }) } })
     Goals(8256, { { 7972, 1, spot = Spot(AZS, 0.166, 0.694, "Ichor of Undeath — Azshara", "Kill the Highborne ghosts here") } })
-    -- Rogue: The Azure Key
+
     Goals(8234, { { 19775, 1, spot = Spot(AZS, 0.442, 0.215, "Sealed Azure Bag — Azshara", "Kill the Timbermaw Shamans here") } })
     Goals(8235, { { 20023, 10, spot = Spot(AZS, 0.692, 0.272, "Encoded Fragment — Azshara", "Kill the Forest Oozes here") } })
-    -- Shaman: Da Voodoo (the Alliance's first step, Mastering the Elements)
+
     if D[8411] and D[8411].routeBuy == nil then
         D[8411].routeBuy = { { 7069, "Elemental Air", 1 }, { 7067, "Elemental Earth", 1 }, { 7068, "Elemental Fire", 1 }, { 7070, "Elemental Water", 1 } }
     end
@@ -8428,7 +8504,7 @@ do
         { 20610, 8, spot = Spot(WPL, 0.334, 0.614, "Bloodshot Spider Eye — Western Plaguelands", "Kill the Venom Mist Lurkers here") },
         { 20611, 8, spot = Spot(WPL, 0.365, 0.636, "Thick Black Claw — Western Plaguelands", "Kill the diseased bears here") },
     })
-    -- Warlock: Trolls of a Feather
+
     for _, id in ipairs({ 8419, 8420 }) do
         if D[id] and D[id].routeBuy == nil then D[id].routeBuy = { { 14256, "Felcloth", 1 } } end
     end
@@ -8453,10 +8529,10 @@ do
     FDJ.QUEST_DONE_BY = FDJ.QUEST_DONE_BY or {}
     FDJ.QUEST_DONE_BY[8419] = FDJ.QUEST_DONE_BY[8419] or { 8420 }
     FDJ.QUEST_DONE_BY[8420] = FDJ.QUEST_DONE_BY[8420] or { 8419 }
-    -- Warrior: Voodoo Feathers
+
     Find(8423, Spot(BL, 0.490, 0.382, "Helboar — Blasted Lands", "Kill 7 Helboar here"))
     Find(8424, Spot(BL, 0.660, 0.317, "Shadowsworn Cultist — Blasted Lands", "Kill the Shadowsworn here"))
-    -- Archmage Xylem (the Mage's and the Rogue's quests): Sanath Lim-yo first
+
     FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
     local XYLEM = string.format("%s|%.4f|%.4f", tostring(AZS), 0.292, 0.402)
     if FDJ.ARROW_VIAS[XYLEM] == nil then
@@ -8465,32 +8541,32 @@ do
         }
     end
 end
--- END stally
--- BEGIN brdally
--- brdally (2.1.7, M 25 Nov 2026: "build BRD route for Alliance. Make sure
--- there's a pop-up that says, do you want to include [the] Onyxia
--- [Attunement] chain?"): what the Route needs for the Alliance's Blackrock
--- Depths quests (Systems/QuestText.lua: FDJ.ROUTE_DUNGEONS). The places:
--- SOURCES.txt, brdally.
---  - Jail Break!: the Blackrock Depths part of the Onyxia Attunement (its
---    chain from Dragonkin Menace in the Burning Steppes, The True Masters
---    through Redridge and Stormwind): starting the Route asks whether to
---    include it (routeAsk, chainKey). Marshal Windsor is found inside;
---    Abandoned Hope comes from him and goes to Marshal Maxwell after the run;
---    A Crumpled Up Note (it drops inside once Abandoned Hope is done) and A
---    Shred of Hope are done inside: the next run.
---  - The Fate of the Kingdom: Kharan Mighthammer is found inside, Kharan's
---    Tale is heard there, The Bearer of Bad News goes from him to King Magni
---    after the run; the quest itself is the next run.
---  - The Smoldering Ruins of Thaurissan: the Thaurissan Relics in the ruins.
---  - Set Them Ablaze!: a stop at each sentry tower of the Grimesilt Dig Site
---    until it burns (Western, Southern, Eastern, Northern: the quest's
---    objectives in that order).
---  - The Love Potion (from Mistress Nagmara inside): before the next run,
---    Nagmara's Vial filled at the crater on the hill in Golakka Hot Springs,
---    the Giant Silver Veins from the cliff giants in southern Azshara, the
---    Gromsblood at the auction house (rungoals). The words: Localization/
---    Content_NewDungeons.lua, l10nbrdally.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 do
     local BS, SG, UNG, AZS = 1428, 1427, 1449, 1447
     local D = FDJ.QUEST_PREREQ_DETAILS or {}
@@ -8500,7 +8576,7 @@ do
         for k, v in pairs(extra or {}) do spot[k] = v end
         return spot
     end
-    -- the steps done inside (the Route: startsInDungeon, needsDungeon)
+
     local function Steps(questID, flags)
         for _, step in ipairs(C[questID] or {}) do
             local f = type(step) == "table" and flags[step.id]
@@ -8510,37 +8586,37 @@ do
         end
     end
     Steps(4322, {
-        [4241] = { needsDungeon = true },                         -- Marshal Windsor: found inside
-        [4242] = { startsInDungeon = true },                      -- Abandoned Hope: from him, to Maxwell
-        [4264] = { startsInDungeon = true, needsDungeon = true }, -- A Crumpled Up Note
-        [4282] = { startsInDungeon = true, needsDungeon = true }, -- A Shred of Hope
+        [4241] = { needsDungeon = true },
+        [4242] = { startsInDungeon = true },
+        [4264] = { startsInDungeon = true, needsDungeon = true },
+        [4282] = { startsInDungeon = true, needsDungeon = true },
     })
-    -- pyroninside (2.1.7, M 25 Nov 2026 at Jalinda Sprig, Overmaster Pyron
-    -- just taken, the arrow back to her: "i talked to her got the quest but
-    -- it still wants me to talk to her"): Pyron is killed inside, in the
-    -- quarry, so the step is handed in after the run.
+
+
+
+
     Steps(4263, {
-        [4262] = { needsDungeon = true },                         -- Overmaster Pyron: killed inside
+        [4262] = { needsDungeon = true },
     })
     Steps(4362, {
-        [4341] = { needsDungeon = true },                         -- Kharan Mighthammer: found inside
-        [4342] = { startsInDungeon = true, needsDungeon = true }, -- Kharan's Tale
-        [4361] = { startsInDungeon = true },                      -- The Bearer of Bad News: from him, to Magni
+        [4341] = { needsDungeon = true },
+        [4342] = { startsInDungeon = true, needsDungeon = true },
+        [4361] = { startsInDungeon = true },
     })
-    -- The Smoldering Ruins of Thaurissan
+
     if D[3701] and D[3701].objectiveMap == nil then
-        -- relicloot (2.1.7, M 25 Nov 2026 at the ruins: "This is a pickup quest,
-        -- not a kill quest"): things to click, so the arrow shows the loot bag
+
+
         D[3701].objectiveMap = Spot(BS, 0.615, 0.412, "Thaurissan Relic — Burning Steppes", "Click the relics all around the ruins here", { pickUp = true })
     end
-    -- Set Them Ablaze!
+
     if D[3463] and D[3463].objectiveSpots == nil then
         local TORCH = "Climb the tower, equip the Torch of Retribution and click the small brazier there"
-        -- equiptorch (2.1.7, M 25 Nov 2026 on the Northern Tower, the torch in
-        -- his bags: "remind the player to equip the staff ... equip torch of
-        -- retribution. And if you have it equipped, then the message
-        -- disappears"): each tower's stop names the torch to wear
-        -- (spot.equipItem, Systems/MapMarkers.lua: equipline).
+
+
+
+
+
         local WEAR = { equipItem = { 10515, "Torch of Retribution" } }
         D[3463].objectiveSpots = {
             [1] = Spot(SG, 0.357, 0.607, "Western Tower — Searing Gorge", TORCH, WEAR),
@@ -8549,16 +8625,18 @@ do
             [4] = Spot(SG, 0.333, 0.545, "Northern Tower — Searing Gorge", TORCH, WEAR),
         }
     end
-    -- Jail Break! (the Onyxia Attunement), The Love Potion
+
     local brd = FDJ.DB and FDJ.DB["Blackrock Depths"]
     for _, quest in ipairs((brd and brd.quests) or {}) do
-        if quest.id == 3802 then quest.routeDoorLast = true end -- legacylast (2.1.7): Dark Iron Legacy, right before going in
+        if quest.id == 3802 then quest.routeDoorLast = true end
         if quest.id == 4322 and quest.routeAsk == nil then
             quest.routeAsk = { chainKey = "ATTUNE_ONYXIA", [2] = 4322 }
         end
         if quest.id == 4201 and quest.routeGoals == nil then
             quest.routeGoals = {
-                { 11413, 1, spot = Spot(UNG, 0.310, 0.500, "Nagmara's Filled Vial — Un'Goro Crater",
+
+
+                { 11413, 1, spot = Spot(UNG, 0.320, 0.503, "Nagmara's Filled Vial — Un'Goro Crater",
                     "Use the vial in the crater on top of the hill (click its icon)",
                     { exact = true, clickItem = { 11412, "Nagmara's Vial" } }) },
                 { 11405, 10, spot = Spot(AZS, 0.540, 0.815, "Giant Silver Vein — Azshara", "Kill the giants around here") },
@@ -8567,4 +8645,315 @@ do
         end
     end
 end
--- END brdally
+
+
+
+
+
+
+
+do
+    local page = FDJ.ONYXIA_PAGE and FDJ.DB and FDJ.DB[FDJ.ONYXIA_PAGE]
+    for _, quest in ipairs((page and page.quests) or {}) do
+        if quest.id == 6502 then
+            quest.logNoteKey, quest.logNoteDungeon = "ONY_KILL_DRAKKISATH", "Upper Blackrock Spire"
+            local door = quest.objectiveMap
+            if type(door) == "table" and door.noteKey == "ONY_ENTER_DUNGEON" then door.noteKey = "ONY_KILL_DRAKKISATH" end
+        end
+    end
+    local lines = {
+        enUS = "Now find a group for %s and kill General Drakkisath",
+        deDE = "Such dir jetzt eine Gruppe für %s und töte General Drakkisath",
+        frFR = "Trouvez maintenant un groupe pour %s et tuez le Général Drakkisath",
+        esES = "Ahora busca un grupo para %s y mata al General Drakkisath",
+        itIT = "Ora trova un gruppo per %s e uccidi il General Drakkisath",
+        ptBR = "Agora encontre um grupo para %s e mate o General Drakkisath",
+        ruRU = "Теперь найдите группу в «%s» и убейте генерала Драккисата",
+        koKR = "이제 %s 파티를 구해서 사령관 드라키사스를 처치하세요",
+        zhCN = "现在组队前往%s并击杀达基萨斯将军",
+        zhTW = "現在組隊前往%s並擊殺達基薩斯將軍",
+    }
+    lines.esMX = lines.esES
+    for locale, text in pairs(lines) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ONY_KILL_DRAKKISATH == nil then t.ONY_KILL_DRAKKISATH = text end
+    end
+end
+
+
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    if D[5002] and D[5002].dungeonStep == nil then D[5002].dungeonStep = false end
+end
+
+
+
+
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    local d = D[94727]
+    if d and type(d.turninMap) == "table" and not d.turninMap.noteKey then
+        local t = {}
+        for k, v in pairs(d.turninMap) do t[k] = v end
+        t.x, t.y, t.noteKey = 0.499, 0.460, "ARROW_GO_DOWNSTAIRS"
+        d.turninMap = t
+    end
+    local strings = {
+        enUS = "Go downstairs", deDE = "Geh die Treppe hinunter", frFR = "Descendez les escaliers",
+        esES = "Baja las escaleras", itIT = "Scendi le scale", ptBR = "Desça as escadas",
+        ruRU = "Спуститесь по лестнице", koKR = "계단을 내려가세요", zhCN = "走下楼梯", zhTW = "走下樓梯",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ARROW_GO_DOWNSTAIRS == nil then t.ARROW_GO_DOWNSTAIRS = text end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    local X, Y = 0.493, 0.469
+    local function Moved(spot)
+        local t = {}
+        for k, v in pairs(spot) do t[k] = v end
+        t.x, t.y = X, Y
+        return t
+    end
+    local map
+    if D[95417] and type(D[95417].turninMap) == "table" then
+        D[95417].turninMap = Moved(D[95417].turninMap)
+        map = D[95417].turninMap.mapID
+    end
+    if D[95601] and type(D[95601].map) == "table" then D[95601].map = Moved(D[95601].map) end
+    if map then
+        FDJ.ARROW_VIAS = FDJ.ARROW_VIAS or {}
+        local DOWN = "Go further down the cave"
+        FDJ.ARROW_VIAS[string.format("%s|%.4f|%.4f", tostring(map), X, Y)] = {
+            indoors = true, reach = 5,
+            direct = { mapID = map, x0 = 0.470, y0 = 0.455, x1 = 0.4975, y1 = 0.520 },
+            { mapID = map, x = 0.499, y = 0.469, label = DOWN, keep = true },
+        }
+        local LINES = { deDE = "Geh weiter in die Höhle hinunter", frFR = "Descendez plus loin dans la grotte",
+            esES = "Baja más adentro de la cueva", itIT = "Scendi più in fondo nella grotta",
+            ptBR = "Desça mais fundo na caverna", ruRU = "Спуститесь глубже в пещеру",
+            koKR = "동굴 더 아래로 내려가세요", zhCN = "继续往洞穴深处走", zhTW = "繼續往洞穴深處走" }
+        LINES.esMX = LINES.esES
+        FDJ.ContentLocales = FDJ.ContentLocales or {}
+        for lang, line in pairs(LINES) do
+            local content = FDJ.ContentLocales[lang] or {}
+            FDJ.ContentLocales[lang] = content
+            content.places = content.places or {}
+            if content.places[DOWN] == nil then content.places[DOWN] = line end
+        end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+do
+    local AZ, FEL = 1447, 1448
+    local function Spot(map, x, y, label, detail, extra)
+        local spot = { markerType = "location", mapID = map, x = x, y = y, label = label, detail = detail }
+        for k, v in pairs(extra or {}) do spot[k] = v end
+        return spot
+    end
+    local CAMP = Spot(AZ, 0.614, 0.249, "Legashi camp \226\128\148 Azshara",
+        "South of the Legashi Stronghold: the Legashi Satyrs, Rogues and Hellcallers")
+    local FEARDRED = Spot(AZ, 0.614, 0.249, "Master Feardred \226\128\148 Azshara",
+        "In the satyrs' camp south of the Legashi Stronghold: kill him for his amulet", { targetName = "Master Feardred" })
+
+
+    local STRONGHOLD = Spot(AZ, 0.636, 0.179, "Legashi Stronghold \226\128\148 Azshara",
+        "The Legashi Hellraisers, Soulstealers and Blackguards in the stronghold")
+    local ESCORT = Spot(AZ, 0.659, 0.144, "Graal \226\128\148 Legashi Stronghold, Azshara",
+        "Escort Graal out of the stronghold: stay close to him", { targetName = "Graal" })
+    local BLOODMAW = Spot(FEL, 0.628, 0.077, "Chieftain Bloodmaw \226\128\148 Felwood",
+        "South of Timbermaw Hold: kill him for Bloodmaw's Basher", { targetName = "Chieftain Bloodmaw" })
+    local HALANOX = Spot(AZ, 0.667, 0.193, "Prince Halanox \226\128\148 Legashi Stronghold, Azshara",
+        "Plant the Timbermaw War Banner in his summoning circle (use it from your bags), then kill him",
+        { targetName = "Prince Halanox", clickItem = { 235518, "Timbermaw War Banner" } })
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    for id, spot in pairs({ [86746] = CAMP, [86777] = FEARDRED, [86792] = STRONGHOLD, [86796] = ESCORT,
+        [87346] = BLOODMAW, [86814] = HALANOX }) do
+        if D[id] and D[id].objectiveMap == nil then D[id].objectiveMap = spot end
+    end
+
+
+    if D[86814] and D[86814].routeNote == nil then D[86814].routeNote, D[86814].routeNoteArg = "ROUTE_ELITE_GROUP", 55 end
+    if D[86752] and D[86752].routeNote == nil then D[86752].routeNote = "ROUTE_TIMBERMAW_NEUTRAL" end
+
+
+
+
+
+
+
+    for _, q in ipairs((FDJ.DB and FDJ.DB["Blackmaw Hold"] and FDJ.DB["Blackmaw Hold"].quests) or {}) do
+        if type(q) == "table" and q.id == 92066 and q.routeAfter == nil then q.routeAfter = { "turn:86752" } end
+    end
+
+    for _, chain in pairs(FDJ.QUEST_PREREQ_CHAINS or {}) do
+        local prev
+        for _, step in ipairs(type(chain) == "table" and chain or {}) do
+            if type(step) == "table" and step.id == 86792 and prev and prev.id == 86777 then step.together = true end
+            prev = type(step) == "table" and step or nil
+        end
+    end
+    local bh = FDJ.DB and FDJ.DB["Blackmaw Hold"]
+    for _, quest in ipairs((bh and bh.quests) or {}) do
+        if quest.id == 92070 and quest.routeDrop == nil then quest.routeDrop = true end
+        if quest.id == 97173 and quest.routeOptIn == nil then quest.routeOptIn = true end
+    end
+    local strings = {
+        enUS = "Needs Neutral with Timbermaw Hold", deDE = "Benötigt neutralen Ruf bei der Holzschlundfeste",
+        frFR = "Nécessite d'être Neutre auprès des Grumegueules", esES = "Requiere ser Neutral con Bastión Fauces de Madera",
+        itIT = "Richiede Neutrale con il Rifugio dei Mordilegno", ptBR = "Requer Neutro com Bastião Presamadeira",
+        ruRU = "Требуется отношение «Равнодушие» с Древобрюхами", koKR = "나무구렁 요새와 중립 관계가 필요합니다",
+        zhCN = "需要木喉要塞中立声望", zhTW = "需要木喉要塞中立聲望",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ROUTE_TIMBERMAW_NEUTRAL == nil then t.ROUTE_TIMBERMAW_NEUTRAL = text end
+    end
+end
+
+
+
+
+
+
+
+do
+    local D = FDJ.QUEST_PREREQ_DETAILS or {}
+    local d = D[95427]
+    if d and type(d.objectiveMap) == "table" and not d.objectiveMap.noteKey then
+        local t = {}
+        for k, v in pairs(d.objectiveMap) do t[k] = v end
+        t.noteKey = "ARROW_CAVE_END"
+        d.objectiveMap = t
+    end
+    local strings = {
+        enUS = "Run to the end of the cave", deDE = "Lauf bis zum Ende der Höhle", frFR = "Courez jusqu'au fond de la grotte",
+        esES = "Corre hasta el final de la cueva", itIT = "Corri fino in fondo alla grotta", ptBR = "Corra até o fim da caverna",
+        ruRU = "Бегите в конец пещеры", koKR = "동굴 끝까지 달려가세요", zhCN = "跑到洞穴尽头", zhTW = "跑到洞穴盡頭",
+    }
+    strings.esMX = strings.esES
+    for locale, text in pairs(strings) do
+        local t = FDJ.Locales and FDJ.Locales[locale]
+        if t and t.ARROW_CAVE_END == nil then t.ARROW_CAVE_END = text end
+    end
+end
+
+
+
+
+
+
+
+
+
+
+
+do
+    local THUNDRIS = { mapID = 1439, x = 0.374, y = 0.401, label = "Thundris Windweaver \226\128\148 Auberdine, Darkshore", targetName = "Thundris Windweaver" }
+    local ULRIC = { mapID = 1440, x = 0.118, y = 0.345, label = "Ulric Frostveil \226\128\148 Zoram'gar Outpost, Ashenvale", targetName = "Ulric Frostveil" }
+    local NOTE = "You also need to pick up:"
+    local d = FDJ.QUEST_PREREQ_DETAILS
+    if d and d[1654] then
+        d[1654].subWarning = NOTE
+        d[1654].subWarningLink = { quest = 1442, name = "Seeking the Kor Gem", map = THUNDRIS }
+        d[1654].subWarningDungeon, d[1654].subWarningStyle = "Blackfathom Deeps", "warning"
+    end
+    if d and d[95036] then
+        d[95036].subWarning = NOTE
+        d[95036].subWarningLink = { quest = 95042, name = "Seeking the Kor Gem", map = ULRIC }
+        d[95036].subWarningDungeon, d[95036].subWarningStyle = "Blackfathom Deeps", "warning"
+    end
+    local T = {
+
+        deDE = { "Du musst auch diese Quest annehmen:", "Suche nach dem Kor-Edelstein", "Suche nach dem Kor-Edelstein",
+            "Thundris Windwirker \226\128\148 Auberdine, Dunkelküste", "Ulric Frostveil \226\128\148 Zoram'gar-Außenposten, Ashenvale" },
+        frFR = { "Vous devez aussi prendre la quête :", "À la recherche de la gemme de Kor", "À la recherche de la gemme de Kor",
+            "Thundris Windweaver \226\128\148 Auberdine, Sombrivage", "Ulric Voile-de-givre \226\128\148 Avant-poste de Zoram'gar, Orneval" },
+        esES = { "También necesitas aceptar:", "La búsqueda de la gema Kor", "En busca de la gema Kor",
+            "Thundris Tejevientos \226\128\148 Auberdine, Costa Oscura", "Ulric Veloescarcha \226\128\148 Avanzada de Zoram'gar, Vallefresno" },
+        itIT = { "Devi anche prendere:", nil, nil,
+            "Thundris Windweaver \226\128\148 Auberdine, Rivafosca", "Ulric Frostveil \226\128\148 Zoram'gar Outpost, Ashenvale" },
+        ptBR = { "Você também precisa pegar:", "Em busca da Gema Kor", "Em busca da Gema Kor",
+            "Trovejius Tecevento \226\128\148 Auberdine, Costa Negra", "Ulorico Glacivéu \226\128\148 Assentamento Zoram'gar, Vale Gris" },
+        ruRU = { "Также нужно взять задание:", "Поиск самоцвета Кора", "В поисках самоцвета Кора",
+            "Тандрис Ветропряд \226\128\148 Аубердин, Темные берега", "Ульрик Фроствейл \226\128\148 Форт Зорам'гар, Ясеневый лес" },
+        koKR = { "다음 퀘스트도 받아야 합니다:", "코르석을 찾아서", "코르석을 찾아서",
+            "툰드리스 윈드위버 \226\128\148 아우버다인, 어둠의 해안", "울릭 프로스트베일 \226\128\148 조람가르 전초기지, 잿빛 골짜기" },
+        zhCN = { "你还需要接取：", "寻找科尔宝石", "寻找科尔宝石",
+            "桑迪斯·织风 \226\128\148 奥伯丁，黑海岸", "乌瑞克·霜帷 \226\128\148 佐拉姆加前哨站，灰谷" },
+        zhTW = { "你還需要接取：", "尋找科爾寶石", "尋找科爾寶石",
+            "桑迪斯·織風 \226\128\148 奧伯丁，黑海岸", "奧里克‧霜幕 \226\128\148 左拉姆加前哨站，梣谷" },
+    }
+    for lang, t in pairs(T) do
+        local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
+        if content then
+            content.quests = content.quests or {}
+            local function Set(id, field, value)
+                if value == nil then return end
+                local q = content.quests[id] or {}
+                content.quests[id] = q
+                if q[field] == nil then q[field] = value end
+            end
+            Set(1654, "subWarning", t[1]); Set(95036, "subWarning", t[1])
+            Set(1442, "name", t[2]); Set(95042, "name", t[3])
+            content.places = content.places or {}
+            if content.places[THUNDRIS.label] == nil then content.places[THUNDRIS.label] = t[4] end
+            if content.places[ULRIC.label] == nil then content.places[ULRIC.label] = t[5] end
+        end
+    end
+end

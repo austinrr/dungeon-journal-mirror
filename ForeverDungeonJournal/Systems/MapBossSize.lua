@@ -1,10 +1,10 @@
--- Boss icon size control on the dungeon maps (journal map and the M map
--- inside a dungeon, which shows the same panel). Sits bottom left in the
--- dark space beside the map art. Size is saved for all characters.
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
-local MIN, MAX, STEP, DEFAULT = 0, 1, 0.1, 0.9 -- 100% down to 0% (hidden); 90% by default
+local MIN, MAX, STEP, DEFAULT = 0, 1, 0.1, 0.9
 local LABEL = {
     enUS = "Boss icons", deDE = "Boss-Symbole", frFR = "Icônes des boss", esES = "Iconos de jefes",
     itIT = "Icone dei boss", ptBR = "Ícones de chefes", ruRU = "Значки боссов", koKR = "우두머리 아이콘",
@@ -20,7 +20,7 @@ end
 local function SetScale(v)
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
     v = math.floor(math.max(MIN, math.min(MAX, v)) * 10 + 0.5) / 10
-    -- Always stored (saved variables), so it stays the same after relogging.
+
     ForeverDungeonJournalDB.mapBossScale = v
     local frame = _G.ForeverDungeonJournalFrame
     local dungeon = FDJ.GetSelectedDungeon and FDJ.GetSelectedDungeon()
@@ -32,13 +32,13 @@ end
 
 local function MakeButton(parent, text)
     local b = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-    FDJ.OwnFonts(b) -- ownfonts (2.0.8)
+    FDJ.OwnFonts(b)
     b:SetSize(24, 22)
     b:SetText(text)
     return b
 end
 
--- Called by the map renderer after the floor buttons are placed.
+
 function FDJ.UpdateMapBossSizer(panel, holder, floorButtons)
     local c = panel.fdjBossSizer
     if not c then
@@ -53,7 +53,7 @@ function FDJ.UpdateMapBossSizer(panel, holder, floorButtons)
         })
         c:SetBackdropColor(0, 0, 0, 0.75)
         c:SetBackdropBorderColor(0.45, 0.38, 0.25, 1)
-        -- Compact: label on top, [-] value [+] underneath.
+
         c.label = c:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         c.label:SetPoint("TOP", 0, -6)
         c.value = c:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontNormalSmall")
@@ -74,7 +74,7 @@ function FDJ.UpdateMapBossSizer(panel, holder, floorButtons)
     c:SetWidth(math.max(92, (c.label:GetStringWidth() or 60) + 14))
     if FDJ.MapBossScale() <= 0 then c.minus:Disable() else c.minus:Enable() end
     if FDJ.MapBossScale() >= MAX then c.plus:Disable() else c.plus:Enable() end
-    -- Bottom left of the panel, in the dark strip beside the map art.
+
     c:ClearAllPoints()
     c:SetPoint("BOTTOMLEFT", panel, "BOTTOMLEFT", 8, 8)
     c:SetFrameLevel(holder:GetFrameLevel() + 30)
@@ -82,23 +82,23 @@ function FDJ.UpdateMapBossSizer(panel, holder, floorButtons)
     if FDJ.UpdateMapQuestToggle then pcall(FDJ.UpdateMapQuestToggle, panel, holder, c) end
 end
 
--- BEGIN hidequests (2.0.15)
--- "Hide quests" on the dungeon maps, just above Boss icons: takes the
--- quests' ! and ? off the map (the quest spots and the objective ?).
--- What the player asks for still shows: the quest tracker's ! / ? and a
--- quest's Show on Map (the spot it opens the map on). Saved for all
--- characters (ForeverDungeonJournalDB.mapHideQuests).
+
+
+
+
+
+
 local HIDE_LABEL = {
     enUS = "Hide quests", deDE = "Quests ausblenden", frFR = "Masquer les quêtes", esES = "Ocultar misiones",
     itIT = "Nascondi missioni", ptBR = "Ocultar missões", ruRU = "Скрыть задания", koKR = "퀘스트 숨기기",
     zhCN = "隐藏任务", zhTW = "隱藏任務",
 }
 
--- autohidequests (2.0.52): on the map of a dungeon where the character has
--- nothing left to do inside (FDJ.MapQuestsAllDoneInside: every quest with a
--- mark on the map done there, 2.0.53), the box is ticked by itself. The
--- saved choice is not changed; unticking it there shows that dungeon's
--- quests again until the next reload.
+
+
+
+
+
 local shownAnyway = {}
 local function AllDone(name)
     return name ~= nil and FDJ.MapQuestsAllDoneInside ~= nil and FDJ.MapQuestsAllDoneInside(name) == true
@@ -125,8 +125,8 @@ function FDJ.SetMapQuestsHidden(on)
     ForeverDungeonJournalDB = ForeverDungeonJournalDB or {}
     local name = Selected()
     if name and AllDone(name) then
-        -- autohidequests: only this dungeon's, the saved choice stays as it is
-        -- unless it was on (then unticking turns it off, as before).
+
+
         shownAnyway[name] = (not on) and true or nil
         if not on then ForeverDungeonJournalDB.mapHideQuests = nil end
     else
@@ -156,7 +156,7 @@ function FDJ.UpdateMapQuestToggle(panel, holder, sizer)
         q.label = q:CreateFontString(nil, "OVERLAY", "ForeverDJ_GameFontHighlightSmall")
         q.label:SetPoint("LEFT", q.check, "RIGHT", 0, 1)
         q.label:SetJustifyH("LEFT")
-        -- The label is part of the box: clicking it ticks too.
+
         q.check:SetHitRectInsets(0, -200, 0, 0)
         q.check:SetScript("OnClick", function(self)
             FDJ.SetMapQuestsHidden(self:GetChecked() and true or false)
@@ -178,4 +178,4 @@ function FDJ.UpdateMapQuestToggle(panel, holder, sizer)
     q:SetFrameLevel(holder:GetFrameLevel() + 30)
     q:Show()
 end
--- END hidequests
+

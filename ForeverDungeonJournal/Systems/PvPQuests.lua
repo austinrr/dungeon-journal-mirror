@@ -1,20 +1,20 @@
--- pvpquestjournal (2.1.6, M 25 Nov 2026: "I would like the quest to be the
--- same graphic as my dungeon quest ... when I click, I'm not hearing a sound
--- ... I prefer how it is in the dungeons ... You could probably have like one
--- big quest for the Frostwolf insignia. Just have the exalted one first, and
--- then you do a chain starting from the first one, as we usually do ... Hero
--- of the Frostwolf is actually part of a chain quest. And the first one is
--- Battle for Alterac ... Remove Speak with Voggah Deathgrip ... Make sure
--- you the counterpart for Alliance you do as well"): Alterac Valley's quests
--- are a quest chain page of the journal's own (questChainPage, like the
--- Tier 0.5 one), with its quest rows, its quest page and its sounds, opened
--- by the PvP page's Quests button; "Back to the rewards" in the Dungeons
--- button's place leads back to the battleground's page (FDJ.OpenFromPage,
--- Systems/TierSets.lua). The Eye of Command heads the list, its chain the
--- insignia ranks from Proving Grounds on, each with the reputation it needs
--- (Data/PvPRewards.lua: needRep); Hero of the Stormpike / of the Frostwolf
--- has The Battle of / for Alterac before it. The quests' data: Data/
--- PvPRewards.lua (FDJ.PVP_QUESTS, FDJ.PVP_QUEST_INFO, the NPCs, the texts).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not (FDJ and FDJ.DB and FDJ.QUEST_PREREQ_CHAINS and FDJ.QUEST_PREREQ_DETAILS
     and FDJ.PVP_QUESTS and FDJ.PVP_QUEST_INFO and FDJ.PVP_QUEST_NPCS) then return end
@@ -26,20 +26,20 @@ FDJ.PVP_AV_PAGE = PAGE
 FDJ.PVP_QUEST_PAGES = FDJ.PVP_QUEST_PAGES or {}
 FDJ.PVP_QUEST_PAGES.AV = PAGE
 
--- The list (The Eye of Command and the Hero quest first) and the chains.
+
 local LIST = {
     Alliance = { 7172, 8271, 7081, 7102, 7121, 7122, 7223, 7282, 7301, 7367, 8375 },
     Horde = { 7167, 8272, 7082, 7101, 7123, 7124, 7224, 7281, 7302, 7368, 8369 },
 }
 local CHAINS = {
-    [7172] = { 7162, 7168, 7169, 7170, 7171 }, -- Proving Grounds ... Legendary Heroes
+    [7172] = { 7162, 7168, 7169, 7170, 7171 },
     [7167] = { 7161, 7163, 7164, 7165, 7166 },
-    [8271] = { 7141 }, -- The Battle of Alterac
-    [8272] = { 7142 }, -- The Battle for Alterac
+    [8271] = { 7141 },
+    [8272] = { 7142 },
 }
-local SIDE_FACTION = { Alliance = 730, Horde = 729 } -- Stormpike Guard, Frostwolf Clan
+local SIDE_FACTION = { Alliance = 730, Horde = 729 }
 local LANGS = { "deDE", "frFR", "esES", "itIT", "ptBR", "ruRU", "koKR", "zhCN", "zhTW" }
--- "Honor" (the Honor a quest gives, shown with its reputation), the game's word
+
 local HONOR = { deDE = "Ehre", frFR = "Honneur", esES = "Honor", itIT = "Onore", ptBR = "Honra",
     ruRU = "Честь", koKR = "명예", zhCN = "荣誉", zhTW = "榮譽" }
 
@@ -57,7 +57,7 @@ local function NPCName(key, lang)
     local names = FDJ.PVP_QUEST_NPC_NAMES and FDJ.PVP_QUEST_NPC_NAMES[key]
     return (type(names) == "table" and names[lang]) or n[1]
 end
--- "Name, Zone" in a language
+
 local function At(key, lang)
     local n = NPCS[key]
     if not n then return nil end
@@ -65,7 +65,7 @@ local function At(key, lang)
     local zone = n[2] and Str(lang, "PVP_ZONE_" .. tostring(n[2]))
     return (type(zone) == "string" and zone ~= "") and (name .. ", " .. zone) or name
 end
--- the NPC's spot, for Show on Map and the round !
+
 local function Spot(key)
     local n = NPCS[key]
     if not (n and n[2] and n[3] and n[4]) then return nil end
@@ -75,7 +75,7 @@ local function ItemName(id, lang)
     local own = lang ~= "enUS" and FDJ.PVP_INSIGNIA_NAMES and FDJ.PVP_INSIGNIA_NAMES[id]
     return (type(own) == "table" and own[lang]) or (FDJ.PVP_ITEM_NAMES and FDJ.PVP_ITEM_NAMES[id]) or ("item " .. tostring(id))
 end
--- The objective in a language (nil: none in it, the English one shows)
+
 local function Objective(id, lang)
     local info = INFO[id] or {}
     if info.kind == "insignia" and info.need and info.finish then
@@ -99,7 +99,7 @@ local function Money(copper)
     return table.concat(parts, " ")
 end
 local function FactionName(id) return FDJ.PVP_QUEST_FACTIONS and FDJ.PVP_QUEST_FACTIONS[id] or tostring(id) end
--- { { "Stormpike Guard", 100 }, ... }
+
 local function Reps(info)
     local list = {}
     local r = info.rep or {}
@@ -110,8 +110,8 @@ end
 local function Items(info)
     local list = {}
     for _, id in ipairs(info.choice or info.items or {}) do
-        -- (the game's colour once the item is known; till then: the Hero
-        -- weapons epic, the insignia rare, Proving Grounds' books common)
+
+
         local quality = info.choice and 4 or ((id == 19483 or id == 19484) and 1) or 3
         list[#list + 1] = { id, ItemName(id, "enUS"), quality }
     end
@@ -127,11 +127,11 @@ local function Required(info)
     return { { info.need, ItemName(info.need, "enUS"), 3 } }
 end
 
--- ------------------------------------------------------------ the steps
+
 local XP = FDJ.FOREVER_QUEST_XP_FALLBACK
 local ITEMS = FDJ.PREREQ_REWARD_ITEMS_FALLBACK
 local MONEY = FDJ.PREREQ_REWARD_MONEY_FALLBACK
-local all = {} -- every quest shown here
+local all = {}
 for side, list in pairs(LIST) do
     for _, id in ipairs(list) do
         all[id] = side
@@ -152,7 +152,7 @@ for main, steps in pairs(CHAINS) do
                 map = Spot(info.start), turninMap = Spot(info.finish),
                 objectiveInDungeon = false, dungeonStep = false,
                 requiredItems = Required(info),
-                showRequiredIcons = info.need and true or nil, -- (the insignia handed in)
+                showRequiredIcons = info.need and true or nil,
                 repNeeds = Needs(info, side),
                 repRewards = Reps(info),
             }
@@ -165,7 +165,7 @@ for main, steps in pairs(CHAINS) do
     if C[main] == nil then C[main] = chain end
 end
 
--- ------------------------------------------------------------- the page
+
 local quests = {}
 for _, side in ipairs({ "Alliance", "Horde" }) do
     for _, id in ipairs(LIST[side]) do
@@ -191,9 +191,9 @@ for _, side in ipairs({ "Alliance", "Horde" }) do
     end
 end
 FDJ.DB[PAGE] = {
-    questChainPage = true, -- Quests is its only tab
-    bothFactions = true,   -- the Alliance and Horde buttons, as on a dungeon's page
-    noArrow = true,        -- no waypoint arrow when tracked
+    questChainPage = true,
+    bothFactions = true,
+    noArrow = true,
     level = "51-60",
     location = "",
     description = "",
@@ -201,7 +201,7 @@ FDJ.DB[PAGE] = {
     quests = quests,
 }
 
--- The page's name: the battleground's.
+
 local baseName = FDJ.LocalizeDungeonName
 FDJ.LocalizeDungeonName = function(name, ...)
     if name == PAGE then
@@ -213,10 +213,10 @@ FDJ.LocalizeDungeonName = function(name, ...)
     return name
 end
 
--- ------------------------------------------------------- the languages
--- The quests' names, objectives and NPCs in the journal's languages (the
--- journal's content tables, as every quest's), and the NPCs', zones' and
--- factions' names in its free text (the map's labels, the reputation).
+
+
+
+
 for _, lang in ipairs(LANGS) do
     local content = FDJ.ContentLocales and FDJ.ContentLocales[lang]
     if type(content) == "table" then
@@ -247,16 +247,16 @@ for _, lang in ipairs(LANGS) do
     end
 end
 
--- ------------------------------------------------------- opening it
+
 local function Plain(v)
     if type(issecretvalue) == "function" and issecretvalue(v) then return nil end
     return v
 end
--- pvpquestjump (2.1.6, M 25 Nov 2026: "on quest rewards item that when I
--- click on them, it's gonna redirect me to the quest that has them"): the
--- quest of a side that gives an item (a chain's step: that step), and the
--- quest of the list it belongs to.
-local GIVES -- [side][itemID] = { questID, listed quest }
+
+
+
+
+local GIVES
 function FDJ.PvPQuestForItem(key, side, itemID)
     if key ~= "AV" or not (side and itemID) then return nil end
     if not GIVES then
@@ -278,17 +278,17 @@ function FDJ.PvPQuestForItem(key, side, itemID)
     return found[1], found[2]
 end
 
--- The battleground's quest page, on a side's first quest not handed in, or
--- on a given quest (questID: one of the list, or a step of its chains)
--- (key: the PvP page's battleground; side: the side it shows).
+
+
+
 function FDJ.OpenPvPQuests(key, side, questID)
     local page = FDJ.PVP_QUEST_PAGES[key]
     if not (page and FDJ.DB[page] and FDJ.OpenQuestPage) then return false end
     if side ~= "Alliance" and side ~= "Horde" then side = FDJ.PlayerFaction and FDJ.PlayerFaction() or "Alliance" end
-    -- (the list kept to the character's faction: that one)
+
     if FDJ.FactionHiddenFor and FDJ.FactionHiddenFor(page, side) then
         side = FDJ.PlayerFaction() or side
-        questID = nil -- (the other side's quest is not in its list)
+        questID = nil
     end
     local first
     for _, quest in ipairs(FDJ.DB[page].quests) do
@@ -297,7 +297,7 @@ function FDJ.OpenPvPQuests(key, side, questID)
             if not (FDJ.QuestTurnedIn and Plain(FDJ.QuestTurnedIn(quest.id))) then first = quest.id break end
         end
     end
-    -- pvpquestjump: the quest asked for (a step: with its chain unfolded)
+
     local main, step
     if questID then
         for _, id in ipairs(LIST[side] or {}) do
@@ -325,7 +325,7 @@ function FDJ.OpenPvPQuests(key, side, questID)
     return true
 end
 
--- Not a dungeon: no arrows to the dungeon before and after it.
+
 local arrowsBefore = FDJ.UpdateDungeonArrows
 FDJ.UpdateDungeonArrows = function(...)
     if arrowsBefore then arrowsBefore(...) end

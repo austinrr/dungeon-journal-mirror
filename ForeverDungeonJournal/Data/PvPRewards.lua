@@ -1,13 +1,13 @@
--- ForeverDungeonJournal: PvP rewards (2.1.6). Generated from the
--- quartermasters' and honor vendors' lists; sources: SOURCES.txt (pvprewards).
--- Each entry: { English name, quality, itemID, required level, itemID, level, ... }
--- (one row per item; its level versions after it). Standings: 5 Friendly,
--- 6 Honored, 7 Revered, 8 Exalted.
+
+
+
+
+
 local _, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
--- notrainee (2.1.6, M 25 Nov 2026 at Illiyana Moonblaze: "there is no mount
--- being sold. So you can remove the mount on both factions. The one at level
--- 25"): the Trainee's Sentinel Nightsaber and Trainee's Outrider Wolf are out.
+
+
+
 FDJ.PVP_REWARDS = {
     WSG = {
         Alliance = {
@@ -425,8 +425,8 @@ FDJ.PVP_QUESTS = {
     [7170] = { "Earned Reverence", 60, 51 },
     [7171] = { "Legendary Heroes", 60, 51 },
     [7172] = { "The Eye of Command", 60, 51 },
-    [7141] = { "The Battle of Alterac", 60, 58 }, -- (Wowhead Forever: requires level 58)
-    [8271] = { "Hero of the Stormpike", 60, 58 }, -- (Wowhead Forever: requires level 58)
+    [7141] = { "The Battle of Alterac", 60, 58 },
+    [8271] = { "Hero of the Stormpike", 60, 58 },
     [7081] = { "Alterac Valley Graveyards", 60, 51 },
     [7102] = { "Towers and Bunkers", 60, 51 },
     [7121] = { "The Quartermaster", 60, 51 },
@@ -442,8 +442,8 @@ FDJ.PVP_QUESTS = {
     [7165] = { "Earned Reverence", 60, 51 },
     [7166] = { "Legendary Heroes", 60, 51 },
     [7167] = { "The Eye of Command", 60, 51 },
-    [7142] = { "The Battle for Alterac", 60, 58 }, -- (Wowhead Forever: requires level 58)
-    [8272] = { "Hero of the Frostwolf", 60, 58 }, -- (Wowhead Forever: requires level 58)
+    [7142] = { "The Battle for Alterac", 60, 58 },
+    [8272] = { "Hero of the Frostwolf", 60, 58 },
     [7082] = { "The Graveyards of Alterac", 60, 51 },
     [7101] = { "Towers and Bunkers", 60, 51 },
     [7123] = { "Speak with our Quartermaster", 60, 51 },
@@ -454,9 +454,9 @@ FDJ.PVP_QUESTS = {
     [7368] = { "Defusing the Threat", 60, 51 },
     [8369] = { "Invaders of Alterac Valley", 60, 51 },
 }
--- (display: the NPC's look, Wowhead Forever's model viewer, for its portrait)
+
 FDJ.PVP_HONOR = {
-    -- Premier sets: per faction and class, each line { material, { slot, rare (55), epic (60) }, ... }
+
     sets = {
         Alliance = {
             WARRIOR = {
@@ -529,13 +529,13 @@ FDJ.PVP_HONOR = {
             },
         },
     },
-    -- the rare piece: Honor and battleground Marks by slot (mark: 20558 WSG, 20559 AB, 20560 AV, 274895 DI)
+
     slotCost = { [1] = { 9000, 20560, 15 }, [3] = { 6350, 20559, 10 }, [5] = { 9350, 20559, 15 }, [9] = { 4500, 20558, 10 },
         [10] = { 7500, 20558, 10 }, [6] = { 6000, 20559, 10 }, [7] = { 9000, 20558, 15 }, [8] = { 7500, 274895, 10 } },
-    -- the level 60 upgrade: slot -> { seal, rank, Honor }
+
     seals = { [9] = { 275240, 8, 1200 }, [6] = { 275244, 8, 1500 }, [8] = { 275243, 9, 1500 }, [10] = { 275239, 10, 2250 },
         [3] = { 275229, 12, 2250 }, [7] = { 275242, 12, 2650 }, [1] = { 275241, 13, 2650 }, [5] = { 275238, 13, 2650 } },
-    -- rank rewards: rank -> { { itemID, Honor, mark, marks }, ... }
+
     ranks = {
         Alliance = {
             [1] = { { 272694 } },
@@ -558,7 +558,7 @@ FDJ.PVP_HONOR = {
             [11] = { { 18245 }, { 18246 }, { 18247 }, { 18248 } },
         },
     },
-    -- rank 14: { itemID, Honor, mark, marks } (two-handed: 22,500 + 20 AV; one-handed and ranged: 12,000 + 10 DI; shields and off-hands: 10,500 + 10 DI)
+
     weapons = {
         Alliance = { { 272693, 12000, 274895, 10 }, { 272838, 10500, 274895, 10 }, { 272839, 12000, 274895, 10 }, { 272840, 22500, 20560, 20 }, { 272841, 12000, 274895, 10 }, { 272842, 12000, 274895, 10 }, { 272843, 12000, 274895, 10 }, { 272844, 12000, 274895, 10 }, { 272845, 12000, 274895, 10 }, { 272846, 12000, 274895, 10 }, { 272847, 12000, 274895, 10 }, { 272848, 22500, 20560, 20 }, { 272849, 22500, 20560, 20 }, { 272850, 22500, 20560, 20 }, { 272851, 22500, 20560, 20 }, { 272856, 12000, 274895, 10 }, { 272857, 12000, 274895, 10 }, { 272858, 22500, 20560, 20 }, { 272859, 12000, 274895, 10 }, { 278157, 10500, 274895, 10 }, { 278158, 10500, 274895, 10 }, { 278468, 10500, 274895, 10 } },
         Horde = { { 272452, 12000, 274895, 10 }, { 272591, 10500, 274895, 10 }, { 272592, 12000, 274895, 10 }, { 272593, 22500, 20560, 20 }, { 272594, 12000, 274895, 10 }, { 272595, 12000, 274895, 10 }, { 272596, 12000, 274895, 10 }, { 272597, 12000, 274895, 10 }, { 272598, 12000, 274895, 10 }, { 272599, 12000, 274895, 10 }, { 272600, 12000, 274895, 10 }, { 272601, 22500, 20560, 20 }, { 272602, 22500, 20560, 20 }, { 272603, 22500, 20560, 20 }, { 272604, 22500, 20560, 20 }, { 272681, 12000, 274895, 10 }, { 272682, 22500, 20560, 20 }, { 272683, 12000, 274895, 10 }, { 272684, 12000, 274895, 10 }, { 272685, 10500, 274895, 10 }, { 272686, 10500, 274895, 10 }, { 278469, 10500, 274895, 10 } },
@@ -571,7 +571,7 @@ FDJ.PVP_HONOR = {
     },
     fieldOfHonor = { mapID = 1446, x = 0.519, y = 0.272, label = "Wizzik Dustfizz — Gadgetzan", targetName = "Wizzik Dustfizz", display = 10747 },
 }
--- English names, shown until the game has the item (its own name then)
+
 FDJ.PVP_ITEM_NAMES = {
     [10500] = "Fire Goggles",
     [12000] = "Limb Cleaver",
@@ -1556,23 +1556,23 @@ FDJ.PVP_ITEM_NAMES = {
     [278158] = "Premier Grand Marshal's Tome of Power",
     [278468] = "Premier Grand Marshal's Barricade",
     [278469] = "Premier High Warlord's Barricade",
-    [19483] = "Peeling the Onion", -- (Proving Grounds' book, Horde: forever-db item.jsonl)
-    [19484] = "The Frostwolf Artichoke", -- (Proving Grounds' book, Alliance)
+    [19483] = "Peeling the Onion",
+    [19484] = "The Frostwolf Artichoke",
 }
 
--- BEGIN pvpquestinfo
--- pvpquestinfo (2.1.6, M 25 Nov 2026: "the quests, I cannot click on them. I
--- cannot see any information on them"): what a battleground quest's page
--- shows (Systems/PvPRewards.lua). Wowhead Forever's quest records: who
--- starts and ends it, its rewards (items, choice, reputation, experience,
--- money, Honor); the NPCs' spots from the Forever client tables
--- (forever-db spawn.jsonl) on the game's maps (Alterac Mountains 1416,
--- Alterac Valley 1459, Stormwind City 1453). start / finish: an NPC of
--- FDJ.PVP_QUEST_NPCS. kind: "insignia" (need = the insignia handed in),
--- "hero" (a choice of rewards), else its objective (FDJ.PVP_QUEST_TEXT).
--- pvpquestpage (2.1.6, M 25 Nov 2026: "get rid of the care packages quests.
--- They're useless ... we realistically only care about Alterac Valley quests
--- as of now"): only Alterac Valley's quests are listed.
+
+
+
+
+
+
+
+
+
+
+
+
+
 FDJ.PVP_QUEST_NPCS = {
     [13777] = { "Sergeant Durgen Stormpike", 1416, 0.368, 0.772 },
     [13776] = { "Corporal Teeka Bloodsnarl", 1416, 0.655, 0.551 },
@@ -1595,8 +1595,8 @@ FDJ.PVP_QUEST_NPCS = {
     [13598] = { "Stormpike Explosives Expert", 1459, 0.428, 0.170 },
     [13597] = { "Frostwolf Explosives Expert", 1459, 0.496, 0.823 },
 }
--- The NPCs' names in the game's other languages (where they differ from the
--- English): the Polestar locale name packs (addon/Polestar_<locale>/Names.lua).
+
+
 FDJ.PVP_QUEST_NPC_NAMES = {
     [13777] = { frFR = "Sergent Durgen Stormpike", esES = "Sargento Durgen Pico Tormenta", ptBR = "Sargento Durgen Lançatroz", ruRU = "Сержант Дарген Грозовая Вершина", koKR = "하사관 두르겐 스톰파이크", zhCN = "杜尔根·雷矛", zhTW = "杜爾根·雷矛中士" },
     [13776] = { frFR = "Caporal Teeka Bloodsnarl", esES = "Cabo Teeka Gruñidosangriento", ptBR = "Cabo Tika Rosnassangue", ruRU = "Капрал Тика Кровавый Рык", koKR = "하사관 티카 블러드스날", zhCN = "提卡·血牙", zhTW = "提卡·血牙下士" },
@@ -1619,11 +1619,11 @@ FDJ.PVP_QUEST_NPC_NAMES = {
     [13598] = { deDE = "Stormpike-Sprengmeister", frFR = "Expert en explosifs Stormpike", esES = "Experto en explosivos Pico Tormenta", ptBR = "Especialista em Explosivos de Lançatroz", ruRU = "Эксперт по взрывчатым веществам из клана Грозовой Вершины", koKR = "스톰파이크 폭파전문가", zhCN = "联盟爆破专家", zhTW = "雷矛爆破專家" },
     [13597] = { deDE = "Sprengmeister der Frostwolf", frFR = "Expert en explosifs Frostwolf", esES = "Experto en explosivos Lobo Gélido", ptBR = "Especialista em Explosivos dos Lobo do Gelo", ruRU = "Эксперт по взрывчатым веществам из клана Северного Волка", koKR = "서리늑대 폭파전문가", zhCN = "霜狼爆破专家", zhTW = "霜狼爆破專家" },
 }
--- { start, finish, xp, money (copper), items, choice, rep = { faction, amount, ... }, honor, kind, need }
--- needRep (pvpquestjournal, M 25 Nov 2026: "the second one is you need to turn in rank 1 when you
--- are friendly ... rank 3 when you are honored, reverence when you are revered, and legendary ...
--- the last one ... maximum exalt reputation, 999 out of 1,000"): the standing each insignia rank
--- needs with the battleground's faction (5 Friendly ... 8 Exalted; needValue: that far into it).
+
+
+
+
+
 FDJ.PVP_QUEST_INFO = {
     [7162] = { start = 13841, finish = 13841, xp = 6600, items = { 17691, 19484 }, rep = { 730, 100, 47, 100 } },
     [7168] = { start = 13841, finish = 13841, xp = 6600, items = { 17900 }, rep = { 730, 100, 47, 100 }, kind = "insignia", need = 17691, needRep = 5 },
@@ -1660,13 +1660,13 @@ FDJ.PVP_QUEST_INFO = {
     [7368] = { start = 13597, finish = 13597, xp = 6600, money = 19800, rep = { 729, 100, 76, 100 } },
     [8369] = { start = 15350, finish = 15350, xp = 8300, money = 33900, rep = { 729, 150 }, honor = 75 },
 }
--- The factions' English names (the game's own, in the player's language, first)
+
 FDJ.PVP_QUEST_FACTIONS = { [730] = "Stormpike Guard", [47] = "Ironforge", [729] = "Frostwolf Clan", [76] = "Orgrimmar",
     [68] = "Undercity", [72] = "Stormwind", [890] = "Silverwing Sentinels", [889] = "Warsong Outriders",
     [509] = "The League of Arathor", [510] = "The Defilers" }
--- The objectives in the game's languages: Wowhead Forever's quest tooltips (enUS, deDE, frFR,
--- esES, ptBR, ruRU, koKR, zhCN); zhTW: the Classic client's text where it is translated (pfQuest's
--- zhTW quest table), else English; itIT: the journal's own.
+
+
+
 FDJ.PVP_QUEST_TEXT = {
     [7081] = { enUS = "Assault a graveyard, then return to Sergeant Durgen Stormpike in the Alterac Mountains.", deDE = "Erobert einen Friedhof und kehrt zu Sergeant Durgen Stormpike im Alteracgebirge zurück.", frFR = "Attaquez un cimetière, puis présentez-vous au caporal Noreg Foudrepique à Dun Baldar.", esES = "Asalta un cementerio y vuelve con el sargento Durgen Pico Tormenta en las Montañas de Alterac.", itIT = "Assalta un cimitero, poi torna dal Sergeant Durgen Stormpike nelle Montagne di Alterac.", ptBR = "Ataque um cemitério e, então, apresente-se ao Sargento Durgen Lançatroz nas Montanhas de Alterac.", ruRU = "Захватите кладбище, затем возвращайтесь к сержанту Даргену Грозовой Вершине в Альтеракские горы.", koKR = "호드의 무덤을 공격한 다음 알터랙 산맥에 있는 하사관 두르겐 스톰파이크에게 돌아가야 합니다.", zhCN = "占领一座墓地，然后向丹巴达尔的诺雷格·雷矛中尉复命。", zhTW = "佔領一座墓地，然後向奧特蘭克山脈的諾雷格·雷矛中尉覆命。" },
     [7082] = { enUS = "Assault a graveyard, then return to Corporal Teeka Bloodsnarl in the Alterac Mountains.", deDE = "Erobert einen Friedhof und kehrt zu Corporal Teeka Bloodsnarl im Alteracgebirge zurück.", frFR = "Attaquez un cimetière, puis présentez-vous au caporal Teeka Bloodsnarl dans les montagnes d'Alterac.", esES = "Asalta un cementerio y vuelve con el cabo Teeka Gruñidosangriento en las Montañas de Alterac.", itIT = "Assalta un cimitero, poi torna dal Corporal Teeka Bloodsnarl nelle Montagne di Alterac.", ptBR = "Ataque um cemitério e depois apresente-se à Cabo Tika Rosnassangue nas Montanhas de Alterac.", ruRU = "Захватите кладбище, затем возвращайтесь к капралу Тике Кровавому Рыку в Альтеракские горы.", koKR = "얼라이언스가 점령하고 있는 무덤을 공격한 다음 알터랙 산맥에 있는 하사관 티카 블러드스날에게 돌아가야 합니다.", zhCN = "占领一座墓地，然后向霜狼村的亚斯拉复命。" },
@@ -1691,8 +1691,8 @@ FDJ.PVP_QUEST_TEXT = {
     [8369] = { enUS = "Bring 3 Alterac Valley Marks of Honor to a Horde Warbringer outside the battlegrounds.", deDE = "Bringt 3 Ehrenabzeichen des Alteractals zu einem der Kriegshetzer der Horde, außerhalb der Schlachtfelder.", frFR = "Apportez 3 Marques d’honneur de la vallée d’Alterac à l’un des porteguerres de la Horde, devant les champs de bataille.", esES = "Entrega 3 marcas de honor del Valle de Alterac a un Belisario de la Horda fuera de los campos de batalla.", itIT = "Porta 3 Alterac Valley Mark of Honor a un Horde Warbringer fuori dai campi di battaglia.", ptBR = "Leve 3 Marcas de Honra do Vale Alterac a um Armipotente da Horda do lado de fora do campo de batalha.", ruRU = "Принесите 3 почетных знака Альтеракской долины ордынскому вестнику войны рядом со входом на поля боя.", koKR = "전장 밖에 있는 호드 전쟁인도자에게 알터랙 계곡 명예 훈장 3개를 가져가야 합니다.", zhCN = "把3枚奥特兰克山谷荣誉奖章交给战场外的部落战争使者。", zhTW = "把3枚奧特蘭克山谷榮譽獎章交給戰場外的部落戰爭使者。" },
     [8375] = { enUS = "Bring 3 Alterac Valley Marks of Honor to an Alliance Brigadier General outside the battlegrounds.", deDE = "Bringt 3 Ehrenabzeichen des Alteractals zu einem der Brigadegeneräle der Allianz, die außerhalb der Schlachtfelder stehen.", frFR = "Apportez 3 Marques d'honneur de la vallée d'Alterac à un général de brigade de l'Alliance, devant les champs de bataille.", esES = "Entrega 3 marcas de honor del Valle de Alterac a un Brigadier general de la Alianza fuera de los campos de batalla.", itIT = "Porta 3 Alterac Valley Mark of Honor a un Alliance Brigadier General fuori dai campi di battaglia.", ptBR = "Leve 3 Marcas de Honra do Vale Alterac a um General de Brigada da Aliança do lado de fora do campo de batalha.", ruRU = "Принесите 3 почетных знака Альтеракской долины бригадному генералу Альянса рядом со входом на поля боя.", koKR = "전장 밖에 있는 얼라이언스 준장에게 알터랙 계곡 명예 훈장 3개를 가져가야 합니다.", zhCN = "把3枚奥特兰克山谷荣誉奖章交给战场外的联盟准将。" },
 }
--- The quests' names in the game's other languages (where they differ from the English): the Polestar
--- locale name packs (addon/Polestar_<locale>/Names.lua).
+
+
 FDJ.PVP_QUEST_NAMES = {
     [7162] = { deDE = "Flaggenjagd", frFR = "Montrer sa valeur", esES = "Terreno de pruebas", ptBR = "Campo de testes", ruRU = "Испытательные земли", koKR = "신병 계급장", zhCN = "试炼场", zhTW = "試煉場" },
     [7168] = { deDE = "Aufstieg und Anerkennung", frFR = "Ascension et reconnaissance", esES = "Ascender y darse a conocer", ptBR = "Cresça e apareça", ruRU = "Награда найдет героя", koKR = "진급", zhCN = "崭露头角", zhTW = "嶄露頭角" },
@@ -1729,8 +1729,8 @@ FDJ.PVP_QUEST_NAMES = {
     [7368] = { deDE = "Die Gefahr bannen", frFR = "Désarmer les mines", esES = "Acabar con la amenaza", ptBR = "Anulando a ameaça", ruRU = "Обезвредить угрозу", koKR = "지뢰 제거", zhCN = "爆破专家", zhTW = "爆破專家" },
     [8369] = { deDE = "Die Invasoren des Alteractals", frFR = "Les envahisseurs de la vallée d'Alterac", esES = "Invasores del Valle de Alterac", ptBR = "Invasores do Vale Alterac", ruRU = "Вторжение в Альтеракскую долину", koKR = "알터랙 계곡의 침략자", zhCN = "奥特兰克的入侵者", zhTW = "奧特蘭克的入侵者" },
 }
--- pvpquestjournal: the insignia handed in, in the game's languages (the Polestar
--- locale name packs, addon/Polestar_<locale>/Names.lua); itIT: English.
+
+
 FDJ.PVP_INSIGNIA_NAMES = {
     [17691] = { deDE = "Abzeichen der Stormpike Rang 1", frFR = "Insigne foudrepique grade 1", esES = "Insignia de Pico Tormenta Rango 1", ptBR = "Insígnia Lançatroz Grau 1", ruRU = "Знак отличия Грозовой Вершины, ранг 1", koKR = "스톰파이크 1급 계급장", zhCN = "1级雷矛徽记", zhTW = "1級雷矛徽記" },
     [17900] = { deDE = "Abzeichen der Stormpike Rang 2", frFR = "Insigne foudrepique grade 2", esES = "Insignia de Pico Tormenta Rango 2", ptBR = "Insígnia Lançatroz Grau 2", ruRU = "Знак отличия Грозовой Вершины, ранг 2", koKR = "스톰파이크 2급 계급장", zhCN = "2级雷矛勋章", zhTW = "2級雷矛勳章" },
@@ -1743,9 +1743,9 @@ FDJ.PVP_INSIGNIA_NAMES = {
     [17907] = { deDE = "Abzeichen der Frostwolf Rang 4", frFR = "Insigne loup-de-givre grade 4", esES = "Insignia Lobo Gélido Rango 4", ptBR = "Insígnia Lobo do Gelo Grau 4", ruRU = "Знак различия клана Северного Волка, ранг 4", koKR = "서리늑대 4급 계급장", zhCN = "4级霜狼勋章", zhTW = "4級霜狼勳章" },
     [17908] = { deDE = "Abzeichen der Frostwolf Rang 5", frFR = "Insigne loup-de-givre grade 5", esES = "Insignia Lobo Gélido Rango 5", ptBR = "Insígnia Lobo do Gelo Grau 5", ruRU = "Знак различия клана Северного Волка, ранг 5", koKR = "서리늑대 5급 계급장", zhCN = "5级霜狼勋章", zhTW = "5級霜狼勳章" },
 }
--- The two battleground factions' names (the same packs).
+
 FDJ.PVP_FACTION_NAMES = {
     [729] = { deDE = "Frostwolfklan", frFR = "Clan Loup-de-Givre", esES = "Clan Lobo Gélido", ptBR = "Clã Lobo do Gelo", ruRU = "Клан Северного Волка", koKR = "서리늑대 부족", zhCN = "霜狼氏族", zhTW = "霜狼氏族" },
     [730] = { deDE = "Stormpikegarde", frFR = "Garde Foudrepique", esES = "Guardia de Pico Tormenta", ptBR = "Guarda de Lançatroz", ruRU = "Стража Грозовой Вершины", koKR = "스톰파이크 경비대", zhCN = "雷矛卫队", zhTW = "雷矛衛隊" },
 }
--- END pvpquestinfo
+

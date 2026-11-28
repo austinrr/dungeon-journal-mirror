@@ -1,7 +1,7 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Traditional Chinese (Taiwan) content, converted from zhCN with zhTW terms.
+
 FDJ.ContentLocales = FDJ.ContentLocales or {}
 FDJ.ContentLocales.zhTW = FDJ.ContentLocales.zhTW or {}
 
@@ -49,7 +49,7 @@ FDJ.ContentLocales.zhTW.dungeons = {
 }
 
 FDJ.ContentLocales.zhTW.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "聖物",
     ["Libram"] = "聖契",
     ["Totem"] = "圖騰",
@@ -66,7 +66,7 @@ FDJ.ContentLocales.zhTW.slotParts = {
 }
 
 FDJ.ContentLocales.zhTW.bosses = {
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Lord Cobrahn"] = "考布萊恩",
     ["Lady Anacondra"] = "安娜科德拉",
     ["Kresh"] = "克雷什",

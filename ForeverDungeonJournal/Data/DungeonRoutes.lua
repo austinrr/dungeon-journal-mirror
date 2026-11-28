@@ -2,21 +2,21 @@ local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 local DB = FDJ.DB or {}
 
--- Travel help for dungeons whose approach is unusually long or confusing for
--- one faction. The English route is the canonical fallback; localized versions
--- are selected at render time so changing the journal language updates this
--- page immediately without a reload.
+
+
+
+
 local routes = {
     ["Ruins of Lordaeron"] = {
         faction = "Alliance",
-        -- The red route begins at Southshore, after the Stormwind -> Auberdine -> Menethil -> Southshore boat chain described below.
-        -- Fastest line, not road-following: Southshore straight north-west past (not through) Dalaran,
-        -- swim straight north across Lordamere Lake to the first place to climb out, then the road to Undercity.
-        -- The "Show on Map" button for it sits on step 2 (showRoute = true).
+
+
+
+
         mapRoute = {
-            mapID = 1415, -- Eastern Kingdoms
+            mapID = 1415,
             points = {
-                -- Hillsbrad Foothills: Southshore docks, then straight north-west across country toward Dalaran (no roads, no Tarren Mill)
+
                 { mapID = 1424, x = 0.5045, y = 0.6175 },
                 { mapID = 1424, x = 0.5063, y = 0.6040 },
                 { mapID = 1424, x = 0.5060, y = 0.5906 },
@@ -42,7 +42,7 @@ local routes = {
                 { mapID = 1424, x = 0.3466, y = 0.1905 },
                 { mapID = 1424, x = 0.3293, y = 0.1497 },
 
-                -- Alterac Mountains: pass just east of Dalaran (not through it) down to the Lordamere Lake shore
+
                 { mapID = 1416, x = 0.2754, y = 0.7605 },
                 { mapID = 1416, x = 0.2685, y = 0.7171 },
                 { mapID = 1416, x = 0.2615, y = 0.6737, corner = true },
@@ -53,7 +53,7 @@ local routes = {
                 { mapID = 1416, x = 0.2161, y = 0.5254 },
                 { mapID = 1416, x = 0.2046, y = 0.5090 },
 
-                -- Lordamere Lake: swim straight north to the first place you can climb out, then onto the road
+
                 { mapID = 1421, x = 0.7715, y = 0.3982 },
                 { mapID = 1421, x = 0.7647, y = 0.3582 },
                 { mapID = 1421, x = 0.7624, y = 0.3448 },
@@ -76,7 +76,7 @@ local routes = {
                 { mapID = 1421, x = 0.6806, y = 0.0509 },
                 { mapID = 1421, x = 0.6707, y = 0.0449 },
 
-                -- Tirisfal Glades: road north to the Ruins of Lordaeron / Undercity gate
+
                 { mapID = 1420, x = 0.5461, y = 0.7237 },
                 { mapID = 1420, x = 0.5508, y = 0.7123 },
                 { mapID = 1420, x = 0.5533, y = 0.6984 },
@@ -94,7 +94,7 @@ local routes = {
                 { mapID = 1420, x = 0.6186, y = 0.6445 },
                 { mapID = 1420, x = 0.6173, y = 0.6594, corner = true },
                 { mapID = 1420, x = 0.6300, y = 0.6690 },
-                { mapID = 1420, x = 0.6440, y = 0.6750 }, -- dungeon entrance
+                { mapID = 1420, x = 0.6440, y = 0.6750 },
             },
         },
         locales = {
@@ -291,15 +291,15 @@ local routes = {
     },
     ["Hall of Thanes"] = {
         faction = "Horde",
-        -- The overview line is rendered on the Eastern Kingdoms map. Each point
-        -- is stored in its native zone/city map (traced along the road art of
-        -- the classic zone maps) and projected onto whatever map is open at
-        -- runtime. "corner = true" marks a road junction where the line turns
-        -- sharply and must not be rounded off by the renderer's smoothing.
+
+
+
+
+
         mapRoute = {
-            mapID = 1415, -- Eastern Kingdoms
-            -- Icons drawn on top of the route line. The Tarren Mill spur exists
-            -- only so Horde players pick up the flight path there.
+            mapID = 1415,
+
+
             waypoints = {
                 {
                     mapID = 1424, x = 0.6063, y = 0.2028, icon = "flightpath",
@@ -308,7 +308,7 @@ local routes = {
                 },
             },
             points = {
-                -- Tirisfal Glades: Undercity gate, then the western pass road south
+
                 { mapID = 1420, x = 0.6173, y = 0.6594 },
                 { mapID = 1420, x = 0.6184, y = 0.6460 },
                 { mapID = 1420, x = 0.6196, y = 0.6325 },
@@ -326,7 +326,7 @@ local routes = {
                 { mapID = 1420, x = 0.5491, y = 0.7168 },
                 { mapID = 1420, x = 0.5446, y = 0.7291 },
 
-                -- Silverpine Forest: main north-south road, east at the Ambermill fork
+
                 { mapID = 1421, x = 0.6712, y = 0.0457 },
                 { mapID = 1421, x = 0.6672, y = 0.0575 },
                 { mapID = 1421, x = 0.6602, y = 0.0678 },
@@ -405,7 +405,7 @@ local routes = {
                 { mapID = 1421, x = 0.6652, y = 0.8014 },
                 { mapID = 1421, x = 0.6771, y = 0.8046 },
 
-                -- Hillsbrad Foothills: Hillsbrad Fields road, Tarren Mill spur, Durnholde road to the Arathi gate
+
                 { mapID = 1424, x = 0.1402, y = 0.4573 },
                 { mapID = 1424, x = 0.1492, y = 0.4610 },
                 { mapID = 1424, x = 0.1582, y = 0.4618 },
@@ -524,7 +524,7 @@ local routes = {
                 { mapID = 1424, x = 0.8049, y = 0.5531 },
                 { mapID = 1424, x = 0.8139, y = 0.5576 },
 
-                -- Arathi Highlands: Thoradin's Wall gate, main road east, south to Thandol Span
+
                 { mapID = 1417, x = 0.2131, y = 0.3046 },
                 { mapID = 1417, x = 0.2161, y = 0.3166 },
                 { mapID = 1417, x = 0.2218, y = 0.3286 },
@@ -595,7 +595,7 @@ local routes = {
                 { mapID = 1417, x = 0.4568, y = 0.9783 },
                 { mapID = 1417, x = 0.4576, y = 0.9888 },
 
-                -- Wetlands: Thandol Span, past Dun Modr, river road to Dun Algaz
+
                 { mapID = 1437, x = 0.5155, y = 0.0606 },
                 { mapID = 1437, x = 0.5118, y = 0.0741 },
                 { mapID = 1437, x = 0.5122, y = 0.0876 },
@@ -653,7 +653,7 @@ local routes = {
                 { mapID = 1437, x = 0.5507, y = 0.7298 },
                 { mapID = 1437, x = 0.5514, y = 0.7373 },
 
-                -- Loch Modan: Dun Algaz road, then west through North Gate Pass
+
                 { mapID = 1432, x = 0.2560, y = 0.0876 },
                 { mapID = 1432, x = 0.2562, y = 0.1004 },
                 { mapID = 1432, x = 0.2547, y = 0.1145 },
@@ -677,7 +677,7 @@ local routes = {
                 { mapID = 1432, x = 0.1889, y = 0.1730 },
                 { mapID = 1432, x = 0.1851, y = 0.1684 },
 
-                -- Dun Morogh: North Gate Outpost, Gol'Bolar road, Kharanos, ramp to the Gates of Ironforge
+
                 { mapID = 1426, x = 0.8438, y = 0.3001 },
                 { mapID = 1426, x = 0.8470, y = 0.3121 },
                 { mapID = 1426, x = 0.8446, y = 0.3252 },
@@ -747,7 +747,7 @@ local routes = {
                 { mapID = 1426, x = 0.5270, y = 0.3455 },
                 { mapID = 1426, x = 0.5364, y = 0.3391 },
 
-                -- Ironforge: Gates -> Commons walkway -> passage into the Great Forge
+
                 { mapID = 1455, x = 0.1896, y = 0.8234 },
                 { mapID = 1455, x = 0.2275, y = 0.7754 },
                 { mapID = 1455, x = 0.2695, y = 0.7545 },

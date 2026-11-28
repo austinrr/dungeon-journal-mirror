@@ -1,12 +1,12 @@
--- Scarlet Monastery wing detection.
--- All wings share one instance, and on some clients nothing the game reports
--- from inside tells them apart. Detection therefore runs in this order:
---   1) the wing's own map ID / map name / room name, when the client has one
---   2) the wing the player picked on the map this visit
---   3) the door the player walked through (learned from earlier visits)
---   4) the wing picked last time (Graveyard the very first time)
--- Whenever 1) or 2) gives a certain answer, the door used for this visit is
--- remembered, so the next visit through that door is recognised by itself.
+
+
+
+
+
+
+
+
+
 local FDJ = _G.ForeverDungeonJournal_NS
 if not FDJ then return end
 
@@ -20,9 +20,9 @@ FDJ.SCARLET_WING_SUBZONES = {
     ["training grounds"] = ARMORY, ["footman's armory"] = ARMORY, ["crusader's armory"] = ARMORY, ["hall of champions"] = ARMORY,
     ["chapel gardens"] = CATHEDRAL, ["crusader's chapel"] = CATHEDRAL,
 }
--- wingnames (2.1.5, M 23 Nov 2026: a Korean client in the Crusader's Chapel,
--- the tracker on the Library): the rooms in the client's language too
--- (FDJ.RunLogRoomNamesL10n, Data/RunLogWings.lua), as the game shows them.
+
+
+
 do
     local add = {}
     for english, wing in pairs(FDJ.SCARLET_WING_SUBZONES) do
@@ -34,23 +34,23 @@ do
     end
 end
 
--- smwing (2.0.8, M 15 Nov 2026: walked into the Cathedral, the journal said
--- Graveyard): the four portals stand side by side in the Grand Vestibule,
--- left to right Graveyard, Cathedral, Armory, Library (Warcraft Tavern),
--- about 0.007 of the Tirisfal map apart (the Graveyard and Library doors
--- below are 0.021 apart). A door is "the same door" within a third of that,
--- so the Cathedral's no longer counts as the Graveyard's (it did: 0.006 and
--- 0.009 reached the next portal).
-local DOOR_RADIUS = 0.0025 -- map-coordinate distance treated as "the same door"
 
--- Built-in door positions on the Tirisfal Glades map (1420), used until the
--- player's own picks have taught the addon better. Both were measured
--- in-game on the Forever client.
+
+
+
+
+
+
+local DOOR_RADIUS = 0.0025
+
+
+
+
 local KNOWN_DOORS = {
     { map = 1420, x = 0.8535, y = 0.3239, wing = LIBRARY },
     { map = 1420, x = 0.8480, y = 0.3037, wing = GRAVEYARD },
 }
-local KNOWN_DOOR_RADIUS = 0.0025 -- (smwing: was 0.009, half the gap between those two doors, so it took in the Cathedral's and Armory's)
+local KNOWN_DOOR_RADIUS = 0.0025
 
 local function NearestKnownDoor(entry)
     if type(entry) ~= "table" then return nil end
@@ -110,8 +110,8 @@ function FDJ.InScarletMonastery()
             local entry = content.dungeons and content.dungeons[wing]
             local localName = entry and PlainString(entry.name)
             if localName then
-                -- "Monasterio Escarlata: Cementerio" -> "monasterio escarlata"
-                -- "Scharlachrotes Kloster - Friedhof" -> "scharlachrotes kloster" too
+
+
                 local base = localName:match("^(.-)%s*[:：]") or localName:match("^(.-)%s+%-%s")
                     or localName:match("^(.-)%s+\226\128\147%s") or localName
                 if base ~= "" and n:find(base:lower(), 1, true) then return true end
@@ -121,10 +121,10 @@ function FDJ.InScarletMonastery()
     return false
 end
 
--- ---------------------------------------------------------------------------
--- Where the player last stood outdoors (= the door they zoned in through).
--- ---------------------------------------------------------------------------
-local lastOutdoor       -- { map, x, y }
+
+
+
+local lastOutdoor
 local outdoorsSinceEntry = false
 
 local function SampleOutdoorPosition()
@@ -175,8 +175,8 @@ local function Visit()
     return db.scarletVisit
 end
 
--- Called when the player arrives somewhere. A fresh walk-in starts a new
--- visit; a /reload or relog inside keeps the visit that was already running.
+
+
 local function OnArrive()
     if not FDJ.InScarletMonastery() then return end
     if outdoorsSinceEntry then
@@ -185,17 +185,17 @@ local function OnArrive()
     end
 end
 
--- ---------------------------------------------------------------------------
--- Resolution
--- ---------------------------------------------------------------------------
--- Returns wing, how, certain
+
+
+
+
 function FDJ.ResolveScarletWing()
     local wing, how
-    -- newvisit (2.1.5, M 23 Nov 2026: in the Cathedral the tracker said
-    -- Library, the wing of the visit before): the tracker asks on the loading
-    -- screen, before this file's own loading-screen event has started the
-    -- new visit (Systems/RunLog.lua loads first); a walk-in from outdoors
-    -- starts it now, so the last visit's wing is never read for this one.
+
+
+
+
+
     if outdoorsSinceEntry then pcall(OnArrive) end
 
     local uiMap
@@ -231,7 +231,7 @@ function FDJ.ResolveScarletWing()
 
     local visit = Visit()
     if wing then
-        -- Certain answer from the client: remember it and teach the door.
+
         if visit.wing ~= wing then
             visit.wing = wing
             LearnDoor(visit.entry, wing)
@@ -244,8 +244,8 @@ function FDJ.ResolveScarletWing()
     local door = NearestDoor(visit.entry)
     if door and door.wing then return door.wing, "entrance used", true end
 
-    -- smwing: the built-in door positions are a guess for the map, not
-    -- proof: the tracker waits for the room name or a kill
+
+
     door = NearestKnownDoor(visit.entry)
     if door then return door.wing, "known entrance", false end
 
@@ -253,7 +253,7 @@ function FDJ.ResolveScarletWing()
     return db.scarletLastPick or GRAVEYARD, "last choice", false
 end
 
--- The player says which wing this is (buttons on the map, or /dj wing).
+
 function FDJ.SetScarletWing(wing)
     local known = false
     for _, w in ipairs(FDJ.SCARLET_WINGS) do if w == wing then known = true end end
@@ -266,22 +266,22 @@ function FDJ.SetScarletWing(wing)
     return true
 end
 
--- smmaps (2.0.8, M 15 Nov 2026: "use the same detector that we use for the
--- tracker... once the tracker knows we are in armory or library, it opens
--- the map for that dungeon"): the tracker found the wing (a kill of a mob or
--- boss only that wing has): this visit is that wing, as if picked, and the
--- big map shows it. Only when the tracker's wing changes (a wing picked on
--- the map to look at stays until the next one).
--- guess (smwing, 2.0.8): only the likeliest of the wings a shared mob
--- leaves (a Scarlet Myrmidon: Cathedral or Armory): shown, but not taught
--- to the door.
+
+
+
+
+
+
+
+
+
 function FDJ.TrackerScarletWing(wing, guess)
     local known = false
     for _, w in ipairs(FDJ.SCARLET_WINGS) do if w == wing then known = true end end
     if not known or not FDJ.InScarletMonastery() then return false end
     local visit = Visit()
     if visit.trackerWing == wing then
-        -- the likeliest wing, now proved by a mob only it has: teach the door
+
         if visit.trackerGuess and not guess then
             visit.trackerGuess = nil
             LearnDoor(visit.entry, wing)
@@ -298,11 +298,11 @@ function FDJ.TrackerScarletWing(wing, guess)
     return true
 end
 
--- smmaps: the wing buttons on the big map. They always switch the map to
--- that wing (before, the room name the game gives won, and the buttons did
--- nothing: M couldn't switch to Graveyard or Library from the Armory). When
--- the game can't tell the wings apart, the click also says which wing this
--- is, as it always did; when it can, it only shows the other wing's map.
+
+
+
+
+
 function FDJ.PickScarletMapWing(wing)
     local known = false
     for _, w in ipairs(FDJ.SCARLET_WINGS) do if w == wing then known = true end end
@@ -318,8 +318,8 @@ function FDJ.PickScarletMapWing(wing)
     visit.view = nil
     return FDJ.SetScarletWing(wing)
 end
--- The wing the big map shows when it isn't where the player is (picked
--- with a wing button), else nil.
+
+
 function FDJ.ScarletMapView()
     if not FDJ.InScarletMonastery() then return nil end
     return Visit().view
@@ -334,7 +334,7 @@ function FDJ.ScarletWingFromWord(word)
     return nil
 end
 
--- /dj where : prints what the client reports, for diagnosing detection.
+
 function FDJ.DescribeLocation()
     local out = {}
     local function add(label, value)
@@ -374,14 +374,14 @@ function FDJ.DescribeLocation()
     return table.concat(out, ", ")
 end
 
--- tirisfalonly (2.1.4, M 23 Nov 2026, the performance check: the position
--- was read three times a second everywhere, all session): only in Tirisfal
--- Glades, where the monastery's doors are; out of it the last position is
--- forgotten (no door there). Being outdoors since the last visit is told by
--- arriving outdoors (a loading screen or a new zone), as the reads did.
+
+
+
+
+
 local TIRISFAL = 1420
 local function InTirisfal()
-    if not (C_Map and C_Map.GetBestMapForUnit and C_Map.GetMapInfo) then return true end -- (can't tell: read as before)
+    if not (C_Map and C_Map.GetBestMapForUnit and C_Map.GetMapInfo) then return true end
     local ok, map = pcall(C_Map.GetBestMapForUnit, "player")
     map = ok and Plain(map) or nil
     for _ = 1, 6 do

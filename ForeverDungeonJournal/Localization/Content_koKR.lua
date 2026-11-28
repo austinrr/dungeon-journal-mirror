@@ -1,8 +1,8 @@
 local ADDON_NAME, FDJ = ...
 FDJ = FDJ or _G.ForeverDungeonJournal_NS
 
--- Korean content localization (dungeon names and descriptions). Quests,
--- bosses and route steps fall back to English until translated.
+
+
 FDJ.ContentLocales = FDJ.ContentLocales or {}
 FDJ.ContentLocales.koKR = FDJ.ContentLocales.koKR or {}
 
@@ -50,7 +50,7 @@ FDJ.ContentLocales.koKR.dungeons = {
 }
 
 FDJ.ContentLocales.koKR.slotParts = {
-    -- isalien (2.1.1): relics (Wowhead Forever, the drop tables in this language)
+
     ["Relic"] = "성물",
     ["Libram"] = "고서",
     ["Totem"] = "토템",
@@ -67,7 +67,7 @@ FDJ.ContentLocales.koKR.slotParts = {
 }
 
 FDJ.ContentLocales.koKR.bosses = {
-    -- Official client names (Wowhead Forever database, 2026-10-03).
+
     ["Faldrim Anvilmar"] = "팔드림 앤빌마",
     ["Plunder"] = "약탈골렘",
     ["Durgen Dirgehammer"] = "드루겐 더지해머",
